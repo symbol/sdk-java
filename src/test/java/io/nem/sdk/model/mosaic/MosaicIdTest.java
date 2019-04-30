@@ -16,55 +16,92 @@
 
 package io.nem.sdk.model.mosaic;
 
+import io.nem.sdk.model.account.PublicAccount;
+import io.nem.sdk.model.blockchain.NetworkType;
+import io.nem.sdk.model.transaction.UInt64;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
 
 import java.math.BigInteger;
-import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class MosaicIdTest {
 
-    @Test
-    void createAMosaicIdFromMosaicNameViaConstructor() {
-        MosaicId mosaicId = new MosaicId("nem:xem");
-        assertEquals(mosaicId.getId(), new BigInteger("-3087871471161192663"));
-        assertEquals(mosaicId.getFullName().get(), "nem:xem");
-    }
+    String publicKey = "b4f12e7c9f6946091e2cb8b6d3a12b50d17ccbbf646386ea27ce2946a7423dcf";
 
     @Test
     void createAMosaicIdFromIdViaConstructor() {
-        MosaicId mosaicId = new MosaicId(new BigInteger("-8884663987180930485"));
-        assertEquals(mosaicId.getId(), new BigInteger("-8884663987180930485"));
-        assertFalse(mosaicId.getFullName().isPresent());
+        MosaicId mosaicId = new MosaicId(new BigInteger("-8810190493148073404"));
+        assertEquals(mosaicId.getId(), new BigInteger("-8810190493148073404"));
+    }
+
+    @Test
+    void createAMosaicIdFromHexViaConstructor() {
+        MosaicId mosaicId = new MosaicId("85BBEA6CC462B244");
+        assertEquals(mosaicId.getId(), new BigInteger("9636553580561478212"));
     }
 
     @Test
     void shouldCompareMosaicIdsForEquality() {
-        MosaicId mosaicId = new MosaicId(new BigInteger("-8884663987180930485"));
-        MosaicId mosaicId2 = new MosaicId(new BigInteger("-8884663987180930485"));
+        MosaicId mosaicId = new MosaicId(new BigInteger("-8810190493148073404"));
+        MosaicId mosaicId2 = new MosaicId(new BigInteger("-8810190493148073404"));
         assertTrue(mosaicId.equals(mosaicId2));
     }
 
-    private static Stream<Arguments> provider() {
-        return Stream.of(
-                Arguments.of("nem"),
-                Arguments.of("nem.xem"),
-                Arguments.of(":nem"),
-                Arguments.of("nem.xem:"),
-                Arguments.of(""),
-                Arguments.of("nem:xem:nem")
-        );
+    @Test
+    void shouldCompareMosaicIdsHexForEquality() {
+        MosaicId mosaicId = new MosaicId("85BBEA6CC462B244");
+        MosaicId mosaicId2 = new MosaicId(new BigInteger("9636553580561478212"));
+        assertEquals(mosaicId.getIdAsHex(), mosaicId2.getIdAsHex());
     }
 
-    @ParameterizedTest
-    @MethodSource("provider")
-    void throwIllegalMosaicIdentifierExceptionWhenMosaicIsNotValid(String invalidIdentifier) {
-        assertThrows(IllegalIdentifierException.class, () -> {
-            new MosaicId(invalidIdentifier);
-        });
+    @Test
+    void shouldCompareMosaicIdsArraysForEquality() {
+        MosaicId mosaicId = new MosaicId("85BBEA6CC462B244");
+        BigInteger bigInt1  = new BigInteger("9636553580561478212");
+        MosaicId mosaicId1 = new MosaicId(bigInt1);
+        BigInteger bigInt2  = new BigInteger("-8810190493148073404");
+        //MosaicId mosaicId2 = new MosaicId(bigInt2);
+        int[] array1 = UInt64.fromBigInteger(bigInt1);
+        int[] array2 = UInt64.fromBigInteger(bigInt2);
+        BigInteger bigInt3 = UInt64.fromLowerAndHigher(3294802500L,2243684972L);
+        BigInteger bigInt4 = UInt64.fromLowerAndHigher(-1000164796,-2051282324);
+        assertEquals(bigInt2,bigInt3);
+        assertEquals(bigInt3,bigInt4);
+        assertArrayEquals(array1, array2);
+        assertEquals(mosaicId.getId(), mosaicId1.getId());
+    }
+
+    @Test
+    void shouldCompareMosaicIdsForNotEquality() {
+        BigInteger bigInt1  = new BigInteger("9636553580561478212");
+        MosaicId mosaicId1 = new MosaicId(bigInt1);
+        BigInteger bigInt2  = new BigInteger("-8810190493148073404");
+        MosaicId mosaicId2 = new MosaicId(bigInt2);
+        int[] array1 = UInt64.fromBigInteger(bigInt1);
+        int[] array2 = UInt64.fromBigInteger(bigInt2);
+        assertArrayEquals(array1, array2);
+        assertNotEquals(bigInt1,bigInt2);
+        assertNotEquals(mosaicId1.getId(), mosaicId2.getId());
+    }
+
+    @Test
+    void createAMosaicIdFromNonceAndOwner() {
+        PublicAccount owner = PublicAccount.createFromPublicKey(publicKey, NetworkType.MIJIN_TEST);
+        byte[] bytes = new byte[] {0x0,0x0,0x0,0x0};
+        MosaicNonce nonce = new MosaicNonce(bytes);
+        MosaicId mosaicId = MosaicId.createFromNonce(nonce, owner);
+        MosaicId mosaicId2 = new MosaicId(new BigInteger("992621222383397347"));
+        assertTrue(mosaicId.equals(mosaicId2));
+    }
+
+    @Test
+    void createAMosaicIdFromNonceAndOwnerTwiceTheSame() {
+        PublicAccount owner = PublicAccount.createFromPublicKey(publicKey, NetworkType.MIJIN_TEST);
+        byte[] bytes = new byte[] {0x0,0x0,0x0,0x0};
+        MosaicNonce nonce = new MosaicNonce(bytes);
+        MosaicId mosaicId1 = MosaicId.createFromNonce(nonce, owner);
+        MosaicId mosaicId2 = MosaicId.createFromNonce(nonce, owner);
+        assertTrue(mosaicId1.equals(mosaicId2));
     }
 }

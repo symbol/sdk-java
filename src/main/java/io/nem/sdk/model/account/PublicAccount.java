@@ -17,6 +17,7 @@
 package io.nem.sdk.model.account;
 
 import io.nem.sdk.model.blockchain.NetworkType;
+import org.bouncycastle.util.encoders.Hex;
 
 import java.util.Objects;
 
@@ -76,6 +77,15 @@ public class PublicAccount {
      */
     public String getPublicKey() {
         return publicKey;
+    }
+
+    /**
+     * Return account public key in bytes.
+     *
+     * @return byte[]
+     */
+    public byte[] getPublicKeyAsBytes() {
+        return Hex.decode(publicKey);
     }
 
 }

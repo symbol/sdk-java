@@ -76,22 +76,41 @@ public class RegisterNamespaceTransaction extends Transaction {
      */
     public static RegisterNamespaceTransaction createRootNamespace(Deadline deadline, String namespaceName, BigInteger duration, NetworkType networkType) {
         Validate.notNull(namespaceName, "NamespaceName must not be null");
-        return new RegisterNamespaceTransaction(networkType, 2, deadline, BigInteger.valueOf(0), namespaceName, new NamespaceId(IdGenerator.generateNamespaceId(namespaceName)), NamespaceType.RootNamespace, Optional.of(duration), Optional.empty());
+        BigInteger fee = BigInteger.valueOf(0);
+        NamespaceId namespaceId = new NamespaceId(IdGenerator.generateNamespaceId(namespaceName));
+        return new RegisterNamespaceTransaction(networkType, 2, deadline, fee, namespaceName, namespaceId, NamespaceType.RootNamespace, Optional.of(duration), Optional.empty());
     }
 
     /**
      * Create a sub namespace object.
      *
-     * @param deadline      - The deadline to include the transaction.
-     * @param namespaceName - The namespace name.
-     * @param parentId      - The parent id name.
-     * @param networkType   - The network type.
+     * @param deadline              - The deadline to include the transaction.
+     * @param namespaceName         - The namespace name.
+     * @param parentNamespaceName   - The parent namespace name.
+     * @param networkType           - The network type.
+     * @return instance of RegisterNamespaceTransaction
+     */
+    public static RegisterNamespaceTransaction createSubNamespace(Deadline deadline, String namespaceName, String parentNamespaceName, NetworkType networkType) {
+        Validate.notNull(namespaceName, "NamespaceName must not be null");
+        Validate.notNull(parentNamespaceName, "ParentNamespaceName must not be null");
+        NamespaceId parentId = new NamespaceId(parentNamespaceName);
+        return RegisterNamespaceTransaction.createSubNamespace(deadline, namespaceName, parentId, networkType);
+    }
+
+    /**
+     * Create a sub namespace object.
+     *
+     * @param deadline          - The deadline to include the transaction.
+     * @param namespaceName     - The namespace name.
+     * @param parentId          - The parent id name.
+     * @param networkType       - The network type.
      * @return instance of RegisterNamespaceTransaction
      */
     public static RegisterNamespaceTransaction createSubNamespace(Deadline deadline, String namespaceName, NamespaceId parentId, NetworkType networkType) {
         Validate.notNull(namespaceName, "NamespaceName must not be null");
         Validate.notNull(parentId, "ParentId must not be null");
-        return new RegisterNamespaceTransaction(networkType, 2, deadline, BigInteger.valueOf(0), namespaceName, new NamespaceId(IdGenerator.generateSubNamespaceIdFromParentId(parentId.getId(), namespaceName)), NamespaceType.SubNamespace, Optional.empty(), Optional.of(parentId));
+        NamespaceId namespaceId = new NamespaceId(IdGenerator.generateNamespaceId(namespaceName, parentId.getId()));
+        return new RegisterNamespaceTransaction(networkType, 2, deadline, BigInteger.valueOf(0), namespaceName, namespaceId, NamespaceType.SubNamespace, Optional.empty(), Optional.of(parentId));
     }
 
 

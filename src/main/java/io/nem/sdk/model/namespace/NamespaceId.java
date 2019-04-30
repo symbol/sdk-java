@@ -17,32 +17,69 @@
 package io.nem.sdk.model.namespace;
 
 import io.nem.sdk.model.transaction.IdGenerator;
+import io.nem.sdk.model.transaction.UInt64;
+import io.nem.sdk.model.transaction.UInt64Id;
+import org.bouncycastle.util.encoders.Hex;
 
 import java.math.BigInteger;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.List;
 
 /**
  * The namespace id structure describes namespace id
  *
  * @since 1.0
  */
-public class NamespaceId {
+public class NamespaceId implements UInt64Id {
     private final BigInteger id;
     private final Optional<String> fullName;
 
     /**
-     * Create NamespaceId from namespace string name (ex: nem or domain.subdom.subdome)
+     * Returns a list of BigInteger ids for a namespace path (ex: nem or domain.subdom.subdome)
      *
-     * @param id
+     * @param namespaceName
+     * @return
      */
-    public NamespaceId(String id) {
-        this.id = IdGenerator.generateNamespaceId(id);
-        this.fullName = Optional.of(id);
+    public static List<BigInteger> getNamespacePath(String namespaceName) {
+
+        return IdGenerator.generateNamespacePath(namespaceName);
     }
 
     /**
-     * Create NamespaceId from biginteger id
+     * Create NamespaceId from namespace string name (ex: nem or domain.subdom.subdome)
+     *
+     * @param namespaceName
+     */
+    public NamespaceId(String namespaceName) {
+        this.id = IdGenerator.generateNamespaceId(namespaceName);
+        this.fullName = Optional.of(namespaceName);
+    }
+
+    /**
+     * Create NamespaceId from namespace string name (ex: nem or domain.subdom.subdome) and parent id
+     *
+     * @param namespaceName
+     * @param parentId
+     */
+    public NamespaceId(String namespaceName, BigInteger parentId) {
+        this.id = IdGenerator.generateNamespaceId(namespaceName, parentId);
+        this.fullName = Optional.of(namespaceName);
+    }
+
+    /**
+     * Create NamespaceId from namespace string name (ex: nem or domain.subdom.subdome) and parent namespace name
+     *
+     * @param namespaceName
+     * @param parentNamespaceName
+     */
+    public NamespaceId(String namespaceName, String parentNamespaceName) {
+        this.id = IdGenerator.generateNamespaceId(namespaceName, parentNamespaceName);
+        this.fullName = Optional.of(parentNamespaceName + "." + namespaceName);
+    }
+
+    /**
+     * Create NamespaceId from BigInteger id
      *
      * @param id
      */
@@ -52,12 +89,33 @@ public class NamespaceId {
     }
 
     /**
-     * Returns namespace biginteger id
+     * Returns namespace BigInteger id
      *
-     * @return namespace biginteger id
+     * @return namespace BigInteger id
      */
     public BigInteger getId() {
+
         return id;
+    }
+
+    /**
+     * Returns namespace id as a long
+     *
+     * @return id long
+     */
+    public long getIdAsLong() {
+
+        return this.id.longValue();
+    }
+
+    /**
+     * Returns namespace id as a hexadecimal string
+     *
+     * @return id Hex String
+     */
+    public String getIdAsHex() {
+
+        return UInt64.bigIntegerToHex(this.id);
     }
 
     /**
@@ -66,6 +124,7 @@ public class NamespaceId {
      * @return namespace full name
      */
     public Optional<String> getFullName() {
+
         return fullName;
     }
 
@@ -79,6 +138,7 @@ public class NamespaceId {
         if (this == o) return true;
         if (!(o instanceof NamespaceId)) return false;
         NamespaceId namespaceId1 = (NamespaceId) o;
+
         return Objects.equals(id, namespaceId1.id);
     }
 }

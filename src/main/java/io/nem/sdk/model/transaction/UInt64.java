@@ -16,12 +16,15 @@
 
 package io.nem.sdk.model.transaction;
 
+import io.nem.core.utils.ByteUtils;
+import io.nem.core.utils.HexEncoder;
 import org.apache.commons.lang.ArrayUtils;
 
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.IntBuffer;
+import java.util.Arrays;
 
 public class UInt64 {
 
@@ -58,8 +61,18 @@ public class UInt64 {
         return new BigInteger(array);
     }
 
+    public static BigInteger fromLowerAndHigher(long lower, long higher) {
+        int[] array = new int[] {(int)lower, (int)higher};
+        return UInt64.fromIntArray(array);
+    }
+
     public static String bigIntegerToHex(BigInteger input) {
-        int[] uint64Parts = UInt64.fromBigInteger(input);
-        return Integer.toHexString(uint64Parts[1]) + Integer.toHexString(uint64Parts[0]);
+        /*int[] uint64Parts = UInt64.fromBigInteger(input);
+        String lower = String.format("%08x",uint64Parts[0]);
+        String higher = String.format("%08x",uint64Parts[1]);
+        return higher + lower;*/
+
+        byte[] bytes = ByteUtils.bigIntToBytes(input);
+        return HexEncoder.getString(bytes);
     }
 }

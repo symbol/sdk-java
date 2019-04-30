@@ -18,7 +18,7 @@ package io.nem.sdk.model.account;
 
 import io.nem.sdk.model.blockchain.NetworkType;
 import io.nem.sdk.model.mosaic.Mosaic;
-import io.nem.sdk.model.mosaic.XEM;
+import io.nem.sdk.model.mosaic.NetworkCurrencyMosaic;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigInteger;
@@ -31,7 +31,7 @@ class AccountInfoTest {
 
     @Test
     void shouldCreateAccountInfoViaConstructor() {
-        List<Mosaic> mosaics =  Arrays.asList(XEM.createRelative(BigInteger.valueOf(10)));
+        List<Mosaic> mosaics =  Arrays.asList(NetworkCurrencyMosaic.createRelative(BigInteger.valueOf(10)));
         AccountInfo accountInfo = new AccountInfo(Address.createFromRawAddress("SDGLFWDSHILTIUHGIBH5UGX2VYF5VNJEKCCDBR26"),
                 new BigInteger("964"),
                 "cf893ffcc47c33e7f68ab1db56365c156b0736824a0c1e273f9e00b8df8f01eb",

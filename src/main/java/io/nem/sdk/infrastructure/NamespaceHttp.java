@@ -56,7 +56,7 @@ public class NamespaceHttp extends Http implements NamespaceRepository {
         Observable<NetworkType> networkTypeResolve = getNetworkTypeObservable();
         return networkTypeResolve
                 .flatMap(networkType -> this.client
-                        .getAbs(this.url + "/namespace/" + UInt64.bigIntegerToHex(namespaceId.getId()))
+                        .getAbs(this.url + "/namespace/" + namespaceId.getIdAsHex())
                         .as(BodyCodec.jsonObject())
                         .rxSend()
                         .toObservable()

@@ -30,7 +30,6 @@ public class MosaicInfo {
     private final boolean active;
     private final Integer index;
     private final String metaId;
-    private final NamespaceId namespaceId;
     private final MosaicId mosaicId;
     private final BigInteger supply;
     private final BigInteger height;
@@ -38,11 +37,10 @@ public class MosaicInfo {
     private final MosaicProperties properties;
     //private final any levy;
 
-    public MosaicInfo(boolean active, Integer index, String metaId, NamespaceId namespaceId, MosaicId mosaicId, BigInteger supply, BigInteger height, PublicAccount owner, MosaicProperties properties) {
+    public MosaicInfo(boolean active, Integer index, String metaId, MosaicId mosaicId, BigInteger supply, BigInteger height, PublicAccount owner, MosaicProperties properties) {
         this.active = active;
         this.index = index;
         this.metaId = metaId;
-        this.namespaceId = namespaceId;
         this.mosaicId = mosaicId;
         this.supply = supply;
         this.height = height;
@@ -69,23 +67,21 @@ public class MosaicInfo {
     }
 
     /**
+     * Returns the index
+     *
      * @return index
      */
     public Integer getIndex() {
         return index;
     }
 
+    /**
+     * Returns the meta id
+     *
+     * @return meta id
+     */
     public String getMetaId() {
         return metaId;
-    }
-
-    /**
-     * Returns the namespace id it belongs to
-     *
-     * @return namespace it belongs to
-     */
-    public NamespaceId getNamespaceId() {
-        return namespaceId;
     }
 
     /**

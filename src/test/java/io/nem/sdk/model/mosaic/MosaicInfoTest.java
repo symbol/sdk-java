@@ -35,7 +35,7 @@ class MosaicInfoTest {
         MosaicInfo mosaicInfo = new MosaicInfo(true,
                 0,
                 "5A3CD9B09CD1E8000159249B",
-                namespaceId,
+                //namespaceId,
                 mosaicId,
                 new BigInteger("100"),
                 new BigInteger("0"),
@@ -45,7 +45,7 @@ class MosaicInfoTest {
         assertEquals(true, mosaicInfo.isActive());
         assertTrue(mosaicInfo.getIndex() == 0);
         assertEquals("5A3CD9B09CD1E8000159249B", mosaicInfo.getMetaId());
-        assertEquals(namespaceId, mosaicInfo.getNamespaceId());
+        //assertEquals(namespaceId, mosaicInfo.getNamespaceId());
         assertEquals(mosaicId, mosaicInfo.getMosaicId());
         assertEquals(new BigInteger("100"), mosaicInfo.getSupply());
         assertEquals(new BigInteger("0"), mosaicInfo.getHeight());
@@ -64,7 +64,7 @@ class MosaicInfoTest {
         MosaicInfo mosaicInfo = new MosaicInfo(true,
                 0,
                 "5A3CD9B09CD1E8000159249B",
-                new NamespaceId(new BigInteger("-8884663987180930485")),
+                //new NamespaceId(new BigInteger("-8884663987180930485")),
                 new MosaicId(new BigInteger("-3087871471161192663")),
                 new BigInteger("100"),
                 new BigInteger("0"),
@@ -81,7 +81,7 @@ class MosaicInfoTest {
         MosaicInfo mosaicInfo = new MosaicInfo(true,
                 0,
                 "5A3CD9B09CD1E8000159249B",
-                new NamespaceId(new BigInteger("-8884663987180930485")),
+                //new NamespaceId(new BigInteger("-8884663987180930485")),
                 new MosaicId(new BigInteger("-3087871471161192663")),
                 new BigInteger("100"),
                 new BigInteger("0"),
@@ -98,7 +98,7 @@ class MosaicInfoTest {
         MosaicInfo mosaicInfo = new MosaicInfo(true,
                 0,
                 "5A3CD9B09CD1E8000159249B",
-                new NamespaceId(new BigInteger("-8884663987180930485")),
+                //new NamespaceId(new BigInteger("-8884663987180930485")),
                 new MosaicId(new BigInteger("-3087871471161192663")),
                 new BigInteger("100"),
                 new BigInteger("0"),
@@ -115,7 +115,7 @@ class MosaicInfoTest {
         MosaicInfo mosaicInfo = new MosaicInfo(true,
                 0,
                 "5A3CD9B09CD1E8000159249B",
-                new NamespaceId(new BigInteger("-8884663987180930485")),
+                //new NamespaceId(new BigInteger("-8884663987180930485")),
                 new MosaicId(new BigInteger("-3087871471161192663")),
                 new BigInteger("100"),
                 new BigInteger("0"),
@@ -132,7 +132,7 @@ class MosaicInfoTest {
         MosaicInfo mosaicInfo = new MosaicInfo(true,
                 0,
                 "5A3CD9B09CD1E8000159249B",
-                new NamespaceId(new BigInteger("-8884663987180930485")),
+                //new NamespaceId(new BigInteger("-8884663987180930485")),
                 new MosaicId(new BigInteger("-3087871471161192663")),
                 new BigInteger("100"),
                 new BigInteger("0"),
@@ -149,7 +149,7 @@ class MosaicInfoTest {
         MosaicInfo mosaicInfo = new MosaicInfo(true,
                 0,
                 "5A3CD9B09CD1E8000159249B",
-                new NamespaceId(new BigInteger("-8884663987180930485")),
+                //new NamespaceId(new BigInteger("-8884663987180930485")),
                 new MosaicId(new BigInteger("-3087871471161192663")),
                 new BigInteger("100"),
                 new BigInteger("0"),

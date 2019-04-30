@@ -25,6 +25,7 @@ import io.nem.sdk.model.mosaic.MosaicName;
 import io.nem.sdk.model.mosaic.MosaicProperties;
 import io.nem.sdk.model.namespace.NamespaceId;
 import io.nem.sdk.model.transaction.UInt64;
+import io.nem.sdk.model.transaction.UInt64Id;
 import io.reactivex.Observable;
 import io.vertx.core.json.JsonObject;
 import io.vertx.reactivex.ext.web.client.HttpResponse;
@@ -50,8 +51,13 @@ public class MosaicHttp extends Http implements MosaicRepository {
         super(host, networkHttp);
     }
 
+    /**
+     * Gets the MosaicInfo for a given mosaicId
+     * @param mosaicId - Mosaic id
+     * @returns Observable<MosaicInfo>
+     */
     @Override
-    public Observable<MosaicInfo> getMosaic(MosaicId mosaicId) {
+    public Observable<MosaicInfo> getMosaic(UInt64Id mosaicId) {
         Observable<NetworkType> networkTypeResolve = getNetworkTypeObservable();
         return networkTypeResolve
                 .flatMap(networkType -> this.client
@@ -64,7 +70,6 @@ public class MosaicHttp extends Http implements MosaicRepository {
                         .map(mosaicInfoDTO -> new MosaicInfo(mosaicInfoDTO.getMeta().isActive(),
                                 mosaicInfoDTO.getMeta().getIndex(),
                                 mosaicInfoDTO.getMeta().getId(),
-                                new NamespaceId(mosaicInfoDTO.getMosaic().getNamespaceId().extractIntArray()),
                                 new MosaicId(mosaicInfoDTO.getMosaic().getMosaicId().extractIntArray()),
                                 mosaicInfoDTO.getMosaic().getSupply().extractIntArray(),
                                 mosaicInfoDTO.getMosaic().getHeight().extractIntArray(),
@@ -73,8 +78,13 @@ public class MosaicHttp extends Http implements MosaicRepository {
                         )));
     }
 
+    /**
+     * Gets MosaicInfo for different mosaicIds.
+     * @param mosaicIds - List of mosaic ids
+     * @returns Observable<List<MosaicInfo>>
+     */
     @Override
-    public Observable<List<MosaicInfo>> getMosaics(List<MosaicId> mosaicIds) {
+    public Observable<List<MosaicInfo>> getMosaics(List<UInt64Id> mosaicIds) {
         JsonObject requestBody = new JsonObject();
         requestBody.put("mosaicIds", mosaicIds.stream().map(id -> UInt64.bigIntegerToHex(id.getId())).collect(Collectors.toList()));
         Observable<NetworkType> networkTypeResolve = getNetworkTypeObservable();
@@ -91,7 +101,6 @@ public class MosaicHttp extends Http implements MosaicRepository {
                         .map(mosaicInfoDTO -> new MosaicInfo(mosaicInfoDTO.getMeta().isActive(),
                                 mosaicInfoDTO.getMeta().getIndex(),
                                 mosaicInfoDTO.getMeta().getId(),
-                                new NamespaceId(mosaicInfoDTO.getMosaic().getNamespaceId().extractIntArray()),
                                 new MosaicId(mosaicInfoDTO.getMosaic().getMosaicId().extractIntArray()),
                                 mosaicInfoDTO.getMosaic().getSupply().extractIntArray(),
                                 mosaicInfoDTO.getMosaic().getHeight().extractIntArray(),
@@ -102,7 +111,17 @@ public class MosaicHttp extends Http implements MosaicRepository {
                         .toObservable());
     }
 
-    @Override
+    private MosaicProperties extractMosaicProperties(MosaicPropertiesDTO mosaicPropertiesDTO) {
+        String flags = "00" + Integer.toBinaryString(mosaicPropertiesDTO.get(0).extractIntArray().intValue());
+        String bitMapFlags = flags.substring(flags.length() - 3, flags.length());
+        return new MosaicProperties(bitMapFlags.charAt(2) == '1',
+                bitMapFlags.charAt(1) == '1',
+                bitMapFlags.charAt(0) == '1',
+                mosaicPropertiesDTO.get(1).extractIntArray().intValue(),
+                mosaicPropertiesDTO.get(2).extractIntArray());
+    }
+
+/*    @Override
     public Observable<List<MosaicInfo>> getMosaicsFromNamespace(NamespaceId namespaceId, QueryParams queryParams) {
         return this.getMosaicsFromNamespace(namespaceId, Optional.of(queryParams));
     }
@@ -127,7 +146,6 @@ public class MosaicHttp extends Http implements MosaicRepository {
                         .map(mosaicInfoDTO -> new MosaicInfo(mosaicInfoDTO.getMeta().isActive(),
                                 mosaicInfoDTO.getMeta().getIndex(),
                                 mosaicInfoDTO.getMeta().getId(),
-                                new NamespaceId(mosaicInfoDTO.getMosaic().getNamespaceId().extractIntArray()),
                                 new MosaicId(mosaicInfoDTO.getMosaic().getMosaicId().extractIntArray()),
                                 mosaicInfoDTO.getMosaic().getSupply().extractIntArray(),
                                 mosaicInfoDTO.getMosaic().getHeight().extractIntArray(),
@@ -156,15 +174,5 @@ public class MosaicHttp extends Http implements MosaicRepository {
                         new NamespaceId(mosaicNameDTO.getParentId().extractIntArray())))
                 .toList()
                 .toObservable();
-    }
-
-    private MosaicProperties extractMosaicProperties(MosaicPropertiesDTO mosaicPropertiesDTO) {
-        String flags = "00" + Integer.toBinaryString(mosaicPropertiesDTO.get(0).extractIntArray().intValue());
-        String bitMapFlags = flags.substring(flags.length() - 3, flags.length());
-        return new MosaicProperties(bitMapFlags.charAt(2) == '1',
-                bitMapFlags.charAt(1) == '1',
-                bitMapFlags.charAt(0) == '1',
-                mosaicPropertiesDTO.get(1).extractIntArray().intValue(),
-                mosaicPropertiesDTO.get(2).extractIntArray());
-    }
+    }*/
 }

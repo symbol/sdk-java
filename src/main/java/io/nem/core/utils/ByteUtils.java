@@ -16,9 +16,38 @@
 
 package io.nem.core.utils;
 
+import io.nem.sdk.model.mosaic.MosaicNonce;
+
+import java.math.BigInteger;
 import java.nio.ByteBuffer;
+import java.util.Arrays;
 
 public class ByteUtils {
+
+
+    /**
+     * Converts a BigInteger value into an array of size bytes.
+     *
+     * @param x The BigInteger.
+     * @param size The number of bytes in the returned byte array.
+     * @return The bytes.
+     */
+    public static byte[] bigIntToBytesOfSize(final BigInteger x, final int size) {
+        byte[] bytes = x.toByteArray();
+        int maxSize = bytes.length;
+        bytes = Arrays.copyOfRange(bytes, (maxSize <= size) ? 0 : maxSize - size, (maxSize <= size) ? size : maxSize);
+        return bytes;
+    }
+
+    /**
+     * Converts a BigInteger value into an array of 8 bytes.
+     *
+     * @param x The BigInteger.
+     * @return The bytes.
+     */
+    public static byte[] bigIntToBytes(final BigInteger x) {
+        return ByteUtils.longToBytes(x.longValue());
+    }
 
     /**
      * Converts an array of 8 bytes into a long.
@@ -68,6 +97,22 @@ public class ByteUtils {
         final ByteBuffer buffer = ByteBuffer.allocate(4);
         buffer.putInt(x);
         return buffer.array();
+    }
+
+    /**
+     * Converts an int array into a byte array.
+     * Assumes each integer value fits in a byte.
+     * If integer value uses more than 1 byte then only the lowest byte
+     *
+     * @param intArray The int array.
+     * @return The bytes.
+     */
+    public static byte[] intArrayToByteArray(final int[] intArray) {
+        byte[] bytes = new byte[intArray.length];
+        for (int i = 0; i < intArray.length; i++) {
+            bytes[i] = (byte)intArray[i];
+        }
+        return bytes;
     }
 
     /**
