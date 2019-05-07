@@ -20,7 +20,53 @@ import org.hamcrest.core.IsEqual;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.math.BigInteger;
+
 public class ByteUtilsTest {
+
+    // region BigIntToBytes
+
+    private static void assertBigIntToBytesConversion(final BigInteger input, final byte[] expected) {
+        // Act:
+        final byte[] result = ByteUtils.bigIntToBytes(input);
+
+        // Assert:
+        Assert.assertThat(result, IsEqual.equalTo(expected));
+    }
+
+    private static void assertBigIntToBytesOfSizeConversion(final BigInteger input, final int size, final byte[] expected) {
+        // Act:
+        final byte[] result = ByteUtils.bigIntToBytesOfSize(input, size);
+
+        // Assert:
+        Assert.assertThat(result, IsEqual.equalTo(expected));
+    }
+
+    @Test
+    public void canConvertBigIntToBytes() {
+        // Assert:
+        assertBigIntToBytesConversion(new BigInteger("0"), new byte[]{0, 0, 0, 0, 0, 0, 0, 0});
+        assertBigIntToBytesConversion(new BigInteger("2139062143"), new byte[]{0x0, 0x0, 0x0, 0x0, 0x7F, 0x7F, 0x7F, 0x7F});
+        assertBigIntToBytesConversion(new BigInteger("8034280445828890495"), new byte[]{0x6F, 0x7F, 0x7F, 0x7F, 0x7F, 0x7F, 0x7F, 0x7F});
+    }
+
+    @Test
+    public void canConvertBigIntToBytesOfGivenSize() {
+        // Assert:
+        assertBigIntToBytesOfSizeConversion(new BigInteger("0"), 4, new byte[]{0, 0, 0, 0});
+        assertBigIntToBytesOfSizeConversion(new BigInteger("2139062143"), 4, new byte[]{0x7F, 0x7F, 0x7F, 0x7F});
+    }
+
+    @Test
+    public void canConvertBigIntToBytesIgnoresExcessiveData() {
+        // Assert:
+        // Should truncates higher than 8 bytes
+        assertBigIntToBytesConversion(new BigInteger("1760474967448236294015"), new byte[]{0x6F, 0x7F, 0x7F, 0x7F, 0x7F, 0x7F, 0x7F, 0x7F});
+        // Should truncates higher than 4 bytes
+        assertBigIntToBytesOfSizeConversion(new BigInteger("8034280445828890495"), 4, new byte[]{0x7F, 0x7F, 0x7F, 0x7F});
+    }
+
+    //endregion
 
     //region bytesToLong / longToBytes
 
@@ -209,6 +255,25 @@ public class ByteUtilsTest {
     }
 
     //endregion
+
+    // region intArrayToBytes
+
+    private static void assertIntArrayToBytesConversion(final int[] input, final byte[] expected) {
+        // Act:
+        final byte[] result = ByteUtils.intArrayToByteArray(input);
+
+        // Assert:
+        Assert.assertThat(result, IsEqual.equalTo(expected));
+    }
+
+    @Test
+    public void canConvertIntArrayToBytes() {
+        // Assert:
+        assertIntArrayToBytesConversion(new int[]{1, 2, 3, 4}, new byte[]{1, 2, 3, 4});
+        assertIntArrayToBytesConversion(new int[]{1, 2, 3, 4, 5, 6, 7, 8}, new byte[]{1, 2, 3, 4, 5, 6, 7, 8});
+        assertIntArrayToBytesConversion(new int[]{0x7F, 0x7F}, new byte[]{0x7F, 0x7F});
+        assertIntArrayToBytesConversion(new int[]{0xFF, 0xFF}, new byte[]{-0x1, -0x1});
+    }
 
     //endregion
 
