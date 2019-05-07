@@ -20,16 +20,15 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import io.nem.sdk.model.account.Address;
 import io.nem.sdk.model.account.PublicAccount;
 import io.nem.sdk.model.blockchain.NetworkType;
-import io.nem.sdk.model.namespace.NamespaceId;
-import io.nem.sdk.model.namespace.NamespaceInfo;
-import io.nem.sdk.model.namespace.NamespaceName;
-import io.nem.sdk.model.namespace.NamespaceType;
+import io.nem.sdk.model.mosaic.MosaicId;
+import io.nem.sdk.model.namespace.*;
 import io.nem.sdk.model.transaction.UInt64;
 import io.reactivex.Observable;
 import io.vertx.core.json.JsonObject;
 import io.vertx.reactivex.ext.web.client.HttpResponse;
 import io.vertx.reactivex.ext.web.codec.BodyCodec;
 
+import java.math.BigInteger;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -197,4 +196,26 @@ public class NamespaceHttp extends Http implements NamespaceRepository {
         return levels;
     }
 
+    /**
+     * Extract the alias from a namespace
+     *
+     * @internal
+     * @access private
+     * @param namespaceDTO
+     */
+    private Alias extractAlias(NamespaceDTO namespaceDTO) {
+
+        Alias alias = new EmptyAlias();
+        if (namespaceDTO.getAlias() != null) {
+            if (namespaceDTO.getAlias().getType() == AliasType.Mosaic.getValue()) {
+                BigInteger mosaicId = namespaceDTO.getAlias().getMosaicId().extractIntArray();
+                return new MosaicAlias(new MosaicId(mosaicId));
+            } else if (namespaceDTO.getAlias().getType() == AliasType.Address.getValue()) {
+                String rawAddress = namespaceDTO.getAlias().getAddress();
+                return new AddressAlias(Address.createFromRawAddress(rawAddress));
+            }
+        }
+
+        return alias;
+    }
 }

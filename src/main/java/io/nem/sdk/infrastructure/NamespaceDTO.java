@@ -68,6 +68,9 @@ public class NamespaceDTO {
     @SerializedName("endHeight")
     private UInt64DTO endHeight = null;
 
+    @SerializedName("alias")
+    private AliasDTO alias = null;
+
     public NamespaceDTO type(Integer type) {
         this.type = type;
         return this;
@@ -233,6 +236,19 @@ public class NamespaceDTO {
     public NamespaceDTO endHeight(UInt64DTO endHeight) {
         this.endHeight = endHeight;
         return this;
+    }
+
+    /**
+     * Get alias
+     * @return alias
+     **/
+    @ApiModelProperty(required = true, value = "")
+    public AliasDTO getAlias() {
+        return alias;
+    }
+
+    public void setAlias(AliasDTO alias) {
+        this.alias = alias;
     }
 
     /**
