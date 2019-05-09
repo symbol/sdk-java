@@ -18,6 +18,7 @@ package io.nem.sdk.model.namespace;
 
 import io.nem.sdk.model.account.PublicAccount;
 import io.nem.sdk.model.blockchain.NetworkType;
+import io.nem.sdk.model.mosaic.MosaicId;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -40,7 +41,9 @@ class NamespaceInfoTest {
                 new NamespaceId(new BigInteger("0")),
                 new PublicAccount("B4F12E7C9F6946091E2CB8B6D3A12B50D17CCBBF646386EA27CE2946A7423DCF", NetworkType.MIJIN_TEST),
                 new BigInteger("1"),
-                new BigInteger("-1"));
+                new BigInteger("-1"),
+                new MosaicAlias(new MosaicId(new BigInteger("100")))
+        );
 
         assertEquals(true, namespaceInfo.isActive());
         assertTrue(namespaceInfo.getIndex() == 0);
@@ -51,6 +54,8 @@ class NamespaceInfoTest {
         Assertions.assertEquals(new PublicAccount("B4F12E7C9F6946091E2CB8B6D3A12B50D17CCBBF646386EA27CE2946A7423DCF", NetworkType.MIJIN_TEST), namespaceInfo.getOwner());
         assertEquals(new BigInteger("1"), namespaceInfo.getStartHeight());
         assertEquals(new BigInteger("-1"), namespaceInfo.getEndHeight());
+        assertEquals(AliasType.Mosaic, namespaceInfo.getAlias().getType());
+        assertEquals(new BigInteger("100"), namespaceInfo.getAlias().getMosaicId().getId());
     }
 
     @Test
@@ -112,7 +117,9 @@ class NamespaceInfoTest {
                 new NamespaceId(new BigInteger("0")),
                 new PublicAccount("B4F12E7C9F6946091E2CB8B6D3A12B50D17CCBBF646386EA27CE2946A7423DCF", NetworkType.MIJIN_TEST),
                 new BigInteger("1"),
-                new BigInteger("-1"));
+                new BigInteger("-1"),
+                new MosaicAlias(new MosaicId(new BigInteger("100")))
+        );
     }
 
     NamespaceInfo createSubNamespaceInfo() {
@@ -125,7 +132,9 @@ class NamespaceInfoTest {
                 new NamespaceId(new BigInteger("-3087871471161192663")),
                 new PublicAccount("B4F12E7C9F6946091E2CB8B6D3A12B50D17CCBBF646386EA27CE2946A7423DCF", NetworkType.MIJIN_TEST),
                 new BigInteger("1"),
-                new BigInteger("-1"));
+                new BigInteger("-1"),
+                new MosaicAlias(new MosaicId(new BigInteger("100")))
+        );
     }
 }
 

@@ -23,13 +23,20 @@
 package io.nem.sdk.model.namespace;
 
 import io.nem.sdk.model.account.Address;
+import io.nem.sdk.model.mosaic.MosaicId;
 
 public class AddressAlias implements Alias {
 
     private final Address address;
 
+    @Override
     public Address getAddress() {
         return this.address;
+    }
+
+    @Override
+    public MosaicId getMosaicId() {
+        return null;
     }
 
     /**
@@ -49,4 +56,7 @@ public class AddressAlias implements Alias {
     public boolean equals(Alias alias) {
         return alias instanceof AddressAlias || alias.getType() == AliasType.Address;
     }
+
+    @Override
+    public boolean isEmpty() { return false; }
 }
