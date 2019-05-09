@@ -116,7 +116,7 @@ public class AccountHttp extends Http implements AccountRepository {
                         .map(Http::mapJsonObjectOrError)
                         .map(json -> objectMapper.readValue(json.toString(), MultisigAccountInfoDTO.class))
                         .map(MultisigAccountInfoDTO::getMultisig)
-                        .map(transfromMultisigAccountInfoDTO(networkType)));
+                        .map(this.transfromMultisigAccountInfoDTO(networkType)));
     }
 
     @Override
@@ -235,7 +235,7 @@ public class AccountHttp extends Http implements AccountRepository {
                 .toObservable();
     }
 
-    private Function<Multisig, MultisigAccountInfo> transfromMultisigAccountInfoDTO(NetworkType networkType) {
+    private Function<MultisigDTO, MultisigAccountInfo> transfromMultisigAccountInfoDTO(NetworkType networkType) {
         return multisig -> new MultisigAccountInfo(
                 new PublicAccount(multisig.getAccount(), networkType),
                 multisig.getMinApproval(),

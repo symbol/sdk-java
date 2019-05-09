@@ -25,7 +25,6 @@ import io.nem.sdk.model.namespace.*;
 import io.nem.sdk.model.transaction.UInt64;
 import io.reactivex.Observable;
 import io.vertx.core.json.JsonObject;
-import io.vertx.reactivex.ext.web.client.HttpResponse;
 import io.vertx.reactivex.ext.web.codec.BodyCodec;
 
 import java.math.BigInteger;
@@ -55,23 +54,13 @@ public class NamespaceHttp extends Http implements NamespaceRepository {
         Observable<NetworkType> networkTypeResolve = getNetworkTypeObservable();
         return networkTypeResolve
                 .flatMap(networkType -> this.client
-                        .getAbs(this.url + "/namespace/" + namespaceId.getIdAsHex())
+                        .getAbs(this.url + "/namespace/" + UInt64.bigIntegerToHex(namespaceId.getId()))
                         .as(BodyCodec.jsonObject())
                         .rxSend()
                         .toObservable()
                         .map(Http::mapJsonObjectOrError)
                         .map(json -> objectMapper.readValue(json.toString(), NamespaceInfoDTO.class))
-                        .map(namespaceInfoDTO -> new NamespaceInfo(namespaceInfoDTO.getMeta().isActive(),
-                                namespaceInfoDTO.getMeta().getIndex(),
-                                namespaceInfoDTO.getMeta().getId(),
-                                NamespaceType.rawValueOf(namespaceInfoDTO.getNamespace().getType()),
-                                namespaceInfoDTO.getNamespace().getDepth(),
-                                extractLevels(namespaceInfoDTO),
-                                new NamespaceId(namespaceInfoDTO.getNamespace().getParentId().extractIntArray()),
-                                new PublicAccount(namespaceInfoDTO.getNamespace().getOwner(), networkType),
-                                namespaceInfoDTO.getNamespace().getStartHeight().extractIntArray(),
-                                namespaceInfoDTO.getNamespace().getEndHeight().extractIntArray()
-                        )));
+                        .map(namespaceInfoDTO -> this.createNamespaceInfo(namespaceInfoDTO, networkType)));
     }
 
     @Override
@@ -96,17 +85,7 @@ public class NamespaceHttp extends Http implements NamespaceRepository {
                         .map(json -> objectMapper.<List<NamespaceInfoDTO>>readValue(json.toString(), new TypeReference<List<NamespaceInfoDTO>>() {
                         }))
                         .flatMapIterable(item -> item)
-                        .map(namespaceInfoDTO -> new NamespaceInfo(namespaceInfoDTO.getMeta().isActive(),
-                                namespaceInfoDTO.getMeta().getIndex(),
-                                namespaceInfoDTO.getMeta().getId(),
-                                NamespaceType.rawValueOf(namespaceInfoDTO.getNamespace().getType()),
-                                namespaceInfoDTO.getNamespace().getDepth(),
-                                extractLevels(namespaceInfoDTO),
-                                new NamespaceId(namespaceInfoDTO.getNamespace().getParentId().extractIntArray()),
-                                new PublicAccount(namespaceInfoDTO.getNamespace().getOwner(), networkType),
-                                namespaceInfoDTO.getNamespace().getStartHeight().extractIntArray(),
-                                namespaceInfoDTO.getNamespace().getEndHeight().extractIntArray()
-                        ))
+                        .map(namespaceInfoDTO -> this.createNamespaceInfo(namespaceInfoDTO, networkType))
                         .toList()
                         .toObservable());
     }
@@ -135,17 +114,7 @@ public class NamespaceHttp extends Http implements NamespaceRepository {
                         .map(json -> objectMapper.<List<NamespaceInfoDTO>>readValue(json.toString(), new TypeReference<List<NamespaceInfoDTO>>() {
                         }))
                         .flatMapIterable(item -> item)
-                        .map(namespaceInfoDTO -> new NamespaceInfo(namespaceInfoDTO.getMeta().isActive(),
-                                namespaceInfoDTO.getMeta().getIndex(),
-                                namespaceInfoDTO.getMeta().getId(),
-                                NamespaceType.rawValueOf(namespaceInfoDTO.getNamespace().getType()),
-                                namespaceInfoDTO.getNamespace().getDepth(),
-                                extractLevels(namespaceInfoDTO),
-                                new NamespaceId(namespaceInfoDTO.getNamespace().getParentId().extractIntArray()),
-                                new PublicAccount(namespaceInfoDTO.getNamespace().getOwner(), networkType),
-                                namespaceInfoDTO.getNamespace().getStartHeight().extractIntArray(),
-                                namespaceInfoDTO.getNamespace().getEndHeight().extractIntArray()
-                        ))
+                        .map(namespaceInfoDTO -> this.createNamespaceInfo(namespaceInfoDTO, networkType))
                         .toList()
                         .toObservable());
     }
@@ -179,6 +148,107 @@ public class NamespaceHttp extends Http implements NamespaceRepository {
                 .toObservable();
     }
 
+    /**
+     * Gets the MosaicId from a MosaicAlias
+     * @param namespaceId - the namespaceId of the namespace
+     * @return Observable of <{@link MosaicId}>
+     */
+    @Override
+    public Observable<MosaicId> getLinkedMosaicId(NamespaceId namespaceId) {
+        Observable<NetworkType> networkTypeResolve = getNetworkTypeObservable();
+        return networkTypeResolve
+                .flatMap(networkType -> this.client
+                        .getAbs(this.url + "/namespace/" + UInt64.bigIntegerToHex(namespaceId.getId()))
+                        .as(BodyCodec.jsonObject())
+                        .rxSend()
+                        .toObservable()
+                        .map(Http::mapJsonObjectOrError)
+                        .map(json -> objectMapper.readValue(json.toString(), NamespaceInfoDTO.class))
+                        .map(namespaceInfoDTO -> this.createMosaicId(namespaceInfoDTO.getNamespace())));
+    }
+
+    /**
+     * Gets the Address from a AddressAlias
+     * @param namespaceId - the namespaceId of the namespace
+     * @return Observable of <{@link MosaicId}>
+     */
+    @Override
+    public Observable<Address> getLinkedAddress(NamespaceId namespaceId) {
+        Observable<NetworkType> networkTypeResolve = getNetworkTypeObservable();
+        return networkTypeResolve
+                .flatMap(networkType -> this.client
+                        .getAbs(this.url + "/namespace/" + UInt64.bigIntegerToHex(namespaceId.getId()))
+                        .as(BodyCodec.jsonObject())
+                        .rxSend()
+                        .toObservable()
+                        .map(Http::mapJsonObjectOrError)
+                        .map(json -> objectMapper.readValue(json.toString(), NamespaceInfoDTO.class))
+                        .map(namespaceInfoDTO -> this.createAddress(namespaceInfoDTO.getNamespace())));
+    }
+
+    /**
+     * Create a NamespaceInfo from a NamespaceInfoDTO and a NetworkType
+     *
+     * @internal
+     * @access private
+     * @param namespaceInfoDTO, networkType
+     */
+    private NamespaceInfo createNamespaceInfo(NamespaceInfoDTO namespaceInfoDTO, NetworkType networkType) {
+        return new NamespaceInfo(namespaceInfoDTO.getMeta().isActive(),
+                namespaceInfoDTO.getMeta().getIndex(),
+                namespaceInfoDTO.getMeta().getId(),
+                NamespaceType.rawValueOf(namespaceInfoDTO.getNamespace().getType()),
+                namespaceInfoDTO.getNamespace().getDepth(),
+                this.extractLevels(namespaceInfoDTO),
+                new NamespaceId(namespaceInfoDTO.getNamespace().getParentId().extractIntArray()),
+                new PublicAccount(namespaceInfoDTO.getNamespace().getOwner(), networkType),
+                namespaceInfoDTO.getNamespace().getStartHeight().extractIntArray(),
+                namespaceInfoDTO.getNamespace().getEndHeight().extractIntArray(),
+                this.extractAlias(namespaceInfoDTO.getNamespace()));
+    }
+
+    /**
+     * Create a MosaicId from a NamespaceDTO
+     *
+     * @internal
+     * @access private
+     * @param namespaceDTO
+     */
+    private MosaicId createMosaicId(NamespaceDTO namespaceDTO) {
+        MosaicId mosaicId = null;
+        if (namespaceDTO.getAlias() != null) {
+            if (namespaceDTO.getAlias().getType() == AliasType.Mosaic.getValue()) {
+                mosaicId = new MosaicId(namespaceDTO.getAlias().getMosaicId().extractIntArray());
+            }
+        }
+        return mosaicId;
+    }
+
+    /**
+     * Create a Address from a NamespaceDTO
+     *
+     * @internal
+     * @access private
+     * @param namespaceDTO
+     */
+    private Address createAddress(NamespaceDTO namespaceDTO) {
+        Address address = null;
+        if (namespaceDTO.getAlias() != null) {
+            if (namespaceDTO.getAlias().getType() == AliasType.Address.getValue()) {
+                String rawAddress = namespaceDTO.getAlias().getAddress();
+                address = Address.createFromRawAddress(rawAddress);
+            }
+        }
+        return address;
+    }
+
+    /**
+     * Extract a list of NamespaceId levels from a NamespaceInfoDTO
+     *
+     * @internal
+     * @access private
+     * @param namespaceInfoDTO
+     */
     private List<NamespaceId> extractLevels(NamespaceInfoDTO namespaceInfoDTO) {
         List<NamespaceId> levels = new ArrayList<NamespaceId>();
         if (namespaceInfoDTO.getNamespace().getLevel0() != null) {
@@ -197,7 +267,7 @@ public class NamespaceHttp extends Http implements NamespaceRepository {
     }
 
     /**
-     * Extract the alias from a namespace
+     * Extract the alias from a NamespaceDTO
      *
      * @internal
      * @access private
