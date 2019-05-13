@@ -38,17 +38,17 @@ class AccountTest {
     @Test
     void shouldCreateAccountViaConstructor() {
         Account account = new Account("787225aaff3d2c71f4ffa32d4f19ec4922f3cd869747f267378f81f8e3fcb12d", NetworkType.MIJIN_TEST);
-        assertEquals("SDRDGFTDLLCB67D4HPGIMIHPNSRYRJRT7DOBGWZY", account.getAddress().plain());
-        assertEquals("1026D70E1954775749C6811084D6450A3184D977383F0E4282CD47118AF37755", account.getPublicKey());
         assertEquals("787225AAFF3D2C71F4FFA32D4F19EC4922F3CD869747F267378F81F8E3FCB12D", account.getPrivateKey());
+        assertEquals("1026D70E1954775749C6811084D6450A3184D977383F0E4282CD47118AF37755", account.getPublicKey());
+        assertEquals("SDRDGFTDLLCB67D4HPGIMIHPNSRYRJRT7DOBGWZY", account.getAddress().plain());
     }
 
     @Test
     void shouldCreateAccountViaStaticConstructor() {
         Account account = Account.createFromPrivateKey("787225AAFF3D2C71F4FFA32D4F19EC4922F3CD869747F267378F81F8E3FCB12D", NetworkType.MIJIN_TEST);
         assertEquals("787225AAFF3D2C71F4FFA32D4F19EC4922F3CD869747F267378F81F8E3FCB12D", account.getPrivateKey());
-        assertEquals("SDRDGFTDLLCB67D4HPGIMIHPNSRYRJRT7DOBGWZY", account.getAddress().plain());
         assertEquals("1026D70E1954775749C6811084D6450A3184D977383F0E4282CD47118AF37755", account.getPublicKey());
+        assertEquals("SDRDGFTDLLCB67D4HPGIMIHPNSRYRJRT7DOBGWZY", account.getAddress().plain());
     }
 
 
@@ -73,7 +73,7 @@ class AccountTest {
         Account account = Account.generateNewAccount(NetworkType.MIJIN_TEST);
         assertNotEquals(account.getPrivateKey(),null);
         assertNotEquals(account.getPublicKey(), null);
-        assertEquals(account.getPrivateKey().toString().length(),64);
+        assertEquals(account.getPrivateKey().length(),64);
     }
 
     @Test
