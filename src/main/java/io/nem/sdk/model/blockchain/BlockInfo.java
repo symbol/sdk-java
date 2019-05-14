@@ -18,6 +18,7 @@ package io.nem.sdk.model.blockchain;
 
 import io.nem.sdk.model.account.PublicAccount;
 
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Optional;
 
@@ -39,11 +40,18 @@ public class BlockInfo {
     private final BigInteger height;
     private final BigInteger timestamp;
     private final BigInteger difficulty;
+    private final Integer feeMultiplier;
     private final String previousBlockHash;
     private final String blockTransactionsHash;
 
+    public static BlockInfo create(String hash, String generationHash, Optional<BigInteger> totalFee, Optional<Integer> numTransactions, String signature, String signer, Integer blockVersion, int type, BigInteger height, BigInteger timestamp, BigInteger difficulty, Integer feeMultiplier, String previousBlockHash, String blockTransactionsHash) {
+        NetworkType networkType = BlockInfo.getNetworkType(blockVersion);
+        Integer transactionVersion = BlockInfo.getTransactionVersion(blockVersion);
+        PublicAccount publicAccount = BlockInfo.getPublicAccount(signer, networkType);
+        return new BlockInfo(hash, generationHash, totalFee, numTransactions, signature, publicAccount, networkType, transactionVersion, type, height, timestamp, difficulty, feeMultiplier, previousBlockHash, blockTransactionsHash);
+    }
 
-    public BlockInfo(String hash, String generationHash, Optional<BigInteger> totalFee, Optional<Integer> numTransactions, String signature, PublicAccount signer, NetworkType networkType, Integer version, int type, BigInteger height, BigInteger timestamp, BigInteger difficulty, String previousBlockHash, String blockTransactionsHash) {
+    public BlockInfo(String hash, String generationHash, Optional<BigInteger> totalFee, Optional<Integer> numTransactions, String signature, PublicAccount signer, NetworkType networkType, Integer version, int type, BigInteger height, BigInteger timestamp, BigInteger difficulty, Integer feeMultiplier, String previousBlockHash, String blockTransactionsHash) {
         this.hash = hash;
         this.generationHash = generationHash;
         this.totalFee = totalFee;
@@ -56,8 +64,36 @@ public class BlockInfo {
         this.height = height;
         this.timestamp = timestamp;
         this.difficulty = difficulty;
+        this.feeMultiplier = feeMultiplier;
         this.previousBlockHash = previousBlockHash;
         this.blockTransactionsHash = blockTransactionsHash;
+    }
+
+    /**
+     * Get network type
+     *
+     * @return network type
+     **/
+    public static NetworkType getNetworkType(Integer blockVersion) {
+        return NetworkType.rawValueOf(Integer.parseInt(Integer.toHexString(blockVersion.intValue()).substring(0, 2), 16));
+    }
+
+    /**
+     * Get transaction version
+     *
+     * @return transaction version
+     **/
+    public static Integer getTransactionVersion(Integer blockVersion) {
+        return Integer.parseInt(Integer.toHexString(blockVersion.intValue()).substring(2, 4), 16);
+    }
+
+    /**
+     * Get public account
+     *
+     * @return public account
+     **/
+    public static PublicAccount getPublicAccount(String signer, NetworkType networkType) {
+        return new PublicAccount(signer, networkType);
     }
 
     /**
@@ -170,6 +206,15 @@ public class BlockInfo {
     }
 
     /**
+     * Returns the feeMultiplier defined by the harvester.
+     *
+     * @return Integer
+     */
+    public Integer getFeeMultiplier() {
+        return feeMultiplier;
+    }
+
+    /**
      * Returns the last block hash.
      *
      * @return String
@@ -203,6 +248,7 @@ public class BlockInfo {
                 ", height=" + height +
                 ", timestamp=" + timestamp +
                 ", difficulty=" + difficulty +
+                ", feeMultiplier=" + feeMultiplier +
                 ", previousBlockHash='" + previousBlockHash + '\'' +
                 ", blockTransactionsHash='" + blockTransactionsHash + '\'' +
                 '}';

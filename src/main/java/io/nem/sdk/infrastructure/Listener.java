@@ -89,29 +89,22 @@ public class Listener {
                 } else if (message.containsKey("block")) {
                     final JsonObject meta = message.getJsonObject("meta");
                     final JsonObject block = message.getJsonObject("block");
-                    int rawNetworkType = (int) Long.parseLong(Integer.toHexString(block.getInteger("version")).substring(0, 2), 16);
-                    final NetworkType networkType;
-                    if (rawNetworkType == NetworkType.MIJIN_TEST.getValue()) networkType = NetworkType.MIJIN_TEST;
-                    else if (rawNetworkType == NetworkType.MIJIN.getValue()) networkType = NetworkType.MIJIN;
-                    else if (rawNetworkType == NetworkType.MAIN_NET.getValue()) networkType = NetworkType.MAIN_NET;
-                    else networkType = NetworkType.TEST_NET;
 
-                    final int version = (int) Long.parseLong(Integer.toHexString(block.getInteger("version")).substring(2, 4), 16);
                     this.messageSubject.onNext(new ListenerMessage(
                             ListenerChannel.BLOCK,
-                            new BlockInfo(
+                            BlockInfo.create(
                                     meta.getString("hash"),
                                     meta.getString("generationHash"),
                                     Optional.empty(),
                                     Optional.empty(),
                                     block.getString("signature"),
-                                    new PublicAccount(block.getString("signer"), networkType),
-                                    networkType,
-                                    version,
+                                    block.getString("signer"),
+                                    block.getInteger("version"),
                                     block.getInteger("type"),
                                     extractBigInteger(block.getJsonArray("height")),
                                     extractBigInteger(block.getJsonArray("timestamp")),
                                     extractBigInteger(block.getJsonArray("difficulty")),
+                                    block.getInteger("feeMultiplier"),
                                     block.getString("previousBlockHash"),
                                     block.getString("blockTransactionsHash")
                             )

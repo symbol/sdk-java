@@ -30,19 +30,19 @@ class BlockInfoTest {
 
     @Test
     void createANewBlockInfo() {
-        BlockInfo blockInfo = new BlockInfo("24E92B511B54EDB48A4850F9B42485FDD1A30589D92C775632DDDD71D7D1D691",
+        BlockInfo blockInfo = BlockInfo.create("24E92B511B54EDB48A4850F9B42485FDD1A30589D92C775632DDDD71D7D1D691",
                 "57F7DA205008026C776CB6AED843393F04CD458E0AA2D9F1D5F31A402072B2D6",
                 Optional.of(UInt64.fromIntArray(new int[]{0, 0})),
                 Optional.of(25),
                 "37351C8244AC166BE6664E3FA954E99A3239AC46E51E2B32CEA1C72DD0851100A7731868E932E1A9BEF8A27D48E1" +
                         "FFEE401E933EB801824373E7537E51733E0F",
-                new PublicAccount("B4F12E7C9F6946091E2CB8B6D3A12B50D17CCBBF646386EA27CE2946A7423DCF", NetworkType.MIJIN_TEST),
-                NetworkType.MIJIN_TEST,
-                3,
+                "B4F12E7C9F6946091E2CB8B6D3A12B50D17CCBBF646386EA27CE2946A7423DCF",
+                36867,
                 32768,
                 UInt64.fromIntArray(new int[]{1, 0}),
                 UInt64.fromIntArray(new int[]{0, 0}),
                 UInt64.fromIntArray(new int[]{276447232, 23283}),
+                1,
                 "702090BA31CEF9E90C62BBDECC0CCCC0F88192B6625839382850357F70DD68A0",
                 "0000000000000000000000000000000000000000000000000000000000000000");
 
@@ -59,6 +59,7 @@ class BlockInfoTest {
         assertEquals(UInt64.fromIntArray(new int[]{1, 0}), blockInfo.getHeight());
         assertEquals(UInt64.fromIntArray(new int[]{0, 0}), blockInfo.getTimestamp());
         assertEquals(UInt64.fromIntArray(new int[]{276447232, 23283}), blockInfo.getDifficulty());
+        assertTrue(1 == blockInfo.getFeeMultiplier());
         assertEquals("702090BA31CEF9E90C62BBDECC0CCCC0F88192B6625839382850357F70DD68A0", blockInfo.getPreviousBlockHash());
         assertEquals("0000000000000000000000000000000000000000000000000000000000000000", blockInfo.getBlockTransactionsHash());
     }
