@@ -16,7 +16,6 @@
 
 package io.nem.sdk.infrastructure;
 
-import io.nem.sdk.model.account.PublicAccount;
 import io.nem.sdk.model.blockchain.BlockInfo;
 import io.nem.sdk.model.blockchain.BlockchainStorageInfo;
 import io.nem.sdk.model.blockchain.NetworkType;
@@ -71,7 +70,11 @@ public class BlockchainHttp extends Http implements BlockchainRepository {
                                 blockInfoDTO.getBlock().getDifficulty().extractIntArray(),
                                 blockInfoDTO.getBlock().getFeeMultiplier(),
                                 blockInfoDTO.getBlock().getPreviousBlockHash(),
-                                blockInfoDTO.getBlock().getBlockTransactionsHash())));
+                                blockInfoDTO.getBlock().getBlockTransactionsHash(),
+                                blockInfoDTO.getBlock().getBlockReceiptsHash(),
+                                blockInfoDTO.getBlock().getStateHash(),
+                                blockInfoDTO.getBlock().getBeneficiaryPublicKey()
+                                )));
     }
 
     @Override

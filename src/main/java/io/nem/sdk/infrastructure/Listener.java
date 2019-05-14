@@ -19,9 +19,7 @@ package io.nem.sdk.infrastructure;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.nem.sdk.model.account.Address;
-import io.nem.sdk.model.account.PublicAccount;
 import io.nem.sdk.model.blockchain.BlockInfo;
-import io.nem.sdk.model.blockchain.NetworkType;
 import io.nem.sdk.model.transaction.*;
 import io.reactivex.Observable;
 import io.reactivex.subjects.PublishSubject;
@@ -106,7 +104,10 @@ public class Listener {
                                     extractBigInteger(block.getJsonArray("difficulty")),
                                     block.getInteger("feeMultiplier"),
                                     block.getString("previousBlockHash"),
-                                    block.getString("blockTransactionsHash")
+                                    block.getString("blockTransactionsHash"),
+                                    block.getString("blockReceiptsHash"),
+                                    block.getString("stateHash"),
+                                    block.getString("beneficiaryPublicKey")
                             )
                     ));
                 } else if (message.containsKey("status")) {

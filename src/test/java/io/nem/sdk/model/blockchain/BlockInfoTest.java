@@ -19,6 +19,7 @@ package io.nem.sdk.model.blockchain;
 import io.nem.sdk.model.account.PublicAccount;
 import io.nem.sdk.model.transaction.UInt64;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.util.Optional;
@@ -28,31 +29,57 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class BlockInfoTest {
 
-    @Test
-    void createANewBlockInfo() {
-        BlockInfo blockInfo = BlockInfo.create("24E92B511B54EDB48A4850F9B42485FDD1A30589D92C775632DDDD71D7D1D691",
-                "57F7DA205008026C776CB6AED843393F04CD458E0AA2D9F1D5F31A402072B2D6",
+    static BlockInfo blockInfo;
+    static String hash;
+    static String generationHash;
+    static String signature;
+    static String signer;
+    static String previousBlockHash;
+    static String blockTransactionsHash;
+    static String blockReceiptsHash;
+    static String stateHash;
+    static String beneficiaryPublicKey;
+
+    @BeforeAll
+    public static void setup()  {
+        hash = "24E92B511B54EDB48A4850F9B42485FDD1A30589D92C775632DDDD71D7D1D691";
+        generationHash = "57F7DA205008026C776CB6AED843393F04CD458E0AA2D9F1D5F31A402072B2D6";
+        signature = "37351C8244AC166BE6664E3FA954E99A3239AC46E51E2B32CEA1C72DD0851100A7731868E932E1A9BEF8A27D48E1" +
+                "FFEE401E933EB801824373E7537E51733E0F";
+        signer = "B4F12E7C9F6946091E2CB8B6D3A12B50D17CCBBF646386EA27CE2946A7423DCF";
+        previousBlockHash = "0000000000000000000000000000000000000000000000000000000000000000";
+        blockTransactionsHash = "702090BA31CEF9E90C62BBDECC0CCCC0F88192B6625839382850357F70DD68A0";
+        blockReceiptsHash = "702090BA31CEF9E90C62BBDECC0CCCC0F88192B6625839382850357F70DD68A0";
+        stateHash = "702090BA31CEF9E90C62BBDECC0CCCC0F88192B6625839382850357F70DD68A0";
+        beneficiaryPublicKey = "B4F12E7C9F6946091E2CB8B6D3A12B50D17CCBBF646386EA27CE2946A7423DCF";
+
+        blockInfo = BlockInfo.create(hash,
+                generationHash,
                 Optional.of(UInt64.fromIntArray(new int[]{0, 0})),
                 Optional.of(25),
-                "37351C8244AC166BE6664E3FA954E99A3239AC46E51E2B32CEA1C72DD0851100A7731868E932E1A9BEF8A27D48E1" +
-                        "FFEE401E933EB801824373E7537E51733E0F",
-                "B4F12E7C9F6946091E2CB8B6D3A12B50D17CCBBF646386EA27CE2946A7423DCF",
+                signature,
+                signer,
                 36867,
                 32768,
                 UInt64.fromIntArray(new int[]{1, 0}),
                 UInt64.fromIntArray(new int[]{0, 0}),
                 UInt64.fromIntArray(new int[]{276447232, 23283}),
                 1,
-                "702090BA31CEF9E90C62BBDECC0CCCC0F88192B6625839382850357F70DD68A0",
-                "0000000000000000000000000000000000000000000000000000000000000000");
+                previousBlockHash,
+                blockTransactionsHash,
+                blockReceiptsHash,
+                stateHash,
+                beneficiaryPublicKey);
+    }
 
-        assertEquals("24E92B511B54EDB48A4850F9B42485FDD1A30589D92C775632DDDD71D7D1D691", blockInfo.getHash());
-        assertEquals("57F7DA205008026C776CB6AED843393F04CD458E0AA2D9F1D5F31A402072B2D6", blockInfo.getGenerationHash());
+    @Test
+    void createANewBlockInfo() {
+        assertEquals(hash, blockInfo.getHash());
+        assertEquals(generationHash, blockInfo.getGenerationHash());
         assertEquals(UInt64.fromIntArray(new int[]{0, 0}), blockInfo.getTotalFee().get());
         assertEquals(new Integer(25), blockInfo.getNumTransactions().get());
-        assertEquals("37351C8244AC166BE6664E3FA954E99A3239AC46E51E2B32CEA1C72DD0851100A7731868E932E1A9BEF8A27D48E1" +
-                "FFEE401E933EB801824373E7537E51733E0F", blockInfo.getSignature());
-        Assertions.assertEquals(new PublicAccount("B4F12E7C9F6946091E2CB8B6D3A12B50D17CCBBF646386EA27CE2946A7423DCF", NetworkType.MIJIN_TEST), blockInfo.getSigner());
+        assertEquals(signature, blockInfo.getSignature());
+        Assertions.assertEquals(new PublicAccount(signer, NetworkType.MIJIN_TEST), blockInfo.getSignerPublicAccount());
         assertEquals(NetworkType.MIJIN_TEST, blockInfo.getNetworkType());
         assertTrue(3 == blockInfo.getVersion());
         assertEquals(32768, blockInfo.getType());
@@ -60,7 +87,37 @@ class BlockInfoTest {
         assertEquals(UInt64.fromIntArray(new int[]{0, 0}), blockInfo.getTimestamp());
         assertEquals(UInt64.fromIntArray(new int[]{276447232, 23283}), blockInfo.getDifficulty());
         assertTrue(1 == blockInfo.getFeeMultiplier());
-        assertEquals("702090BA31CEF9E90C62BBDECC0CCCC0F88192B6625839382850357F70DD68A0", blockInfo.getPreviousBlockHash());
-        assertEquals("0000000000000000000000000000000000000000000000000000000000000000", blockInfo.getBlockTransactionsHash());
+        assertEquals(previousBlockHash, blockInfo.getPreviousBlockHash());
+        assertEquals(blockTransactionsHash, blockInfo.getBlockTransactionsHash());
+        assertEquals(blockReceiptsHash, blockInfo.getBlockReceiptsHash());
+        assertEquals(stateHash, blockInfo.getStateHash());
+        assertEquals(new PublicAccount(beneficiaryPublicKey, NetworkType.MIJIN_TEST), blockInfo.getBeneficiaryPublicAccount());
+    }
+
+    @Test
+    void testToString() {
+
+        String blockInfoString = "BlockInfo{" +
+                "hash='" + hash + '\'' +
+                ", generationHash='" + generationHash + '\'' +
+                ", totalFee=Optional[0]" + '\'' +
+                ", numTransactions=Optional[25]" + '\'' +
+                ", signature='" + signature + '\'' +
+                ", signer=" + signer + '\'' +
+                ", networkType=MIJIN_TEST" + '\'' +
+                ", version=3" + '\'' +
+                ", type=32768" + '\'' +
+                ", height=1" + '\'' +
+                ", timestamp=0" + '\'' +
+                ", difficulty=100000000000000" + '\'' +
+                ", feeMultiplier=1" + '\'' +
+                ", previousBlockHash='" + previousBlockHash + '\'' +
+                ", blockTransactionsHash='" + blockTransactionsHash + '\'' +
+                ", blockReceiptsHash='" + blockReceiptsHash + '\'' +
+                ", stateHash='" + stateHash + '\'' +
+                ", beneficiaryPublicKey='" + beneficiaryPublicKey + '\'' +
+                '}';
+
+        assertEquals(blockInfoString, blockInfo.toString());
     }
 }
