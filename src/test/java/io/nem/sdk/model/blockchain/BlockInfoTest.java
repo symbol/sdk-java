@@ -21,27 +21,29 @@ import io.nem.sdk.model.transaction.UInt64;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class BlockInfoTest {
 
-    static BlockInfo blockInfo;
-    static String hash;
-    static String generationHash;
-    static String signature;
-    static String signer;
-    static String previousBlockHash;
-    static String blockTransactionsHash;
-    static String blockReceiptsHash;
-    static String stateHash;
-    static String beneficiaryPublicKey;
+    private BlockInfo blockInfo;
+    private String hash;
+    private String generationHash;
+    private String signature;
+    private String signer;
+    private String previousBlockHash;
+    private String blockTransactionsHash;
+    private String blockReceiptsHash;
+    private String stateHash;
+    private String beneficiaryPublicKey;
 
     @BeforeAll
-    public static void setup()  {
+    void setup()  {
         hash = "24E92B511B54EDB48A4850F9B42485FDD1A30589D92C775632DDDD71D7D1D691";
         generationHash = "57F7DA205008026C776CB6AED843393F04CD458E0AA2D9F1D5F31A402072B2D6";
         signature = "37351C8244AC166BE6664E3FA954E99A3239AC46E51E2B32CEA1C72DD0851100A7731868E932E1A9BEF8A27D48E1" +
