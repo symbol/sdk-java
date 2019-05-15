@@ -73,7 +73,7 @@ public class BlockchainHttp extends Http implements BlockchainRepository {
                                 blockInfoDTO.getBlock().getBlockTransactionsHash(),
                                 blockInfoDTO.getBlock().getBlockReceiptsHash(),
                                 blockInfoDTO.getBlock().getStateHash(),
-                                blockInfoDTO.getBlock().getBeneficiaryPublicKey()
+                                Optional.ofNullable(blockInfoDTO.getBlock().getBeneficiaryPublicKey())
                                 )));
     }
 

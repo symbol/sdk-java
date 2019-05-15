@@ -107,7 +107,7 @@ public class Listener {
                                     block.getString("blockTransactionsHash"),
                                     block.getString("blockReceiptsHash"),
                                     block.getString("stateHash"),
-                                    block.getString("beneficiaryPublicKey")
+                                    Optional.ofNullable(block.getString("beneficiaryPublicKey"))
                             )
                     ));
                 } else if (message.containsKey("status")) {

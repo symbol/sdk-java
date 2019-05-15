@@ -44,17 +44,17 @@ public class BlockInfo {
     private final String blockTransactionsHash;
     private final String blockReceiptsHash;
     private final String stateHash;
-    private final PublicAccount beneficiaryPublicAccount;
+    private final Optional<PublicAccount> beneficiaryPublicAccount;
 
-    public static BlockInfo create(String hash, String generationHash, Optional<BigInteger> totalFee, Optional<Integer> numTransactions, String signature, String signer, Integer blockVersion, int type, BigInteger height, BigInteger timestamp, BigInteger difficulty, Integer feeMultiplier, String previousBlockHash, String blockTransactionsHash, String blockReceiptsHash, String stateHash, String beneficiaryPublicKey) {
+    public static BlockInfo create(String hash, String generationHash, Optional<BigInteger> totalFee, Optional<Integer> numTransactions, String signature, String signer, Integer blockVersion, int type, BigInteger height, BigInteger timestamp, BigInteger difficulty, Integer feeMultiplier, String previousBlockHash, String blockTransactionsHash, String blockReceiptsHash, String stateHash, Optional<String> beneficiaryPublicKey) {
         NetworkType networkType = BlockInfo.getNetworkType(blockVersion);
         Integer transactionVersion = BlockInfo.getTransactionVersion(blockVersion);
         PublicAccount signerPublicAccount = BlockInfo.getPublicAccount(signer, networkType);
-        PublicAccount beneficiaryPublicAccount = BlockInfo.getPublicAccount(beneficiaryPublicKey, networkType);
+        Optional<PublicAccount> beneficiaryPublicAccount = BlockInfo.getPublicAccount(beneficiaryPublicKey, networkType);
         return new BlockInfo(hash, generationHash, totalFee, numTransactions, signature, signerPublicAccount, networkType, transactionVersion, type, height, timestamp, difficulty, feeMultiplier, previousBlockHash, blockTransactionsHash, blockReceiptsHash, stateHash, beneficiaryPublicAccount);
     }
 
-    public BlockInfo(String hash, String generationHash, Optional<BigInteger> totalFee, Optional<Integer> numTransactions, String signature, PublicAccount signerPublicAccount, NetworkType networkType, Integer version, int type, BigInteger height, BigInteger timestamp, BigInteger difficulty, Integer feeMultiplier, String previousBlockHash, String blockTransactionsHash, String blockReceiptsHash, String stateHash, PublicAccount beneficiaryPublicAccount) {
+    public BlockInfo(String hash, String generationHash, Optional<BigInteger> totalFee, Optional<Integer> numTransactions, String signature, PublicAccount signerPublicAccount, NetworkType networkType, Integer version, int type, BigInteger height, BigInteger timestamp, BigInteger difficulty, Integer feeMultiplier, String previousBlockHash, String blockTransactionsHash, String blockReceiptsHash, String stateHash, Optional<PublicAccount> beneficiaryPublicAccount) {
         this.hash = hash;
         this.generationHash = generationHash;
         this.totalFee = totalFee;
@@ -98,8 +98,20 @@ public class BlockInfo {
      *
      * @return public account
      **/
-    public static PublicAccount getPublicAccount(String signer, NetworkType networkType) {
-        return new PublicAccount(signer, networkType);
+    public static PublicAccount getPublicAccount(String publicKey, NetworkType networkType) {
+        return new PublicAccount(publicKey, networkType);
+    }
+
+    /**
+     * Get public account
+     *
+     * @return public account
+     **/
+    public static Optional<PublicAccount> getPublicAccount(Optional<String> publicKey, NetworkType networkType) {
+        if (publicKey.isPresent() && !publicKey.get().isEmpty())
+            return Optional.of(new PublicAccount(publicKey.get(), networkType));
+        else
+            return Optional.empty();
     }
 
     /**
@@ -262,10 +274,21 @@ public class BlockInfo {
      *
      * @return PublicAccount
      */
-    public PublicAccount getBeneficiaryPublicAccount() {
+    public Optional<PublicAccount> getBeneficiaryPublicAccount() {
         return beneficiaryPublicAccount;
     }
 
+    /**
+     * Returns the beneficiary public key.
+     *
+     * @return String
+     */
+    public String getBeneficiaryPublicKey() {
+        if (beneficiaryPublicAccount.isPresent())
+            return beneficiaryPublicAccount.get().getPublicKey();
+        else
+            return "";
+    }
 
     @Override
     public String toString() {
@@ -287,7 +310,7 @@ public class BlockInfo {
                 ", blockTransactionsHash='" + blockTransactionsHash + '\'' +
                 ", blockReceiptsHash='" + blockReceiptsHash + '\'' +
                 ", stateHash='" + stateHash + '\'' +
-                ", beneficiaryPublicKey='" + beneficiaryPublicAccount.getPublicKey() + '\'' +
+                ", beneficiaryPublicKey='" + this.getBeneficiaryPublicKey() + '\'' +
                 '}';
     }
 }
