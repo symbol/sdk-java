@@ -20,6 +20,8 @@ import io.nem.sdk.model.mosaic.MosaicId;
 import io.nem.sdk.model.mosaic.MosaicInfo;
 import io.nem.sdk.model.mosaic.MosaicName;
 import io.nem.sdk.model.namespace.NamespaceId;
+import io.nem.sdk.model.transaction.UInt64;
+import io.nem.sdk.model.transaction.UInt64Id;
 import io.reactivex.Observable;
 
 import java.math.BigInteger;
@@ -38,7 +40,7 @@ public interface MosaicRepository {
      * @param mosaicId BigInteger
      * @return Observable of {@link MosaicInfo}
      */
-    Observable<MosaicInfo> getMosaic(MosaicId mosaicId);
+    Observable<MosaicInfo> getMosaic(UInt64Id mosaicId);
 
     /**
      * Gets MosaicInfo for different mosaicIds.
@@ -46,16 +48,16 @@ public interface MosaicRepository {
      * @param mosaicIds List of BigInteger
      * @return Observable of List<{@link MosaicInfo}>
      */
-    Observable<List<MosaicInfo>> getMosaics(List<MosaicId> mosaicIds);
+    Observable<List<MosaicInfo>> getMosaics(List<UInt64Id> mosaicIds);
 
-    /**
+   /**
      * Gets list of MosaicInfo from mosaics created with provided namespace.
      *
      * @param namespaceId BigInteger
      * @param queryParams QueryParams
      * @return Observable of List<{@link MosaicInfo}>
      */
-    Observable<List<MosaicInfo>> getMosaicsFromNamespace(NamespaceId namespaceId, QueryParams queryParams);
+    //Observable<List<MosaicInfo>> getMosaicsFromNamespace(NamespaceId namespaceId, QueryParams queryParams);
 
     /**
      * Gets list of MosaicInfo from mosaics created with provided namespace.
@@ -64,7 +66,7 @@ public interface MosaicRepository {
      * @param namespaceId BigInteger
      * @return Observable of List<{@link MosaicInfo}>
      */
-    Observable<List<MosaicInfo>> getMosaicsFromNamespace(NamespaceId namespaceId);
+    //Observable<List<MosaicInfo>> getMosaicsFromNamespace(NamespaceId namespaceId);
 
     /**
      * Gets list of MosaicName for different mosaicIds.
@@ -72,5 +74,5 @@ public interface MosaicRepository {
      * @param mosaicIds List of BigInteger
      * @return Observable of List<{@link MosaicName}>
      */
-    Observable<List<MosaicName>> getMosaicNames(List<MosaicId> mosaicIds);
+    //Observable<List<MosaicName>> getMosaicNames(List<MosaicId> mosaicIds);
 }

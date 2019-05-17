@@ -16,7 +16,6 @@
 
 package io.nem.sdk.infrastructure;
 
-import io.nem.sdk.model.account.PublicAccount;
 import io.nem.sdk.model.blockchain.BlockInfo;
 import io.nem.sdk.model.blockchain.BlockchainStorageInfo;
 import io.nem.sdk.model.blockchain.NetworkType;
@@ -24,7 +23,6 @@ import io.nem.sdk.model.transaction.Transaction;
 import io.reactivex.Observable;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
-import io.vertx.reactivex.ext.web.client.HttpResponse;
 import io.vertx.reactivex.ext.web.codec.BodyCodec;
 
 import java.math.BigInteger;
@@ -59,21 +57,24 @@ public class BlockchainHttp extends Http implements BlockchainRepository {
                         .toObservable()
                         .map(Http::mapJsonObjectOrError)
                         .map(json -> objectMapper.readValue(json.toString(), BlockInfoDTO.class))
-                        .map(blockInfoDTO -> new BlockInfo(blockInfoDTO.getMeta().getHash(),
+                        .map(blockInfoDTO -> BlockInfo.create(blockInfoDTO.getMeta().getHash(),
                                 blockInfoDTO.getMeta().getGenerationHash(),
                                 Optional.of(blockInfoDTO.getMeta().getTotalFee().extractIntArray()),
                                 Optional.of(blockInfoDTO.getMeta().getNumTransactions().intValue()),
                                 blockInfoDTO.getBlock().getSignature(),
-                                new PublicAccount(blockInfoDTO.getBlock().getSigner(), networkType),
-                                networkType,
-                                (int) Long.parseLong(Integer.toHexString(blockInfoDTO.getBlock().getVersion().intValue()).substring(2, 4), 16),
+                                blockInfoDTO.getBlock().getSigner(),
+                                blockInfoDTO.getBlock().getVersion().intValue(),
                                 blockInfoDTO.getBlock().getType().intValue(),
                                 blockInfoDTO.getBlock().getHeight().extractIntArray(),
                                 blockInfoDTO.getBlock().getTimestamp().extractIntArray(),
                                 blockInfoDTO.getBlock().getDifficulty().extractIntArray(),
+                                blockInfoDTO.getBlock().getFeeMultiplier(),
                                 blockInfoDTO.getBlock().getPreviousBlockHash(),
-                                blockInfoDTO.getBlock().getBlockTransactionsHash())));
-
+                                blockInfoDTO.getBlock().getBlockTransactionsHash(),
+                                blockInfoDTO.getBlock().getBlockReceiptsHash(),
+                                blockInfoDTO.getBlock().getStateHash(),
+                                Optional.ofNullable(blockInfoDTO.getBlock().getBeneficiaryPublicKey())
+                                )));
     }
 
     @Override

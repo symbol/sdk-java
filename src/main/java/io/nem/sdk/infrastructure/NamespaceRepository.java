@@ -17,13 +17,12 @@
 package io.nem.sdk.infrastructure;
 
 import io.nem.sdk.model.account.Address;
-import io.nem.sdk.model.account.PublicAccount;
+import io.nem.sdk.model.mosaic.MosaicId;
 import io.nem.sdk.model.namespace.NamespaceId;
 import io.nem.sdk.model.namespace.NamespaceInfo;
 import io.nem.sdk.model.namespace.NamespaceName;
 import io.reactivex.Observable;
 
-import java.math.BigInteger;
 import java.util.List;
 
 /**
@@ -84,4 +83,18 @@ public interface NamespaceRepository {
      * @return Observable of List<{@link NamespaceName}>
      */
     Observable<List<NamespaceName>> getNamespaceNames(List<NamespaceId> namespaceIds);
+
+    /**
+     * Gets the MosaicId from a MosaicAlias
+     * @param namespaceId - the namespaceId of the namespace
+     * @return Observable of <{@link MosaicId}>
+     */
+    Observable<MosaicId> getLinkedMosaicId(NamespaceId namespaceId);
+
+    /**
+     * Gets the Address from a AddressAlias
+     * @param namespaceId - the namespaceId of the namespace
+     * @return Observable of <{@link Address}>
+     */
+    Observable<Address> getLinkedAddress(NamespaceId namespaceId);
 }

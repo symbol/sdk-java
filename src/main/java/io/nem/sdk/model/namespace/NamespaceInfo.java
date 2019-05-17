@@ -37,8 +37,9 @@ public class NamespaceInfo {
     private final PublicAccount owner;
     private final BigInteger startHeight;
     private final BigInteger endHeight;
+    private final Alias alias;
 
-    public NamespaceInfo(boolean active, Integer index, String metaId, NamespaceType type, Integer depth, List<NamespaceId> levels, NamespaceId parentId, PublicAccount owner, BigInteger startHeight, BigInteger endHeight) {
+    public NamespaceInfo(boolean active, Integer index, String metaId, NamespaceType type, Integer depth, List<NamespaceId> levels, NamespaceId parentId, PublicAccount owner, BigInteger startHeight, BigInteger endHeight, Alias alias) {
         this.active = active;
         this.index = index;
         this.metaId = metaId;
@@ -49,6 +50,7 @@ public class NamespaceInfo {
         this.owner = owner;
         this.startHeight = startHeight;
         this.endHeight = endHeight;
+        this.alias = alias;
     }
 
     /**
@@ -147,6 +149,24 @@ public class NamespaceInfo {
      */
     public boolean isRoot() {
         return this.type == NamespaceType.RootNamespace;
+    }
+
+    /**
+     * Returns the Alias
+     *
+     * @return alias
+     */
+    public Alias getAlias() {
+        return alias;
+    }
+
+    /**
+     * Returns true if namespace has Alias
+     *
+     * @return true if namespace has Alias
+     */
+    public boolean hasAlias() {
+        return !this.alias.isEmpty();
     }
 
     /**

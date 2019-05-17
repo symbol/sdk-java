@@ -19,10 +19,7 @@ package io.nem.sdk.infrastructure;
 import io.nem.sdk.model.account.Address;
 import io.nem.sdk.model.account.PublicAccount;
 import io.nem.sdk.model.blockchain.NetworkType;
-import io.nem.sdk.model.mosaic.Mosaic;
-import io.nem.sdk.model.mosaic.MosaicId;
-import io.nem.sdk.model.mosaic.MosaicProperties;
-import io.nem.sdk.model.mosaic.MosaicSupplyType;
+import io.nem.sdk.model.mosaic.*;
 import io.nem.sdk.model.namespace.NamespaceId;
 import io.nem.sdk.model.namespace.NamespaceType;
 import io.nem.sdk.model.transaction.*;
@@ -201,8 +198,7 @@ class MosaicCreationTransactionMapping extends TransactionMapping {
                 extractTransactionVersion(transaction.getInteger("version")),
                 deadline,
                 extractBigInteger(transaction.getJsonArray("fee")),
-                transaction.getString("name"),
-                new NamespaceId(extractBigInteger(transaction.getJsonArray("parentId"))),
+                MosaicNonce.createFromBigInteger(extractBigInteger(transaction.getJsonArray("nonce"))),
                 new MosaicId(extractBigInteger(transaction.getJsonArray("mosaicId"))),
                 properties,
                 transaction.getString("signature"),

@@ -20,6 +20,7 @@ import io.nem.sdk.model.account.PublicAccount;
 import io.nem.sdk.model.namespace.NamespaceId;
 
 import java.math.BigInteger;
+import java.util.Optional;
 
 /**
  * The mosaic info structure contains its properties, the owner and the namespace to which it belongs to.
@@ -27,65 +28,33 @@ import java.math.BigInteger;
  * @since 1.0
  */
 public class MosaicInfo {
-    private final boolean active;
-    private final Integer index;
     private final String metaId;
-    private final NamespaceId namespaceId;
     private final MosaicId mosaicId;
     private final BigInteger supply;
     private final BigInteger height;
     private final PublicAccount owner;
+    private final Integer revision;
     private final MosaicProperties properties;
-    //private final any levy;
+    private final Object levy;
 
-    public MosaicInfo(boolean active, Integer index, String metaId, NamespaceId namespaceId, MosaicId mosaicId, BigInteger supply, BigInteger height, PublicAccount owner, MosaicProperties properties) {
-        this.active = active;
-        this.index = index;
+    public MosaicInfo(String metaId, MosaicId mosaicId, BigInteger supply, BigInteger height, PublicAccount owner, Integer revision, MosaicProperties properties, Object levy) {
         this.metaId = metaId;
-        this.namespaceId = namespaceId;
         this.mosaicId = mosaicId;
         this.supply = supply;
         this.height = height;
         this.owner = owner;
+        this.revision = revision;
         this.properties = properties;
+        this.levy = levy;
     }
 
     /**
-     * Returns true if the mosaic is active
+     * Returns the meta id
      *
-     * @return if the mosaic is active
+     * @return meta id
      */
-    public boolean isActive() {
-        return active;
-    }
-
-    /**
-     * Returns true if the mosaic is expired
-     *
-     * @return if the mosaic is expired
-     */
-    public boolean isExpired() {
-        return !active;
-    }
-
-    /**
-     * @return index
-     */
-    public Integer getIndex() {
-        return index;
-    }
-
     public String getMetaId() {
         return metaId;
-    }
-
-    /**
-     * Returns the namespace id it belongs to
-     *
-     * @return namespace it belongs to
-     */
-    public NamespaceId getNamespaceId() {
-        return namespaceId;
     }
 
     /**
@@ -122,6 +91,15 @@ public class MosaicInfo {
      */
     public PublicAccount getOwner() {
         return owner;
+    }
+
+    /**
+     * Returns the revision number
+     *
+     * @return revision
+     */
+    public Integer getRevision() {
+        return revision;
     }
 
     /**
@@ -167,6 +145,16 @@ public class MosaicInfo {
      */
     public int getDivisibility() {
         return properties.getDivisibility();
+    }
+
+    /**
+     * Returns optional mosaic levy
+     *
+     * @return mosaic levy
+     */
+    public Object getLevy() {
+
+        return levy;
     }
 }
 
