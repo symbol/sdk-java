@@ -116,7 +116,7 @@ public class ByteUtils {
     }
 
     /**
-     * Converts an array of 4 bytes into a short.
+     * Converts an array of 2 bytes into a short.
      *
      * @param bytes The bytes.
      * @return The short.
@@ -129,7 +129,7 @@ public class ByteUtils {
     }
 
     /**
-     * Converts a short value into an array of 4 bytes.
+     * Converts a short value into an array of 2 bytes.
      *
      * @param x The short.
      * @return The bytes.
