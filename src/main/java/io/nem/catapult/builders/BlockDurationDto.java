@@ -87,4 +87,13 @@ public final class BlockDurationDto {
             dataOutputStream.writeLong(Long.reverseBytes(this.getBlockDuration()));
         });
     }
+
+    /**
+     * Returns the object data as a string value
+     *
+     * @return String
+     */
+    public String asString() {
+        return Long.toString(this.getBlockDuration());
+    }
 }

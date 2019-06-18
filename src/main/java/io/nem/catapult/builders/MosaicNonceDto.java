@@ -87,4 +87,13 @@ public final class MosaicNonceDto {
             dataOutputStream.writeInt(Integer.reverseBytes(this.getMosaicNonce()));
         });
     }
+
+    /**
+     * Returns the object data as a string value
+     *
+     * @return String
+     */
+    public String asString() {
+        return Integer.toString(this.getMosaicNonce());
+    }
 }

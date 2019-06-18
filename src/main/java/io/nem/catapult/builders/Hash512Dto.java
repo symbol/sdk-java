@@ -20,6 +20,8 @@
 
 package io.nem.catapult.builders;
 
+import io.nem.core.utils.HexEncoder;
+
 import java.io.DataInput;
 import java.nio.ByteBuffer;
 
@@ -90,5 +92,14 @@ public final class Hash512Dto {
         return GeneratorUtils.serialize(dataOutputStream -> {
             dataOutputStream.write(this.hash512.array(), 0, this.hash512.array().length);
         });
+    }
+
+    /**
+     * Returns the object data as a string value
+     *
+     * @return String
+     */
+    public String asString() {
+        return HexEncoder.getString(this.getHash512().array());
     }
 }

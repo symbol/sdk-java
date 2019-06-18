@@ -87,4 +87,13 @@ public final class TimestampDto {
             dataOutputStream.writeLong(Long.reverseBytes(this.getTimestamp()));
         });
     }
+
+    /**
+     * Returns the object data as a string value
+     *
+     * @return String
+     */
+    public String asString() {
+        return Long.toString(this.getTimestamp());
+    }
 }

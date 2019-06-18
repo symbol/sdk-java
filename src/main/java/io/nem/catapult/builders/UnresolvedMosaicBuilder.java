@@ -116,4 +116,20 @@ public class UnresolvedMosaicBuilder {
             dataOutputStream.write(amountBytes, 0, amountBytes.length);
         });
     }
+
+    /**
+     * Returns the object data as a string value
+     *
+     * @return String
+     */
+    public String asString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(" [");
+        sb.append(this.getMosaicId().asString());
+        sb.append(", ");
+        sb.append(this.getAmount().asString());
+        sb.append("]");
+
+        return sb.toString();
+    }
 }

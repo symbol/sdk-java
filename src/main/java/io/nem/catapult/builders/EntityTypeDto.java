@@ -90,4 +90,13 @@ public enum EntityTypeDto {
             dataOutputStream.writeShort(Short.reverseBytes(this.value));
         });
     }
+
+    /**
+     * Returns the object data as a string value
+     *
+     * @return String
+     */
+    public String asString() {
+        return Short.toString(this.value);
+    }
 }

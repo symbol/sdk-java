@@ -20,6 +20,8 @@
 
 package io.nem.catapult.builders;
 
+import io.nem.core.utils.StringEncoder;
+
 import java.io.DataInput;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
@@ -94,12 +96,30 @@ public final class TransferTransactionBuilder extends TransactionBuilder {
     }
 
     /**
+     * Gets transaction message as plain text.
+     *
+     * @return plain text message.
+     */
+    public String getMessageAsString() {
+        return this.transferTransactionBody.getMessageAsString();
+    }
+
+    /**
      * Gets attached mosaics.
      *
      * @return Attached mosaics.
      */
     public ArrayList<UnresolvedMosaicBuilder> getMosaics() {
         return this.transferTransactionBody.getMosaics();
+    }
+
+    /**
+     * Gets attached mosaics as a string.
+     *
+     * @return String.
+     */
+    public String getMosaicsAsString() {
+        return this.transferTransactionBody.getMosaicsAsString();
     }
 
     /**
@@ -136,5 +156,14 @@ public final class TransferTransactionBuilder extends TransactionBuilder {
             final byte[] transferTransactionBodyBytes = this.transferTransactionBody.serialize();
             dataOutputStream.write(transferTransactionBodyBytes, 0, transferTransactionBodyBytes.length);
         });
+    }
+
+    public String asString() {
+        StringBuilder sb = new StringBuilder(super.asString());
+        sb.append("\nRecipient: "+this.getRecipient().asString());
+        sb.append("\nMessage: "+this.getMessageAsString());
+        sb.append("\nMosaics[MosaicId, Amount]: "+this.getMosaicsAsString());
+
+        return sb.toString();
     }
 }

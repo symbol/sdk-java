@@ -20,6 +20,8 @@
 
 package io.nem.catapult.builders;
 
+import io.nem.core.utils.Base32Encoder;
+
 import java.io.DataInput;
 import java.nio.ByteBuffer;
 
@@ -90,5 +92,14 @@ public final class AddressDto {
         return GeneratorUtils.serialize(dataOutputStream -> {
             dataOutputStream.write(this.address.array(), 0, this.address.array().length);
         });
+    }
+
+    /**
+     * Returns the object data as a string value
+     *
+     * @return String
+     */
+    public String asString() {
+        return Base32Encoder.getString(this.getAddress().array());
     }
 }

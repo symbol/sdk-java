@@ -20,6 +20,8 @@
 
 package io.nem.catapult.builders;
 
+import io.nem.core.utils.HexEncoder;
+
 import java.io.DataInput;
 import java.nio.ByteBuffer;
 
@@ -90,5 +92,14 @@ public final class KeyDto {
         return GeneratorUtils.serialize(dataOutputStream -> {
             dataOutputStream.write(this.key.array(), 0, this.key.array().length);
         });
+    }
+
+    /**
+     * Returns the object data as a string value
+     *
+     * @return String
+     */
+    public String asString() {
+        return HexEncoder.getString(this.getKey().array());
     }
 }

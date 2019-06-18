@@ -87,4 +87,13 @@ public final class NamespaceIdDto {
             dataOutputStream.writeLong(Long.reverseBytes(this.getNamespaceId()));
         });
     }
+
+    /**
+     * Returns the object data as a string value
+     *
+     * @return String
+     */
+    public String asString() {
+        return Long.toString(this.getNamespaceId());
+    }
 }

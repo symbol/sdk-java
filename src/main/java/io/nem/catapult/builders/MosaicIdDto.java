@@ -87,4 +87,13 @@ public final class MosaicIdDto {
             dataOutputStream.writeLong(Long.reverseBytes(this.getMosaicId()));
         });
     }
+
+    /**
+     * Returns the object data as a string value
+     *
+     * @return String
+     */
+    public String asString() {
+        return Long.toString(this.getMosaicId());
+    }
 }
