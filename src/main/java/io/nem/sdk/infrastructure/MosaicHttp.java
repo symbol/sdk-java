@@ -95,7 +95,7 @@ public class MosaicHttp extends Http implements MosaicRepository {
 
     private MosaicProperties extractMosaicProperties(MosaicPropertiesDTO mosaicPropertiesDTO) {
         String flags = "00" + Integer.toBinaryString(mosaicPropertiesDTO.get(0).extractIntArray().intValue());
-        String bitMapFlags = flags.substring(flags.length() - 3, flags.length());
+        String bitMapFlags = flags.substring(flags.length() - 3);
         return new MosaicProperties(bitMapFlags.charAt(2) == '1',
                 bitMapFlags.charAt(1) == '1',
                 bitMapFlags.charAt(0) == '1',

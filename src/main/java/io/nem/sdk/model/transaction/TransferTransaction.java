@@ -99,7 +99,8 @@ public class TransferTransaction extends Transaction {
         return message;
     }
 
-    byte[] generateBytes() {
+    // TODO To remove public access before commit
+    public byte[] generateBytes() {
         FlatBufferBuilder builder = new FlatBufferBuilder();
         BigInteger deadlineBigInt = BigInteger.valueOf(getDeadline().getInstant());
         int[] fee = new int[]{0, 0};

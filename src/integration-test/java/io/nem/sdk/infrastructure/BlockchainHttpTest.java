@@ -40,7 +40,7 @@ class BlockchainHttpTest extends BaseTest {
 
     @BeforeAll
     void setup() throws IOException {
-        blockchainHttp = new BlockchainHttp(this.getNodeUrl());
+        blockchainHttp = new BlockchainHttp(this.getApiUrl());
     }
 
     @Test
@@ -56,7 +56,7 @@ class BlockchainHttpTest extends BaseTest {
     }
 
     // TODO to fix after catbuffer integration
-    //@Test
+    @Test
     void getBlockTransactions() throws ExecutionException, InterruptedException {
         List<Transaction> transactions = blockchainHttp
                 .getBlockTransactions(BigInteger.valueOf(1))
@@ -66,11 +66,11 @@ class BlockchainHttpTest extends BaseTest {
         assertEquals(10, transactions.size());
 
         List<Transaction> nextTransactions = blockchainHttp
-                .getBlockTransactions(BigInteger.valueOf(1), new QueryParams(15, transactions.get(0).getTransactionInfo().get().getId().get()))
+                .getBlockTransactions(BigInteger.valueOf(1), new QueryParams(10, transactions.get(0).getTransactionInfo().get().getId().get()))
                 .toFuture()
                 .get();
 
-        assertEquals(15, nextTransactions.size());
+        assertEquals(10, nextTransactions.size());
         assertEquals(transactions.get(1).getTransactionInfo().get().getHash(), nextTransactions.get(0).getTransactionInfo().get().getHash());
     }
 

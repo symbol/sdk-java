@@ -32,11 +32,11 @@ class NetworkHttpTest extends BaseTest {
 
     @BeforeAll
     void setup() throws IOException {
-        networkHttp = new NetworkHttp(this.getNodeUrl());
+        networkHttp = new NetworkHttp(this.getApiUrl());
     }
 
     @Test
-    void getNetworkType() throws ExecutionException, InterruptedException {
+    void testNetworkType() throws ExecutionException, InterruptedException {
         NetworkType networkType = networkHttp.getNetworkType().toFuture().get();
 
         assertEquals(NetworkType.MIJIN_TEST.getValue(), networkType.getValue());
