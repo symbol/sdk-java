@@ -134,5 +134,13 @@ public class HexEncoderTest {
                 "00000d465457");
     }
 
+    @Test
+    public void getStringCanConvertEmptyBytesToHexString() {
+        // Assert:
+        assertGetStringConversion(
+                new byte[]{},
+                "");
+    }
+
     //endregion
 }

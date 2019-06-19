@@ -21,10 +21,7 @@ import io.nem.sdk.model.account.Account;
 import io.nem.sdk.model.account.Address;
 import io.nem.sdk.model.account.PublicAccount;
 import io.nem.sdk.model.blockchain.NetworkType;
-import io.nem.sdk.model.mosaic.MosaicId;
-import io.nem.sdk.model.mosaic.MosaicProperties;
-import io.nem.sdk.model.mosaic.MosaicSupplyType;
-import io.nem.sdk.model.mosaic.XEM;
+import io.nem.sdk.model.mosaic.*;
 import io.nem.sdk.model.namespace.NamespaceId;
 import io.nem.sdk.model.transaction.*;
 import org.apache.commons.codec.binary.Hex;
@@ -56,12 +53,12 @@ class E2ETest extends BaseTest {
 
     @BeforeAll
     void setup() throws ExecutionException, InterruptedException, IOException {
-        transactionHttp = new TransactionHttp(this.getNodeUrl());
+        transactionHttp = new TransactionHttp(this.getApiUrl());
         account = new Account("787225aaff3d2c71f4ffa32d4f19ec4922f3cd869747f267378f81f8e3fcb12d", NetworkType.MIJIN_TEST);
         multisigAccount = new Account("5edebfdbeb32e9146d05ffd232c8af2cf9f396caf9954289daa0362d097fff3b", NetworkType.MIJIN_TEST);
         cosignatoryAccount = new Account("2a2b1f5d366a5dd5dc56c3c757cf4fe6c66e2787087692cf329d7a49a594658b", NetworkType.MIJIN_TEST);
         cosignatoryAccount2 = new Account("b8afae6f4ad13a1b8aad047b488e0738a437c7389d4ff30c359ac068910c1d59", NetworkType.MIJIN_TEST);
-        listener = new Listener(this.getNodeUrl());
+        listener = new Listener(this.getApiUrl());
         listener.open().get();
     }
 
@@ -71,7 +68,7 @@ class E2ETest extends BaseTest {
                 new Deadline(2, HOURS),
                 new Address("SDRDGFTDLLCB67D4HPGIMIHPNSRYRJRT7DOBGWZY", NetworkType.MIJIN_TEST),
                 Collections.singletonList(
-                        XEM.createAbsolute(BigInteger.valueOf(1))
+                        NetworkCurrencyMosaic.createAbsolute(BigInteger.valueOf(1))
                 ),
                 new PlainMessage("message"),
                 NetworkType.MIJIN_TEST
@@ -89,7 +86,7 @@ class E2ETest extends BaseTest {
                 new Deadline(2, HOURS),
                 new Address("SDRDGFTDLLCB67D4HPGIMIHPNSRYRJRT7DOBGWZY", NetworkType.MIJIN_TEST),
                 Collections.singletonList(
-                        XEM.createAbsolute(BigInteger.valueOf(1))
+                        NetworkCurrencyMosaic.createAbsolute(BigInteger.valueOf(1))
                 ),
                 new PlainMessage("messageloooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo" +
                         "ooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo" +
@@ -206,8 +203,8 @@ class E2ETest extends BaseTest {
 
         MosaicDefinitionTransaction mosaicDefinitionTransaction = MosaicDefinitionTransaction.create(
                 new Deadline(2, HOURS),
-                mosaicName,
-                this.namespaceName,
+                MosaicNonce.createFromBigInteger(new BigInteger("0")),
+                new MosaicId(new BigInteger("0")),
                 new MosaicProperties(true, true,true, 4, BigInteger.valueOf(100)),
                 NetworkType.MIJIN_TEST
         );
@@ -225,8 +222,8 @@ class E2ETest extends BaseTest {
 
         MosaicDefinitionTransaction mosaicDefinitionTransaction = MosaicDefinitionTransaction.create(
                 new Deadline(2, HOURS),
-                mosaicName,
-                this.namespaceName,
+                MosaicNonce.createFromBigInteger(new BigInteger("0")),
+                new MosaicId(new BigInteger("0")),
                 new MosaicProperties(true, false,false, 4, BigInteger.valueOf(100)),
                 NetworkType.MIJIN_TEST
         );
@@ -308,7 +305,7 @@ class E2ETest extends BaseTest {
 
         LockFundsTransaction lockFundsTransaction = LockFundsTransaction.create(
                 new Deadline(2, HOURS),
-                XEM.createRelative(BigInteger.valueOf(10)),
+                NetworkCurrencyMosaic.createRelative(BigInteger.valueOf(10)),
                 BigInteger.valueOf(100),
                 signedTransaction,
                 NetworkType.MIJIN_TEST
@@ -331,7 +328,7 @@ class E2ETest extends BaseTest {
                 new Deadline(2, HOURS),
                 new Address("SDRDGFTDLLCB67D4HPGIMIHPNSRYRJRT7DOBGWZY", NetworkType.MIJIN_TEST),
                 Collections.singletonList(
-                        XEM.createAbsolute(BigInteger.valueOf(1))
+                        NetworkCurrencyMosaic.createAbsolute(BigInteger.valueOf(1))
                 ),
                 PlainMessage.create("test-message"),
                 NetworkType.MIJIN_TEST
@@ -347,7 +344,7 @@ class E2ETest extends BaseTest {
 
         LockFundsTransaction lockFundsTransaction = LockFundsTransaction.create(
                 new Deadline(2, HOURS),
-                XEM.createRelative(BigInteger.valueOf(10)),
+                NetworkCurrencyMosaic.createRelative(BigInteger.valueOf(10)),
                 BigInteger.valueOf(100),
                 signedTransaction,
                 NetworkType.MIJIN_TEST
@@ -378,7 +375,7 @@ class E2ETest extends BaseTest {
         SignedTransaction signedTransaction = this.account.sign(aggregateTransaction);
         LockFundsTransaction lockFundstx = LockFundsTransaction.create(
                 new Deadline(2, HOURS),
-                XEM.createRelative(BigInteger.valueOf(10)),
+                NetworkCurrencyMosaic.createRelative(BigInteger.valueOf(10)),
                 BigInteger.valueOf(100),
                 signedTransaction,
                 NetworkType.MIJIN_TEST
@@ -396,7 +393,7 @@ class E2ETest extends BaseTest {
         SignedTransaction signedTransaction = this.account.sign(aggregateTransaction);
         LockFundsTransaction lockFundstx = LockFundsTransaction.create(
                 new Deadline(2, HOURS),
-                XEM.createRelative(BigInteger.valueOf(10)),
+                NetworkCurrencyMosaic.createRelative(BigInteger.valueOf(10)),
                 BigInteger.valueOf(100),
                 signedTransaction,
                 NetworkType.MIJIN_TEST
@@ -424,7 +421,7 @@ class E2ETest extends BaseTest {
         String secret = Hex.encodeHexString(result);
         SecretLockTransaction secretLocktx = SecretLockTransaction.create(
                 new Deadline(2, HOURS),
-                XEM.createRelative(BigInteger.valueOf(10)),
+                NetworkCurrencyMosaic.createRelative(BigInteger.valueOf(10)),
                 BigInteger.valueOf(100),
                 HashType.SHA3_256,
                 secret,
@@ -447,7 +444,7 @@ class E2ETest extends BaseTest {
         String secret = Hex.encodeHexString(result);
         SecretLockTransaction secretLocktx = SecretLockTransaction.create(
                 new Deadline(2, HOURS),
-                XEM.createRelative(BigInteger.valueOf(10)),
+                NetworkCurrencyMosaic.createRelative(BigInteger.valueOf(10)),
                 BigInteger.valueOf(100),
                 HashType.SHA3_256,
                 secret,
@@ -478,7 +475,7 @@ class E2ETest extends BaseTest {
         String proof = Hex.encodeHexString(secretBytes);
         SecretLockTransaction secretLocktx = SecretLockTransaction.create(
                 new Deadline(2, HOURS),
-                XEM.createRelative(BigInteger.valueOf(10)),
+                NetworkCurrencyMosaic.createRelative(BigInteger.valueOf(10)),
                 BigInteger.valueOf(100),
                 HashType.SHA3_256,
                 secret,
@@ -516,7 +513,7 @@ class E2ETest extends BaseTest {
         String proof = Hex.encodeHexString(secretBytes);
         SecretLockTransaction secretLocktx = SecretLockTransaction.create(
                 new Deadline(2, HOURS),
-                XEM.createRelative(BigInteger.valueOf(10)),
+                NetworkCurrencyMosaic.createRelative(BigInteger.valueOf(10)),
                 BigInteger.valueOf(100),
                 HashType.SHA3_256,
                 secret,

@@ -17,7 +17,6 @@
 package io.nem.sdk.infrastructure;
 
 import io.nem.sdk.model.account.*;
-import io.nem.sdk.model.blockchain.NetworkType;
 import io.nem.sdk.model.transaction.AggregateTransaction;
 import io.nem.sdk.model.transaction.Transaction;
 import io.reactivex.observers.TestObserver;
@@ -27,7 +26,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 
 import java.io.IOException;
-import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
@@ -40,48 +38,51 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class AccountHttpTest extends BaseTest {
     private AccountHttp accountHttp;
-    private final PublicAccount publicAccount = PublicAccount.createFromPublicKey("1026D70E1954775749C6811084D6450A3184D977383F0E4282CD47118AF37755", NetworkType.MIJIN_TEST);
 
     @BeforeAll
-    void setup() throws IOException {
-        accountHttp = new AccountHttp(this.getNodeUrl());
+    void setup() { /* initializations done in BaseTest class */ }
+    public AccountHttp getAccountHttp() throws IOException {
+        if (this.accountHttp == null)
+            this.accountHttp = new AccountHttp(this.getApiUrl());
+        return this.accountHttp;
     }
 
     @Test
-    void getAccountInfo() throws ExecutionException, InterruptedException {
-        AccountInfo accountInfo = accountHttp
-                .getAccountInfo(Address.createFromRawAddress("SDRDGFTDLLCB67D4HPGIMIHPNSRYRJRT7DOBGWZY"))
+    void getAccountInfo() throws ExecutionException, InterruptedException, IOException {
+        AccountInfo accountInfo = this.getAccountHttp()
+                .getAccountInfo(this.getTestAccountAddress())
                 .toFuture()
                 .get();
 
-        assertEquals("1026D70E1954775749C6811084D6450A3184D977383F0E4282CD47118AF37755", accountInfo.getPublicKey());
+        String publicKey = this.config().getTestAccountPublicKey();
+        assertEquals(this.config().getTestAccountPublicKey(), accountInfo.getPublicKey());
     }
 
     @Test
-    void getAccountsInfo() throws ExecutionException, InterruptedException {
-        List<AccountInfo> accountInfos = accountHttp
-                .getAccountsInfo(Collections.singletonList(Address.createFromRawAddress("SDRDGFTDLLCB67D4HPGIMIHPNSRYRJRT7DOBGWZY")))
-                .toFuture()
-                .get();
-
-        assertEquals(1, accountInfos.size());
-        assertEquals("1026D70E1954775749C6811084D6450A3184D977383F0E4282CD47118AF37755", accountInfos.get(0).getPublicKey());
-    }
-
-    @Test
-    void getMultipleAccountsInfo() throws ExecutionException, InterruptedException {
-        List<AccountInfo> accountInfos = accountHttp
-                .getAccountsInfo(Collections.singletonList(Address.createFromRawAddress("SDRDGFTDLLCB67D4HPGIMIHPNSRYRJRT7DOBGWZY")))
+    void getAccountsInfo() throws ExecutionException, InterruptedException, IOException {
+        List<AccountInfo> accountInfos = this.getAccountHttp()
+                .getAccountsInfo(Collections.singletonList(this.getTestAccountAddress()))
                 .toFuture()
                 .get();
 
         assertEquals(1, accountInfos.size());
-        assertEquals("1026D70E1954775749C6811084D6450A3184D977383F0E4282CD47118AF37755", accountInfos.get(0).getPublicKey());
+        assertEquals(this.config().getTestAccountPublicKey(), accountInfos.get(0).getPublicKey());
     }
 
     @Test
-    void getMultisigAccountInfo() throws ExecutionException, InterruptedException {
-        MultisigAccountInfo multisigAccountInfo = accountHttp
+    void getMultipleAccountsInfo() throws ExecutionException, InterruptedException, IOException {
+        List<AccountInfo> accountInfos = this.getAccountHttp()
+                .getAccountsInfo(Collections.singletonList(this.getTestAccountAddress()))
+                .toFuture()
+                .get();
+
+        assertEquals(1, accountInfos.size());
+        assertEquals(this.config().getTestAccountPublicKey(), accountInfos.get(0).getPublicKey());
+    }
+
+    @Test
+    void getMultisigAccountInfo() throws ExecutionException, InterruptedException, IOException {
+        MultisigAccountInfo multisigAccountInfo = this.getAccountHttp()
                 .getMultisigAccountInfo(Address.createFromRawAddress("SBCPGZ3S2SCC3YHBBTYDCUZV4ZZEPHM2KGCP4QXX"))
                 .toFuture()
                 .get();
@@ -90,8 +91,8 @@ class AccountHttpTest extends BaseTest {
     }
 
     @Test
-    void getMultisigAccountGraphInfo() throws ExecutionException, InterruptedException {
-        MultisigAccountGraphInfo multisigAccountGraphInfos = accountHttp
+    void getMultisigAccountGraphInfo() throws ExecutionException, InterruptedException, IOException {
+        MultisigAccountGraphInfo multisigAccountGraphInfos = this.getAccountHttp()
                 .getMultisigAccountGraphInfo(Address.createFromRawAddress("SBCPGZ3S2SCC3YHBBTYDCUZV4ZZEPHM2KGCP4QXX"))
                 .toFuture()
                 .get();
@@ -100,9 +101,9 @@ class AccountHttpTest extends BaseTest {
     }
 
     @Test
-    void transactions() throws ExecutionException, InterruptedException {
-        List<Transaction> transactions = accountHttp
-                .transactions(publicAccount)
+    void transactions() throws ExecutionException, InterruptedException, IOException {
+        List<Transaction> transactions = this.getAccountHttp()
+                .transactions(this.getTestPublicAccount())
                 .toFuture()
                 .get();
 
@@ -110,16 +111,16 @@ class AccountHttpTest extends BaseTest {
     }
 
     @Test
-    void transactionsWithPagination() throws ExecutionException, InterruptedException {
-        List<Transaction> transactions = accountHttp
-                .transactions(publicAccount)
+    void transactionsWithPagination() throws ExecutionException, InterruptedException, IOException {
+        List<Transaction> transactions = this.getAccountHttp()
+                .transactions(this.getTestPublicAccount())
                 .toFuture()
                 .get();
 
         assertEquals(10, transactions.size());
 
-        List<Transaction> nextTransactions = accountHttp
-                .transactions(publicAccount, new QueryParams(11, transactions.get(0).getTransactionInfo().get().getId().get()))
+        List<Transaction> nextTransactions = this.getAccountHttp()
+                .transactions(this.getTestPublicAccount(), new QueryParams(11, transactions.get(0).getTransactionInfo().get().getId().get()))
                 .toFuture()
                 .get();
 
@@ -128,19 +129,20 @@ class AccountHttpTest extends BaseTest {
     }
 
     @Test
-    void incomingTransactions() throws ExecutionException, InterruptedException {
-        List<Transaction> transactions = accountHttp
-                .incomingTransactions(publicAccount)
+    void incomingTransactions() throws ExecutionException, InterruptedException, IOException {
+        List<Transaction> transactions = this.getAccountHttp()
+                .incomingTransactions(this.getTestPublicAccount())
                 .toFuture()
                 .get();
 
-        assertEquals(4, transactions.size());
+        // TODO generate incoming transactions in order to test non-zero incoming transactions size
+        assertEquals(0, transactions.size());
     }
 
     @Test
-    void outgoingTransactions() throws ExecutionException, InterruptedException {
-        List<Transaction> transactions = accountHttp
-                .outgoingTransactions(publicAccount)
+    void outgoingTransactions() throws ExecutionException, InterruptedException, IOException {
+        List<Transaction> transactions = this.getAccountHttp()
+                .outgoingTransactions(this.getTestPublicAccount())
                 .toFuture()
                 .get();
 
@@ -148,9 +150,9 @@ class AccountHttpTest extends BaseTest {
     }
 
     @Test
-    void aggregateBondedTransactions() throws ExecutionException, InterruptedException {
-        List<AggregateTransaction> transactions = accountHttp
-                .aggregateBondedTransactions(publicAccount)
+    void aggregateBondedTransactions() throws ExecutionException, InterruptedException, IOException {
+        List<AggregateTransaction> transactions = this.getAccountHttp()
+                .aggregateBondedTransactions(this.getTestPublicAccount())
                 .toFuture()
                 .get();
 
@@ -158,9 +160,9 @@ class AccountHttpTest extends BaseTest {
     }
 
     @Test
-    void unconfirmedTransactions() throws ExecutionException, InterruptedException {
-        List<Transaction> transactions = accountHttp
-                .unconfirmedTransactions(publicAccount)
+    void unconfirmedTransactions() throws ExecutionException, InterruptedException, IOException {
+        List<Transaction> transactions = this.getAccountHttp()
+                .unconfirmedTransactions(this.getTestPublicAccount())
                 .toFuture()
                 .get();
 
@@ -168,9 +170,9 @@ class AccountHttpTest extends BaseTest {
     }
 
     @Test
-    void throwExceptionWhenBlockDoesNotExists() {
+    void throwExceptionWhenBlockDoesNotExists() throws IOException {
         TestObserver<AccountInfo> testObserver = new TestObserver<>();
-        accountHttp
+        this.getAccountHttp()
                 .getAccountInfo(Address.createFromRawAddress("SARDGFTDLLCB67D4HPGIMIHPNSRYRJRT7DOBGWZY"))
                 .subscribeOn(Schedulers.single())
                 .test()

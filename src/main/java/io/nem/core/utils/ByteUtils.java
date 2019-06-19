@@ -116,6 +116,31 @@ public class ByteUtils {
     }
 
     /**
+     * Converts an array of 2 bytes into a short.
+     *
+     * @param bytes The bytes.
+     * @return The short.
+     */
+    public static short bytesToShort(final byte[] bytes) {
+        final ByteBuffer buffer = ByteBuffer.allocate(2);
+        buffer.put(bytes, 0, 2);
+        buffer.flip();
+        return buffer.getShort();
+    }
+
+    /**
+     * Converts a short value into an array of 2 bytes.
+     *
+     * @param x The short.
+     * @return The bytes.
+     */
+    public static byte[] shortToBytes(final short x) {
+        final ByteBuffer buffer = ByteBuffer.allocate(2);
+        buffer.putShort(x);
+        return buffer.array();
+    }
+
+    /**
      * Constant-time byte comparison. The constant time behavior eliminates side channel attacks.
      *
      * @param b One byte.

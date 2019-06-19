@@ -41,7 +41,7 @@ public class TransactionHttpTest extends BaseTest {
 
     @Before
     public void setup() throws IOException {
-        transactionHttp = new TransactionHttp(this.getNodeUrl());
+        transactionHttp = new TransactionHttp(this.getApiUrl());
     }
 
     @Test

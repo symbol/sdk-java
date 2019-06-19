@@ -108,10 +108,19 @@ public class BlockInfo {
      * @return public account
      **/
     public static Optional<PublicAccount> getPublicAccount(Optional<String> publicKey, NetworkType networkType) {
-        if (publicKey.isPresent() && !publicKey.get().isEmpty())
+        if (publicKey.isPresent() && !publicKey.get().isEmpty()) {
+
+            // TODO Revert workaround after beneficiaryPublicKey is fixed in REST API
+            if (publicKey.get().length() == 44) {
+                // Temporary workaround for REST API incorrectly returning block's beneficiary public key as a Base64 string instead of a Hex string
+                // e.g. REST API returns "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=" (Base64 string with length 44)
+                //      instead of "0000000000000000000000000000000000000000000000000000000000000000" (Hex string with length 64)
+                return Optional.empty();
+            }
             return Optional.of(new PublicAccount(publicKey.get(), networkType));
-        else
+        } else {
             return Optional.empty();
+        }
     }
 
     /**
