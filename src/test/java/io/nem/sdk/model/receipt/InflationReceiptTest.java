@@ -52,7 +52,7 @@ public class InflationReceiptTest {
         InflationReceipt inflationReceipt =
                 new InflationReceipt(mosaicId, BigInteger.valueOf(10), ReceiptType.Inflation, ReceiptVersion.INFLATION_RECEIPT, Optional.of(100));
         assertEquals(inflationReceipt.getType(), ReceiptType.Inflation);
-        assertEquals(inflationReceipt.getSize(), null);
+        assertEquals(inflationReceipt.getSize(), Optional.of(100));
         assertEquals(inflationReceipt.getVersion(), ReceiptVersion.INFLATION_RECEIPT);
         assertEquals(inflationReceipt.getMosaicId().getIdAsHex().toUpperCase(), "85BBEA6CC462B244");
         assertEquals(inflationReceipt.getAmount(), BigInteger.TEN);
