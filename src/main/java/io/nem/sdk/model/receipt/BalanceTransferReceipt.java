@@ -19,7 +19,7 @@ package io.nem.sdk.model.receipt;
 import io.nem.sdk.model.account.Address;
 import io.nem.sdk.model.account.PublicAccount;
 import io.nem.sdk.model.mosaic.MosaicId;
-import io.nem.sdk.model.namespace.NamespaceId;
+import io.nem.sdk.model.namespace.AddressAlias;
 
 import java.math.BigInteger;
 import java.util.Optional;
@@ -125,7 +125,7 @@ public class BalanceTransferReceipt<T> extends Receipt {
      */
     private void validateRecipientType() {
         Class recipientClass = this.recipient.getClass();
-        if (!Address.class.isAssignableFrom(recipientClass) && !NamespaceId.class.isAssignableFrom(recipientClass)) {
+        if (!Address.class.isAssignableFrom(recipientClass) && !AddressAlias.class.isAssignableFrom(recipientClass)) {
             throw new IllegalArgumentException("Recipient type: [" + recipientClass.getName() + "] is not valid for BalanceTransferReceipt");
         }
     }
