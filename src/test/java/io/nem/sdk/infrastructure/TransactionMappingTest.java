@@ -28,6 +28,8 @@ import org.junit.jupiter.api.Test;
 import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
 
 import static junit.framework.TestCase.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -400,6 +402,8 @@ public class TransactionMappingTest {
     }
 
     BigInteger extractBigInteger(JsonArray input) {
-        return UInt64.fromLowerAndHigher(new Long(input.getJsonObject(0).toString()), new Long(input.getJsonObject(1).toString()));
+        List<Long> array = new ArrayList();
+        input.stream().forEach(item -> array.add(new Long(item.toString())));
+        return UInt64.fromIntArray(array.stream().mapToInt(Long::intValue).toArray());
     }
 }

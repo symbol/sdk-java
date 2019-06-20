@@ -71,7 +71,9 @@ public class TransactionMapping implements Function<JsonObject, Transaction> {
     }
 
     BigInteger extractBigInteger(JsonArray input) {
-        return UInt64.fromLowerAndHigher(new Long(input.getJsonObject(0).toString()), new Long(input.getJsonObject(1).toString()));
+        List<Long> array = new ArrayList();
+        input.stream().forEach(item -> array.add(new Long(item.toString())));
+        return UInt64.fromIntArray(array.stream().mapToInt(Long::intValue).toArray());
     }
 
     BigInteger extractBigInteger(Long input) {
