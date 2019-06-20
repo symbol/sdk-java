@@ -44,7 +44,7 @@ public class InflationReceipt extends Receipt {
     /**
      * Constructor InflationReceipt
      *
-     * @param mosaicId  Mosaic Ic
+     * @param mosaicId  Mosaic Id
      * @param amount    Amount
      * @param type      Receipt Type
      * @param version   Receipt Version

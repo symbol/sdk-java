@@ -56,7 +56,7 @@ public class BalanceTransferReceipt<T> extends Receipt {
      *
      * @param sender    Sender's Public Account
      * @param recipient Recipient (Address | AddressAlias)
-     * @param mosaicId  Mosaic Ic
+     * @param mosaicId  Mosaic Id
      * @param amount    Amount
      * @param type      Receipt Type
      * @param version   Receipt Version

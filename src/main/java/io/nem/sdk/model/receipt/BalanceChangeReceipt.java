@@ -49,7 +49,7 @@ public class BalanceChangeReceipt extends Receipt {
      * Constructor BalanceChangeReceipt
      *
      * @param account   Public Account
-     * @param mosaicId  Mosaic Ic
+     * @param mosaicId  Mosaic Id
      * @param amount    Amount
      * @param type      Receipt Type
      * @param version   Receipt Version
