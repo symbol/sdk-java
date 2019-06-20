@@ -125,10 +125,6 @@ public class MosaicDefinitionTransaction extends Transaction {
             flags += 2;
         }
 
-        if (mosaicProperties.isLevyMutable()) {
-            flags += 4;
-        }
-
         // Create Vectors
         int signatureVector = MosaicDefinitionCreationTransactionBuffer.createSignatureVector(builder, new byte[64]);
         int signerVector = MosaicDefinitionCreationTransactionBuffer.createSignerVector(builder, new byte[32]);

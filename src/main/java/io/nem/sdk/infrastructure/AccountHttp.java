@@ -17,12 +17,17 @@
 package io.nem.sdk.infrastructure;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import io.nem.sdk.infrastructure.model.AccountInfoDTO;
+import io.nem.sdk.infrastructure.model.MultisigAccountGraphInfoDTO;
+import io.nem.sdk.infrastructure.model.MultisigAccountInfoDTO;
+import io.nem.sdk.infrastructure.model.MultisigDTO;
 import io.nem.sdk.model.account.*;
 import io.nem.sdk.model.blockchain.NetworkType;
 import io.nem.sdk.model.mosaic.Mosaic;
 import io.nem.sdk.model.mosaic.MosaicId;
 import io.nem.sdk.model.transaction.AggregateTransaction;
 import io.nem.sdk.model.transaction.Transaction;
+import io.nem.sdk.model.transaction.UInt64;
 import io.reactivex.Observable;
 import io.reactivex.functions.Function;
 import io.vertx.core.json.JsonArray;
@@ -63,14 +68,14 @@ public class AccountHttp extends Http implements AccountRepository {
                 .map(json -> objectMapper.readValue(json.toString(), AccountInfoDTO.class))
                 .map(AccountInfoDTO::getAccount)
                 .map(accountDTO -> new AccountInfo(Address.createFromRawAddress(accountDTO.getAddressEncoded()),
-                        accountDTO.getAddressHeight().extractIntArray(),
+                        extractIntArray(accountDTO.getAddressHeight()),
                         accountDTO.getPublicKey(),
-                        accountDTO.getPublicKeyHeight().extractIntArray(),
-                        accountDTO.getImportance().extractIntArray(),
-                        accountDTO.getImportanceHeight().extractIntArray(),
+                        extractIntArray(accountDTO.getPublicKeyHeight()),
+                        extractIntArray(accountDTO.getImportance()),
+                        extractIntArray(accountDTO.getImportanceHeight()),
                         accountDTO.getMosaics().stream().map(mosaicDTO -> new Mosaic(
-                                new MosaicId(mosaicDTO.getId().extractIntArray()),
-                                mosaicDTO.getAmount().extractIntArray()
+                                new MosaicId(extractIntArray(mosaicDTO.getId())),
+                                extractIntArray(mosaicDTO.getAmount())
                         )).collect(Collectors.toList())));
     }
 
@@ -91,14 +96,14 @@ public class AccountHttp extends Http implements AccountRepository {
                         .flatMapIterable(item -> item)
                         .map(AccountInfoDTO::getAccount)
                         .map(accountDTO -> new AccountInfo(Address.createFromRawAddress(accountDTO.getAddressEncoded()),
-                                accountDTO.getAddressHeight().extractIntArray(),
+                                extractIntArray(accountDTO.getAddressHeight()),
                                 accountDTO.getPublicKey(),
-                                accountDTO.getPublicKeyHeight().extractIntArray(),
-                                accountDTO.getImportance().extractIntArray(),
-                                accountDTO.getImportanceHeight().extractIntArray(),
+                                extractIntArray(accountDTO.getPublicKeyHeight()),
+                                extractIntArray(accountDTO.getImportance()),
+                                extractIntArray(accountDTO.getImportanceHeight()),
                                 accountDTO.getMosaics().stream().map(mosaicDTO -> new Mosaic(
-                                        new MosaicId(mosaicDTO.getId().extractIntArray()),
-                                        mosaicDTO.getAmount().extractIntArray()
+                                        new MosaicId(extractIntArray(mosaicDTO.getId())),
+                                        extractIntArray(mosaicDTO.getAmount())
                                 )).collect(Collectors.toList())))
                         .toList()
                         .toObservable());

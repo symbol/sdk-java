@@ -19,6 +19,7 @@ package io.nem.sdk.infrastructure;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.nem.sdk.model.blockchain.NetworkType;
+import io.nem.sdk.model.transaction.UInt64;
 import io.reactivex.Observable;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
@@ -26,8 +27,10 @@ import io.vertx.reactivex.core.Vertx;
 import io.vertx.reactivex.ext.web.client.HttpResponse;
 import io.vertx.reactivex.ext.web.client.WebClient;
 
+import java.math.BigInteger;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.List;
 
 public class Http {
     protected final WebClient client;
@@ -75,5 +78,9 @@ public class Http {
             throw new RuntimeException(response.statusMessage());
         }
         return response.body();
+    }
+
+    static BigInteger extractIntArray(List<Integer> list) {
+        return UInt64.fromIntArray(list.stream().mapToInt(i->i).toArray());
     }
 }

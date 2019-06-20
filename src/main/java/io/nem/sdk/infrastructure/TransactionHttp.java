@@ -17,6 +17,7 @@
 package io.nem.sdk.infrastructure;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import io.nem.sdk.infrastructure.model.TransactionStatusDTO;
 import io.nem.sdk.model.transaction.*;
 import io.reactivex.Observable;
 import io.vertx.core.json.JsonArray;
@@ -84,8 +85,8 @@ public class TransactionHttp extends Http implements TransactionRepository {
                 .map(transactionStatusDTO -> new TransactionStatus(transactionStatusDTO.getGroup(),
                         transactionStatusDTO.getStatus(),
                         transactionStatusDTO.getHash(),
-                        new Deadline(transactionStatusDTO.getDeadline().extractIntArray()),
-                        transactionStatusDTO.getHeight().extractIntArray()));
+                        new Deadline(extractIntArray(transactionStatusDTO.getDeadline())),
+                        extractIntArray(transactionStatusDTO.getHeight())));
     }
 
     @Override
@@ -104,8 +105,8 @@ public class TransactionHttp extends Http implements TransactionRepository {
                 .map(transactionStatusDTO -> new TransactionStatus(transactionStatusDTO.getGroup(),
                         transactionStatusDTO.getStatus(),
                         transactionStatusDTO.getHash(),
-                        new Deadline(transactionStatusDTO.getDeadline().extractIntArray()),
-                        transactionStatusDTO.getHeight().extractIntArray()))
+                        new Deadline(extractIntArray(transactionStatusDTO.getDeadline())),
+                        extractIntArray(transactionStatusDTO.getHeight())))
                 .toList()
                 .toObservable();
     }

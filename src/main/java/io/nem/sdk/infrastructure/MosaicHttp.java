@@ -17,6 +17,8 @@
 package io.nem.sdk.infrastructure;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import io.nem.sdk.infrastructure.model.MosaicInfoDTO;
+import io.nem.sdk.infrastructure.model.MosaicPropertyDTO;
 import io.nem.sdk.model.account.PublicAccount;
 import io.nem.sdk.model.blockchain.NetworkType;
 import io.nem.sdk.model.mosaic.MosaicId;
@@ -84,22 +86,20 @@ public class MosaicHttp extends Http implements MosaicRepository {
 
     private MosaicInfo createMosaicInfo(MosaicInfoDTO mosaicInfoDTO, NetworkType networkType) {
         return new MosaicInfo(mosaicInfoDTO.getMeta().getId(),
-                new MosaicId(mosaicInfoDTO.getMosaic().getMosaicId().extractIntArray()),
-                mosaicInfoDTO.getMosaic().getSupply().extractIntArray(),
-                mosaicInfoDTO.getMosaic().getHeight().extractIntArray(),
+                new MosaicId(extractIntArray(mosaicInfoDTO.getMosaic().getMosaicId())),
+                extractIntArray(mosaicInfoDTO.getMosaic().getSupply()),
+                extractIntArray(mosaicInfoDTO.getMosaic().getHeight()),
                 new PublicAccount(mosaicInfoDTO.getMosaic().getOwner(), networkType),
                 mosaicInfoDTO.getMosaic().getRevision(),
-                extractMosaicProperties(mosaicInfoDTO.getMosaic().getProperties()),
-                mosaicInfoDTO.getMosaic().getLevy());
+                extractMosaicProperties(mosaicInfoDTO.getMosaic().getProperties()));
     }
 
-    private MosaicProperties extractMosaicProperties(MosaicPropertiesDTO mosaicPropertiesDTO) {
-        String flags = "00" + Integer.toBinaryString(mosaicPropertiesDTO.get(0).extractIntArray().intValue());
-        String bitMapFlags = flags.substring(flags.length() - 3);
-        return new MosaicProperties(bitMapFlags.charAt(2) == '1',
-                bitMapFlags.charAt(1) == '1',
+    private MosaicProperties extractMosaicProperties(List<MosaicPropertyDTO> mosaicPropertiesDTO) {
+        String flags = "00" + Integer.toBinaryString(extractIntArray(mosaicPropertiesDTO.get(0).getValue()).intValue());
+        String bitMapFlags = flags.substring(flags.length() - 2);
+        return new MosaicProperties(bitMapFlags.charAt(1) == '1',
                 bitMapFlags.charAt(0) == '1',
-                mosaicPropertiesDTO.get(1).extractIntArray().intValue(),
-                mosaicPropertiesDTO.get(2).extractIntArray());
+                extractIntArray(mosaicPropertiesDTO.get(1).getValue()).intValue(),
+                extractIntArray(mosaicPropertiesDTO.get(2).getValue()));
     }
 }

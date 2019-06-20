@@ -113,6 +113,13 @@ dependencies {
     compile "com.google.flatbuffers:flatbuffers-java:1.8.0"
     compile 'com.google.code.gson:gson:2.8.2'
     compile 'io.swagger:swagger-parser:1.0.34'
+    compile 'io.swagger:swagger-annotations:1.5.22'
+    compile 'com.squareup.okhttp3:okhttp:3.14.2'
+    compile 'com.squareup.okhttp3:logging-interceptor:3.14.2'
+    compile 'com.google.code.gson:gson:2.8.5'
+    compile 'io.gsonfire:gson-fire:1.8.3'
+    compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.9'
+    compile 'org.threeten:threetenbp:1.3.5'
 
     testCompile 'org.hamcrest:hamcrest-core:1.3'
     testCompile 'org.hamcrest:hamcrest-library:1.3'

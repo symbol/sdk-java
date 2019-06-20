@@ -95,22 +95,4 @@ class UInt64Test {
         BigInteger result = UInt64.fromIntArray(input);
         assertEquals(expected, result);
     }
-
-    @Test
-    void testNEMUInt64DTOExtractIntArray() {
-        UInt64DTO dto = new UInt64DTO();
-        dto.add(new Long(929036875));
-        dto.add(new Long("2226345261"));
-        BigInteger result = dto.extractIntArray();
-        assertEquals(new BigInteger("-8884663987180930485"), result);
-    }
-
-    @Test
-    void testSUBNEMUInt64DTOExtractIntArray() {
-        UInt64DTO dto = new UInt64DTO();
-        dto.add(new Long(373240754));
-        dto.add(new Long("3827892399"));
-        BigInteger result = dto.extractIntArray();
-        assertEquals(new BigInteger("-2006071407024327758"), result);
-    }
 }

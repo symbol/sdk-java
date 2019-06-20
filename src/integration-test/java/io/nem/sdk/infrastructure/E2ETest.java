@@ -205,7 +205,7 @@ class E2ETest extends BaseTest {
                 new Deadline(2, HOURS),
                 MosaicNonce.createFromBigInteger(new BigInteger("0")),
                 new MosaicId(new BigInteger("0")),
-                new MosaicProperties(true, true,true, 4, BigInteger.valueOf(100)),
+                new MosaicProperties(true, true, 4, BigInteger.valueOf(100)),
                 NetworkType.MIJIN_TEST
         );
 
@@ -224,7 +224,7 @@ class E2ETest extends BaseTest {
                 new Deadline(2, HOURS),
                 MosaicNonce.createFromBigInteger(new BigInteger("0")),
                 new MosaicId(new BigInteger("0")),
-                new MosaicProperties(true, false,false, 4, BigInteger.valueOf(100)),
+                new MosaicProperties(true, false, 4, BigInteger.valueOf(100)),
                 NetworkType.MIJIN_TEST
         );
 

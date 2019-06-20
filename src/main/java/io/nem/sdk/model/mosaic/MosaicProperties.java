@@ -40,10 +40,6 @@ public class MosaicProperties {
      */
     private final boolean transferable;
     /**
-     * Levy mutable
-     */
-    private final boolean levyMutable;
-    /**
      * The divisibility determines up to what decimal place the mosaic can be divided into.
      * Thus a divisibility of 3 means that a mosaic can be divided into smallest parts of 0.001 mosaics
      * i.e. milli mosaics is the smallest sub-unit.
@@ -59,11 +55,10 @@ public class MosaicProperties {
      */
     private final BigInteger duration;
 
-    public MosaicProperties(boolean supplyMutable, boolean transferable, boolean levyMutable, int divisibility, BigInteger duration) {
+    public MosaicProperties(boolean supplyMutable, boolean transferable, int divisibility, BigInteger duration) {
         Validate.notNull(duration, "Duration cannot be null");
         this.supplyMutable = supplyMutable;
         this.transferable = transferable;
-        this.levyMutable = levyMutable;
         this.divisibility = divisibility;
         this.duration = duration;
     }
@@ -87,15 +82,6 @@ public class MosaicProperties {
     }
 
     /**
-     * Returns true if the mosaic levy is mutable
-     *
-     * @return if the mosaic levy is mutable
-     */
-    public boolean isLevyMutable() {
-        return levyMutable;
-    }
-
-    /**
      * Returns the number of blocks from height it will be active
      *
      * @return the number of blocks from height it will be active
@@ -116,7 +102,6 @@ public class MosaicProperties {
     public static class Builder {
         private boolean supplyMutable;
         private boolean transferable;
-        private boolean levyMutable;
         private int divisibility;
         private BigInteger duration;
 
@@ -127,11 +112,6 @@ public class MosaicProperties {
 
         public Builder transferable(boolean transferable) {
             this.transferable = transferable;
-            return this;
-        }
-
-        public Builder levyMutable(boolean levyMutable) {
-            this.levyMutable = levyMutable;
             return this;
         }
 
@@ -146,7 +126,7 @@ public class MosaicProperties {
         }
 
         public MosaicProperties build() {
-            return new MosaicProperties(this.supplyMutable, this.transferable, this.levyMutable, this.divisibility, this.duration);
+            return new MosaicProperties(this.supplyMutable, this.transferable, this.divisibility, this.duration);
         }
     }
 }
