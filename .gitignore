@@ -86,3 +86,7 @@ crypto/out
 gradle-local.properties
 
 bin/
+
+.classpath
+.project
+org.eclipse.buildship.core.prefs
