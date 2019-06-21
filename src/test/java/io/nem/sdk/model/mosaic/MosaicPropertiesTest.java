@@ -27,10 +27,9 @@ class MosaicPropertiesTest {
 
     @Test
     void shouldCreateMosaicPropertiesViaConstructor() {
-        MosaicProperties mosaicProperties = new MosaicProperties(true, true, true, 1, BigInteger.valueOf(1000));
+        MosaicProperties mosaicProperties = new MosaicProperties(true, true, 1, BigInteger.valueOf(1000));
         assertTrue(mosaicProperties.isSupplyMutable());
         assertTrue(mosaicProperties.isTransferable());
-        assertTrue(mosaicProperties.isLevyMutable());
         assertTrue(1 == mosaicProperties.getDivisibility());
         assertEquals(BigInteger.valueOf(1000), mosaicProperties.getDuration());
     }
@@ -40,13 +39,11 @@ class MosaicPropertiesTest {
         MosaicProperties mosaicProperties = new MosaicProperties.Builder()
                 .supplyMutable(true)
                 .transferable(true)
-                .levyMutable(true)
                 .divisibility(1)
                 .duration(BigInteger.valueOf(1000))
                 .build();
         assertTrue(mosaicProperties.isSupplyMutable());
         assertTrue(mosaicProperties.isTransferable());
-        assertTrue(mosaicProperties.isLevyMutable());
         assertTrue(1 == mosaicProperties.getDivisibility());
         assertEquals(BigInteger.valueOf(1000), mosaicProperties.getDuration());
     }

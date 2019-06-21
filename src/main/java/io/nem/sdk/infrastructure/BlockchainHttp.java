@@ -16,10 +16,15 @@
 
 package io.nem.sdk.infrastructure;
 
+import io.nem.sdk.infrastructure.model.BlockInfoDTO;
+import io.nem.sdk.infrastructure.model.BlockchainScoreDTO;
+import io.nem.sdk.infrastructure.model.HeightInfoDTO;
+import io.nem.sdk.infrastructure.model.StorageInfoDTO;
 import io.nem.sdk.model.blockchain.BlockInfo;
 import io.nem.sdk.model.blockchain.BlockchainStorageInfo;
 import io.nem.sdk.model.blockchain.NetworkType;
 import io.nem.sdk.model.transaction.Transaction;
+import io.nem.sdk.model.transaction.UInt64;
 import io.reactivex.Observable;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
@@ -59,21 +64,21 @@ public class BlockchainHttp extends Http implements BlockchainRepository {
                         .map(json -> objectMapper.readValue(json.toString(), BlockInfoDTO.class))
                         .map(blockInfoDTO -> BlockInfo.create(blockInfoDTO.getMeta().getHash(),
                                 blockInfoDTO.getMeta().getGenerationHash(),
-                                Optional.of(blockInfoDTO.getMeta().getTotalFee().extractIntArray()),
+                                Optional.of(extractIntArray(blockInfoDTO.getMeta().getTotalFee())),
                                 Optional.of(blockInfoDTO.getMeta().getNumTransactions().intValue()),
                                 blockInfoDTO.getBlock().getSignature(),
                                 blockInfoDTO.getBlock().getSigner(),
                                 blockInfoDTO.getBlock().getVersion().intValue(),
                                 blockInfoDTO.getBlock().getType().intValue(),
-                                blockInfoDTO.getBlock().getHeight().extractIntArray(),
-                                blockInfoDTO.getBlock().getTimestamp().extractIntArray(),
-                                blockInfoDTO.getBlock().getDifficulty().extractIntArray(),
+                                extractIntArray(blockInfoDTO.getBlock().getHeight()),
+                                extractIntArray(blockInfoDTO.getBlock().getTimestamp()),
+                                extractIntArray(blockInfoDTO.getBlock().getDifficulty()),
                                 blockInfoDTO.getBlock().getFeeMultiplier(),
                                 blockInfoDTO.getBlock().getPreviousBlockHash(),
                                 blockInfoDTO.getBlock().getBlockTransactionsHash(),
                                 blockInfoDTO.getBlock().getBlockReceiptsHash(),
                                 blockInfoDTO.getBlock().getStateHash(),
-                                Optional.ofNullable(blockInfoDTO.getBlock().getBeneficiaryPublicKey())
+                                Optional.ofNullable(blockInfoDTO.getBlock().getBeneficiary())
                                 )));
     }
 
@@ -109,8 +114,8 @@ public class BlockchainHttp extends Http implements BlockchainRepository {
                 .rxSend()
                 .toObservable()
                 .map(Http::mapJsonObjectOrError)
-                .map(json -> objectMapper.readValue(json.toString(), HeightDTO.class))
-                .map(blockchainHeight -> blockchainHeight.getHeight().extractIntArray());
+                .map(json -> objectMapper.readValue(json.toString(), HeightInfoDTO.class))
+                .map(blockchainHeight -> extractIntArray(blockchainHeight.getHeight()));
     }
 
     public Observable<BigInteger> getBlockchainScore() {
@@ -121,7 +126,10 @@ public class BlockchainHttp extends Http implements BlockchainRepository {
                 .toObservable()
                 .map(Http::mapJsonObjectOrError)
                 .map(json -> objectMapper.readValue(json.toString(), BlockchainScoreDTO.class))
-                .map(blockchainScoreDTO -> blockchainScoreDTO.extractIntArray());
+                .map(blockchainScoreDTO -> {
+                   return UInt64.fromIntArray(new int[]{ UInt64.fromIntArray(blockchainScoreDTO.getScoreLow().stream().mapToInt(i->i).toArray()).intValue(),
+                            UInt64.fromIntArray(blockchainScoreDTO.getScoreHigh().stream().mapToInt(i->i).toArray()).intValue()});
+                });
     }
 
     @Override
@@ -132,7 +140,7 @@ public class BlockchainHttp extends Http implements BlockchainRepository {
                 .rxSend()
                 .toObservable()
                 .map(Http::mapJsonObjectOrError)
-                .map(json -> objectMapper.readValue(json.toString(), BlockchainStorageInfoDTO.class))
+                .map(json -> objectMapper.readValue(json.toString(), StorageInfoDTO.class))
                 .map(blockchainStorageInfoDTO -> new BlockchainStorageInfo(blockchainStorageInfoDTO.getNumAccounts(),
                         blockchainStorageInfoDTO.getNumBlocks(),
                         blockchainStorageInfoDTO.getNumBlocks()));

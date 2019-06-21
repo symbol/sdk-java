@@ -37,7 +37,7 @@ class MosaicDefinitionTransactionTest {
                 new Deadline(2, ChronoUnit.HOURS),
                 MosaicNonce.createFromBigInteger(new BigInteger("0")),
                 new MosaicId(new BigInteger("0")),
-                new MosaicProperties(true, true, true, 3, BigInteger.valueOf(10)),
+                new MosaicProperties(true, true,  3, BigInteger.valueOf(10)),
                 NetworkType.MIJIN_TEST
         );
 
@@ -48,7 +48,6 @@ class MosaicDefinitionTransactionTest {
         assertEquals(new BigInteger("0"), mosaicCreationTx.getMosaicId().getId());
         assertEquals(true, mosaicCreationTx.getMosaicProperties().isSupplyMutable());
         assertEquals(true, mosaicCreationTx.getMosaicProperties().isTransferable());
-        assertEquals(true, mosaicCreationTx.getMosaicProperties().isLevyMutable());
         assertEquals(3, mosaicCreationTx.getMosaicProperties().getDivisibility());
         assertEquals(BigInteger.valueOf(10), mosaicCreationTx.getMosaicProperties().getDuration());
     }

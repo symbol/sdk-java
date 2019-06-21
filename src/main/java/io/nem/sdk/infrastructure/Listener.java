@@ -289,9 +289,7 @@ public class Listener {
     }
 
     private BigInteger extractBigInteger(JsonArray input) {
-        UInt64DTO uInt64DTO = new UInt64DTO();
-        input.stream().forEach(item -> uInt64DTO.add(new Long(item.toString())));
-        return uInt64DTO.extractIntArray();
+        return UInt64.fromLowerAndHigher(new Long(input.getJsonObject(0).toString()), new Long(input.getJsonObject(1).toString()));
     }
 
     private boolean transactionFromAddress(final Transaction transaction, final Address address) {

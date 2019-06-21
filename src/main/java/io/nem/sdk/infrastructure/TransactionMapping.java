@@ -71,9 +71,9 @@ public class TransactionMapping implements Function<JsonObject, Transaction> {
     }
 
     BigInteger extractBigInteger(JsonArray input) {
-        UInt64DTO uInt64DTO = new UInt64DTO();
-        input.stream().forEach(item -> uInt64DTO.add(new Long(item.toString())));
-        return uInt64DTO.extractIntArray();
+        List<Long> array = new ArrayList();
+        input.stream().forEach(item -> array.add(new Long(item.toString())));
+        return UInt64.fromIntArray(array.stream().mapToInt(Long::intValue).toArray());
     }
 
     BigInteger extractBigInteger(Long input) {
@@ -191,9 +191,8 @@ class MosaicCreationTransactionMapping extends TransactionMapping {
         JsonArray mosaicProperties = transaction.getJsonArray("properties");
 
         String flags = "00" + Integer.toBinaryString(extractBigInteger(mosaicProperties.getJsonObject(0).getJsonArray("value")).intValue());
-        String bitMapFlags = flags.substring(flags.length() - 3);
-        MosaicProperties properties = new MosaicProperties(bitMapFlags.charAt(2) == '1',
-                bitMapFlags.charAt(1) == '1',
+        String bitMapFlags = flags.substring(flags.length() - 2);
+        MosaicProperties properties = new MosaicProperties(bitMapFlags.charAt(1) == '1',
                 bitMapFlags.charAt(0) == '1',
                 extractBigInteger(mosaicProperties.getJsonObject(1).getJsonArray("value")).intValue(),
                 mosaicProperties.size() == 3 ? extractBigInteger(mosaicProperties.getJsonObject(2).getJsonArray("value")) : BigInteger.valueOf(0));

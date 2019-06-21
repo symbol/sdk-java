@@ -28,6 +28,8 @@ import org.junit.jupiter.api.Test;
 import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
 
 import static junit.framework.TestCase.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -346,7 +348,6 @@ public class TransactionMappingTest {
                 transaction.getMosaicProperties().getDuration());
         assertTrue(transaction.getMosaicProperties().isSupplyMutable());
         assertTrue(transaction.getMosaicProperties().isTransferable());
-        assertTrue(transaction.getMosaicProperties().isLevyMutable());
     }
 
     void validateMosaicSupplyChangeTx(MosaicSupplyChangeTransaction transaction, JsonObject transactionDTO) {
@@ -401,8 +402,8 @@ public class TransactionMappingTest {
     }
 
     BigInteger extractBigInteger(JsonArray input) {
-        UInt64DTO uInt64DTO = new UInt64DTO();
-        input.stream().forEach(item -> uInt64DTO.add(new Long(item.toString())));
-        return uInt64DTO.extractIntArray();
+        List<Long> array = new ArrayList();
+        input.stream().forEach(item -> array.add(new Long(item.toString())));
+        return UInt64.fromIntArray(array.stream().mapToInt(Long::intValue).toArray());
     }
 }

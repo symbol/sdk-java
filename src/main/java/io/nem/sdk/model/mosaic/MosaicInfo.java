@@ -35,9 +35,8 @@ public class MosaicInfo {
     private final PublicAccount owner;
     private final Integer revision;
     private final MosaicProperties properties;
-    private final Object levy;
 
-    public MosaicInfo(String metaId, MosaicId mosaicId, BigInteger supply, BigInteger height, PublicAccount owner, Integer revision, MosaicProperties properties, Object levy) {
+    public MosaicInfo(String metaId, MosaicId mosaicId, BigInteger supply, BigInteger height, PublicAccount owner, Integer revision, MosaicProperties properties) {
         this.metaId = metaId;
         this.mosaicId = mosaicId;
         this.supply = supply;
@@ -45,7 +44,6 @@ public class MosaicInfo {
         this.owner = owner;
         this.revision = revision;
         this.properties = properties;
-        this.levy = levy;
     }
 
     /**
@@ -121,15 +119,6 @@ public class MosaicInfo {
     }
 
     /**
-     * Returns if the mosaic levy is mutable
-     *
-     * @return if the mosaic levy is mutable
-     */
-    public boolean isLevyMutable() {
-        return properties.isLevyMutable();
-    }
-
-    /**
      * Return the number of blocks from height it will be active
      *
      * @return the number of blocks from height it will be active
@@ -145,16 +134,6 @@ public class MosaicInfo {
      */
     public int getDivisibility() {
         return properties.getDivisibility();
-    }
-
-    /**
-     * Returns optional mosaic levy
-     *
-     * @return mosaic levy
-     */
-    public Object getLevy() {
-
-        return levy;
     }
 }
 
