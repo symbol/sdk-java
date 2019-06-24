@@ -66,6 +66,11 @@ public class UInt64 {
         return UInt64.fromIntArray(array);
     }
 
+    public static BigInteger fromLowerAndHigher(Number lower, Number higher) {
+        int[] array = new int[] {lower.intValue(), higher.intValue()};
+        return UInt64.fromIntArray(array);
+    }
+
     public static String bigIntegerToHex(BigInteger input) {
         /*int[] uint64Parts = UInt64.fromBigInteger(input);
         String lower = String.format("%08x",uint64Parts[0]);

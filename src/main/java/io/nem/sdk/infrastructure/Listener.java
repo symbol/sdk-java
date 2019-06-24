@@ -34,6 +34,7 @@ import io.vertx.core.json.JsonObject;
 import java.math.BigInteger;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -290,7 +291,8 @@ public class Listener {
     }
 
     private BigInteger extractBigInteger(JsonArray input) {
-        return UInt64.fromLowerAndHigher(new Long(input.getJsonObject(0).toString()), new Long(input.getJsonObject(1).toString()));
+        ArrayList<Number> numbers = (ArrayList)input.getList();
+        return UInt64.fromLowerAndHigher(numbers.get(0), numbers.get(1));
     }
 
     private boolean transactionFromAddress(final Transaction transaction, final Address address) {
