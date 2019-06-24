@@ -26,7 +26,6 @@ import io.nem.sdk.model.namespace.NamespaceId;
 import io.nem.sdk.model.transaction.*;
 import org.apache.commons.codec.binary.Hex;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 
@@ -43,6 +42,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class E2ETest extends BaseTest {
     private TransactionHttp transactionHttp;
     private Account account;
+    private Address recipient;
     private Account multisigAccount;
     private Account cosignatoryAccount;
     private Account cosignatoryAccount2;
@@ -54,7 +54,8 @@ class E2ETest extends BaseTest {
     @BeforeAll
     void setup() throws ExecutionException, InterruptedException, IOException {
         transactionHttp = new TransactionHttp(this.getApiUrl());
-        account = new Account("787225aaff3d2c71f4ffa32d4f19ec4922f3cd869747f267378f81f8e3fcb12d", NetworkType.MIJIN_TEST);
+        account = this.getTestAccount();
+        recipient = this.getRecipient();
         multisigAccount = new Account("5edebfdbeb32e9146d05ffd232c8af2cf9f396caf9954289daa0362d097fff3b", NetworkType.MIJIN_TEST);
         cosignatoryAccount = new Account("2a2b1f5d366a5dd5dc56c3c757cf4fe6c66e2787087692cf329d7a49a594658b", NetworkType.MIJIN_TEST);
         cosignatoryAccount2 = new Account("b8afae6f4ad13a1b8aad047b488e0738a437c7389d4ff30c359ac068910c1d59", NetworkType.MIJIN_TEST);
@@ -66,16 +67,20 @@ class E2ETest extends BaseTest {
     void standaloneTransferTransaction() throws ExecutionException, InterruptedException {
         TransferTransaction transferTransaction = TransferTransaction.create(
                 new Deadline(2, HOURS),
-                new Address("SDRDGFTDLLCB67D4HPGIMIHPNSRYRJRT7DOBGWZY", NetworkType.MIJIN_TEST),
+                this.recipient,
                 Collections.singletonList(
                         NetworkCurrencyMosaic.createAbsolute(BigInteger.valueOf(1))
                 ),
-                new PlainMessage("message"),
+                new PlainMessage("E2ETest:standaloneTransferTransaction:message"),
                 NetworkType.MIJIN_TEST
         );
 
         SignedTransaction signedTransaction = this.account.sign(transferTransaction);
-        transactionHttp.announce(signedTransaction).toFuture().get();
+        String payload = signedTransaction.getPayload();
+        assertEquals(420, payload.length());
+
+        TransactionAnnounceResponse transactionAnnounceResponse = transactionHttp.announce(signedTransaction).toFuture().get();
+        assertEquals("packet 9 was pushed to the network via /transaction", transactionAnnounceResponse.getMessage());
 
         this.validateTransactionAnnounceCorrectly(this.account.getAddress(), signedTransaction.getHash());
     }
@@ -84,17 +89,18 @@ class E2ETest extends BaseTest {
     void aggregateTransferTransaction() throws ExecutionException, InterruptedException {
         TransferTransaction transferTransaction = TransferTransaction.create(
                 new Deadline(2, HOURS),
-                new Address("SDRDGFTDLLCB67D4HPGIMIHPNSRYRJRT7DOBGWZY", NetworkType.MIJIN_TEST),
+                this.recipient,
                 Collections.singletonList(
                         NetworkCurrencyMosaic.createAbsolute(BigInteger.valueOf(1))
                 ),
-                new PlainMessage("messageloooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo" +
+                new PlainMessage("E2ETest:aggregateTransferTransaction:message"),  // temp use short message for debugging
+                /*new PlainMessage("E2ETest:aggregateTransferTransaction:messagelooooooooooooooooooooooooooooooooooooooo" +
                         "ooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo" +
                         "ooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo" +
                         "ooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo" +
                         "ooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo" +
                         "ooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo" +
-                        "oooooooong"), // Use long message to test if size of inner transaction is calculated correctly
+                        "oooooooong"), // Use long message to test if size of inner transaction is calculated correctly*/
                 NetworkType.MIJIN_TEST
         );
 
@@ -107,7 +113,8 @@ class E2ETest extends BaseTest {
 
         SignedTransaction signedTransaction = this.account.sign(aggregateTransaction);
 
-        transactionHttp.announce(signedTransaction).toFuture().get();
+        TransactionAnnounceResponse transactionAnnounceResponse = transactionHttp.announce(signedTransaction).toFuture().get();
+        System.out.println(transactionAnnounceResponse.getMessage());
 
         this.validateTransactionAnnounceCorrectly(this.account.getAddress(), signedTransaction.getHash());
     }

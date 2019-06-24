@@ -16,6 +16,7 @@
 
 package io.nem.sdk.infrastructure;
 
+import io.nem.sdk.model.account.Account;
 import io.nem.sdk.model.account.Address;
 import io.nem.sdk.model.account.PublicAccount;
 import io.nem.sdk.model.blockchain.NetworkType;
@@ -23,8 +24,10 @@ import io.nem.sdk.model.blockchain.NetworkType;
 public abstract class BaseTest {
     private static final Config CONFIG = Config.getInstance();
     private NetworkType networkType;
+    private Account testAccount;
     private PublicAccount testPublicAccount;
     private Address testAccountAddress;
+    private Address testRecipient;  // Test Account2 Address
 
     public Config config() {
         return BaseTest.CONFIG;
@@ -36,6 +39,12 @@ public abstract class BaseTest {
         if (this.networkType == null)
             this.networkType = NetworkType.valueOf(this.config().getNetworkType());
         return this.networkType;
+    }
+
+    public Account getTestAccount() {
+        if (this.testAccount == null)
+            this.testAccount = Account.createFromPrivateKey(this.config().getTestAccountPrivateKey(), this.getNetworkType());
+        return this.testAccount;
     }
 
     public PublicAccount getTestPublicAccount() {
@@ -50,4 +59,9 @@ public abstract class BaseTest {
         return this.testAccountAddress;
     }
 
+    public Address getRecipient() {
+        if (this.testRecipient == null)
+            this.testRecipient = Address.createFromRawAddress(this.config().getTestAccount2Address());
+        return this.testRecipient;
+    }
 }

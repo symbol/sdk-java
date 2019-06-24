@@ -178,6 +178,7 @@ public class Listener {
      * @return an observable stream of Transaction with state confirmed
      */
     public Observable<Transaction> confirmed(final Address address) {
+        this.subscribeTo(ListenerChannel.STATUS.toString() + "/" + address.plain());
         this.subscribeTo(ListenerChannel.CONFIRMED_ADDED.toString() + "/" + address.plain());
         return this.messageSubject
                 .filter(rawMessage -> rawMessage.getChannel().equals(ListenerChannel.CONFIRMED_ADDED))
