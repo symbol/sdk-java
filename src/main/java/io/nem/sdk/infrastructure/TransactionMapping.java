@@ -140,7 +140,7 @@ class TransferTransactionMapping extends TransactionMapping {
                 extractNetworkType(transaction.getInteger("version")),
                 extractTransactionVersion(transaction.getInteger("version")),
                 deadline,
-                extractBigInteger(transaction.getJsonArray("fee")),
+                extractBigInteger(transaction.getJsonArray("maxFee")),
                 Address.createFromEncoded(transaction.getString("recipient")),
                 mosaics,
                 message,
