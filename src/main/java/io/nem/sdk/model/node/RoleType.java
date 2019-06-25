@@ -16,7 +16,7 @@
 package io.nem.sdk.model.node;
 
 public enum RoleType {
-    PearNode(1),
+    PeerNode(1),
     ApiNode(2);
 
     private int value;
@@ -42,7 +42,7 @@ public enum RoleType {
     public static RoleType rawValueOf(int value) {
         switch (value) {
             case 1:
-                return RoleType.PearNode;
+                return RoleType.PeerNode;
             case 2:
                 return RoleType.ApiNode;
             default:

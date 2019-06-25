@@ -88,7 +88,7 @@ class BlockHttpTest extends BaseTest {
     void throwExceptionWhenBlockDoesNotExists() {
         TestObserver<BlockInfo> testObserver = new TestObserver<>();
         blockHttp
-                .getBlockByHeight(BigInteger.valueOf(1000000000))
+                .getBlockByHeight(BigInteger.valueOf(0))
                 .subscribeOn(Schedulers.single())
                 .test()
                 .awaitDone(2, TimeUnit.SECONDS)
