@@ -45,7 +45,7 @@ public class BalanceChangeReceiptTest {
         assertEquals(balanceChangeReceipt.getType(), ReceiptType.Harvest_Fee);
         assertEquals(balanceChangeReceipt.getSize(), null);
         assertEquals(balanceChangeReceipt.getVersion(), ReceiptVersion.BALANCE_CHANGE);
-        assertEquals(balanceChangeReceipt.getAccount().getPublicKey().toUpperCase(), account.getPublicKey().toUpperCase());
+        assertEquals(balanceChangeReceipt.getAccount().getPublicKey().toString().toUpperCase(), account.getPublicKey().toUpperCase());
         assertEquals(balanceChangeReceipt.getMosaicId().getIdAsHex().toUpperCase(), "85BBEA6CC462B244");
         assertEquals(balanceChangeReceipt.getAmount(), BigInteger.TEN);
     }
@@ -58,7 +58,7 @@ public class BalanceChangeReceiptTest {
         assertEquals(balanceChangeReceipt.getType(), ReceiptType.LockHash_Created);
         assertEquals(balanceChangeReceipt.getSize(), null);
         assertEquals(balanceChangeReceipt.getVersion(), ReceiptVersion.BALANCE_CHANGE);
-        assertEquals(balanceChangeReceipt.getAccount().getPublicKey().toUpperCase(), account.getPublicKey().toUpperCase());
+        assertEquals(balanceChangeReceipt.getAccount().getPublicKey().toString().toUpperCase(), account.getPublicKey().toUpperCase());
         assertEquals(balanceChangeReceipt.getMosaicId().getIdAsHex().toUpperCase(), "85BBEA6CC462B244");
         assertEquals(balanceChangeReceipt.getAmount(), BigInteger.TEN);
     }
@@ -71,7 +71,7 @@ public class BalanceChangeReceiptTest {
         assertEquals(balanceChangeReceipt.getType(), ReceiptType.LockHash_Expired);
         assertEquals(balanceChangeReceipt.getSize(), null);
         assertEquals(balanceChangeReceipt.getVersion(), ReceiptVersion.BALANCE_CHANGE);
-        assertEquals(balanceChangeReceipt.getAccount().getPublicKey().toUpperCase(), account.getPublicKey().toUpperCase());
+        assertEquals(balanceChangeReceipt.getAccount().getPublicKey().toString().toUpperCase(), account.getPublicKey().toUpperCase());
         assertEquals(balanceChangeReceipt.getMosaicId().getIdAsHex().toUpperCase(), "85BBEA6CC462B244");
         assertEquals(balanceChangeReceipt.getAmount(), BigInteger.TEN);
     }
@@ -84,7 +84,7 @@ public class BalanceChangeReceiptTest {
         assertEquals(balanceChangeReceipt.getType(), ReceiptType.LockHash_Completed);
         assertEquals(balanceChangeReceipt.getSize(), null);
         assertEquals(balanceChangeReceipt.getVersion(), ReceiptVersion.BALANCE_CHANGE);
-        assertEquals(balanceChangeReceipt.getAccount().getPublicKey().toUpperCase(), account.getPublicKey().toUpperCase());
+        assertEquals(balanceChangeReceipt.getAccount().getPublicKey().toString().toUpperCase(), account.getPublicKey().toUpperCase());
         assertEquals(balanceChangeReceipt.getMosaicId().getIdAsHex().toUpperCase(), "85BBEA6CC462B244");
         assertEquals(balanceChangeReceipt.getAmount(), BigInteger.TEN);
     }
@@ -97,7 +97,7 @@ public class BalanceChangeReceiptTest {
         assertEquals(balanceChangeReceipt.getType(), ReceiptType.LockSecret_Created);
         assertEquals(balanceChangeReceipt.getSize(), null);
         assertEquals(balanceChangeReceipt.getVersion(), ReceiptVersion.BALANCE_CHANGE);
-        assertEquals(balanceChangeReceipt.getAccount().getPublicKey().toUpperCase(), account.getPublicKey().toUpperCase());
+        assertEquals(balanceChangeReceipt.getAccount().getPublicKey().toString().toUpperCase(), account.getPublicKey().toUpperCase());
         assertEquals(balanceChangeReceipt.getMosaicId().getIdAsHex().toUpperCase(), "85BBEA6CC462B244");
         assertEquals(balanceChangeReceipt.getAmount(), BigInteger.TEN);
     }
@@ -110,7 +110,7 @@ public class BalanceChangeReceiptTest {
         assertEquals(balanceChangeReceipt.getType(), ReceiptType.LockSecret_Expired);
         assertEquals(balanceChangeReceipt.getSize(), null);
         assertEquals(balanceChangeReceipt.getVersion(), ReceiptVersion.BALANCE_CHANGE);
-        assertEquals(balanceChangeReceipt.getAccount().getPublicKey().toUpperCase(), account.getPublicKey().toUpperCase());
+        assertEquals(balanceChangeReceipt.getAccount().getPublicKey().toString().toUpperCase(), account.getPublicKey().toUpperCase());
         assertEquals(balanceChangeReceipt.getMosaicId().getIdAsHex().toUpperCase(), "85BBEA6CC462B244");
         assertEquals(balanceChangeReceipt.getAmount(), BigInteger.TEN);
     }
@@ -123,7 +123,7 @@ public class BalanceChangeReceiptTest {
         assertEquals(balanceChangeReceipt.getType(), ReceiptType.LockSecret_Completed);
         assertEquals(balanceChangeReceipt.getSize(), null);
         assertEquals(balanceChangeReceipt.getVersion(), ReceiptVersion.BALANCE_CHANGE);
-        assertEquals(balanceChangeReceipt.getAccount().getPublicKey().toUpperCase(), account.getPublicKey().toUpperCase());
+        assertEquals(balanceChangeReceipt.getAccount().getPublicKey().toString().toUpperCase(), account.getPublicKey().toUpperCase());
         assertEquals(balanceChangeReceipt.getMosaicId().getIdAsHex().toUpperCase(), "85BBEA6CC462B244");
         assertEquals(balanceChangeReceipt.getAmount(), BigInteger.TEN);
     }

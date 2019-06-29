@@ -57,6 +57,7 @@ class NamespaceIdTest {
 
     @Test
     void createANamespaceIdFromSubNamespacePathViaConstructor() {
+        NamespaceId test = new NamespaceId("subnem");
         NamespaceId namespaceId = new NamespaceId("nem.subnem");
         assertEquals(namespaceId.getId(), new BigInteger("16440672666685223858"));
         assertEquals(namespaceId.getFullName().get(), "nem.subnem");

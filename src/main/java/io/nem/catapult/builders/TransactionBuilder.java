@@ -20,9 +20,6 @@
 
 package io.nem.catapult.builders;
 
-import io.nem.core.utils.ByteUtils;
-import io.nem.sdk.model.blockchain.NetworkType;
-
 import java.io.DataInput;
 
 /** Binary layout for a transaction. */
@@ -41,10 +38,6 @@ public class TransactionBuilder {
     private final AmountDto fee;
     /** Transaction deadline. */
     private final TimestampDto deadline;
-
-    private Integer transactionVersion;
-    private NetworkType networkType;
-
 
     /**
      * Constructor - Creates an object from stream.
@@ -136,7 +129,9 @@ public class TransactionBuilder {
      *
      * @return Entity version.
      */
-    public short getVersion() { return this.version; }
+    public short getVersion() {
+        return this.version;
+    }
 
     /**
      * Gets entity type.
@@ -212,50 +207,5 @@ public class TransactionBuilder {
             final byte[] deadlineBytes = this.deadline.serialize();
             dataOutputStream.write(deadlineBytes, 0, deadlineBytes.length);
         });
-    }
-
-    public String asString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("\nSize: "+this.getSize());
-        sb.append("\nSignature: "+this.getSignature().asString());
-        sb.append("\nSigner: "+this.getSigner().asString());
-        sb.append("\nTransactionVersion: "+this.getTransactionVersion());
-        sb.append("\nNetworkType: "+this.getNetworkType());
-        sb.append("\nType: "+this.getType().asString());
-        sb.append("\nFee: "+this.getFee().asString());
-        sb.append("\nDeadline: "+this.getDeadline().asString());
-
-        return sb.toString();
-    }
-
-    /**
-     * Gets transaction version by lazy initialization.
-     *
-     * @return Integer
-     */
-    public Integer getTransactionVersion() {
-        if (this.transactionVersion == null) this.setTransactionVersionAndNetworkType(this.version);
-        return this.transactionVersion;
-    }
-
-    /**
-     * Gets network type by lazy initialization.
-     *
-     * @return NetworkType
-     */
-    public NetworkType getNetworkType() {
-        if (this.networkType == null) this.setTransactionVersionAndNetworkType(this.version);
-        return this.networkType;
-    }
-
-    /**
-     * Extract and set transaction version and network type from version.
-     *
-     * @param version
-     */
-    private void setTransactionVersionAndNetworkType(short version) {
-        byte[] bytes = ByteUtils.shortToBytes(version);
-        this.transactionVersion = Byte.toUnsignedInt(bytes[1]);
-        this.networkType = NetworkType.rawValueOf(Byte.toUnsignedInt(bytes[0]));
     }
 }

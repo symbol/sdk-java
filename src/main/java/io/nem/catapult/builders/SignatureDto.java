@@ -20,8 +20,6 @@
 
 package io.nem.catapult.builders;
 
-import io.nem.core.utils.HexEncoder;
-
 import java.io.DataInput;
 import java.nio.ByteBuffer;
 
@@ -92,14 +90,5 @@ public final class SignatureDto {
         return GeneratorUtils.serialize(dataOutputStream -> {
             dataOutputStream.write(this.signature.array(), 0, this.signature.array().length);
         });
-    }
-
-    /**
-     * Returns the object data as a string value
-     *
-     * @return String
-     */
-    public String asString() {
-        return HexEncoder.getString(this.getSignature().array());
     }
 }

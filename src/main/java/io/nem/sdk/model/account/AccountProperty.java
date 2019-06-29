@@ -23,19 +23,19 @@ import java.util.List;
  */
 public class AccountProperty {
 
-    private final PropertyType propertyType;
-    private final List<Object> values;
+	private final PropertyType propertyType;
+	private final List<Object> values;
 
-    public AccountProperty(PropertyType propertyType, List<Object> values) {
-        this.propertyType = propertyType;
-        this.values = values;
-    }
+	public AccountProperty(PropertyType propertyType, List<Object> values) {
+		this.propertyType = propertyType;
+		this.values = values;
+	}
 
-    public PropertyType getPropertyType() {
-        return propertyType;
-    }
+	public PropertyType getPropertyType() {
+		return propertyType;
+	}
 
-    public List<Object> getValues() {
-        return values;
-    }
+	public List<Object> getValues() {
+		return values;
+	}
 }

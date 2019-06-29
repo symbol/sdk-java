@@ -83,17 +83,8 @@ public final class AmountDto {
      * @return Serialized bytes.
      */
     public byte[] serialize() {
-        return GeneratorUtils.serialize(dataOutputStream ->
-            dataOutputStream.writeLong(Long.reverseBytes(this.getAmount()))
-        );
-    }
-
-    /**
-     * Returns the object data as a string value
-     *
-     * @return String
-     */
-    public String asString() {
-        return Long.toString(this.getAmount());
+        return GeneratorUtils.serialize(dataOutputStream -> {
+            dataOutputStream.writeLong(Long.reverseBytes(this.getAmount()));
+        });
     }
 }

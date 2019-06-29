@@ -29,14 +29,14 @@ class PublicAccountTest {
     @Test
     void shouldCreatePublicAccountViaConstructor() {
         PublicAccount publicAccount = new PublicAccount(publicKey, NetworkType.MIJIN_TEST);
-        assertEquals(publicKey, publicAccount.getPublicKey());
+        assertEquals(publicKey.toUpperCase(), publicAccount.getPublicKey().toString());
         assertEquals("SARNASAS2BIAB6LMFA3FPMGBPGIJGK6IJETM3ZSP", publicAccount.getAddress().plain());
     }
 
     @Test
     void shouldCreatePublicAccountViaStaticConstructor() {
         PublicAccount publicAccount = PublicAccount.createFromPublicKey(publicKey, NetworkType.MIJIN_TEST);
-        assertEquals(publicKey, publicAccount.getPublicKey());
+        assertEquals(publicKey.toUpperCase(), publicAccount.getPublicKey().toString());
         assertEquals("SARNASAS2BIAB6LMFA3FPMGBPGIJGK6IJETM3ZSP", publicAccount.getAddress().plain());
     }
 

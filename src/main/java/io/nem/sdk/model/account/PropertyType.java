@@ -26,48 +26,48 @@ package io.nem.sdk.model.account;
  */
 public enum PropertyType {
 
-    AllowAddress(0x01),
-    AllowMosaic(0x02),
-    AllowTransaction(0x04),
-    Sentinel(0x05),
-    BlockAddress(0x80 + 0x01),
-    BlockMosaic(0x80 + 0x02),
-    BlockTransaction(0x80 + 0x04);
+	AllowAddress(0x01),
+	AllowMosaic(0x02),
+	AllowTransaction(0x04),
+	Sentinel(0x05),
+	BlockAddress(0x80 + 0x01),
+	BlockMosaic(0x80 + 0x02),
+	BlockTransaction(0x80 + 0x04);
 
-    private Integer value;
+	private Integer value;
 
-    public static PropertyType rawValueOf(String value) {
-        switch (value) {
-            case "0x01":
-                return PropertyType.AllowAddress;
-            case "0x02":
-                return PropertyType.AllowMosaic;
-            case "0x04":
-                return PropertyType.AllowTransaction;
-            case "0x05":
-                return PropertyType.Sentinel;
-            case "0x81":
-                return PropertyType.BlockAddress;
-            case "0x82":
-                return PropertyType.BlockMosaic;
-            case "0x84":
-                return PropertyType.BlockTransaction;
-            default:
-                throw new IllegalArgumentException(value + " is not a valid value");
-        }
-    }
+	PropertyType(int value) {
+		this.value = value;
+	}
 
-    PropertyType(int value) {
-        this.value = value;
-    }
+	public static PropertyType rawValueOf(String value) {
+		switch (value) {
+			case "0x01":
+				return PropertyType.AllowAddress;
+			case "0x02":
+				return PropertyType.AllowMosaic;
+			case "0x04":
+				return PropertyType.AllowTransaction;
+			case "0x05":
+				return PropertyType.Sentinel;
+			case "0x81":
+				return PropertyType.BlockAddress;
+			case "0x82":
+				return PropertyType.BlockMosaic;
+			case "0x84":
+				return PropertyType.BlockTransaction;
+			default:
+				throw new IllegalArgumentException(value + " is not a valid value");
+		}
+	}
 
-    /**
-     * Returns enum value.
-     *
-     * @return enum value
-     */
-    public Integer getValue() {
-        return this.value;
-    }
+	/**
+	 * Returns enum value.
+	 *
+	 * @return enum value
+	 */
+	public Integer getValue() {
+		return this.value;
+	}
 
 }

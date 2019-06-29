@@ -20,10 +20,6 @@
 
 package io.nem.catapult.builders;
 
-import io.nem.core.utils.Base32Encoder;
-import io.nem.core.utils.HexEncoder;
-import org.apache.commons.codec.binary.Hex;
-
 import java.io.DataInput;
 import java.nio.ByteBuffer;
 
@@ -94,14 +90,5 @@ public final class Hash256Dto {
         return GeneratorUtils.serialize(dataOutputStream -> {
             dataOutputStream.write(this.hash256.array(), 0, this.hash256.array().length);
         });
-    }
-
-    /**
-     * Returns the object data as a string value
-     *
-     * @return String
-     */
-    public String asString() {
-        return HexEncoder.getString(this.getHash256().array());
     }
 }

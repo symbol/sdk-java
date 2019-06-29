@@ -38,6 +38,7 @@ import java.util.ArrayList;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.Collectors;
 
 /**
  * Listener
@@ -94,8 +95,9 @@ public class Listener {
                             BlockInfo.create(
                                     meta.getString("hash"),
                                     meta.getString("generationHash"),
-                                    Optional.empty(),
-                                    Optional.empty(),
+                                    extractBigInteger(block.getJsonArray("totalFee")),
+                                    block.getInteger("numTransactions"),
+                                    block.getJsonArray("subCacheMerkleRoots").stream().map(o -> o.toString()).collect(Collectors.toList()),
                                     block.getString("signature"),
                                     block.getString("signer"),
                                     block.getInteger("version"),
@@ -108,7 +110,7 @@ public class Listener {
                                     block.getString("blockTransactionsHash"),
                                     block.getString("blockReceiptsHash"),
                                     block.getString("stateHash"),
-                                    Optional.ofNullable(block.getString("beneficiaryPublicKey"))
+                                    block.getString("beneficiaryPublicKey")
                             )
                     ));
                 } else if (message.containsKey("status")) {
@@ -292,7 +294,7 @@ public class Listener {
 
     private BigInteger extractBigInteger(JsonArray input) {
         ArrayList<Number> numbers = (ArrayList)input.getList();
-        return UInt64.fromLowerAndHigher(numbers.get(0), numbers.get(1));
+        return UInt64.fromLowerAndHigher((long)numbers.get(0), (long)numbers.get(1));
     }
 
     private boolean transactionFromAddress(final Transaction transaction, final Address address) {

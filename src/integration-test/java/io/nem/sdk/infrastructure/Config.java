@@ -39,7 +39,7 @@ public class Config {
     public String getTestAccountPrivateKey() { return this.config.getJsonObject("testAccount").getString("privateKey"); }
     public String getTestAccountPublicKey() { return this.config.getJsonObject("testAccount").getString("publicKey"); }
     public String getTestAccountAddress() { return this.config.getJsonObject("testAccount").getString("address"); }
-
+    public String getGenerationHash() { return this.config.getString("generationHash");}
     public String getMultisigAccountPrivateKey() { return this.config.getJsonObject("multisigAccount").getString("privateKey"); }
     public String getMultisigAccountPublicKey() { return this.config.getJsonObject("multisigAccount").getString("publicKey"); }
     public String getMultisigAccountAddress() { return this.config.getJsonObject("multisigAccount").getString("address"); }

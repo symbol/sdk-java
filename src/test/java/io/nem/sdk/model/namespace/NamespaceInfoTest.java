@@ -55,7 +55,7 @@ class NamespaceInfoTest {
         assertEquals(new BigInteger("1"), namespaceInfo.getStartHeight());
         assertEquals(new BigInteger("-1"), namespaceInfo.getEndHeight());
         assertEquals(AliasType.Mosaic, namespaceInfo.getAlias().getType());
-        assertEquals(new BigInteger("100"), namespaceInfo.getAlias().getMosaicId().getId());
+        assertEquals(new BigInteger("100"), ((MosaicId)namespaceInfo.getAlias().getAliasValue()).getId());
     }
 
     @Test

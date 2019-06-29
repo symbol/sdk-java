@@ -22,47 +22,47 @@ package io.nem.sdk.model.transaction;
  * @since 1.0
  */
 public enum MultisigCosignatoryModificationType {
-    /**
-     * Add cosignatory.
-     */
-    ADD(0),
+	/**
+	 * Add cosignatory.
+	 */
+	ADD(0),
 
-    /**
-     * Remove cosignatory
-     */
-    REMOVE(1);
+	/**
+	 * Remove cosignatory
+	 */
+	REMOVE(1);
 
-    private int value;
+	private int value;
 
-    MultisigCosignatoryModificationType(int value) {
-        this.value = value;
-    }
+	MultisigCosignatoryModificationType(int value) {
+		this.value = value;
+	}
 
-    /**
-     * Static constructor converting multsig cosignatory modification raw value to enum instance.
-     *
-     * @param value Multisig cosignatory modification type raw value
-     * @return {@link MultisigCosignatoryModificationType}
-     */
-    public static MultisigCosignatoryModificationType rawValueOf(int value) {
-        switch (value) {
-            case 0:
-                return MultisigCosignatoryModificationType.ADD;
-            case 1:
-                return MultisigCosignatoryModificationType.REMOVE;
-            default:
-                throw new IllegalArgumentException(value + " is not a valid value");
-        }
-    }
+	/**
+	 * Static constructor converting multsig cosignatory modification raw value to enum instance.
+	 *
+	 * @param value Multisig cosignatory modification type raw value
+	 * @return {@link MultisigCosignatoryModificationType}
+	 */
+	public static MultisigCosignatoryModificationType rawValueOf(int value) {
+		switch (value) {
+			case 0:
+				return MultisigCosignatoryModificationType.ADD;
+			case 1:
+				return MultisigCosignatoryModificationType.REMOVE;
+			default:
+				throw new IllegalArgumentException(value + " is not a valid value");
+		}
+	}
 
-    /**
-     * Returns enum value.
-     *
-     * @return int
-     */
-    public int getValue() {
-        return value;
-    }
+	/**
+	 * Returns enum value.
+	 *
+	 * @return int
+	 */
+	public int getValue() {
+		return value;
+	}
 
 }
 

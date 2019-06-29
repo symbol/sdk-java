@@ -24,45 +24,45 @@ import io.nem.sdk.model.namespace.NamespaceId;
  * @since 1.0
  */
 public class MosaicName {
-    private final MosaicId mosaicId;
-    private final String name;
-    private final NamespaceId parentId;
+	private final MosaicId mosaicId;
+	private final String name;
+	private final NamespaceId parentId;
 
-    /**
-     * @param mosaicId mosaic identifier
-     * @param name     mosaic name
-     * @param parentId namespace identifier
-     */
-    public MosaicName(MosaicId mosaicId, String name, NamespaceId parentId) {
-        this.mosaicId = mosaicId;
-        this.name = name;
-        this.parentId = parentId;
-    }
+	/**
+	 * @param mosaicId mosaic identifier
+	 * @param name     mosaic name
+	 * @param parentId namespace identifier
+	 */
+	public MosaicName(MosaicId mosaicId, String name, NamespaceId parentId) {
+		this.mosaicId = mosaicId;
+		this.name = name;
+		this.parentId = parentId;
+	}
 
-    /**
-     * Returns mosaic identifier
-     *
-     * @return mosaic identifier
-     */
-    public MosaicId getMosaicId() {
-        return mosaicId;
-    }
+	/**
+	 * Returns mosaic identifier
+	 *
+	 * @return mosaic identifier
+	 */
+	public MosaicId getMosaicId() {
+		return mosaicId;
+	}
 
-    /**
-     * Returns mosaic name
-     *
-     * @return mosaic name
-     */
-    public String getName() {
-        return name;
-    }
+	/**
+	 * Returns mosaic name
+	 *
+	 * @return mosaic name
+	 */
+	public String getName() {
+		return name;
+	}
 
-    /**
-     * Returns namespace identifier it belongs to
-     *
-     * @return namespace identifier
-     */
-    public NamespaceId getParentId() {
-        return parentId;
-    }
+	/**
+	 * Returns namespace identifier it belongs to
+	 *
+	 * @return namespace identifier
+	 */
+	public NamespaceId getParentId() {
+		return parentId;
+	}
 }

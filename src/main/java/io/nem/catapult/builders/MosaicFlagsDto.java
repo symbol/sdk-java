@@ -29,9 +29,7 @@ public enum MosaicFlagsDto implements BitMaskable {
     /** Mosaic supply is mutable. */
     SUPPLY_MUTABLE((byte) 1),
     /** Mosaic is transferable. */
-    TRANSFERABLE((byte) 2),
-    /** Mosaic levy is mutable. */
-    LEVY_MUTABLE((byte) 4);
+    TRANSFERABLE((byte) 2);
 
     /** Enum value. */
     private final byte value;
@@ -102,14 +100,5 @@ public enum MosaicFlagsDto implements BitMaskable {
         return GeneratorUtils.serialize(dataOutputStream -> {
             dataOutputStream.writeByte(this.value);
         });
-    }
-
-    /**
-     * Returns the object data as a string value
-     *
-     * @return String
-     */
-    public String asString() {
-        return Byte.toString(this.value);
     }
 }

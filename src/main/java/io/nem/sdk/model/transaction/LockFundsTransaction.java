@@ -16,7 +16,7 @@
 
 package io.nem.sdk.model.transaction;
 
-import com.google.flatbuffers.FlatBufferBuilder;
+import io.nem.catapult.builders.*;
 import io.nem.sdk.model.account.PublicAccount;
 import io.nem.sdk.model.blockchain.NetworkType;
 import io.nem.sdk.model.mosaic.Mosaic;
@@ -24,6 +24,7 @@ import org.apache.commons.lang3.Validate;
 import org.bouncycastle.util.encoders.Hex;
 
 import java.math.BigInteger;
+import java.nio.ByteBuffer;
 import java.util.Optional;
 
 /**
@@ -33,100 +34,128 @@ import java.util.Optional;
  * @since 1.0
  */
 public class LockFundsTransaction extends Transaction {
-    private final Mosaic mosaic;
-    private final BigInteger duration;
-    private final SignedTransaction signedTransaction;
-    private final Schema schema = new LockFundsTransactionSchema();
+	private final Mosaic mosaic;
+	private final BigInteger duration;
+	private final SignedTransaction signedTransaction;
 
-    public LockFundsTransaction(NetworkType networkType, Integer version, Deadline deadline, BigInteger fee, Mosaic mosaic, BigInteger duration, SignedTransaction signedTransaction, String signature, PublicAccount signer, TransactionInfo transactionInfo) {
-        this(networkType, version, deadline, fee, mosaic, duration, signedTransaction, Optional.of(signature), Optional.of(signer), Optional.of(transactionInfo));
-    }
+	public LockFundsTransaction(NetworkType networkType, Integer version, Deadline deadline, BigInteger fee, Mosaic mosaic,
+								BigInteger duration, SignedTransaction signedTransaction, String signature, PublicAccount signer,
+								TransactionInfo transactionInfo) {
+		this(networkType, version, deadline, fee, mosaic, duration, signedTransaction, Optional.of(signature), Optional.of(signer),
+				Optional.of(transactionInfo));
+	}
 
-    public LockFundsTransaction(NetworkType networkType, Integer version, Deadline deadline, BigInteger fee, Mosaic mosaic, BigInteger duration, SignedTransaction signedTransaction) {
-        this(networkType, version, deadline, fee, mosaic, duration, signedTransaction, Optional.empty(), Optional.empty(), Optional.empty());
-    }
+	public LockFundsTransaction(NetworkType networkType, Integer version, Deadline deadline, BigInteger fee, Mosaic mosaic,
+								BigInteger duration, SignedTransaction signedTransaction) {
+		this(networkType, version, deadline, fee, mosaic, duration, signedTransaction, Optional.empty(), Optional.empty(),
+				Optional.empty());
+	}
 
-    private LockFundsTransaction(NetworkType networkType, Integer version, Deadline deadline, BigInteger fee, Mosaic mosaic, BigInteger duration, SignedTransaction signedTransaction, Optional<String> signature, Optional<PublicAccount> signer, Optional<TransactionInfo> transactionInfo) {
-        super(TransactionType.LOCK, networkType, version, deadline, fee, signature, signer, transactionInfo);
-        Validate.notNull(mosaic, "Mosaic must not be null");
-        Validate.notNull(duration, "Duration must not be null");
-        Validate.notNull(signedTransaction, "Signed transaction must not be null");
-        this.mosaic = mosaic;
-        this.duration = duration;
-        this.signedTransaction = signedTransaction;
-        if (signedTransaction.getType() != TransactionType.AGGREGATE_BONDED) {
-            throw new IllegalArgumentException("Signed transaction must be Aggregate Bonded Transaction");
-        }
-    }
+	private LockFundsTransaction(NetworkType networkType, Integer version, Deadline deadline, BigInteger fee, Mosaic mosaic,
+								 BigInteger duration, SignedTransaction signedTransaction, Optional<String> signature,
+								 Optional<PublicAccount> signer, Optional<TransactionInfo> transactionInfo) {
+		super(TransactionType.LOCK, networkType, version, deadline, fee, signature, signer, transactionInfo);
+		Validate.notNull(mosaic, "Mosaic must not be null");
+		Validate.notNull(duration, "Duration must not be null");
+		Validate.notNull(signedTransaction, "Signed transaction must not be null");
+		this.mosaic = mosaic;
+		this.duration = duration;
+		this.signedTransaction = signedTransaction;
+		if (signedTransaction.getType() != TransactionType.AGGREGATE_BONDED) {
+			throw new IllegalArgumentException("Signed transaction must be Aggregate Bonded Transaction");
+		}
+	}
 
-    /**
-     * Create a lock funds transaction object.
-     * @param deadline          The deadline to include the transaction.
-     * @param mosaic            The locked mosaic.
-     * @param duration          The funds lock duration.
-     * @param signedTransaction The signed transaction for which funds are locked.
-     * @param networkType       The network type.
-     * @return a LockFundsTransaction instance
-     */
-    public static LockFundsTransaction create(Deadline deadline, Mosaic mosaic, BigInteger duration, SignedTransaction signedTransaction, NetworkType networkType) {
-        return new LockFundsTransaction(networkType, 3, deadline, BigInteger.valueOf(0), mosaic, duration, signedTransaction);
-    }
+	/**
+	 * Create a lock funds transaction object.
+	 *
+	 * @param deadline          The deadline to include the transaction.
+	 * @param mosaic            The locked mosaic.
+	 * @param duration          The funds lock duration.
+	 * @param signedTransaction The signed transaction for which funds are locked.
+	 * @param networkType       The network type.
+	 * @return a LockFundsTransaction instance
+	 */
+	public static LockFundsTransaction create(Deadline deadline, Mosaic mosaic, BigInteger duration, SignedTransaction signedTransaction,
+											  NetworkType networkType) {
+		return new LockFundsTransaction(networkType, TransactionVersion.LOCK.getValue(), deadline, BigInteger.valueOf(0), mosaic, duration,
+				signedTransaction);
+	}
 
-    /**
-     * Returns locked mosaic.
-     *
-     * @return locked mosaic.
-     */
-    public Mosaic getMosaic() { return mosaic; }
+	/**
+	 * Returns locked mosaic.
+	 *
+	 * @return locked mosaic.
+	 */
+	public Mosaic getMosaic() {
+		return mosaic;
+	}
 
-    /**
-     * Returns funds lock duration in number of blocks.
-     *
-     * @return funds lock duration in number of blocks.
-     */
-    public BigInteger getDuration() { return duration; }
+	/**
+	 * Returns funds lock duration in number of blocks.
+	 *
+	 * @return funds lock duration in number of blocks.
+	 */
+	public BigInteger getDuration() {
+		return duration;
+	}
 
-    /**
-     * Returns signed transaction for which funds are locked.
-     *
-     * @return signed transaction for which funds are locked.
-     */
-    public SignedTransaction getSignedTransaction() { return signedTransaction; }
+	/**
+	 * Returns signed transaction for which funds are locked.
+	 *
+	 * @return signed transaction for which funds are locked.
+	 */
+	public SignedTransaction getSignedTransaction() {
+		return signedTransaction;
+	}
 
-    @Override
-    byte[] generateBytes() {
-        FlatBufferBuilder builder = new FlatBufferBuilder();
-        BigInteger deadlineBigInt = BigInteger.valueOf(getDeadline().getInstant());
-        int[] fee = new int[]{0, 0};
-        int version = (int) Long.parseLong(Integer.toHexString(getNetworkType().getValue()) + "0" + Integer.toHexString(getVersion()), 16);
+	/**
+	 * Serialized the transaction.
+	 *
+	 * @return bytes of the transaction.
+	 */
+	@Override
+	byte[] generateBytes() {
+		// Add place holders to the signer and signature until actually signed
+		final ByteBuffer signerBuffer = ByteBuffer.allocate(32);
+		final ByteBuffer signatureBuffer = ByteBuffer.allocate(64);
 
-        // Create Vectors
-        int signatureVector = LockFundsTransactionBuffer.createSignatureVector(builder, new byte[64]);
-        int signerVector = LockFundsTransactionBuffer.createSignerVector(builder, new byte[32]);
-        int deadlineVector = LockFundsTransactionBuffer.createDeadlineVector(builder, UInt64.fromBigInteger(deadlineBigInt));
-        int feeVector = LockFundsTransactionBuffer.createFeeVector(builder, fee);
-        int mosaicIdVector = LockFundsTransactionBuffer.createMosaicIdVector(builder, UInt64.fromBigInteger(mosaic.getId().getId()));
-        int mosaicAmountVector = LockFundsTransactionBuffer.createMosaicAmountVector(builder, UInt64.fromBigInteger(mosaic.getAmount()));
-        int durationVector = LockFundsTransactionBuffer.createDurationVector(builder, UInt64.fromBigInteger(duration));
+		HashLockTransactionBuilder txBuilder =
+				HashLockTransactionBuilder.create(new SignatureDto(signatureBuffer),
+						new KeyDto(signerBuffer), getNetworkVersion(),
+						EntityTypeDto.HASH_LOCK_TRANSACTION,
+						new AmountDto(getFee().longValue()), new TimestampDto(getDeadline().getInstant()),
+						UnresolvedMosaicBuilder.create(new UnresolvedMosaicIdDto(
+										getMosaic().getId().getId().longValue()),
+								new AmountDto(getMosaic().getAmount().longValue())),
+						new BlockDurationDto(getDuration().longValue()), new Hash256Dto(getHashBuffer()));
+		return txBuilder.serialize();
+	}
 
-        int hashVector = LockFundsTransactionBuffer.createHashVector(builder, Hex.decode(signedTransaction.getHash()));
+	/**
+	 * Gets the embedded tx bytes.
+	 *
+	 * @return Embedded tx bytes
+	 */
+	@Override
+	byte[] generateEmbeddedBytes() {
+		EmbeddedHashLockTransactionBuilder txBuilder =
+				EmbeddedHashLockTransactionBuilder.create(new KeyDto(getSignerBytes().get()), getNetworkVersion(),
+						EntityTypeDto.HASH_LOCK_TRANSACTION,
+						UnresolvedMosaicBuilder.create(new UnresolvedMosaicIdDto(
+										getMosaic().getId().getId().longValue()),
+								new AmountDto(getMosaic().getAmount().longValue())),
+						new BlockDurationDto(getDuration().longValue()), new Hash256Dto(getHashBuffer()));
+		return txBuilder.serialize();
+	}
 
-        LockFundsTransactionBuffer.startLockFundsTransactionBuffer(builder);
-        LockFundsTransactionBuffer.addSize(builder, 176);
-        LockFundsTransactionBuffer.addSignature(builder, signatureVector);
-        LockFundsTransactionBuffer.addSigner(builder, signerVector);
-        LockFundsTransactionBuffer.addVersion(builder, version);
-        LockFundsTransactionBuffer.addType(builder, getType().getValue());
-        LockFundsTransactionBuffer.addFee(builder, feeVector);
-        LockFundsTransactionBuffer.addDeadline(builder, deadlineVector);
-        LockFundsTransactionBuffer.addMosaicId(builder, mosaicIdVector);
-        LockFundsTransactionBuffer.addMosaicAmount(builder, mosaicAmountVector);
-        LockFundsTransactionBuffer.addDuration(builder, durationVector);
-        LockFundsTransactionBuffer.addHash(builder, hashVector);
-
-        int codedLockFunds = LockFundsTransactionBuffer.endLockFundsTransactionBuffer(builder);
-        builder.finish(codedLockFunds);
-
-        return schema.serialize(builder.sizedByteArray());
-    }
+	/**
+	 * Gets hash buffer.
+	 * @return Hash buffer.
+	 */
+	private ByteBuffer getHashBuffer() {
+		final byte[] hashBytes = Hex.decode(signedTransaction.getHash());
+		final ByteBuffer hashBuffer = ByteBuffer.wrap(hashBytes);
+		return hashBuffer;
+	}
 }

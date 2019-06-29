@@ -66,6 +66,8 @@ class IdGeneratorTest {
                 0x4A, 0xFF, 0x7B, 0x4B, 0xA8, 0xC1, 0xC2, 0x6A, 0x79, 0x17, 0x57, 0x59, 0x93, 0x34, 0x66, 0x27,
                 0xCB, 0x6C, 0x80, 0xDE, 0x62, 0xCD, 0x92, 0xF7, 0xF9, 0xAE, 0xDB, 0x70, 0x64, 0xA3, 0xDE, 0x62
         };
+        String hexPublicKey = Hex.toHexString(ByteUtils.intArrayToByteArray(publicKey));
+        String hexNonce = Hex.toHexString(ByteUtils.intArrayToByteArray(nonce));
         int[] expected = new int[] {0xC0AFC518, 0x3AD842A8};
         BigInteger id = IdGenerator.generateMosaicId(ByteUtils.intArrayToByteArray(nonce), ByteUtils.intArrayToByteArray(publicKey));
         assertEquals(UInt64.fromIntArray(expected), id);

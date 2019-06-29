@@ -1,18 +1,22 @@
-/*
- * Copyright 2018 NEM
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+/**
+ *** Copyright (c) 2016-present,
+ *** Jaguar0625, gimre, BloodyRookie, Tech Bureau, Corp. All rights reserved.
+ ***
+ *** This file is part of Catapult.
+ ***
+ *** Catapult is free software: you can redistribute it and/or modify
+ *** it under the terms of the GNU Lesser General Public License as published by
+ *** the Free Software Foundation, either version 3 of the License, or
+ *** (at your option) any later version.
+ ***
+ *** Catapult is distributed in the hope that it will be useful,
+ *** but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *** MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *** GNU Lesser General Public License for more details.
+ ***
+ *** You should have received a copy of the GNU Lesser General Public License
+ *** along with Catapult. If not, see <http://www.gnu.org/licenses/>.
+ **/
 
 package io.nem.sdk.infrastructure;
 
@@ -26,6 +30,7 @@ import io.nem.sdk.model.transaction.*;
 import io.reactivex.functions.Function;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
+import org.apache.commons.math3.analysis.function.Add;
 import org.bouncycastle.util.encoders.Hex;
 
 import java.io.UnsupportedEncodingException;
@@ -51,8 +56,8 @@ public class TransactionMapping implements Function<JsonObject, Transaction> {
             return new MosaicCreationTransactionMapping().apply(input);
         } else if (type == TransactionType.MOSAIC_SUPPLY_CHANGE.getValue()) {
             return new MosaicSupplyChangeTransactionMapping().apply(input);
-        //} else if (type == TransactionType.MOSAIC_ALIAS.getValue()) {
-        //    return new MosaicAliasTransactionMapping().apply(input);
+            //} else if (type == TransactionType.MOSAIC_ALIAS.getValue()) {
+            //    return new MosaicAliasTransactionMapping().apply(input);
         } else if (type == TransactionType.MODIFY_MULTISIG_ACCOUNT.getValue()) {
             return new MultisigModificationTransactionMapping().apply(input);
         } else if (type == TransactionType.AGGREGATE_COMPLETE.getValue() || type == TransactionType.AGGREGATE_BONDED.getValue()) {
@@ -141,7 +146,8 @@ class TransferTransactionMapping extends TransactionMapping {
                 extractTransactionVersion(transaction.getInteger("version")),
                 deadline,
                 extractBigInteger(transaction.getJsonArray("maxFee")),
-                Address.createFromEncoded(transaction.getString("recipient")),
+                Optional.of(Address.createFromEncoded(transaction.getString("recipient"))),
+                Optional.empty(),
                 mosaics,
                 message,
                 transaction.getString("signature"),
@@ -192,7 +198,7 @@ class MosaicCreationTransactionMapping extends TransactionMapping {
 
         String flags = "00" + Integer.toBinaryString(extractBigInteger(mosaicProperties.getJsonObject(0).getJsonArray("value")).intValue());
         String bitMapFlags = flags.substring(flags.length() - 2);
-        MosaicProperties properties = new MosaicProperties(bitMapFlags.charAt(1) == '1',
+        MosaicProperties properties = MosaicProperties.create(bitMapFlags.charAt(1) == '1',
                 bitMapFlags.charAt(0) == '1',
                 extractBigInteger(mosaicProperties.getJsonObject(1).getJsonArray("value")).intValue(),
                 mosaicProperties.size() == 3 ? extractBigInteger(mosaicProperties.getJsonObject(2).getJsonArray("value")) : BigInteger.valueOf(0));
@@ -262,8 +268,8 @@ class MultisigModificationTransactionMapping extends TransactionMapping {
                 extractTransactionVersion(transaction.getInteger("version")),
                 deadline,
                 extractBigInteger(transaction.getJsonArray("maxFee")),
-                transaction.getInteger("minApprovalDelta"),
-                transaction.getInteger("minRemovalDelta"),
+                (byte) transaction.getInteger("minApprovalDelta").intValue(),
+                (byte) transaction.getInteger("minRemovalDelta").intValue(),
                 modifications,
                 transaction.getString("signature"),
                 new PublicAccount(transaction.getString("signer"), networkType),
@@ -399,6 +405,7 @@ class SecretProofTransactionMapping extends TransactionMapping {
                 deadline,
                 extractBigInteger(transaction.getJsonArray("maxFee")),
                 HashType.rawValueOf(transaction.getInteger("hashAlgorithm")),
+                Address.createFromEncoded(transaction.getString("recipient")),
                 transaction.getString("secret"),
                 transaction.getString("proof"),
                 transaction.getString("signature"),
@@ -422,9 +429,9 @@ class AccountLinkTransactionMapping extends TransactionMapping{
                 networkType,
                 extractTransactionVersion(transaction.getInteger("version")),
                 deadline,
-                extractBigInteger(transaction.getJsonArray("fee")),
-                transaction.getString("remoteAccountKey"),
-                LinkActionType.rawValueOf(transaction.getInteger("linkAction")),
+                extractBigInteger(transaction.getJsonArray("maxFee")),
+                PublicAccount.createFromPublicKey(transaction.getString("remoteAccountKey"), networkType),
+                AccountLinkAction.rawValueOf(transaction.getInteger("action")),
                 transaction.getString("signature"),
                 new PublicAccount(transaction.getString("signer"), networkType),
                 transactionInfo

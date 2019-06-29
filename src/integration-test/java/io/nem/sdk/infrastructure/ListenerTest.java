@@ -46,7 +46,7 @@ class ListenerTest extends BaseTest {
     private Account multisigAccount;
     private Account cosignatoryAccount;
     private Account cosignatoryAccount2;
-
+    private String generationHash;
 
     @BeforeAll
     void setup() throws IOException {
@@ -56,6 +56,7 @@ class ListenerTest extends BaseTest {
         multisigAccount = new Account("5edebfdbeb32e9146d05ffd232c8af2cf9f396caf9954289daa0362d097fff3b", NetworkType.MIJIN_TEST);
         cosignatoryAccount = new Account("2a2b1f5d366a5dd5dc56c3c757cf4fe6c66e2787087692cf329d7a49a594658b", NetworkType.MIJIN_TEST);
         cosignatoryAccount2 = new Account("b8afae6f4ad13a1b8aad047b488e0738a437c7389d4ff30c359ac068910c1d59", NetworkType.MIJIN);
+        generationHash = this.getGenerationHash();
     }
 
     @Test
@@ -186,13 +187,14 @@ class ListenerTest extends BaseTest {
     private SignedTransaction announceStandaloneTransferTransaction() throws ExecutionException, InterruptedException {
         TransferTransaction transferTransaction = TransferTransaction.create(
                 new Deadline(2, HOURS),
+                BigInteger.ZERO,
                 this.getRecipient(),
                 Arrays.asList(),
                 PlainMessage.create("test-message"),
                 NetworkType.MIJIN_TEST
         );
 
-        SignedTransaction signedTransaction = this.account.sign(transferTransaction);
+        SignedTransaction signedTransaction = this.account.sign(transferTransaction, generationHash);
         transactionHttp.announce(signedTransaction).toFuture().get();
         return signedTransaction;
     }
@@ -200,13 +202,14 @@ class ListenerTest extends BaseTest {
     private SignedTransaction announceStandaloneTransferTransactionWithInsufficientBalance() throws ExecutionException, InterruptedException {
         TransferTransaction transferTransaction = TransferTransaction.create(
                 new Deadline(2, HOURS),
+                BigInteger.ZERO,
                 new Address("SBILTA367K2LX2FEXG5TFWAS7GEFYAGY7QLFBYKC", NetworkType.MIJIN_TEST),
                 Arrays.asList(NetworkCurrencyMosaic.createRelative(new BigInteger("100000000000"))),
                 PlainMessage.create("test-message"),
                 NetworkType.MIJIN_TEST
         );
 
-        SignedTransaction signedTransaction = this.account.sign(transferTransaction);
+        SignedTransaction signedTransaction = this.account.sign(transferTransaction, generationHash);
         transactionHttp.announce(signedTransaction).toFuture().get();
         return signedTransaction;
     }
@@ -214,6 +217,7 @@ class ListenerTest extends BaseTest {
     private SignedTransaction announceAggregateBondedTransaction() throws ExecutionException, InterruptedException {
         TransferTransaction transferTransaction = TransferTransaction.create(
                 new Deadline(2, HOURS),
+                BigInteger.ZERO,
                 new Address("SBILTA367K2LX2FEXG5TFWAS7GEFYAGY7QLFBYKC", NetworkType.MIJIN_TEST),
                 Arrays.asList(),
                 PlainMessage.create("test-message"),
@@ -227,7 +231,7 @@ class ListenerTest extends BaseTest {
                 ),
                 NetworkType.MIJIN_TEST);
 
-        SignedTransaction signedTransaction = this.cosignatoryAccount.sign(aggregateTransaction);
+        SignedTransaction signedTransaction = this.cosignatoryAccount.sign(aggregateTransaction, generationHash);
 
         transactionHttp.announceAggregateBonded(signedTransaction).toFuture().get();
 

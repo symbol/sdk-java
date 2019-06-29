@@ -16,8 +16,8 @@
 
 package io.nem.sdk.model.account;
 
+import io.nem.core.crypto.PublicKey;
 import io.nem.sdk.model.blockchain.NetworkType;
-import org.bouncycastle.util.encoders.Hex;
 
 import java.util.Objects;
 
@@ -27,65 +27,59 @@ import java.util.Objects;
  * @since 1.0
  */
 public class PublicAccount {
-    private final Address address;
-    private final String publicKey;
+	private final Address address;
+	private final PublicKey publicKey;
 
-    public PublicAccount(String publicKey, NetworkType networkType) {
-        this.address = Address.createFromPublicKey(publicKey, networkType);
-        this.publicKey = publicKey;
-    }
+	public PublicAccount(String publicKey, NetworkType networkType) {
+		this.address = Address.createFromPublicKey(publicKey, networkType);
+		this.publicKey = PublicKey.fromHexString(publicKey);
+	}
 
-    /**
-     * Create a PublicAccount from a public key and network type.
-     *
-     * @param publicKey   Public key
-     * @param networkType NetworkType
-     * @return {@link PublicAccount}
-     */
-    public static PublicAccount createFromPublicKey(String publicKey, NetworkType networkType) {
-        return new PublicAccount(publicKey, networkType);
-    }
+	/**
+	 * Create a PublicAccount from a public key and network type.
+	 *
+	 * @param publicKey   Public key
+	 * @param networkType NetworkType
+	 * @return {@link PublicAccount}
+	 */
+	public static PublicAccount createFromPublicKey(String publicKey, NetworkType networkType) {
+		return new PublicAccount(publicKey, networkType);
+	}
 
-    /**
-     * Compares public accounts for equality.
-     *
-     * @param o PublicAccount
-     * @return boolean
-     */
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof PublicAccount)) return false;
-        PublicAccount that = (PublicAccount) o;
-        return Objects.equals(address, that.address) &&
-                Objects.equals(publicKey, that.publicKey);
-    }
+	/**
+	 * Compares public accounts for equality.
+	 *
+	 * @param o PublicAccount
+	 * @return boolean
+	 */
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) {
+			return true;
+		}
+		if (!(o instanceof PublicAccount)) {
+			return false;
+		}
+		PublicAccount that = (PublicAccount) o;
+		return Objects.equals(address, that.address) &&
+				Objects.equals(publicKey, that.publicKey);
+	}
 
-    /**
-     * Returns account address.
-     *
-     * @return {@link Address}
-     */
-    public Address getAddress() {
-        return address;
-    }
+	/**
+	 * Returns account address.
+	 *
+	 * @return {@link Address}
+	 */
+	public Address getAddress() {
+		return address;
+	}
 
-    /**
-     * Return account public key.
-     *
-     * @return String
-     */
-    public String getPublicKey() {
-        return publicKey;
-    }
-
-    /**
-     * Return account public key in bytes.
-     *
-     * @return byte[]
-     */
-    public byte[] getPublicKeyAsBytes() {
-        return Hex.decode(publicKey);
-    }
-
+	/**
+	 * Return account public key.
+	 *
+	 * @return PublicKey
+	 */
+	public PublicKey getPublicKey() {
+		return publicKey;
+	}
 }

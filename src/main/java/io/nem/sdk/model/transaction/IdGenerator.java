@@ -32,63 +32,63 @@ import java.util.regex.Pattern;
 
 public class IdGenerator {
 
-    public static BigInteger generateMosaicId(byte[] nonce, byte[] publicKey) {
-        byte[] hash = IdGenerator.getHashInLittleEndian(nonce, publicKey);
-        // Unset the high bit for mosaic id
-        hash = (new BigInteger(hash)).and(new BigInteger("7FFFFFFFFFFFFFFF", 16)).toByteArray();
-        return new BigInteger(hash);
-    }
+	public static BigInteger generateMosaicId(byte[] nonce, byte[] publicKey) {
+		byte[] hash = IdGenerator.getHashInLittleEndian(nonce, publicKey);
+		// Unset the high bit for mosaic id
+		hash = (new BigInteger(hash)).and(new BigInteger("7FFFFFFFFFFFFFFF", 16)).toByteArray();
+		return new BigInteger(hash);
+	}
 
-    public static BigInteger generateNamespaceId(String namespaceName, BigInteger parentId) {
-        if (!namespaceName.matches("^[a-z0-9][a-z0-9-_]*$")) {
-            throw new IllegalIdentifierException("invalid namespace name");
-        }
+	public static BigInteger generateNamespaceId(String namespaceName, BigInteger parentId) {
+		if (!namespaceName.matches("^[a-z0-9][a-z0-9-_]*$")) {
+			throw new IllegalIdentifierException("invalid namespace name");
+		}
 
-        byte[] parentIdBytes = new byte[8];
-        byte[] bytes = ByteUtils.bigIntToBytes(parentId);
-        ByteBuffer.wrap(parentIdBytes).put(bytes);
-        ArrayUtils.reverse(parentIdBytes);
+		byte[] parentIdBytes = new byte[8];
+		byte[] bytes = ByteUtils.bigIntToBytes(parentId);
+		ByteBuffer.wrap(parentIdBytes).put(bytes);
+		ArrayUtils.reverse(parentIdBytes);
 
-        byte[] hash = IdGenerator.getHashInLittleEndian(parentIdBytes, namespaceName.getBytes());
-        // Set the high bit for namespace id
-        hash = (new BigInteger(hash)).or(new BigInteger("8000000000000000", 16)).toByteArray();
-        return new BigInteger(hash);
-    }
+		byte[] hash = IdGenerator.getHashInLittleEndian(parentIdBytes, namespaceName.getBytes());
+		// Set the high bit for namespace id
+		hash = (new BigInteger(hash)).or(new BigInteger("8000000000000000", 16)).toByteArray();
+		return new BigInteger(hash);
+	}
 
-    public static BigInteger generateNamespaceId(String namespaceName, String parentNamespaceName) {
-        return IdGenerator.generateNamespaceId(parentNamespaceName + "." + namespaceName);
-    }
+	public static BigInteger generateNamespaceId(String namespaceName, String parentNamespaceName) {
+		return IdGenerator.generateNamespaceId(parentNamespaceName + "." + namespaceName);
+	}
 
-    public static BigInteger generateNamespaceId(String namespacePath) {
-        List<BigInteger> namespaceList = generateNamespacePath(namespacePath);
-        return namespaceList.get(namespaceList.size() - 1);
-    }
+	public static BigInteger generateNamespaceId(String namespacePath) {
+		List<BigInteger> namespaceList = generateNamespacePath(namespacePath);
+		return namespaceList.get(namespaceList.size() - 1);
+	}
 
-    public static List<BigInteger> generateNamespacePath(String namespacePath) {
-        String[] parts = namespacePath.split(Pattern.quote("."));
-        List<BigInteger> path = new ArrayList<BigInteger>();
+	public static List<BigInteger> generateNamespacePath(String namespacePath) {
+		String[] parts = namespacePath.split(Pattern.quote("."));
+		List<BigInteger> path = new ArrayList<BigInteger>();
 
-        if (parts.length == 0) {
-            throw new IllegalIdentifierException("invalid namespace path");
-        } else if (parts.length > 3) {
-            throw new IllegalIdentifierException("too many parts");
-        }
+		if (parts.length == 0) {
+			throw new IllegalIdentifierException("invalid namespace path");
+		} else if (parts.length > 3) {
+			throw new IllegalIdentifierException("too many parts");
+		}
 
-        BigInteger namespaceId = BigInteger.valueOf(0);
+		BigInteger namespaceId = BigInteger.valueOf(0);
 
-        for (int i = 0; i < parts.length; i++) {
-            namespaceId = generateNamespaceId(parts[i], namespaceId);
-            path.add(namespaceId);
-        }
-        return path;
-    }
+		for (int i = 0; i < parts.length; i++) {
+			namespaceId = generateNamespaceId(parts[i], namespaceId);
+			path.add(namespaceId);
+		}
+		return path;
+	}
 
-    private static byte[] getHashInLittleEndian(final byte[]... inputs) {
-        byte[] result = Hashes.sha3_256(inputs);
-        result = Arrays.copyOfRange(result, 0, 8);
-        ArrayUtils.reverse(result);
-        return result;
-    }
+	private static byte[] getHashInLittleEndian(final byte[]... inputs) {
+		byte[] result = Hashes.sha3_256(inputs);
+		result = Arrays.copyOfRange(result, 0, 8);
+		ArrayUtils.reverse(result);
+		return result;
+	}
 
 /*  public static BigInteger generateNamespaceId2(String name, BigInteger parentId) {
 

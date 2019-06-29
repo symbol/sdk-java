@@ -87,13 +87,4 @@ public final class UnresolvedMosaicIdDto {
             dataOutputStream.writeLong(Long.reverseBytes(this.getUnresolvedMosaicId()));
         });
     }
-
-    /**
-     * Returns the object data as a string value
-     *
-     * @return String
-     */
-    public String asString() {
-        return Long.toString(this.getUnresolvedMosaicId());
-    }
 }

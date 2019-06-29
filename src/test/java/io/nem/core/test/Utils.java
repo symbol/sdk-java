@@ -175,7 +175,7 @@ public class Utils {
      * @return A slightly different key
      */
     public static PublicKey mutate(final PublicKey key) {
-        return new PublicKey(Utils.incrementAtIndex(key.getRaw(), 12));
+        return new PublicKey(Utils.incrementAtIndex(key.getBytes(), 12));
     }
 
     /**

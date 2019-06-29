@@ -51,7 +51,7 @@ public class BalanceTransferReceiptTest {
         assertEquals(balanceTransferReceipt.getType(), ReceiptType.Mosaic_Rental_Fee);
         assertEquals(balanceTransferReceipt.getSize(), null);
         assertEquals(balanceTransferReceipt.getVersion(), ReceiptVersion.BALANCE_TRANSFER);
-        assertEquals(balanceTransferReceipt.getSender().getPublicKey().toUpperCase(), account.getPublicKey().toUpperCase());
+        assertEquals(balanceTransferReceipt.getSender().getPublicKey().toString().toUpperCase(), account.getPublicKey().toUpperCase());
         assertEquals(balanceTransferReceipt.getRecipient().pretty(), "SDGLFW-DSHILT-IUHGIB-H5UGX2-VYF5VN-JEKCCD-BR26");
         assertEquals(balanceTransferReceipt.getMosaicId().getIdAsHex().toUpperCase(), "85BBEA6CC462B244");
         assertEquals(balanceTransferReceipt.getAmount(), BigInteger.TEN);
@@ -65,8 +65,8 @@ public class BalanceTransferReceiptTest {
         assertEquals(balanceTransferReceipt.getType(), ReceiptType.Mosaic_Rental_Fee);
         assertEquals(balanceTransferReceipt.getSize(), null);
         assertEquals(balanceTransferReceipt.getVersion(), ReceiptVersion.BALANCE_TRANSFER);
-        assertEquals(balanceTransferReceipt.getSender().getPublicKey().toUpperCase(), account.getPublicKey().toUpperCase());
-        assertEquals(balanceTransferReceipt.getRecipient().getAddress(), recipientAddress);
+        assertEquals(balanceTransferReceipt.getSender().getPublicKey().toString().toUpperCase(), account.getPublicKey().toUpperCase());
+        assertEquals(balanceTransferReceipt.getRecipient().getAliasValue(), recipientAddress);
         assertEquals(balanceTransferReceipt.getMosaicId().getIdAsHex().toUpperCase(), "85BBEA6CC462B244");
         assertEquals(balanceTransferReceipt.getAmount(), BigInteger.TEN);
     }
@@ -79,7 +79,7 @@ public class BalanceTransferReceiptTest {
         assertEquals(balanceTransferReceipt.getType(), ReceiptType.Namespace_Rental_Fee);
         assertEquals(balanceTransferReceipt.getSize(), null);
         assertEquals(balanceTransferReceipt.getVersion(), ReceiptVersion.BALANCE_TRANSFER);
-        assertEquals(balanceTransferReceipt.getSender().getPublicKey().toUpperCase(), account.getPublicKey().toUpperCase());
+        assertEquals(balanceTransferReceipt.getSender().getPublicKey().toString().toUpperCase(), account.getPublicKey().toUpperCase());
         assertEquals(balanceTransferReceipt.getRecipient().pretty(), "SDGLFW-DSHILT-IUHGIB-H5UGX2-VYF5VN-JEKCCD-BR26");
         assertEquals(balanceTransferReceipt.getMosaicId().getIdAsHex().toUpperCase(), "85BBEA6CC462B244");
         assertEquals(balanceTransferReceipt.getAmount(), BigInteger.TEN);
@@ -93,8 +93,8 @@ public class BalanceTransferReceiptTest {
         assertEquals(balanceTransferReceipt.getType(), ReceiptType.Namespace_Rental_Fee);
         assertEquals(balanceTransferReceipt.getSize(), null);
         assertEquals(balanceTransferReceipt.getVersion(), ReceiptVersion.BALANCE_TRANSFER);
-        assertEquals(balanceTransferReceipt.getSender().getPublicKey().toUpperCase(), account.getPublicKey().toUpperCase());
-        assertEquals(balanceTransferReceipt.getRecipient().getAddress(), recipientAddress);
+        assertEquals(balanceTransferReceipt.getSender().getPublicKey().toString().toUpperCase(), account.getPublicKey().toUpperCase());
+        assertEquals(balanceTransferReceipt.getRecipient().getAliasValue(), recipientAddress);
         assertEquals(balanceTransferReceipt.getMosaicId().getIdAsHex().toUpperCase(), "85BBEA6CC462B244");
         assertEquals(balanceTransferReceipt.getAmount(), BigInteger.TEN);
     }

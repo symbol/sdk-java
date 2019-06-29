@@ -228,7 +228,7 @@ public class AccountHttp extends Http implements AccountRepository {
 
     private Observable<List<Transaction>> findTransactions(PublicAccount publicAccount, Optional<QueryParams> queryParams, String path) {
         return this.client
-                .getAbs(this.url + publicAccount.getPublicKey() + path + (queryParams.isPresent() ? queryParams.get().toUrl() : ""))
+                .getAbs(this.url + publicAccount.getPublicKey().toString() + path + (queryParams.isPresent() ? queryParams.get().toUrl() : ""))
                 .as(BodyCodec.jsonArray())
                 .rxSend()
                 .toObservable()

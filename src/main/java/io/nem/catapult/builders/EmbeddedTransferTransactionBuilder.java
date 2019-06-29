@@ -21,8 +21,8 @@
 package io.nem.catapult.builders;
 
 import java.io.DataInput;
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.nio.ByteBuffer;
 
 /** Binary layout for an embedded transfer transaction. */
 public final class EmbeddedTransferTransactionBuilder extends EmbeddedTransactionBuilder {
