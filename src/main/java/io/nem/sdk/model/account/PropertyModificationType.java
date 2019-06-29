@@ -21,32 +21,32 @@ package io.nem.sdk.model.account;
  */
 public enum PropertyModificationType {
 
-    Add(0x00),
-    Remove(0x01);
+	Add(0x00),
+	Remove(0x01);
 
-    private Integer value;
+	private Integer value;
 
-    public static PropertyModificationType rawValueOf(String value) {
-        switch (value) {
-            case "0x00":
-                return PropertyModificationType.Add;
-            case "0x01":
-                return PropertyModificationType.Remove;
-            default:
-                throw new IllegalArgumentException(value + " is not a valid value");
-        }
-    }
+	PropertyModificationType(int value) {
+		this.value = value;
+	}
 
-    PropertyModificationType(int value) {
-        this.value = value;
-    }
+	public static PropertyModificationType rawValueOf(String value) {
+		switch (value) {
+			case "0x00":
+				return PropertyModificationType.Add;
+			case "0x01":
+				return PropertyModificationType.Remove;
+			default:
+				throw new IllegalArgumentException(value + " is not a valid value");
+		}
+	}
 
-    /**
-     * Returns enum value.
-     *
-     * @return enum value
-     */
-    public Integer getValue() {
-        return this.value;
-    }
+	/**
+	 * Returns enum value.
+	 *
+	 * @return enum value
+	 */
+	public Integer getValue() {
+		return this.value;
+	}
 }

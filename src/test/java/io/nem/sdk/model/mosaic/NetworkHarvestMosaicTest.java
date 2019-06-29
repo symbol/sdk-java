@@ -48,6 +48,5 @@ class NetworkHarvestMosaicTest {
         assertEquals(NetworkHarvestMosaic.INITIALSUPPLY, new BigInteger("15000000"));
         assertEquals(NetworkHarvestMosaic.TRANSFERABLE, true);
         assertEquals(NetworkHarvestMosaic.SUPPLYMUTABLE, true);
-        assertEquals(NetworkHarvestMosaic.LEVYMUTABLE, false);
     }
 }

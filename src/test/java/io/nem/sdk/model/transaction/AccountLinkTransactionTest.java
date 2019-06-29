@@ -22,6 +22,8 @@ import io.nem.sdk.model.blockchain.NetworkType;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import java.math.BigInteger;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
@@ -37,12 +39,13 @@ public class AccountLinkTransactionTest {
     void create() {
         AccountLinkTransaction accountLinkTransaction = AccountLinkTransaction.create(
                 new FakeDeadline(),
-                account.getPublicKey(),
-                LinkActionType.LINK,
+                BigInteger.ZERO,
+                account.getPublicAccount(),
+                AccountLinkAction.LINK,
                 NetworkType.MIJIN_TEST
         );
-        assertEquals( accountLinkTransaction.getLinkAction(),LinkActionType.LINK);
-        assertEquals(accountLinkTransaction.getRemoteAccountKey(),"9A49366406ACA952B88BADF5F1E9BE6CE4968141035A60BE503273EA65456B24");
+        assertEquals( accountLinkTransaction.getLinkAction(),AccountLinkAction.LINK);
+        assertEquals(accountLinkTransaction.getRemoteAccount().getPublicKey().toString(),"9A49366406ACA952B88BADF5F1E9BE6CE4968141035A60BE503273EA65456B24");
     }
 
 }

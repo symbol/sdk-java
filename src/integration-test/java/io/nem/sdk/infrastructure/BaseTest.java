@@ -28,6 +28,7 @@ public abstract class BaseTest {
     private PublicAccount testPublicAccount;
     private Address testAccountAddress;
     private Address testRecipient;  // Test Account2 Address
+    private String generationHash;
 
     public Config config() {
         return BaseTest.CONFIG;
@@ -63,5 +64,11 @@ public abstract class BaseTest {
         if (this.testRecipient == null)
             this.testRecipient = Address.createFromRawAddress(this.config().getTestAccount2Address());
         return this.testRecipient;
+    }
+
+    public String getGenerationHash() {
+        if (this.generationHash == null)
+            this.generationHash = this.config().getGenerationHash();
+        return this.generationHash;
     }
 }

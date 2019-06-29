@@ -20,6 +20,7 @@ import io.nem.sdk.model.blockchain.NetworkType;
 import io.nem.sdk.model.mosaic.MosaicId;
 import io.nem.sdk.model.mosaic.MosaicNonce;
 import io.nem.sdk.model.mosaic.MosaicProperties;
+import org.bouncycastle.util.encoders.Hex;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -35,39 +36,38 @@ class MosaicDefinitionTransactionTest {
     void createAMosaicCreationTransactionViaStaticConstructor() {
         MosaicDefinitionTransaction mosaicCreationTx = MosaicDefinitionTransaction.create(
                 new Deadline(2, ChronoUnit.HOURS),
+                BigInteger.ZERO,
                 MosaicNonce.createFromBigInteger(new BigInteger("0")),
                 new MosaicId(new BigInteger("0")),
-                new MosaicProperties(true, true,  3, BigInteger.valueOf(10)),
+                MosaicProperties.create(true, true,  3, BigInteger.valueOf(10)),
                 NetworkType.MIJIN_TEST
         );
 
         assertEquals(NetworkType.MIJIN_TEST, mosaicCreationTx.getNetworkType());
-        assertTrue(3 == mosaicCreationTx.getVersion());
+        assertTrue(1 == mosaicCreationTx.getVersion());
         assertTrue(LocalDateTime.now().isBefore(mosaicCreationTx.getDeadline().getLocalDateTime()));
         assertEquals(BigInteger.valueOf(0), mosaicCreationTx.getFee());
         assertEquals(new BigInteger("0"), mosaicCreationTx.getMosaicId().getId());
         assertEquals(true, mosaicCreationTx.getMosaicProperties().isSupplyMutable());
         assertEquals(true, mosaicCreationTx.getMosaicProperties().isTransferable());
         assertEquals(3, mosaicCreationTx.getMosaicProperties().getDivisibility());
-        assertEquals(BigInteger.valueOf(10), mosaicCreationTx.getMosaicProperties().getDuration());
+        assertEquals(BigInteger.valueOf(10), mosaicCreationTx.getMosaicProperties().getDuration().get());
     }
 
-    /* TODO after catbuffer integration
     @Test
     @DisplayName("Serialization")
     void serialization() {
-        byte[] expected = new byte[]{(byte) 156, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                2, (byte) 144, 77, 65, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, (byte) 155, (byte) 138, 22, 28, (byte) 245, 9, 35, (byte) 144, 21, (byte) 153, 17, (byte) 174, (byte) 167, 46, (byte) 189, 60, 7, 1, 7, 4, 109, 111, 115, 97, 105, 99, 115, 2, 16, 39, 0, 0, 0, 0, 0, 0};
-
+        String expected = "9000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001904d4100000000000000000100000000000000000000000000000000000000010304021027000000000000";
         MosaicDefinitionTransaction mosaicDefinitionTransaction = MosaicDefinitionTransaction.create(
                 new FakeDeadline(),
+                BigInteger.ZERO,
                 MosaicNonce.createFromBigInteger(new BigInteger("0")),
                 new MosaicId(new BigInteger("0")),
-                new MosaicProperties(true, true, true, 4, BigInteger.valueOf(10000)),
+                MosaicProperties.create(true, true, 4, BigInteger.valueOf(10000)),
                 NetworkType.MIJIN_TEST
         );
 
         byte[] actual = mosaicDefinitionTransaction.generateBytes();
-        assertArrayEquals(expected, actual);
-    }*/
+        assertEquals(expected, Hex.toHexString(actual));
+    }
 }

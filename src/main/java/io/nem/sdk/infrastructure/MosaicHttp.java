@@ -85,7 +85,7 @@ public class MosaicHttp extends Http implements MosaicRepository {
     }
 
     private MosaicInfo createMosaicInfo(MosaicInfoDTO mosaicInfoDTO, NetworkType networkType) {
-        return new MosaicInfo(mosaicInfoDTO.getMeta().getId(),
+        return MosaicInfo.create(mosaicInfoDTO.getMeta().getId(),
                 new MosaicId(extractIntArray(mosaicInfoDTO.getMosaic().getMosaicId())),
                 extractIntArray(mosaicInfoDTO.getMosaic().getSupply()),
                 extractIntArray(mosaicInfoDTO.getMosaic().getHeight()),
@@ -97,7 +97,7 @@ public class MosaicHttp extends Http implements MosaicRepository {
     private MosaicProperties extractMosaicProperties(List<MosaicPropertyDTO> mosaicPropertiesDTO) {
         String flags = "00" + Integer.toBinaryString(extractIntArray(mosaicPropertiesDTO.get(0).getValue()).intValue());
         String bitMapFlags = flags.substring(flags.length() - 2);
-        return new MosaicProperties(bitMapFlags.charAt(1) == '1',
+        return MosaicProperties.create(bitMapFlags.charAt(1) == '1',
                 bitMapFlags.charAt(0) == '1',
                 extractIntArray(mosaicPropertiesDTO.get(1).getValue()).intValue(),
                 extractIntArray(mosaicPropertiesDTO.get(2).getValue()));

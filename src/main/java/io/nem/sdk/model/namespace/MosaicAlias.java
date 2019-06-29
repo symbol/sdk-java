@@ -16,41 +16,27 @@
 
 package io.nem.sdk.model.namespace;
 
-import io.nem.sdk.model.account.Address;
 import io.nem.sdk.model.mosaic.MosaicId;
 
-public class MosaicAlias implements Alias {
+/**
+ * Mosaic alias.
+ */
+public class MosaicAlias extends AliasBase<MosaicId> {
+	/**
+	 * Creates mosaicId alias.
+	 *
+	 * @param mosaicId Mosaic id.
+	 */
+	public MosaicAlias(MosaicId mosaicId) {
+		super(mosaicId);
+	}
 
-    private final MosaicId mosaicId;
-
-    @Override
-    public MosaicId getMosaicId() {
-        return this.mosaicId;
-    }
-
-    @Override
-    public Address getAddress() {
-        return null;
-    }
-
-    /**
-     * Create MosaicAlias from mosaicId
-     *
-     * @param mosaicId
-     */
-    public MosaicAlias(MosaicId mosaicId) {
-        this.mosaicId = mosaicId;
-    }
-
-    public AliasType getType(){
-        return AliasType.Mosaic;
-    }
-
-    @Override
-    public boolean equals(Alias alias) {
-        return alias instanceof MosaicAlias || alias.getType() == AliasType.Mosaic;
-    }
-
-    @Override
-    public boolean isEmpty() { return false; }
+	/**
+	 * Gets the alias type.
+	 *
+	 * @return Alias type.
+	 */
+	public AliasType getType() {
+		return AliasType.Mosaic;
+	}
 }

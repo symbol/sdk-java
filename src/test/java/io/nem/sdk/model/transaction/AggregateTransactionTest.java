@@ -24,6 +24,7 @@ import io.nem.sdk.model.blockchain.NetworkType;
 import io.nem.sdk.model.mosaic.Mosaic;
 import io.nem.sdk.model.mosaic.NetworkCurrencyMosaic;
 import io.vertx.core.json.JsonObject;
+import org.bouncycastle.util.encoders.Hex;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -36,12 +37,13 @@ import java.util.Collections;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class AggregateTransactionTest {
-
+    private final String generationHash = "57F7DA205008026C776CB6AED843393F04CD458E0AA2D9F1D5F31A402072B2D6";
     @Test
     void createAAggregateTransactionViaStaticConstructor() {
 
         TransferTransaction transferTx = TransferTransaction.create(
                 new Deadline(2, ChronoUnit.HOURS),
+                BigInteger.ZERO,
                 new Address("SDGLFW-DSHILT-IUHGIB-H5UGX2-VYF5VN-JEKCCD-BR26", NetworkType.MIJIN_TEST),
                 Collections.emptyList(),
                 PlainMessage.Empty,
@@ -54,27 +56,21 @@ public class AggregateTransactionTest {
                 NetworkType.MIJIN_TEST);
 
         assertEquals(NetworkType.MIJIN_TEST, aggregateTx.getNetworkType());
-        assertTrue(2 == aggregateTx.getVersion());
+        assertTrue(1 == aggregateTx.getVersion());
         assertTrue(LocalDateTime.now().isBefore(aggregateTx.getDeadline().getLocalDateTime()));
         assertEquals(BigInteger.valueOf(0), aggregateTx.getFee());
         assertEquals(1, aggregateTx.getInnerTransactions().size());
     }
 
-    /* TODO after DTO and catbuffer integration
     @Test
     @DisplayName("Serialization")
     void serialization() {
         // Generated at nem2-library-js/test/transactions/RegisterNamespaceTransaction.spec.js
-        byte[] expected = new byte[]{(byte)209,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-                0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-                2,(byte)144,65,65,0,0,0,0, 0,0,0,0,1,0,0,0,0,0,0,0,85,0,0,0,85,0,0,0,(byte)132,107,68,57,21,69,121,(byte)165,(byte)144,59,20,89,
-                (byte)201,(byte)207,105,(byte)203,(byte)129,83,(byte)246,(byte)208,17,10,122,14,(byte)214,29,(byte)226,(byte)154,
-                (byte)228,(byte)129,11,(byte)242,3,(byte)144,84,65,(byte)144,80,(byte)185,(byte)131,126,(byte)250,(byte)180,
-                (byte)187,(byte)232,(byte)164,(byte)185,(byte)187,50,(byte)216,18,(byte)249,(byte)136,92,0,(byte)216,(byte)252,
-                22,80,(byte)225,66,1,0,1,0,68,(byte)207,95,(byte)217,65,(byte)173,37,(byte)213,(byte)128,(byte)150,(byte)152,0,0,0,0,0};
+        String expected = "d100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001904141000000000000000001000000000000005500000055000000846b4439154579a5903b1459c9cf69cb8153f6d0110a7a0ed61de29ae4810bf2019054419050b9837efab4bbe8a4b9bb32d812f9885c00d8fc1650e1420100010044b262c46ceabb858096980000000000";
 
         TransferTransaction transferTx = TransferTransaction.create(
                 new FakeDeadline(),
+                BigInteger.ZERO,
                 new Address("SBILTA367K2LX2FEXG5TFWAS7GEFYAGY7QLFBYKC", NetworkType.MIJIN_TEST),
                 Collections.singletonList(
                         new Mosaic(NetworkCurrencyMosaic.NAMESPACEID, BigInteger.valueOf(10000000))
@@ -90,14 +86,15 @@ public class AggregateTransactionTest {
         );
 
         byte[] actual = aggregateTx.generateBytes();
-        assertArrayEquals(expected, actual);
-    }*/
+        assertEquals(expected, Hex.toHexString(actual));
+    }
 
     @Test
     void shouldCreateAggregateTransactionAndSignWithMultipleCosignatories() {
 
         TransferTransaction transferTx = TransferTransaction.create(
                 new FakeDeadline(),
+                BigInteger.ZERO,
                 new Address("SBILTA367K2LX2FEXG5TFWAS7GEFYAGY7QLFBYKC", NetworkType.MIJIN_TEST),
                 Arrays.asList(),
                 new PlainMessage("test-message"),
@@ -113,7 +110,7 @@ public class AggregateTransactionTest {
         Account cosignatoryAccount = new Account("2a2b1f5d366a5dd5dc56c3c757cf4fe6c66e2787087692cf329d7a49a594658b", NetworkType.MIJIN_TEST);
         Account cosignatoryAccount2 = new Account("b8afae6f4ad13a1b8aad047b488e0738a437c7389d4ff30c359ac068910c1d59", NetworkType.MIJIN_TEST); // TODO bug with private key
 
-        SignedTransaction signedTransaction = cosignatoryAccount.signTransactionWithCosignatories(aggregateTx, Arrays.asList(cosignatoryAccount2));
+        SignedTransaction signedTransaction = cosignatoryAccount.signTransactionWithCosignatories(aggregateTx, Arrays.asList(cosignatoryAccount2), generationHash);
 
         assertEquals("2d010000", signedTransaction.getPayload().substring(0, 8));
         assertEquals("5100000051000000", signedTransaction.getPayload().substring(240, 256));

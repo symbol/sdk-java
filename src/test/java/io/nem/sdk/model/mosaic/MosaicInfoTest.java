@@ -29,10 +29,10 @@ class MosaicInfoTest {
 
     @Test
     void createAMosaicInfoViaConstructor() {
-        MosaicProperties mosaicProperties = new MosaicProperties(true, true, 3, BigInteger.valueOf(10));
+        MosaicProperties mosaicProperties = MosaicProperties.create(true, true, 3, BigInteger.valueOf(10));
         MosaicId mosaicId = new MosaicId(new BigInteger("-3087871471161192663"));
 
-        MosaicInfo mosaicInfo = new MosaicInfo(
+        MosaicInfo mosaicInfo = MosaicInfo.create(
                 "5A3CD9B09CD1E8000159249B",
                 mosaicId,
                 new BigInteger("100"),
@@ -49,14 +49,14 @@ class MosaicInfoTest {
         assertTrue(mosaicInfo.isSupplyMutable());
         assertTrue(mosaicInfo.isTransferable());
         assertEquals(3, mosaicInfo.getDivisibility());
-        assertEquals(BigInteger.valueOf(10), mosaicInfo.getDuration());
+        assertEquals(BigInteger.valueOf(10).intValue(), mosaicInfo.getDuration().get().intValue());
     }
 
     @Test
     void shouldReturnIsSupplyMutableWhenIsMutable() {
-        MosaicProperties mosaicProperties = new MosaicProperties(true, true, 3, BigInteger.valueOf(10));
+        MosaicProperties mosaicProperties = MosaicProperties.create(true, true, 3, BigInteger.valueOf(10));
 
-        MosaicInfo mosaicInfo = new MosaicInfo(
+        MosaicInfo mosaicInfo = MosaicInfo.create(
                 "5A3CD9B09CD1E8000159249B",
                 new MosaicId(new BigInteger("-3087871471161192663")),
                 new BigInteger("100"),
@@ -70,9 +70,9 @@ class MosaicInfoTest {
 
     @Test
     void shouldReturnIsSupplyMutableWhenIsImmutable() {
-        MosaicProperties mosaicProperties = new MosaicProperties(false, true, 3, BigInteger.valueOf(10));
+        MosaicProperties mosaicProperties = MosaicProperties.create(false, true, 3, BigInteger.valueOf(10));
 
-        MosaicInfo mosaicInfo = new MosaicInfo(
+        MosaicInfo mosaicInfo = MosaicInfo.create(
                 "5A3CD9B09CD1E8000159249B",
                 new MosaicId(new BigInteger("-3087871471161192663")),
                 new BigInteger("100"),
@@ -86,9 +86,9 @@ class MosaicInfoTest {
 
     @Test
     void shouldReturnIsTransferableWhenItsTransferable() {
-        MosaicProperties mosaicProperties = new MosaicProperties(true, true, 3, BigInteger.valueOf(10));
+        MosaicProperties mosaicProperties = MosaicProperties.create(true, true, 3, BigInteger.valueOf(10));
 
-        MosaicInfo mosaicInfo = new MosaicInfo(
+        MosaicInfo mosaicInfo = MosaicInfo.create(
                 "5A3CD9B09CD1E8000159249B",
                 new MosaicId(new BigInteger("-3087871471161192663")),
                 new BigInteger("100"),
@@ -102,9 +102,9 @@ class MosaicInfoTest {
 
     @Test
     void shouldReturnIsTransferableWhenItsNotTransferable() {
-        MosaicProperties mosaicProperties = new MosaicProperties(true, false, 3, BigInteger.valueOf(10));
+        MosaicProperties mosaicProperties = MosaicProperties.create(true, false, 3, BigInteger.valueOf(10));
 
-        MosaicInfo mosaicInfo = new MosaicInfo(
+        MosaicInfo mosaicInfo = MosaicInfo.create(
                 "5A3CD9B09CD1E8000159249B",
                 new MosaicId(new BigInteger("-3087871471161192663")),
                 new BigInteger("100"),

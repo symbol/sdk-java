@@ -21,8 +21,8 @@
 package io.nem.catapult.builders;
 
 import java.io.DataInput;
-import java.util.EnumSet;
 import java.util.ArrayList;
+import java.util.EnumSet;
 
 /** Binary layout for a mosaic definition transaction. */
 final class MosaicDefinitionTransactionBodyBuilder {

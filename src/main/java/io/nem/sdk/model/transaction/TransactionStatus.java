@@ -24,62 +24,62 @@ import java.math.BigInteger;
  * @since 1.0
  */
 public class TransactionStatus {
-    private final String group;
-    private final String status;
-    private final String hash;
-    private final Deadline deadline;
-    private final BigInteger height;
+	private final String group;
+	private final String status;
+	private final String hash;
+	private final Deadline deadline;
+	private final BigInteger height;
 
-    public TransactionStatus(String group, String status, String hash, Deadline deadline, BigInteger height) {
-        this.group = group;
-        this.status = status;
-        this.hash = hash;
-        this.deadline = deadline;
-        this.height = height;
-    }
+	public TransactionStatus(final String group, final String status, final String hash, final Deadline deadline, final BigInteger height) {
+		this.group = group;
+		this.status = status;
+		this.hash = hash;
+		this.deadline = deadline;
+		this.height = height;
+	}
 
-    /**
-     * Returns transaction status group "failed", "unconfirmed", "confirmed", etc...
-     *
-     * @return transaction group name
-     */
-    public String getGroup() {
-        return group;
-    }
+	/**
+	 * Returns transaction status group "failed", "unconfirmed", "confirmed", etc...
+	 *
+	 * @return transaction group name
+	 */
+	public String getGroup() {
+		return group;
+	}
 
-    /**
-     * Returns transaction status being the error name in case of failure and success otherwise.
-     *
-     * @return transaction status
-     */
-    public String getStatus() {
-        return status;
-    }
+	/**
+	 * Returns transaction status being the error name in case of failure and success otherwise.
+	 *
+	 * @return transaction status
+	 */
+	public String getStatus() {
+		return status;
+	}
 
-    /**
-     * Returns transaction hash.
-     *
-     * @return transaction hash
-     */
-    public String getHash() {
-        return hash;
-    }
+	/**
+	 * Returns transaction hash.
+	 *
+	 * @return transaction hash
+	 */
+	public String getHash() {
+		return hash;
+	}
 
-    /**
-     * Returns transaction deadline.
-     *
-     * @return transaction deadline
-     */
-    public Deadline getDeadline() {
-        return deadline;
-    }
+	/**
+	 * Returns transaction deadline.
+	 *
+	 * @return transaction deadline
+	 */
+	public Deadline getDeadline() {
+		return deadline;
+	}
 
-    /**
-     * Returns height of the block at which it was confirmed or rejected.
-     *
-     * @return block height
-     */
-    public BigInteger getHeight() {
-        return height;
-    }
+	/**
+	 * Returns height of the block at which it was confirmed or rejected.
+	 *
+	 * @return block height
+	 */
+	public BigInteger getHeight() {
+		return height;
+	}
 }

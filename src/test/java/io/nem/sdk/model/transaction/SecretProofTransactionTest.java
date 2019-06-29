@@ -17,6 +17,7 @@
 package io.nem.sdk.model.transaction;
 
 import io.nem.sdk.model.account.Account;
+import io.nem.sdk.model.account.Address;
 import io.nem.sdk.model.account.PublicAccount;
 import io.nem.sdk.model.blockchain.NetworkType;
 import org.bouncycastle.util.encoders.Hex;
@@ -24,64 +25,61 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.math.BigInteger;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 public class SecretProofTransactionTest {
     static Account account;
+    static String generationHash;
+    static Address recipient;
 
     @BeforeAll
     public static void setup() {
         account = new Account("787225aaff3d2c71f4ffa32d4f19ec4922f3cd869747f267378f81f8e3fcb12d", NetworkType.MIJIN_TEST);
+        generationHash = "57F7DA205008026C776CB6AED843393F04CD458E0AA2D9F1D5F31A402072B2D6";
+        recipient = Address.createFromPublicKey("b4f12e7c9f6946091e2cb8b6d3a12b50d17ccbbf646386ea27ce2946a7423dcf", NetworkType.MIJIN_TEST);
     }
 
     @Test
     @DisplayName("Serialization")
     void serialization() {
 
-        byte[] expected = new byte[]{(byte)159,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-                0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-                0,0,0,0,0,0,0,3,(byte)144,82,66,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,
-
-                63, -56, -70, 16, 34, -102, -75, 119, -115, 5, -39, -60, -73, -11, 102, 118, -88, -117, -7, 41, 92, 24, 90, -49, -64, -7, 97, -37, 84, 8, -54, -2
-
-                ,4,0,(byte)154,73,54,100
-        };
+        String expected = "b80000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000190524200000000000000000100000000000000003fc8ba10229ab5778d05d9c4b7f56676a88bf9295c185acfc0f961db5408cafe9022d04812d05000f96c283657b0c17990932bc84926cde64f04009a493664";
 
         String secret = "3fc8ba10229ab5778d05d9c4b7f56676a88bf9295c185acfc0f961db5408cafe";
         String secretSeed = "9a493664";
         SecretProofTransaction secretProoftx = SecretProofTransaction.create(
                 new FakeDeadline(),
+                BigInteger.ZERO,
                 HashType.SHA3_256,
+                recipient,
                 secret,
                 secretSeed,
                 NetworkType.MIJIN_TEST
         );
         byte[] actual = secretProoftx.generateBytes();
-        assertEquals(Hex.toHexString(expected), Hex.toHexString(actual));
+        assertEquals(expected, Hex.toHexString(actual));
     }
 
     @Test
     @DisplayName("To aggregate")
     void toAggregate() {
-        byte[] expected = new byte[]{(byte)79,0,0,0,-102,73,54,100,6,-84,-87,82,-72,-117,-83,-11,-15,-23,-66,108,-28,-106,-127,
-                65,3,90,96,-66,80,50,115,-22,101,69,107,36,3,(byte)144,82,66,0,
-
-                63, -56, -70, 16, 34, -102, -75, 119, -115, 5, -39, -60, -73, -11, 102, 118, -88, -117, -7, 41, 92, 24, 90, -49, -64, -7, 97, -37, 84, 8, -54, -2
-
-                ,4,0,(byte)154,73,54,100
-        };
+        String expected = "680000009a49366406aca952b88badf5f1e9be6ce4968141035a60be503273ea65456b2401905242003fc8ba10229ab5778d05d9c4b7f56676a88bf9295c185acfc0f961db5408cafe9022d04812d05000f96c283657b0c17990932bc84926cde64f04009a493664";
 
         String secret = "3fc8ba10229ab5778d05d9c4b7f56676a88bf9295c185acfc0f961db5408cafe";
         String secretSeed = "9a493664";
         SecretProofTransaction secretProoftx = SecretProofTransaction.create(
                 new FakeDeadline(),
+                BigInteger.ZERO,
                 HashType.SHA3_256,
+                recipient,
                 secret,
                 secretSeed,
                 NetworkType.MIJIN_TEST
         );
         byte[] actual = secretProoftx.toAggregate(new PublicAccount("9A49366406ACA952B88BADF5F1E9BE6CE4968141035A60BE503273EA65456B24", NetworkType.MIJIN_TEST)).toAggregateTransactionBytes();
-        assertArrayEquals(expected, actual);
+        assertEquals(expected, Hex.toHexString(actual));
     }
 
     @Test
@@ -90,14 +88,17 @@ public class SecretProofTransactionTest {
         String secretSeed = "9a493664";
         SecretProofTransaction secretProoftx = SecretProofTransaction.create(
                 new FakeDeadline(),
+                BigInteger.ZERO,
                 HashType.SHA3_256,
+                recipient,
                 secret,
                 secretSeed,
                 NetworkType.MIJIN_TEST
         );
-        SignedTransaction signedTransaction = secretProoftx.signWith(account);
-        assertEquals("9F000000B5F704A8ADC74F09EB5EAE13F9265DE542480A3FED07CD1C2068D4203322272048DA36F22433E596BC6754F0ABEEC9D3E21EB713B0CD2E440DAEFC40B3883D041026D70E1954775749C6811084D6450A3184D977383F0E4282CD47118AF377550390524200000000000000000100000000000000003FC8BA10229AB5778D05D9C4B7F56676A88BF9295C185ACFC0F961DB5408CAFE04009A493664", signedTransaction.getPayload());
-        assertEquals("5F56250D59BD5818F85B2D5E3E85FC7EF92F4BAF7C3695A4A4645AEF592EA6EA", signedTransaction.getHash());
+        SignedTransaction signedTransaction = secretProoftx.signWith(account, generationHash);
+        String payload = signedTransaction.getPayload();
+        assertEquals(payload.substring(240), "003FC8BA10229AB5778D05D9C4B7F56676A88BF9295C185ACFC0F961DB5408CAFE9022D04812D05000F96C283657B0C17990932BC84926CDE64F04009A493664");
+        assertEquals("E0FB9BF47C70A411EB77AD4683FA33E823A403BC04ECD0D50F85143BBE2C3229", signedTransaction.getHash());
     }
 
     @Test
@@ -107,7 +108,9 @@ public class SecretProofTransactionTest {
         assertThrows(IllegalArgumentException.class, ()-> {
             SecretProofTransaction secretProoftx = SecretProofTransaction.create(
                     new FakeDeadline(),
+                    BigInteger.ZERO,
                     HashType.SHA3_256,
+                    recipient,
                     "non valid hash",
                     proof,
                     NetworkType.MIJIN_TEST

@@ -34,7 +34,7 @@ public class PublicKeyTest {
         final PublicKey key = new PublicKey(TEST_BYTES);
 
         // Assert:
-        Assert.assertThat(key.getRaw(), IsEqual.equalTo(TEST_BYTES));
+        Assert.assertThat(key.getBytes(), IsEqual.equalTo(TEST_BYTES));
     }
 
     @Test
@@ -43,7 +43,7 @@ public class PublicKeyTest {
         final PublicKey key = PublicKey.fromHexString("227F");
 
         // Assert:
-        Assert.assertThat(key.getRaw(), IsEqual.equalTo(new byte[]{0x22, 0x7F}));
+        Assert.assertThat(key.getBytes(), IsEqual.equalTo(new byte[]{0x22, 0x7F}));
     }
 
     @Test(expected = CryptoException.class)
@@ -90,7 +90,7 @@ public class PublicKeyTest {
     @Test
     public void toStringReturnsHexRepresentation() {
         // Assert:
-        Assert.assertThat(new PublicKey(TEST_BYTES).toString(), IsEqual.equalTo("22ab71"));
+        Assert.assertThat(new PublicKey(TEST_BYTES).toString().toUpperCase(), IsEqual.equalTo("22ab71".toUpperCase()));
     }
 
     //endregion

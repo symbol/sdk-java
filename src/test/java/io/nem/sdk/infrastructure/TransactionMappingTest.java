@@ -183,7 +183,7 @@ public class TransactionMappingTest {
 
     @Test
     void shouldCreateStandaloneSecretProofTransaction() {
-        JsonObject secretProofTransactionDTO = new JsonObject("{\"meta\": {\"height\": [22212,0],\"hash\": \"A1BBEF9DF8F5170B43AFBB38BCA9140F38C7234C6F4AB306458F6AF2E2F0234A\",\"merkleComponentHash\": \"A1BBEF9DF8F5170B43AFBB38BCA9140F38C7234C6F4AB306458F6AF2E2F0234A\",\"index\": 0,\"id\": \"5A86FDDA5F8AE10001776BD2\"},\"transaction\": {\"signature\": \"7C52EA06C71843FD6B1AE30A04FECD53C0B78FE8A8A2925D96FE528401255CBB3F3156C99F2F3E4DEF01CD38A014B677AD4DB78733929C0C96BC28FD7D508D05\",\"signer\": \"74A6BD39F42535AA3608924A517A88E3B2C36B2DFC296CB379604A3FEE01C7B8\",\"version\": 36867,\"type\": 16978,\"maxFee\": [0,0],\"deadline\": [3496462687,13],\"hashAlgorithm\": 0,\"secret\": \"428A9DEB1DC6B938AD7C83617E4A558D5316489ADE176AE0C821568A2AD6F700\",\"proof\": \"E08664BF179B064D9E3B\"}}");
+        JsonObject secretProofTransactionDTO = new JsonObject("{\"meta\": {\"height\": [22212,0],\"hash\": \"A1BBEF9DF8F5170B43AFBB38BCA9140F38C7234C6F4AB306458F6AF2E2F0234A\",\"merkleComponentHash\": \"A1BBEF9DF8F5170B43AFBB38BCA9140F38C7234C6F4AB306458F6AF2E2F0234A\",\"index\": 0,\"id\": \"5A86FDDA5F8AE10001776BD2\"},\"transaction\": {\"signature\": \"7C52EA06C71843FD6B1AE30A04FECD53C0B78FE8A8A2925D96FE528401255CBB3F3156C99F2F3E4DEF01CD38A014B677AD4DB78733929C0C96BC28FD7D508D05\",\"signer\": \"74A6BD39F42535AA3608924A517A88E3B2C36B2DFC296CB379604A3FEE01C7B8\",\"version\": 36867,\"type\": 16978,\"maxFee\": [0,0],\"deadline\": [3496462687,13],\"hashAlgorithm\": 0,\"secret\": \"428A9DEB1DC6B938AD7C83617E4A558D5316489ADE176AE0C821568A2AD6F700\",\"recipient\":\"9050B9837EFAB4BBE8A4B9BB32D812F9885C00D8FC1650E142\",\"proof\": \"E08664BF179B064D9E3B\"}}");
 
         Transaction secretProofTransaction = new TransactionMapping().apply(secretProofTransactionDTO);
 
@@ -192,7 +192,7 @@ public class TransactionMappingTest {
 
     @Test
     void shouldCreateAggregateSecretProofTransaction() {
-        JsonObject aggregateSecretProofTransactionDTO = new JsonObject("{\"meta\": {\"hash\": \"671653C94E2254F2A23EFEDB15D67C38332AED1FBD24B063C0A8E675582B6A96\",\"height\": [18160,0],\"id\": \"5A0069D83F17CF0001777E55\",\"index\": 0,\"merkleComponentHash\": \"81E5E7AE49998802DABC816EC10158D3A7879702FF29084C2C992CD1289877A7\"},\"transaction\": {\"cosignatures\": [{\"signature\": \"5780C8DF9D46BA2BCF029DCC5D3BF55FE1CB5BE7ABCF30387C4637DDEDFC2152703CA0AD95F21BB9B942F3CC52FCFC2064C7B84CF60D1A9E69195F1943156C07\",\"signer\": \"A5F82EC8EBB341427B6785C8111906CD0DF18838FB11B51CE0E18B5E79DFF630\"}],\"deadline\": [3266625578,11],\"maxFee\": [0,0],\"signature\": \"939673209A13FF82397578D22CC96EB8516A6760C894D9B7535E3A1E068007B9255CFA9A914C97142A7AE18533E381C846B69D2AE0D60D1DC8A55AD120E2B606\",\"signer\": \"7681ED5023141D9CDCF184E5A7B60B7D466739918ED5DA30F7E71EA7B86EFF2D\",\"transactions\": [{\"meta\": {\"aggregateHash\": \"3D28C804EDD07D5A728E5C5FFEC01AB07AFA5766AE6997B38526D36015A4D006\",\"aggregateId\": \"5A0069D83F17CF0001777E55\",\"height\": [18160,0],\"id\": \"5A0069D83F17CF0001777E56\",\"index\": 0},\"transaction\": {\"signer\": \"74A6BD39F42535AA3608924A517A88E3B2C36B2DFC296CB379604A3FEE01C7B8\",\"version\": 36867,\"type\": 16978,\"hashAlgorithm\": 0,\"secret\": \"428A9DEB1DC6B938AD7C83617E4A558D5316489ADE176AE0C821568A2AD6F700\",\"proof\": \"E08664BF179B064D9E3B\"}}],\"type\": 16705,\"version\": 36867}}");
+        JsonObject aggregateSecretProofTransactionDTO = new JsonObject("{\"meta\": {\"hash\": \"671653C94E2254F2A23EFEDB15D67C38332AED1FBD24B063C0A8E675582B6A96\",\"height\": [18160,0],\"id\": \"5A0069D83F17CF0001777E55\",\"index\": 0,\"merkleComponentHash\": \"81E5E7AE49998802DABC816EC10158D3A7879702FF29084C2C992CD1289877A7\"},\"transaction\": {\"cosignatures\": [{\"signature\": \"5780C8DF9D46BA2BCF029DCC5D3BF55FE1CB5BE7ABCF30387C4637DDEDFC2152703CA0AD95F21BB9B942F3CC52FCFC2064C7B84CF60D1A9E69195F1943156C07\",\"signer\": \"A5F82EC8EBB341427B6785C8111906CD0DF18838FB11B51CE0E18B5E79DFF630\"}],\"deadline\": [3266625578,11],\"maxFee\": [0,0],\"signature\": \"939673209A13FF82397578D22CC96EB8516A6760C894D9B7535E3A1E068007B9255CFA9A914C97142A7AE18533E381C846B69D2AE0D60D1DC8A55AD120E2B606\",\"signer\": \"7681ED5023141D9CDCF184E5A7B60B7D466739918ED5DA30F7E71EA7B86EFF2D\",\"transactions\": [{\"meta\": {\"aggregateHash\": \"3D28C804EDD07D5A728E5C5FFEC01AB07AFA5766AE6997B38526D36015A4D006\",\"aggregateId\": \"5A0069D83F17CF0001777E55\",\"height\": [18160,0],\"id\": \"5A0069D83F17CF0001777E56\",\"index\": 0},\"transaction\": {\"signer\": \"74A6BD39F42535AA3608924A517A88E3B2C36B2DFC296CB379604A3FEE01C7B8\",\"version\": 36867,\"type\": 16978,\"hashAlgorithm\": 0,\"secret\": \"428A9DEB1DC6B938AD7C83617E4A558D5316489ADE176AE0C821568A2AD6F700\",\"recipient\":\"9050B9837EFAB4BBE8A4B9BB32D812F9885C00D8FC1650E142\",\"proof\": \"E08664BF179B064D9E3B\"}}],\"type\": 16705,\"version\": 36867}}");
 
         Transaction aggregateSecretProofTransaction = new TransactionMapping().apply(aggregateSecretProofTransactionDTO);
 
@@ -228,7 +228,7 @@ public class TransactionMappingTest {
         }
 
         assertEquals(transactionDTO.getJsonObject("transaction").getString("signature"), transaction.getSignature().get());
-        assertEquals(transactionDTO.getJsonObject("transaction").getString("signer"), transaction.getSigner().get().getPublicKey());
+        assertEquals(transactionDTO.getJsonObject("transaction").getString("signer"), transaction.getSigner().get().getPublicKey().toString());
         assertTrue(transaction.getType().getValue() == transactionDTO.getJsonObject("transaction").getInteger("type"));
         int version = (int) Long.parseLong(Integer.toHexString(transactionDTO.getJsonObject("transaction").getInteger("version")).substring(2, 4), 16);
         assertTrue(transaction.getVersion() == version);
@@ -279,7 +279,7 @@ public class TransactionMappingTest {
         }
 
         assertEquals(aggregateTransactionDTO.getJsonObject("transaction").getString("signature"), aggregateTransaction.getSignature().get());
-        assertEquals(aggregateTransactionDTO.getJsonObject("transaction").getString("signer"), aggregateTransaction.getSigner().get().getPublicKey());
+        assertEquals(aggregateTransactionDTO.getJsonObject("transaction").getString("signer"), aggregateTransaction.getSigner().get().getPublicKey().toString());
         int version = (int) Long.parseLong(Integer.toHexString(aggregateTransactionDTO.getJsonObject("transaction").getInteger("version")).substring(2, 4), 16);
         assertTrue(aggregateTransaction.getVersion() == version);
         int networkType = (int) Long.parseLong(Integer.toHexString(aggregateTransactionDTO.getJsonObject("transaction").getInteger("version")).substring(0, 2), 16);
@@ -293,14 +293,14 @@ public class TransactionMappingTest {
         assertEquals(aggregateTransactionDTO.getJsonObject("transaction").getJsonArray("cosignatures").getJsonObject(0).getString("signature"),
                 aggregateTransaction.getCosignatures().get(0).getSignature());
         assertEquals(aggregateTransactionDTO.getJsonObject("transaction").getJsonArray("cosignatures").getJsonObject(0).getString("signer"),
-                aggregateTransaction.getCosignatures().get(0).getSigner().getPublicKey());
+                aggregateTransaction.getCosignatures().get(0).getSigner().getPublicKey().toString());
 
         Transaction innerTransaction = aggregateTransaction.getInnerTransactions().get(0);
         validateStandaloneTransaction(innerTransaction, aggregateTransactionDTO.getJsonObject("transaction").getJsonArray("transactions").getJsonObject(0));
     }
 
     void validateTransferTx(TransferTransaction transaction, JsonObject transactionDTO) {
-        assertEquals(Address.createFromEncoded(transactionDTO.getJsonObject("transaction").getString("recipient")), transaction.getRecipient());
+        assertEquals(Address.createFromEncoded(transactionDTO.getJsonObject("transaction").getString("recipient")), transaction.getRecipient().get());
 
         JsonArray mosaicsDTO = transactionDTO.getJsonObject("transaction").getJsonArray("mosaics");
         if (mosaicsDTO != null && mosaicsDTO.size() > 0) {
@@ -345,7 +345,7 @@ public class TransactionMappingTest {
         assertTrue(transaction.getMosaicProperties().getDivisibility() ==
                 transactionDTO.getJsonObject("transaction").getJsonArray("properties").getJsonObject(1).getJsonArray("value").getInteger(0));
         assertEquals(extractBigInteger(transactionDTO.getJsonObject("transaction").getJsonArray("properties").getJsonObject(2).getJsonArray("value")),
-                transaction.getMosaicProperties().getDuration());
+                transaction.getMosaicProperties().getDuration().get());
         assertTrue(transaction.getMosaicProperties().isSupplyMutable());
         assertTrue(transaction.getMosaicProperties().isTransferable());
     }
@@ -362,7 +362,7 @@ public class TransactionMappingTest {
         assertTrue(transaction.getMinApprovalDelta() == transactionDTO.getJsonObject("transaction").getInteger("minApprovalDelta"));
         assertTrue(transaction.getMinRemovalDelta() == transactionDTO.getJsonObject("transaction").getInteger("minRemovalDelta"));
         assertEquals(transactionDTO.getJsonObject("transaction").getJsonArray("modifications").getJsonObject(0).getString("cosignatoryPublicKey"),
-                transaction.getModifications().get(0).getCosignatoryPublicAccount().getPublicKey());
+                transaction.getModifications().get(0).getCosignatoryPublicAccount().getPublicKey().toString());
         assertTrue(transactionDTO.getJsonObject("transaction").getJsonArray("modifications").getJsonObject(0).getInteger("type") ==
                 transaction.getModifications().get(0).getType().getValue());
     }

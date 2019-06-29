@@ -50,6 +50,7 @@ class E2ETest extends BaseTest {
     private String namespaceName = "nem2-tests";
     private MosaicId mosaicId = new MosaicId(new BigInteger("4532189107927582222")); // This mosaic is created in functional testing
     private Listener listener;
+    private String generationHash;
 
     @BeforeAll
     void setup() throws ExecutionException, InterruptedException, IOException {
@@ -59,6 +60,7 @@ class E2ETest extends BaseTest {
         multisigAccount = new Account("5edebfdbeb32e9146d05ffd232c8af2cf9f396caf9954289daa0362d097fff3b", NetworkType.MIJIN_TEST);
         cosignatoryAccount = new Account("2a2b1f5d366a5dd5dc56c3c757cf4fe6c66e2787087692cf329d7a49a594658b", NetworkType.MIJIN_TEST);
         cosignatoryAccount2 = new Account("b8afae6f4ad13a1b8aad047b488e0738a437c7389d4ff30c359ac068910c1d59", NetworkType.MIJIN_TEST);
+        generationHash = this.getGenerationHash();
         listener = new Listener(this.getApiUrl());
         listener.open().get();
     }
@@ -67,6 +69,7 @@ class E2ETest extends BaseTest {
     void standaloneTransferTransaction() throws ExecutionException, InterruptedException {
         TransferTransaction transferTransaction = TransferTransaction.create(
                 new Deadline(2, HOURS),
+                BigInteger.ZERO,
                 this.recipient,
                 Collections.singletonList(
                         NetworkCurrencyMosaic.createAbsolute(BigInteger.valueOf(1))
@@ -75,7 +78,7 @@ class E2ETest extends BaseTest {
                 NetworkType.MIJIN_TEST
         );
 
-        SignedTransaction signedTransaction = this.account.sign(transferTransaction);
+        SignedTransaction signedTransaction = this.account.sign(transferTransaction, generationHash);
         String payload = signedTransaction.getPayload();
         assertEquals(420, payload.length());
 
@@ -89,6 +92,7 @@ class E2ETest extends BaseTest {
     void aggregateTransferTransaction() throws ExecutionException, InterruptedException {
         TransferTransaction transferTransaction = TransferTransaction.create(
                 new Deadline(2, HOURS),
+                BigInteger.ZERO,
                 this.recipient,
                 Collections.singletonList(
                         NetworkCurrencyMosaic.createAbsolute(BigInteger.valueOf(1))
@@ -111,7 +115,7 @@ class E2ETest extends BaseTest {
                 ),
                 NetworkType.MIJIN_TEST);
 
-        SignedTransaction signedTransaction = this.account.sign(aggregateTransaction);
+        SignedTransaction signedTransaction = this.account.sign(aggregateTransaction, generationHash);
 
         TransactionAnnounceResponse transactionAnnounceResponse = transactionHttp.announce(signedTransaction).toFuture().get();
         System.out.println(transactionAnnounceResponse.getMessage());
@@ -125,12 +129,13 @@ class E2ETest extends BaseTest {
 
         RegisterNamespaceTransaction registerNamespaceTransaction = RegisterNamespaceTransaction.createRootNamespace(
                 new Deadline(2, HOURS),
+                BigInteger.ZERO,
                 namespaceName,
                 BigInteger.valueOf(100),
                 NetworkType.MIJIN_TEST
         );
 
-        SignedTransaction signedTransaction = this.account.sign(registerNamespaceTransaction);
+        SignedTransaction signedTransaction = this.account.sign(registerNamespaceTransaction, generationHash);
 
         transactionHttp.announce(signedTransaction).toFuture().get();
 
@@ -143,6 +148,7 @@ class E2ETest extends BaseTest {
 
         RegisterNamespaceTransaction registerNamespaceTransaction = RegisterNamespaceTransaction.createRootNamespace(
                 new Deadline(2, HOURS),
+                BigInteger.ZERO,
                 namespaceName,
                 BigInteger.valueOf(100),
                 NetworkType.MIJIN_TEST
@@ -154,7 +160,7 @@ class E2ETest extends BaseTest {
                 ),
                 NetworkType.MIJIN_TEST);
 
-        SignedTransaction signedTransaction = this.account.sign(aggregateTransaction);
+        SignedTransaction signedTransaction = this.account.sign(aggregateTransaction, generationHash);
 
         transactionHttp.announce(signedTransaction).toFuture().get();
 
@@ -167,12 +173,13 @@ class E2ETest extends BaseTest {
 
         RegisterNamespaceTransaction registerNamespaceTransaction = RegisterNamespaceTransaction.createSubNamespace(
                 new Deadline(2, HOURS),
+                BigInteger.ZERO,
                 namespaceName,
                 this.namespaceId,
                 NetworkType.MIJIN_TEST
         );
 
-        SignedTransaction signedTransaction = this.account.sign(registerNamespaceTransaction);
+        SignedTransaction signedTransaction = this.account.sign(registerNamespaceTransaction, generationHash);
 
         transactionHttp.announce(signedTransaction).toFuture().get();
 
@@ -185,6 +192,7 @@ class E2ETest extends BaseTest {
 
         RegisterNamespaceTransaction registerNamespaceTransaction = RegisterNamespaceTransaction.createSubNamespace(
                 new Deadline(2, HOURS),
+                BigInteger.ZERO,
                 namespaceName,
                 this.namespaceId,
                 NetworkType.MIJIN_TEST
@@ -197,7 +205,7 @@ class E2ETest extends BaseTest {
                 ),
                 NetworkType.MIJIN_TEST);
 
-        SignedTransaction signedTransaction = this.account.sign(aggregateTransaction);
+        SignedTransaction signedTransaction = this.account.sign(aggregateTransaction, generationHash);
 
         transactionHttp.announce(signedTransaction).toFuture().get();
 
@@ -210,13 +218,14 @@ class E2ETest extends BaseTest {
 
         MosaicDefinitionTransaction mosaicDefinitionTransaction = MosaicDefinitionTransaction.create(
                 new Deadline(2, HOURS),
+                BigInteger.ZERO,
                 MosaicNonce.createFromBigInteger(new BigInteger("0")),
                 new MosaicId(new BigInteger("0")),
-                new MosaicProperties(true, true, 4, BigInteger.valueOf(100)),
+                MosaicProperties.create(true, true, 4, BigInteger.valueOf(100)),
                 NetworkType.MIJIN_TEST
         );
 
-        SignedTransaction signedTransaction = this.account.sign(mosaicDefinitionTransaction);
+        SignedTransaction signedTransaction = this.account.sign(mosaicDefinitionTransaction, generationHash);
 
         transactionHttp.announce(signedTransaction).toFuture().get();
 
@@ -229,9 +238,10 @@ class E2ETest extends BaseTest {
 
         MosaicDefinitionTransaction mosaicDefinitionTransaction = MosaicDefinitionTransaction.create(
                 new Deadline(2, HOURS),
+                BigInteger.ZERO,
                 MosaicNonce.createFromBigInteger(new BigInteger("0")),
                 new MosaicId(new BigInteger("0")),
-                new MosaicProperties(true, false, 4, BigInteger.valueOf(100)),
+                MosaicProperties.create(true, false, 4, BigInteger.valueOf(100)),
                 NetworkType.MIJIN_TEST
         );
 
@@ -242,7 +252,7 @@ class E2ETest extends BaseTest {
                 ),
                 NetworkType.MIJIN_TEST);
 
-        SignedTransaction signedTransaction = this.account.sign(aggregateTransaction);
+        SignedTransaction signedTransaction = this.account.sign(aggregateTransaction, generationHash);
 
         transactionHttp.announce(signedTransaction).toFuture().get();
 
@@ -259,7 +269,7 @@ class E2ETest extends BaseTest {
                 NetworkType.MIJIN_TEST
         );
 
-        SignedTransaction signedTransaction = this.account.sign(mosaicSupplyChangeTransaction);
+        SignedTransaction signedTransaction = this.account.sign(mosaicSupplyChangeTransaction, generationHash);
 
         transactionHttp.announce(signedTransaction).toFuture().get();
 
@@ -283,7 +293,7 @@ class E2ETest extends BaseTest {
                 ),
                 NetworkType.MIJIN_TEST);
 
-        SignedTransaction signedTransaction = this.account.sign(aggregateTransaction);
+        SignedTransaction signedTransaction = this.account.sign(aggregateTransaction, generationHash);
 
         transactionHttp.announce(signedTransaction).toFuture().get();
 
@@ -294,8 +304,8 @@ class E2ETest extends BaseTest {
     void shouldSignModifyMultisigAccountTransactionWithCosignatories() throws ExecutionException, InterruptedException {
         ModifyMultisigAccountTransaction modifyMultisigAccountTransaction = ModifyMultisigAccountTransaction.create(
                 new Deadline(2, HOURS),
-                0,
-                0,
+                (byte)0,
+                (byte)0,
                 Collections.singletonList(
                         new MultisigCosignatoryModification(MultisigCosignatoryModificationType.ADD, PublicAccount.createFromPublicKey("B0F93CBEE49EEB9953C6F3985B15A4F238E205584D8F924C621CBE4D7AC6EC24", NetworkType.MIJIN_TEST))
                 ),
@@ -308,7 +318,7 @@ class E2ETest extends BaseTest {
                 NetworkType.MIJIN_TEST);
 
         SignedTransaction signedTransaction = this.cosignatoryAccount.signTransactionWithCosignatories(aggregateTransaction,
-                Collections.singletonList(this.cosignatoryAccount2));
+                Collections.singletonList(this.cosignatoryAccount2), generationHash);
 
         LockFundsTransaction lockFundsTransaction = LockFundsTransaction.create(
                 new Deadline(2, HOURS),
@@ -318,7 +328,7 @@ class E2ETest extends BaseTest {
                 NetworkType.MIJIN_TEST
         );
 
-        SignedTransaction lockFundsSignedTransaction = this.cosignatoryAccount.sign(lockFundsTransaction);
+        SignedTransaction lockFundsSignedTransaction = this.cosignatoryAccount.sign(lockFundsTransaction, generationHash);
 
         transactionHttp.announce(lockFundsSignedTransaction).toFuture().get();
 
@@ -333,6 +343,7 @@ class E2ETest extends BaseTest {
     void CosignatureTransaction() throws ExecutionException, InterruptedException {
         TransferTransaction transferTransaction = TransferTransaction.create(
                 new Deadline(2, HOURS),
+                BigInteger.ZERO,
                 new Address("SDRDGFTDLLCB67D4HPGIMIHPNSRYRJRT7DOBGWZY", NetworkType.MIJIN_TEST),
                 Collections.singletonList(
                         NetworkCurrencyMosaic.createAbsolute(BigInteger.valueOf(1))
@@ -347,7 +358,7 @@ class E2ETest extends BaseTest {
                         transferTransaction.toAggregate(this.multisigAccount.getPublicAccount())
                 ),
                 NetworkType.MIJIN_TEST);
-        SignedTransaction signedTransaction = this.cosignatoryAccount.sign(aggregateTransaction);
+        SignedTransaction signedTransaction = this.cosignatoryAccount.sign(aggregateTransaction, generationHash);
 
         LockFundsTransaction lockFundsTransaction = LockFundsTransaction.create(
                 new Deadline(2, HOURS),
@@ -357,7 +368,7 @@ class E2ETest extends BaseTest {
                 NetworkType.MIJIN_TEST
         );
 
-        SignedTransaction lockFundsSignedTransaction = this.cosignatoryAccount.sign(lockFundsTransaction);
+        SignedTransaction lockFundsSignedTransaction = this.cosignatoryAccount.sign(lockFundsTransaction, generationHash);
 
         transactionHttp.announce(lockFundsSignedTransaction).toFuture().get();
 
@@ -379,7 +390,7 @@ class E2ETest extends BaseTest {
     @Test
     void standaloneLockFundsTransaction() throws ExecutionException, InterruptedException {
         AggregateTransaction aggregateTransaction = AggregateTransaction.createBonded(new Deadline(2, HOURS), Collections.emptyList(), NetworkType.MIJIN_TEST);
-        SignedTransaction signedTransaction = this.account.sign(aggregateTransaction);
+        SignedTransaction signedTransaction = this.account.sign(aggregateTransaction, generationHash);
         LockFundsTransaction lockFundstx = LockFundsTransaction.create(
                 new Deadline(2, HOURS),
                 NetworkCurrencyMosaic.createRelative(BigInteger.valueOf(10)),
@@ -388,7 +399,7 @@ class E2ETest extends BaseTest {
                 NetworkType.MIJIN_TEST
         );
 
-        SignedTransaction lockFundsTransactionSigned = this.account.sign(lockFundstx);
+        SignedTransaction lockFundsTransactionSigned = this.account.sign(lockFundstx, generationHash);
         transactionHttp.announce(lockFundsTransactionSigned).toFuture().get();
 
         this.validateTransactionAnnounceCorrectly(this.account.getAddress(), lockFundsTransactionSigned.getHash());
@@ -397,7 +408,7 @@ class E2ETest extends BaseTest {
     @Test
     void aggregateLockFundsTransaction() throws ExecutionException, InterruptedException {
         AggregateTransaction aggregateTransaction = AggregateTransaction.createBonded(new Deadline(2, HOURS), Collections.emptyList(), NetworkType.MIJIN_TEST);
-        SignedTransaction signedTransaction = this.account.sign(aggregateTransaction);
+        SignedTransaction signedTransaction = this.account.sign(aggregateTransaction, generationHash);
         LockFundsTransaction lockFundstx = LockFundsTransaction.create(
                 new Deadline(2, HOURS),
                 NetworkCurrencyMosaic.createRelative(BigInteger.valueOf(10)),
@@ -413,7 +424,7 @@ class E2ETest extends BaseTest {
                 ),
                 NetworkType.MIJIN_TEST);
 
-        SignedTransaction lockFundsTransactionSigned = this.account.sign(lockFundsAggregatetx);
+        SignedTransaction lockFundsTransactionSigned = this.account.sign(lockFundsAggregatetx, generationHash);
 
         transactionHttp.announce(lockFundsTransactionSigned).toFuture().get();
 
@@ -436,7 +447,7 @@ class E2ETest extends BaseTest {
                 NetworkType.MIJIN_TEST
         );
 
-        SignedTransaction secretLockTransactionSigned = this.account.sign(secretLocktx);
+        SignedTransaction secretLockTransactionSigned = this.account.sign(secretLocktx, generationHash);
 
         transactionHttp.announce(secretLockTransactionSigned).toFuture().get();
 
@@ -466,7 +477,7 @@ class E2ETest extends BaseTest {
                 ),
                 NetworkType.MIJIN_TEST);
 
-        SignedTransaction secretLockTransactionSigned = this.account.sign(secretLockAggregatetx);
+        SignedTransaction secretLockTransactionSigned = this.account.sign(secretLockAggregatetx, generationHash);
 
         transactionHttp.announce(secretLockTransactionSigned).toFuture().get();
 
@@ -490,7 +501,7 @@ class E2ETest extends BaseTest {
                 NetworkType.MIJIN_TEST
         );
 
-        SignedTransaction lockFundsTransactionSigned = this.account.sign(secretLocktx);
+        SignedTransaction lockFundsTransactionSigned = this.account.sign(secretLocktx, generationHash);
 
         transactionHttp.announce(lockFundsTransactionSigned).toFuture().get();
 
@@ -498,13 +509,15 @@ class E2ETest extends BaseTest {
 
         SecretProofTransaction secretProoftx = SecretProofTransaction.create(
                 new Deadline(2, HOURS),
+                BigInteger.ZERO,
                 HashType.SHA3_256,
+                Address.createFromRawAddress("SDUP5PLHDXKBX3UU5Q52LAY4WYEKGEWC6IB3VBFM"),
                 secret,
                 proof,
                 NetworkType.MIJIN_TEST
         );
 
-        SignedTransaction secretProofTransactionSigned = this.account.sign(secretProoftx);
+        SignedTransaction secretProofTransactionSigned = this.account.sign(secretProoftx, generationHash);
 
         transactionHttp.announce(secretProofTransactionSigned).toFuture().get();
 
@@ -528,7 +541,7 @@ class E2ETest extends BaseTest {
                 NetworkType.MIJIN_TEST
         );
 
-        SignedTransaction lockFundsTransactionSigned = this.account.sign(secretLocktx);
+        SignedTransaction lockFundsTransactionSigned = this.account.sign(secretLocktx, generationHash);
 
         transactionHttp.announce(lockFundsTransactionSigned).toFuture().get();
 
@@ -536,7 +549,9 @@ class E2ETest extends BaseTest {
 
         SecretProofTransaction secretProoftx = SecretProofTransaction.create(
                 new Deadline(2, HOURS),
+                BigInteger.ZERO,
                 HashType.SHA3_256,
+                Address.createFromRawAddress("SDUP5PLHDXKBX3UU5Q52LAY4WYEKGEWC6IB3VBFM"),
                 secret,
                 proof,
                 NetworkType.MIJIN_TEST
@@ -549,7 +564,7 @@ class E2ETest extends BaseTest {
                 ),
                 NetworkType.MIJIN_TEST);
 
-        SignedTransaction secretProofTransactionSigned = this.account.sign(secretProofAggregatetx);
+        SignedTransaction secretProofTransactionSigned = this.account.sign(secretProofAggregatetx, generationHash);
 
         transactionHttp.announce(secretProofTransactionSigned).toFuture().get();
 

@@ -16,50 +16,38 @@
 
 package io.nem.sdk.model.namespace;
 
-import io.nem.sdk.model.account.Address;
-import io.nem.sdk.model.mosaic.MosaicId;
-
 /**
  * The alias structure defines an interface for Aliases
- *
- * @since
  */
-public interface Alias {
+public interface Alias<T> {
 
-    /**
-     * Gets the alias type
-     *
-     * @return aliasType {@link AliasType}
-     */
-    AliasType getType();
+	/**
+	 * Gets the alias type
+	 *
+	 * @return aliasType {@link AliasType}
+	 */
+	AliasType getType();
 
-    /**
-     * Gets the mosaic id if this alias has aMosaicId
-     *
-     * @return mosaicId {@link MosaicId}
-     */
-    MosaicId getMosaicId();
+	/**
+	 * Gets the alias.
+	 *
+	 * @return Alias of type T.
+	 */
+	T getAliasValue();
 
-    /**
-     * Gets the address if this alias has anAddress
-     *
-     * @return address {@link Address}
-     */
-    Address getAddress();
+	/**
+	 * Compares this alias to specified alias.
+	 *
+	 * @param alias
+	 * @return true if aliases are of the same type; false otherwise
+	 */
+	boolean equals(Alias<T> alias);
 
-    /**
-     * Compares this alias to specified alias.
-     *
-     * @param alias
-     * @return true if aliases are of the same type; false otherwise
-     */
-    boolean equals(Alias alias);
-
-    /**
-     * Returns true if this alias is anEmptyAlias; false otherwise.
-     *
-     * @param
-     * @return true if alias is empty; false otherwise
-     */
-    boolean isEmpty();
+	/**
+	 * Returns true if this alias is anEmptyAlias; false otherwise.
+	 *
+	 * @param
+	 * @return true if alias is empty; false otherwise
+	 */
+	boolean isEmpty();
 }

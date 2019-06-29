@@ -54,6 +54,5 @@ class NetworkCurrencyMosaicTest {
         assertEquals(NetworkCurrencyMosaic.INITIALSUPPLY, new BigInteger("8999999999"));
         assertEquals(NetworkCurrencyMosaic.TRANSFERABLE, true);
         assertEquals(NetworkCurrencyMosaic.SUPPLYMUTABLE, false);
-        assertEquals(NetworkCurrencyMosaic.LEVYMUTABLE, false);
     }
 }

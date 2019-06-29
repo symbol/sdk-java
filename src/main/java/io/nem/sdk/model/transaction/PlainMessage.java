@@ -23,27 +23,27 @@ package io.nem.sdk.model.transaction;
  */
 public class PlainMessage extends Message {
 
-    /**
-     * Plain message containing an empty string.
-     */
-    public static PlainMessage Empty = new PlainMessage("");
+	/**
+	 * Plain message containing an empty string.
+	 */
+	public static PlainMessage Empty = new PlainMessage("");
 
-    /**
-     * Constructor
-     *
-     * @param payload plain message payload
-     */
-    public PlainMessage(String payload) {
-        super(0, payload);
-    }
+	/**
+	 * Constructor
+	 *
+	 * @param payload plain message payload
+	 */
+	public PlainMessage(String payload) {
+		super(0, payload);
+	}
 
-    /**
-     * Create a plain message object.
-     *
-     * @param payload plain message payload
-     * @return instance of PlainMessage
-     */
-    public static PlainMessage create(String payload) {
-        return new PlainMessage(payload);
-    }
+	/**
+	 * Create a plain message object.
+	 *
+	 * @param payload plain message payload
+	 * @return instance of PlainMessage
+	 */
+	public static PlainMessage create(String payload) {
+		return new PlainMessage(payload);
+	}
 }

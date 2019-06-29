@@ -34,6 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 class AccountTest {
+    private final String generationHash = "57F7DA205008026C776CB6AED843393F04CD458E0AA2D9F1D5F31A402072B2D6";
 
     @Test
     void shouldCreateAccountViaConstructor() {
@@ -81,6 +82,7 @@ class AccountTest {
         Account account = new Account("787225aaff3d2c71f4ffa32d4f19ec4922f3cd869747f267378f81f8e3fcb12d", NetworkType.MIJIN_TEST);
         TransferTransaction transferTransaction = TransferTransaction.create(
                 new FakeDeadline(),
+                BigInteger.ZERO,
                 new Address("SDUP5PLHDXKBX3UU5Q52LAY4WYEKGEWC6IB3VBFM", NetworkType.MIJIN_TEST),
                 Collections.singletonList(
                         new Mosaic(new MosaicId(new BigInteger("95442763262823")), BigInteger.valueOf(100))
@@ -89,9 +91,10 @@ class AccountTest {
                 NetworkType.MIJIN_TEST
         );
 
-        SignedTransaction signedTransaction = account.sign(transferTransaction);
-        assertEquals("A5000000773891AD01DD4CDF6E3A55C186C673E256D7DF9D471846F1943CC3529E4E02B38B9AF3F8D13784645FF5FAAFA94A321B94933C673D12DE60E4BC05ABA56F750E1026D70E1954775749C6811084D6450A3184D977383F0E4282CD47118AF37755039054410000000000000000010000000000000090E8FEBD671DD41BEE94EC3BA5831CB608A312C2F203BA84AC01000100672B0000CE5600006400000000000000", signedTransaction.getPayload());
-        assertEquals("350AE56BC97DB805E2098AB2C596FA4C6B37EF974BF24DFD61CD9F77C7687424", signedTransaction.getHash());
+        SignedTransaction signedTransaction = account.sign(transferTransaction, generationHash);
+        String payload = signedTransaction.getPayload();
+        assertEquals(payload.substring(240), "90E8FEBD671DD41BEE94EC3BA5831CB608A312C2F203BA84AC01000100672B0000CE5600006400000000000000");
+        assertEquals("B54321C382FA3CC53EB6559FDDE03832898E7E89C8F90C10DF8567AD41A926A2", signedTransaction.getHash());
     }
 
     @Test

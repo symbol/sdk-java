@@ -20,52 +20,50 @@ import java.util.Optional;
 
 /**
  * The namespace name info structure describes basic information of a namespace and name.
- *
- * @since 1.0
  */
 public class NamespaceName {
-    private final NamespaceId namespaceId;
-    private final String name;
-    private final Optional<NamespaceId> parentId;
+	private final NamespaceId namespaceId;
+	private final String name;
+	private final Optional<NamespaceId> parentId;
 
-    public NamespaceName(NamespaceId namespaceId, String name) {
-        this(namespaceId, name, Optional.empty());
-    }
+	public NamespaceName(NamespaceId namespaceId, String name) {
+		this(namespaceId, name, Optional.empty());
+	}
 
-    public NamespaceName(NamespaceId namespaceId, String name, NamespaceId parentId) {
-        this(namespaceId, name, Optional.of(parentId));
-    }
+	public NamespaceName(NamespaceId namespaceId, String name, NamespaceId parentId) {
+		this(namespaceId, name, Optional.of(parentId));
+	}
 
-    private NamespaceName(NamespaceId namespaceId, String name, Optional<NamespaceId> parentId) {
-        this.namespaceId = namespaceId;
-        this.name = name;
-        this.parentId = parentId;
-    }
+	private NamespaceName(NamespaceId namespaceId, String name, Optional<NamespaceId> parentId) {
+		this.namespaceId = namespaceId;
+		this.name = name;
+		this.parentId = parentId;
+	}
 
-    /**
-     * Returns the namespace id
-     *
-     * @return the namespace id
-     */
-    public NamespaceId getNamespaceId() {
-        return namespaceId;
-    }
+	/**
+	 * Returns the namespace id
+	 *
+	 * @return the namespace id
+	 */
+	public NamespaceId getNamespaceId() {
+		return namespaceId;
+	}
 
-    /**
-     * Returns the namespace name
-     *
-     * @return the namespace name
-     */
-    public String getName() {
-        return name;
-    }
+	/**
+	 * Returns the namespace name
+	 *
+	 * @return the namespace name
+	 */
+	public String getName() {
+		return name;
+	}
 
-    /**
-     * Returns an optional that could contain the parent namespace id
-     *
-     * @return the parent id if available
-     */
-    public Optional<NamespaceId> getParentId() {
-        return parentId;
-    }
+	/**
+	 * Returns an optional that could contain the parent namespace id
+	 *
+	 * @return the parent id if available
+	 */
+	public Optional<NamespaceId> getParentId() {
+		return parentId;
+	}
 }

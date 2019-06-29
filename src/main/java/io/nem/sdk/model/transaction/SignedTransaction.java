@@ -23,38 +23,40 @@ package io.nem.sdk.model.transaction;
  * @since 1.0
  */
 public class SignedTransaction {
-    private final String payload;
-    private final String hash;
-    private final TransactionType type;
+	private final String payload;
+	private final String hash;
+	private final TransactionType type;
 
-    public SignedTransaction(String payload, String hash, TransactionType type) {
-        this.payload = payload;
-        this.hash = hash;
-        this.type = type;
-    }
+	public SignedTransaction(String payload, String hash, TransactionType type) {
+		this.payload = payload;
+		this.hash = hash;
+		this.type = type;
+	}
 
-    /**
-     * Returns transaction serialized data.
-     *
-     * @return transaction serialized data
-     */
-    public String getPayload() {
-        return payload;
-    }
+	/**
+	 * Returns transaction serialized data.
+	 *
+	 * @return transaction serialized data
+	 */
+	public String getPayload() {
+		return payload;
+	}
 
-    /**
-     * Returns transaction hash.
-     *
-     * @return transaction hash
-     */
-    public String getHash() {
-        return hash;
-    }
+	/**
+	 * Returns transaction hash.
+	 *
+	 * @return transaction hash
+	 */
+	public String getHash() {
+		return hash;
+	}
 
-    /**
-     * Returns transaction type.
-     *
-     * @return transaction type
-     */
-    public TransactionType getType() { return type; }
+	/**
+	 * Returns transaction type.
+	 *
+	 * @return transaction type
+	 */
+	public TransactionType getType() {
+		return type;
+	}
 }

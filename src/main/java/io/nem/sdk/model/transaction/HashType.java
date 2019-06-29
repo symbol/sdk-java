@@ -22,71 +22,69 @@ package io.nem.sdk.model.transaction;
  */
 public enum HashType {
 
-    /**
-     *  hashed using SHA3-256
-     *  (Catapult Native)
-     */
-    SHA3_256(0),
-    /**
-     *  hashed using Keccak-256
-     *  (ETH Compat)
-     */
-    KECCAK_256(1),
-    /**
-     * hashed twice: first with SHA-256 and then with RIPEMD-160
-     * (BTC Compat)
-     */
-    HASH_160(2),
-    /**
-     * Hashed twice with SHA-256
-     * (BTC Compat)
-     */
-    HASH_256(3);
+	/**
+	 * hashed using SHA3-256
+	 * (Catapult Native)
+	 */
+	SHA3_256(0),
+	/**
+	 * hashed using Keccak-256
+	 * (ETH Compat)
+	 */
+	KECCAK_256(1),
+	/**
+	 * hashed twice: first with SHA-256 and then with RIPEMD-160
+	 * (BTC Compat)
+	 */
+	HASH_160(2),
+	/**
+	 * Hashed twice with SHA-256
+	 * (BTC Compat)
+	 */
+	HASH_256(3);
 
-    private int value;
+	private int value;
 
-    HashType(int value) {
-        this.value = value;
-    }
+	HashType(int value) {
+		this.value = value;
+	}
 
-    public static HashType rawValueOf(int value) {
-        switch (value) {
-            case 0:
-                return HashType.SHA3_256;
-            case 1:
-                return HashType.KECCAK_256;
-            case 2:
-                return HashType.HASH_160;
-            case 3:
-                return HashType.HASH_256;
-            default:
-                throw new IllegalArgumentException(value + " is not a valid value");
-        }
-    }
+	public static HashType rawValueOf(int value) {
+		switch (value) {
+			case 0:
+				return HashType.SHA3_256;
+			case 1:
+				return HashType.KECCAK_256;
+			case 2:
+				return HashType.HASH_160;
+			case 3:
+				return HashType.HASH_256;
+			default:
+				throw new IllegalArgumentException(value + " is not a valid value");
+		}
+	}
 
-    /**
-     * Validate hash algorithm and hash have desired format
-     * @param hashType  Hash type
-     * @param input     Input hashed
-     * @return boolean when format is correct
-     */
-    public static boolean Validator(HashType hashType, String input) {
-        if (hashType == HashType.SHA3_256 && input.matches("-?[0-9a-fA-F]+")) {
-            return input.length() == 64;
-        }
-        else if (hashType == HashType.KECCAK_256 && input.matches("-?[0-9a-fA-F]+")) {
-            return input.length() == 64;
-        }
-        else if (hashType == HashType.HASH_160 && input.matches("-?[0-9a-fA-F]+")) {
-            return input.length() == 40;
-        }
-        else if (hashType == HashType.HASH_256 && input.matches("-?[0-9a-fA-F]+")) {
-            return input.length() == 64;
-        }
-        return false;
-    }
+	/**
+	 * Validate hash algorithm and hash have desired format
+	 *
+	 * @param hashType Hash type
+	 * @param input    Input hashed
+	 * @return boolean when format is correct
+	 */
+	public static boolean Validator(HashType hashType, String input) {
+		if (hashType == HashType.SHA3_256 && input.matches("-?[0-9a-fA-F]+")) {
+			return input.length() == 64;
+		} else if (hashType == HashType.KECCAK_256 && input.matches("-?[0-9a-fA-F]+")) {
+			return input.length() == 64;
+		} else if (hashType == HashType.HASH_160 && input.matches("-?[0-9a-fA-F]+")) {
+			return input.length() == 40;
+		} else if (hashType == HashType.HASH_256 && input.matches("-?[0-9a-fA-F]+")) {
+			return input.length() == 64;
+		}
+		return false;
+	}
 
-    public int getValue() {
-        return value;
-    }
+	public int getValue() {
+		return value;
+	}
 }

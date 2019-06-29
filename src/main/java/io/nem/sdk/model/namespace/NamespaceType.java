@@ -22,35 +22,35 @@ package io.nem.sdk.model.namespace;
  * @since 1.0
  */
 public enum NamespaceType {
-    /**
-     * Root namespace
-     */
-    RootNamespace(0),
-    /**
-     * Sub namespace
-     */
-    SubNamespace(1);
+	/**
+	 * Root namespace
+	 */
+	RootNamespace(0),
+	/**
+	 * Sub namespace
+	 */
+	SubNamespace(1);
 
-    private int value;
+	private int value;
 
-    NamespaceType(int value) {
-        this.value = value;
-    }
+	NamespaceType(int value) {
+		this.value = value;
+	}
 
-    public static NamespaceType rawValueOf(int value) {
-        switch (value) {
-            case 0:
-                return NamespaceType.RootNamespace;
-            case 1:
-                return NamespaceType.SubNamespace;
-            default:
-                throw new IllegalArgumentException(value + " is not a valid value");
-        }
-    }
+	public static NamespaceType rawValueOf(int value) {
+		switch (value) {
+			case 0:
+				return NamespaceType.RootNamespace;
+			case 1:
+				return NamespaceType.SubNamespace;
+			default:
+				throw new IllegalArgumentException(value + " is not a valid value");
+		}
+	}
 
-    public int getValue() {
-        return value;
-    }
+	public int getValue() {
+		return value;
+	}
 
 }
 

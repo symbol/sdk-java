@@ -20,8 +20,6 @@
 
 package io.nem.catapult.builders;
 
-import io.nem.core.utils.Base32Encoder;
-
 import java.io.DataInput;
 import java.nio.ByteBuffer;
 
@@ -92,14 +90,5 @@ public final class UnresolvedAddressDto {
         return GeneratorUtils.serialize(dataOutputStream -> {
             dataOutputStream.write(this.unresolvedAddress.array(), 0, this.unresolvedAddress.array().length);
         });
-    }
-
-    /**
-     * Returns the object data as a string value
-     *
-     * @return String
-     */
-    public String asString() {
-        return Base32Encoder.getString(this.getUnresolvedAddress().array());
     }
 }

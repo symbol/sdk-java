@@ -37,4 +37,8 @@ public class FakeTransferTransaction extends Transaction {
     byte[] generateBytes() {
         throw new Error("Method no implemented");
     }
+    @Override
+    byte[] generateEmbeddedBytes() {
+        throw new Error("Method no implemented");
+    }
 }

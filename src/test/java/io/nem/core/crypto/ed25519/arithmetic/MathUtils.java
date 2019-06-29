@@ -526,7 +526,7 @@ public class MathUtils {
         final Ed25519GroupElement R = scalarMultiplyGroupElement(Ed25519Group.BASE_POINT, toFieldElement(toBigInteger(rReduced)));
         final Ed25519EncodedFieldElement h = new Ed25519EncodedFieldElement(Hashes.sha3_512(
                 R.encode().getRaw(),
-                keyPair.getPublicKey().getRaw(),
+                keyPair.getPublicKey().getBytes(),
                 data));
         final Ed25519EncodedFieldElement hReduced = reduceModGroupOrder(h);
         final BigInteger S = toBigInteger(rReduced).add(toBigInteger(hReduced).multiply(toBigInteger(a))).mod(Ed25519Group.GROUP_ORDER);

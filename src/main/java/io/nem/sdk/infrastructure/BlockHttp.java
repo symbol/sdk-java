@@ -145,8 +145,9 @@ public class BlockHttp extends Http implements BlockRepository {
     private BlockInfo extractBlockInfo(BlockInfoDTO blockInfoDTO) {
         return BlockInfo.create(blockInfoDTO.getMeta().getHash(),
                 blockInfoDTO.getMeta().getGenerationHash(),
-                Optional.of(extractIntArray(blockInfoDTO.getMeta().getTotalFee())),
-                Optional.of(blockInfoDTO.getMeta().getNumTransactions().intValue()),
+                extractIntArray(blockInfoDTO.getMeta().getTotalFee()),
+                blockInfoDTO.getMeta().getNumTransactions().intValue(),
+                blockInfoDTO.getMeta().getSubCacheMerkleRoots(),
                 blockInfoDTO.getBlock().getSignature(),
                 blockInfoDTO.getBlock().getSigner(),
                 blockInfoDTO.getBlock().getVersion().intValue(),
@@ -159,6 +160,6 @@ public class BlockHttp extends Http implements BlockRepository {
                 blockInfoDTO.getBlock().getBlockTransactionsHash(),
                 blockInfoDTO.getBlock().getBlockReceiptsHash(),
                 blockInfoDTO.getBlock().getStateHash(),
-                Optional.ofNullable(blockInfoDTO.getBlock().getBeneficiary()));
+                blockInfoDTO.getBlock().getBeneficiary());
     }
 }

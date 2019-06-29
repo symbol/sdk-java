@@ -18,6 +18,7 @@ package io.nem.sdk.model.transaction;
 
 import io.nem.sdk.model.account.PublicAccount;
 import io.nem.sdk.model.blockchain.NetworkType;
+import org.bouncycastle.util.encoders.Hex;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -35,8 +36,8 @@ class ModifyMultisigAccountTransactionTest {
     void createAMultisigModificationTransactionViaConstructor() {
         ModifyMultisigAccountTransaction modifyMultisigAccountTransaction = ModifyMultisigAccountTransaction.create(
                 new Deadline(2, ChronoUnit.HOURS),
-                2,
-                1,
+                (byte)2,
+                (byte)1,
                 Collections.singletonList(
                         new MultisigCosignatoryModification(MultisigCosignatoryModificationType.ADD,
                                 PublicAccount.createFromPublicKey("68b3fbb18729c1fde225c57f8ce080fa828f0067e451a3fd81fa628842b0b763", NetworkType.MIJIN_TEST))
@@ -45,12 +46,12 @@ class ModifyMultisigAccountTransactionTest {
         );
 
         assertEquals(NetworkType.MIJIN_TEST, modifyMultisigAccountTransaction.getNetworkType());
-        assertTrue(3 == modifyMultisigAccountTransaction.getVersion());
+        assertTrue(1 == modifyMultisigAccountTransaction.getVersion());
         assertTrue(LocalDateTime.now().isBefore(modifyMultisigAccountTransaction.getDeadline().getLocalDateTime()));
         assertEquals(BigInteger.valueOf(0), modifyMultisigAccountTransaction.getFee());
         assertEquals(2, modifyMultisigAccountTransaction.getMinApprovalDelta());
         assertEquals(1, modifyMultisigAccountTransaction.getMinRemovalDelta());
-        assertEquals("68b3fbb18729c1fde225c57f8ce080fa828f0067e451a3fd81fa628842b0b763", modifyMultisigAccountTransaction.getModifications().get(0).getCosignatoryPublicAccount().getPublicKey());
+        assertEquals("68b3fbb18729c1fde225c57f8ce080fa828f0067e451a3fd81fa628842b0b763".toUpperCase(), modifyMultisigAccountTransaction.getModifications().get(0).getCosignatoryPublicAccount().getPublicKey().toString().toUpperCase());
         assertEquals(MultisigCosignatoryModificationType.ADD, modifyMultisigAccountTransaction.getModifications().get(0).getType());
     }
 
@@ -58,14 +59,11 @@ class ModifyMultisigAccountTransactionTest {
     @DisplayName("Serialization")
     void serialization() {
         // Generated at nem2-library-js/test/transactions/ModifyMultisigAccountTransaction.spec.js
-        byte[] expected = new byte[]{(byte) 189, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                3, (byte) 144, 85, 65, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 2, 2, 0, 104, (byte) 179, (byte) 251, (byte) 177, (byte) 135, 41, (byte) 193, (byte) 253, (byte) 226, 37, (byte) 197, 127, (byte) 140, (byte) 224, (byte) 128, (byte) 250, (byte) 130, (byte) 143, 0, 103, (byte) 228, 81, (byte) 163, (byte) 253, (byte) 129, (byte) 250, 98, (byte) 136, 66, (byte) 176, (byte) 183, 99, 0, (byte) 207, (byte) 137, 63, (byte) 252, (byte) 196, 124, 51, (byte) 231, (byte) 246, (byte) 138, (byte) 177, (byte) 219, 86, 54, 92, 21, 107, 7, 54, (byte) 130, 74, 12, 30, 39, 63, (byte) 158, 0, (byte) 184, (byte) 223, (byte) 143, 1, (byte) 235};
-
+        String expected = "bd00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001905541000000000000000001000000000000000102020068b3fbb18729c1fde225c57f8ce080fa828f0067e451a3fd81fa628842b0b76300cf893ffcc47c33e7f68ab1db56365c156b0736824a0c1e273f9e00b8df8f01eb";
         ModifyMultisigAccountTransaction modifyMultisigAccountTransaction = ModifyMultisigAccountTransaction.create(
                 new FakeDeadline(),
-                2,
-                1,
+                (byte)2,
+                (byte)1,
                 Arrays.asList(
                         new MultisigCosignatoryModification(MultisigCosignatoryModificationType.ADD, PublicAccount.createFromPublicKey("68b3fbb18729c1fde225c57f8ce080fa828f0067e451a3fd81fa628842b0b763", NetworkType.MIJIN_TEST)),
                         new MultisigCosignatoryModification(MultisigCosignatoryModificationType.ADD, PublicAccount.createFromPublicKey("cf893ffcc47c33e7f68ab1db56365c156b0736824a0c1e273f9e00b8df8f01eb", NetworkType.MIJIN_TEST))
@@ -75,6 +73,6 @@ class ModifyMultisigAccountTransactionTest {
         );
 
         byte[] actual = modifyMultisigAccountTransaction.generateBytes();
-        assertArrayEquals(expected, actual);
+        assertEquals(expected, Hex.toHexString(actual));
     }
 }

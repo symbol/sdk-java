@@ -20,11 +20,9 @@
 
 package io.nem.catapult.builders;
 
-import io.nem.core.utils.StringEncoder;
-
 import java.io.DataInput;
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.nio.ByteBuffer;
 
 /** Binary layout for a transfer transaction. */
 final class TransferTransactionBodyBuilder {
@@ -103,36 +101,12 @@ final class TransferTransactionBodyBuilder {
     }
 
     /**
-     * Gets transaction message as plain text.
-     *
-     * @return plain text message.
-     */
-    public String getMessageAsString() {
-        return StringEncoder.getString(this.message.array()).trim();
-    }
-
-    /**
      * Gets attached mosaics.
      *
      * @return Attached mosaics.
      */
     public ArrayList<UnresolvedMosaicBuilder> getMosaics() {
         return this.mosaics;
-    }
-
-    /**
-     * Gets attached mosaics as a string.
-     *
-     * @return string.
-     */
-    public String getMosaicsAsString() {
-        StringBuilder sb = new StringBuilder("{");
-        for (UnresolvedMosaicBuilder  mosaic : this.mosaics) {
-            sb.append(mosaic.asString());
-        }
-        sb.append(" }");
-
-        return sb.toString();
     }
 
     /**

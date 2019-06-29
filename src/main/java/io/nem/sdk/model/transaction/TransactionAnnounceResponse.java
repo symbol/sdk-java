@@ -18,27 +18,25 @@ package io.nem.sdk.model.transaction;
 
 /**
  * The transaction response of an announce transaction.
- *
- * @since 1.0
  */
 public class TransactionAnnounceResponse {
-    private final String message;
+	private final String message;
 
-    /**
-     * Constructor
-     *
-     * @param message Success or error message.
-     */
-    public TransactionAnnounceResponse(String message) {
-        this.message = message;
-    }
+	/**
+	 * Constructor
+	 *
+	 * @param message Success or error message.
+	 */
+	public TransactionAnnounceResponse(String message) {
+		this.message = message;
+	}
 
-    /**
-     * Returns success or error message.
-     *
-     * @return transaction response message
-     */
-    public String getMessage() {
-        return message;
-    }
+	/**
+	 * Returns success or error message.
+	 *
+	 * @return transaction response message
+	 */
+	public String getMessage() {
+		return message;
+	}
 }

@@ -94,13 +94,4 @@ public enum LockHashAlgorithmDto {
             dataOutputStream.writeByte(this.value);
         });
     }
-
-    /**
-     * Returns the object data as a string value
-     *
-     * @return String
-     */
-    public String asString() {
-        return Byte.toString(this.value);
-    }
 }
