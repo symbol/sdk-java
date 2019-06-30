@@ -31,6 +31,18 @@ public enum EntityTypeDto {
 	 */
 	RESERVED((short) 0),
 	/**
+	 * Account address restriction transaction.
+	 */
+	ACCOUNT_ADDRESS_RESTRICTION_TRANSACTION((short) 0x4150),
+	/**
+	 * Account mosaic restriction transaction.
+	 */
+	ACCOUNT_MOSAIC_RESTRICTION_TRANSACTION((short) 0x4250),
+	/**
+	 * Account operation restriction transaction.
+	 */
+	ACCOUNT_OPERATION_RESTRICTION_TRANSACTION((short) 0x4350),
+	/**
 	 * Account link transaction.
 	 */
 	ACCOUNT_LINK_TRANSACTION((short) 0x414C),
