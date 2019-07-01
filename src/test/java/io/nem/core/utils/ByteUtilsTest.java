@@ -326,12 +326,12 @@ public class ByteUtilsTest {
 
     //endregion
 
-    //region toString
+    //region hexFormat
 
     @Test
     public void toStringCreatesCorrectRepresentationForEmptyBytes() {
         // Act:
-        final String result = ByteUtils.toString(new byte[]{});
+        final String result = ByteUtils.hexFormat(new byte[]{});
 
         // Assert:
         Assert.assertThat(result, IsEqual.equalTo("{ }"));
@@ -340,7 +340,7 @@ public class ByteUtilsTest {
     @Test
     public void toStringCreatesCorrectRepresentationForNonEmptyBytes() {
         // Act:
-        final String result = ByteUtils.toString(new byte[]{0x12, (byte) 0x8A, 0x00, 0x07});
+        final String result = ByteUtils.hexFormat(new byte[]{0x12, (byte) 0x8A, 0x00, 0x07});
 
         // Assert:
         Assert.assertThat(result, IsEqual.equalTo("{ 12 8A 00 07 }"));

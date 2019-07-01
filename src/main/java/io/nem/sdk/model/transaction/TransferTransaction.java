@@ -17,6 +17,9 @@
 package io.nem.sdk.model.transaction;
 
 import com.google.flatbuffers.FlatBufferBuilder;
+import io.nem.catapult.builders.SignatureDto;
+import io.nem.catapult.builders.TransferTransactionBuilder;
+import io.nem.catapult.builders.UnresolvedMosaicBuilder;
 import io.nem.sdk.model.account.Address;
 import io.nem.sdk.model.account.PublicAccount;
 import io.nem.sdk.model.blockchain.NetworkType;
@@ -26,6 +29,7 @@ import org.apache.commons.lang3.Validate;
 
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -40,16 +44,16 @@ public class TransferTransaction extends Transaction {
     private final Message message;
     private final Schema schema = new TransferTransactionSchema();
 
-    public TransferTransaction(NetworkType networkType, Integer version, Deadline deadline, BigInteger fee, Address recipient, List<Mosaic> mosaics, Message message, String signature, PublicAccount signer, TransactionInfo transactionInfo) {
-        this(networkType, version, deadline, fee, recipient, mosaics, message, Optional.of(signature), Optional.of(signer), Optional.of(transactionInfo));
+    public TransferTransaction(NetworkType networkType, Integer version, Deadline deadline, BigInteger maxFee, Address recipient, List<Mosaic> mosaics, Message message, String signature, PublicAccount signer, TransactionInfo transactionInfo) {
+        this(networkType, version, deadline, maxFee, recipient, mosaics, message, Optional.of(signature), Optional.of(signer), Optional.of(transactionInfo));
     }
 
-    public TransferTransaction(NetworkType networkType, Integer version, Deadline deadline, BigInteger fee, Address recipient, List<Mosaic> mosaics, Message message) {
-        this(networkType, version, deadline, fee, recipient, mosaics, message, Optional.empty(), Optional.empty(), Optional.empty());
+    public TransferTransaction(NetworkType networkType, Integer version, Deadline deadline, BigInteger maxFee, Address recipient, List<Mosaic> mosaics, Message message) {
+        this(networkType, version, deadline, maxFee, recipient, mosaics, message, Optional.empty(), Optional.empty(), Optional.empty());
     }
 
-    private TransferTransaction(NetworkType networkType, Integer version, Deadline deadline, BigInteger fee, Address recipient, List<Mosaic> mosaics, Message message, Optional<String> signature, Optional<PublicAccount> signer, Optional<TransactionInfo> transactionInfo) {
-        super(TransactionType.TRANSFER, networkType, version, deadline, fee, signature, signer, transactionInfo);
+    private TransferTransaction(NetworkType networkType, Integer version, Deadline deadline, BigInteger maxFee, Address recipient, List<Mosaic> mosaics, Message message, Optional<String> signature, Optional<PublicAccount> signer, Optional<TransactionInfo> transactionInfo) {
+        super(TransactionType.TRANSFER, networkType, version, deadline, maxFee, signature, signer, transactionInfo);
         Validate.notNull(recipient, "Recipient must not be null");
         Validate.notNull(mosaics, "Mosaics must not be null");
         Validate.notNull(message, "Message must not be null");
@@ -99,11 +103,14 @@ public class TransferTransaction extends Transaction {
         return message;
     }
 
-    // TODO To remove public access before commit
+    // TODO Revert access back to default before release
     public byte[] generateBytes() {
+        return this.serialize();
+
+        /*
         FlatBufferBuilder builder = new FlatBufferBuilder();
         BigInteger deadlineBigInt = BigInteger.valueOf(getDeadline().getInstant());
-        int[] fee = new int[]{0, 0};
+        int[] maxFee = new int[]{0, 0};
         int version = (int) Long.parseLong(Integer.toHexString(getNetworkType().getValue()) + "0" + Integer.toHexString(getVersion()), 16);
 
         // Create Message
@@ -131,7 +138,7 @@ public class TransferTransaction extends Transaction {
         int signatureVector = TransferTransactionBuffer.createSignatureVector(builder, new byte[64]);
         int signerVector = TransferTransactionBuffer.createSignerVector(builder, new byte[32]);
         int deadlineVector = TransferTransactionBuffer.createDeadlineVector(builder, UInt64.fromBigInteger(deadlineBigInt));
-        int feeVector = TransferTransactionBuffer.createFeeVector(builder, fee);
+        int maxFeeVector = TransferTransactionBuffer.createMaxFeeVector(builder, maxFee);
         int recipientVector = TransferTransactionBuffer.createRecipientVector(builder, address);
         int mosaicsVector = TransferTransactionBuffer.createMosaicsVector(builder, mosaicBuffers);
 
@@ -143,7 +150,7 @@ public class TransferTransaction extends Transaction {
         TransferTransactionBuffer.addSigner(builder, signerVector);
         TransferTransactionBuffer.addVersion(builder, version);
         TransferTransactionBuffer.addType(builder, getType().getValue());
-        TransferTransactionBuffer.addFee(builder, feeVector);
+        TransferTransactionBuffer.addMaxFee(builder, maxFeeVector);
         TransferTransactionBuffer.addDeadline(builder, deadlineVector);
         TransferTransactionBuffer.addRecipient(builder, recipientVector);
         TransferTransactionBuffer.addNumMosaics(builder, mosaics.size());
@@ -154,6 +161,35 @@ public class TransferTransaction extends Transaction {
         int codedTransfer = TransferTransactionBuffer.endTransferTransactionBuffer(builder);
         builder.finish(codedTransfer);
 
-        return schema.serialize(builder.sizedByteArray());
+        return schema.serialize(builder.sizedByteArray());*/
+    }
+
+    public byte[] serialize() {
+
+        String signature = this.getSignature().isPresent() ? this.getSignature().get() : null;
+        String signer = this.getSigner().isPresent() ? this.getSigner().get().getPublicKey() : null;
+        byte transactionVersion = this.getVersion().byteValue();
+        byte networkType = ((byte) this.getNetworkType().getValue());
+        short type = (short) this.getType().getValue();
+        long maxFee = this.getMaxFee().longValue();
+        long deadline = this.getDeadline().getInstant();
+        String recipient = this.getRecipient().plain();
+        String message = this.getMessage().getPayload();
+
+        /*StringBuilder sb = new StringBuilder();
+        sb.append("\nTransferTransaction.serialize():");
+        sb.append("\nsignature " + signature);
+        sb.append("\nsigner " + signer);
+        sb.append("\ntransactionVersion " + transactionVersion);
+        sb.append("\nnetworkType " + networkType);
+        sb.append("\ntype " + type);
+        sb.append("\nmaxFee " + maxFee);
+        sb.append("\ndeadline " + deadline);
+        sb.append("\nrecipient " + recipient);
+        sb.append("\nmessage " + message);
+        System.out.println(sb.toString());*/
+
+        TransferTransactionBuilder builder = TransferTransactionBuilder.create(signature, signer, transactionVersion, networkType, type, maxFee, deadline, recipient, message, this.mosaics);
+        return builder.serialize();
     }
 }

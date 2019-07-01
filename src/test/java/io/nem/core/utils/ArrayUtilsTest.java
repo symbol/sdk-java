@@ -40,9 +40,9 @@ public class ArrayUtilsTest {
     private static String createMessage(final byte[] bytes1, final byte[] bytes2) {
         return String.format(
                 "bytes1: %s%sbytes2: %s",
-                ByteUtils.toString(bytes1),
+                ByteUtils.hexFormat(bytes1),
                 System.lineSeparator(),
-                ByteUtils.toString(bytes2));
+                ByteUtils.hexFormat(bytes2));
     }
 
     private static void assertCompareZero(final byte[] a, final byte[] b) {
