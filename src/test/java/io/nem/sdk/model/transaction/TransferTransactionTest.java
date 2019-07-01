@@ -67,13 +67,13 @@ class TransferTransactionTest {
         assertNotNull(transferTx.getMessage());
     }
 
-    @Test // TODO to fix transaction size
+    @Test
     @DisplayName("Serialization")
     void serialization() {
         // Generated at nem2-library-js/test/transactions/TransferTransaction.spec.js
         byte[] expected = new byte[]{(byte) 165, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                 3, (byte) 144, 84, 65, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, (byte) 144, (byte) 232, (byte) 254, (byte) 189, (byte) 103, (byte) 29, (byte) 212, (byte) 27, (byte) 238, (byte) 148, (byte) 236, (byte) 59, (byte) 165, (byte) 131, (byte) 28, (byte) 182, (byte) 8, (byte) 163, (byte) 18, (byte) 194, (byte) 242, (byte) 3, (byte) 186, (byte) 132, (byte) 172,
-                1, 0, 1, 0, 103, 43, 0, 0, (byte) 206, 86, 0, 0, 100, 0, 0, 0, 0, 0, 0, 0};
+                1, 0, 1, 48, 103, 43, 0, 0, (byte) 206, 86, 0, 0, 100, 0, 0, 0, 0, 0, 0, 0};
 
         TransferTransaction transferTransaction = TransferTransaction.create(
                 new FakeDeadline(),
@@ -84,17 +84,19 @@ class TransferTransactionTest {
                 PlainMessage.Empty,
                 NetworkType.MIJIN_TEST
         );
-        byte[] actual = transferTransaction.generateBytes();
-        // assertArrayEquals(expected, actual); // TODO Fix error array lengths differ, expected: <165> but was: <164>
+        byte[] actual = transferTransaction.serialize();
+
+        assertEquals(expected.length, actual.length);
+        assertArrayEquals(expected, actual);
     }
 
-    @Test // TODO to fix transaction size
+    @Test
     @DisplayName("Serialization with Builder")
     void compareSerializationFlatBufferAndBuilder() {
         // Generated at nem2-library-js/test/transactions/TransferTransaction.spec.js
         byte[] expected = new byte[]{(byte) 165, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                 3, (byte) 144, 84, 65, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, (byte) 144, (byte) 232, (byte) 254, (byte) 189, (byte) 103, (byte) 29, (byte) 212, (byte) 27, (byte) 238, (byte) 148, (byte) 236, (byte) 59, (byte) 165, (byte) 131, (byte) 28, (byte) 182, (byte) 8, (byte) 163, (byte) 18, (byte) 194, (byte) 242, (byte) 3, (byte) 186, (byte) 132, (byte) 172,
-                1, 0, 1, 0, 103, 43, 0, 0, (byte) 206, 86, 0, 0, 100, 0, 0, 0, 0, 0, 0, 0};
+                1, 0, 1, 48, 103, 43, 0, 0, (byte) 206, 86, 0, 0, 100, 0, 0, 0, 0, 0, 0, 0};
 
         TransferTransaction txModel = TransferTransaction.create(
                 new FakeDeadline(),
@@ -107,11 +109,13 @@ class TransferTransactionTest {
         );
         byte[] actual = txModel.generateBytes();
         System.out.println(ByteUtils.unsignedBytesToString(actual));
+        assertEquals(expected.length, actual.length);
         //assertArrayEquals(expected, actual);
 
         byte[] actual2 = txModel.serialize();
         System.out.println(ByteUtils.unsignedBytesToString(actual2));
-        //assertArrayEquals(expected, actual2); // TODO Fix error array lengths differ, expected: <165> but was: <164>
+        assertEquals(expected.length, actual2.length);
+        assertArrayEquals(expected, actual2);
 
         // deserialize
         ByteArrayInputStream bs = new ByteArrayInputStream(actual2);
@@ -167,7 +171,7 @@ class TransferTransactionTest {
         System.out.println(ByteUtils.hexFormat(test.getMessage().array()));*/
     }
 
-    @Test // TODO to fix transaction size
+    @Test
     @DisplayName("To aggregate")
     void toAggregate() {
         byte[] expected =  new byte[]{85,0,0,0,-102,73,54,100,6,-84,-87,82,-72,-117,-83,-11,-15,-23,-66,108,-28,-106,-127,
@@ -184,7 +188,8 @@ class TransferTransactionTest {
                 NetworkType.MIJIN_TEST
         );
         byte[] actual = transferTransaction.toAggregate(new PublicAccount("9A49366406ACA952B88BADF5F1E9BE6CE4968141035A60BE503273EA65456B24", NetworkType.MIJIN_TEST)).toAggregateTransactionBytes();
-        //assertArrayEquals(expected, actual); // TODO Fix error array lengths differ, expected: <85> but was: <84>
+        assertEquals(expected.length, actual.length);
+        assertArrayEquals(expected, actual);
     }
 
     @Test
@@ -200,7 +205,7 @@ class TransferTransactionTest {
         );
 
         SignedTransaction signedTransaction = transferTransaction.signWith(account);
-        assertEquals("A4000000C9112B389AF5AFFB3609AD634DD213BA97E8158FD22D0F5391FDBE3F663CF98CB58BE659AD63C215E65706FE580D97E12949C9082CAFA20ED134AEC7AADB2B071026D70E1954775749C6811084D6450A3184D977383F0E4282CD47118AF37755039054410000000000000000010000000000000090E8FEBD671DD41BEE94EC3BA5831CB608A312C2F203BA84AC000001672B0000CE5600006400000000000000", signedTransaction.getPayload());
-        assertEquals("F69055F917B0C1FBFA8A2D1512AE45E4A3D3FCD692A4D3AF0125784972EE1238", signedTransaction.getHash());
+        assertEquals("A5000000773891AD01DD4CDF6E3A55C186C673E256D7DF9D471846F1943CC3529E4E02B38B9AF3F8D13784645FF5FAAFA94A321B94933C673D12DE60E4BC05ABA56F750E1026D70E1954775749C6811084D6450A3184D977383F0E4282CD47118AF37755039054410000000000000000010000000000000090E8FEBD671DD41BEE94EC3BA5831CB608A312C2F203BA84AC01000100672B0000CE5600006400000000000000", signedTransaction.getPayload());
+        assertEquals("350AE56BC97DB805E2098AB2C596FA4C6B37EF974BF24DFD61CD9F77C7687424", signedTransaction.getHash());
     }
 }

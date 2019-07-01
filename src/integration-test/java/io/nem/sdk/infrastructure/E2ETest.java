@@ -80,7 +80,7 @@ class E2ETest extends BaseTest {
 
         SignedTransaction signedTransaction = this.account.sign(transferTransaction);
         String payload = signedTransaction.getPayload();
-        //assertEquals(420, payload.length());
+        assertEquals(420, payload.length());
 
         TransactionAnnounceResponse transactionAnnounceResponse = transactionHttp.announce(signedTransaction).toFuture().get();
         assertEquals("packet 9 was pushed to the network via /transaction", transactionAnnounceResponse.getMessage());

@@ -62,7 +62,7 @@ class TransferTransactionBuilderTest {
                 NetworkType.MIJIN_TEST
         );
 
-        byte[] bytes = transferTx.generateBytes();
+        byte[] bytes = transferTx.serialize();
         System.out.println(ByteUtils.hexFormat(bytes));
 
         System.out.print("{ ");
@@ -91,13 +91,13 @@ class TransferTransactionBuilderTest {
         assertNotNull(transferTx.getMessage());
     }
 
-    @Test // TODO to fix transaction size
+    @Test
     @DisplayName("TransferTransaction Serialization")
     void testSerializeTransferTransaction() {
         // Generated at nem2-library-js/test/transactions/TransferTransaction.spec.js
         byte[] expected = new byte[]{(byte) 165, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                 3, (byte) 144, 84, 65, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, (byte) 144, (byte) 232, (byte) 254, (byte) 189, (byte) 103, (byte) 29, (byte) 212, (byte) 27, (byte) 238, (byte) 148, (byte) 236, (byte) 59, (byte) 165, (byte) 131, (byte) 28, (byte) 182, (byte) 8, (byte) 163, (byte) 18, (byte) 194, (byte) 242, (byte) 3, (byte) 186, (byte) 132, (byte) 172,
-                1, 0, 1, 0, 103, 43, 0, 0, (byte) 206, 86, 0, 0, 100, 0, 0, 0, 0, 0, 0, 0};
+                1, 0, 1, 48, 103, 43, 0, 0, (byte) 206, 86, 0, 0, 100, 0, 0, 0, 0, 0, 0, 0};
 
         TransferTransaction transferTransaction = TransferTransaction.create(
                 new FakeDeadline(),
@@ -116,30 +116,16 @@ class TransferTransactionBuilderTest {
         144000000
         */
 
-        byte[] actual = transferTransaction.generateBytes();
-        //assertArrayEquals(expected, actual);  // TODO to fix transaction size
+        byte[] actual = transferTransaction.serialize();
+        assertEquals(expected.length, actual.length);
+        assertArrayEquals(expected, actual);
     }
 
     @Test
     @DisplayName("TransferTransactionBuilder Serialization")
     void testSerializeTransferTransactionBuilder()
     {
-        byte[] expected = new byte[]{(byte) 165, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                3, (byte) 144, 84, 65, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, (byte) 144, (byte) 232, (byte) 254, (byte) 189, (byte) 103, (byte) 29, (byte) 212, (byte) 27, (byte) 238, (byte) 148, (byte) 236, (byte) 59, (byte) 165, (byte) 131, (byte) 28, (byte) 182, (byte) 8, (byte) 163, (byte) 18, (byte) 194, (byte) 242, (byte) 3, (byte) 186, (byte) 132, (byte) 172,
-                1, 0, 1, 0, 103, 43, 0, 0, (byte) 206, 86, 0, 0, 100, 0, 0, 0, 0, 0, 0, 0};
-
         try {
-
-            /* tx.getSignature(),
-               tx.getSigner(),
-               tx.getVersion(),
-               tx.getType(),
-               tx.getFee(),
-               tx.getDeadline(),
-               tx.getRecipient(),
-               tx.getMessage(),
-               tx.getMosaics()*/
-
             java.nio.ByteBuffer bb = java.nio.ByteBuffer.allocate(64);
             bb.put(new byte[64]);
             SignatureDto signature = new SignatureDto(bb);
@@ -304,15 +290,6 @@ class TransferTransactionBuilderTest {
                     "9E8334E3F83E972461125504AFFD3E7750AFBB3371E7B2D" +
                     "22A599A3D0E3039054410000000000000000265DEE3F170" +
                     "0000090FA39EC47E05600AFA74308A7EA607D145E371B5F" +
-                    "4F1447BC0F00010057656C636F6D6520546F204E454D44B" +
-                    "262C46CEABB858096980000000000";
-
-            hexString = "B3000000F77A8DCFCB57B81F9BE5B46738F7132998F5512" +
-                    "3BFF4D89DC8E5CAE1F071A040E5571F4D8DA125B243C785" +
-                    "DA5261F878E3DE898815F6E8F12A2C0A5F0A9C3504FA624" +
-                    "9E8334E3F83E972461125504AFFD3E7750AFBB3371E7B2D" +
-                    "22A599A3D0E3039054410000000000000000265DEE3F170" +
-                    "0000090FA39EC47E05600AFA74308A7EA607D145E371B5F" +
                     "4F1447BC0F000157656C636F6D6520546F204E454D0044B" +
                     "262C46CEABB858096980000000000";
 
@@ -438,7 +415,7 @@ class TransferTransactionBuilderTest {
         }
     }
 
-    @Test // TODO to fix transaction size
+    @Test
     @DisplayName("Serialization with Builder")
     void serializationWithBuilder() {
         // Generated at nem2-library-js/test/transactions/TransferTransaction.spec.js
@@ -455,9 +432,9 @@ class TransferTransactionBuilderTest {
                 PlainMessage.Empty,
                 NetworkType.MIJIN_TEST
         );
-        byte[] actual = tx.generateBytes();
+        byte[] actual = tx.serialize();
 
-        //assertArrayEquals(expected, actual); // TODO fix size, differs by 1 byte
+        assertEquals(expected.length, actual.length);
         assertEquals("SDUP5PLHDXKBX3UU5Q52LAY4WYEKGEWC6IB3VBFM", tx.getRecipient().plain());
     }
 }

@@ -20,6 +20,7 @@ import com.google.flatbuffers.FlatBufferBuilder;
 import io.nem.catapult.builders.SignatureDto;
 import io.nem.catapult.builders.TransferTransactionBuilder;
 import io.nem.catapult.builders.UnresolvedMosaicBuilder;
+import io.nem.core.utils.ByteUtils;
 import io.nem.sdk.model.account.Address;
 import io.nem.sdk.model.account.PublicAccount;
 import io.nem.sdk.model.blockchain.NetworkType;
@@ -103,11 +104,10 @@ public class TransferTransaction extends Transaction {
         return message;
     }
 
+    // Deprecated
     // TODO Revert access back to default before release
     public byte[] generateBytes() {
-        return this.serialize();
 
-        /*
         FlatBufferBuilder builder = new FlatBufferBuilder();
         BigInteger deadlineBigInt = BigInteger.valueOf(getDeadline().getInstant());
         int[] maxFee = new int[]{0, 0};
@@ -161,7 +161,7 @@ public class TransferTransaction extends Transaction {
         int codedTransfer = TransferTransactionBuffer.endTransferTransactionBuffer(builder);
         builder.finish(codedTransfer);
 
-        return schema.serialize(builder.sizedByteArray());*/
+        return schema.serialize(builder.sizedByteArray());
     }
 
     public byte[] serialize() {
@@ -174,20 +174,7 @@ public class TransferTransaction extends Transaction {
         long maxFee = this.getMaxFee().longValue();
         long deadline = this.getDeadline().getInstant();
         String recipient = this.getRecipient().plain();
-        String message = this.getMessage().getPayload();
-
-        /*StringBuilder sb = new StringBuilder();
-        sb.append("\nTransferTransaction.serialize():");
-        sb.append("\nsignature " + signature);
-        sb.append("\nsigner " + signer);
-        sb.append("\ntransactionVersion " + transactionVersion);
-        sb.append("\nnetworkType " + networkType);
-        sb.append("\ntype " + type);
-        sb.append("\nmaxFee " + maxFee);
-        sb.append("\ndeadline " + deadline);
-        sb.append("\nrecipient " + recipient);
-        sb.append("\nmessage " + message);
-        System.out.println(sb.toString());*/
+        String message = this.getMessage().asString();
 
         TransferTransactionBuilder builder = TransferTransactionBuilder.create(signature, signer, transactionVersion, networkType, type, maxFee, deadline, recipient, message, this.mosaics);
         return builder.serialize();
