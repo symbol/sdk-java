@@ -86,3 +86,5 @@ crypto/out
 gradle-local.properties
 
 bin/
+
+.project

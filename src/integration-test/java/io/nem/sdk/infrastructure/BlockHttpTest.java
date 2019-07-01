@@ -18,6 +18,7 @@ package io.nem.sdk.infrastructure;
 
 import io.nem.sdk.model.blockchain.BlockInfo;
 import io.nem.sdk.model.blockchain.BlockchainStorageInfo;
+import io.nem.sdk.model.receipt.Statement;
 import io.nem.sdk.model.transaction.Transaction;
 import io.reactivex.observers.TestObserver;
 import io.reactivex.schedulers.Schedulers;
@@ -35,17 +36,17 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class BlockchainHttpTest extends BaseTest {
-    private BlockchainHttp blockchainHttp;
+class BlockHttpTest extends BaseTest {
+    private BlockHttp blockHttp;
 
     @BeforeAll
     void setup() throws IOException {
-        blockchainHttp = new BlockchainHttp(this.getApiUrl());
+        blockHttp = new BlockHttp(this.getApiUrl());
     }
 
     @Test
     void getBlockByHeight() throws ExecutionException, InterruptedException {
-        BlockInfo blockInfo = blockchainHttp
+        BlockInfo blockInfo = blockHttp
                 .getBlockByHeight(BigInteger.valueOf(1))
                 .toFuture()
                 .get();
@@ -58,14 +59,14 @@ class BlockchainHttpTest extends BaseTest {
     // TODO to fix after catbuffer integration
     @Test
     void getBlockTransactions() throws ExecutionException, InterruptedException {
-        List<Transaction> transactions = blockchainHttp
+        List<Transaction> transactions = blockHttp
                 .getBlockTransactions(BigInteger.valueOf(1))
                 .toFuture()
                 .get();
 
         assertEquals(10, transactions.size());
 
-        List<Transaction> nextTransactions = blockchainHttp
+        List<Transaction> nextTransactions = blockHttp
                 .getBlockTransactions(BigInteger.valueOf(1), new QueryParams(10, transactions.get(0).getTransactionInfo().get().getId().get()))
                 .toFuture()
                 .get();
@@ -75,42 +76,19 @@ class BlockchainHttpTest extends BaseTest {
     }
 
     @Test
-    void getBlockchainHeight() throws ExecutionException, InterruptedException {
-        BigInteger blockchainHeight = blockchainHttp
-                .getBlockchainHeight()
+    void getBlockReceipts() throws ExecutionException, InterruptedException {
+        Statement statement = blockHttp
+                .getBlockReceipts(BigInteger.valueOf(6262))
                 .toFuture()
                 .get();
 
-        assertTrue(blockchainHeight.intValue() > 0);
+        assertEquals(statement.getTransactionStatements().isEmpty(), false);
     }
-
-    @Test
-    void getBlockchainScore() throws ExecutionException, InterruptedException {
-        BigInteger blockchainScore = blockchainHttp
-                .getBlockchainScore()
-                .toFuture()
-                .get();
-
-        assertTrue(blockchainScore.intValue() != 0);
-    }
-
-    @Test
-    void getBlockchainStorage() throws ExecutionException, InterruptedException {
-        BlockchainStorageInfo blockchainStorageInfo = blockchainHttp
-                .getBlockchainStorage()
-                .toFuture()
-                .get();
-
-        assertTrue(blockchainStorageInfo.getNumAccounts() > 0);
-        assertTrue(blockchainStorageInfo.getNumTransactions() > 0);
-        assertTrue(blockchainStorageInfo.getNumBlocks() > 0);
-    }
-
     @Test
     void throwExceptionWhenBlockDoesNotExists() {
         TestObserver<BlockInfo> testObserver = new TestObserver<>();
-        blockchainHttp
-                .getBlockByHeight(BigInteger.valueOf(1000000000))
+        blockHttp
+                .getBlockByHeight(BigInteger.valueOf(0))
                 .subscribeOn(Schedulers.single())
                 .test()
                 .awaitDone(2, TimeUnit.SECONDS)
