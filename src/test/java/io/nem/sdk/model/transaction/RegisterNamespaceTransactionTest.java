@@ -17,7 +17,6 @@
 package io.nem.sdk.model.transaction;
 
 import io.nem.sdk.model.account.Account;
-import io.nem.sdk.model.account.PublicAccount;
 import io.nem.sdk.model.blockchain.NetworkType;
 import io.nem.sdk.model.namespace.NamespaceId;
 import io.nem.sdk.model.namespace.NamespaceType;
@@ -51,7 +50,7 @@ class RegisterNamespaceTransactionTest {
         assertEquals(NetworkType.MIJIN_TEST, registerNamespaceTransaction.getNetworkType());
         assertTrue(2 == registerNamespaceTransaction.getVersion());
         assertTrue(LocalDateTime.now().isBefore(registerNamespaceTransaction.getDeadline().getLocalDateTime()));
-        assertEquals(BigInteger.valueOf(0), registerNamespaceTransaction.getFee());
+        assertEquals(BigInteger.valueOf(0), registerNamespaceTransaction.getMaxFee());
         assertEquals("root-test-namespace", registerNamespaceTransaction.getNamespaceName());
         assertEquals(NamespaceType.RootNamespace, registerNamespaceTransaction.getNamespaceType());
         assertEquals(BigInteger.valueOf(1000), registerNamespaceTransaction.getDuration().get());
@@ -73,7 +72,7 @@ class RegisterNamespaceTransactionTest {
         assertEquals(NetworkType.MIJIN_TEST, registerNamespaceTransaction.getNetworkType());
         assertTrue(2 == registerNamespaceTransaction.getVersion());
         assertTrue(LocalDateTime.now().isBefore(registerNamespaceTransaction.getDeadline().getLocalDateTime()));
-        assertEquals(BigInteger.valueOf(0), registerNamespaceTransaction.getFee());
+        assertEquals(BigInteger.valueOf(0), registerNamespaceTransaction.getMaxFee());
         assertEquals("root-test-namespace", registerNamespaceTransaction.getNamespaceName());
         assertEquals(NamespaceType.SubNamespace, registerNamespaceTransaction.getNamespaceType());
         assertEquals(Optional.empty(), registerNamespaceTransaction.getDuration());
@@ -95,7 +94,7 @@ class RegisterNamespaceTransactionTest {
         assertEquals(NetworkType.MIJIN_TEST, registerNamespaceTransaction.getNetworkType());
         assertTrue(2 == registerNamespaceTransaction.getVersion());
         assertTrue(LocalDateTime.now().isBefore(registerNamespaceTransaction.getDeadline().getLocalDateTime()));
-        assertEquals(BigInteger.valueOf(0), registerNamespaceTransaction.getFee());
+        assertEquals(BigInteger.valueOf(0), registerNamespaceTransaction.getMaxFee());
         assertEquals("root-test-namespace", registerNamespaceTransaction.getNamespaceName());
         assertEquals(NamespaceType.SubNamespace, registerNamespaceTransaction.getNamespaceType());
         assertEquals(Optional.empty(), registerNamespaceTransaction.getDuration());

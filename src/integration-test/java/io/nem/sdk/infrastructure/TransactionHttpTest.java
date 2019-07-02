@@ -37,7 +37,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class TransactionHttpTest extends BaseTest {
     private TransactionHttp transactionHttp;
-    private final String transactionHash = "EE5B39DBDA00BA39D06B9E67AE5B43162366C862D9B8F656F7E7068D327377BE";
+    //private final String transactionHash = "31d396ba69df35b5ae184acfafb3f49eb99cdd2c7791522ce4e86cada1e8774f".toUpperCase();
+    private final String transactionHash = "606FA7F2F02A2AA3247E1493611B8E3EBAFB32CB4B07732A39CCFE655E907D6F";
 
     @Before
     public void setup() throws IOException {

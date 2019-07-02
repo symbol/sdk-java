@@ -53,7 +53,7 @@ class TransferTransactionBuffer extends Table {
         TransferTransactionBuffer.addMessage(builder, messageOffset);
         TransferTransactionBuffer.addRecipient(builder, recipientOffset);
         TransferTransactionBuffer.addDeadline(builder, deadlineOffset);
-        TransferTransactionBuffer.addFee(builder, feeOffset);
+        TransferTransactionBuffer.addMaxFee(builder, feeOffset);
         TransferTransactionBuffer.addSigner(builder, signerOffset);
         TransferTransactionBuffer.addSignature(builder, signatureOffset);
         TransferTransactionBuffer.addSize(builder, size);
@@ -108,17 +108,17 @@ class TransferTransactionBuffer extends Table {
         builder.addShort(4, (short) type, (short) 0);
     }
 
-    public static void addFee(FlatBufferBuilder builder, int feeOffset) {
+    public static void addMaxFee(FlatBufferBuilder builder, int feeOffset) {
         builder.addOffset(5, feeOffset, 0);
     }
 
-    public static int createFeeVector(FlatBufferBuilder builder, int[] data) {
+    public static int createMaxFeeVector(FlatBufferBuilder builder, int[] data) {
         builder.startVector(4, data.length, 4);
         for (int i = data.length - 1; i >= 0; i--) builder.addInt(data[i]);
         return builder.endVector();
     }
 
-    public static void startFeeVector(FlatBufferBuilder builder, int numElems) {
+    public static void startMaxFeeVector(FlatBufferBuilder builder, int numElems) {
         builder.startVector(4, numElems, 4);
     }
 
@@ -238,17 +238,17 @@ class TransferTransactionBuffer extends Table {
         return o != 0 ? bb.getShort(o + bb_pos) & 0xFFFF : 0;
     }
 
-    public long fee(int j) {
+    public long maxFee(int j) {
         int o = __offset(14);
         return o != 0 ? (long) bb.getInt(__vector(o) + j * 4) & 0xFFFFFFFFL : 0;
     }
 
-    public int feeLength() {
+    public int maxFeeLength() {
         int o = __offset(14);
         return o != 0 ? __vector_len(o) : 0;
     }
 
-    public ByteBuffer feeAsByteBuffer() {
+    public ByteBuffer maxFeeAsByteBuffer() {
         return __vector_as_bytebuffer(14, 4);
     }
 

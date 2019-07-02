@@ -24,7 +24,6 @@ import java.util.Arrays;
 
 public class ByteUtils {
 
-
     /**
      * Converts a BigInteger value into an array of size bytes.
      *
@@ -173,7 +172,7 @@ public class ByteUtils {
      * @param bytes The bytes.
      * @return An string representation of the bytes.
      */
-    public static String toString(final byte[] bytes) {
+    public static String hexFormat(final byte[] bytes) {
         final StringBuilder builder = new StringBuilder();
         builder.append("{ ");
         for (final byte b : bytes) {
@@ -182,5 +181,27 @@ public class ByteUtils {
 
         builder.append("}");
         return builder.toString();
+    }
+
+    /**
+     * Creates a human readable representation of an array of unsigned bytes.
+     *
+     * @param bytes The bytes.
+     * @return An string representation of unsigned bytes.
+     */
+    public static String unsignedBytesToString(final byte[] bytes) {
+        final StringBuilder sb = new StringBuilder();
+        sb.append("{");
+        for (final byte b : bytes) {
+            int val = Byte.toUnsignedInt(b);
+            if (val > 127) sb.append(" (byte)");
+            sb.append(" ");
+            sb.append(val);
+            sb.append(",");
+        }
+        if (sb.indexOf(" ") == 1) sb.deleteCharAt(1);
+        if (sb.lastIndexOf(",") != -1) sb.deleteCharAt(sb.lastIndexOf(","));
+        sb.append("}");
+        return sb.toString();
     }
 }

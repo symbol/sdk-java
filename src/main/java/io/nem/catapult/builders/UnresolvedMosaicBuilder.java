@@ -64,6 +64,19 @@ public class UnresolvedMosaicBuilder {
     }
 
     /**
+     * Creates an instance of UnresolvedMosaicBuilder.
+     *
+     * @param mosaicId Mosaic identifier long.
+     * @param amount Mosaic amount long.
+     * @return Instance of UnresolvedMosaicBuilder.
+     */
+    public static UnresolvedMosaicBuilder create(final long mosaicId, final long amount) {
+        UnresolvedMosaicIdDto unresolvedMosaicIdDto = new UnresolvedMosaicIdDto(mosaicId);
+        AmountDto amountDto = new AmountDto(amount);
+        return new UnresolvedMosaicBuilder(unresolvedMosaicIdDto, amountDto);
+    }
+
+    /**
      * Gets mosaic identifier.
      *
      * @return Mosaic identifier.

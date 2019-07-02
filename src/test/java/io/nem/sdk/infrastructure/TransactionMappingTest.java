@@ -19,13 +19,11 @@ package io.nem.sdk.infrastructure;
 import io.nem.sdk.model.account.Address;
 import io.nem.sdk.model.namespace.NamespaceType;
 import io.nem.sdk.model.transaction.*;
-import io.vertx.core.json.Json;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import org.bouncycastle.util.encoders.Hex;
 import org.junit.jupiter.api.Test;
 
-import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -234,8 +232,7 @@ public class TransactionMappingTest {
         assertTrue(transaction.getVersion() == version);
         int networkType = (int) Long.parseLong(Integer.toHexString(transactionDTO.getJsonObject("transaction").getInteger("version")).substring(0, 2), 16);
         assertTrue(transaction.getNetworkType().getValue() == networkType);
-        assertEquals(extractBigInteger(transactionDTO.getJsonObject("transaction").getJsonArray("maxFee")),
-                transaction.getFee());
+        assertEquals(extractBigInteger(transactionDTO.getJsonObject("transaction").getJsonArray("maxFee")), transaction.getMaxFee());
         assertNotNull(transaction.getDeadline());
 
         if (transaction.getType() == TransactionType.TRANSFER) {
@@ -286,7 +283,7 @@ public class TransactionMappingTest {
         assertTrue(aggregateTransaction.getNetworkType().getValue() == networkType);
         assertTrue(aggregateTransaction.getType().getValue() == aggregateTransactionDTO.getJsonObject("transaction").getInteger("type"));
         assertEquals(extractBigInteger(aggregateTransactionDTO.getJsonObject("transaction").getJsonArray("maxFee")),
-                aggregateTransaction.getFee());
+                aggregateTransaction.getMaxFee());
         assertNotNull(aggregateTransaction.getDeadline());
 
 

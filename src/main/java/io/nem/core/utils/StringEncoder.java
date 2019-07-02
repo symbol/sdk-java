@@ -16,6 +16,7 @@
 
 package io.nem.core.utils;
 
+import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 
 /**
@@ -43,5 +44,34 @@ public class StringEncoder {
      */
     public static String getString(final byte[] bytes) {
         return new String(bytes, ENCODING_CHARSET);
+    }
+
+    /**
+     * Converts a string to a UTF-8 ByteBuffer.
+     *
+     * @param s The input string.
+     * @param capacity The byte buffer capacity.
+     * @return The output byte buffer.
+     */
+    public static ByteBuffer getByteBuffer(final String s, int capacity) {
+        ByteBuffer bb = ByteBuffer.allocate(capacity);
+        if (s != null && !s.isEmpty()) {
+            byte[] bytes = s.getBytes(ENCODING_CHARSET);
+            if (bytes.length > capacity)
+                bb.put(bytes, 0, capacity);
+            else
+                bb.put(bytes);
+        }
+        return bb;
+    }
+
+    /**
+     * Converts a string to a UTF-8 ByteBuffer.
+     *
+     * @param s The input string.
+     * @return The output byte buffer.
+     */
+    public static ByteBuffer getByteBuffer(final String s) {
+        return getByteBuffer(s, s.getBytes(ENCODING_CHARSET).length);
     }
 }

@@ -30,6 +30,10 @@ public class StringEncoderTest {
             0x24, (byte) 0xC2, (byte) 0xA2, (byte) 0xE2, (byte) 0x82, (byte) 0xAC
     };
 
+    private static final byte[] ENCODED_ADDRESS_BYTES = new byte[]{
+            83, 68, 85, 80, 53, 80, 76, 72, 68, 88, 75, 66, 88, 51, 85, 85, 53, 81, 53, 50, 76, 65, 89, 52, 87, 89, 69, 75, 71, 69, 87, 67, 54, 73, 66, 51, 86, 66, 70, 77
+    };
+
     @Test
     public void stringCanBeConvertedToByteArray() {
         // Assert:
@@ -42,5 +46,21 @@ public class StringEncoderTest {
         // Assert:
         Assert.assertThat(StringEncoder.getString(ENCODED_SIGMA_BYTES), IsEqual.equalTo("Sigma"));
         Assert.assertThat(StringEncoder.getString(ENCODED_CURRENCY_SYMBOLS_BYTES), IsEqual.equalTo("$¢€"));
+    }
+
+    @Test
+    public void stringCanBeConvertedToByteBuffer() {
+        // Assert:
+        Assert.assertThat(StringEncoder.getByteBuffer("Sigma").array(), IsEqual.equalTo(ENCODED_SIGMA_BYTES));
+        Assert.assertThat(StringEncoder.getByteBuffer("$¢€").array(), IsEqual.equalTo(ENCODED_CURRENCY_SYMBOLS_BYTES));
+    }
+
+    @Test
+    public void stringCanBeConvertedToByteArray2() {
+        // Assert:
+        byte[] bytes = StringEncoder.getBytes("SDUP5PLHDXKBX3UU5Q52LAY4WYEKGEWC6IB3VBFM");
+        //System.out.println(ByteUtils.unsignedBytesToString(bytes));
+        Assert.assertThat(StringEncoder.getBytes("SDUP5PLHDXKBX3UU5Q52LAY4WYEKGEWC6IB3VBFM"), IsEqual.equalTo(ENCODED_ADDRESS_BYTES));
+        Assert.assertThat(StringEncoder.getByteBuffer("SDUP5PLHDXKBX3UU5Q52LAY4WYEKGEWC6IB3VBFM").array(), IsEqual.equalTo(ENCODED_ADDRESS_BYTES));
     }
 }

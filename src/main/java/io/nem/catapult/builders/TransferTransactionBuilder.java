@@ -20,11 +20,17 @@
 
 package io.nem.catapult.builders;
 
+import io.nem.core.utils.ByteUtils;
 import io.nem.core.utils.StringEncoder;
+import io.nem.sdk.model.mosaic.Mosaic;
 
 import java.io.DataInput;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toList;
 
 /** Binary layout for a non-embedded transfer transaction. */
 public final class TransferTransactionBuilder extends TransactionBuilder {
@@ -48,7 +54,7 @@ public final class TransferTransactionBuilder extends TransactionBuilder {
      * @param signer Entity signer's public key.
      * @param version Entity version.
      * @param type Entity type.
-     * @param fee Transaction fee.
+     * @param fee Transaction maxFee.
      * @param deadline Transaction deadline.
      * @param recipient Transaction recipient.
      * @param message Transaction message.
@@ -66,7 +72,7 @@ public final class TransferTransactionBuilder extends TransactionBuilder {
      * @param signer Entity signer's public key.
      * @param version Entity version.
      * @param type Entity type.
-     * @param fee Transaction fee.
+     * @param fee Transaction maxFee.
      * @param deadline Transaction deadline.
      * @param recipient Transaction recipient.
      * @param message Transaction message.
@@ -78,10 +84,45 @@ public final class TransferTransactionBuilder extends TransactionBuilder {
     }
 
     /**
-     * Gets transaction recipient.
+     * Creates an instance of TransferTransactionBuilder.
      *
-     * @return Transaction recipient.
+     * @param signature Entity signature.
+     * @param signer Entity signer's public key.
+     * @param version Entity version.
+     * @param type Entity type.
+     * @param fee Transaction maxFee.
+     * @param deadline Transaction deadline.
+     * @param recipient Transaction recipient.
+     * @param message Transaction message.
+     * @param mosaics Attached mosaics.
+     * @return Instance of TransferTransactionBuilder.
      */
+    public static TransferTransactionBuilder create(final String signature, final String signer, final short version, final short type, final long fee, final long deadline, final String recipient, final String message, final List<Mosaic> mosaics) {
+        SignatureDto signatureDto = SignatureDto.create(signature);
+        KeyDto signerDto = KeyDto.create(signer);
+        EntityTypeDto entityTypeDto = EntityTypeDto.rawValueOf(type);
+        AmountDto amountDto = new AmountDto(fee);
+        TimestampDto timestampDto = new TimestampDto(deadline);
+        UnresolvedAddressDto unresolvedAddressDto = UnresolvedAddressDto.create(recipient);
+        ByteBuffer messageBuffer = StringEncoder.getByteBuffer(message);
+        ArrayList<UnresolvedMosaicBuilder> unresolvedMosaicBuilders =
+                (ArrayList<UnresolvedMosaicBuilder>) mosaics.stream()
+                        .map(Mosaic::getUnresolvedMosaicBuilder)
+                        .collect(toList());
+
+        return new TransferTransactionBuilder(signatureDto, signerDto, version, entityTypeDto, amountDto, timestampDto, unresolvedAddressDto, messageBuffer, unresolvedMosaicBuilders);
+    }
+
+    public static TransferTransactionBuilder create(final String signature, final String signer, final byte transactionVersion, final byte networkType, final short type, final long fee, final long deadline, final String recipient, final String message, final List<Mosaic> mosaics) {
+        short version = TransactionBuilder.getVersion(transactionVersion, networkType);
+        return TransferTransactionBuilder.create(signature, signer, version, type, fee, deadline, recipient, message, mosaics);
+    }
+
+        /**
+         * Gets transaction recipient.
+         *
+         * @return Transaction recipient.
+         */
     public UnresolvedAddressDto getRecipient() {
         return this.transferTransactionBody.getRecipient();
     }
@@ -162,7 +203,7 @@ public final class TransferTransactionBuilder extends TransactionBuilder {
         StringBuilder sb = new StringBuilder(super.asString());
         sb.append("\nRecipient: "+this.getRecipient().asString());
         sb.append("\nMessage: "+this.getMessageAsString());
-        sb.append("\nMosaics[MosaicId, Amount]: "+this.getMosaicsAsString());
+        sb.append("\nMosaics[MosaicId,Amount]: "+this.getMosaicsAsString());
 
         return sb.toString();
     }

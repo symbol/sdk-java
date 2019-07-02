@@ -40,7 +40,7 @@ final class GeneratorUtils {
 	/**
 	 * Throws if the object is null.
 	 *
-	 * @param object  Object to to check.
+	 * @param object  Object to check.
 	 * @param message Format string message.
 	 * @param values  Format values.
 	 * @param <T>     Type of object.
