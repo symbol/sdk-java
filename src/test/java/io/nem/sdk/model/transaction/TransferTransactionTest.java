@@ -121,55 +121,9 @@ class TransferTransactionTest {
         ByteArrayInputStream bs = new ByteArrayInputStream(actual2);
         DataInput di = new DataInputStream(bs);
         TransferTransactionBuilder txBuilder = TransferTransactionBuilder.loadFromBinary(di);
-
-/*        System.out.println("\nTransactionBuilder asString:");
-        System.out.println(txBuilder.asString());
-
-        System.out.println("\nTransactionBuilder each field:");
-        System.out.println("Size " + txBuilder.getSize());
-        System.out.println("Signer " + txBuilder.getSigner().asString());
-        System.out.println("Signature " + txBuilder.getSignature().asString());
-        System.out.println("Version " + txBuilder.getVersion());
-        System.out.println("  Txn Version " + txBuilder.getTransactionVersion().intValue());
-        System.out.println("  Network Type " + txBuilder.getNetworkType());
-        System.out.println("Type " + txBuilder.getType().name());
-        System.out.println("Deadline " + txBuilder.getDeadline().getTimestamp());
-        System.out.println("Recipient " + txBuilder.getRecipient().asString());
-        System.out.println("Fee " + txBuilder.getFee().getAmount());
-        System.out.println("Mosaics " + txBuilder.getMosaicsAsString());
-        System.out.println("Message " + txBuilder.getMessageAsString());*/
-
+        //System.out.println(txBuilder.asString());
         assertEquals(txModel.getRecipient().plain(), txBuilder.getRecipient().asString());
 
-        // assert
-        /*assertEquals(179, test.getSize());
-
-        String signature = "f77a8dcfcb57b81f9be5b46738f7132998f55123bff4d89dc8e5cae1f071a040e5571f4d8da125b243c785da5261f878e3de898815f6e8f12a2c0a5f0a9c3504";
-        assertEquals(signature, test.getSignature().asString());
-
-        assertEquals("SD5DT3CH4BLABL5HIMEKP2TAPUKF4NY3L5HRIR54", test.getRecipient().asString());
-        assertEquals("fa6249e8334e3f83e972461125504affd3e7750afbb3371e7b2d22a599a3d0e3", test.getSigner().asString());
-
-        assertEquals(-28669, test.getVersion());
-        assertEquals(3, test.getTransactionVersion().intValue());
-        assertEquals(NetworkType.MIJIN_TEST, test.getNetworkType());
-
-        assertEquals("TRANSFER_TRANSACTION_BUILDER", test.getType().name());
-        assertEquals("16724", test.getType().asString());
-
-        assertEquals(99856833830L, test.getDeadline().getTimestamp());
-        assertEquals("99856833830", test.getDeadline().asString());
-
-        assertEquals(0, test.getFee().getAmount());
-        assertEquals("0", test.getFee().asString());
-
-        assertEquals(new Long(-8810190493148073404L).longValue(), test.getMosaics().get(0).getMosaicId().getUnresolvedMosaicId());
-        assertEquals("-8810190493148073404", test.getMosaics().get(0).getMosaicId().asString());
-
-        assertEquals(15, test.getMessage().array().length);
-        assertEquals("Welcome To NEM", test.getMessageAsString());
-        System.out.println(ByteUtils.unsignedBytesToString(test.getMessage().array()));
-        System.out.println(ByteUtils.hexFormat(test.getMessage().array()));*/
     }
 
     @Test
