@@ -107,13 +107,13 @@ class TransferTransactionTest {
                 PlainMessage.Empty,
                 NetworkType.MIJIN_TEST
         );
-        byte[] actual = txModel.generateBytes();
-        System.out.println(ByteUtils.unsignedBytesToString(actual));
+        byte[] actual = txModel.generateBytes();  // Uses FlatBuffer
+        //System.out.println(ByteUtils.unsignedBytesToString(actual));
         assertEquals(expected.length, actual.length);
-        //assertArrayEquals(expected, actual);
+        //assertArrayEquals(expected, actual);   // message type byte value is 0 instead of 48 (first is in bits, expected is in decimal)
 
-        byte[] actual2 = txModel.serialize();
-        System.out.println(ByteUtils.unsignedBytesToString(actual2));
+        byte[] actual2 = txModel.serialize();   // Uses catbuffer
+        //System.out.println(ByteUtils.unsignedBytesToString(actual2));
         assertEquals(expected.length, actual2.length);
         assertArrayEquals(expected, actual2);
 
@@ -121,7 +121,8 @@ class TransferTransactionTest {
         ByteArrayInputStream bs = new ByteArrayInputStream(actual2);
         DataInput di = new DataInputStream(bs);
         TransferTransactionBuilder txBuilder = TransferTransactionBuilder.loadFromBinary(di);
-        System.out.println("\nTransactionBuilder asString:");
+
+/*        System.out.println("\nTransactionBuilder asString:");
         System.out.println(txBuilder.asString());
 
         System.out.println("\nTransactionBuilder each field:");
@@ -136,7 +137,7 @@ class TransferTransactionTest {
         System.out.println("Recipient " + txBuilder.getRecipient().asString());
         System.out.println("Fee " + txBuilder.getFee().getAmount());
         System.out.println("Mosaics " + txBuilder.getMosaicsAsString());
-        System.out.println("Message " + txBuilder.getMessageAsString());
+        System.out.println("Message " + txBuilder.getMessageAsString());*/
 
         assertEquals(txModel.getRecipient().plain(), txBuilder.getRecipient().asString());
 

@@ -59,7 +59,7 @@ public class StringEncoderTest {
     public void stringCanBeConvertedToByteArray2() {
         // Assert:
         byte[] bytes = StringEncoder.getBytes("SDUP5PLHDXKBX3UU5Q52LAY4WYEKGEWC6IB3VBFM");
-        System.out.println(ByteUtils.unsignedBytesToString(bytes));
+        //System.out.println(ByteUtils.unsignedBytesToString(bytes));
         Assert.assertThat(StringEncoder.getBytes("SDUP5PLHDXKBX3UU5Q52LAY4WYEKGEWC6IB3VBFM"), IsEqual.equalTo(ENCODED_ADDRESS_BYTES));
         Assert.assertThat(StringEncoder.getByteBuffer("SDUP5PLHDXKBX3UU5Q52LAY4WYEKGEWC6IB3VBFM").array(), IsEqual.equalTo(ENCODED_ADDRESS_BYTES));
     }

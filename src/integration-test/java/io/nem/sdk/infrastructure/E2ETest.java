@@ -16,7 +16,6 @@
 
 package io.nem.sdk.infrastructure;
 
-import io.nem.catapult.builders.TransferTransactionBuilder;
 import io.nem.core.crypto.Hashes;
 import io.nem.sdk.model.account.Account;
 import io.nem.sdk.model.account.Address;
@@ -37,6 +36,8 @@ import java.util.Collections;
 import java.util.Random;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import static java.time.temporal.ChronoUnit.HOURS;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -53,6 +54,7 @@ class E2ETest extends BaseTest {
     private String namespaceName = "nem2-tests";
     private MosaicId mosaicId = new MosaicId(new BigInteger("4532189107927582222")); // This mosaic is created in functional testing
     private Listener listener;
+    private long timeoutSeconds = 20;
 
     @BeforeAll
     void setup() throws ExecutionException, InterruptedException, IOException {
@@ -66,8 +68,8 @@ class E2ETest extends BaseTest {
         listener.open().get();
     }
 
-    @Test // TODO to fix transaction size
-    void standaloneTransferTransaction() throws ExecutionException, InterruptedException {
+    @Test
+    void standaloneTransferTransaction() throws ExecutionException, InterruptedException, TimeoutException {
         TransferTransaction transferTransaction = TransferTransaction.create(
                 new Deadline(2, HOURS),
                 this.recipient,
@@ -85,13 +87,11 @@ class E2ETest extends BaseTest {
         TransactionAnnounceResponse transactionAnnounceResponse = transactionHttp.announce(signedTransaction).toFuture().get();
         assertEquals("packet 9 was pushed to the network via /transaction", transactionAnnounceResponse.getMessage());
 
-        System.out.println("signedTransaction hash: " + signedTransaction.getHash());
-
         this.validateTransactionAnnounceCorrectly(this.account.getAddress(), signedTransaction.getHash());
     }
 
-    @Test // TODO to fix transaction size
-    void aggregateTransferTransaction() throws ExecutionException, InterruptedException {
+    @Test
+    void aggregateTransferTransaction() throws ExecutionException, InterruptedException, TimeoutException {
         TransferTransaction transferTransaction = TransferTransaction.create(
                 new Deadline(2, HOURS),
                 this.recipient,
@@ -118,13 +118,13 @@ class E2ETest extends BaseTest {
         SignedTransaction signedTransaction = this.account.sign(aggregateTransaction);
 
         TransactionAnnounceResponse transactionAnnounceResponse = transactionHttp.announce(signedTransaction).toFuture().get();
-        System.out.println(transactionAnnounceResponse.getMessage());
+        assertEquals("packet 9 was pushed to the network via /transaction", transactionAnnounceResponse.getMessage());
 
         this.validateTransactionAnnounceCorrectly(this.account.getAddress(), signedTransaction.getHash());
     }
 
     @Test
-    void standaloneRootRegisterNamespaceTransaction() throws ExecutionException, InterruptedException {
+    void standaloneRootRegisterNamespaceTransaction() throws ExecutionException, InterruptedException, TimeoutException {
         String namespaceName = "test-root-namespace-" + new Double(Math.floor(Math.random() * 10000)).intValue();
 
         RegisterNamespaceTransaction registerNamespaceTransaction = RegisterNamespaceTransaction.createRootNamespace(
@@ -142,7 +142,7 @@ class E2ETest extends BaseTest {
     }
 
     @Test
-    void aggregateRootRegisterNamespaceTransaction() throws ExecutionException, InterruptedException {
+    void aggregateRootRegisterNamespaceTransaction() throws ExecutionException, InterruptedException, TimeoutException {
         String namespaceName = "test-root-namespace-" + new Double(Math.floor(Math.random() * 10000)).intValue();
 
         RegisterNamespaceTransaction registerNamespaceTransaction = RegisterNamespaceTransaction.createRootNamespace(
@@ -166,7 +166,7 @@ class E2ETest extends BaseTest {
     }
 
     @Test
-    void standaloneSubNamespaceRegisterNamespaceTransaction() throws ExecutionException, InterruptedException {
+    void standaloneSubNamespaceRegisterNamespaceTransaction() throws ExecutionException, InterruptedException, TimeoutException {
         String namespaceName = "test-sub-namespace-" + new Double(Math.floor(Math.random() * 10000)).intValue();
 
         RegisterNamespaceTransaction registerNamespaceTransaction = RegisterNamespaceTransaction.createSubNamespace(
@@ -184,7 +184,7 @@ class E2ETest extends BaseTest {
     }
 
     @Test
-    void aggregateSubNamespaceRegisterNamespaceTransaction() throws ExecutionException, InterruptedException {
+    void aggregateSubNamespaceRegisterNamespaceTransaction() throws ExecutionException, InterruptedException, TimeoutException {
         String namespaceName = "test-sub-namespace-" + new Double(Math.floor(Math.random() * 10000)).intValue();
 
         RegisterNamespaceTransaction registerNamespaceTransaction = RegisterNamespaceTransaction.createSubNamespace(
@@ -209,7 +209,7 @@ class E2ETest extends BaseTest {
     }
 
     @Test
-    void standaloneMosaicDefinitionTransaction() throws ExecutionException, InterruptedException {
+    void standaloneMosaicDefinitionTransaction() throws ExecutionException, InterruptedException, TimeoutException {
         String mosaicName = "test-mosaic-" + new Double(Math.floor(Math.random() * 10000)).intValue();
 
         MosaicDefinitionTransaction mosaicDefinitionTransaction = MosaicDefinitionTransaction.create(
@@ -228,7 +228,7 @@ class E2ETest extends BaseTest {
     }
 
     @Test
-    void aggregateMosaicDefinitionTransaction() throws ExecutionException, InterruptedException {
+    void aggregateMosaicDefinitionTransaction() throws ExecutionException, InterruptedException, TimeoutException {
         String mosaicName = "test-mosaic-" + new Double(Math.floor(Math.random() * 10000)).intValue();
 
         MosaicDefinitionTransaction mosaicDefinitionTransaction = MosaicDefinitionTransaction.create(
@@ -254,7 +254,7 @@ class E2ETest extends BaseTest {
     }
 
     @Test
-    void standaloneMosaicSupplyChangeTransaction() throws ExecutionException, InterruptedException {
+    void standaloneMosaicSupplyChangeTransaction() throws ExecutionException, InterruptedException, TimeoutException {
         MosaicSupplyChangeTransaction mosaicSupplyChangeTransaction = MosaicSupplyChangeTransaction.create(
                 new Deadline(2, HOURS),
                 this.mosaicId,
@@ -271,7 +271,7 @@ class E2ETest extends BaseTest {
     }
 
     @Test
-    void aggregateMosaicSupplyChangeTransaction() throws ExecutionException, InterruptedException {
+    void aggregateMosaicSupplyChangeTransaction() throws ExecutionException, InterruptedException, TimeoutException {
         MosaicSupplyChangeTransaction mosaicSupplyChangeTransaction = MosaicSupplyChangeTransaction.create(
                 new Deadline(2, HOURS),
                 this.mosaicId,
@@ -295,7 +295,7 @@ class E2ETest extends BaseTest {
     }
 
     @Test
-    void shouldSignModifyMultisigAccountTransactionWithCosignatories() throws ExecutionException, InterruptedException {
+    void shouldSignModifyMultisigAccountTransactionWithCosignatories() throws ExecutionException, InterruptedException, TimeoutException {
         ModifyMultisigAccountTransaction modifyMultisigAccountTransaction = ModifyMultisigAccountTransaction.create(
                 new Deadline(2, HOURS),
                 0,
@@ -334,7 +334,7 @@ class E2ETest extends BaseTest {
     }
 
     @Test
-    void CosignatureTransaction() throws ExecutionException, InterruptedException {
+    void CosignatureTransaction() throws ExecutionException, InterruptedException, TimeoutException {
         TransferTransaction transferTransaction = TransferTransaction.create(
                 new Deadline(2, HOURS),
                 new Address("SDRDGFTDLLCB67D4HPGIMIHPNSRYRJRT7DOBGWZY", NetworkType.MIJIN_TEST),
@@ -381,7 +381,7 @@ class E2ETest extends BaseTest {
     }
 
     @Test
-    void standaloneLockFundsTransaction() throws ExecutionException, InterruptedException {
+    void standaloneLockFundsTransaction() throws ExecutionException, InterruptedException, TimeoutException {
         AggregateTransaction aggregateTransaction = AggregateTransaction.createBonded(new Deadline(2, HOURS), Collections.emptyList(), NetworkType.MIJIN_TEST);
         SignedTransaction signedTransaction = this.account.sign(aggregateTransaction);
         LockFundsTransaction lockFundstx = LockFundsTransaction.create(
@@ -399,7 +399,7 @@ class E2ETest extends BaseTest {
     }
 
     @Test
-    void aggregateLockFundsTransaction() throws ExecutionException, InterruptedException {
+    void aggregateLockFundsTransaction() throws ExecutionException, InterruptedException, TimeoutException {
         AggregateTransaction aggregateTransaction = AggregateTransaction.createBonded(new Deadline(2, HOURS), Collections.emptyList(), NetworkType.MIJIN_TEST);
         SignedTransaction signedTransaction = this.account.sign(aggregateTransaction);
         LockFundsTransaction lockFundstx = LockFundsTransaction.create(
@@ -425,7 +425,7 @@ class E2ETest extends BaseTest {
     }
 
     @Test
-    void standaloneSecretLockTransaction() throws ExecutionException, InterruptedException {
+    void standaloneSecretLockTransaction() throws ExecutionException, InterruptedException, TimeoutException {
         byte[] secretBytes = new byte[20];
         new Random().nextBytes(secretBytes);
         byte[] result = Hashes.sha3_256(secretBytes);
@@ -448,7 +448,7 @@ class E2ETest extends BaseTest {
     }
 
     @Test
-    void aggregateSecretLockTransaction() throws ExecutionException, InterruptedException {
+    void aggregateSecretLockTransaction() throws ExecutionException, InterruptedException, TimeoutException {
         byte[] secretBytes = new byte[20];
         new Random().nextBytes(secretBytes);
         byte[] result = Hashes.sha3_256(secretBytes);
@@ -478,7 +478,7 @@ class E2ETest extends BaseTest {
     }
 
     @Test
-    void standaloneSecretProofTransaction() throws ExecutionException, InterruptedException {
+    void standaloneSecretProofTransaction() throws ExecutionException, InterruptedException, TimeoutException {
         byte[] secretBytes = new byte[20];
         new Random().nextBytes(secretBytes);
         byte[] result = Hashes.sha3_256(secretBytes);
@@ -516,7 +516,7 @@ class E2ETest extends BaseTest {
     }
 
     @Test
-    void aggregateSecretProofTransaction() throws ExecutionException, InterruptedException {
+    void aggregateSecretProofTransaction() throws ExecutionException, InterruptedException, TimeoutException {
         byte[] secretBytes = new byte[20];
         new Random().nextBytes(secretBytes);
         byte[] result = Hashes.sha3_256(secretBytes);
@@ -560,27 +560,23 @@ class E2ETest extends BaseTest {
         this.validateTransactionAnnounceCorrectly(this.account.getAddress(), secretProofTransactionSigned.getHash());
     }
 
-    void validateTransactionAnnounceCorrectly(Address address, String transactionHash) throws ExecutionException, InterruptedException {
+    void validateTransactionAnnounceCorrectly(Address address, String transactionHash) throws ExecutionException, InterruptedException, TimeoutException {
         //Transaction transaction = listener.confirmed(address).take(1).toFuture().get();
         Observable<Transaction> observable = listener.confirmed(address);
         observable = observable.take(1);
         Future<Transaction> future = observable.toFuture();
-        while (!future.isDone()) {
-            System.out.println("not done, wait 1 second...");
-            Thread.sleep(1000);
-        }
-        Transaction transaction = future.get();
+        Transaction transaction = future.get(this.timeoutSeconds, TimeUnit.SECONDS);
 
         assertEquals(transactionHash, transaction.getTransactionInfo().get().getHash().get());
     }
 
-    void validateAggregateBondedTransactionAnnounceCorrectly(Address address, String transactionHash) throws ExecutionException, InterruptedException {
-        AggregateTransaction aggregateTransaction = listener.aggregateBondedAdded(address).take(1).toFuture().get();
+    void validateAggregateBondedTransactionAnnounceCorrectly(Address address, String transactionHash) throws ExecutionException, InterruptedException, TimeoutException {
+        AggregateTransaction aggregateTransaction = listener.aggregateBondedAdded(address).take(1).toFuture().get(this.timeoutSeconds, TimeUnit.SECONDS);
         assertEquals(transactionHash, aggregateTransaction.getTransactionInfo().get().getHash().get());
     }
 
-    void validateAggregateBondedCosignatureTransactionAnnounceCorrectly(Address address, String transactionHash) throws ExecutionException, InterruptedException {
-        String hash = listener.cosignatureAdded(address).take(1).toFuture().get().getParentHash();
+    void validateAggregateBondedCosignatureTransactionAnnounceCorrectly(Address address, String transactionHash) throws ExecutionException, InterruptedException, TimeoutException {
+        String hash = listener.cosignatureAdded(address).take(1).toFuture().get(this.timeoutSeconds, TimeUnit.SECONDS).getParentHash();
         assertEquals(transactionHash, hash);
     }
 }
