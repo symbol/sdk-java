@@ -60,11 +60,10 @@ public class ArrayUtils {
     /**
      * Splits a single array into two arrays.
      *
-     * @param bytes      The input array.
+     * @param bytes The input array.
      * @param splitIndex The index at which the array should be split.
-     * @return Two arrays split at the splitIndex.
-     * The first array will contain the first splitIndex elements.
-     * The second array will contain all trailing elements.
+     * @return Two arrays split at the splitIndex. The first array will contain the first splitIndex
+     * elements. The second array will contain all trailing elements.
      */
     public static byte[][] split(final byte[] bytes, final int splitIndex) {
         if (splitIndex < 0 || bytes.length < splitIndex) {
@@ -82,7 +81,7 @@ public class ArrayUtils {
     /**
      * Converts a BigInteger to a little endian byte array.
      *
-     * @param value    The value to convert.
+     * @param value The value to convert.
      * @param numBytes The number of bytes in the destination array.
      * @return The resulting little endian byte array.
      */

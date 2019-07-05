@@ -56,11 +56,12 @@ public class StringUtils {
      * This pattern is replaced by the given value.
      *
      * @param string String that contains variables.
-     * @param name   Name of the variable to be replaced with its value.
-     * @param value  Value that will replace the variable.
+     * @param name Name of the variable to be replaced with its value.
+     * @param value Value that will replace the variable.
      * @return string with value replacing the variable with the given name
      */
-    public static String replaceVariable(final String string, final String name, final String value) {
+    public static String replaceVariable(final String string, final String name,
+        final String value) {
         return string.replace(String.format("${%s}", name), value);
     }
 }

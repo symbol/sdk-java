@@ -1,15 +1,14 @@
 package io.nem.sdk.model.mosaic;
 
 import io.nem.sdk.model.namespace.NamespaceId;
-
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
 /**
  * NetworkCurrencyMosaic mosaic
  *
- * This represents the per-network currency mosaic. This mosaicId is aliased
- * with namespace name `cat.currency`.
+ * <p>This represents the per-network currency mosaic. This mosaicId is aliased with namespace name
+ * `cat.currency`.
  *
  * @since 0.10.2
  */
@@ -35,14 +34,9 @@ public class NetworkCurrencyMosaic extends Mosaic {
      * Is supply mutable
      */
     public static final boolean SUPPLYMUTABLE = false;
-    /**
-     * Is levy mutable
-     */
-    public static final boolean LEVYMUTABLE = false;
 
     /**
      *
-     * @param amount
      */
     public NetworkCurrencyMosaic(BigInteger amount) {
 
@@ -57,12 +51,16 @@ public class NetworkCurrencyMosaic extends Mosaic {
      */
     public static NetworkCurrencyMosaic createRelative(BigInteger amount) {
 
-        BigInteger relativeAmount = new BigDecimal(Math.pow(10, NetworkCurrencyMosaic.DIVISIBILITY)).toBigInteger().multiply(amount);
+        BigInteger relativeAmount =
+            new BigDecimal(Math.pow(10, NetworkCurrencyMosaic.DIVISIBILITY))
+                .toBigInteger()
+                .multiply(amount);
         return new NetworkCurrencyMosaic(relativeAmount);
     }
 
     /**
-     * Create xem with using micro xem as unit, 1 NetworkCurrencyMosaic = 1000000 micro NetworkCurrencyMosaic.
+     * Create xem with using micro xem as unit, 1 NetworkCurrencyMosaic = 1000000 micro
+     * NetworkCurrencyMosaic.
      *
      * @param amount amount to send
      * @return a NetworkCurrencyMosaic instance

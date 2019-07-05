@@ -18,13 +18,11 @@ package io.nem.sdk.model.transaction;
 
 import io.nem.core.utils.ByteUtils;
 import io.nem.core.utils.HexEncoder;
-import org.apache.commons.lang.ArrayUtils;
-
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.IntBuffer;
-import java.util.Arrays;
+import org.apache.commons.lang.ArrayUtils;
 
 public class UInt64 {
 
@@ -34,7 +32,9 @@ public class UInt64 {
         int lower = 0, higher = 0;
         byte[] lowerBound = new byte[4];
         int size = 4;
-        if (bytes.length < 4) size = bytes.length;
+        if (bytes.length < 4) {
+            size = bytes.length;
+        }
         System.arraycopy(bytes, 0, lowerBound, 0, size);
         lower = ByteBuffer.wrap(lowerBound).order(ByteOrder.LITTLE_ENDIAN).getInt();
         if (bytes.length > 4) {
@@ -62,20 +62,15 @@ public class UInt64 {
     }
 
     public static BigInteger fromLowerAndHigher(long lower, long higher) {
-        int[] array = new int[] {(int)lower, (int)higher};
-        return UInt64.fromIntArray(array);
-    }
-
-    public static BigInteger fromLowerAndHigher(Number lower, Number higher) {
-        int[] array = new int[] {lower.intValue(), higher.intValue()};
+        int[] array = new int[]{(int) lower, (int) higher};
         return UInt64.fromIntArray(array);
     }
 
     public static String bigIntegerToHex(BigInteger input) {
-        /*int[] uint64Parts = UInt64.fromBigInteger(input);
-        String lower = String.format("%08x",uint64Parts[0]);
-        String higher = String.format("%08x",uint64Parts[1]);
-        return higher + lower;*/
+    /*        int[] uint64Parts = UInt64.fromBigInteger(input);
+    String lower = String.format("%08x",uint64Parts[0]);
+    String higher = String.format("%08x",uint64Parts[1]);
+    return higher + lower;*/
 
         byte[] bytes = ByteUtils.bigIntToBytes(input);
         return HexEncoder.getString(bytes);

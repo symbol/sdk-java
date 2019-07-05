@@ -16,23 +16,25 @@
 
 package io.nem.sdk.model.account;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import io.nem.sdk.model.blockchain.NetworkType;
 import io.nem.sdk.model.mosaic.Mosaic;
 import io.nem.sdk.model.mosaic.NetworkCurrencyMosaic;
-import org.junit.jupiter.api.Test;
-
 import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import org.junit.jupiter.api.Test;
 
 class AccountInfoTest {
 
     @Test
     void shouldCreateAccountInfoViaConstructor() {
-        List<Mosaic> mosaics =  Arrays.asList(NetworkCurrencyMosaic.createRelative(BigInteger.valueOf(10)));
-        AccountInfo accountInfo = new AccountInfo(Address.createFromRawAddress("SDGLFWDSHILTIUHGIBH5UGX2VYF5VNJEKCCDBR26"),
+        List<Mosaic> mosaics =
+            Arrays.asList(NetworkCurrencyMosaic.createRelative(BigInteger.valueOf(10)));
+        AccountInfo accountInfo =
+            new AccountInfo(
+                Address.createFromRawAddress("SDGLFWDSHILTIUHGIBH5UGX2VYF5VNJEKCCDBR26"),
                 new BigInteger("964"),
                 "cf893ffcc47c33e7f68ab1db56365c156b0736824a0c1e273f9e00b8df8f01eb",
                 new BigInteger("966"),
@@ -40,14 +42,21 @@ class AccountInfoTest {
                 new BigInteger("0"),
                 mosaics);
 
-        assertEquals(Address.createFromRawAddress("SDGLFWDSHILTIUHGIBH5UGX2VYF5VNJEKCCDBR26"), accountInfo.getAddress());
+        assertEquals(
+            Address.createFromRawAddress("SDGLFWDSHILTIUHGIBH5UGX2VYF5VNJEKCCDBR26"),
+            accountInfo.getAddress());
         assertEquals(new BigInteger("964"), accountInfo.getAddressHeight());
-        assertEquals("cf893ffcc47c33e7f68ab1db56365c156b0736824a0c1e273f9e00b8df8f01eb", accountInfo.getPublicKey());
+        assertEquals(
+            "cf893ffcc47c33e7f68ab1db56365c156b0736824a0c1e273f9e00b8df8f01eb",
+            accountInfo.getPublicKey());
         assertEquals(new BigInteger("966"), accountInfo.getPublicKeyHeight());
-        assertEquals(new BigInteger("0"), accountInfo.getImportance());
-        assertEquals(new BigInteger("0"), accountInfo.getImportanceHeight());
+        assertEquals(new BigInteger("0"), accountInfo.getImportances().get(0).getValue());
+        assertEquals(new BigInteger("0"), accountInfo.getImportances().get(0).getHeight());
         assertEquals(mosaics, accountInfo.getMosaics());
-        assertEquals(PublicAccount.createFromPublicKey("cf893ffcc47c33e7f68ab1db56365c156b0736824a0c1e273f9e00b8df8f01eb", NetworkType.MIJIN_TEST), accountInfo.getPublicAccount());
-
+        assertEquals(
+            PublicAccount.createFromPublicKey(
+                "cf893ffcc47c33e7f68ab1db56365c156b0736824a0c1e273f9e00b8df8f01eb",
+                NetworkType.MIJIN_TEST),
+            accountInfo.getPublicAccount());
     }
 }

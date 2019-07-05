@@ -69,7 +69,7 @@ public class FormatUtils {
     /**
      * Formats a double value with a given number of decimal places.
      *
-     * @param value         The value to format.
+     * @param value The value to format.
      * @param decimalPlaces The desired number of decimal places.
      * @return The formatted string.
      */

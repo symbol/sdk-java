@@ -32,8 +32,6 @@ public class ParameterizedUtils {
      * @return The collection of object arrays.
      */
     public static Collection<Object[]> wrap(final Collection<Integer> values) {
-        return values.stream()
-                .map(v -> new Object[]{v})
-                .collect(Collectors.toList());
+        return values.stream().map(v -> new Object[]{v}).collect(Collectors.toList());
     }
 }

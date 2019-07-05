@@ -18,7 +18,6 @@ package io.nem.sdk.model.receipt;
 
 import io.nem.sdk.model.mosaic.MosaicId;
 import io.nem.sdk.model.namespace.NamespaceId;
-
 import java.util.Optional;
 
 public class ArtifactExpiryReceipt<T> extends Receipt {
@@ -29,11 +28,12 @@ public class ArtifactExpiryReceipt<T> extends Receipt {
      * Constructor ArtifactExpiryReceipt
      *
      * @param artifactId (MosaicId or NamespaceId)
-     * @param type      Receipt Type
-     * @param version   Receipt Version
-     * @param size      Receipt Size
+     * @param type Receipt Type
+     * @param version Receipt Version
+     * @param size Receipt Size
      */
-    public ArtifactExpiryReceipt (T artifactId, ReceiptType type, ReceiptVersion version, Optional<Integer> size) {
+    public ArtifactExpiryReceipt(
+        T artifactId, ReceiptType type, ReceiptVersion version, Optional<Integer> size) {
         super(type, version, size);
         this.artifactId = artifactId;
         this.validateArtifactType();
@@ -44,10 +44,10 @@ public class ArtifactExpiryReceipt<T> extends Receipt {
      * Constructor ArtifactExpiryReceipt
      *
      * @param artifactId (MosaicId or NamespaceId)
-     * @param type      Receipt Type
-     * @param version   Receipt Version
+     * @param type Receipt Type
+     * @param version Receipt Version
      */
-    public ArtifactExpiryReceipt (T artifactId, ReceiptType type, ReceiptVersion version) {
+    public ArtifactExpiryReceipt(T artifactId, ReceiptType type, ReceiptVersion version) {
         super(type, version, null);
         this.artifactId = artifactId;
         this.validateArtifactType();
@@ -70,8 +70,12 @@ public class ArtifactExpiryReceipt<T> extends Receipt {
      */
     private void validateArtifactType() {
         Class artifactClass = this.artifactId.getClass();
-        if (!MosaicId.class.isAssignableFrom(artifactClass) && !NamespaceId.class.isAssignableFrom(artifactClass)) {
-            throw new IllegalArgumentException("Artifact type: [" + artifactClass.getName() + "] is not valid for ArtifactExpiryReceipt");
+        if (!MosaicId.class.isAssignableFrom(artifactClass)
+            && !NamespaceId.class.isAssignableFrom(artifactClass)) {
+            throw new IllegalArgumentException(
+                "Artifact type: ["
+                    + artifactClass.getName()
+                    + "] is not valid for ArtifactExpiryReceipt");
         }
     }
 
@@ -85,5 +89,4 @@ public class ArtifactExpiryReceipt<T> extends Receipt {
             throw new IllegalArgumentException("Receipt type: [" + type.name() + "] is not valid.");
         }
     }
-
 }

@@ -26,13 +26,13 @@ import io.vertx.core.json.JsonObject;
 import io.vertx.reactivex.core.Vertx;
 import io.vertx.reactivex.ext.web.client.HttpResponse;
 import io.vertx.reactivex.ext.web.client.WebClient;
-
 import java.math.BigInteger;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
 
 public class Http {
+
     protected final WebClient client;
     protected final URL url;
     protected final ObjectMapper objectMapper = new ObjectMapper();
@@ -53,19 +53,6 @@ public class Http {
         this(host, null);
     }
 
-    Observable<NetworkType> getNetworkTypeObservable() {
-        Observable<NetworkType> networkTypeResolve;
-        if (this.networkType == null) {
-            networkTypeResolve = networkHttp.getNetworkType().map(networkType -> {
-                this.networkType = networkType;
-                return networkType;
-            });
-        } else {
-            networkTypeResolve = Observable.just(networkType);
-        }
-        return networkTypeResolve;
-    }
-
     static JsonObject mapJsonObjectOrError(final HttpResponse<JsonObject> response) {
         if (response.statusCode() < 200 || response.statusCode() > 299) {
             throw new RuntimeException(response.statusMessage());
@@ -81,6 +68,23 @@ public class Http {
     }
 
     static BigInteger extractIntArray(List<Integer> list) {
-        return UInt64.fromIntArray(list.stream().mapToInt(i->i).toArray());
+        return UInt64.fromIntArray(list.stream().mapToInt(i -> i).toArray());
+    }
+
+    Observable<NetworkType> getNetworkTypeObservable() {
+        Observable<NetworkType> networkTypeResolve;
+        if (this.networkType == null) {
+            networkTypeResolve =
+                networkHttp
+                    .getNetworkType()
+                    .map(
+                        networkType -> {
+                            this.networkType = networkType;
+                            return networkType;
+                        });
+        } else {
+            networkTypeResolve = Observable.just(networkType);
+        }
+        return networkTypeResolve;
     }
 }

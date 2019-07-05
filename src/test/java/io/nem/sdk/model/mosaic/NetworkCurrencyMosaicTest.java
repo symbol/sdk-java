@@ -1,12 +1,11 @@
 package io.nem.sdk.model.mosaic;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import io.nem.sdk.model.namespace.NamespaceId;
 import io.nem.sdk.model.transaction.UInt64;
-import org.junit.jupiter.api.Test;
-
 import java.math.BigInteger;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import org.junit.jupiter.api.Test;
 
 class NetworkCurrencyMosaicTest {
 
@@ -20,7 +19,8 @@ class NetworkCurrencyMosaicTest {
 
     @Test
     void shouldCreateRelativeNetworkCurrencyMosaic() {
-        NetworkCurrencyMosaic currency = NetworkCurrencyMosaic.createRelative(BigInteger.valueOf(1000));
+        NetworkCurrencyMosaic currency = NetworkCurrencyMosaic
+            .createRelative(BigInteger.valueOf(1000));
         assertEquals(BigInteger.valueOf(1000 * 1000000), currency.getAmount());
         assertEquals(NetworkCurrencyMosaic.NAMESPACEID, currency.getId());
         assertEquals("85bbea6cc462b244", currency.getIdAsHex());
@@ -28,7 +28,8 @@ class NetworkCurrencyMosaicTest {
 
     @Test
     void shouldCreateAbsoluteNetworkCurrencyMosaic() {
-        NetworkCurrencyMosaic currency = NetworkCurrencyMosaic.createAbsolute(BigInteger.valueOf(1));
+        NetworkCurrencyMosaic currency = NetworkCurrencyMosaic
+            .createAbsolute(BigInteger.valueOf(1));
         assertEquals(BigInteger.valueOf(1), currency.getAmount());
         assertEquals(NetworkCurrencyMosaic.NAMESPACEID, currency.getId());
         assertEquals("85bbea6cc462b244", currency.getIdAsHex());
@@ -36,7 +37,8 @@ class NetworkCurrencyMosaicTest {
 
     @Test
     void shouldCompareNamespaceIdsForEquality() {
-        NamespaceId namespaceId = new NamespaceId(UInt64.fromLowerAndHigher(3294802500L, 2243684972L));
+        NamespaceId namespaceId = new NamespaceId(
+            UInt64.fromLowerAndHigher(3294802500L, 2243684972L));
         assertEquals(-8810190493148073404L, namespaceId.getIdAsLong());
         assertEquals(NetworkCurrencyMosaic.NAMESPACEID.getIdAsLong(), namespaceId.getIdAsLong());
         assertEquals(NetworkCurrencyMosaic.NAMESPACEID.getIdAsHex(), namespaceId.getIdAsHex());
@@ -54,6 +56,5 @@ class NetworkCurrencyMosaicTest {
         assertEquals(NetworkCurrencyMosaic.INITIALSUPPLY, new BigInteger("8999999999"));
         assertEquals(NetworkCurrencyMosaic.TRANSFERABLE, true);
         assertEquals(NetworkCurrencyMosaic.SUPPLYMUTABLE, false);
-        assertEquals(NetworkCurrencyMosaic.LEVYMUTABLE, false);
     }
 }

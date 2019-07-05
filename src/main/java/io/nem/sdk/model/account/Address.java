@@ -19,13 +19,15 @@ package io.nem.sdk.model.account;
 import io.nem.core.crypto.Hashes;
 import io.nem.core.utils.ArrayUtils;
 import io.nem.core.utils.Base32Encoder;
+import io.nem.core.utils.ExceptionUtils;
 import io.nem.sdk.model.blockchain.NetworkType;
+import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
+import java.util.Objects;
 import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.binary.Base32;
 import org.apache.commons.codec.binary.Hex;
-
-import java.util.Arrays;
-import java.util.Objects;
 
 /**
  * The address structure describes an address with its network.
@@ -33,19 +35,20 @@ import java.util.Objects;
  * @since 1.0
  */
 public class Address {
+
     private static final int NUM_CHECKSUM_BYTES = 4;
-    final private String address;
-    final private NetworkType networkType;
+    private final String address;
+    private final NetworkType networkType;
 
     /**
      * Constructor
      *
-     * @param address     Address in plain format
+     * @param address Address in plain format
      * @param networkType Network type
      */
     public Address(String address, NetworkType networkType) {
-        this.address = Objects
-                .requireNonNull(address, "address must not be null")
+        this.address =
+            Objects.requireNonNull(address, "address must not be null")
                 .replace("-", "")
                 .trim()
                 .toUpperCase();
@@ -89,17 +92,16 @@ public class Address {
      * @return {@link Address}
      */
     public static Address createFromEncoded(String encodedAddress) {
-        try {
-            return Address.createFromRawAddress(new String(new Base32().encode(Hex.decodeHex(encodedAddress))));
-        } catch (DecoderException e) {
-            throw new RuntimeException(e.getCause());
-        }
+        return ExceptionUtils.propagate(
+            () ->
+                Address.createFromRawAddress(
+                    new String(new Base32().encode(Hex.decodeHex(encodedAddress)))));
     }
 
     /**
      * Create from private key.
      *
-     * @param publicKey   String
+     * @param publicKey String
      * @param networkType NetworkType
      * @return Address
      */
@@ -121,13 +123,15 @@ public class Address {
         final byte[] ripemd160StepOneHash = Hashes.ripemd160(sha3PublicKeyHash);
 
         // step 3: add version byte in front of (2)
-        final byte[] versionPrefixedRipemd160Hash = ArrayUtils.concat(new byte[]{version}, ripemd160StepOneHash);
+        final byte[] versionPrefixedRipemd160Hash =
+            ArrayUtils.concat(new byte[]{version}, ripemd160StepOneHash);
 
         // step 4: get the checksum of (3)
         final byte[] stepThreeChecksum = generateChecksum(versionPrefixedRipemd160Hash);
 
         // step 5: concatenate (3) and (4)
-        final byte[] concatStepThreeAndStepSix = ArrayUtils.concat(versionPrefixedRipemd160Hash, stepThreeChecksum);
+        final byte[] concatStepThreeAndStepSix =
+            ArrayUtils.concat(versionPrefixedRipemd160Hash, stepThreeChecksum);
 
         // step 6: base32 encode (5)
         return Base32Encoder.getString(concatStepThreeAndStepSix);
@@ -160,24 +164,33 @@ public class Address {
     }
 
     /**
+     * Gets address as byte buffer.
+     *
+     * @return Byte buffer.
+     */
+    public ByteBuffer getByteBuffer() {
+        return ByteBuffer.wrap(new Base32().decode(plain().getBytes(StandardCharsets.UTF_8)));
+    }
+
+    /**
      * Get address in pretty format ex: SB3KUB-HATFCP-V7UZQL-WAQ2EU-R6SIHB-SBEOED-DDF3.
      *
      * @return String
      */
     public String pretty() {
-        return this.address.substring(0, 6) +
-                "-" +
-                this.address.substring(6, 6 + 6) +
-                "-" +
-                this.address.substring(6 * 2, 6 * 2 + 6) +
-                "-" +
-                this.address.substring(6 * 3, 6 * 3 + 6) +
-                "-" +
-                this.address.substring(6 * 4, 6 * 4 + 6) +
-                "-" +
-                this.address.substring(6 * 5, 6 * 5 + 6) +
-                "-" +
-                this.address.substring(6 * 6, 6 * 6 + 4);
+        return this.address.substring(0, 6)
+            + "-"
+            + this.address.substring(6, 6 + 6)
+            + "-"
+            + this.address.substring(6 * 2, 6 * 2 + 6)
+            + "-"
+            + this.address.substring(6 * 3, 6 * 3 + 6)
+            + "-"
+            + this.address.substring(6 * 4, 6 * 4 + 6)
+            + "-"
+            + this.address.substring(6 * 5, 6 * 5 + 6)
+            + "-"
+            + this.address.substring(6 * 6, 6 * 6 + 4);
     }
 
     /**
@@ -187,11 +200,14 @@ public class Address {
      */
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Address)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof Address)) {
+            return false;
+        }
         Address address1 = (Address) o;
-        return Objects.equals(address, address1.address) &&
-                networkType == address1.networkType;
+        return Objects.equals(address, address1.address) && networkType == address1.networkType;
     }
 
     @Override

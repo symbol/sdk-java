@@ -16,28 +16,13 @@
 
 /**
  * The AddressAlias structure describes address aliases
- *
- * @since
  */
-
 package io.nem.sdk.model.namespace;
 
 import io.nem.sdk.model.account.Address;
-import io.nem.sdk.model.mosaic.MosaicId;
 
-public class AddressAlias implements Alias {
-
-    private final Address address;
-
-    @Override
-    public Address getAddress() {
-        return this.address;
-    }
-
-    @Override
-    public MosaicId getMosaicId() {
-        return null;
-    }
+/** Address alias. */
+public class AddressAlias extends AliasBase<Address> {
 
     /**
      * Create AddressAlias from address
@@ -45,18 +30,15 @@ public class AddressAlias implements Alias {
      * @param address
      */
     public AddressAlias(Address address) {
-        this.address = address;
+        super(address);
     }
 
-    public AliasType getType(){
+    /**
+     * Gets the alias type.
+     *
+     * @return Alias type.
+     */
+    public AliasType getType() {
         return AliasType.Address;
     }
-
-    @Override
-    public boolean equals(Alias alias) {
-        return alias instanceof AddressAlias || alias.getType() == AliasType.Address;
-    }
-
-    @Override
-    public boolean isEmpty() { return false; }
 }

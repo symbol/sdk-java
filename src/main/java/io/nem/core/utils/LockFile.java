@@ -78,6 +78,7 @@ public class LockFile {
     }
 
     private static class FileLockHandle implements Closeable {
+
         private final RandomAccessFile file;
         private FileLock lock;
 

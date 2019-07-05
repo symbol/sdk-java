@@ -16,19 +16,19 @@
 
 package io.nem.sdk.infrastructure;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import io.nem.sdk.model.blockchain.BlockchainScore;
+import java.io.IOException;
+import java.math.BigInteger;
+import java.util.concurrent.ExecutionException;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 
-import java.io.IOException;
-import java.math.BigInteger;
-import java.util.concurrent.ExecutionException;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class ChainHttpTest extends BaseTest {
+
     private ChainHttp chainHttp;
 
     @BeforeAll
@@ -38,20 +38,14 @@ class ChainHttpTest extends BaseTest {
 
     @Test
     void getBlockchainHeight() throws ExecutionException, InterruptedException {
-        BigInteger blockchainHeight = chainHttp
-                .getBlockchainHeight()
-                .toFuture()
-                .get();
+        BigInteger blockchainHeight = chainHttp.getBlockchainHeight().toFuture().get();
 
         assertTrue(blockchainHeight.intValue() > 0);
     }
 
     @Test
     void getBlockchainScore() throws ExecutionException, InterruptedException {
-        BlockchainScore blockchainScore = chainHttp
-                .getBlockchainScore()
-                .toFuture()
-                .get();
+        BlockchainScore blockchainScore = chainHttp.getBlockchainScore().toFuture().get();
 
         assertTrue(blockchainScore.getScoreLow().longValue() >= 0);
         assertTrue(blockchainScore.getScoreHigh().longValue() >= 0);

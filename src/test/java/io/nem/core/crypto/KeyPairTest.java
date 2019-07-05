@@ -25,7 +25,7 @@ import org.mockito.Mockito;
 
 public class KeyPairTest {
 
-    //region basic construction
+    // region basic construction
 
     @Test
     public void ctorCanCreateNewKeyPair() {
@@ -66,7 +66,7 @@ public class KeyPairTest {
         Assert.assertThat(kp2.getPublicKey(), IsEqual.equalTo(kp1.getPublicKey()));
     }
 
-    //endregion
+    // endregion
 
     @Test
     public void ctorCreatesDifferentInstancesWithDifferentKeys() {
@@ -90,7 +90,7 @@ public class KeyPairTest {
         new KeyPair(publicKey, context.engine);
     }
 
-    //region delegation
+    // region delegation
 
     @Test
     public void ctorCreatesKeyGenerator() {
@@ -129,6 +129,7 @@ public class KeyPairTest {
     }
 
     private class KeyPairContext {
+
         private final CryptoEngine engine = Mockito.mock(CryptoEngine.class);
         private final KeyAnalyzer analyzer = Mockito.mock(KeyAnalyzer.class);
         private final KeyGenerator generator = Mockito.mock(KeyGenerator.class);
@@ -141,9 +142,10 @@ public class KeyPairTest {
             Mockito.when(this.engine.createKeyAnalyzer()).thenReturn(this.analyzer);
             Mockito.when(this.engine.createKeyGenerator()).thenReturn(this.generator);
             Mockito.when(this.generator.generateKeyPair()).thenReturn(this.keyPair1);
-            Mockito.when(this.generator.derivePublicKey(this.privateKey)).thenReturn(this.publicKey);
+            Mockito.when(this.generator.derivePublicKey(this.privateKey))
+                .thenReturn(this.publicKey);
         }
     }
 
-    //endregion
+    // endregion
 }

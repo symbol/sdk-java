@@ -21,11 +21,13 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * The multisig account graph info structure describes the information of all the mutlisig levels an account is involved in.
+ * The multisig account graph info structure describes the information of all the mutlisig levels an
+ * account is involved in.
  *
  * @since 1.0
  */
 public class MultisigAccountGraphInfo {
+
     private final Map<Integer, List<MultisigAccountInfo>> multisigAccounts;
 
     public MultisigAccountGraphInfo(Map<Integer, List<MultisigAccountInfo>> multisigAccounts) {
@@ -44,7 +46,7 @@ public class MultisigAccountGraphInfo {
     /**
      * Returns multisig accounts.
      *
-     * @return Map<Integer ,   List < { @ link   MultisigAccountInfo }>>
+     * @return Map<Integer, List < { @ link MultisigAccountInfo }>>
      */
     public Map<Integer, List<MultisigAccountInfo>> getMultisigAccounts() {
         return multisigAccounts;

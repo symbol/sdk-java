@@ -24,13 +24,19 @@ import java.util.List;
  * @since 1.0
  */
 public class MultisigAccountInfo {
+
     private final PublicAccount account;
     private final int minApproval;
     private final int minRemoval;
     private final List<PublicAccount> cosignatories;
     private final List<PublicAccount> multisigAccounts;
 
-    public MultisigAccountInfo(PublicAccount account, int minApproval, int minRemoval, List<PublicAccount> cosignatories, List<PublicAccount> multisigAccounts) {
+    public MultisigAccountInfo(
+        PublicAccount account,
+        int minApproval,
+        int minRemoval,
+        List<PublicAccount> cosignatories,
+        List<PublicAccount> multisigAccounts) {
         this.account = account;
         this.minApproval = minApproval;
         this.minRemoval = minRemoval;

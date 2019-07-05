@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 NEM
+ * Copyright 2019 NEM
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ import io.nem.sdk.model.account.PublicAccount;
  * @since 1.0
  */
 public class AggregateTransactionCosignature {
+
     private final String signature;
     private final PublicAccount signer;
 

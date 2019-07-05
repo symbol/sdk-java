@@ -16,15 +16,16 @@
 
 package io.nem.sdk.model.transaction;
 
-import org.junit.jupiter.api.Test;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import org.junit.jupiter.api.Test;
 
 public class CosignatureSignedTransactionTest {
 
     @Test
     void createACosignatureSignedTransactionViaConstructor() {
-        CosignatureSignedTransaction cosignatureSignedTransaction = new CosignatureSignedTransaction("parentHash", "signature", "signer");
+        CosignatureSignedTransaction cosignatureSignedTransaction =
+            new CosignatureSignedTransaction("parentHash", "signature", "signer");
 
         assertEquals("parentHash", cosignatureSignedTransaction.getParentHash());
         assertEquals("signature", cosignatureSignedTransaction.getSignature());

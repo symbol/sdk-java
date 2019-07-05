@@ -24,9 +24,7 @@ import java.util.function.DoubleConsumer;
 import java.util.function.DoubleUnaryOperator;
 
 /**
- * Abstract matrix class.
- * <br>
- * This class provides default implementations of most matrix functions
+ * Abstract matrix class. <br> This class provides default implementations of most matrix functions
  * but they should be optimized in derived classes when performance is important.
  */
 public abstract class Matrix {
@@ -45,7 +43,7 @@ public abstract class Matrix {
         this.numCols = numCols;
     }
 
-    //region get{Element|Row|Column}Count / {get|set|increment}At
+    // region get{Element|Row|Column}Count / {get|set|increment}At
 
     /**
      * Gets the number of elements.
@@ -110,9 +108,9 @@ public abstract class Matrix {
         this.setAtUnchecked(row, col, originalVal + val);
     }
 
-    //endregion
+    // endregion
 
-    //region get{Row|Column}SumVector
+    // region get{Row|Column}SumVector
 
     /**
      * Gets a vector containing the sums of each matrix row.
@@ -140,9 +138,9 @@ public abstract class Matrix {
         return sums;
     }
 
-    //endregion
+    // endregion
 
-    //region mutation functions
+    // region mutation functions
 
     /**
      * Normalizes each column of the matrix.
@@ -158,14 +156,15 @@ public abstract class Matrix {
             }
         }
 
-        this.forEach((row, col, value, setter) -> {
-            final double sum = columnSums[col];
-            if (0 == sum) {
-                return;
-            }
+        this.forEach(
+            (row, col, value, setter) -> {
+                final double sum = columnSums[col];
+                if (0 == sum) {
+                    return;
+                }
 
-            setter.accept(value / sum);
-        });
+                setter.accept(value / sum);
+            });
 
         return zeroColumns;
     }
@@ -183,11 +182,12 @@ public abstract class Matrix {
      * @param minValue The minimum value that should not be set to zero.
      */
     public void removeLessThan(final double minValue) {
-        this.forEach((row, col, value, setter) -> {
-            if (value < minValue) {
-                setter.accept(0.0);
-            }
-        });
+        this.forEach(
+            (row, col, value, setter) -> {
+                if (value < minValue) {
+                    setter.accept(0.0);
+                }
+            });
     }
 
     /**
@@ -199,13 +199,12 @@ public abstract class Matrix {
         this.forEach((row, col, value, setter) -> setter.accept(value / scale));
     }
 
-    //endregion
+    // endregion
 
-    //region element-wise operations
+    // region element-wise operations
 
     /**
-     * Creates a new Matrix by multiplying this matrix element-wise with
-     * another matrix.
+     * Creates a new Matrix by multiplying this matrix element-wise with another matrix.
      *
      * @param matrix The other matrix.
      * @return The new matrix.
@@ -215,8 +214,7 @@ public abstract class Matrix {
     }
 
     /**
-     * Creates a new Matrix by adding this matrix element-wise with
-     * another matrix.
+     * Creates a new Matrix by adding this matrix element-wise with another matrix.
      *
      * @param matrix The other matrix.
      * @return The new matrix.
@@ -225,24 +223,29 @@ public abstract class Matrix {
         return this.join(matrix, true, (l, r) -> l + r);
     }
 
-    private Matrix join(final Matrix matrix, final boolean isTwoWay, final DoubleBinaryOperator op) {
+    private Matrix join(final Matrix matrix, final boolean isTwoWay,
+        final DoubleBinaryOperator op) {
         if (!this.isSameSize(matrix)) {
             throw new IllegalArgumentException("matrix sizes must be equal");
         }
 
         final Matrix result = this.create(this.getRowCount(), this.getColumnCount());
-        this.forEach((r, c, v) -> result.setAtUnchecked(r, c, op.applyAsDouble(v, matrix.getAtUnchecked(r, c))));
+        this.forEach(
+            (r, c, v) -> result
+                .setAtUnchecked(r, c, op.applyAsDouble(v, matrix.getAtUnchecked(r, c))));
 
         if (isTwoWay) {
-            matrix.forEach((r, c, v) -> result.setAtUnchecked(r, c, op.applyAsDouble(v, this.getAtUnchecked(r, c))));
+            matrix.forEach(
+                (r, c, v) -> result
+                    .setAtUnchecked(r, c, op.applyAsDouble(v, this.getAtUnchecked(r, c))));
         }
 
         return result;
     }
 
-    //endregion
+    // endregion
 
-    //region aggregation functions
+    // region aggregation functions
 
     /**
      * Gets the sum of the absolute value of all the matrix's elements.
@@ -269,9 +272,9 @@ public abstract class Matrix {
         return sum[0];
     }
 
-    //endregion
+    // endregion
 
-    //region vector operations
+    // region vector operations
 
     /**
      * Multiplies this matrix by a vector.
@@ -291,9 +294,9 @@ public abstract class Matrix {
         return new ColumnVector(rawResult);
     }
 
-    //endregion
+    // endregion
 
-    //region transforms
+    // region transforms
 
     /**
      * Transposes this matrix.
@@ -307,7 +310,8 @@ public abstract class Matrix {
     }
 
     /**
-     * Creates a new matrix by rounding all elements in this matrix to the specified number of decimal places.
+     * Creates a new matrix by rounding all elements in this matrix to the specified number of
+     * decimal places.
      *
      * @param numPlaces The number of decimal places.
      * @return The new matrix.
@@ -361,9 +365,9 @@ public abstract class Matrix {
         return matrix;
     }
 
-    //endregion
+    // endregion
 
-    //region predicates
+    // region predicates
 
     /**
      * Determines if two this matrix and another matrix have the same dimensions.
@@ -394,9 +398,9 @@ public abstract class Matrix {
         return 0 == this.absSum();
     }
 
-    //endregion
+    // endregion
 
-    //region hashCode / equals
+    // region hashCode / equals
 
     @Override
     public int hashCode() {
@@ -418,9 +422,9 @@ public abstract class Matrix {
         return 0 == inequalityMatrix.sum();
     }
 
-    //endregion
+    // endregion
 
-    //region readonly-foreach
+    // region readonly-foreach
 
     /**
      * Calls the specified function for every non-zero element.
@@ -440,9 +444,9 @@ public abstract class Matrix {
      */
     protected abstract Matrix create(final int numRows, final int numCols);
 
-    //endregion
+    // endregion
 
-    //region abstract functions
+    // region abstract functions
 
     /**
      * Gets the value at the specified row and column.
@@ -478,8 +482,8 @@ public abstract class Matrix {
     public abstract MatrixNonZeroElementRowIterator getNonZeroElementRowIterator(final int row);
 
     /**
-     * Functional interface that visits every non-zero element in this matrix.
-     * Depending on the implementation, zero elements may or may not be visited.
+     * Functional interface that visits every non-zero element in this matrix. Depending on the
+     * implementation, zero elements may or may not be visited.
      */
     @FunctionalInterface
     public interface ReadOnlyElementVisitorFunction {
@@ -487,16 +491,16 @@ public abstract class Matrix {
         /**
          * Visits the specified element.
          *
-         * @param row   The row.
-         * @param col   The column.
+         * @param row The row.
+         * @param col The column.
          * @param value The value.
          */
         void visit(final int row, final int col, final double value);
     }
 
     /**
-     * Functional interface that visits every non-zero element in this matrix.
-     * Depending on the implementation, zero elements may or may not be visited.
+     * Functional interface that visits every non-zero element in this matrix. Depending on the
+     * implementation, zero elements may or may not be visited.
      */
     @FunctionalInterface
     protected interface ElementVisitorFunction {
@@ -504,13 +508,13 @@ public abstract class Matrix {
         /**
          * Visits the specified element.
          *
-         * @param row    The row.
-         * @param col    The column.
-         * @param value  The value.
+         * @param row The row.
+         * @param col The column.
+         * @param value The value.
          * @param setter a function that can be used to update the value.
          */
         void visit(final int row, final int col, final double value, final DoubleConsumer setter);
     }
 
-    //endregion
+    // endregion
 }

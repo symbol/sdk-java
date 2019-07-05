@@ -14,95 +14,175 @@
  * limitations under the License.
  */
 
-
 package io.nem.sdk.model.transaction;
 
-import com.google.flatbuffers.FlatBufferBuilder;
+import io.nem.catapult.builders.AccountLinkActionDto;
+import io.nem.catapult.builders.AccountLinkTransactionBuilder;
+import io.nem.catapult.builders.AmountDto;
+import io.nem.catapult.builders.EmbeddedAccountLinkTransactionBuilder;
+import io.nem.catapult.builders.EntityTypeDto;
+import io.nem.catapult.builders.KeyDto;
+import io.nem.catapult.builders.SignatureDto;
+import io.nem.catapult.builders.TimestampDto;
 import io.nem.sdk.model.account.PublicAccount;
 import io.nem.sdk.model.blockchain.NetworkType;
+import java.math.BigInteger;
+import java.nio.ByteBuffer;
+import java.util.Optional;
 import org.apache.commons.lang.Validate;
 
-import java.math.BigInteger;
-import java.util.Optional;
+public class AccountLinkTransaction extends Transaction {
 
-public class AccountLinkTransaction extends Transaction{
+    private final PublicAccount remoteAccount;
+    private final AccountLinkAction linkAction;
 
-    private final String remoteAccountKey;
-    private final LinkActionType linkAction;
-    private final Schema schema = new AccountLinkTransactionSchema();
-
-    public AccountLinkTransaction(NetworkType networkType,
-                                  Integer version, Deadline deadline, BigInteger fee,
-                                  String remoteAccountKey,
-                                  LinkActionType linkAction,
-                                  String signature,
-                                  PublicAccount signer,
-                                  TransactionInfo transactionInfo) {
-        this(networkType, version, deadline, fee, remoteAccountKey, linkAction, Optional.of(signature), Optional.of(signer), Optional.of(transactionInfo));
+    public AccountLinkTransaction(
+        final NetworkType networkType,
+        final Integer version,
+        final Deadline deadline,
+        final BigInteger maxFee,
+        final PublicAccount remoteAccount,
+        final AccountLinkAction linkAction,
+        final String signature,
+        final PublicAccount signer,
+        final TransactionInfo transactionInfo) {
+        this(
+            networkType,
+            version,
+            deadline,
+            maxFee,
+            remoteAccount,
+            linkAction,
+            Optional.of(signature),
+            Optional.of(signer),
+            Optional.of(transactionInfo));
     }
 
-    public AccountLinkTransaction(NetworkType networkType,
-                                  Integer version, Deadline deadline, BigInteger fee,
-                                  String remoteAccountKey,
-                                  LinkActionType linkAction) {
-        this(networkType, version, deadline, fee, remoteAccountKey, linkAction, Optional.empty(), Optional.empty(), Optional.empty());
+    public AccountLinkTransaction(
+        final NetworkType networkType,
+        final Integer version,
+        final Deadline deadline,
+        final BigInteger maxFee,
+        final PublicAccount remoteAccount,
+        final AccountLinkAction linkAction) {
+        this(
+            networkType,
+            version,
+            deadline,
+            maxFee,
+            remoteAccount,
+            linkAction,
+            Optional.empty(),
+            Optional.empty(),
+            Optional.empty());
     }
 
-    private AccountLinkTransaction(NetworkType networkType,
-                                   Integer version, Deadline deadline, BigInteger fee,
-                                   String remoteAccountKey,
-                                   LinkActionType linkAction,
-                                   Optional<String> signature,
-                                   Optional<PublicAccount> signer,
-                                   Optional<TransactionInfo> transactionInfo) {
-        super(TransactionType.ACCOUNT_LINK, networkType, version, deadline, fee, signature, signer, transactionInfo);
-        Validate.notNull(remoteAccountKey, "remoteAccountKey must not be null");
+    private AccountLinkTransaction(
+        final NetworkType networkType,
+        final Integer version,
+        final Deadline deadline,
+        final BigInteger maxFee,
+        final PublicAccount remoteAccount,
+        final AccountLinkAction linkAction,
+        final Optional<String> signature,
+        final Optional<PublicAccount> signer,
+        final Optional<TransactionInfo> transactionInfo) {
+        super(
+            TransactionType.ACCOUNT_LINK,
+            networkType,
+            version,
+            deadline,
+            maxFee,
+            signature,
+            signer,
+            transactionInfo);
+        Validate.notNull(remoteAccount, "remoteAccount must not be null");
         Validate.notNull(linkAction, "linkAction must not be null");
-        this.remoteAccountKey = remoteAccountKey;
+        this.remoteAccount = remoteAccount;
         this.linkAction = linkAction;
     }
 
-    public static AccountLinkTransaction create(Deadline deadline,
-                                                String remoteAccountKey,
-                                                LinkActionType linkAction,
-                                                NetworkType networkType) {
-        return new AccountLinkTransaction(networkType, 2,deadline, BigInteger.valueOf(0), remoteAccountKey, linkAction);
+    /**
+     * Creates an account link transaction.
+     *
+     * @param deadline Deadline to include the transaction.
+     * @param maxFee Max fee defined by the sender.
+     * @param remoteAccountKey Remote account key.
+     * @param linkAction Link action.
+     * @param networkType Network type.
+     * @return Account link transaction
+     */
+    public static AccountLinkTransaction create(
+        final Deadline deadline,
+        final BigInteger maxFee,
+        final PublicAccount remoteAccountKey,
+        final AccountLinkAction linkAction,
+        final NetworkType networkType) {
+        return new AccountLinkTransaction(
+            networkType,
+            TransactionVersion.ACCOUNT_LINK.getValue(),
+            deadline,
+            maxFee,
+            remoteAccountKey,
+            linkAction);
     }
 
-    public String getRemoteAccountKey() {
-        return remoteAccountKey;
+    /**
+     * Gets the public key.
+     *
+     * @return Public key.
+     */
+    public PublicAccount getRemoteAccount() {
+        return remoteAccount;
     }
 
-    public LinkActionType getLinkAction() {
+    /**
+     * Gets the link action.
+     *
+     * @return Link action.
+     */
+    public AccountLinkAction getLinkAction() {
         return linkAction;
     }
 
+    /**
+     * Serialized the transaction.
+     *
+     * @return bytes of the transaction.
+     */
     @Override
     byte[] generateBytes() {
-        FlatBufferBuilder builder = new FlatBufferBuilder();
-        BigInteger deadlineBigInt = BigInteger.valueOf(getDeadline().getInstant());
-        int[] fee = new int[]{0, 0};
-        int version = (int) Long.parseLong(Integer.toHexString(getNetworkType().getValue()) + "0" + Integer.toHexString(getVersion()), 16);
+        // Add place holders to the signer and signature until actually signed
+        final ByteBuffer signerBuffer = ByteBuffer.allocate(32);
+        final ByteBuffer signatureBuffer = ByteBuffer.allocate(64);
 
-        // Create Vectors
-        int signatureVector = AccountLinkTransactionBuffer.createSignatureVector(builder, new byte[64]);
-        int signerVector = AccountLinkTransactionBuffer.createSignerVector(builder, new byte[32]);
-        int deadlineVector = AccountLinkTransactionBuffer.createDeadlineVector(builder, UInt64.fromBigInteger(deadlineBigInt));
-        int feeVector = AccountLinkTransactionBuffer.createFeeVector(builder, fee);
+        final AccountLinkTransactionBuilder txBuilder =
+            AccountLinkTransactionBuilder.create(
+                new SignatureDto(signatureBuffer),
+                new KeyDto(signerBuffer),
+                getNetworkVersion(),
+                EntityTypeDto.ACCOUNT_LINK_TRANSACTION,
+                new AmountDto(getFee().longValue()),
+                new TimestampDto(getDeadline().getInstant()),
+                new KeyDto(getRemoteAccount().getPublicKey().getByteBuffer()),
+                AccountLinkActionDto.rawValueOf(getLinkAction().getValue()));
+        return txBuilder.serialize();
+    }
 
-
-        AccountLinkTransactionBuffer.startAccountLinkTransactionBuffer(builder);
-        AccountLinkTransactionBuffer.addSize(builder, 200 + remoteAccountKey.length());
-        AccountLinkTransactionBuffer.addSignature(builder, signatureVector);
-        AccountLinkTransactionBuffer.addSigner(builder, signerVector);
-        AccountLinkTransactionBuffer.addVersion(builder, version);
-        AccountLinkTransactionBuffer.addType(builder, getType().getValue());
-        AccountLinkTransactionBuffer.addFee(builder, feeVector);
-        AccountLinkTransactionBuffer.addDeadline(builder, deadlineVector);
-
-        int codedTransaction = AccountLinkTransactionBuffer.endAccountLinkTransactionBuffer(builder);
-        builder.finish(codedTransaction);
-
-        return schema.serialize(builder.sizedByteArray());
+    /**
+     * Serialized the transaction to embedded bytes.
+     *
+     * @return bytes of the transaction.
+     */
+    @Override
+    byte[] generateEmbeddedBytes() {
+        final EmbeddedAccountLinkTransactionBuilder txBuilder =
+            EmbeddedAccountLinkTransactionBuilder.create(
+                new KeyDto(getSignerBytes().get()),
+                getNetworkVersion(),
+                EntityTypeDto.ADDRESS_ALIAS_TRANSACTION,
+                new KeyDto(getRemoteAccount().getPublicKey().getByteBuffer()),
+                AccountLinkActionDto.rawValueOf(getLinkAction().getValue()));
+        return txBuilder.serialize();
     }
 }

@@ -16,28 +16,32 @@
 
 package io.nem.sdk.model.account;
 
-import io.nem.sdk.model.blockchain.NetworkType;
-import org.junit.jupiter.api.Test;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
-class PublicAccountTest {
-    private final String publicKey = "b4f12e7c9f6946091e2cb8b6d3a12b50d17ccbbf646386ea27ce2946a7423dcf";
+import io.nem.sdk.model.blockchain.NetworkType;
+import org.junit.jupiter.api.Test;
 
+class PublicAccountTest {
+
+    private final String publicKey =
+        "b4f12e7c9f6946091e2cb8b6d3a12b50d17ccbbf646386ea27ce2946a7423dcf";
 
     @Test
     void shouldCreatePublicAccountViaConstructor() {
         PublicAccount publicAccount = new PublicAccount(publicKey, NetworkType.MIJIN_TEST);
-        assertEquals(publicKey, publicAccount.getPublicKey());
-        assertEquals("SARNASAS2BIAB6LMFA3FPMGBPGIJGK6IJETM3ZSP", publicAccount.getAddress().plain());
+        assertEquals(publicKey.toUpperCase(), publicAccount.getPublicKey().toString());
+        assertEquals("SARNASAS2BIAB6LMFA3FPMGBPGIJGK6IJETM3ZSP",
+            publicAccount.getAddress().plain());
     }
 
     @Test
     void shouldCreatePublicAccountViaStaticConstructor() {
-        PublicAccount publicAccount = PublicAccount.createFromPublicKey(publicKey, NetworkType.MIJIN_TEST);
-        assertEquals(publicKey, publicAccount.getPublicKey());
-        assertEquals("SARNASAS2BIAB6LMFA3FPMGBPGIJGK6IJETM3ZSP", publicAccount.getAddress().plain());
+        PublicAccount publicAccount =
+            PublicAccount.createFromPublicKey(publicKey, NetworkType.MIJIN_TEST);
+        assertEquals(publicKey.toUpperCase(), publicAccount.getPublicKey().toString());
+        assertEquals("SARNASAS2BIAB6LMFA3FPMGBPGIJGK6IJETM3ZSP",
+            publicAccount.getAddress().plain());
     }
 
     @Test

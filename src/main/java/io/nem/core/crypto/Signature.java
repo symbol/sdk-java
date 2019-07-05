@@ -18,7 +18,6 @@ package io.nem.core.crypto;
 
 import io.nem.core.utils.ArrayUtils;
 import io.nem.core.utils.HexEncoder;
-
 import java.math.BigInteger;
 import java.util.Arrays;
 
@@ -26,7 +25,9 @@ import java.util.Arrays;
  * A EC signature.
  */
 public class Signature {
-    private static final BigInteger MAXIMUM_VALUE = BigInteger.ONE.shiftLeft(256).subtract(BigInteger.ONE);
+
+    private static final BigInteger MAXIMUM_VALUE =
+        BigInteger.ONE.shiftLeft(256).subtract(BigInteger.ONE);
 
     private final byte[] r;
     private final byte[] s;
@@ -69,7 +70,8 @@ public class Signature {
      */
     public Signature(final byte[] r, final byte[] s) {
         if (32 != r.length || 32 != s.length) {
-            throw new IllegalArgumentException("binary signature representation of r and s must both have 32 bytes length");
+            throw new IllegalArgumentException(
+                "binary signature representation of r and s must both have 32 bytes length");
         }
 
         this.r = r;
@@ -133,7 +135,8 @@ public class Signature {
         }
 
         final Signature rhs = (Signature) obj;
-        return 1 == ArrayUtils.isEqualConstantTime(this.r, rhs.r) && 1 == ArrayUtils.isEqualConstantTime(this.s, rhs.s);
+        return 1 == ArrayUtils.isEqualConstantTime(this.r, rhs.r)
+            && 1 == ArrayUtils.isEqualConstantTime(this.s, rhs.s);
     }
 
     @Override

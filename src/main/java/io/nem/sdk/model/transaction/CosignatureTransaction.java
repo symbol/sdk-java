@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 NEM
+ * Copyright 2019 NEM
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,6 +26,7 @@ import org.bouncycastle.util.encoders.Hex;
  * @since 1.0
  */
 public class CosignatureTransaction {
+
     private final AggregateTransaction transactionToCosign;
 
     /**
@@ -34,8 +35,10 @@ public class CosignatureTransaction {
      * @param transactionToCosign Aggregate transaction that will be cosigned.
      */
     public CosignatureTransaction(AggregateTransaction transactionToCosign) {
-        if (!transactionToCosign.getTransactionInfo().isPresent() || !transactionToCosign.getTransactionInfo().get().getHash().isPresent()) {
-            throw new IllegalArgumentException("Transaction to cosign should be announced before being able to cosign it");
+        if (!transactionToCosign.getTransactionInfo().isPresent()
+            || !transactionToCosign.getTransactionInfo().get().getHash().isPresent()) {
+            throw new IllegalArgumentException(
+                "Transaction to cosign should be announced before being able to cosign it");
         }
         this.transactionToCosign = transactionToCosign;
     }
@@ -67,8 +70,12 @@ public class CosignatureTransaction {
      */
     public CosignatureSignedTransaction signWith(Account account) {
         Signer signer = new Signer(account.getKeyPair());
-        byte[] bytes = Hex.decode(this.transactionToCosign.getTransactionInfo().get().getHash().get());
+        byte[] bytes = Hex
+            .decode(this.transactionToCosign.getTransactionInfo().get().getHash().get());
         byte[] signatureBytes = signer.sign(bytes).getBytes();
-        return new CosignatureSignedTransaction(this.transactionToCosign.getTransactionInfo().get().getHash().get(), Hex.toHexString(signatureBytes), account.getPublicKey());
+        return new CosignatureSignedTransaction(
+            this.transactionToCosign.getTransactionInfo().get().getHash().get(),
+            Hex.toHexString(signatureBytes),
+            account.getPublicKey());
     }
 }

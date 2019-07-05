@@ -22,6 +22,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 public class CircularStackTest {
+
     @Test(expected = IndexOutOfBoundsException.class)
     public void peekOnEmptyStackThrowsException() {
         // Arrange:
@@ -100,7 +101,7 @@ public class CircularStackTest {
         Assert.assertThat(intStack.size(), IsEqual.equalTo(2));
     }
 
-    //region shallowCopyTo
+    // region shallowCopyTo
 
     @Test
     public void canCopyLargerToSmaller() {
@@ -168,9 +169,9 @@ public class CircularStackTest {
         }
     }
 
-    //endregion
+    // endregion
 
-    //region iteration
+    // region iteration
 
     @Test
     public void canIterateOverStackFromOldestToNewestElement() {
@@ -209,7 +210,7 @@ public class CircularStackTest {
         Assert.assertThat(intStack.size(), IsEqual.equalTo(0));
     }
 
-    //endregion
+    // endregion
 
     private CircularStack<Integer> createStack(final int i) {
         return new CircularStack<>(i);

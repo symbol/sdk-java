@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 NEM
+ * Copyright 2019 NEM
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,10 +18,13 @@ package io.nem.sdk.model.transaction;
 
 /**
  * Enum containing transaction type constants.
- *
- * @since 1.0
  */
 public enum TransactionType {
+
+    /**
+     * RESERVED
+     */
+    RESERVED(0),
 
     // Mosaic
     /**
@@ -104,26 +107,15 @@ public enum TransactionType {
      */
     SECRET_PROOF(0x4252),
 
-    // Remote harvesting
     /**
      * Account link transaction type
      */
     ACCOUNT_LINK(0x414C);
 
-
     private int value;
 
     TransactionType(int value) {
         this.value = value;
-    }
-
-    /**
-     * Returns enum value.
-     *
-     * @return enum value
-     */
-    public int getValue() {
-        return this.value;
     }
 
     /**
@@ -170,4 +162,12 @@ public enum TransactionType {
         }
     }
 
+    /**
+     * Returns enum value.
+     *
+     * @return enum value
+     */
+    public int getValue() {
+        return this.value;
+    }
 }

@@ -21,7 +21,6 @@ import io.nem.core.crypto.PrivateKey;
 import io.nem.core.crypto.PublicKey;
 import io.nem.core.crypto.Signature;
 import io.nem.core.utils.ExceptionUtils;
-
 import java.math.BigInteger;
 import java.security.SecureRandom;
 
@@ -39,7 +38,6 @@ public class Utils {
         final KeyPair pair = new KeyPair();
         return pair.getPublicKey();
     }
-
 
     public static Long generateRandomId() {
         final SecureRandom rand = new SecureRandom();
@@ -78,11 +76,10 @@ public class Utils {
         return input;
     }
 
-
     /**
      * Increments a single character in the specified string.
      *
-     * @param s     The string
+     * @param s The string
      * @param index The index of the character to increment
      * @return The resulting string
      */
@@ -95,7 +92,7 @@ public class Utils {
     /**
      * Changes a single character in the specified base 32 string.
      *
-     * @param s     A base 32 string
+     * @param s A base 32 string
      * @param index The index of the character to change
      * @return The resulting base 32 string
      */
@@ -131,7 +128,7 @@ public class Utils {
     /**
      * Creates a string initialized with a single character.
      *
-     * @param ch       The character used in the string.
+     * @param ch The character used in the string.
      * @param numChars The number of characters in hte string.
      * @return A string of length numChars initialized to ch.
      */
@@ -175,7 +172,7 @@ public class Utils {
      * @return A slightly different key
      */
     public static PublicKey mutate(final PublicKey key) {
-        return new PublicKey(Utils.incrementAtIndex(key.getRaw(), 12));
+        return new PublicKey(Utils.incrementAtIndex(key.getBytes(), 12));
     }
 
     /**
@@ -188,5 +185,5 @@ public class Utils {
         return new PrivateKey(key.getRaw().add(BigInteger.ONE));
     }
 
-    //endregion
+    // endregion
 }

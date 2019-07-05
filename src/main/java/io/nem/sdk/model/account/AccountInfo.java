@@ -17,8 +17,8 @@
 package io.nem.sdk.model.account;
 
 import io.nem.sdk.model.mosaic.Mosaic;
-
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -27,21 +27,43 @@ import java.util.List;
  * @since 1.0
  */
 public class AccountInfo {
+
     private final Address address;
     private final BigInteger addressHeight;
     private final String publicKey;
     private final BigInteger publicKeyHeight;
-    private final BigInteger importance;
-    private final BigInteger importanceHeight;
+    private final List<Importances> importances;
     private final List<Mosaic> mosaics;
 
-    public AccountInfo(Address address, BigInteger addressHeight, String publicKey, BigInteger publicKeyHeight, BigInteger importance, BigInteger importanceHeight, List<Mosaic> mosaics) {
+    public AccountInfo(
+        Address address,
+        BigInteger addressHeight,
+        String publicKey,
+        BigInteger publicKeyHeight,
+        BigInteger importance,
+        BigInteger importanceHeight,
+        List<Mosaic> mosaics) {
         this.address = address;
         this.addressHeight = addressHeight;
         this.publicKey = publicKey;
         this.publicKeyHeight = publicKeyHeight;
-        this.importance = importance;
-        this.importanceHeight = importanceHeight;
+        this.importances = new ArrayList<>();
+        this.importances.add(new Importances(importance, importanceHeight));
+        this.mosaics = mosaics;
+    }
+
+    public AccountInfo(
+        Address address,
+        BigInteger addressHeight,
+        String publicKey,
+        BigInteger publicKeyHeight,
+        List<Importances> importances,
+        List<Mosaic> mosaics) {
+        this.address = address;
+        this.addressHeight = addressHeight;
+        this.publicKey = publicKey;
+        this.publicKeyHeight = publicKeyHeight;
+        this.importances = importances;
         this.mosaics = mosaics;
     }
 
@@ -82,21 +104,12 @@ public class AccountInfo {
     }
 
     /**
-     * Returns importance of the account.
+     * Returns list of importances for the account.
      *
      * @return BigInteger
      */
-    public BigInteger getImportance() {
-        return importance;
-    }
-
-    /**
-     * Returns importance height of the account.
-     *
-     * @return BigInteger
-     */
-    public BigInteger getImportanceHeight() {
-        return importanceHeight;
+    public List<Importances> getImportances() {
+        return importances;
     }
 
     /**

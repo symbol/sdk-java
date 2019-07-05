@@ -19,12 +19,10 @@ package io.nem.sdk.model.namespace;
 import io.nem.sdk.model.transaction.IdGenerator;
 import io.nem.sdk.model.transaction.UInt64;
 import io.nem.sdk.model.transaction.UInt64Id;
-import org.bouncycastle.util.encoders.Hex;
-
 import java.math.BigInteger;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.List;
 
 /**
  * The namespace id structure describes namespace id
@@ -32,24 +30,12 @@ import java.util.List;
  * @since 1.0
  */
 public class NamespaceId implements UInt64Id {
+
     private final BigInteger id;
     private final Optional<String> fullName;
 
     /**
-     * Returns a list of BigInteger ids for a namespace path (ex: nem or domain.subdom.subdome)
-     *
-     * @param namespaceName
-     * @return
-     */
-    public static List<BigInteger> getNamespacePath(String namespaceName) {
-
-        return IdGenerator.generateNamespacePath(namespaceName);
-    }
-
-    /**
      * Create NamespaceId from namespace string name (ex: nem or domain.subdom.subdome)
-     *
-     * @param namespaceName
      */
     public NamespaceId(String namespaceName) {
         this.id = IdGenerator.generateNamespaceId(namespaceName);
@@ -57,10 +43,8 @@ public class NamespaceId implements UInt64Id {
     }
 
     /**
-     * Create NamespaceId from namespace string name (ex: nem or domain.subdom.subdome) and parent id
-     *
-     * @param namespaceName
-     * @param parentId
+     * Create NamespaceId from namespace string name (ex: nem or domain.subdom.subdome) and parent
+     * id
      */
     public NamespaceId(String namespaceName, BigInteger parentId) {
         this.id = IdGenerator.generateNamespaceId(namespaceName, parentId);
@@ -68,10 +52,8 @@ public class NamespaceId implements UInt64Id {
     }
 
     /**
-     * Create NamespaceId from namespace string name (ex: nem or domain.subdom.subdome) and parent namespace name
-     *
-     * @param namespaceName
-     * @param parentNamespaceName
+     * Create NamespaceId from namespace string name (ex: nem or domain.subdom.subdome) and parent
+     * namespace name
      */
     public NamespaceId(String namespaceName, String parentNamespaceName) {
         this.id = IdGenerator.generateNamespaceId(namespaceName, parentNamespaceName);
@@ -80,12 +62,18 @@ public class NamespaceId implements UInt64Id {
 
     /**
      * Create NamespaceId from BigInteger id
-     *
-     * @param id
      */
     public NamespaceId(BigInteger id) {
         this.id = id;
         this.fullName = Optional.empty();
+    }
+
+    /**
+     * Returns a list of BigInteger ids for a namespace path (ex: nem or domain.subdom.subdome)
+     */
+    public static List<BigInteger> getNamespacePath(String namespaceName) {
+
+        return IdGenerator.generateNamespacePath(namespaceName);
     }
 
     /**
@@ -135,8 +123,12 @@ public class NamespaceId implements UInt64Id {
      */
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof NamespaceId)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof NamespaceId)) {
+            return false;
+        }
         NamespaceId namespaceId1 = (NamespaceId) o;
 
         return Objects.equals(id, namespaceId1.id);

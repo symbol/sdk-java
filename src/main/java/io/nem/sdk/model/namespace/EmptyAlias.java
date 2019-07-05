@@ -16,30 +16,24 @@
 
 package io.nem.sdk.model.namespace;
 
-import io.nem.sdk.model.account.Address;
-import io.nem.sdk.model.mosaic.MosaicId;
+/**
+ * Empty alias
+ */
+public class EmptyAlias extends AliasBase<Object> {
 
-public class EmptyAlias implements Alias {
+    /**
+     * Create AddressAlias from address
+     */
+    public EmptyAlias() {
+        super(null);
+    }
 
-    public AliasType getType(){
+    /**
+     * Gets the alias type.
+     *
+     * @return Alias type.
+     */
+    public AliasType getType() {
         return AliasType.None;
     }
-
-    @Override
-    public MosaicId getMosaicId() {
-        return null;
-    }
-
-    @Override
-    public Address getAddress() {
-        return null;
-    }
-
-    @Override
-    public boolean equals(Alias alias) {
-        return alias instanceof EmptyAlias || alias.getType() == AliasType.None;
-    }
-
-    @Override
-    public boolean isEmpty() { return true; }
 }

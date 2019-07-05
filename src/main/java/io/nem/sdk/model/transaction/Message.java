@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 NEM
+ * Copyright 2019 NEM
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,10 +18,9 @@ package io.nem.sdk.model.transaction;
 
 /**
  * An abstract message class that serves as the base class of all message types.
- *
- * @since 1.0
  */
 public abstract class Message {
+
     private final int type;
     private final String payload;
 

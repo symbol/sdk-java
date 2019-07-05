@@ -22,6 +22,7 @@ package io.nem.sdk.model.mosaic;
  * @since 1.0
  */
 public class IllegalIdentifierException extends RuntimeException {
+
     public IllegalIdentifierException() {
     }
 

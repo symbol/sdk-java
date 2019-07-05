@@ -19,24 +19,29 @@ package io.nem.sdk.model.account;
 import io.nem.core.crypto.KeyPair;
 import io.nem.core.crypto.PrivateKey;
 import io.nem.sdk.model.blockchain.NetworkType;
-import io.nem.sdk.model.transaction.*;
-
-import javax.validation.constraints.NotNull;
+import io.nem.sdk.model.transaction.AggregateTransaction;
+import io.nem.sdk.model.transaction.CosignatureSignedTransaction;
+import io.nem.sdk.model.transaction.CosignatureTransaction;
+import io.nem.sdk.model.transaction.SignedTransaction;
+import io.nem.sdk.model.transaction.Transaction;
 import java.util.List;
+import javax.validation.constraints.NotNull;
 
 /**
- * The account structure describes an account private key, public key, address and allows signing transactions.
+ * The account structure describes an account private key, public key, address and allows signing
+ * transactions.
  *
  * @since 1.0
  */
 public class Account {
+
     private final KeyPair keyPair;
     private final PublicAccount publicAccount;
 
     /**
      * Constructor
      *
-     * @param privateKey  String
+     * @param privateKey String
      * @param networkType NetworkType
      */
     public Account(@NotNull String privateKey, NetworkType networkType) {
@@ -52,7 +57,7 @@ public class Account {
     /**
      * Create an Account from a given private key.
      *
-     * @param privateKey  Private key from an account
+     * @param privateKey Private key from an account
      * @param networkType NetworkType
      * @return {@link Account}
      */
@@ -62,13 +67,10 @@ public class Account {
 
     /**
      * Create an new Account
-     *
-     * @param networkType
-     * @return
      */
-    public static Account generateNewAccount(NetworkType networkType){
+    public static Account generateNewAccount(NetworkType networkType) {
         KeyPair keyPair = new KeyPair();
-        return new Account( keyPair.getPrivateKey().toString(),networkType);
+        return new Account(keyPair.getPrivateKey().toString(), networkType);
     }
 
     /**
@@ -77,7 +79,7 @@ public class Account {
      * @return {@link String}
      */
     public String getPublicKey() {
-        return this.keyPair.getPublicKey().toString().toUpperCase();
+        return this.keyPair.getPublicKey().toString();
     }
 
     /**
@@ -122,8 +124,8 @@ public class Account {
      * @param transaction The transaction to be signed.
      * @return {@link SignedTransaction}
      */
-    public SignedTransaction sign(Transaction transaction) {
-        return transaction.signWith(this);
+    public SignedTransaction sign(final Transaction transaction, final String generationHash) {
+        return transaction.signWith(this, generationHash);
     }
 
     /**
@@ -132,18 +134,22 @@ public class Account {
      * @param cosignatureTransaction The aggregate signature transaction.
      * @return {@link CosignatureSignedTransaction}
      */
-    public CosignatureSignedTransaction signCosignatureTransaction(CosignatureTransaction cosignatureTransaction) {
+    public CosignatureSignedTransaction signCosignatureTransaction(
+        CosignatureTransaction cosignatureTransaction) {
         return cosignatureTransaction.signWith(this);
     }
 
     /**
      * Sign transaction with cosignatories creating a new SignedTransaction.
      *
-     * @param transaction   The aggregate transaction to be signed.
+     * @param transaction The aggregate transaction to be signed.
      * @param cosignatories The list of accounts that will cosign the transaction
      * @return {@link SignedTransaction}
      */
-    public SignedTransaction signTransactionWithCosignatories(AggregateTransaction transaction, List<Account> cosignatories) {
-        return transaction.signTransactionWithCosigners(this, cosignatories);
+    public SignedTransaction signTransactionWithCosignatories(
+        final AggregateTransaction transaction,
+        final List<Account> cosignatories,
+        final String generationHash) {
+        return transaction.signTransactionWithCosigners(this, cosignatories, generationHash);
     }
 }

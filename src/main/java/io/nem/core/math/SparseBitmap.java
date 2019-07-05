@@ -17,7 +17,6 @@
 package io.nem.core.math;
 
 import com.googlecode.javaewah.EWAHCompressedBitmap;
-
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
@@ -26,6 +25,7 @@ import java.util.List;
  * This is a wrapper for the EWAHCompressedBitmap.
  */
 public class SparseBitmap implements Iterable<Integer> {
+
     private final EWAHCompressedBitmap bitmap;
 
     // Private constructor
@@ -33,7 +33,7 @@ public class SparseBitmap implements Iterable<Integer> {
         this.bitmap = bitmap;
     }
 
-    //region factories
+    // region factories
 
     /**
      * Creates a new <code>SparseBitmap</code> that is empty.
@@ -45,8 +45,8 @@ public class SparseBitmap implements Iterable<Integer> {
     }
 
     /**
-     * Creates a new <code>SparseBitmap</code> from data that are already sorted
-     * in strictly ascending order (duplicate values are okay).
+     * Creates a new <code>SparseBitmap</code> from data that are already sorted in strictly
+     * ascending order (duplicate values are okay).
      *
      * @param bitsToSet The bits to set.
      * @return A new <code>SparseBitmap</code> with the given bits set.
@@ -66,15 +66,16 @@ public class SparseBitmap implements Iterable<Integer> {
         return new SparseBitmap(EWAHCompressedBitmap.bitmapOf(bitsToSet));
     }
 
-    //endregion
+    // endregion
 
-    //region get / set
+    // region get / set
 
     /**
      * Creates a new SparseBitmap that is the logical <code>or</code> of all the given bitmaps.
      *
      * @param bitmaps Bitmaps to compute the logical <code>or</code> for
-     * @return SparseBitmap that has the values set according to the <code>or</code> of the given bitmaps.
+     * @return SparseBitmap that has the values set according to the <code>or</code> of the given
+     * bitmaps.
      */
     public static SparseBitmap batchOr(final SparseBitmap... bitmaps) {
         if (bitmaps.length < 1) {
@@ -98,15 +99,18 @@ public class SparseBitmap implements Iterable<Integer> {
      * Gets the value of the bit at the given index.
      *
      * @param bitToGet The index of the bit to get.
-     * @return true if the bit is set, false if the bit is not set at the given <code>bitToGet</code> index.
+     * @return true if the bit is set, false if the bit is not set at the given
+     * <code>bitToGet</code>
+     * index.
      */
     public boolean get(final int bitToGet) {
         return this.bitmap.get(bitToGet);
     }
 
     /**
-     * For speed, this method sets bits at the given index, without checking that the bits
-     * are set in strictly ascending order. If the bits are not in ascending order, performance could be adversely affected.
+     * For speed, this method sets bits at the given index, without checking that the bits are set
+     * in strictly ascending order. If the bits are not in ascending order, performance could be
+     * adversely affected.
      *
      * @param bitToSet index of the bit to set
      */
@@ -114,28 +118,29 @@ public class SparseBitmap implements Iterable<Integer> {
         this.bitmap.set(bitToSet);
     }
 
-    //endregion
+    // endregion
 
-    //region clear
+    // region clear
 
     /**
-     * Set the bit at the given index. Throws an exception if bits are not set in strictly ascending order.
-     * For performance reasons, bits must be set in ascending order.
+     * Set the bit at the given index. Throws an exception if bits are not set in strictly ascending
+     * order. For performance reasons, bits must be set in ascending order.
      *
      * @param bitToSet The index of the bit to set.
      */
     public void set(final int bitToSet) {
         // Check that we are setting bits in ascending order (equality with the last value is OK).
-        if (this.bitmap.cardinality() > 0 && bitToSet < this.bitmap.toArray()[this.bitmap.cardinality() - 1]) {
+        if (this.bitmap.cardinality() > 0
+            && bitToSet < this.bitmap.toArray()[this.bitmap.cardinality() - 1]) {
             throw new IllegalArgumentException("Must set bits in strictly ascending order.");
         }
 
         this.bitmap.set(bitToSet);
     }
 
-    //endregion
+    // endregion
 
-    //region logical operations
+    // region logical operations
 
     /**
      * Clears all the bits in this sparse bitmap.
@@ -145,44 +150,44 @@ public class SparseBitmap implements Iterable<Integer> {
     }
 
     /**
-     * Computes the logical <code>or</code> of the context bitmap
-     * (<code>this</code>) and the given bitmap.
+     * Computes the logical <code>or</code> of the context bitmap (<code>this</code>) and the given
+     * bitmap.
      *
      * @param rhs Bitmap to compute the logical <code>or</code> with.
-     * @return Logical <code>or</code> of <code>this</code> bitmap
-     * (context object) and the given bitmap.
+     * @return Logical <code>or</code> of <code>this</code> bitmap (context object) and the given
+     * bitmap.
      */
     public SparseBitmap or(final SparseBitmap rhs) {
         return new SparseBitmap(this.bitmap.or(rhs.bitmap));
     }
 
     /**
-     * Computes the logical <code>and</code> of the context bitmap
-     * (<code>this</code>) and the given bitmap.
+     * Computes the logical <code>and</code> of the context bitmap (<code>this</code>) and the given
+     * bitmap.
      *
      * @param rhs Bitmap to compute the logical <code>and</code> with.
-     * @return Logical <code>and</code> of <code>this</code> bitmap
-     * (context object) and the given bitmap.
+     * @return Logical <code>and</code> of <code>this</code> bitmap (context object) and the given
+     * bitmap.
      */
     public SparseBitmap and(final SparseBitmap rhs) {
         return new SparseBitmap(this.bitmap.and(rhs.bitmap));
     }
 
     /**
-     * Computes the logical <code>and not</code> of the context bitmap
-     * (<code>this</code>) and the given bitmap.
+     * Computes the logical <code>and not</code> of the context bitmap (<code>this</code>) and the
+     * given bitmap.
      *
      * @param rhs Bitmap to compute the logical <code>and not</code> with.
-     * @return Logical <code>and not</code> of <code>this</code> bitmap
-     * (context object) and the given bitmap.
+     * @return Logical <code>and not</code> of <code>this</code> bitmap (context object) and the
+     * given bitmap.
      */
     public SparseBitmap andNot(final SparseBitmap rhs) {
         return new SparseBitmap(this.bitmap.andNot(rhs.bitmap));
     }
 
-    //endregion
+    // endregion
 
-    //region highest bit / cardinality
+    // region highest bit / cardinality
 
     /**
      * Gets the highest bit that is set in the bitmap.
@@ -190,12 +195,12 @@ public class SparseBitmap implements Iterable<Integer> {
      * @return The highest bit.
      */
     public int getHighestBit() {
-        return this.bitmap.cardinality() > 0 ? this.bitmap.toArray()[this.bitmap.cardinality() - 1] : 0;
+        return this.bitmap.cardinality() > 0 ? this.bitmap.toArray()[this.bitmap.cardinality() - 1]
+            : 0;
     }
 
     /**
-     * Size of the intersection of <code>this</code> bitmap and
-     * the given bitmap.
+     * Size of the intersection of <code>this</code> bitmap and the given bitmap.
      *
      * @param rhs given sparse bitmap to compute the size of the intersection of
      * @return size of the intersection of <code>this</code> bitmap and the given bitmap.
@@ -213,9 +218,9 @@ public class SparseBitmap implements Iterable<Integer> {
         return this.bitmap.cardinality();
     }
 
-    //endregion
+    // endregion
 
-    //region list / iterator
+    // region list / iterator
 
     /**
      * Creates a binary list representation of this sparse bitmap.
@@ -231,9 +236,9 @@ public class SparseBitmap implements Iterable<Integer> {
         return this.bitmap.iterator();
     }
 
-    //endregion
+    // endregion
 
-    //region hashCode / equals
+    // region hashCode / equals
 
     @Override
     public int hashCode() {
@@ -255,5 +260,5 @@ public class SparseBitmap implements Iterable<Integer> {
         return this.bitmap.toString();
     }
 
-    //endregion
+    // endregion
 }

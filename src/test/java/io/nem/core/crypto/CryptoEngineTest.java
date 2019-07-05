@@ -63,7 +63,8 @@ public abstract class CryptoEngineTest {
     public void canCreateBlockCipher() {
         // Act:
         final CryptoEngine engine = this.getCryptoEngine();
-        final BlockCipher blockCipher = engine.createBlockCipher(KeyPair.random(engine), KeyPair.random(engine));
+        final BlockCipher blockCipher =
+            engine.createBlockCipher(KeyPair.random(engine), KeyPair.random(engine));
 
         // Assert:
         Assert.assertThat(blockCipher, IsInstanceOf.instanceOf(BlockCipher.class));

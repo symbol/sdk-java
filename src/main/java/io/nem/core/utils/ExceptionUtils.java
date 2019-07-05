@@ -41,12 +41,11 @@ public class ExceptionUtils {
      * Propagates checked exceptions as a specific runtime exception.
      *
      * @param runnable The checked runnable.
-     * @param wrap     A function that wraps an exception in a runtime exception.
-     * @param <E>      The specific exception type.
+     * @param wrap A function that wraps an exception in a runtime exception.
+     * @param <E> The specific exception type.
      */
     public static <E extends RuntimeException> void propagateVoid(
-            final CheckedRunnable runnable,
-            final Function<Exception, E> wrap) {
+        final CheckedRunnable runnable, final Function<Exception, E> wrap) {
         propagate(new CheckedRuntimeToCallableAdapter(runnable), wrap);
     }
 
@@ -54,7 +53,7 @@ public class ExceptionUtils {
      * Propagates checked exceptions as a runtime exception.
      *
      * @param callable The function.
-     * @param <T>      The function return type.
+     * @param <T> The function return type.
      * @return The function result.
      */
     public static <T> T propagate(final Callable<T> callable) {
@@ -65,14 +64,13 @@ public class ExceptionUtils {
      * Propagates checked exceptions as a specific runtime exception.
      *
      * @param callable The function.
-     * @param wrap     A function that wraps an exception in a runtime exception.
-     * @param <T>      The function return type.
-     * @param <E>      The specific exception type.
+     * @param wrap A function that wraps an exception in a runtime exception.
+     * @param <T> The function return type.
+     * @param <E> The specific exception type.
      * @return The function result.
      */
     public static <T, E extends RuntimeException> T propagate(
-            final Callable<T> callable,
-            final Function<Exception, E> wrap) {
+        final Callable<T> callable, final Function<Exception, E> wrap) {
         try {
             return callable.call();
         } catch (final ExecutionException e) {
@@ -104,6 +102,7 @@ public class ExceptionUtils {
     }
 
     private static class CheckedRuntimeToCallableAdapter implements Callable<Void> {
+
         private final CheckedRunnable runnable;
 
         public CheckedRuntimeToCallableAdapter(final CheckedRunnable runnable) {

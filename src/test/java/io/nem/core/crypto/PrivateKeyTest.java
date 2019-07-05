@@ -16,16 +16,15 @@
 
 package io.nem.core.crypto;
 
+import java.math.BigInteger;
 import org.hamcrest.core.IsEqual;
 import org.hamcrest.core.IsNot;
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.math.BigInteger;
-
 public class PrivateKeyTest {
 
-    //region constructors / factories
+    // region constructors / factories
 
     @Test
     public void canCreateFromBigInteger() {
@@ -69,7 +68,8 @@ public class PrivateKeyTest {
         final PrivateKey key = PrivateKey.fromHexString("ABC");
 
         // Assert:
-        Assert.assertThat(key.getRaw(), IsEqual.equalTo(new BigInteger(new byte[]{(byte) 0x0A, (byte) 0xBC})));
+        Assert.assertThat(
+            key.getRaw(), IsEqual.equalTo(new BigInteger(new byte[]{(byte) 0x0A, (byte) 0xBC})));
     }
 
     @Test
@@ -78,7 +78,8 @@ public class PrivateKeyTest {
         final PrivateKey key = PrivateKey.fromHexString("8000");
 
         // Assert:
-        Assert.assertThat(key.getRaw(), IsEqual.equalTo(new BigInteger(-1, new byte[]{(byte) 0x80, 0x00})));
+        Assert.assertThat(
+            key.getRaw(), IsEqual.equalTo(new BigInteger(-1, new byte[]{(byte) 0x80, 0x00})));
     }
 
     @Test(expected = CryptoException.class)
@@ -93,13 +94,13 @@ public class PrivateKeyTest {
         PrivateKey.fromHexString("22G75");
     }
 
-    //endregion
+    // endregion
 
-    //region serializer
+    // region serializer
 
-    //endregion
+    // endregion
 
-    //region equals / hashCode
+    // region equals / hashCode
 
     @Test
     public void equalsOnlyReturnsTrueForEquivalentObjects() {
@@ -121,14 +122,17 @@ public class PrivateKeyTest {
         final int hashCode = key.hashCode();
 
         // Assert:
-        Assert.assertThat(PrivateKey.fromDecimalString("2275").hashCode(), IsEqual.equalTo(hashCode));
-        Assert.assertThat(PrivateKey.fromDecimalString("2276").hashCode(), IsNot.not(IsEqual.equalTo(hashCode)));
-        Assert.assertThat(PrivateKey.fromHexString("2275").hashCode(), IsNot.not(IsEqual.equalTo(hashCode)));
+        Assert
+            .assertThat(PrivateKey.fromDecimalString("2275").hashCode(), IsEqual.equalTo(hashCode));
+        Assert.assertThat(
+            PrivateKey.fromDecimalString("2276").hashCode(), IsNot.not(IsEqual.equalTo(hashCode)));
+        Assert.assertThat(
+            PrivateKey.fromHexString("2275").hashCode(), IsNot.not(IsEqual.equalTo(hashCode)));
     }
 
-    //endregion
+    // endregion
 
-    //region toString
+    // region toString
 
     @Test
     public void toStringReturnsHexRepresentation() {
@@ -137,5 +141,5 @@ public class PrivateKeyTest {
         Assert.assertThat(PrivateKey.fromDecimalString("2275").toString(), IsEqual.equalTo("08e3"));
     }
 
-    //endregion
+    // endregion
 }

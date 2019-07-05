@@ -17,15 +17,11 @@
 package io.nem.sdk.model.namespace;
 
 /**
- * The alias type. Supported types are:
- * 0: No alias.
- * 1: Mosaic id alias.
- * 2: Address alias.
+ * The alias type. Supported types are: 0: No alias. 1: Mosaic id alias. 2: Address alias.
  *
  * @since
  */
 public enum AliasType {
-
     None(0),
     Mosaic(1),
     Address(2);

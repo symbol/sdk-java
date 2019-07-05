@@ -16,18 +16,17 @@
 
 package io.nem.core.utils;
 
+import java.math.BigInteger;
+import java.security.SecureRandom;
 import org.hamcrest.core.IsEqual;
 import org.hamcrest.core.IsNot;
 import org.hamcrest.core.IsSame;
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.math.BigInteger;
-import java.security.SecureRandom;
-
 public class ArrayUtilsTest {
 
-    //region duplicate
+    // region duplicate
 
     private static void assertCanDuplicate(final byte[] bytes) {
         // Act:
@@ -39,10 +38,8 @@ public class ArrayUtilsTest {
 
     private static String createMessage(final byte[] bytes1, final byte[] bytes2) {
         return String.format(
-                "bytes1: %s%sbytes2: %s",
-                ByteUtils.toString(bytes1),
-                System.lineSeparator(),
-                ByteUtils.toString(bytes2));
+            "bytes1: %s%sbytes2: %s",
+            ByteUtils.toString(bytes1), System.lineSeparator(), ByteUtils.toString(bytes2));
     }
 
     private static void assertCompareZero(final byte[] a, final byte[] b) {
@@ -69,9 +66,9 @@ public class ArrayUtilsTest {
         Assert.assertThat(result, IsNot.not(IsSame.sameInstance(src)));
     }
 
-    //endregion
+    // endregion
 
-    //region concat
+    // region concat
 
     @Test
     public void duplicateCanDuplicateEmptyArray() {
@@ -117,9 +114,9 @@ public class ArrayUtilsTest {
         Assert.assertThat(result, IsEqual.equalTo(new byte[]{12, 4, 6}));
     }
 
-    //endregion
+    // endregion
 
-    //region split
+    // region split
 
     @Test
     public void concatCanCombineNonEmptyArrayWithEmptyArray() {
@@ -150,7 +147,8 @@ public class ArrayUtilsTest {
     @Test
     public void concatCanCombineMoreThanTwoArrays() {
         // Act:
-        final byte[] result = ArrayUtils.concat(new byte[]{7, 13}, new byte[]{12, 4, 6}, new byte[]{11, 9});
+        final byte[] result =
+            ArrayUtils.concat(new byte[]{7, 13}, new byte[]{12, 4, 6}, new byte[]{11, 9});
 
         // Assert:
         Assert.assertThat(result, IsEqual.equalTo(new byte[]{7, 13, 12, 4, 6, 11, 9}));
@@ -188,9 +186,9 @@ public class ArrayUtilsTest {
         Assert.assertThat(parts[1], IsEqual.equalTo(new byte[]{}));
     }
 
-    //endregion
+    // endregion
 
-    //region toByteArray
+    // region toByteArray
 
     @Test
     public void canSplitArrayAtBeginning() {
@@ -243,9 +241,9 @@ public class ArrayUtilsTest {
         Assert.assertThat(bytes, IsEqual.equalTo(new byte[]{(byte) 0x95, 0x14, 0x32}));
     }
 
-    //endregion
+    // endregion
 
-    //region toBigInteger
+    // region toBigInteger
 
     @Test
     public void canConvertNegativeBigIntegerToByteArray() {
@@ -274,9 +272,9 @@ public class ArrayUtilsTest {
         Assert.assertThat(bytes, IsEqual.equalTo(new byte[]{(byte) 0x95, 0x14, 0x32}));
     }
 
-    //endregion
+    // endregion
 
-    //region isEqual
+    // region isEqual
 
     @Test
     public void canConvertByteArrayToPositiveBigInteger() {
@@ -290,7 +288,8 @@ public class ArrayUtilsTest {
     @Test
     public void canConvertByteArrayToNegativeBigInteger() {
         // Act:
-        final BigInteger result = ArrayUtils.toBigInteger(new byte[]{(byte) 0x95, 0x14, (byte) 0xF2});
+        final BigInteger result = ArrayUtils
+            .toBigInteger(new byte[]{(byte) 0x95, 0x14, (byte) 0xF2});
 
         // Assert:
         Assert.assertThat(new BigInteger("F21495", 16), IsEqual.equalTo(result));
@@ -305,9 +304,9 @@ public class ArrayUtilsTest {
         Assert.assertThat(new BigInteger("0000A5", 16), IsEqual.equalTo(result));
     }
 
-    //endregion
+    // endregion
 
-    //region compare
+    // region compare
 
     @Test
     public void isEqualsReturnsOneForEqualByteArrays() {
@@ -349,54 +348,42 @@ public class ArrayUtilsTest {
     @Test
     public void compareReturnsZeroForEmptyArrays() {
         // Assert:
-        assertCompareZero(
-                new byte[]{},
-                new byte[]{});
+        assertCompareZero(new byte[]{}, new byte[]{});
     }
 
     @Test
     public void compareReturnsNonZeroForEmptyAndNonEmptyArrays() {
         // Assert:
-        assertCompareNonZero(
-                new byte[]{},
-                new byte[]{5});
+        assertCompareNonZero(new byte[]{}, new byte[]{5});
     }
 
     @Test
     public void compareReturnsNonZeroForDifferentSizedArrays() {
         // Assert:
-        assertCompareNonZero(
-                new byte[]{54},
-                new byte[]{5, 4});
+        assertCompareNonZero(new byte[]{54}, new byte[]{5, 4});
     }
 
     @Test
     public void compareReturnsNonZeroForArraysOfSameLengthWithDifferentPositiveElementValue() {
         // Assert:
-        assertCompareNonZero(
-                new byte[]{1, 2, 3, 4, 5},
-                new byte[]{1, 2, 4, 4, 5});
+        assertCompareNonZero(new byte[]{1, 2, 3, 4, 5}, new byte[]{1, 2, 4, 4, 5});
     }
 
     @Test
     public void compareReturnsNonZeroForArraysOfSameLengthWithDifferentNegativeElementValue() {
         // Assert:
-        assertCompareNonZero(
-                new byte[]{1, 2, -4, 4, 5},
-                new byte[]{1, 2, -3, 4, 5});
+        assertCompareNonZero(new byte[]{1, 2, -4, 4, 5}, new byte[]{1, 2, -3, 4, 5});
     }
 
     @Test
     public void compareReturnsZeroForArraysOfSameLengthWithEqualElementValues() {
         // Assert:
-        assertCompareZero(
-                new byte[]{1, 2, 3, 4, 5},
-                new byte[]{1, 2, 3, 4, 5});
+        assertCompareZero(new byte[]{1, 2, 3, 4, 5}, new byte[]{1, 2, 3, 4, 5});
     }
 
-    //endregion
+    // endregion
 
-    //region getBit
+    // region getBit
 
     @Test
     public void getBitReturnZeroIfBitIsNotSet() {
@@ -412,5 +399,5 @@ public class ArrayUtilsTest {
         Assert.assertThat(ArrayUtils.getBit(new byte[]{1, 2, 3}, 16), IsEqual.equalTo(1));
     }
 
-    //endregion
+    // endregion
 }

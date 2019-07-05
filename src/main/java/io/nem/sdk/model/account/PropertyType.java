@@ -17,15 +17,11 @@
 package io.nem.sdk.model.account;
 
 /**
- * Account property type
- * 0x01	The property type is an address.
- * 0x02	The property type is mosaic id.
- * 0x03	The property type is a transaction type.
- * 0x04	Property type sentinel.
- * 0x80 + type	The property is interpreted as a blocking operation.
+ * Account property type 0x01 The property type is an address. 0x02 The property type is mosaic id.
+ * 0x03 The property type is a transaction type. 0x04 Property type sentinel. 0x80 + type The
+ * property is interpreted as a blocking operation.
  */
 public enum PropertyType {
-
     AllowAddress(0x01),
     AllowMosaic(0x02),
     AllowTransaction(0x04),
@@ -35,6 +31,10 @@ public enum PropertyType {
     BlockTransaction(0x80 + 0x04);
 
     private Integer value;
+
+    PropertyType(int value) {
+        this.value = value;
+    }
 
     public static PropertyType rawValueOf(String value) {
         switch (value) {
@@ -57,10 +57,6 @@ public enum PropertyType {
         }
     }
 
-    PropertyType(int value) {
-        this.value = value;
-    }
-
     /**
      * Returns enum value.
      *
@@ -69,5 +65,4 @@ public enum PropertyType {
     public Integer getValue() {
         return this.value;
     }
-
 }

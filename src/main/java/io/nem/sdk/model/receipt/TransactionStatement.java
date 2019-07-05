@@ -20,17 +20,20 @@ import java.math.BigInteger;
 import java.util.List;
 
 public class TransactionStatement {
+
     private final BigInteger height;
     private final ReceiptSource receiptSource;
     private final List<Receipt> receipts;
+
     /**
      * Constructor
      *
-     * @param height              Block height
-     * @param receiptSource       The receipt source.
-     * @param receipts            Array of receipts.
+     * @param height Block height
+     * @param receiptSource The receipt source.
+     * @param receipts Array of receipts.
      */
-    public TransactionStatement (BigInteger height, ReceiptSource receiptSource, List<Receipt> receipts) {
+    public TransactionStatement(
+        BigInteger height, ReceiptSource receiptSource, List<Receipt> receipts) {
         this.height = height;
         this.receiptSource = receiptSource;
         this.receipts = receipts;
@@ -44,7 +47,6 @@ public class TransactionStatement {
     public ReceiptSource getReceiptSource() {
         return this.receiptSource;
     }
-
 
     /**
      * Returns block height

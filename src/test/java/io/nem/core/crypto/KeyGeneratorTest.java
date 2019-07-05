@@ -49,7 +49,7 @@ public abstract class KeyGeneratorTest {
 
         // Assert:
         Assert.assertThat(publicKey, IsNull.notNullValue());
-        Assert.assertThat(publicKey.getRaw(), IsEqual.equalTo(kp.getPublicKey().getRaw()));
+        Assert.assertThat(publicKey.getBytes(), IsEqual.equalTo(kp.getPublicKey().getBytes()));
     }
 
     @Test

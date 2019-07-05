@@ -18,7 +18,6 @@ package io.nem.core.crypto.ed25519;
 
 import io.nem.core.crypto.Curve;
 import io.nem.core.crypto.ed25519.arithmetic.Ed25519Group;
-
 import java.math.BigInteger;
 
 /**

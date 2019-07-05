@@ -21,12 +21,11 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * A two-level map of items.
- * <br>
- * Items are automatically created on access.
- * Item associations are order-dependent.
+ * A two-level map of items. <br> Items are automatically created on access. Item associations are
+ * order-dependent.
  */
 public abstract class AbstractTwoLevelMap<TKey, TValue> {
+
     private final Map<TKey, Map<TKey, TValue>> impl = new ConcurrentHashMap<>();
 
     /**

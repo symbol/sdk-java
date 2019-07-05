@@ -17,7 +17,6 @@
 package io.nem.core.math;
 
 import io.nem.core.utils.FormatUtils;
-
 import java.text.DecimalFormat;
 import java.util.Arrays;
 
@@ -35,15 +34,17 @@ public class SparseMatrix extends Matrix {
      * The rows of the matrix
      */
     private double[][] values = null;
+
     private int[][] cols = null;
     private int[] maxIndices = null;
 
     /**
      * Creates a new matrix of the specified size which has a given capacity for each row.
      *
-     * @param numRows               The desired number of rows to represent.
-     * @param numCols               The desired number of columns to represent.
-     * @param initialCapacityPerRow The initial capacity of a row. Choose carefully to avoid reallocation!
+     * @param numRows The desired number of rows to represent.
+     * @param numCols The desired number of columns to represent.
+     * @param initialCapacityPerRow The initial capacity of a row. Choose carefully to avoid
+     * reallocation!
      */
     public SparseMatrix(final int numRows, final int numCols, final int initialCapacityPerRow) {
         super(numRows, numCols);
@@ -59,16 +60,12 @@ public class SparseMatrix extends Matrix {
         }
     }
 
-    //region Matrix abstract functions
+    // region Matrix abstract functions
 
     private static String formatEntry(final int row, final int col, final double value) {
         final DecimalFormat format = FormatUtils.getDefaultDecimalFormat();
         return String.format(
-                "%s(%d, %d) -> %s",
-                System.lineSeparator(),
-                row,
-                col,
-                format.format(value));
+            "%s(%d, %d) -> %s", System.lineSeparator(), row, col, format.format(value));
     }
 
     @Override
@@ -84,7 +81,8 @@ public class SparseMatrix extends Matrix {
 
     @Override
     protected final void setAtUnchecked(final int row, final int col, final double val) {
-        // keep the columns sorted in ascending order (needed for SparseBitmap in NodeNeighborhoodMap ctor)
+        // keep the columns sorted in ascending order (needed for SparseBitmap in NodeNeighborhoodMap
+        // ctor)
 
         if (val == 0.0) {
             for (int i = 0; i < this.maxIndices[row]; ++i) {
@@ -151,13 +149,17 @@ public class SparseMatrix extends Matrix {
             for (int j = 0; j < size; ++j) {
                 final int jCopy = j;
                 copied[0] = false;
-                func.visit(i, rowCols[j], rowValues[j], v -> {
-                    if (0.0 == v) {
-                        copied[0] = this.remove(iCopy, jCopy);
-                    } else {
-                        rowValues[jCopy] = v;
-                    }
-                });
+                func.visit(
+                    i,
+                    rowCols[j],
+                    rowValues[j],
+                    v -> {
+                        if (0.0 == v) {
+                            copied[0] = this.remove(iCopy, jCopy);
+                        } else {
+                            rowValues[jCopy] = v;
+                        }
+                    });
 
                 if (copied[0]) {
                     // Same index again since the array shrank.
@@ -180,7 +182,7 @@ public class SparseMatrix extends Matrix {
         }
     }
 
-    //endregion
+    // endregion
 
     @Override
     public MatrixNonZeroElementRowIterator getNonZeroElementRowIterator(final int row) {
@@ -229,7 +231,7 @@ public class SparseMatrix extends Matrix {
     /**
      * Remove an entries at a specific position
      *
-     * @param row      The row.
+     * @param row The row.
      * @param colIndex The column index.
      */
     private boolean remove(final int row, final int colIndex) {
@@ -238,8 +240,10 @@ public class SparseMatrix extends Matrix {
         final int lastIndex = this.maxIndices[row] - 1;
         if (lastIndex > 0 && lastIndex != colIndex) {
             // We have to copy since the values within one row are ordered.
-            System.arraycopy(this.cols[row], colIndex + 1, this.cols[row], colIndex, lastIndex - colIndex);
-            System.arraycopy(this.values[row], colIndex + 1, this.values[row], colIndex, lastIndex - colIndex);
+            System.arraycopy(
+                this.cols[row], colIndex + 1, this.cols[row], colIndex, lastIndex - colIndex);
+            System.arraycopy(
+                this.values[row], colIndex + 1, this.values[row], colIndex, lastIndex - colIndex);
             copied = true;
         }
 

@@ -17,7 +17,6 @@
 package io.nem.sdk.model.namespace;
 
 import io.nem.sdk.model.account.PublicAccount;
-
 import java.math.BigInteger;
 import java.util.List;
 
@@ -27,6 +26,7 @@ import java.util.List;
  * @since 1.0
  */
 public class NamespaceInfo {
+
     private final boolean active;
     private final Integer index;
     private final String metaId;
@@ -39,7 +39,18 @@ public class NamespaceInfo {
     private final BigInteger endHeight;
     private final Alias alias;
 
-    public NamespaceInfo(boolean active, Integer index, String metaId, NamespaceType type, Integer depth, List<NamespaceId> levels, NamespaceId parentId, PublicAccount owner, BigInteger startHeight, BigInteger endHeight, Alias alias) {
+    public NamespaceInfo(
+        boolean active,
+        Integer index,
+        String metaId,
+        NamespaceType type,
+        Integer depth,
+        List<NamespaceId> levels,
+        NamespaceId parentId,
+        PublicAccount owner,
+        BigInteger startHeight,
+        BigInteger endHeight,
+        Alias alias) {
         this.active = active;
         this.index = index;
         this.metaId = metaId;
@@ -181,8 +192,7 @@ public class NamespaceInfo {
     /**
      * Returns the Parent Namespace Id
      *
-     * @return the Parent Namespace Id
-     * @throws Error if it is not a SubNamespace
+     * @return the Parent Namespace Idpace
      */
     public NamespaceId parentNamespaceId() {
         if (this.isRoot()) {
@@ -190,5 +200,4 @@ public class NamespaceInfo {
         }
         return this.parentId;
     }
-
 }

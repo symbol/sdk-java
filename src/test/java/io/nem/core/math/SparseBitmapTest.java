@@ -17,36 +17,36 @@
 package io.nem.core.math;
 
 import io.nem.core.test.ExceptionAssert;
-import org.hamcrest.core.IsEqual;
-import org.hamcrest.core.IsNot;
-import org.junit.Assert;
-import org.junit.Test;
-
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
+import org.hamcrest.core.IsEqual;
+import org.hamcrest.core.IsNot;
+import org.junit.Assert;
+import org.junit.Test;
 
 /**
  * Test for SparseBitmap, our wrapper for EWAHCompressedBitmap.
  */
 public class SparseBitmapTest {
 
-    //region createEmpty
+    // region createEmpty
 
-    private static final Map<String, SparseBitmap> DESC_TO_SB_MAP = new HashMap<String, SparseBitmap>() {
-        {
-            this.put("default", SparseBitmap.createFromSortedData(4, 8, 16));
-            this.put("diff-short", SparseBitmap.createFromSortedData(4, 8));
-            this.put("diff-long", SparseBitmap.createFromSortedData(4, 8, 16, 32));
-            this.put("diff-values", SparseBitmap.createFromSortedData(4, 9, 16));
-        }
-    };
+    private static final Map<String, SparseBitmap> DESC_TO_SB_MAP =
+        new HashMap<String, SparseBitmap>() {
+            {
+                this.put("default", SparseBitmap.createFromSortedData(4, 8, 16));
+                this.put("diff-short", SparseBitmap.createFromSortedData(4, 8));
+                this.put("diff-long", SparseBitmap.createFromSortedData(4, 8, 16, 32));
+                this.put("diff-values", SparseBitmap.createFromSortedData(4, 9, 16));
+            }
+        };
 
-    //endregion
+    // endregion
 
-    //region createFromUnsortedData
+    // region createFromUnsortedData
 
     @Test
     public void createEmptyCanCreateEmptyBitmap() {
@@ -96,9 +96,9 @@ public class SparseBitmapTest {
         Assert.assertThat(sb.get(4), IsEqual.equalTo(false));
     }
 
-    //endregion
+    // endregion
 
-    //region createFromSortedData
+    // region createFromSortedData
 
     @Test
     public void createFromUnsortedDataCanCreateBitmapAroundBitsInUnsortedOrder() {
@@ -138,9 +138,9 @@ public class SparseBitmapTest {
         Assert.assertThat(sb.get(4), IsEqual.equalTo(false));
     }
 
-    //endregion
+    // endregion
 
-    //region get / set
+    // region get / set
 
     @Test
     public void createFromSortedDataCanCreateBitmapAroundBitsInSortedOrderWithDuplicates() {
@@ -211,9 +211,9 @@ public class SparseBitmapTest {
         Assert.assertThat(sb.get(3), IsEqual.equalTo(false));
     }
 
-    //endregion
+    // endregion
 
-    //region clear
+    // region clear
 
     @Test
     public void bitsCanBeSetOutOfOrderWithoutAscendingCheck() {
@@ -246,9 +246,9 @@ public class SparseBitmapTest {
         Assert.assertThat(sb.get(6), IsEqual.equalTo(false));
     }
 
-    //endregion
+    // endregion
 
-    //region getHighestBit
+    // region getHighestBit
 
     @Test
     public void bitsCanBeSetAfterClearing() {
@@ -276,9 +276,9 @@ public class SparseBitmapTest {
         Assert.assertThat(sb.getHighestBit(), IsEqual.equalTo(0));
     }
 
-    //endregion
+    // endregion
 
-    //region batchOr
+    // region batchOr
 
     @Test
     public void getHighestBitReturnsCorrectResultWhenBitsAreSet() {
@@ -309,14 +309,15 @@ public class SparseBitmapTest {
         Assert.assertThat(sb.get(3), IsEqual.equalTo(true));
     }
 
-    //endregion
+    // endregion
 
-    //region toList / iterator
+    // region toList / iterator
 
     @Test
     public void batchOrCanCreateBitmapFromMultipleBitmaps() {
         // Act:
-        final SparseBitmap sb = SparseBitmap.batchOr(
+        final SparseBitmap sb =
+            SparseBitmap.batchOr(
                 SparseBitmap.createFromSortedData(1, 3),
                 SparseBitmap.createFromSortedData(5, 6),
                 SparseBitmap.createFromSortedData(2, 7));
@@ -340,9 +341,9 @@ public class SparseBitmapTest {
         Assert.assertThat(sb.toList(), IsEqual.equalTo(Arrays.asList(100, 200, 300)));
     }
 
-    //endregion
+    // endregion
 
-    //region or / and / andNot
+    // region or / and / andNot
 
     @Test
     public void iteratorReturnsSetBits() {
@@ -351,8 +352,8 @@ public class SparseBitmapTest {
 
         // Assert:
         Assert.assertThat(
-                StreamSupport.stream(sb.spliterator(), false).collect(Collectors.toList()),
-                IsEqual.equalTo(Arrays.asList(100, 200, 300)));
+            StreamSupport.stream(sb.spliterator(), false).collect(Collectors.toList()),
+            IsEqual.equalTo(Arrays.asList(100, 200, 300)));
     }
 
     @Test
@@ -389,9 +390,9 @@ public class SparseBitmapTest {
         Assert.assertThat(result.get(4), IsEqual.equalTo(true));
     }
 
-    //endregion
+    // endregion
 
-    //region cardinality / andCardinality
+    // region cardinality / andCardinality
 
     @Test
     public void andNotCreatesCorrectBitmap() {
@@ -418,9 +419,9 @@ public class SparseBitmapTest {
         Assert.assertThat(sb.cardinality(), IsEqual.equalTo(5));
     }
 
-    //endregion
+    // endregion
 
-    //region toString
+    // region toString
 
     @Test
     public void andCardinalityReturnsTheNumberOfIntersectingBits() {
@@ -444,9 +445,9 @@ public class SparseBitmapTest {
         Assert.assertThat(sb.toString(), IsEqual.equalTo("{}"));
     }
 
-    //endregion
+    // endregion
 
-    //region hashCode/equals
+    // region hashCode/equals
 
     @Test
     public void toStringReturnsCorrectRepresentationForNonEmptyBitmap() {
@@ -479,9 +480,12 @@ public class SparseBitmapTest {
 
         // Assert:
         Assert.assertThat(DESC_TO_SB_MAP.get("default").hashCode(), IsEqual.equalTo(hashCode));
-        Assert.assertThat(DESC_TO_SB_MAP.get("diff-short").hashCode(), IsNot.not(IsEqual.equalTo(hashCode)));
-        Assert.assertThat(DESC_TO_SB_MAP.get("diff-long").hashCode(), IsNot.not(IsEqual.equalTo(hashCode)));
-        Assert.assertThat(DESC_TO_SB_MAP.get("diff-values").hashCode(), IsNot.not(IsEqual.equalTo(hashCode)));
+        Assert.assertThat(
+            DESC_TO_SB_MAP.get("diff-short").hashCode(), IsNot.not(IsEqual.equalTo(hashCode)));
+        Assert.assertThat(
+            DESC_TO_SB_MAP.get("diff-long").hashCode(), IsNot.not(IsEqual.equalTo(hashCode)));
+        Assert.assertThat(
+            DESC_TO_SB_MAP.get("diff-values").hashCode(), IsNot.not(IsEqual.equalTo(hashCode)));
     }
 
     // endregion

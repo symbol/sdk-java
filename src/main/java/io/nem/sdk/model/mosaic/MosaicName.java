@@ -24,13 +24,14 @@ import io.nem.sdk.model.namespace.NamespaceId;
  * @since 1.0
  */
 public class MosaicName {
+
     private final MosaicId mosaicId;
     private final String name;
     private final NamespaceId parentId;
 
     /**
      * @param mosaicId mosaic identifier
-     * @param name     mosaic name
+     * @param name mosaic name
      * @param parentId namespace identifier
      */
     public MosaicName(MosaicId mosaicId, String name, NamespaceId parentId) {

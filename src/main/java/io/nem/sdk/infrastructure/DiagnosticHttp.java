@@ -26,14 +26,11 @@ import java.net.MalformedURLException;
 
 /**
  * Diagnostic http repository.
- *
  */
 public class DiagnosticHttp extends Http implements DiagnosticRepository {
 
     /**
      * Constructor
-     * @param host
-     * @throws MalformedURLException
      */
     public DiagnosticHttp(String host) throws MalformedURLException {
         this(host, new NetworkHttp(host));
@@ -41,9 +38,6 @@ public class DiagnosticHttp extends Http implements DiagnosticRepository {
 
     /**
      * Constructor
-     * @param host
-     * @param networkHttp
-     * @throws MalformedURLException
      */
     public DiagnosticHttp(String host, NetworkHttp networkHttp) throws MalformedURLException {
         super(host, networkHttp);
@@ -51,33 +45,40 @@ public class DiagnosticHttp extends Http implements DiagnosticRepository {
 
     /**
      * Get storage info
+     *
      * @return Observable<BlockchainStorageInfo>
      */
     public Observable<BlockchainStorageInfo> getBlockchainStorage() {
         return this.client
-                .getAbs(this.url + "/diagnostic/storage")
-                .as(BodyCodec.jsonObject())
-                .rxSend()
-                .toObservable()
-                .map(Http::mapJsonObjectOrError)
-                .map(json -> objectMapper.readValue(json.toString(), StorageInfoDTO.class))
-                .map(blockchainStorageInfoDTO -> new BlockchainStorageInfo(blockchainStorageInfoDTO.getNumAccounts(),
+            .getAbs(this.url + "/diagnostic/storage")
+            .as(BodyCodec.jsonObject())
+            .rxSend()
+            .toObservable()
+            .map(Http::mapJsonObjectOrError)
+            .map(json -> objectMapper.readValue(json.toString(), StorageInfoDTO.class))
+            .map(
+                blockchainStorageInfoDTO ->
+                    new BlockchainStorageInfo(
+                        blockchainStorageInfoDTO.getNumAccounts(),
                         blockchainStorageInfoDTO.getNumBlocks(),
                         blockchainStorageInfoDTO.getNumBlocks()));
     }
 
     /**
      * Get server info
+     *
      * @return Observable<ServerInfo>
      */
     public Observable<ServerInfo> getServerInfo() {
         return this.client
-                .getAbs(this.url + "/diagnostic/server")
-                .as(BodyCodec.jsonObject())
-                .rxSend()
-                .toObservable()
-                .map(Http::mapJsonObjectOrError)
-                .map(json -> objectMapper.readValue(json.toString(), ServerInfoDTO.class))
-                .map(serverInfoDTO -> new ServerInfo(serverInfoDTO.getRestVersion(),serverInfoDTO.getRestVersion()));
+            .getAbs(this.url + "/diagnostic/server")
+            .as(BodyCodec.jsonObject())
+            .rxSend()
+            .toObservable()
+            .map(Http::mapJsonObjectOrError)
+            .map(json -> objectMapper.readValue(json.toString(), ServerInfoDTO.class))
+            .map(
+                serverInfoDTO ->
+                    new ServerInfo(serverInfoDTO.getRestVersion(), serverInfoDTO.getRestVersion()));
     }
 }

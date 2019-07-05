@@ -16,36 +16,39 @@
 
 package io.nem.sdk.model.transaction;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import io.nem.sdk.model.blockchain.NetworkType;
 import io.nem.sdk.model.mosaic.MosaicId;
 import io.nem.sdk.model.mosaic.MosaicSupplyType;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-
 import java.math.BigInteger;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-
-import static org.junit.jupiter.api.Assertions.*;
+import org.bouncycastle.util.encoders.Hex;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
 class MosaicSupplyChangeTransactionTest {
 
     @Test
     void createAMosaicSupplyChangeTransactionViaConstructor() {
 
-        MosaicSupplyChangeTransaction mosaicSupplyChangeTx = MosaicSupplyChangeTransaction.create(
+        MosaicSupplyChangeTransaction mosaicSupplyChangeTx =
+            MosaicSupplyChangeTransaction.create(
                 new Deadline(2, ChronoUnit.HOURS),
                 new MosaicId(new BigInteger("6300565133566699912")),
                 MosaicSupplyType.INCREASE,
                 BigInteger.valueOf(10),
-                NetworkType.MIJIN_TEST
-        );
+                NetworkType.MIJIN_TEST);
 
         assertEquals(NetworkType.MIJIN_TEST, mosaicSupplyChangeTx.getNetworkType());
-        assertTrue(2 == mosaicSupplyChangeTx.getVersion());
-        assertTrue(LocalDateTime.now().isBefore(mosaicSupplyChangeTx.getDeadline().getLocalDateTime()));
+        assertTrue(1 == mosaicSupplyChangeTx.getVersion());
+        assertTrue(
+            LocalDateTime.now().isBefore(mosaicSupplyChangeTx.getDeadline().getLocalDateTime()));
         assertEquals(BigInteger.valueOf(0), mosaicSupplyChangeTx.getFee());
-        assertEquals(new BigInteger("6300565133566699912"), mosaicSupplyChangeTx.getMosaicId().getId());
+        assertEquals(new BigInteger("6300565133566699912"),
+            mosaicSupplyChangeTx.getMosaicId().getId());
         assertEquals(MosaicSupplyType.INCREASE, mosaicSupplyChangeTx.getMosaicSupplyType());
         assertEquals(BigInteger.valueOf(10), mosaicSupplyChangeTx.getDelta());
     }
@@ -54,18 +57,18 @@ class MosaicSupplyChangeTransactionTest {
     @DisplayName("Serialization")
     void serialization() {
         // Generated at nem2-library-js/test/transactions/MosaicSupplyChangeTransaction.spec.js
-        byte[] expected = new byte[]{(byte)137,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-                2,(byte)144,77,66,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,(byte)136,105,116,110,(byte)155,26,112,87,1,10,0,0,0,0,0,0,0};
+        String expected =
+            "8900000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001904d42000000000000000001000000000000008869746e9b1a7057010a00000000000000";
 
-        MosaicSupplyChangeTransaction mosaicSupplyChangeTransaction = MosaicSupplyChangeTransaction.create(
+        MosaicSupplyChangeTransaction mosaicSupplyChangeTransaction =
+            MosaicSupplyChangeTransaction.create(
                 new FakeDeadline(),
                 new MosaicId(new BigInteger("6300565133566699912")),
                 MosaicSupplyType.INCREASE,
                 BigInteger.valueOf(10),
-                NetworkType.MIJIN_TEST
-        );
+                NetworkType.MIJIN_TEST);
 
         byte[] actual = mosaicSupplyChangeTransaction.generateBytes();
-        assertArrayEquals(expected, actual);
+        assertEquals(expected, Hex.toHexString(actual));
     }
 }

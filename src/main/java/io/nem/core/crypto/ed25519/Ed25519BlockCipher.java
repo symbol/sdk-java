@@ -16,9 +16,15 @@
 
 package io.nem.core.crypto.ed25519;
 
-import io.nem.core.crypto.*;
+import io.nem.core.crypto.BlockCipher;
+import io.nem.core.crypto.Hashes;
+import io.nem.core.crypto.KeyPair;
+import io.nem.core.crypto.PrivateKey;
+import io.nem.core.crypto.PublicKey;
 import io.nem.core.crypto.ed25519.arithmetic.Ed25519EncodedGroupElement;
 import io.nem.core.crypto.ed25519.arithmetic.Ed25519GroupElement;
+import java.security.SecureRandom;
+import java.util.Arrays;
 import org.bouncycastle.crypto.BufferedBlockCipher;
 import org.bouncycastle.crypto.CipherParameters;
 import org.bouncycastle.crypto.InvalidCipherTextException;
@@ -30,13 +36,11 @@ import org.bouncycastle.crypto.paddings.PaddedBufferedBlockCipher;
 import org.bouncycastle.crypto.params.KeyParameter;
 import org.bouncycastle.crypto.params.ParametersWithIV;
 
-import java.security.SecureRandom;
-import java.util.Arrays;
-
 /**
  * Implementation of the block cipher for Ed25519.
  */
 public class Ed25519BlockCipher implements BlockCipher {
+
     private final KeyPair senderKeyPair;
     private final KeyPair recipientKeyPair;
     private final SecureRandom random;
@@ -46,7 +50,7 @@ public class Ed25519BlockCipher implements BlockCipher {
         this.senderKeyPair = senderKeyPair;
         this.recipientKeyPair = recipientKeyPair;
         this.random = new SecureRandom();
-        this.keyLength = recipientKeyPair.getPublicKey().getRaw().length;
+        this.keyLength = recipientKeyPair.getPublicKey().getBytes().length;
     }
 
     @Override
@@ -56,7 +60,9 @@ public class Ed25519BlockCipher implements BlockCipher {
         this.random.nextBytes(salt);
 
         // Derive shared key.
-        final byte[] sharedKey = this.getSharedKey(this.senderKeyPair.getPrivateKey(), this.recipientKeyPair.getPublicKey(), salt);
+        final byte[] sharedKey =
+            this.getSharedKey(
+                this.senderKeyPair.getPrivateKey(), this.recipientKeyPair.getPublicKey(), salt);
 
         // Setup IV.
         final byte[] ivData = new byte[16];
@@ -89,7 +95,9 @@ public class Ed25519BlockCipher implements BlockCipher {
         final byte[] encData = Arrays.copyOfRange(input, 48, input.length);
 
         // Derive shared key.
-        final byte[] sharedKey = this.getSharedKey(this.recipientKeyPair.getPrivateKey(), this.senderKeyPair.getPublicKey(), salt);
+        final byte[] sharedKey =
+            this.getSharedKey(
+                this.recipientKeyPair.getPrivateKey(), this.senderKeyPair.getPublicKey(), salt);
 
         // Setup block cipher.
         final BufferedBlockCipher cipher = this.setupBlockCipher(sharedKey, ivData, false);
@@ -110,23 +118,29 @@ public class Ed25519BlockCipher implements BlockCipher {
         return Arrays.copyOf(buf, length);
     }
 
-    private BufferedBlockCipher setupBlockCipher(final byte[] sharedKey, final byte[] ivData, final boolean forEncryption) {
+    private BufferedBlockCipher setupBlockCipher(
+        final byte[] sharedKey, final byte[] ivData, final boolean forEncryption) {
         // Setup cipher parameters with key and IV.
         final KeyParameter keyParam = new KeyParameter(sharedKey);
         final CipherParameters params = new ParametersWithIV(keyParam, ivData);
 
         // Setup AES cipher in CBC mode with PKCS7 padding.
         final BlockCipherPadding padding = new PKCS7Padding();
-        final BufferedBlockCipher cipher = new PaddedBufferedBlockCipher(new CBCBlockCipher(new AESEngine()), padding);
+        final BufferedBlockCipher cipher =
+            new PaddedBufferedBlockCipher(new CBCBlockCipher(new AESEngine()), padding);
         cipher.reset();
         cipher.init(forEncryption, params);
         return cipher;
     }
 
-    private byte[] getSharedKey(final PrivateKey privateKey, final PublicKey publicKey, final byte[] salt) {
-        final Ed25519GroupElement senderA = new Ed25519EncodedGroupElement(publicKey.getRaw()).decode();
+    private byte[] getSharedKey(
+        final PrivateKey privateKey, final PublicKey publicKey, final byte[] salt) {
+        final Ed25519GroupElement senderA =
+            new Ed25519EncodedGroupElement(publicKey.getBytes()).decode();
         senderA.precomputeForScalarMultiplication();
-        final byte[] sharedKey = senderA.scalarMultiply(Ed25519Utils.prepareForScalarMultiply(privateKey)).encode().getRaw();
+        final byte[] sharedKey =
+            senderA.scalarMultiply(Ed25519Utils.prepareForScalarMultiply(privateKey)).encode()
+                .getRaw();
         for (int i = 0; i < this.keyLength; i++) {
             sharedKey[i] ^= salt[i];
         }

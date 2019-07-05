@@ -20,8 +20,6 @@ import io.nem.sdk.model.account.PublicAccount;
 import io.nem.sdk.model.transaction.IdGenerator;
 import io.nem.sdk.model.transaction.UInt64;
 import io.nem.sdk.model.transaction.UInt64Id;
-import org.bouncycastle.util.encoders.Hex;
-
 import java.math.BigInteger;
 import java.util.Objects;
 import java.util.Optional;
@@ -32,13 +30,13 @@ import java.util.Optional;
  * @since 1.0
  */
 public class MosaicId implements UInt64Id {
+
     private final BigInteger id;
     private final Optional<String> fullName;
 
     /**
      * Create MosaicId from mosaic Hex string
      *
-     * @param hex
      * @throws IllegalIdentifierException MosaicId identifier
      */
     public MosaicId(String hex) {
@@ -51,8 +49,6 @@ public class MosaicId implements UInt64Id {
 
     /**
      * Create MosaicId from BigInteger id
-     *
-     * @param id
      */
     public MosaicId(BigInteger id) {
         this.id = id;
@@ -61,21 +57,15 @@ public class MosaicId implements UInt64Id {
 
     /**
      * Create MosaicId from a MosaicNonce and a PublicAccount
-     *
-     * @param mosaicNonce
-     * @param owner
      */
-    public MosaicId (MosaicNonce mosaicNonce, PublicAccount owner) {
-        this.id = IdGenerator.generateMosaicId(mosaicNonce.getNonce(), owner.getPublicKeyAsBytes());
+    public MosaicId(MosaicNonce mosaicNonce, PublicAccount owner) {
+        this.id = IdGenerator
+            .generateMosaicId(mosaicNonce.getNonce(), owner.getPublicKey().getBytes());
         this.fullName = Optional.empty();
     }
 
     /**
      * Create MosaicId from a MosaicNonce and a PublicAccount
-     *
-     * @param mosaicNonce
-     * @param owner
-     * @return
      */
     public static MosaicId createFromNonce(MosaicNonce mosaicNonce, PublicAccount owner) {
 
@@ -104,8 +94,6 @@ public class MosaicId implements UInt64Id {
 
     /**
      * Returns mosaic id as a hexadecimal string
-     *
-     * @return
      */
     public String getIdAsHex() {
 
@@ -129,8 +117,12 @@ public class MosaicId implements UInt64Id {
      */
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof MosaicId)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof MosaicId)) {
+            return false;
+        }
         MosaicId mosaicId1 = (MosaicId) o;
 
         return Objects.equals(id, mosaicId1.id);

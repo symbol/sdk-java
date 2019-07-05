@@ -17,8 +17,9 @@
 package io.nem.sdk.infrastructure;
 
 public class ListenerSubscribeMessage {
-    final private String uid;
-    final private String subscribe;
+
+    private final String uid;
+    private final String subscribe;
 
     public ListenerSubscribeMessage(String uid, String subscribe) {
         this.uid = uid;

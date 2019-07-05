@@ -1,12 +1,12 @@
 package io.nem.sdk.model.namespace;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+
 import io.nem.sdk.model.account.Address;
 import io.nem.sdk.model.mosaic.MosaicId;
 import io.nem.sdk.model.transaction.UInt64;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 public class AliasTest {
 
@@ -25,14 +25,14 @@ public class AliasTest {
     void shouldCreateAAddressAlias() {
         AddressAlias addressAlias = new AddressAlias(address);
         assertEquals(AliasType.Address, addressAlias.getType());
-        assertEquals(address, addressAlias.getAddress());
+        assertEquals(address, addressAlias.getAliasValue());
     }
 
     @Test
     void shouldCreateAMosaicAlias() {
         MosaicAlias mosaicAlias = new MosaicAlias(mosaicId);
         assertEquals(AliasType.Mosaic, mosaicAlias.getType());
-        assertEquals(mosaicId, mosaicAlias.getMosaicId());
+        assertEquals(mosaicId, mosaicAlias.getAliasValue());
     }
 
     @Test
@@ -40,8 +40,8 @@ public class AliasTest {
         AddressAlias addressAlias = new AddressAlias(address);
         AddressAlias addressAlias1 = new AddressAlias(address);
         AddressAlias addressAlias2 = new AddressAlias(address2);
-        assertEquals(addressAlias.getAddress(), addressAlias1.getAddress());
-        assertNotEquals(addressAlias.getAddress(), addressAlias2.getAddress());
+        assertEquals(addressAlias.getAliasValue(), addressAlias1.getAliasValue());
+        assertNotEquals(addressAlias.getAliasValue(), addressAlias2.getAliasValue());
     }
 
     @Test
@@ -49,7 +49,7 @@ public class AliasTest {
         MosaicAlias mosaicAlias = new MosaicAlias(mosaicId);
         MosaicAlias mosaicAlias1 = new MosaicAlias(mosaicId);
         MosaicAlias mosaicAlias2 = new MosaicAlias(mosaicId2);
-        assertEquals(mosaicAlias.getMosaicId(), mosaicAlias1.getMosaicId());
-        assertNotEquals(mosaicAlias.getMosaicId(), mosaicAlias2.getMosaicId());
+        assertEquals(mosaicAlias.getAliasValue(), mosaicAlias1.getAliasValue());
+        assertNotEquals(mosaicAlias.getAliasValue(), mosaicAlias2.getAliasValue());
     }
 }

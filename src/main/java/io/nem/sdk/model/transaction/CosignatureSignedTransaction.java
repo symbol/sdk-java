@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 NEM
+ * Copyright 2019 NEM
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ package io.nem.sdk.model.transaction;
  * @since 1.0
  */
 public class CosignatureSignedTransaction {
+
     private final String parentHash;
     private final String signature;
     private final String signer;
@@ -33,7 +34,8 @@ public class CosignatureSignedTransaction {
     }
 
     /**
-     * Returns hash of parent aggregate transaction that has been signed by a cosignatory of the transaction.
+     * Returns hash of parent aggregate transaction that has been signed by a cosignatory of the
+     * transaction.
      *
      * @return String
      */

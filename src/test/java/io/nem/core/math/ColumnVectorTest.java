@@ -18,27 +18,28 @@ package io.nem.core.math;
 
 import io.nem.core.test.ExceptionAssert;
 import io.nem.core.test.IsRoundedEqual;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import org.hamcrest.core.IsEqual;
 import org.hamcrest.core.IsNot;
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-
 public class ColumnVectorTest {
 
-    //region constructor / getAt / setAt
+    // region constructor / getAt / setAt
 
     private static void assertOutOfBounds(final int size, final int index) {
-        ExceptionAssert.assertThrows(v -> {
-            // Arrange:
-            final ColumnVector vector = new ColumnVector(size);
+        ExceptionAssert.assertThrows(
+            v -> {
+                // Arrange:
+                final ColumnVector vector = new ColumnVector(size);
 
-            // Act:
-            vector.getAt(index);
-        }, IndexOutOfBoundsException.class);
+                // Act:
+                vector.getAt(index);
+            },
+            IndexOutOfBoundsException.class);
     }
 
     @Test
@@ -111,9 +112,9 @@ public class ColumnVectorTest {
         assertOutOfBounds(3, 3);
     }
 
-    //endregion
+    // endregion
 
-    //region getRaw
+    // region getRaw
 
     @Test
     public void rawVectorIsAccessible() {
@@ -140,9 +141,9 @@ public class ColumnVectorTest {
         Assert.assertThat(areEqual, IsEqual.equalTo(true));
     }
 
-    //endregion
+    // endregion
 
-    //region setAll
+    // region setAll
 
     @Test
     public void setAllSetsAllVectorElementValues() {
@@ -156,9 +157,9 @@ public class ColumnVectorTest {
         Assert.assertThat(vector, IsEqual.equalTo(new ColumnVector(4, 4, 4)));
     }
 
-    //endregion
+    // endregion
 
-    //region sum / absSum
+    // region sum / absSum
 
     @Test
     public void vectorSumCanBeCalculated() {
@@ -178,9 +179,9 @@ public class ColumnVectorTest {
         Assert.assertThat(vector.absSum(), IsEqual.equalTo(15.0));
     }
 
-    //endregion
+    // endregion
 
-    //region max / median
+    // region max / median
 
     @Test
     public void vectorMaxCanBeCalculated() {
@@ -200,9 +201,9 @@ public class ColumnVectorTest {
         Assert.assertThat(vector.median(), IsEqual.equalTo(7.0));
     }
 
-    //endregion
+    // endregion
 
-    //region align
+    // region align
 
     @Test
     public void cannotAlignVectorWithNonZeroInFirstPosition() {
@@ -230,9 +231,9 @@ public class ColumnVectorTest {
         Assert.assertThat(vector, IsEqual.equalTo(new ColumnVector(1, 1.5, -3.5)));
     }
 
-    //endregion
+    // endregion
 
-    //region scale
+    // region scale
 
     @Test
     public void vectorCanBeScaledByArbitraryFactor() {
@@ -246,9 +247,9 @@ public class ColumnVectorTest {
         Assert.assertThat(vector, IsEqual.equalTo(new ColumnVector(0.25, -0.50, 0.125)));
     }
 
-    //endregion
+    // endregion
 
-    //region normalize
+    // region normalize
 
     @Test
     public void vectorWithNonZeroSumCanBeNormalized() {
@@ -286,9 +287,9 @@ public class ColumnVectorTest {
         Assert.assertThat(vector, IsEqual.equalTo(new ColumnVector(0, 0, 0)));
     }
 
-    //endregion
+    // endregion
 
-    //region add
+    // region add
 
     @Test
     public void scalarCanBeAddedToVector() {
@@ -303,9 +304,9 @@ public class ColumnVectorTest {
         Assert.assertThat(result, IsEqual.equalTo(new ColumnVector(10, 4, 9)));
     }
 
-    //endregion
+    // endregion
 
-    //region addElementWise
+    // region addElementWise
 
     @Test
     public void twoVectorsOfSameSizeCanBeAddedTogetherElementWise() {
@@ -329,13 +330,15 @@ public class ColumnVectorTest {
         final ColumnVector smallerVector = new ColumnVector(7);
 
         // Act:
-        ExceptionAssert.assertThrows(v -> largerVector.addElementWise(smallerVector), IllegalArgumentException.class);
-        ExceptionAssert.assertThrows(v -> smallerVector.addElementWise(largerVector), IllegalArgumentException.class);
+        ExceptionAssert.assertThrows(
+            v -> largerVector.addElementWise(smallerVector), IllegalArgumentException.class);
+        ExceptionAssert.assertThrows(
+            v -> smallerVector.addElementWise(largerVector), IllegalArgumentException.class);
     }
 
-    //endregion
+    // endregion
 
-    //region distance / getMagnitude
+    // region distance / getMagnitude
 
     @Test
     public void l1DistanceCanBeCalculatedBetweenTwoVectorsOfSameSize() {
@@ -357,8 +360,10 @@ public class ColumnVectorTest {
         final ColumnVector smallerVector = new ColumnVector(7);
 
         // Act:
-        ExceptionAssert.assertThrows(v -> largerVector.l1Distance(smallerVector), IllegalArgumentException.class);
-        ExceptionAssert.assertThrows(v -> smallerVector.l1Distance(largerVector), IllegalArgumentException.class);
+        ExceptionAssert.assertThrows(
+            v -> largerVector.l1Distance(smallerVector), IllegalArgumentException.class);
+        ExceptionAssert.assertThrows(
+            v -> smallerVector.l1Distance(largerVector), IllegalArgumentException.class);
     }
 
     @Test
@@ -381,8 +386,10 @@ public class ColumnVectorTest {
         final ColumnVector smallerVector = new ColumnVector(7);
 
         // Act:
-        ExceptionAssert.assertThrows(v -> largerVector.l2Distance(smallerVector), IllegalArgumentException.class);
-        ExceptionAssert.assertThrows(v -> smallerVector.l2Distance(largerVector), IllegalArgumentException.class);
+        ExceptionAssert.assertThrows(
+            v -> largerVector.l2Distance(smallerVector), IllegalArgumentException.class);
+        ExceptionAssert.assertThrows(
+            v -> smallerVector.l2Distance(largerVector), IllegalArgumentException.class);
     }
 
     @Test
@@ -397,9 +404,9 @@ public class ColumnVectorTest {
         Assert.assertEquals(13.96424, magnitude, 0.0000001);
     }
 
-    //endregion
+    // endregion
 
-    //region correlation
+    // region correlation
 
     @Test
     public void correlationCannotBeCalculatedForDifferentSizedVectors() {
@@ -408,8 +415,10 @@ public class ColumnVectorTest {
         final ColumnVector smallerVector = new ColumnVector(7);
 
         // Act:
-        ExceptionAssert.assertThrows(v -> largerVector.correlation(smallerVector), IllegalArgumentException.class);
-        ExceptionAssert.assertThrows(v -> smallerVector.correlation(largerVector), IllegalArgumentException.class);
+        ExceptionAssert.assertThrows(
+            v -> largerVector.correlation(smallerVector), IllegalArgumentException.class);
+        ExceptionAssert.assertThrows(
+            v -> smallerVector.correlation(largerVector), IllegalArgumentException.class);
     }
 
     @Test
@@ -447,9 +456,9 @@ public class ColumnVectorTest {
         Assert.assertThat(rhs.correlation(lhs), IsRoundedEqual.equalTo(0.6877, 4));
     }
 
-    //endregion
+    // endregion
 
-    //region multiply
+    // region multiply
 
     @Test
     public void vectorCanBeMultipliedByScalar() {
@@ -464,9 +473,9 @@ public class ColumnVectorTest {
         Assert.assertThat(result, IsEqual.equalTo(new ColumnVector(16, -32, 8)));
     }
 
-    //endregion
+    // endregion
 
-    //region multiplyElementWise
+    // region multiplyElementWise
 
     @Test
     public void vectorCanBeMultipliedByVectorElementWise() {
@@ -503,9 +512,9 @@ public class ColumnVectorTest {
         v1.multiplyElementWise(v2);
     }
 
-    //endregion
+    // endregion
 
-    //region roundTo / abs / sqrt
+    // region roundTo / abs / sqrt
 
     @Test
     public void vectorCanBeRounded() {
@@ -546,23 +555,27 @@ public class ColumnVectorTest {
         Assert.assertThat(result, IsEqual.equalTo(new ColumnVector(25.0, 6.0, 11.0)));
     }
 
-    //endregion
+    // endregion
 
-    //region isZeroVector
+    // region isZeroVector
 
     @Test
     public void isZeroVectorReturnsTrueIfAndOnlyIfAllElementsAreZero() {
         // Assert:
-        Assert.assertThat(new ColumnVector(-3, 2, -5, 7, -1, 8).isZeroVector(), IsEqual.equalTo(false));
-        Assert.assertThat(new ColumnVector(-3, 2, -5, 0, -1, 8).isZeroVector(), IsEqual.equalTo(false));
-        Assert.assertThat(new ColumnVector(0, 0, -1, 1, 0, 0).isZeroVector(), IsEqual.equalTo(false));
-        Assert.assertThat(new ColumnVector(0, 0, -1, 0, 0, 0).isZeroVector(), IsEqual.equalTo(false));
+        Assert.assertThat(new ColumnVector(-3, 2, -5, 7, -1, 8).isZeroVector(),
+            IsEqual.equalTo(false));
+        Assert.assertThat(new ColumnVector(-3, 2, -5, 0, -1, 8).isZeroVector(),
+            IsEqual.equalTo(false));
+        Assert
+            .assertThat(new ColumnVector(0, 0, -1, 1, 0, 0).isZeroVector(), IsEqual.equalTo(false));
+        Assert
+            .assertThat(new ColumnVector(0, 0, -1, 0, 0, 0).isZeroVector(), IsEqual.equalTo(false));
         Assert.assertThat(new ColumnVector(0, 0, 0, 0, 0, 0).isZeroVector(), IsEqual.equalTo(true));
     }
 
-    //endregion
+    // endregion
 
-    //region toString
+    // region toString
 
     @Test
     public void vectorStringRepresentationIsCorrect() {
@@ -576,22 +589,23 @@ public class ColumnVectorTest {
         Assert.assertThat(vector.toString(), IsEqual.equalTo(expectedResult));
     }
 
-    //endregion
+    // endregion
 
-    //region removeNegatives
+    // region removeNegatives
 
     @Test
     public void removeNegativesSetsNegativeValuesToZero() {
         // Arrange:
-        final Map<ColumnVector, ColumnVector> testCases = new HashMap<ColumnVector, ColumnVector>() {
-            {
-                this.put(new ColumnVector(2, -4, 1), new ColumnVector(2, 0, 1));
-                this.put(new ColumnVector(-1, 454, 1), new ColumnVector(0, 454, 1));
-                this.put(new ColumnVector(2, 343, -131), new ColumnVector(2, 343, 0));
-                this.put(new ColumnVector(-2, -343, -131), new ColumnVector(0, 0, 0));
-                this.put(new ColumnVector(2, 343, 131), new ColumnVector(2, 343, 131));
-            }
-        };
+        final Map<ColumnVector, ColumnVector> testCases =
+            new HashMap<ColumnVector, ColumnVector>() {
+                {
+                    this.put(new ColumnVector(2, -4, 1), new ColumnVector(2, 0, 1));
+                    this.put(new ColumnVector(-1, 454, 1), new ColumnVector(0, 454, 1));
+                    this.put(new ColumnVector(2, 343, -131), new ColumnVector(2, 343, 0));
+                    this.put(new ColumnVector(-2, -343, -131), new ColumnVector(0, 0, 0));
+                    this.put(new ColumnVector(2, 343, 131), new ColumnVector(2, 343, 131));
+                }
+            };
 
         // Act:
         for (final Map.Entry<ColumnVector, ColumnVector> entry : testCases.entrySet()) {
@@ -602,9 +616,9 @@ public class ColumnVectorTest {
         }
     }
 
-    //endregion
+    // endregion
 
-    //region equals / hashCode
+    // region equals / hashCode
 
     @Test
     public void equalsOnlyReturnsTrueForEquivalentObjects() {
@@ -628,10 +642,13 @@ public class ColumnVectorTest {
 
         // Assert:
         Assert.assertThat(new ColumnVector(2, -4, 1).hashCode(), IsEqual.equalTo(hashCode));
-        Assert.assertThat(new ColumnVector(1, -4, 1).hashCode(), IsNot.not(IsEqual.equalTo(hashCode)));
-        Assert.assertThat(new ColumnVector(2, 8, 1).hashCode(), IsNot.not(IsEqual.equalTo(hashCode)));
-        Assert.assertThat(new ColumnVector(2, -4, 2).hashCode(), IsNot.not(IsEqual.equalTo(hashCode)));
+        Assert.assertThat(new ColumnVector(1, -4, 1).hashCode(),
+            IsNot.not(IsEqual.equalTo(hashCode)));
+        Assert
+            .assertThat(new ColumnVector(2, 8, 1).hashCode(), IsNot.not(IsEqual.equalTo(hashCode)));
+        Assert.assertThat(new ColumnVector(2, -4, 2).hashCode(),
+            IsNot.not(IsEqual.equalTo(hashCode)));
     }
 
-    //endregion
+    // endregion
 }

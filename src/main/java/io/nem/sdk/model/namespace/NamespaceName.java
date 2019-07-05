@@ -20,10 +20,9 @@ import java.util.Optional;
 
 /**
  * The namespace name info structure describes basic information of a namespace and name.
- *
- * @since 1.0
  */
 public class NamespaceName {
+
     private final NamespaceId namespaceId;
     private final String name;
     private final Optional<NamespaceId> parentId;

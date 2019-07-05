@@ -20,11 +20,14 @@ package io.nem.sdk.model.account;
  * Account property modification type
  */
 public enum PropertyModificationType {
-
     Add(0x00),
     Remove(0x01);
 
     private Integer value;
+
+    PropertyModificationType(int value) {
+        this.value = value;
+    }
 
     public static PropertyModificationType rawValueOf(String value) {
         switch (value) {
@@ -35,10 +38,6 @@ public enum PropertyModificationType {
             default:
                 throw new IllegalArgumentException(value + " is not a valid value");
         }
-    }
-
-    PropertyModificationType(int value) {
-        this.value = value;
     }
 
     /**

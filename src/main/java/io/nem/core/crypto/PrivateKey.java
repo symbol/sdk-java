@@ -17,7 +17,6 @@
 package io.nem.core.crypto;
 
 import io.nem.core.utils.HexEncoder;
-
 import java.math.BigInteger;
 
 /**

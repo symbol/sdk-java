@@ -20,6 +20,7 @@ package io.nem.core.crypto;
  * Wraps DSA signing and verification logic.
  */
 public class Signer implements DsaSigner {
+
     private final DsaSigner signer;
 
     /**
@@ -35,7 +36,7 @@ public class Signer implements DsaSigner {
      * Creates a signer around a KeyPair.
      *
      * @param keyPair The KeyPair that should be used for signing and verification.
-     * @param engine  The crypto engine.
+     * @param engine The crypto engine.
      */
     public Signer(final KeyPair keyPair, final CryptoEngine engine) {
         this(engine.createDsaSigner(keyPair));

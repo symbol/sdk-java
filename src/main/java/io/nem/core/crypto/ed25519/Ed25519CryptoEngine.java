@@ -16,7 +16,13 @@
 
 package io.nem.core.crypto.ed25519;
 
-import io.nem.core.crypto.*;
+import io.nem.core.crypto.BlockCipher;
+import io.nem.core.crypto.CryptoEngine;
+import io.nem.core.crypto.Curve;
+import io.nem.core.crypto.DsaSigner;
+import io.nem.core.crypto.KeyAnalyzer;
+import io.nem.core.crypto.KeyGenerator;
+import io.nem.core.crypto.KeyPair;
 
 /**
  * Class that wraps the Ed25519 specific implementation.
@@ -39,7 +45,8 @@ public class Ed25519CryptoEngine implements CryptoEngine {
     }
 
     @Override
-    public BlockCipher createBlockCipher(final KeyPair senderKeyPair, final KeyPair recipientKeyPair) {
+    public BlockCipher createBlockCipher(
+        final KeyPair senderKeyPair, final KeyPair recipientKeyPair) {
         return new Ed25519BlockCipher(senderKeyPair, recipientKeyPair);
     }
 

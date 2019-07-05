@@ -22,6 +22,7 @@ package io.nem.core.utils;
  * @param <T> The inner type.
  */
 public class SetOnce<T> {
+
     private final T defaultValue;
     private T value;
 

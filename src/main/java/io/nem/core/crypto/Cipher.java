@@ -20,13 +20,16 @@ package io.nem.core.crypto;
  * Wraps IES encryption and decryption logic.
  */
 public class Cipher implements BlockCipher {
+
     private final BlockCipher cipher;
 
     /**
      * Creates a cipher around a sender KeyPair and recipient KeyPair.
      *
-     * @param senderKeyPair    The sender KeyPair. The sender's private key is required for encryption.
-     * @param recipientKeyPair The recipient KeyPair. The recipient's private key is required for decryption.
+     * @param senderKeyPair The sender KeyPair. The sender's private key is required for
+     * encryption.
+     * @param recipientKeyPair The recipient KeyPair. The recipient's private key is required for
+     * decryption.
      */
     public Cipher(final KeyPair senderKeyPair, final KeyPair recipientKeyPair) {
         this(senderKeyPair, recipientKeyPair, CryptoEngines.defaultEngine());
@@ -35,11 +38,14 @@ public class Cipher implements BlockCipher {
     /**
      * Creates a cipher around a sender KeyPair and recipient KeyPair.
      *
-     * @param senderKeyPair    The sender KeyPair. The sender's private key is required for encryption.
-     * @param recipientKeyPair The recipient KeyPair. The recipient's private key is required for decryption.
-     * @param engine           The crypto engine.
+     * @param senderKeyPair The sender KeyPair. The sender's private key is required for
+     * encryption.
+     * @param recipientKeyPair The recipient KeyPair. The recipient's private key is required for
+     * decryption.
+     * @param engine The crypto engine.
      */
-    public Cipher(final KeyPair senderKeyPair, final KeyPair recipientKeyPair, final CryptoEngine engine) {
+    public Cipher(
+        final KeyPair senderKeyPair, final KeyPair recipientKeyPair, final CryptoEngine engine) {
         this(engine.createBlockCipher(senderKeyPair, recipientKeyPair));
     }
 

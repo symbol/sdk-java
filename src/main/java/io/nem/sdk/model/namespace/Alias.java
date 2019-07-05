@@ -16,15 +16,10 @@
 
 package io.nem.sdk.model.namespace;
 
-import io.nem.sdk.model.account.Address;
-import io.nem.sdk.model.mosaic.MosaicId;
-
 /**
  * The alias structure defines an interface for Aliases
- *
- * @since
  */
-public interface Alias {
+public interface Alias<T> {
 
     /**
      * Gets the alias type
@@ -34,31 +29,22 @@ public interface Alias {
     AliasType getType();
 
     /**
-     * Gets the mosaic id if this alias has aMosaicId
+     * Gets the alias.
      *
-     * @return mosaicId {@link MosaicId}
+     * @return Alias of type T.
      */
-    MosaicId getMosaicId();
-
-    /**
-     * Gets the address if this alias has anAddress
-     *
-     * @return address {@link Address}
-     */
-    Address getAddress();
+    T getAliasValue();
 
     /**
      * Compares this alias to specified alias.
      *
-     * @param alias
      * @return true if aliases are of the same type; false otherwise
      */
-    boolean equals(Alias alias);
+    boolean equals(Alias<T> alias);
 
     /**
      * Returns true if this alias is anEmptyAlias; false otherwise.
      *
-     * @param
      * @return true if alias is empty; false otherwise
      */
     boolean isEmpty();

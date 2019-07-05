@@ -16,9 +16,8 @@
 
 package io.nem.sdk.model.account;
 
+import io.nem.core.crypto.PublicKey;
 import io.nem.sdk.model.blockchain.NetworkType;
-import org.bouncycastle.util.encoders.Hex;
-
 import java.util.Objects;
 
 /**
@@ -27,18 +26,19 @@ import java.util.Objects;
  * @since 1.0
  */
 public class PublicAccount {
+
     private final Address address;
-    private final String publicKey;
+    private final PublicKey publicKey;
 
     public PublicAccount(String publicKey, NetworkType networkType) {
         this.address = Address.createFromPublicKey(publicKey, networkType);
-        this.publicKey = publicKey;
+        this.publicKey = PublicKey.fromHexString(publicKey);
     }
 
     /**
      * Create a PublicAccount from a public key and network type.
      *
-     * @param publicKey   Public key
+     * @param publicKey Public key
      * @param networkType NetworkType
      * @return {@link PublicAccount}
      */
@@ -54,11 +54,14 @@ public class PublicAccount {
      */
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof PublicAccount)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof PublicAccount)) {
+            return false;
+        }
         PublicAccount that = (PublicAccount) o;
-        return Objects.equals(address, that.address) &&
-                Objects.equals(publicKey, that.publicKey);
+        return Objects.equals(address, that.address) && Objects.equals(publicKey, that.publicKey);
     }
 
     /**
@@ -73,19 +76,9 @@ public class PublicAccount {
     /**
      * Return account public key.
      *
-     * @return String
+     * @return PublicKey
      */
-    public String getPublicKey() {
+    public PublicKey getPublicKey() {
         return publicKey;
     }
-
-    /**
-     * Return account public key in bytes.
-     *
-     * @return byte[]
-     */
-    public byte[] getPublicKeyAsBytes() {
-        return Hex.decode(publicKey);
-    }
-
 }

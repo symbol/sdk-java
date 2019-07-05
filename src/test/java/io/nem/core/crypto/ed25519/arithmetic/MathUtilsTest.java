@@ -27,11 +27,9 @@ public class MathUtilsTest {
      */
     @Test
     public void mathUtilsWorkAsExpected() {
-        final Ed25519GroupElement neutral = Ed25519GroupElement.p3(
-                Ed25519Field.ZERO,
-                Ed25519Field.ONE,
-                Ed25519Field.ONE,
-                Ed25519Field.ZERO);
+        final Ed25519GroupElement neutral =
+            Ed25519GroupElement.p3(
+                Ed25519Field.ZERO, Ed25519Field.ONE, Ed25519Field.ONE, Ed25519Field.ZERO);
         for (int i = 0; i < 1000; i++) {
             final Ed25519GroupElement g = MathUtils.getRandomGroupElement();
 
@@ -74,7 +72,8 @@ public class MathUtilsTest {
             final Ed25519GroupElement g = MathUtils.getRandomGroupElement();
 
             // Act:
-            final Ed25519GroupElement h = MathUtils.scalarMultiplyGroupElement(g, Ed25519Field.ZERO);
+            final Ed25519GroupElement h = MathUtils
+                .scalarMultiplyGroupElement(g, Ed25519Field.ZERO);
 
             // Assert:
             Assert.assertThat(Ed25519Group.ZERO_P3, IsEqual.equalTo(h));

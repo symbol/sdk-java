@@ -16,11 +16,12 @@
 
 package io.nem.sdk.model.transaction;
 
-import org.junit.jupiter.api.Test;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import org.junit.jupiter.api.Test;
+
 class TransactionTypeTest {
+
     @Test
     void aggregateCompleteType() {
         TransactionType transactionType = TransactionType.AGGREGATE_COMPLETE;
@@ -138,7 +139,8 @@ class TransactionTypeTest {
         TransactionType transactionType = TransactionType.ACCOUNT_PROPERTIES_ENTITY_TYPE;
         assertEquals(0x4350, transactionType.getValue());
         assertEquals(17232, transactionType.getValue());
-        assertEquals(TransactionType.ACCOUNT_PROPERTIES_ENTITY_TYPE, TransactionType.rawValueOf(17232));
+        assertEquals(TransactionType.ACCOUNT_PROPERTIES_ENTITY_TYPE,
+            TransactionType.rawValueOf(17232));
     }
 
     @Test

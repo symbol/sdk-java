@@ -32,7 +32,7 @@ public interface DsaSigner {
     /**
      * Verifies that the signature is valid.
      *
-     * @param data      The original message.
+     * @param data The original message.
      * @param signature The generated signature.
      * @return true if the signature is valid.
      */

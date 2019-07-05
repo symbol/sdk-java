@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 NEM
+ * Copyright 2019 NEM
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,14 +19,15 @@ package io.nem.sdk.model.transaction;
 /**
  * Enum containing transaction type versions.
  *
- * Transaction format versions are defined in catapult-server in
- * each transaction's plugin source code.
+ * <p>Transaction format versions are defined in catapult-server in each transaction's plugin
+ * source
+ * code.
  *
- * In [catapult-server](https://github.com/nemtech/catapult-server), the `DEFINE_TRANSACTION_CONSTANTS` macro
- * is used to define the `TYPE` and `VERSION` of the transaction format.
+ * <p>In [catapult-server](https://github.com/nemtech/catapult-server), the
+ * `DEFINE_TRANSACTION_CONSTANTS` macro is used to define the `TYPE` and `VERSION` of the
+ * transaction format.
  *
  * @see https://github.com/nemtech/catapult-server/blob/master/plugins/txes/transfer/src/model/TransferTransaction.h#L37
- *
  * @since 1.0
  */
 public enum TransactionVersion {
@@ -35,18 +36,18 @@ public enum TransactionVersion {
     /**
      * Mosaic definition transaction type.
      */
-    MOSAIC_DEFINITION(3),
+    MOSAIC_DEFINITION(1),
 
     /**
      * Mosaic supply change transaction.
      */
-    MOSAIC_SUPPLY_CHANGE(2),
+    MOSAIC_SUPPLY_CHANGE(1),
 
     // Namespace
     /**
      * Register namespace transaction type.
      */
-    REGISTER_NAMESPACE(2),
+    REGISTER_NAMESPACE(1),
 
     /**
      * Address alias transaction type.
@@ -62,23 +63,23 @@ public enum TransactionVersion {
     /**
      * Transfer Transaction transaction type.
      */
-    TRANSFER(3),
+    TRANSFER(1),
 
     // Multisignature
     /**
      * Modify multisig account transaction type.
      */
-    MODIFY_MULTISIG_ACCOUNT(3),
+    MODIFY_MULTISIG_ACCOUNT(1),
 
     /**
      * Aggregate complete transaction type.
      */
-    AGGREGATE_COMPLETE(2),
+    AGGREGATE_COMPLETE(1),
 
     /**
      * Aggregate bonded transaction type
      */
-    AGGREGATE_BONDED(2),
+    AGGREGATE_BONDED(1),
 
     /**
      * Hash Lock transaction type
@@ -116,8 +117,7 @@ public enum TransactionVersion {
     /**
      * Account link transaction type
      */
-    ACCOUNT_LINK(2);
-
+    ACCOUNT_LINK(1);
 
     private Integer value;
 
@@ -133,5 +133,4 @@ public enum TransactionVersion {
     public Integer getValue() {
         return this.value;
     }
-
 }

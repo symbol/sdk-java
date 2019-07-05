@@ -17,12 +17,11 @@
 package io.nem.core.crypto;
 
 import io.nem.core.utils.ExceptionUtils;
+import java.security.MessageDigest;
+import java.security.Security;
 import org.bouncycastle.jcajce.provider.digest.Keccak;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.util.encoders.Hex;
-
-import java.security.MessageDigest;
-import java.security.Security;
 
 /**
  * Static class that exposes hash functions.
@@ -96,16 +95,17 @@ public class Hashes {
         byte[] concat_inputs = new byte[0];
         byte[] concat_inputsCopy;
 
-        for(int i=0; i<inputs.length; i++) {
+        for (int i = 0; i < inputs.length; i++) {
 
-            concat_inputsCopy = new byte[ concat_inputs.length];
+            concat_inputsCopy = new byte[concat_inputs.length];
 
-            System.arraycopy(concat_inputs, 0, concat_inputsCopy,  0, concat_inputs.length );
+            System.arraycopy(concat_inputs, 0, concat_inputsCopy, 0, concat_inputs.length);
 
-            concat_inputs = new byte[ concat_inputsCopy.length + inputs[i].length];
+            concat_inputs = new byte[concat_inputsCopy.length + inputs[i].length];
 
-            System.arraycopy(concat_inputsCopy, 0, concat_inputs,  0, concat_inputsCopy.length );
-            System.arraycopy(inputs[i], 0, concat_inputs,  concat_inputsCopy.length, inputs[i].length );
+            System.arraycopy(concat_inputsCopy, 0, concat_inputs, 0, concat_inputsCopy.length);
+            System
+                .arraycopy(inputs[i], 0, concat_inputs, concat_inputsCopy.length, inputs[i].length);
         }
         keccak.update(concat_inputs);
 
@@ -123,7 +123,7 @@ public class Hashes {
 
         byte[] hashed_sha256 = hash("SHA256", inputs);
 
-        return hash("RIPEMD160", Hex.toHexString(hashed_sha256).getBytes() );
+        return hash("RIPEMD160", Hex.toHexString(hashed_sha256).getBytes());
     }
 
     /**
@@ -137,21 +137,20 @@ public class Hashes {
 
         byte[] hashed_sha256 = hash("SHA256", inputs);
 
-        return hash("SHA256", Hex.toHexString(hashed_sha256).getBytes() );
+        return hash("SHA256", Hex.toHexString(hashed_sha256).getBytes());
     }
 
     private static byte[] hash(final String algorithm, final byte[]... inputs) {
         return ExceptionUtils.propagate(
-                () -> {
-                    final MessageDigest digest = MessageDigest.getInstance(algorithm, "BC");
+            () -> {
+                final MessageDigest digest = MessageDigest.getInstance(algorithm, "BC");
 
-                    for (final byte[] input : inputs) {
-                        digest.update(input);
-                    }
+                for (final byte[] input : inputs) {
+                    digest.update(input);
+                }
 
-                    return digest.digest();
-                },
-                CryptoException::new);
+                return digest.digest();
+            },
+            CryptoException::new);
     }
-
 }

@@ -16,12 +16,14 @@
 
 package io.nem.core.crypto.ed25519;
 
-import io.nem.core.crypto.*;
+import io.nem.core.crypto.CryptoEngines;
+import io.nem.core.crypto.KeyGenerator;
+import io.nem.core.crypto.KeyPair;
+import io.nem.core.crypto.PrivateKey;
+import io.nem.core.crypto.PublicKey;
 import io.nem.core.crypto.ed25519.arithmetic.Ed25519EncodedFieldElement;
 import io.nem.core.crypto.ed25519.arithmetic.Ed25519Group;
 import io.nem.core.crypto.ed25519.arithmetic.Ed25519GroupElement;
-import io.nem.core.utils.ArrayUtils;
-
 import java.math.BigInteger;
 import java.security.SecureRandom;
 
@@ -29,6 +31,7 @@ import java.security.SecureRandom;
  * Implementation of the key generator for Ed25519.
  */
 public class Ed25519KeyGenerator implements KeyGenerator {
+
     private final SecureRandom random;
 
     public Ed25519KeyGenerator() {

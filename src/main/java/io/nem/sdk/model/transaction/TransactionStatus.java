@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 NEM
+ * Copyright 2019 NEM
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,13 +24,19 @@ import java.math.BigInteger;
  * @since 1.0
  */
 public class TransactionStatus {
+
     private final String group;
     private final String status;
     private final String hash;
     private final Deadline deadline;
     private final BigInteger height;
 
-    public TransactionStatus(String group, String status, String hash, Deadline deadline, BigInteger height) {
+    public TransactionStatus(
+        final String group,
+        final String status,
+        final String hash,
+        final Deadline deadline,
+        final BigInteger height) {
         this.group = group;
         this.status = status;
         this.hash = hash;

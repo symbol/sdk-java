@@ -19,13 +19,12 @@ package io.nem.sdk.model.blockchain;
  * Server info class
  */
 public class ServerInfo {
+
     private final String restVersion;
     private final String sdkVersion;
 
     /**
      * Constructor
-     * @param restVersion
-     * @param sdkVersion
      */
     public ServerInfo(String restVersion, String sdkVersion) {
         this.restVersion = restVersion;
@@ -34,6 +33,7 @@ public class ServerInfo {
 
     /**
      * Return server rest version
+     *
      * @return server rest version
      */
     public String getRestVersion() {
@@ -42,6 +42,7 @@ public class ServerInfo {
 
     /**
      * Return server sdk version
+     *
      * @return sdk version
      */
     public String getSdkVersion() {

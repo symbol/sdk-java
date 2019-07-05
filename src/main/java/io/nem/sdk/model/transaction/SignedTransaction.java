@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 NEM
+ * Copyright 2019 NEM
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,6 +23,7 @@ package io.nem.sdk.model.transaction;
  * @since 1.0
  */
 public class SignedTransaction {
+
     private final String payload;
     private final String hash;
     private final TransactionType type;
@@ -56,5 +57,7 @@ public class SignedTransaction {
      *
      * @return transaction type
      */
-    public TransactionType getType() { return type; }
+    public TransactionType getType() {
+        return type;
+    }
 }

@@ -18,23 +18,50 @@ package io.nem.sdk.model.transaction;
 
 import io.nem.sdk.model.account.PublicAccount;
 import io.nem.sdk.model.blockchain.NetworkType;
-
-import javax.swing.text.html.Option;
 import java.math.BigInteger;
 import java.util.Optional;
 
 public class FakeTransferTransaction extends Transaction {
 
-    public FakeTransferTransaction(NetworkType networkType, Integer version, Deadline deadline, BigInteger fee, String signature, PublicAccount signer, TransactionInfo transactionInfo) {
-        super(TransactionType.TRANSFER, networkType, version, deadline, fee, Optional.of(signature), Optional.of(signer), Optional.of(transactionInfo));
+    public FakeTransferTransaction(
+        NetworkType networkType,
+        Integer version,
+        Deadline deadline,
+        BigInteger fee,
+        String signature,
+        PublicAccount signer,
+        TransactionInfo transactionInfo) {
+        super(
+            TransactionType.TRANSFER,
+            networkType,
+            version,
+            deadline,
+            fee,
+            Optional.of(signature),
+            Optional.of(signer),
+            Optional.of(transactionInfo));
     }
 
-    public FakeTransferTransaction(NetworkType networkType, Integer version, Deadline deadline, BigInteger fee) {
-        super(TransactionType.TRANSFER, networkType, version, deadline, fee, Optional.empty(), Optional.empty(), Optional.empty());
+    public FakeTransferTransaction(
+        NetworkType networkType, Integer version, Deadline deadline, BigInteger fee) {
+        super(
+            TransactionType.TRANSFER,
+            networkType,
+            version,
+            deadline,
+            fee,
+            Optional.empty(),
+            Optional.empty(),
+            Optional.empty());
     }
 
     @Override
     byte[] generateBytes() {
+        throw new Error("Method no implemented");
+    }
+
+    @Override
+    byte[] generateEmbeddedBytes() {
         throw new Error("Method no implemented");
     }
 }

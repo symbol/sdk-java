@@ -1,33 +1,26 @@
-/*
- * Copyright 2018 NEM
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+/**
+ * ** Copyright (c) 2016-present, ** Jaguar0625, gimre, BloodyRookie, Tech Bureau, Corp. All rights
+ * reserved. ** ** This file is part of Catapult. ** ** Catapult is free software: you can
+ * redistribute it and/or modify ** it under the terms of the GNU Lesser General Public License as
+ * published by ** the Free Software Foundation, either version 3 of the License, or ** (at your
+ * option) any later version. ** ** Catapult is distributed in the hope that it will be useful, **
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of ** MERCHANTABILITY or FITNESS FOR
+ * A PARTICULAR PURPOSE. See the ** GNU Lesser General Public License for more details. ** ** You
+ * should have received a copy of the GNU Lesser General Public License ** along with Catapult. If
+ * not, see <http://www.gnu.org/licenses/>.
  */
-
 package io.nem.sdk.model.mosaic;
 
 import io.nem.sdk.model.account.PublicAccount;
-import io.nem.sdk.model.namespace.NamespaceId;
-
 import java.math.BigInteger;
 import java.util.Optional;
 
 /**
- * The mosaic info structure contains its properties, the owner and the namespace to which it belongs to.
- *
- * @since 1.0
+ * The mosaic info structure contains its properties, the owner and the namespace to which it
+ * belongs to.
  */
 public class MosaicInfo {
+
     private final String metaId;
     private final MosaicId mosaicId;
     private final BigInteger supply;
@@ -36,7 +29,14 @@ public class MosaicInfo {
     private final Integer revision;
     private final MosaicProperties properties;
 
-    public MosaicInfo(String metaId, MosaicId mosaicId, BigInteger supply, BigInteger height, PublicAccount owner, Integer revision, MosaicProperties properties) {
+    private MosaicInfo(
+        final String metaId,
+        final MosaicId mosaicId,
+        final BigInteger supply,
+        final BigInteger height,
+        final PublicAccount owner,
+        final Integer revision,
+        final MosaicProperties properties) {
         this.metaId = metaId;
         this.mosaicId = mosaicId;
         this.supply = supply;
@@ -44,6 +44,17 @@ public class MosaicInfo {
         this.owner = owner;
         this.revision = revision;
         this.properties = properties;
+    }
+
+    public static MosaicInfo create(
+        final String metaId,
+        final MosaicId mosaicId,
+        final BigInteger supply,
+        final BigInteger height,
+        final PublicAccount owner,
+        final Integer revision,
+        final MosaicProperties properties) {
+        return new MosaicInfo(metaId, mosaicId, supply, height, owner, revision, properties);
     }
 
     /**
@@ -123,7 +134,7 @@ public class MosaicInfo {
      *
      * @return the number of blocks from height it will be active
      */
-    public BigInteger getDuration() {
+    public Optional<BigInteger> getDuration() {
         return properties.getDuration();
     }
 
@@ -136,4 +147,3 @@ public class MosaicInfo {
         return properties.getDivisibility();
     }
 }
-

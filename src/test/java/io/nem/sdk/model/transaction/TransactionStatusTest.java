@@ -16,25 +16,33 @@
 
 package io.nem.sdk.model.transaction;
 
-import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.math.BigInteger;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import org.junit.jupiter.api.Test;
 
 public class TransactionStatusTest {
 
     @Test
     void createATransactionStatusViaConstructor() {
-        TransactionStatus transactionStatus = new TransactionStatus("confirmed", "Success", "B6C7648A3DDF71415650805E9E7801424FE03BBEE7D21F9C57B60220D3E95B2F", new Deadline(2, ChronoUnit.HOURS), new BigInteger("121855"));
+        TransactionStatus transactionStatus =
+            new TransactionStatus(
+                "confirmed",
+                "Success",
+                "B6C7648A3DDF71415650805E9E7801424FE03BBEE7D21F9C57B60220D3E95B2F",
+                new Deadline(2, ChronoUnit.HOURS),
+                new BigInteger("121855"));
 
         assertEquals("confirmed", transactionStatus.getGroup());
         assertEquals("Success", transactionStatus.getStatus());
-        assertEquals("B6C7648A3DDF71415650805E9E7801424FE03BBEE7D21F9C57B60220D3E95B2F", transactionStatus.getHash());
-        assertTrue(LocalDateTime.now().isBefore(transactionStatus.getDeadline().getLocalDateTime()));
+        assertEquals(
+            "B6C7648A3DDF71415650805E9E7801424FE03BBEE7D21F9C57B60220D3E95B2F",
+            transactionStatus.getHash());
+        assertTrue(
+            LocalDateTime.now().isBefore(transactionStatus.getDeadline().getLocalDateTime()));
         assertEquals(new BigInteger("121855"), transactionStatus.getHeight());
     }
 }

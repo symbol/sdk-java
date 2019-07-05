@@ -20,6 +20,7 @@ package io.nem.core.math;
  * Represents a matrix element consisting of row, a column, and a value.
  */
 public class MatrixElement {
+
     private final int row;
     private final int col;
     private final double value;
@@ -27,8 +28,8 @@ public class MatrixElement {
     /**
      * Creates a matrix entry
      *
-     * @param row   The row index.
-     * @param col   The column index.
+     * @param row The row index.
+     * @param col The column index.
      * @param value The value.
      */
     public MatrixElement(final int row, final int col, final double value) {
@@ -76,8 +77,8 @@ public class MatrixElement {
         }
 
         final MatrixElement rhs = (MatrixElement) obj;
-        return this.getRow().equals(rhs.getRow()) &&
-                this.getColumn().equals(rhs.getColumn()) &&
-                this.getValue().equals(rhs.getValue());
+        return this.getRow().equals(rhs.getRow())
+            && this.getColumn().equals(rhs.getColumn())
+            && this.getValue().equals(rhs.getValue());
     }
 }

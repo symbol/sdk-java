@@ -22,13 +22,14 @@ import org.hamcrest.core.IsEqual;
  * Matcher that checks the that two double values are equal within an epsilon value.
  */
 public class IsRoundedEqual extends org.hamcrest.BaseMatcher<Double> {
+
     private final Double lhs;
     private final int numPlaces;
 
     /**
      * Creates a new IsRoundedEqual matcher.
      *
-     * @param lhs       The value to match.
+     * @param lhs The value to match.
      * @param numPlaces The number of places that each number should be rounded.
      */
     private IsRoundedEqual(final Double lhs, final int numPlaces) {
@@ -55,12 +56,13 @@ public class IsRoundedEqual extends org.hamcrest.BaseMatcher<Double> {
     /**
      * Creates a rounded equal matcher that checks double (near) equality.
      *
-     * @param value     The value to match.
+     * @param value The value to match.
      * @param numPlaces The number of places that each number should be rounded.
      * @return The matcher.
      */
     @org.hamcrest.Factory
-    public static <T> org.hamcrest.Matcher<Double> equalTo(final Double value, final int numPlaces) {
+    public static <T> org.hamcrest.Matcher<Double> equalTo(final Double value,
+        final int numPlaces) {
         return new IsRoundedEqual(value, numPlaces);
     }
 

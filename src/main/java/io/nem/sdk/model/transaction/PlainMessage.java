@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 NEM
+ * Copyright 2019 NEM
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,8 @@
 package io.nem.sdk.model.transaction;
 
 /**
- * The plain message model defines a plain string. When sending it to the network we transform the payload to hex-string.
+ * The plain message model defines a plain string. When sending it to the network we transform the
+ * payload to hex-string.
  *
  * @since 1.0
  */

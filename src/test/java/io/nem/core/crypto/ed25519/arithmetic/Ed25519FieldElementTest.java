@@ -16,13 +16,12 @@
 
 package io.nem.core.crypto.ed25519.arithmetic;
 
+import java.math.BigInteger;
+import java.security.SecureRandom;
 import org.hamcrest.core.IsEqual;
 import org.hamcrest.core.IsNot;
 import org.junit.Assert;
 import org.junit.Test;
-
-import java.math.BigInteger;
-import java.security.SecureRandom;
 
 /**
  * Tests rely on the BigInteger class.
@@ -31,12 +30,13 @@ public class Ed25519FieldElementTest {
 
     // region constructor
 
-    private static boolean differsOnlyByAFactorOfAFourthRootOfOne(final Ed25519FieldElement x, final Ed25519FieldElement root) {
+    private static boolean differsOnlyByAFactorOfAFourthRootOfOne(
+        final Ed25519FieldElement x, final Ed25519FieldElement root) {
         final Ed25519FieldElement rootTimesI = root.multiply(Ed25519Field.I);
-        return x.equals(root) ||
-                x.equals(root.negate()) ||
-                x.equals(rootTimesI) ||
-                x.equals(rootTimesI.negate());
+        return x.equals(root)
+            || x.equals(root.negate())
+            || x.equals(rootTimesI)
+            || x.equals(rootTimesI.negate());
     }
 
     private static void assertEquals(final Ed25519FieldElement f, final BigInteger b) {
@@ -230,7 +230,8 @@ public class Ed25519FieldElementTest {
             Assert.assertThat(fraction.square().square(), IsEqual.equalTo(sqrt.square().square()));
 
             // (u / v) == +-1 * sqrt(u^2 / v^2) or (u / v) == +-i * sqrt(u^2 / v^2)
-            Assert.assertThat(differsOnlyByAFactorOfAFourthRootOfOne(fraction, sqrt), IsEqual.equalTo(true));
+            Assert.assertThat(
+                differsOnlyByAFactorOfAFourthRootOfOne(fraction, sqrt), IsEqual.equalTo(true));
         }
     }
 
@@ -241,7 +242,8 @@ public class Ed25519FieldElementTest {
     @Test
     public void decodeReturnsCorrectFieldElementForSimpleByteArrays() {
         // Arrange:
-        final Ed25519EncodedFieldElement encoded1 = MathUtils.toEncodedFieldElement(BigInteger.ZERO);
+        final Ed25519EncodedFieldElement encoded1 = MathUtils
+            .toEncodedFieldElement(BigInteger.ZERO);
         final Ed25519EncodedFieldElement encoded2 = MathUtils.toEncodedFieldElement(BigInteger.ONE);
 
         // Act:
@@ -289,7 +291,11 @@ public class Ed25519FieldElementTest {
             }
 
             // odd numbers are negative
-            final boolean isNegative = MathUtils.toBigInteger(t).mod(Ed25519Field.P).mod(new BigInteger("2")).equals(BigInteger.ONE);
+            final boolean isNegative =
+                MathUtils.toBigInteger(t)
+                    .mod(Ed25519Field.P)
+                    .mod(new BigInteger("2"))
+                    .equals(BigInteger.ONE);
             final Ed25519FieldElement f = new Ed25519FieldElement(t);
 
             // Assert:
@@ -333,7 +339,7 @@ public class Ed25519FieldElementTest {
 
     // endregion
 
-    //region toString
+    // region toString
 
     @Test
     public void toStringReturnsCorrectRepresentation() {

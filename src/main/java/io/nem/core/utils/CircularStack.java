@@ -21,13 +21,14 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * Circular stack is a last in first out buffer with fixed size that replace its oldest element if full.
- * The removal order is inverse of insertion order. The iteration order is the same as insertion order.
- * <strong>Note that implementation is not synchronized.</strong>
+ * Circular stack is a last in first out buffer with fixed size that replace its oldest element if
+ * full. The removal order is inverse of insertion order. The iteration order is the same as
+ * insertion order. <strong>Note that implementation is not synchronized.</strong>
  *
  * @param <E> Type of elements on the stack.
  */
 public class CircularStack<E> implements Iterable<E> {
+
     private final List<E> elements;
     private final int limit;
 

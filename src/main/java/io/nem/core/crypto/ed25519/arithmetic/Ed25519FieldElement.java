@@ -20,14 +20,14 @@ import java.util.Arrays;
 
 /**
  * Represents a element of the finite field with p=2^255-19 elements.
- * <p>
- * values[0] ... values[9], represent the integer <br>
- * values[0] + 2^26 * values[1] + 2^51 * values[2] + 2^77 * values[3] + 2^102 * values[4] + ... + 2^230 * values[9]. <br>
- * Bounds on each values[i] vary depending on context.
- * </p>
- * This implementation is based on the ref10 implementation of SUPERCOP.
+ *
+ * <p>values[0] ... values[9], represent the integer <br>
+ * values[0] + 2^26 * values[1] + 2^51 * values[2] + 2^77 * values[3] + 2^102 * values[4] + ... +
+ * 2^230 * values[9]. <br> Bounds on each values[i] vary depending on context. This implementation
+ * is based on the ref10 implementation of SUPERCOP.
  */
 public class Ed25519FieldElement {
+
     private final int[] values;
 
     /**
@@ -45,16 +45,19 @@ public class Ed25519FieldElement {
 
     /**
      * Calculates and returns one of the square roots of u / v.
+     *
      * <pre>{@code
      * x = (u * v^3) * (u * v^7)^((p - 5) / 8) ==> x^2 = +-(u / v).
      * }</pre>
+     *
      * Note that this means x can be sqrt(u / v), -sqrt(u / v), +i * sqrt(u / v), -i * sqrt(u / v).
      *
      * @param u The nominator of the fraction.
      * @param v The denominator of the fraction.
      * @return The square root of u / v.
      */
-    public static Ed25519FieldElement sqrt(final Ed25519FieldElement u, final Ed25519FieldElement v) {
+    public static Ed25519FieldElement sqrt(final Ed25519FieldElement u,
+        final Ed25519FieldElement v) {
         Ed25519FieldElement x;
         final Ed25519FieldElement v3;
 
@@ -92,8 +95,8 @@ public class Ed25519FieldElement {
     }
 
     /**
-     * Adds the given field element to this and returns the result.
-     * <b>h = this + g</b>
+     * Adds the given field element to this and returns the result. <b>h = this + g</b>
+     *
      * <pre>
      * Preconditions:
      *     |this| bounded by 1.1*2^25,1.1*2^24,1.1*2^25,1.1*2^24,etc.
@@ -116,8 +119,8 @@ public class Ed25519FieldElement {
     }
 
     /**
-     * Subtract the given field element from this and returns the result.
-     * <b>h = this - g</b>
+     * Subtract the given field element from this and returns the result. <b>h = this - g</b>
+     *
      * <pre>
      * Preconditions:
      *     |this| bounded by 1.1*2^25,1.1*2^24,1.1*2^25,1.1*2^24,etc.
@@ -140,8 +143,8 @@ public class Ed25519FieldElement {
     }
 
     /**
-     * Negates this field element and return the result.
-     * <b>h = -this</b>
+     * Negates this field element and return the result. <b>h = -this</b>
+     *
      * <pre>
      * Preconditions:
      *     |this| bounded by 1.1*2^25,1.1*2^24,1.1*2^25,1.1*2^24,etc.
@@ -161,32 +164,23 @@ public class Ed25519FieldElement {
     }
 
     /**
-     * Multiplies this field element with the given field element and returns the result.
-     * <b>h = this * g</b>
-     * Preconditions:
+     * Multiplies this field element with the given field element and returns the result. <b>h =
+     * this * g</b> Preconditions:
+     *
      * <pre>
      *     |this| bounded by 1.65*2^26,1.65*2^25,1.65*2^26,1.65*2^25,etc.
      *        |g| bounded by 1.65*2^26,1.65*2^25,1.65*2^26,1.65*2^25,etc.
      * Postconditions:
      *        |h| bounded by 1.01*2^25,1.01*2^24,1.01*2^25,1.01*2^24,etc.
      * </pre>
-     * Notes on implementation strategy:
-     * <br>
-     * Using schoolbook multiplication. Karatsuba would save a little in some
-     * cost models.
-     * <br>
-     * Most multiplications by 2 and 19 are 32-bit precomputations; cheaper than
-     * 64-bit postcomputations.
-     * <br>
-     * There is one remaining multiplication by 19 in the carry chain; one *19
-     * precomputation can be merged into this, but the resulting data flow is
-     * considerably less clean.
-     * <br>
-     * There are 12 carries below. 10 of them are 2-way parallelizable and
-     * vectorizable. Can get away with 11 carries, but then data flow is much
-     * deeper.
-     * <br>
-     * With tighter constraints on inputs can squeeze carries into int32.
+     *
+     * Notes on implementation strategy: <br> Using schoolbook multiplication. Karatsuba would save
+     * a little in some cost models. <br> Most multiplications by 2 and 19 are 32-bit
+     * precomputations; cheaper than 64-bit postcomputations. <br> There is one remaining
+     * multiplication by 19 in the carry chain; one *19 precomputation can be merged into this, but
+     * the resulting data flow is considerably less clean. <br> There are 12 carries below. 10 of
+     * them are 2-way parallelizable and vectorizable. Can get away with 11 carries, but then data
+     * flow is much deeper. <br> With tighter constraints on inputs can squeeze carries into int32.
      *
      * @param g The field element to multiply.
      * @return The (reasonably reduced) field element this * val.
@@ -329,23 +323,31 @@ public class Ed25519FieldElement {
         final long f9g9_38 = f9_2 * (long) g9_19;
 
         /**
-         * Remember: 2^255 congruent 19 modulo p.
-         * h = h0 * 2^0 + h1 * 2^26 + h2 * 2^(26+25) + h3 * 2^(26+25+26) + ... + h9 * 2^(5*26+5*25).
-         * So to get the real number we would have to multiply the coefficients with the corresponding powers of 2.
-         * To get an idea what is going on below, look at the calculation of h0:
-         * h0 is the coefficient to the power 2^0 so it collects (sums) all products that have the power 2^0.
-         * f0 * g0 really is f0 * 2^0 * g0 * 2^0 = (f0 * g0) * 2^0.
-         * f1 * g9 really is f1 * 2^26 * g9 * 2^230 = f1 * g9 * 2^256 = 2 * f1 * g9 * 2^255 congruent 2 * 19 * f1 * g9 * 2^0 modulo p.
-         * f2 * g8 really is f2 * 2^51 * g8 * 2^204 = f2 * g8 * 2^255 congruent 19 * f2 * g8 * 2^0 modulo p.
-         * and so on...
+         * Remember: 2^255 congruent 19 modulo p. h = h0 * 2^0 + h1 * 2^26 + h2 * 2^(26+25) + h3 *
+         * 2^(26+25+26) + ... + h9 * 2^(5*26+5*25). So to get the real number we would have to multiply
+         * the coefficients with the corresponding powers of 2. To get an idea what is going on below,
+         * look at the calculation of h0: h0 is the coefficient to the power 2^0 so it collects (sums)
+         * all products that have the power 2^0. f0 * g0 really is f0 * 2^0 * g0 * 2^0 = (f0 * g0) *
+         * 2^0. f1 * g9 really is f1 * 2^26 * g9 * 2^230 = f1 * g9 * 2^256 = 2 * f1 * g9 * 2^255
+         * congruent 2 * 19 * f1 * g9 * 2^0 modulo p. f2 * g8 really is f2 * 2^51 * g8 * 2^204 = f2 * g8
+         * * 2^255 congruent 19 * f2 * g8 * 2^0 modulo p. and so on...
          */
-        long h0 = f0g0 + f1g9_38 + f2g8_19 + f3g7_38 + f4g6_19 + f5g5_38 + f6g4_19 + f7g3_38 + f8g2_19 + f9g1_38;
-        long h1 = f0g1 + f1g0 + f2g9_19 + f3g8_19 + f4g7_19 + f5g6_19 + f6g5_19 + f7g4_19 + f8g3_19 + f9g2_19;
-        long h2 = f0g2 + f1g1_2 + f2g0 + f3g9_38 + f4g8_19 + f5g7_38 + f6g6_19 + f7g5_38 + f8g4_19 + f9g3_38;
-        long h3 = f0g3 + f1g2 + f2g1 + f3g0 + f4g9_19 + f5g8_19 + f6g7_19 + f7g6_19 + f8g5_19 + f9g4_19;
-        long h4 = f0g4 + f1g3_2 + f2g2 + f3g1_2 + f4g0 + f5g9_38 + f6g8_19 + f7g7_38 + f8g6_19 + f9g5_38;
+        long h0 =
+            f0g0 + f1g9_38 + f2g8_19 + f3g7_38 + f4g6_19 + f5g5_38 + f6g4_19 + f7g3_38 + f8g2_19
+                + f9g1_38;
+        long h1 =
+            f0g1 + f1g0 + f2g9_19 + f3g8_19 + f4g7_19 + f5g6_19 + f6g5_19 + f7g4_19 + f8g3_19
+                + f9g2_19;
+        long h2 =
+            f0g2 + f1g1_2 + f2g0 + f3g9_38 + f4g8_19 + f5g7_38 + f6g6_19 + f7g5_38 + f8g4_19
+                + f9g3_38;
+        long h3 =
+            f0g3 + f1g2 + f2g1 + f3g0 + f4g9_19 + f5g8_19 + f6g7_19 + f7g6_19 + f8g5_19 + f9g4_19;
+        long h4 =
+            f0g4 + f1g3_2 + f2g2 + f3g1_2 + f4g0 + f5g9_38 + f6g8_19 + f7g7_38 + f8g6_19 + f9g5_38;
         long h5 = f0g5 + f1g4 + f2g3 + f3g2 + f4g1 + f5g0 + f6g9_19 + f7g8_19 + f8g7_19 + f9g6_19;
-        long h6 = f0g6 + f1g5_2 + f2g4 + f3g3_2 + f4g2 + f5g1_2 + f6g0 + f7g9_38 + f8g8_19 + f9g7_38;
+        long h6 =
+            f0g6 + f1g5_2 + f2g4 + f3g3_2 + f4g2 + f5g1_2 + f6g0 + f7g9_38 + f8g8_19 + f9g7_38;
         long h7 = f0g7 + f1g6 + f2g5 + f3g4 + f4g3 + f5g2 + f6g1 + f7g0 + f8g9_19 + f9g8_19;
         long h8 = f0g8 + f1g7_2 + f2g6 + f3g5_2 + f4g4 + f5g3_2 + f6g2 + f7g1_2 + f8g0 + f9g9_38;
         long h9 = f0g9 + f1g8 + f2g7 + f3g6 + f4g5 + f5g4 + f6g3 + f7g2 + f8g1 + f9g0;
@@ -361,12 +363,11 @@ public class Ed25519FieldElement {
         final long carry9;
 
         /**
-         * |h0| <= (1.65*1.65*2^52*(1+19+19+19+19)+1.65*1.65*2^50*(38+38+38+38+38))
-         * i.e. |h0| <= 1.4*2^60; narrower ranges for h2, h4, h6, h8
-         * |h1| <= (1.65*1.65*2^51*(1+1+19+19+19+19+19+19+19+19))
-         * i.e. |h1| <= 1.7*2^59; narrower ranges for h3, h5, h7, h9
+         * |h0| <= (1.65*1.65*2^52*(1+19+19+19+19)+1.65*1.65*2^50*(38+38+38+38+38)) i.e. |h0| <=
+         * 1.4*2^60; narrower ranges for h2, h4, h6, h8 |h1| <=
+         * (1.65*1.65*2^51*(1+1+19+19+19+19+19+19+19+19)) i.e. |h1| <= 1.7*2^59; narrower ranges for h3,
+         * h5, h7, h9
          */
-
         carry0 = (h0 + (long) (1 << 25)) >> 26;
         h1 += carry0;
         h0 -= carry0 << 26;
@@ -450,14 +451,15 @@ public class Ed25519FieldElement {
     }
 
     /**
-     * Squares this field element and returns the result.
-     * <b>h = this * this</b>
+     * Squares this field element and returns the result. <b>h = this * this</b>
+     *
      * <pre>
      * Preconditions:
      *     |this| bounded by 1.65*2^26,1.65*2^25,1.65*2^26,1.65*2^25,etc.
      * Postconditions:
      *        |h| bounded by 1.01*2^25,1.01*2^24,1.01*2^25,1.01*2^24,etc.
      * </pre>
+     *
      * See multiply for discussion of implementation strategy.
      *
      * @return The square of this field element.
@@ -467,14 +469,16 @@ public class Ed25519FieldElement {
     }
 
     /**
-     * Squares this field element, multiplies by two and returns the result.
-     * <b>h = 2 * this * this</b>
+     * Squares this field element, multiplies by two and returns the result. <b>h = 2 * this *
+     * this</b>
+     *
      * <pre>
      * Preconditions:
      *     |this| bounded by 1.65*2^26,1.65*2^25,1.65*2^26,1.65*2^25,etc.
      * Postconditions:
      *        |h| bounded by 1.01*2^25,1.01*2^24,1.01*2^25,1.01*2^24,etc.
      * </pre>
+     *
      * See multiply for discussion of implementation strategy.
      *
      * @return The square of this field element times 2.
@@ -484,15 +488,16 @@ public class Ed25519FieldElement {
     }
 
     /**
-     * Squares this field element, optionally multiplies by two and returns the result.
-     * <b>h = 2 * this * this</b> if dbl is true or
-     * <b>h = this * this</b> if dbl is false.
+     * Squares this field element, optionally multiplies by two and returns the result. <b>h = 2 *
+     * this * this</b> if dbl is true or <b>h = this * this</b> if dbl is false.
+     *
      * <pre>
      * Preconditions:
      *     |this| bounded by 1.65*2^26,1.65*2^25,1.65*2^26,1.65*2^25,etc.
      * Postconditions:
      *        |h| bounded by 1.01*2^25,1.01*2^24,1.01*2^25,1.01*2^24,etc.
      * </pre>
+     *
      * See multiply for discussion of implementation strategy.
      *
      * @return The square of this field element times 2.
@@ -668,9 +673,8 @@ public class Ed25519FieldElement {
     }
 
     /**
-     * Invert this field element and return the result.
-     * The inverse is found via Fermat's little theorem:
-     * a^p congruent a mod p and therefore a^(p-2) congruent a^-1 mod p
+     * Invert this field element and return the result. The inverse is found via Fermat's little
+     * theorem: a^p congruent a mod p and therefore a^(p-2) congruent a^-1 mod p
      *
      * @return The inverse of this field element.
      */
@@ -722,8 +726,8 @@ public class Ed25519FieldElement {
     }
 
     /**
-     * Computes this field element to the power of (2^252 - 4) and returns the result.
-     * This is a helper function for calculating the square root.
+     * Computes this field element to the power of (2^252 - 4) and returns the result. This is a
+     * helper function for calculating the square root.
      *
      * @return This field element to the power of (2^252 - 4).
      */
@@ -830,10 +834,10 @@ public class Ed25519FieldElement {
     }
 
     /**
-     * Reduce this field element modulo field size p = 2^255 - 19 and return the result.
-     * The idea for the modulo p reduction algorithm is as follows:
-     * <pre>
-     * {@code
+     * Reduce this field element modulo field size p = 2^255 - 19 and return the result. The idea
+     * for the modulo p reduction algorithm is as follows:
+     *
+     * <pre>{@code
      * Assumption:
      * p = 2^255 - 19
      * h = h0 + 2^25 * h1 + 2^(26+25) * h2 + ... + 2^230 * h9 where 0 <= |hi| < 2^27 for all i=0,...,9.
@@ -856,8 +860,7 @@ public class Ed25519FieldElement {
      *       = h - q * 2^255 + 19 * q + 19 * 2^-255 * h - 19 * q + 19^2 * 2^-255 * q + 1/2 - 19^2 * 2^-255 * q - 19 * 2^-255 * h + 19 * 2^-25 * h9
      *       = h + 19 * 2^-25 * h9 + 1/2 - q^255.
      * Inserting the expression for x into (1) we get the desired expression for q.
-     * }
-     * </pre>
+     * }</pre>
      *
      * @return The mod p reduced field element;
      */
@@ -947,9 +950,9 @@ public class Ed25519FieldElement {
     }
 
     /**
-     * Encodes a given field element in its 32 byte 2^8 bit representation. This is done in two steps.
-     * Step 1: Reduce the value of the field element modulo p.
-     * Step 2: Convert the field element to the 32 byte representation.
+     * Encodes a given field element in its 32 byte 2^8 bit representation. This is done in two
+     * steps. Step 1: Reduce the value of the field element modulo p. Step 2: Convert the field
+     * element to the 32 byte representation.
      *
      * @return Encoded field element (32 bytes).
      */
@@ -1007,8 +1010,8 @@ public class Ed25519FieldElement {
     }
 
     /**
-     * Return true if this is in {1,3,5,...,q-2}
-     * Return false if this is in {0,2,4,...,q-1}
+     * Return true if this is in {1,3,5,...,q-2} Return false if this is in {0,2,4,...,q-1}
+     *
      * <pre>
      * Preconditions:
      *     |x| bounded by 1.1*2^26,1.1*2^25,1.1*2^26,1.1*2^25,etc.

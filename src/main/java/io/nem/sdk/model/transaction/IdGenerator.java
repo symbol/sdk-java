@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 NEM
+ * Copyright 2019 NEM
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,16 +19,13 @@ package io.nem.sdk.model.transaction;
 import io.nem.core.crypto.Hashes;
 import io.nem.core.utils.ByteUtils;
 import io.nem.sdk.model.mosaic.IllegalIdentifierException;
-import org.apache.commons.lang.ArrayUtils;
-import org.bouncycastle.util.encoders.Hex;
-
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Pattern;
-
+import org.apache.commons.lang.ArrayUtils;
 
 public class IdGenerator {
 
@@ -90,37 +87,37 @@ public class IdGenerator {
         return result;
     }
 
-/*  public static BigInteger generateNamespaceId2(String name, BigInteger parentId) {
+  /*  public static BigInteger generateNamespaceId2(String name, BigInteger parentId) {
 
-        byte[] parentIdBytes = new byte[8];
-        ByteBuffer.wrap(parentIdBytes).put(parentId.toByteArray()); // GO
-        ArrayUtils.reverse(parentIdBytes);
+      byte[] parentIdBytes = new byte[8];
+      ByteBuffer.wrap(parentIdBytes).put(parentId.toByteArray()); // GO
+      ArrayUtils.reverse(parentIdBytes);
 
-        byte[] nameBytes = name.getBytes();
-        List<byte[]> hashes = IdGenerator.getHashesInLittleEndian(parentIdBytes, nameBytes);
+      byte[] nameBytes = name.getBytes();
+      List<byte[]> hashes = IdGenerator.getHashesInLittleEndian(parentIdBytes, nameBytes);
 
-        byte[] low = hashes.get(0);
-        byte[] high = hashes.get(1);
+      byte[] low = hashes.get(0);
+      byte[] high = hashes.get(1);
 
-        // Set the high bit for namespace id
-        high = (new BigInteger(high)).or(new BigInteger("80000000", 16)).toByteArray();
+      // Set the high bit for namespace id
+      high = (new BigInteger(high)).or(new BigInteger("80000000", 16)).toByteArray();
 
-        byte[] last = ArrayUtils.addAll(high, low);
+      byte[] last = ArrayUtils.addAll(high, low);
 
-        return new BigInteger(last);
-    }
+      return new BigInteger(last);
+  }
 
-    private static List<byte[]> getHashesInLittleEndian(final byte[]... inputs) {
-        byte[] result = Hashes.sha3_256(inputs);
+  private static List<byte[]> getHashesInLittleEndian(final byte[]... inputs) {
+      byte[] result = Hashes.sha3_256(inputs);
 
-        byte[] low = Arrays.copyOfRange(result, 0, 4);
-        byte[] high = Arrays.copyOfRange(result, 4, 8);
+      byte[] low = Arrays.copyOfRange(result, 0, 4);
+      byte[] high = Arrays.copyOfRange(result, 4, 8);
 
-        ArrayUtils.reverse(low);
-        ArrayUtils.reverse(high);
-        List<byte[]> hashes = new ArrayList<>(2);
-        hashes.add(low);
-        hashes.add(high);
-        return hashes;
-    }*/
+      ArrayUtils.reverse(low);
+      ArrayUtils.reverse(high);
+      List<byte[]> hashes = new ArrayList<>(2);
+      hashes.add(low);
+      hashes.add(high);
+      return hashes;
+  }*/
 }

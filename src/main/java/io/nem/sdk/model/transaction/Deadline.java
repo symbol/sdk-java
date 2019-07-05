@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 NEM
+ * Copyright 2019 NEM
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,8 +23,9 @@ import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 
 /**
- * The deadline of the transaction. The deadline is given as the number of seconds elapsed since the creation of the nemesis block.
- * If a transaction does not get included in a block before the deadline is reached, it is deleted.
+ * The deadline of the transaction. The deadline is given as the number of seconds elapsed since the
+ * creation of the nemesis block. If a transaction does not get included in a block before the
+ * deadline is reached, it is deleted.
  *
  * @since 1.0
  */
@@ -34,12 +35,13 @@ public class Deadline {
      * Nemesis block timestamp.
      */
     public static Instant TIMESTAMP_NEMSIS_BLOCK = Instant.ofEpochSecond(1459468800);
+
     private final Instant instant;
 
     /**
      * Constructor
      *
-     * @param units      int
+     * @param units int
      * @param chronoUnit Chrono unit
      */
     public Deadline(int units, ChronoUnit chronoUnit) {
@@ -52,13 +54,15 @@ public class Deadline {
      * @param input Deadline in BigInteger format
      */
     public Deadline(BigInteger input) {
-        instant = Instant.ofEpochMilli(input.longValue());
+        instant =
+            Instant
+                .ofEpochMilli(input.longValue() + Deadline.TIMESTAMP_NEMSIS_BLOCK.toEpochMilli());
     }
 
     /**
      * Create deadline model.
      *
-     * @param units      int
+     * @param units int
      * @param chronoUnit Chrono unit
      * @return {@link Deadline}
      */

@@ -37,7 +37,7 @@ public abstract class KeyAnalyzerTest {
         // Arrange:
         final KeyAnalyzer analyzer = this.getKeyAnalyzer();
         final KeyPair keyPair = this.getCryptoEngine().createKeyGenerator().generateKeyPair();
-        final PublicKey key = new PublicKey(new byte[keyPair.getPublicKey().getRaw().length + 1]);
+        final PublicKey key = new PublicKey(new byte[keyPair.getPublicKey().getBytes().length + 1]);
 
         // Act + Assert:
         Assert.assertThat(analyzer.isKeyCompressed(key), IsEqual.equalTo(false));

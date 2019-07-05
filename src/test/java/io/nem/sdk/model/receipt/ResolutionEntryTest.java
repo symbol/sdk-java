@@ -16,6 +16,9 @@
 
 package io.nem.sdk.model.receipt;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 import io.nem.sdk.model.account.Address;
 import io.nem.sdk.model.blockchain.NetworkType;
 import io.nem.sdk.model.mosaic.MosaicId;
@@ -24,25 +27,27 @@ import io.nem.sdk.model.namespace.MosaicAlias;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
 public class ResolutionEntryTest {
+
     static AddressAlias addressAlias;
     static MosaicAlias mosaicAlias;
     static ReceiptSource receiptSource;
 
     @BeforeAll
     public static void setup() {
-        addressAlias = new AddressAlias(new Address("SDGLFW-DSHILT-IUHGIB-H5UGX2-VYF5VN-JEKCCD-BR26", NetworkType.MIJIN_TEST));
+        addressAlias =
+            new AddressAlias(
+                new Address("SDGLFW-DSHILT-IUHGIB-H5UGX2-VYF5VN-JEKCCD-BR26",
+                    NetworkType.MIJIN_TEST));
         mosaicAlias = new MosaicAlias(new MosaicId("85BBEA6CC462B244"));
-        receiptSource = new ReceiptSource(1,1);
+        receiptSource = new ReceiptSource(1, 1);
     }
 
     @Test
     void shouldCreateAddressResolutionEntry() {
 
-        ResolutionEntry<AddressAlias> resolutionEntry = new ResolutionEntry(addressAlias, receiptSource, ReceiptType.Address_Alias_Resolution);
+        ResolutionEntry<AddressAlias> resolutionEntry =
+            new ResolutionEntry(addressAlias, receiptSource, ReceiptType.Address_Alias_Resolution);
         assertEquals(resolutionEntry.getType(), ReceiptType.Address_Alias_Resolution);
         assertEquals(resolutionEntry.getReceiptSource(), receiptSource);
         assertEquals(resolutionEntry.getResolved(), addressAlias);
@@ -51,7 +56,8 @@ public class ResolutionEntryTest {
     @Test
     void shouldCreateMosaicResolutionEntry() {
 
-        ResolutionEntry<MosaicAlias> resolutionEntry = new ResolutionEntry(mosaicAlias, receiptSource, ReceiptType.Mosaic_Alias_Resolution);
+        ResolutionEntry<MosaicAlias> resolutionEntry =
+            new ResolutionEntry(mosaicAlias, receiptSource, ReceiptType.Mosaic_Alias_Resolution);
         assertEquals(resolutionEntry.getType(), ReceiptType.Mosaic_Alias_Resolution);
         assertEquals(resolutionEntry.getReceiptSource(), receiptSource);
         assertEquals(resolutionEntry.getResolved(), mosaicAlias);
@@ -59,15 +65,19 @@ public class ResolutionEntryTest {
 
     @Test
     void shouldThrowIllegalArgumentExceptionWithWrongReceiptType() {
-        assertThrows(IllegalArgumentException.class, () -> {
-            new ResolutionEntry(addressAlias, receiptSource, ReceiptType.Namespace_Rental_Fee);
-        });
+        assertThrows(
+            IllegalArgumentException.class,
+            () -> {
+                new ResolutionEntry(addressAlias, receiptSource, ReceiptType.Namespace_Rental_Fee);
+            });
     }
 
     @Test
     void shouldThrowIllegalArgumentExceptionWithWrongResolvedType() {
-        assertThrows(IllegalArgumentException.class, () -> {
-            new ResolutionEntry("", receiptSource, ReceiptType.Address_Alias_Resolution);
-        });
+        assertThrows(
+            IllegalArgumentException.class,
+            () -> {
+                new ResolutionEntry("", receiptSource, ReceiptType.Address_Alias_Resolution);
+            });
     }
 }

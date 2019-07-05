@@ -16,17 +16,17 @@
 
 package io.nem.sdk.model.receipt;
 
-import org.junit.jupiter.api.Test;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import org.junit.jupiter.api.Test;
+
 public class ReceiptSourceTest {
+
     @Test
     void shouldCreateReceiptSource() {
 
-        ReceiptSource source = new ReceiptSource(1,1);
+        ReceiptSource source = new ReceiptSource(1, 1);
         assertEquals(source.getPrimaryId(), 1);
         assertEquals(source.getSecondaryId(), 1);
     }
-
 }

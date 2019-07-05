@@ -16,12 +16,11 @@
 
 package io.nem.sdk.model.mosaic;
 
-import io.nem.sdk.model.namespace.NamespaceId;
-import org.junit.jupiter.api.Test;
-
-import java.math.BigInteger;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import io.nem.sdk.model.namespace.NamespaceId;
+import java.math.BigInteger;
+import org.junit.jupiter.api.Test;
 
 class MosaicNameTest {
 

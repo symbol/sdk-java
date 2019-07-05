@@ -16,15 +16,21 @@
 
 package io.nem.core.crypto.ed25519;
 
-import io.nem.core.crypto.*;
+import io.nem.core.crypto.CryptoEngine;
+import io.nem.core.crypto.CryptoEngines;
+import io.nem.core.crypto.CryptoException;
+import io.nem.core.crypto.DsaSigner;
+import io.nem.core.crypto.DsaSignerTest;
+import io.nem.core.crypto.KeyPair;
+import io.nem.core.crypto.PublicKey;
+import io.nem.core.crypto.Signature;
 import io.nem.core.crypto.ed25519.arithmetic.MathUtils;
 import io.nem.core.test.Utils;
+import java.math.BigInteger;
 import org.hamcrest.core.IsEqual;
 import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
-
-import java.math.BigInteger;
 
 public class Ed25519DsaSignerTest extends DsaSignerTest {
 
@@ -42,7 +48,8 @@ public class Ed25519DsaSignerTest extends DsaSignerTest {
         final Signature nonCanonicalSignature = new Signature(signature.getR(), nonCanonicalS);
 
         // Assert:
-        Assert.assertThat(dsaSigner.isCanonicalSignature(nonCanonicalSignature), IsEqual.equalTo(false));
+        Assert.assertThat(
+            dsaSigner.isCanonicalSignature(nonCanonicalSignature), IsEqual.equalTo(false));
     }
 
     @Test
@@ -57,11 +64,14 @@ public class Ed25519DsaSignerTest extends DsaSignerTest {
         final Signature signature = dsaSigner.sign(input);
         final BigInteger nonCanonicalS = engine.getCurve().getGroupOrder().add(signature.getS());
         final Signature nonCanonicalSignature = new Signature(signature.getR(), nonCanonicalS);
-        Assert.assertThat(dsaSigner.isCanonicalSignature(nonCanonicalSignature), IsEqual.equalTo(false));
-        final Signature canonicalSignature = dsaSigner.makeSignatureCanonical(nonCanonicalSignature);
+        Assert.assertThat(
+            dsaSigner.isCanonicalSignature(nonCanonicalSignature), IsEqual.equalTo(false));
+        final Signature canonicalSignature = dsaSigner
+            .makeSignatureCanonical(nonCanonicalSignature);
 
         // Assert:
-        Assert.assertThat(dsaSigner.isCanonicalSignature(canonicalSignature), IsEqual.equalTo(true));
+        Assert
+            .assertThat(dsaSigner.isCanonicalSignature(canonicalSignature), IsEqual.equalTo(true));
     }
 
     @Test
@@ -82,7 +92,8 @@ public class Ed25519DsaSignerTest extends DsaSignerTest {
         }
 
         // Act:
-        final Signature signature2 = new Signature(groupOrder.add(signature.getR()), signature.getS());
+        final Signature signature2 = new Signature(groupOrder.add(signature.getR()),
+            signature.getS());
 
         // Assert:
         Assert.assertThat(dsaSigner.verify(input, signature2), IsEqual.equalTo(false));
@@ -146,21 +157,24 @@ public class Ed25519DsaSignerTest extends DsaSignerTest {
         final DsaSigner dsaSigner = this.getDsaSigner(kp);
         final byte[] input = Utils.generateRandomBytes();
         final Signature signature = dsaSigner.sign(input);
-        final Ed25519DsaSigner dsaSignerWithZeroArrayPublicKey = Mockito.mock(Ed25519DsaSigner.class);
+        final Ed25519DsaSigner dsaSignerWithZeroArrayPublicKey = Mockito
+            .mock(Ed25519DsaSigner.class);
         final KeyPair keyPairWithZeroArrayPublicKey = Mockito.mock(KeyPair.class);
         Mockito.when(dsaSignerWithZeroArrayPublicKey.getKeyPair())
-                .thenReturn(keyPairWithZeroArrayPublicKey);
+            .thenReturn(keyPairWithZeroArrayPublicKey);
         Mockito.when(keyPairWithZeroArrayPublicKey.getPublicKey())
-                .thenReturn(new PublicKey(new byte[32]));
+            .thenReturn(new PublicKey(new byte[32]));
         Mockito.when(dsaSignerWithZeroArrayPublicKey.verify(input, signature)).thenCallRealMethod();
-        Mockito.when(dsaSignerWithZeroArrayPublicKey.isCanonicalSignature(signature)).thenReturn(true);
+        Mockito.when(dsaSignerWithZeroArrayPublicKey.isCanonicalSignature(signature))
+            .thenReturn(true);
 
         // Act:
         final boolean result = dsaSignerWithZeroArrayPublicKey.verify(input, signature);
 
         // Assert (getKeyPair() would be called more than once if it got beyond the second check):
         Assert.assertThat(result, IsEqual.equalTo(false));
-        Mockito.verify(dsaSignerWithZeroArrayPublicKey, Mockito.times(1)).isCanonicalSignature(signature);
+        Mockito.verify(dsaSignerWithZeroArrayPublicKey, Mockito.times(1))
+            .isCanonicalSignature(signature);
         Mockito.verify(dsaSignerWithZeroArrayPublicKey, Mockito.times(1)).getKeyPair();
     }
 

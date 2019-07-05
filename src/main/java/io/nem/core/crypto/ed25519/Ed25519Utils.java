@@ -19,7 +19,6 @@ package io.nem.core.crypto.ed25519;
 import io.nem.core.crypto.Hashes;
 import io.nem.core.crypto.PrivateKey;
 import io.nem.core.crypto.ed25519.arithmetic.Ed25519EncodedFieldElement;
-
 import java.util.Arrays;
 
 /**
@@ -28,8 +27,8 @@ import java.util.Arrays;
 public class Ed25519Utils {
 
     /**
-     * Prepares a private key's raw value for scalar multiplication.
-     * The hashing is for achieving better randomness and the clamping prevents small subgroup attacks.
+     * Prepares a private key's raw value for scalar multiplication. The hashing is for achieving
+     * better randomness and the clamping prevents small subgroup attacks.
      *
      * @param key The private key.
      * @return The prepared encoded field element.

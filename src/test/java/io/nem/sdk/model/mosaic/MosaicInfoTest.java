@@ -16,28 +16,32 @@
 
 package io.nem.sdk.model.mosaic;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import io.nem.sdk.model.account.PublicAccount;
 import io.nem.sdk.model.blockchain.NetworkType;
-import io.nem.sdk.model.namespace.NamespaceId;
-import org.junit.jupiter.api.Test;
-
 import java.math.BigInteger;
-
-import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Test;
 
 class MosaicInfoTest {
 
     @Test
     void createAMosaicInfoViaConstructor() {
-        MosaicProperties mosaicProperties = new MosaicProperties(true, true, 3, BigInteger.valueOf(10));
+        MosaicProperties mosaicProperties =
+            MosaicProperties.create(true, true, 3, BigInteger.valueOf(10));
         MosaicId mosaicId = new MosaicId(new BigInteger("-3087871471161192663"));
 
-        MosaicInfo mosaicInfo = new MosaicInfo(
+        MosaicInfo mosaicInfo =
+            MosaicInfo.create(
                 "5A3CD9B09CD1E8000159249B",
                 mosaicId,
                 new BigInteger("100"),
                 new BigInteger("0"),
-                new PublicAccount("B4F12E7C9F6946091E2CB8B6D3A12B50D17CCBBF646386EA27CE2946A7423DCF", NetworkType.MIJIN_TEST),
+                new PublicAccount(
+                    "B4F12E7C9F6946091E2CB8B6D3A12B50D17CCBBF646386EA27CE2946A7423DCF",
+                    NetworkType.MIJIN_TEST),
                 1,
                 mosaicProperties);
 
@@ -45,23 +49,31 @@ class MosaicInfoTest {
         assertEquals(mosaicId, mosaicInfo.getMosaicId());
         assertEquals(new BigInteger("100"), mosaicInfo.getSupply());
         assertEquals(new BigInteger("0"), mosaicInfo.getHeight());
-        assertEquals(new PublicAccount("B4F12E7C9F6946091E2CB8B6D3A12B50D17CCBBF646386EA27CE2946A7423DCF", NetworkType.MIJIN_TEST), mosaicInfo.getOwner());
+        assertEquals(
+            new PublicAccount(
+                "B4F12E7C9F6946091E2CB8B6D3A12B50D17CCBBF646386EA27CE2946A7423DCF",
+                NetworkType.MIJIN_TEST),
+            mosaicInfo.getOwner());
         assertTrue(mosaicInfo.isSupplyMutable());
         assertTrue(mosaicInfo.isTransferable());
         assertEquals(3, mosaicInfo.getDivisibility());
-        assertEquals(BigInteger.valueOf(10), mosaicInfo.getDuration());
+        assertEquals(BigInteger.valueOf(10).intValue(), mosaicInfo.getDuration().get().intValue());
     }
 
     @Test
     void shouldReturnIsSupplyMutableWhenIsMutable() {
-        MosaicProperties mosaicProperties = new MosaicProperties(true, true, 3, BigInteger.valueOf(10));
+        MosaicProperties mosaicProperties =
+            MosaicProperties.create(true, true, 3, BigInteger.valueOf(10));
 
-        MosaicInfo mosaicInfo = new MosaicInfo(
+        MosaicInfo mosaicInfo =
+            MosaicInfo.create(
                 "5A3CD9B09CD1E8000159249B",
                 new MosaicId(new BigInteger("-3087871471161192663")),
                 new BigInteger("100"),
                 new BigInteger("0"),
-                new PublicAccount("B4F12E7C9F6946091E2CB8B6D3A12B50D17CCBBF646386EA27CE2946A7423DCF", NetworkType.MIJIN_TEST),
+                new PublicAccount(
+                    "B4F12E7C9F6946091E2CB8B6D3A12B50D17CCBBF646386EA27CE2946A7423DCF",
+                    NetworkType.MIJIN_TEST),
                 1,
                 mosaicProperties);
 
@@ -70,14 +82,18 @@ class MosaicInfoTest {
 
     @Test
     void shouldReturnIsSupplyMutableWhenIsImmutable() {
-        MosaicProperties mosaicProperties = new MosaicProperties(false, true, 3, BigInteger.valueOf(10));
+        MosaicProperties mosaicProperties =
+            MosaicProperties.create(false, true, 3, BigInteger.valueOf(10));
 
-        MosaicInfo mosaicInfo = new MosaicInfo(
+        MosaicInfo mosaicInfo =
+            MosaicInfo.create(
                 "5A3CD9B09CD1E8000159249B",
                 new MosaicId(new BigInteger("-3087871471161192663")),
                 new BigInteger("100"),
                 new BigInteger("0"),
-                new PublicAccount("B4F12E7C9F6946091E2CB8B6D3A12B50D17CCBBF646386EA27CE2946A7423DCF", NetworkType.MIJIN_TEST),
+                new PublicAccount(
+                    "B4F12E7C9F6946091E2CB8B6D3A12B50D17CCBBF646386EA27CE2946A7423DCF",
+                    NetworkType.MIJIN_TEST),
                 1,
                 mosaicProperties);
 
@@ -86,14 +102,18 @@ class MosaicInfoTest {
 
     @Test
     void shouldReturnIsTransferableWhenItsTransferable() {
-        MosaicProperties mosaicProperties = new MosaicProperties(true, true, 3, BigInteger.valueOf(10));
+        MosaicProperties mosaicProperties =
+            MosaicProperties.create(true, true, 3, BigInteger.valueOf(10));
 
-        MosaicInfo mosaicInfo = new MosaicInfo(
+        MosaicInfo mosaicInfo =
+            MosaicInfo.create(
                 "5A3CD9B09CD1E8000159249B",
                 new MosaicId(new BigInteger("-3087871471161192663")),
                 new BigInteger("100"),
                 new BigInteger("0"),
-                new PublicAccount("B4F12E7C9F6946091E2CB8B6D3A12B50D17CCBBF646386EA27CE2946A7423DCF", NetworkType.MIJIN_TEST),
+                new PublicAccount(
+                    "B4F12E7C9F6946091E2CB8B6D3A12B50D17CCBBF646386EA27CE2946A7423DCF",
+                    NetworkType.MIJIN_TEST),
                 1,
                 mosaicProperties);
 
@@ -102,14 +122,18 @@ class MosaicInfoTest {
 
     @Test
     void shouldReturnIsTransferableWhenItsNotTransferable() {
-        MosaicProperties mosaicProperties = new MosaicProperties(true, false, 3, BigInteger.valueOf(10));
+        MosaicProperties mosaicProperties =
+            MosaicProperties.create(true, false, 3, BigInteger.valueOf(10));
 
-        MosaicInfo mosaicInfo = new MosaicInfo(
+        MosaicInfo mosaicInfo =
+            MosaicInfo.create(
                 "5A3CD9B09CD1E8000159249B",
                 new MosaicId(new BigInteger("-3087871471161192663")),
                 new BigInteger("100"),
                 new BigInteger("0"),
-                new PublicAccount("B4F12E7C9F6946091E2CB8B6D3A12B50D17CCBBF646386EA27CE2946A7423DCF", NetworkType.MIJIN_TEST),
+                new PublicAccount(
+                    "B4F12E7C9F6946091E2CB8B6D3A12B50D17CCBBF646386EA27CE2946A7423DCF",
+                    NetworkType.MIJIN_TEST),
                 1,
                 mosaicProperties);
 

@@ -51,6 +51,4 @@ public enum NamespaceType {
     public int getValue() {
         return value;
     }
-
 }
-

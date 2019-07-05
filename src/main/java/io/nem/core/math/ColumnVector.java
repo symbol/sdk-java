@@ -17,12 +17,11 @@
 package io.nem.core.math;
 
 import io.nem.core.utils.FormatUtils;
-import org.apache.commons.math3.stat.descriptive.rank.Median;
-
 import java.text.DecimalFormat;
 import java.util.Arrays;
 import java.util.function.DoubleFunction;
 import java.util.function.Supplier;
+import org.apache.commons.math3.stat.descriptive.rank.Median;
 
 /**
  * Represents a linear algebra vector.
@@ -70,9 +69,9 @@ public class ColumnVector {
         this.size = this.vector.length;
     }
 
-    //region matrix delegation
+    // region matrix delegation
 
-    //region size / {get|set|increment}At
+    // region size / {get|set|increment}At
 
     /**
      * Gets the size of the vector.
@@ -97,7 +96,7 @@ public class ColumnVector {
      * Sets a value at the specified index.
      *
      * @param index The index.
-     * @param val   The value.
+     * @param val The value.
      */
     public void setAt(final int index, final double val) {
         this.matrix.setAt(index, 0, val);
@@ -107,22 +106,20 @@ public class ColumnVector {
      * Increments at the specified index by a value.
      *
      * @param index The index.
-     * @param val   The value.
+     * @param val The value.
      */
     public void incrementAt(final int index, final double val) {
         this.matrix.incrementAt(index, 0, val);
     }
 
-    //endregion
+    // endregion
 
-    //region mutation functions
+    // region mutation functions
 
     /**
-     * Normalizes this vector's elements so that the absolute value of all
-     * elements sums to 1.0.
-     * <br>
-     * This method has the side effect of modifying the implicit context
-     * object, so be careful.
+     * Normalizes this vector's elements so that the absolute value of all elements sums to 1.0.
+     * <br> This method has the side effect of modifying the implicit context object, so be
+     * careful.
      */
     public void normalize() {
         this.matrix.normalizeColumns();
@@ -137,13 +134,12 @@ public class ColumnVector {
         this.matrix.scale(scale);
     }
 
-    //endregion
+    // endregion
 
-    //region element-wise operations
+    // region element-wise operations
 
     /**
-     * Creates a new ColumnVector by multiplying this vector element-wise with
-     * another vector.
+     * Creates a new ColumnVector by multiplying this vector element-wise with another vector.
      *
      * @param vector The vector.
      * @return The new vector.
@@ -162,9 +158,9 @@ public class ColumnVector {
         return this.transform(() -> ColumnVector.this.matrix.addElementWise(vector.matrix));
     }
 
-    //endregion
+    // endregion
 
-    //region aggregation functions
+    // region aggregation functions
 
     /**
      * Gets the sum of the absolute value of all the vector's elements.
@@ -184,12 +180,13 @@ public class ColumnVector {
         return this.matrix.sum();
     }
 
-    //endregion
+    // endregion
 
-    //region transforms
+    // region transforms
 
     /**
-     * Creates a new ColumnVector by rounding this vector to the specified number of decimal places.
+     * Creates a new ColumnVector by rounding this vector to the specified number of decimal
+     * places.
      *
      * @param numPlaces The number of decimal places.
      * @return The new vector.
@@ -241,9 +238,9 @@ public class ColumnVector {
         return new ColumnVector(matrix);
     }
 
-    //endregion
+    // endregion
 
-    //region predicates
+    // region predicates
 
     /**
      * Determines if this vector is a zero vector.
@@ -254,11 +251,11 @@ public class ColumnVector {
         return this.matrix.isZeroMatrix();
     }
 
-    //endregion
+    // endregion
 
-    //endregion
+    // endregion
 
-    //region getRaw / setAll
+    // region getBytes / setAll
 
     /**
      * Gets the underlying, raw array.
@@ -280,13 +277,12 @@ public class ColumnVector {
         }
     }
 
-    //endregion
+    // endregion
 
-    //region align
+    // region align
 
     /**
-     * Scales this vector so that v[0] is equal to 1.
-     * This can help PowerIteration converge faster.
+     * Scales this vector so that v[0] is equal to 1. This can help PowerIteration converge faster.
      * Alignment will fail if the vector's first element is 0.
      *
      * @return true if the alignment was successful; false otherwise.
@@ -300,9 +296,9 @@ public class ColumnVector {
         return true;
     }
 
-    //endregion
+    // endregion
 
-    //region max / median
+    // region max / median
 
     /**
      * Gets the maximum value for an individual element in this vector.
@@ -328,9 +324,9 @@ public class ColumnVector {
         return median.evaluate(this.vector);
     }
 
-    //endregion
+    // endregion
 
-    //region magnitude / distance / correlation
+    // region magnitude / distance / correlation
 
     /**
      * Gets the magnitude of this vector.
@@ -365,7 +361,8 @@ public class ColumnVector {
 
     private double distance(final ColumnVector vector, final DoubleFunction<Double> aggregate) {
         if (this.size != vector.size) {
-            throw new IllegalArgumentException("cannot determine the distance between vectors with different sizes");
+            throw new IllegalArgumentException(
+                "cannot determine the distance between vectors with different sizes");
         }
 
         double distance = 0;
@@ -385,7 +382,8 @@ public class ColumnVector {
      */
     public double correlation(final ColumnVector vector) {
         if (this.size != vector.size) {
-            throw new IllegalArgumentException("cannot determine the correlation between vectors with different sizes");
+            throw new IllegalArgumentException(
+                "cannot determine the correlation between vectors with different sizes");
         }
 
         final ColumnVector meanAdjustedX = this.meanAdjust();
@@ -402,9 +400,9 @@ public class ColumnVector {
         return this.add(-mean);
     }
 
-    //endregion
+    // endregion
 
-    //region toString
+    // region toString
 
     @Override
     public String toString() {
@@ -422,9 +420,9 @@ public class ColumnVector {
         return builder.toString();
     }
 
-    //endregion
+    // endregion
 
-    //region setNegativesToZero
+    // region setNegativesToZero
 
     /**
      * Sets all negative values to zero.
@@ -433,9 +431,9 @@ public class ColumnVector {
         this.matrix.removeNegatives();
     }
 
-    //endregion
+    // endregion
 
-    //region hashCode / equals
+    // region hashCode / equals
 
     @Override
     public int hashCode() {
@@ -452,5 +450,5 @@ public class ColumnVector {
         return Arrays.equals(this.vector, rhs.vector);
     }
 
-    //endregion
+    // endregion
 }

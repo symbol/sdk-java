@@ -16,14 +16,11 @@
 
 package io.nem.core.utils;
 
-import io.nem.sdk.model.mosaic.MosaicNonce;
-
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 
 public class ByteUtils {
-
 
     /**
      * Converts a BigInteger value into an array of size bytes.
@@ -35,7 +32,9 @@ public class ByteUtils {
     public static byte[] bigIntToBytesOfSize(final BigInteger x, final int size) {
         byte[] bytes = x.toByteArray();
         int maxSize = bytes.length;
-        bytes = Arrays.copyOfRange(bytes, (maxSize <= size) ? 0 : maxSize - size, (maxSize <= size) ? size : maxSize);
+        bytes =
+            Arrays.copyOfRange(
+                bytes, (maxSize <= size) ? 0 : maxSize - size, (maxSize <= size) ? size : maxSize);
         return bytes;
     }
 
@@ -100,9 +99,8 @@ public class ByteUtils {
     }
 
     /**
-     * Converts an int array into a byte array.
-     * Assumes each integer value fits in a byte.
-     * If integer value uses more than 1 byte then only the lowest byte
+     * Converts an int array into a byte array. Assumes each integer value fits in a byte. If
+     * integer value uses more than 1 byte then only the lowest byte
      *
      * @param intArray The int array.
      * @return The bytes.
@@ -110,34 +108,9 @@ public class ByteUtils {
     public static byte[] intArrayToByteArray(final int[] intArray) {
         byte[] bytes = new byte[intArray.length];
         for (int i = 0; i < intArray.length; i++) {
-            bytes[i] = (byte)intArray[i];
+            bytes[i] = (byte) intArray[i];
         }
         return bytes;
-    }
-
-    /**
-     * Converts an array of 2 bytes into a short.
-     *
-     * @param bytes The bytes.
-     * @return The short.
-     */
-    public static short bytesToShort(final byte[] bytes) {
-        final ByteBuffer buffer = ByteBuffer.allocate(2);
-        buffer.put(bytes, 0, 2);
-        buffer.flip();
-        return buffer.getShort();
-    }
-
-    /**
-     * Converts a short value into an array of 2 bytes.
-     *
-     * @param x The short.
-     * @return The bytes.
-     */
-    public static byte[] shortToBytes(final short x) {
-        final ByteBuffer buffer = ByteBuffer.allocate(2);
-        buffer.putShort(x);
-        return buffer.array();
     }
 
     /**
@@ -158,7 +131,8 @@ public class ByteUtils {
     }
 
     /**
-     * Constant-time check if byte is negative. The constant time behavior eliminates side channel attacks.
+     * Constant-time check if byte is negative. The constant time behavior eliminates side channel
+     * attacks.
      *
      * @param b The byte to check.
      * @return 1 if the byte is negative, 0 otherwise.
@@ -182,5 +156,20 @@ public class ByteUtils {
 
         builder.append("}");
         return builder.toString();
+    }
+
+    /**
+     * Reverse and copy to a new array.
+     *
+     * @param array Array to copy.
+     * @return Reverse array.
+     */
+    public static byte[] reverseCopy(final byte[] array) {
+        final byte[] reverseArray = new byte[array.length];
+
+        for (int i = 0, j = array.length - 1; i < array.length; i++, j--) {
+            reverseArray[j] = array[i];
+        }
+        return reverseArray;
     }
 }

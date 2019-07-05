@@ -16,9 +16,9 @@
 
 package io.nem.sdk.model.mosaic;
 
-import org.apache.commons.lang3.Validate;
-
 import java.math.BigInteger;
+import java.util.Optional;
+import org.apache.commons.lang3.Validate;
 
 /**
  * The mosaic properties structure describes mosaic properties.
@@ -26,41 +26,73 @@ import java.math.BigInteger;
  * @since 1.0
  */
 public class MosaicProperties {
+
     /**
-     * The creator can choose between a definition that allows a mosaic supply change at a later point or an immutable supply.
-     * Allowed values for the property are "true" and "false". The default value is "false".
+     * The creator can choose between a definition that allows a mosaic supply change at a later
+     * point or an immutable supply. Allowed values for the property are "true" and "false". The
+     * default value is "false".
      */
     private final boolean supplyMutable;
     /**
-     * The creator can choose if the mosaic definition should allow for transfers of the mosaic among accounts other than the creator.
-     * If the property 'transferable' is set to "false", only transfer transactions
-     * having the creator as sender or as recipient can transfer mosaics of that type.
-     * If set to "true" the mosaics can be transferred to and from arbitrary accounts.
+     * The creator can choose if the mosaic definition should allow for transfers of the mosaic
+     * among accounts other than the creator. If the property 'transferable' is set to "false", only
+     * transfer transactions having the creator as sender or as recipient can transfer mosaics of
+     * that type. If set to "true" the mosaics can be transferred to and from arbitrary accounts.
      * Allowed values for the property are thus "true" and "false". The default value is "true".
      */
     private final boolean transferable;
     /**
-     * The divisibility determines up to what decimal place the mosaic can be divided into.
-     * Thus a divisibility of 3 means that a mosaic can be divided into smallest parts of 0.001 mosaics
-     * i.e. milli mosaics is the smallest sub-unit.
-     * When transferring mosaics via a transfer transaction the quantity transferred
-     * is given in multiples of those smallest parts.
-     * The divisibility must be in the range of 0 and 6. The default value is "0".
+     * The divisibility determines up to what decimal place the mosaic can be divided into. Thus a
+     * divisibility of 3 means that a mosaic can be divided into smallest parts of 0.001 mosaics
+     * i.e. milli mosaics is the smallest sub-unit. When transferring mosaics via a transfer
+     * transaction the quantity transferred is given in multiples of those smallest parts. The
+     * divisibility must be in the range of 0 and 6. The default value is "0".
      */
     private final int divisibility;
     /**
-     * The duration in blocks a mosaic will be available.
-     * After the duration finishes mosaic is inactive and can be renewed.
-     * Duration is optional when defining the mosaic
+     * The duration in blocks a mosaic will be available. After the duration finishes mosaic is
+     * inactive and can be renewed. Duration is optional when defining the mosaic
      */
-    private final BigInteger duration;
+    private final Optional<BigInteger> duration;
 
-    public MosaicProperties(boolean supplyMutable, boolean transferable, int divisibility, BigInteger duration) {
+    private MosaicProperties(
+        boolean supplyMutable,
+        boolean transferable,
+        int divisibility,
+        Optional<BigInteger> duration) {
         Validate.notNull(duration, "Duration cannot be null");
         this.supplyMutable = supplyMutable;
         this.transferable = transferable;
         this.divisibility = divisibility;
         this.duration = duration;
+    }
+
+    /**
+     * Creates a mosaic properties.
+     *
+     * @param supplyMutable True supply can change.
+     * @param transferable True mosaic can be transfer.
+     * @param divisibility Decimal place of the mosaic.
+     * @param duration Duration in blocks a mosaic will be available.
+     * @return Mosaic properties.
+     */
+    public static MosaicProperties create(
+        boolean supplyMutable, boolean transferable, int divisibility, BigInteger duration) {
+        return new MosaicProperties(supplyMutable, transferable, divisibility,
+            Optional.of(duration));
+    }
+
+    /**
+     * Creates a mosaic properties.
+     *
+     * @param supplyMutable True supply can change.
+     * @param transferable True mosaic can be transfer.
+     * @param divisibility Decimal place of the mosaic.
+     * @return Mosaic properties.
+     */
+    public static MosaicProperties create(
+        boolean supplyMutable, boolean transferable, int divisibility) {
+        return new MosaicProperties(supplyMutable, transferable, divisibility, Optional.empty());
     }
 
     /**
@@ -86,7 +118,7 @@ public class MosaicProperties {
      *
      * @return the number of blocks from height it will be active
      */
-    public BigInteger getDuration() {
+    public Optional<BigInteger> getDuration() {
         return duration;
     }
 
@@ -97,36 +129,5 @@ public class MosaicProperties {
      */
     public int getDivisibility() {
         return divisibility;
-    }
-
-    public static class Builder {
-        private boolean supplyMutable;
-        private boolean transferable;
-        private int divisibility;
-        private BigInteger duration;
-
-        public Builder supplyMutable(boolean supplyMutable) {
-            this.supplyMutable = supplyMutable;
-            return this;
-        }
-
-        public Builder transferable(boolean transferable) {
-            this.transferable = transferable;
-            return this;
-        }
-
-        public Builder divisibility(int divisibility) {
-            this.divisibility = divisibility;
-            return this;
-        }
-
-        public Builder duration(BigInteger duration) {
-            this.duration = duration;
-            return this;
-        }
-
-        public MosaicProperties build() {
-            return new MosaicProperties(this.supplyMutable, this.transferable, this.divisibility, this.duration);
-        }
     }
 }

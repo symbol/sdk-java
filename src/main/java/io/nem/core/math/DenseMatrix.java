@@ -17,7 +17,6 @@
 package io.nem.core.math;
 
 import io.nem.core.utils.FormatUtils;
-
 import java.text.DecimalFormat;
 import java.util.function.DoubleConsumer;
 
@@ -25,6 +24,7 @@ import java.util.function.DoubleConsumer;
  * Represents a dense matrix.
  */
 public final class DenseMatrix extends Matrix {
+
     private final int numCols;
     private final double[] values;
 
@@ -43,8 +43,8 @@ public final class DenseMatrix extends Matrix {
     /**
      * Creates a new matrix of the specified size and values.
      *
-     * @param rows   The desired number of rows.
-     * @param cols   The desired number of columns.
+     * @param rows The desired number of rows.
+     * @param cols The desired number of columns.
      * @param values The specified values.
      */
     public DenseMatrix(final int rows, final int cols, final double[] values) {
@@ -113,7 +113,8 @@ public final class DenseMatrix extends Matrix {
             public MatrixElement next() {
                 while (this.index < DenseMatrix.this.getColumnCount()) {
                     if (DenseMatrix.this.getAt(row, this.index++) != 0.0) {
-                        return new MatrixElement(row, this.index - 1, DenseMatrix.this.getAt(row, this.index - 1));
+                        return new MatrixElement(
+                            row, this.index - 1, DenseMatrix.this.getAt(row, this.index - 1));
                     }
                 }
 
@@ -127,17 +128,18 @@ public final class DenseMatrix extends Matrix {
         final DecimalFormat format = FormatUtils.getDefaultDecimalFormat();
         final StringBuilder builder = new StringBuilder();
 
-        this.forEach((r, c, v) -> {
-            if (0 != r && 0 == c) {
-                builder.append(System.lineSeparator());
-            }
+        this.forEach(
+            (r, c, v) -> {
+                if (0 != r && 0 == c) {
+                    builder.append(System.lineSeparator());
+                }
 
-            if (0 != c) {
-                builder.append(" ");
-            }
+                if (0 != c) {
+                    builder.append(" ");
+                }
 
-            builder.append(format.format(v));
-        });
+                builder.append(format.format(v));
+            });
 
         return builder.toString();
     }
@@ -145,6 +147,7 @@ public final class DenseMatrix extends Matrix {
     // endregion
 
     class SetWrapper implements DoubleConsumer {
+
         final int i;
         final int j;
 

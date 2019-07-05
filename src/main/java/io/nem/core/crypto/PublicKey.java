@@ -17,13 +17,14 @@
 package io.nem.core.crypto;
 
 import io.nem.core.utils.HexEncoder;
-
+import java.nio.ByteBuffer;
 import java.util.Arrays;
 
 /**
  * Represents a public key.
  */
 public class PublicKey {
+
     private final byte[] value;
 
     /**
@@ -54,8 +55,17 @@ public class PublicKey {
      *
      * @return The raw public key value.
      */
-    public byte[] getRaw() {
+    public byte[] getBytes() {
         return this.value;
+    }
+
+    /**
+     * Gets raw public key value.
+     *
+     * @return The raw public key value.
+     */
+    public ByteBuffer getByteBuffer() {
+        return ByteBuffer.wrap(this.value);
     }
 
     @Override
@@ -75,6 +85,6 @@ public class PublicKey {
 
     @Override
     public String toString() {
-        return HexEncoder.getString(this.value);
+        return HexEncoder.getString(this.value).toUpperCase();
     }
 }
