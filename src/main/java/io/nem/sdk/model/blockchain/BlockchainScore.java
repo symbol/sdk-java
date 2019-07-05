@@ -18,22 +18,21 @@ package io.nem.sdk.model.blockchain;
 import java.math.BigInteger;
 
 public class BlockchainScore {
+
     private final BigInteger scoreLow;
     private final BigInteger scoreHigh;
 
     /**
      * Constructor
-     * @param scoreLow
-     * @param scoreHigh
      */
-    public BlockchainScore(BigInteger scoreLow, BigInteger scoreHigh)
-    {
+    public BlockchainScore(BigInteger scoreLow, BigInteger scoreHigh) {
         this.scoreHigh = scoreHigh;
         this.scoreLow = scoreLow;
     }
 
     /**
      * Get scoreLow
+     *
      * @return BigInteger
      */
     public BigInteger getScoreLow() {
@@ -42,6 +41,7 @@ public class BlockchainScore {
 
     /**
      * Get scoreHigh
+     *
      * @return BigInteger
      */
     public BigInteger getScoreHigh() {

@@ -26,15 +26,6 @@ public enum RoleType {
     }
 
     /**
-     * Returns enum value.
-     *
-     * @return enum value
-     */
-    public int getValue() {
-        return this.value;
-    }
-
-    /**
      * Static constructor converting role type raw value to enum instance.
      *
      * @return {@link RoleType}
@@ -48,5 +39,14 @@ public enum RoleType {
             default:
                 throw new IllegalArgumentException(value + " is not a valid role type");
         }
+    }
+
+    /**
+     * Returns enum value.
+     *
+     * @return enum value
+     */
+    public int getValue() {
+        return this.value;
     }
 }

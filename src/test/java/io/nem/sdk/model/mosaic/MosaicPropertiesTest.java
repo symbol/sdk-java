@@ -16,21 +16,22 @@
 
 package io.nem.sdk.model.mosaic;
 
-import org.junit.jupiter.api.Test;
-
-import java.math.BigInteger;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.math.BigInteger;
+import org.junit.jupiter.api.Test;
 
 class MosaicPropertiesTest {
 
     @Test
     void shouldCreateMosaicPropertiesViaConstructor() {
-        MosaicProperties mosaicProperties = MosaicProperties.create(true, true, 1, BigInteger.valueOf(1000));
+        MosaicProperties mosaicProperties =
+            MosaicProperties.create(true, true, 1, BigInteger.valueOf(1000));
         assertTrue(mosaicProperties.isSupplyMutable());
         assertTrue(mosaicProperties.isTransferable());
         assertTrue(1 == mosaicProperties.getDivisibility());
-        assertEquals(BigInteger.valueOf(1000).intValue(), mosaicProperties.getDuration().get().intValue());
+        assertEquals(
+            BigInteger.valueOf(1000).intValue(), mosaicProperties.getDuration().get().intValue());
     }
 }

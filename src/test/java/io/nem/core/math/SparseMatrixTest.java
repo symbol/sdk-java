@@ -17,16 +17,15 @@
 package io.nem.core.math;
 
 import io.nem.core.test.IsEquivalent;
+import java.util.ArrayList;
+import java.util.List;
 import org.hamcrest.core.IsEqual;
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class SparseMatrixTest extends MatrixTest<SparseMatrix> {
 
-    //region forEach
+    // region forEach
 
     private static void assertSorted(final MatrixNonZeroElementRowIterator iterator) {
         int col = -1;
@@ -37,9 +36,9 @@ public class SparseMatrixTest extends MatrixTest<SparseMatrix> {
         }
     }
 
-    //endregion
+    // endregion
 
-    //region toString
+    // region toString
 
     @Test
     public void forEachReturnsAllNonZeroElements() {
@@ -54,24 +53,27 @@ public class SparseMatrixTest extends MatrixTest<SparseMatrix> {
         Assert.assertThat(values, IsEquivalent.equivalentTo(2.0, 1.0, -5.0, 8.0));
     }
 
-    //endregion
+    // endregion
 
-    //region removal / reallocation
+    // region removal / reallocation
 
     @Test
     public void sparseMatrixStringRepresentationIsCorrect() {
         // Arrange:
-        final Matrix matrix = this.createMatrix(3, 2, new double[]{
-                2.1234, 11.1234, 0, 1, 5012.0126, 0
-        });
+        final Matrix matrix =
+            this.createMatrix(3, 2, new double[]{2.1234, 11.1234, 0, 1, 5012.0126, 0});
 
         // Assert:
         final String expectedString =
-                "[3 x 2]" + System.lineSeparator()
-                        + "(0, 0) -> 2.123" + System.lineSeparator()
-                        + "(0, 1) -> 11.123" + System.lineSeparator()
-                        + "(1, 1) -> 1.000" + System.lineSeparator()
-                        + "(2, 0) -> 5012.013";
+            "[3 x 2]"
+                + System.lineSeparator()
+                + "(0, 0) -> 2.123"
+                + System.lineSeparator()
+                + "(0, 1) -> 11.123"
+                + System.lineSeparator()
+                + "(1, 1) -> 1.000"
+                + System.lineSeparator()
+                + "(2, 0) -> 5012.013";
         Assert.assertThat(matrix.toString(), IsEqual.equalTo(expectedString));
     }
 
@@ -89,8 +91,8 @@ public class SparseMatrixTest extends MatrixTest<SparseMatrix> {
         // Assert:
         Assert.assertThat(sparseMatrix.getNonZeroColumnCount(0), IsEqual.equalTo(1));
         Assert.assertThat(
-                sparseMatrix,
-                IsEqual.equalTo(this.createMatrix(3, 2, new double[]{2, 0, 5, 11, 1, 8})));
+            sparseMatrix,
+            IsEqual.equalTo(this.createMatrix(3, 2, new double[]{2, 0, 5, 11, 1, 8})));
     }
 
     @Test
@@ -117,8 +119,8 @@ public class SparseMatrixTest extends MatrixTest<SparseMatrix> {
         // Assert:
         Assert.assertThat(sparseMatrix.getNonZeroColumnCount(0), IsEqual.equalTo(1));
         Assert.assertThat(
-                sparseMatrix,
-                IsEqual.equalTo(this.createMatrix(3, 2, new double[]{2, 0, 5, 11, 1, 8})));
+            sparseMatrix,
+            IsEqual.equalTo(this.createMatrix(3, 2, new double[]{2, 0, 5, 11, 1, 8})));
     }
 
     @Test
@@ -136,14 +138,15 @@ public class SparseMatrixTest extends MatrixTest<SparseMatrix> {
         // Assert:
         Assert.assertThat(sparseMatrix.getNonZeroColumnCount(0), IsEqual.equalTo(0));
         Assert.assertThat(
-                sparseMatrix,
-                IsEqual.equalTo(this.createMatrix(3, 2, new double[]{0, 0, 5, 11, 1, 8})));
+            sparseMatrix,
+            IsEqual.equalTo(this.createMatrix(3, 2, new double[]{0, 0, 5, 11, 1, 8})));
     }
 
     @Test
     public void removeLessThanShrinksNumberOfEntries() {
         // Arrange:
-        final SparseMatrix sparseMatrix = this.createMatrix(1, 6, new double[]{2, -3, -5, 11, -1, 8});
+        final SparseMatrix sparseMatrix = this
+            .createMatrix(1, 6, new double[]{2, -3, -5, 11, -1, 8});
 
         // Act:
         sparseMatrix.removeLessThan(0);
@@ -170,9 +173,9 @@ public class SparseMatrixTest extends MatrixTest<SparseMatrix> {
         Assert.assertThat(sparseMatrix.getAt(0, 1), IsEqual.equalTo(3.0));
     }
 
-    //endregion
+    // endregion
 
-    //region getNumEntries
+    // region getNumEntries
 
     @Test
     public void rowCanBeReallocatedIfLowerColumnElementDoesNotFit() {
@@ -192,9 +195,9 @@ public class SparseMatrixTest extends MatrixTest<SparseMatrix> {
         Assert.assertThat(sparseMatrix.getAt(0, 0), IsEqual.equalTo(3.0));
     }
 
-    //endregion
+    // endregion
 
-    //region sorted columns
+    // region sorted columns
 
     @Test
     public void getNumEntriesReturnsTotalNumberOfNonZeroElements() {
@@ -243,7 +246,8 @@ public class SparseMatrixTest extends MatrixTest<SparseMatrix> {
     @Test
     public void removeLessThanKeepsColumnsSorted() {
         // Arrange:
-        final SparseMatrix sparseMatrix = this.createMatrix(1, 6, new double[]{2, -3, -5, 11, -1, 8});
+        final SparseMatrix sparseMatrix = this
+            .createMatrix(1, 6, new double[]{2, -3, -5, 11, -1, 8});
 
         // Act:
         sparseMatrix.removeLessThan(0);
@@ -252,7 +256,7 @@ public class SparseMatrixTest extends MatrixTest<SparseMatrix> {
         assertSorted(sparseMatrix.getNonZeroElementRowIterator(0));
     }
 
-    //endregion
+    // endregion
 
     @Override
     protected SparseMatrix createMatrix(final int rows, final int cols) {

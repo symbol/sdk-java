@@ -17,24 +17,29 @@
 package io.nem.sdk.model.receipt;
 
 import io.nem.sdk.model.mosaic.MosaicId;
-
 import java.math.BigInteger;
 import java.util.Optional;
 
 public class InflationReceipt extends Receipt {
+
     private final MosaicId mosaicId;
     private final BigInteger amount;
 
     /**
      * Constructor InflationReceipt
      *
-     * @param mosaicId  Mosaic Id
-     * @param amount    Amount
-     * @param type      Receipt Type
-     * @param version   Receipt Version
-     * @param size      Receipt Size
+     * @param mosaicId Mosaic Id
+     * @param amount Amount
+     * @param type Receipt Type
+     * @param version Receipt Version
+     * @param size Receipt Size
      */
-    public InflationReceipt (MosaicId mosaicId, BigInteger amount, ReceiptType type, ReceiptVersion version, Optional<Integer> size) {
+    public InflationReceipt(
+        MosaicId mosaicId,
+        BigInteger amount,
+        ReceiptType type,
+        ReceiptVersion version,
+        Optional<Integer> size) {
         super(type, version, size);
         this.amount = amount;
         this.mosaicId = mosaicId;
@@ -44,12 +49,13 @@ public class InflationReceipt extends Receipt {
     /**
      * Constructor InflationReceipt
      *
-     * @param mosaicId  Mosaic Id
-     * @param amount    Amount
-     * @param type      Receipt Type
-     * @param version   Receipt Version
+     * @param mosaicId Mosaic Id
+     * @param amount Amount
+     * @param type Receipt Type
+     * @param version Receipt Version
      */
-    public InflationReceipt (MosaicId mosaicId, BigInteger amount, ReceiptType type, ReceiptVersion version) {
+    public InflationReceipt(
+        MosaicId mosaicId, BigInteger amount, ReceiptType type, ReceiptVersion version) {
         super(type, version, null);
         this.amount = amount;
         this.mosaicId = mosaicId;

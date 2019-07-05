@@ -23,12 +23,14 @@ public interface NodeRepository {
 
     /**
      * Supplies additional information about the application running on a node.
+     *
      * @summary Get the node information
      */
     Observable<NodeInfo> getNodeInfo();
 
     /**
      * Gets the node time at the moment the reply was sent and received.
+     *
      * @summary Get the node time
      */
     Observable<NodeTime> getNodeTime();

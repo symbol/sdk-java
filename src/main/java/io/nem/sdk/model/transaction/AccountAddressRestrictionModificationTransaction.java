@@ -15,73 +15,101 @@
  */
 package io.nem.sdk.model.transaction;
 
-import io.nem.catapult.builders.*;
+import io.nem.catapult.builders.AccountAddressRestrictionModificationBuilder;
+import io.nem.catapult.builders.AccountAddressRestrictionTransactionBuilder;
+import io.nem.catapult.builders.AccountRestrictionModificationTypeDto;
+import io.nem.catapult.builders.AccountRestrictionTypeDto;
+import io.nem.catapult.builders.AddressDto;
+import io.nem.catapult.builders.AmountDto;
+import io.nem.catapult.builders.EmbeddedAccountAddressRestrictionTransactionBuilder;
+import io.nem.catapult.builders.EntityTypeDto;
+import io.nem.catapult.builders.KeyDto;
+import io.nem.catapult.builders.SignatureDto;
+import io.nem.catapult.builders.TimestampDto;
 import io.nem.sdk.model.account.Address;
 import io.nem.sdk.model.account.PublicAccount;
 import io.nem.sdk.model.blockchain.NetworkType;
-import org.apache.commons.lang.Validate;
-
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import org.apache.commons.lang.Validate;
 
 public class AccountAddressRestrictionModificationTransaction extends Transaction {
+
     private final AccountRestrictionType restrictionType;
     private final List<AccountRestrictionModification<Address>> modifications;
 
     /**
      * public constructor
-     * @param networkType
-     * @param version
-     * @param deadline
-     * @param fee
-     * @param restrictionType
-     * @param modifications
-     * @param signature
-     * @param signer
-     * @param transactionInfo
      */
-    public AccountAddressRestrictionModificationTransaction(final NetworkType networkType, final Integer version, final Deadline deadline, final BigInteger fee,
-                                                            final AccountRestrictionType restrictionType, final List<AccountRestrictionModification<Address>> modifications,
-                                                            final String signature, final PublicAccount signer, final TransactionInfo transactionInfo) {
-        this(networkType, version, deadline, fee, restrictionType, modifications, Optional.of(signature),
-                Optional.of(signer), Optional.of(transactionInfo));
+    public AccountAddressRestrictionModificationTransaction(
+        final NetworkType networkType,
+        final Integer version,
+        final Deadline deadline,
+        final BigInteger fee,
+        final AccountRestrictionType restrictionType,
+        final List<AccountRestrictionModification<Address>> modifications,
+        final String signature,
+        final PublicAccount signer,
+        final TransactionInfo transactionInfo) {
+        this(
+            networkType,
+            version,
+            deadline,
+            fee,
+            restrictionType,
+            modifications,
+            Optional.of(signature),
+            Optional.of(signer),
+            Optional.of(transactionInfo));
     }
 
     /**
      * private constructor
-     * @param networkType
-     * @param version
-     * @param deadline
-     * @param fee
-     * @param restrictionType
-     * @param modifications
      */
-    private AccountAddressRestrictionModificationTransaction(final NetworkType networkType, final Integer version, final Deadline deadline, final BigInteger fee,
-                                                             final AccountRestrictionType restrictionType, final List<AccountRestrictionModification<Address>> modifications) {
-        this(networkType, version, deadline, fee, restrictionType, modifications, Optional.empty(), Optional.empty(),
-                Optional.empty());
+    private AccountAddressRestrictionModificationTransaction(
+        final NetworkType networkType,
+        final Integer version,
+        final Deadline deadline,
+        final BigInteger fee,
+        final AccountRestrictionType restrictionType,
+        final List<AccountRestrictionModification<Address>> modifications) {
+        this(
+            networkType,
+            version,
+            deadline,
+            fee,
+            restrictionType,
+            modifications,
+            Optional.empty(),
+            Optional.empty(),
+            Optional.empty());
     }
 
     /**
      * private constructor
-     * @param networkType
-     * @param version
-     * @param deadline
-     * @param fee
-     * @param restrictionType
-     * @param modifications
-     * @param signature
-     * @param signer
-     * @param transactionInfo
      */
-    private AccountAddressRestrictionModificationTransaction(final NetworkType networkType, final Integer version, final Deadline deadline, final BigInteger fee,
-                                                             final AccountRestrictionType restrictionType, final List<AccountRestrictionModification<Address>> modifications,
-                                                             final Optional<String> signature, final Optional<PublicAccount> signer,
-                                                             final Optional<TransactionInfo> transactionInfo) {
-        super(TransactionType.ACCOUNT_PROPERTIES_ADDRESS, networkType, version, deadline, fee, signature, signer, transactionInfo);
+    private AccountAddressRestrictionModificationTransaction(
+        final NetworkType networkType,
+        final Integer version,
+        final Deadline deadline,
+        final BigInteger fee,
+        final AccountRestrictionType restrictionType,
+        final List<AccountRestrictionModification<Address>> modifications,
+        final Optional<String> signature,
+        final Optional<PublicAccount> signer,
+        final Optional<TransactionInfo> transactionInfo) {
+        super(
+            TransactionType.ACCOUNT_PROPERTIES_ADDRESS,
+            networkType,
+            version,
+            deadline,
+            fee,
+            signature,
+            signer,
+            transactionInfo);
         Validate.notNull(restrictionType, "RestrictionType must not be null");
         Validate.notNull(modifications, "Modifications must not be null");
         this.restrictionType = restrictionType;
@@ -90,22 +118,26 @@ public class AccountAddressRestrictionModificationTransaction extends Transactio
 
     /**
      * Create account address restriction transaction object
-     * @param deadline
-     * @param restrictionType
-     * @param modifications
-     * @param networkType
+     *
      * @return {@link AccountAddressRestrictionModificationTransaction}
      */
-    public static AccountAddressRestrictionModificationTransaction create(Deadline deadline,
-                                                                          AccountRestrictionType restrictionType,
-                                                                          List<AccountRestrictionModification<Address>> modifications,
-                                                                          NetworkType networkType) {
-        return new AccountAddressRestrictionModificationTransaction(networkType, TransactionVersion.ACCOUNT_PROPERTIES_ADDRESS.getValue(), deadline,
-                        BigInteger.ZERO, restrictionType, modifications);
+    public static AccountAddressRestrictionModificationTransaction create(
+        Deadline deadline,
+        AccountRestrictionType restrictionType,
+        List<AccountRestrictionModification<Address>> modifications,
+        NetworkType networkType) {
+        return new AccountAddressRestrictionModificationTransaction(
+            networkType,
+            TransactionVersion.ACCOUNT_PROPERTIES_ADDRESS.getValue(),
+            deadline,
+            BigInteger.ZERO,
+            restrictionType,
+            modifications);
     }
 
     /**
      * Get account restriction type
+     *
      * @return {@linke AccountRestrictionType}
      */
     public AccountRestrictionType getRestrictionType() {
@@ -114,6 +146,7 @@ public class AccountAddressRestrictionModificationTransaction extends Transactio
 
     /**
      * Get account address restriction modifications
+     *
      * @return {@link List<AccountRestrictionModification<Address>>}
      */
     public List<AccountRestrictionModification<Address>> getModifications() {
@@ -131,12 +164,15 @@ public class AccountAddressRestrictionModificationTransaction extends Transactio
         final ByteBuffer signatureBuffer = ByteBuffer.allocate(64);
 
         AccountAddressRestrictionTransactionBuilder txBuilder =
-                AccountAddressRestrictionTransactionBuilder.create(new SignatureDto(signatureBuffer),
-                        new KeyDto(signerBuffer), getNetworkVersion(),
-                        EntityTypeDto.ACCOUNT_ADDRESS_RESTRICTION_TRANSACTION,
-                        new AmountDto(getFee().longValue()), new TimestampDto(getDeadline().getInstant()),
-                        AccountRestrictionTypeDto.rawValueOf(this.restrictionType.getValue()),
-                        getModificationBuilder());
+            AccountAddressRestrictionTransactionBuilder.create(
+                new SignatureDto(signatureBuffer),
+                new KeyDto(signerBuffer),
+                getNetworkVersion(),
+                EntityTypeDto.ACCOUNT_ADDRESS_RESTRICTION_TRANSACTION,
+                new AmountDto(getFee().longValue()),
+                new TimestampDto(getDeadline().getInstant()),
+                AccountRestrictionTypeDto.rawValueOf(this.restrictionType.getValue()),
+                getModificationBuilder());
         return txBuilder.serialize();
     }
 
@@ -147,26 +183,31 @@ public class AccountAddressRestrictionModificationTransaction extends Transactio
      */
     byte[] generateEmbeddedBytes() {
         EmbeddedAccountAddressRestrictionTransactionBuilder txBuilder =
-                EmbeddedAccountAddressRestrictionTransactionBuilder.create(new KeyDto(getSignerBytes().get()), getNetworkVersion(),
-                        EntityTypeDto.ACCOUNT_ADDRESS_RESTRICTION_TRANSACTION,
-                        AccountRestrictionTypeDto.rawValueOf(this.restrictionType.getValue()), getModificationBuilder());
+            EmbeddedAccountAddressRestrictionTransactionBuilder.create(
+                new KeyDto(getSignerBytes().get()),
+                getNetworkVersion(),
+                EntityTypeDto.ACCOUNT_ADDRESS_RESTRICTION_TRANSACTION,
+                AccountRestrictionTypeDto.rawValueOf(this.restrictionType.getValue()),
+                getModificationBuilder());
         return txBuilder.serialize();
     }
 
     /**
      * Gets account restriction modification.
+     *
      * @return account restriction modification.
      */
     private ArrayList<AccountAddressRestrictionModificationBuilder> getModificationBuilder() {
-        final ArrayList<AccountAddressRestrictionModificationBuilder> modificationBuilder = new ArrayList<>(modifications.size());
+        final ArrayList<AccountAddressRestrictionModificationBuilder> modificationBuilder =
+            new ArrayList<>(modifications.size());
         for (AccountRestrictionModification<Address> accountRestrictionModification : modifications) {
             final ByteBuffer addressByteBuffer =
-                    accountRestrictionModification.getValue().getByteBuffer();
+                accountRestrictionModification.getValue().getByteBuffer();
             final AccountAddressRestrictionModificationBuilder builder =
-                    AccountAddressRestrictionModificationBuilder.create(
-                            AccountRestrictionModificationTypeDto.rawValueOf(accountRestrictionModification.getModificationType().getValue()),
-                            new AddressDto(addressByteBuffer)
-                    );
+                AccountAddressRestrictionModificationBuilder.create(
+                    AccountRestrictionModificationTypeDto.rawValueOf(
+                        accountRestrictionModification.getModificationType().getValue()),
+                    new AddressDto(addressByteBuffer));
             modificationBuilder.add(builder);
         }
         return modificationBuilder;

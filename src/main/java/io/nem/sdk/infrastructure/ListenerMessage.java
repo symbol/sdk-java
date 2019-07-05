@@ -17,6 +17,7 @@
 package io.nem.sdk.infrastructure;
 
 public class ListenerMessage {
+
     private final ListenerChannel channel;
     private final Object message;
 

@@ -17,23 +17,23 @@
 package io.nem.core.crypto;
 
 import io.nem.core.test.Utils;
+import java.math.BigInteger;
 import org.hamcrest.core.IsEqual;
 import org.hamcrest.core.IsNot;
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.math.BigInteger;
-
 public class SignatureTest {
 
-    //region constructor
+    // region constructor
 
     private static Signature createSignature(final String r, final String s) {
         return new Signature(new BigInteger(r, 16), new BigInteger(s, 16));
     }
 
     private static Signature createSignature(final int r, final int s) {
-        return new Signature(new BigInteger(String.format("%d", r)), new BigInteger(String.format("%d", s)));
+        return new Signature(
+            new BigInteger(String.format("%d", r)), new BigInteger(String.format("%d", s)));
     }
 
     @Test
@@ -69,7 +69,8 @@ public class SignatureTest {
         final Signature originalSignature = createSignature("99512345", "12351234");
 
         // Act:
-        final Signature signature = new Signature(originalSignature.getBinaryR(), originalSignature.getBinaryS());
+        final Signature signature =
+            new Signature(originalSignature.getBinaryR(), originalSignature.getBinaryS());
 
         // Assert:
         Assert.assertThat(signature.getR(), IsEqual.equalTo(originalSignature.getR()));
@@ -120,9 +121,9 @@ public class SignatureTest {
         new Signature(new byte[32], new byte[33]);
     }
 
-    //endregion
+    // endregion
 
-    //region getBytes
+    // region getBytes
 
     @Test
     public void byteArrayCtorSucceedsIfByteArrayIsCorrectLength() {
@@ -152,9 +153,9 @@ public class SignatureTest {
         }
     }
 
-    //endregion
+    // endregion
 
-    //region getBinaryR / getBinaryS
+    // region getBinaryR / getBinaryS
 
     @Test
     public void canRoundtripBinarySignature() {
@@ -166,15 +167,15 @@ public class SignatureTest {
 
     private Signature[] createRoundtripTestSignatures() {
         return new Signature[]{
-                createSignature(Utils.createString('F', 64), Utils.createString('0', 64)),
-                createSignature(Utils.createString('0', 64), Utils.createString('F', 64)),
-                createSignature("99512345", "12351234")
+            createSignature(Utils.createString('F', 64), Utils.createString('0', 64)),
+            createSignature(Utils.createString('0', 64), Utils.createString('F', 64)),
+            createSignature("99512345", "12351234")
         };
     }
 
-    //endregion
+    // endregion
 
-    //region equals / hashCode
+    // region equals / hashCode
 
     @Test
     public void getBinaryRReturnsRAsByteArray() {
@@ -206,11 +207,11 @@ public class SignatureTest {
         Assert.assertThat(s, IsEqual.equalTo(originalS));
     }
 
-    //endregion
+    // endregion
 
-    //region inline serialization
+    // region inline serialization
 
-    //endregion
+    // endregion
 
     // region toString
 
@@ -227,7 +228,7 @@ public class SignatureTest {
         Assert.assertThat(new BigInteger("1235"), IsNot.not(IsEqual.equalTo((Object) signature)));
     }
 
-    //endregion
+    // endregion
 
     @Test
     public void hashCodesAreEqualForEquivalentObjects() {
@@ -237,8 +238,10 @@ public class SignatureTest {
 
         // Assert:
         Assert.assertThat(createSignature(1235, 7789).hashCode(), IsEqual.equalTo(hashCode));
-        Assert.assertThat(createSignature(1234, 7789).hashCode(), IsNot.not(IsEqual.equalTo(hashCode)));
-        Assert.assertThat(createSignature(1235, 7790).hashCode(), IsNot.not(IsEqual.equalTo(hashCode)));
+        Assert.assertThat(createSignature(1234, 7789).hashCode(),
+            IsNot.not(IsEqual.equalTo(hashCode)));
+        Assert.assertThat(createSignature(1235, 7790).hashCode(),
+            IsNot.not(IsEqual.equalTo(hashCode)));
     }
 
     @Test
@@ -248,8 +251,8 @@ public class SignatureTest {
 
         // Assert:
         final String expectedSignature =
-                "0c00000000000000000000000000000000000000000000000000000000000000" +
-                        "0102000000000000000000000000000000000000000000000000000000000000";
+            "0c00000000000000000000000000000000000000000000000000000000000000"
+                + "0102000000000000000000000000000000000000000000000000000000000000";
         Assert.assertThat(signature.toString(), IsEqual.equalTo(expectedSignature));
     }
 }

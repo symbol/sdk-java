@@ -21,7 +21,6 @@ import io.nem.sdk.model.blockchain.MerkelProofInfo;
 import io.nem.sdk.model.receipt.Statement;
 import io.nem.sdk.model.transaction.Transaction;
 import io.reactivex.Observable;
-
 import java.math.BigInteger;
 import java.util.List;
 import java.util.Optional;
@@ -50,53 +49,47 @@ public interface BlockRepository {
     Observable<List<Transaction>> getBlockTransactions(BigInteger height);
 
     /**
-     * Gets list of transactions included in a block for a block height
-     * With pagination.
+     * Gets list of transactions included in a block for a block height With pagination.
      *
-     * @param height      BigInteger
+     * @param height BigInteger
      * @param queryParams QueryParams
      * @return Observable of List<{@link Transaction}>
      */
     Observable<List<Transaction>> getBlockTransactions(BigInteger height, QueryParams queryParams);
 
     /**
-     * Get the merkle path for a given a receipt statement hash and block
-     * Returns the merkle path for a [receipt statement or resolution](https://nemtech.github.io/concepts/receipt.html)
-     * linked to a block. The path is the complementary data needed to calculate the merkle root.
-     * A client can compare if the calculated root equals the one recorded in the block header,
+     * Get the merkle path for a given a receipt statement hash and block Returns the merkle path
+     * for a [receipt statement or resolution](https://nemtech.github.io/concepts/receipt.html)
+     * linked to a block. The path is the complementary data needed to calculate the merkle root. A
+     * client can compare if the calculated root equals the one recorded in the block header,
      * verifying that the receipt was linked with the block.
-     * @param height
-     * @param limit
+     *
      * @param queryParams QueryParams
      * @return Observable<BlockInfo>
      */
-    Observable<List<BlockInfo>> getBlocksByHeightWithLimit(BigInteger height, int limit, Optional<QueryParams> queryParams);
+    Observable<List<BlockInfo>> getBlocksByHeightWithLimit(
+        BigInteger height, int limit, Optional<QueryParams> queryParams);
 
     /**
-     *
-     * @param height
-     * @param hash
      * @return Observable<MerkleProofInfo>
      */
     Observable<MerkelProofInfo> getMerkleReceipts(BigInteger height, String hash);
 
     /**
-     * Get the merkle path for a given a transaction and block
-     * Returns the merkle path for a [transaction](https://nemtech.github.io/concepts/transaction.html)
-     * included in a block. The path is the complementary data needed to calculate the merkle root.
-     * A client can compare if the calculated root equals the one recorded in the block header,
-     * verifying that the transaction was included in the block.
-     * @param height
-     * @param hash
+     * Get the merkle path for a given a transaction and block Returns the merkle path for a
+     * [transaction](https://nemtech.github.io/concepts/transaction.html) included in a block. The
+     * path is the complementary data needed to calculate the merkle root. A client can compare if
+     * the calculated root equals the one recorded in the block header, verifying that the
+     * transaction was included in the block.
+     *
      * @return Observable<MerkleProofInfo>
      */
     Observable<MerkelProofInfo> getMerkleTransaction(BigInteger height, String hash);
 
     /**
      * Get receipts from a block
-     * @param height
+     *
      * @return Observable<Statement>
      */
     Observable<Statement> getBlockReceipts(BigInteger height);
-
 }

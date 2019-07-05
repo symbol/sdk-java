@@ -21,155 +21,153 @@ package io.nem.sdk.model.transaction;
  */
 public enum TransactionType {
 
-	/**
-	 * RESERVED
-	 */
-	RESERVED(0),
+    /**
+     * RESERVED
+     */
+    RESERVED(0),
 
-	// Mosaic
-	/**
-	 * Mosaic definition transaction type.
-	 */
-	MOSAIC_DEFINITION(0x414D),
+    // Mosaic
+    /**
+     * Mosaic definition transaction type.
+     */
+    MOSAIC_DEFINITION(0x414D),
 
-	/**
-	 * Mosaic supply change transaction.
-	 */
-	MOSAIC_SUPPLY_CHANGE(0x424D),
+    /**
+     * Mosaic supply change transaction.
+     */
+    MOSAIC_SUPPLY_CHANGE(0x424D),
 
-	// Namespace
-	/**
-	 * Register namespace transaction type.
-	 */
-	REGISTER_NAMESPACE(0x414E),
+    // Namespace
+    /**
+     * Register namespace transaction type.
+     */
+    REGISTER_NAMESPACE(0x414E),
 
-	/**
-	 * Address alias transaction type.
-	 */
-	ADDRESS_ALIAS(0x424E),
+    /**
+     * Address alias transaction type.
+     */
+    ADDRESS_ALIAS(0x424E),
 
-	/**
-	 * Mosaic alias transaction type.
-	 */
-	MOSAIC_ALIAS(0x434E),
+    /**
+     * Mosaic alias transaction type.
+     */
+    MOSAIC_ALIAS(0x434E),
 
-	// Transfer
-	/**
-	 * Transfer Transaction transaction type.
-	 */
-	TRANSFER(0x4154),
+    // Transfer
+    /**
+     * Transfer Transaction transaction type.
+     */
+    TRANSFER(0x4154),
 
-	// Multisignature
-	/**
-	 * Modify multisig account transaction type.
-	 */
-	MODIFY_MULTISIG_ACCOUNT(0x4155),
+    // Multisignature
+    /**
+     * Modify multisig account transaction type.
+     */
+    MODIFY_MULTISIG_ACCOUNT(0x4155),
 
-	/**
-	 * Aggregate complete transaction type.
-	 */
-	AGGREGATE_COMPLETE(0x4141),
+    /**
+     * Aggregate complete transaction type.
+     */
+    AGGREGATE_COMPLETE(0x4141),
 
-	/**
-	 * Aggregate bonded transaction type
-	 */
-	AGGREGATE_BONDED(0x4241),
+    /**
+     * Aggregate bonded transaction type
+     */
+    AGGREGATE_BONDED(0x4241),
 
-	/**
-	 * Hash Lock transaction type
-	 */
-	LOCK(0x4148),
+    /**
+     * Hash Lock transaction type
+     */
+    LOCK(0x4148),
 
-	// Account filters
-	/**
-	 * Account properties address transaction type
-	 */
-	ACCOUNT_PROPERTIES_ADDRESS(0x4150),
+    // Account filters
+    /**
+     * Account properties address transaction type
+     */
+    ACCOUNT_PROPERTIES_ADDRESS(0x4150),
 
-	/**
-	 * Account properties mosaic transaction type
-	 */
-	ACCOUNT_PROPERTIES_MOSAIC(0x4250),
+    /**
+     * Account properties mosaic transaction type
+     */
+    ACCOUNT_PROPERTIES_MOSAIC(0x4250),
 
-	/**
-	 * Account properties entity type transaction type
-	 */
-	ACCOUNT_PROPERTIES_ENTITY_TYPE(0x4350),
+    /**
+     * Account properties entity type transaction type
+     */
+    ACCOUNT_PROPERTIES_ENTITY_TYPE(0x4350),
 
-	// Cross-chain swaps
-	/**
-	 * Secret Lock Transaction type
-	 */
-	SECRET_LOCK(0x4152),
+    // Cross-chain swaps
+    /**
+     * Secret Lock Transaction type
+     */
+    SECRET_LOCK(0x4152),
 
-	/**
-	 * Secret Proof transaction type
-	 */
-	SECRET_PROOF(0x4252),
+    /**
+     * Secret Proof transaction type
+     */
+    SECRET_PROOF(0x4252),
 
-	/**
-	 * Account link transaction type
-	 */
-	ACCOUNT_LINK(0x414C);
+    /**
+     * Account link transaction type
+     */
+    ACCOUNT_LINK(0x414C);
 
+    private int value;
 
-	private int value;
+    TransactionType(int value) {
+        this.value = value;
+    }
 
-	TransactionType(int value) {
-		this.value = value;
-	}
+    /**
+     * Static constructor converting transaction type raw value to enum instance.
+     *
+     * @return {@link TransactionType}
+     */
+    public static TransactionType rawValueOf(int value) {
+        switch (value) {
+            case 16717:
+                return TransactionType.MOSAIC_DEFINITION;
+            case 16973:
+                return TransactionType.MOSAIC_SUPPLY_CHANGE;
+            case 16718:
+                return TransactionType.REGISTER_NAMESPACE;
+            case 16974:
+                return TransactionType.ADDRESS_ALIAS;
+            case 17230:
+                return TransactionType.MOSAIC_ALIAS;
+            case 16724:
+                return TransactionType.TRANSFER;
+            case 16725:
+                return TransactionType.MODIFY_MULTISIG_ACCOUNT;
+            case 16705:
+                return TransactionType.AGGREGATE_COMPLETE;
+            case 16961:
+                return TransactionType.AGGREGATE_BONDED;
+            case 16712:
+                return TransactionType.LOCK;
+            case 16720:
+                return TransactionType.ACCOUNT_PROPERTIES_ADDRESS;
+            case 16976:
+                return TransactionType.ACCOUNT_PROPERTIES_MOSAIC;
+            case 17232:
+                return TransactionType.ACCOUNT_PROPERTIES_ENTITY_TYPE;
+            case 16722:
+                return TransactionType.SECRET_LOCK;
+            case 16978:
+                return TransactionType.SECRET_PROOF;
+            case 16716:
+                return TransactionType.ACCOUNT_LINK;
+            default:
+                throw new IllegalArgumentException(value + " is not a valid value");
+        }
+    }
 
-	/**
-	 * Static constructor converting transaction type raw value to enum instance.
-	 *
-	 * @return {@link TransactionType}
-	 */
-	public static TransactionType rawValueOf(int value) {
-		switch (value) {
-			case 16717:
-				return TransactionType.MOSAIC_DEFINITION;
-			case 16973:
-				return TransactionType.MOSAIC_SUPPLY_CHANGE;
-			case 16718:
-				return TransactionType.REGISTER_NAMESPACE;
-			case 16974:
-				return TransactionType.ADDRESS_ALIAS;
-			case 17230:
-				return TransactionType.MOSAIC_ALIAS;
-			case 16724:
-				return TransactionType.TRANSFER;
-			case 16725:
-				return TransactionType.MODIFY_MULTISIG_ACCOUNT;
-			case 16705:
-				return TransactionType.AGGREGATE_COMPLETE;
-			case 16961:
-				return TransactionType.AGGREGATE_BONDED;
-			case 16712:
-				return TransactionType.LOCK;
-			case 16720:
-				return TransactionType.ACCOUNT_PROPERTIES_ADDRESS;
-			case 16976:
-				return TransactionType.ACCOUNT_PROPERTIES_MOSAIC;
-			case 17232:
-				return TransactionType.ACCOUNT_PROPERTIES_ENTITY_TYPE;
-			case 16722:
-				return TransactionType.SECRET_LOCK;
-			case 16978:
-				return TransactionType.SECRET_PROOF;
-			case 16716:
-				return TransactionType.ACCOUNT_LINK;
-			default:
-				throw new IllegalArgumentException(value + " is not a valid value");
-		}
-	}
-
-	/**
-	 * Returns enum value.
-	 *
-	 * @return enum value
-	 */
-	public int getValue() {
-		return this.value;
-	}
-
+    /**
+     * Returns enum value.
+     *
+     * @return enum value
+     */
+    public int getValue() {
+        return this.value;
+    }
 }

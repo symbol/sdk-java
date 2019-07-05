@@ -16,36 +16,38 @@
 
 package io.nem.sdk.model.transaction;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import io.nem.sdk.model.account.Account;
 import io.nem.sdk.model.blockchain.NetworkType;
-
+import java.math.BigInteger;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import java.math.BigInteger;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
-
 public class AccountLinkTransactionTest {
+
     static Account account;
 
     @BeforeAll
     public static void setup() {
-        account = new Account("041e2ce90c31cd65620ed16ab7a5a485e5b335d7e61c75cd9b3a2fed3e091728",
+        account =
+            new Account(
+                "041e2ce90c31cd65620ed16ab7a5a485e5b335d7e61c75cd9b3a2fed3e091728",
                 NetworkType.MIJIN_TEST);
     }
+
     @Test
     void create() {
-        AccountLinkTransaction accountLinkTransaction = AccountLinkTransaction.create(
+        AccountLinkTransaction accountLinkTransaction =
+            AccountLinkTransaction.create(
                 new FakeDeadline(),
                 BigInteger.ZERO,
                 account.getPublicAccount(),
                 AccountLinkAction.LINK,
-                NetworkType.MIJIN_TEST
-        );
-        assertEquals( accountLinkTransaction.getLinkAction(),AccountLinkAction.LINK);
-        assertEquals(accountLinkTransaction.getRemoteAccount().getPublicKey().toString(),"9A49366406ACA952B88BADF5F1E9BE6CE4968141035A60BE503273EA65456B24");
+                NetworkType.MIJIN_TEST);
+        assertEquals(accountLinkTransaction.getLinkAction(), AccountLinkAction.LINK);
+        assertEquals(
+            accountLinkTransaction.getRemoteAccount().getPublicKey().toString(),
+            "9A49366406ACA952B88BADF5F1E9BE6CE4968141035A60BE503273EA65456B24");
     }
-
 }

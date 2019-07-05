@@ -16,7 +16,13 @@
 
 package io.nem.core.crypto.ed25519;
 
-import io.nem.core.crypto.*;
+import io.nem.core.crypto.CryptoEngine;
+import io.nem.core.crypto.CryptoEngines;
+import io.nem.core.crypto.KeyGenerator;
+import io.nem.core.crypto.KeyGeneratorTest;
+import io.nem.core.crypto.KeyPair;
+import io.nem.core.crypto.PrivateKey;
+import io.nem.core.crypto.PublicKey;
 import io.nem.core.crypto.ed25519.arithmetic.Ed25519EncodedGroupElement;
 import io.nem.core.crypto.ed25519.arithmetic.MathUtils;
 import org.hamcrest.core.IsEqual;
@@ -59,11 +65,16 @@ public class Ed25519KeyGeneratorTest extends KeyGeneratorTest {
     @Test
     public void derivePublicKey() {
         final KeyGenerator generator = this.getKeyGenerator();
-        final KeyPair keyPair = new KeyPair(PrivateKey.fromHexString("787225aaff3d2c71f4ffa32d4f19ec4922f3cd869747f267378f81f8e3fcb12d"));
+        final KeyPair keyPair =
+            new KeyPair(
+                PrivateKey.fromHexString(
+                    "787225aaff3d2c71f4ffa32d4f19ec4922f3cd869747f267378f81f8e3fcb12d"));
 
         final PublicKey publicKey = generator.derivePublicKey(keyPair.getPrivateKey());
 
-        final PublicKey expected = PublicKey.fromHexString("1026d70e1954775749c6811084d6450a3184d977383f0e4282cd47118af37755");
+        final PublicKey expected =
+            PublicKey
+                .fromHexString("1026d70e1954775749c6811084d6450a3184d977383f0e4282cd47118af37755");
         Assert.assertThat(publicKey, IsEqual.equalTo(expected));
     }
 

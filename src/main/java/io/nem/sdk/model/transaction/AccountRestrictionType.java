@@ -16,24 +16,42 @@
 
 package io.nem.sdk.model.transaction;
 
-/** Account restriction types. */
+/**
+ * Account restriction types.
+ */
 public enum AccountRestrictionType {
-    /** Account restriction type is an address. */
+    /**
+     * Account restriction type is an address.
+     */
     ADDRESS((byte) 1),
-    /** Account restriction type is a mosaic id. */
+    /**
+     * Account restriction type is a mosaic id.
+     */
     MOSAIC_ID((byte) 2),
-    /** Account restriction type is a transaction type. */
+    /**
+     * Account restriction type is a transaction type.
+     */
     TRANSACTION_TYPE((byte) 4),
-    /** Account restriction type sentinel. */
+    /**
+     * Account restriction type sentinel.
+     */
     SENTINEL((byte) 5),
-    /** Account restriction is interpreted as blocking address operation. */
+    /**
+     * Account restriction is interpreted as blocking address operation.
+     */
     BLOCK_ADDRESS((byte) 129),
-    /** Account restriction is interpreted as blocking mosaicId operation. */
+    /**
+     * Account restriction is interpreted as blocking mosaicId operation.
+     */
     BLOCK_MOSAIC_ID((byte) 130),
-    /** Account restriction is interpreted as blocking transaction type operation. */
+    /**
+     * Account restriction is interpreted as blocking transaction type operation.
+     */
     BLOCK_TRANSACTION_TYPE((byte) 132);
 
-    /** Enum value. */
+    /**
+     * Enum value.
+     */
     private final byte value;
 
     /**
@@ -57,7 +75,8 @@ public enum AccountRestrictionType {
                 return current;
             }
         }
-        throw new IllegalArgumentException(value + " was not a backing value for AccountRestrictionType.");
+        throw new IllegalArgumentException(
+            value + " was not a backing value for AccountRestrictionType.");
     }
 
     /**

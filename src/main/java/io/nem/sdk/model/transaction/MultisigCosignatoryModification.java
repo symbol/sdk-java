@@ -19,38 +19,38 @@ package io.nem.sdk.model.transaction;
 import io.nem.sdk.model.account.PublicAccount;
 
 /**
- * The multisig cosignatory modifications are part of the NEM's multisig account system.
- * With a multisig cosignatory modification a cosignatory is added to or deleted from a multisig account.
+ * The multisig cosignatory modifications are part of the NEM's multisig account system. With a
+ * multisig cosignatory modification a cosignatory is added to or deleted from a multisig account.
  * Multisig cosignatory modifications are part of a modify multisig account transactions.
  *
  * @since 1.0
  */
 public class MultisigCosignatoryModification {
-	private final MultisigCosignatoryModificationType type;
-	private final PublicAccount cosignatoryPublicAccount;
 
-	public MultisigCosignatoryModification(MultisigCosignatoryModificationType type, PublicAccount cosignatoryPublicAccount) {
-		this.type = type;
-		this.cosignatoryPublicAccount = cosignatoryPublicAccount;
-	}
+    private final MultisigCosignatoryModificationType type;
+    private final PublicAccount cosignatoryPublicAccount;
 
-	/**
-	 * Returns multisig modification type.
-	 *
-	 * @return {@link MultisigCosignatoryModificationType}
-	 */
-	public MultisigCosignatoryModificationType getType() {
-		return type;
-	}
+    public MultisigCosignatoryModification(
+        MultisigCosignatoryModificationType type, PublicAccount cosignatoryPublicAccount) {
+        this.type = type;
+        this.cosignatoryPublicAccount = cosignatoryPublicAccount;
+    }
 
-	/**
-	 * Returns cosignatory public account.
-	 *
-	 * @return {@link PublicAccount}
-	 */
-	public PublicAccount getCosignatoryPublicAccount() {
-		return cosignatoryPublicAccount;
-	}
+    /**
+     * Returns multisig modification type.
+     *
+     * @return {@link MultisigCosignatoryModificationType}
+     */
+    public MultisigCosignatoryModificationType getType() {
+        return type;
+    }
+
+    /**
+     * Returns cosignatory public account.
+     *
+     * @return {@link PublicAccount}
+     */
+    public PublicAccount getCosignatoryPublicAccount() {
+        return cosignatoryPublicAccount;
+    }
 }
-
-

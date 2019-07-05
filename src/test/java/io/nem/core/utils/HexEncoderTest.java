@@ -22,7 +22,7 @@ import org.junit.Test;
 
 public class HexEncoderTest {
 
-    //region getBytes
+    // region getBytes
 
     private static void assertGetBytesConversion(final String input, final byte[] expectedOutput) {
         // Act:
@@ -32,7 +32,8 @@ public class HexEncoderTest {
         Assert.assertThat(output, IsEqual.equalTo(expectedOutput));
     }
 
-    private static void assertTryGetBytesConversion(final String input, final byte[] expectedOutput) {
+    private static void assertTryGetBytesConversion(final String input,
+        final byte[] expectedOutput) {
         // Act:
         final byte[] output = HexEncoder.tryGetBytes(input);
 
@@ -48,99 +49,79 @@ public class HexEncoderTest {
         Assert.assertThat(output, IsEqual.equalTo(expectedOutput));
     }
 
-	/*@Test
-	public void getBytesCannotConvertMalformedStringToByteArray() {
-		// Act:
-		ExceptionAssert.assertThrows(v -> HexEncoder.getBytes("4e454g465457"), IllegalArgumentException.class);
-	}*/
+  /*@Test
+  public void getBytesCannotConvertMalformedStringToByteArray() {
+  	// Act:
+  	ExceptionAssert.assertThrows(v -> HexEncoder.getBytes("4e454g465457"), IllegalArgumentException.class);
+  }*/
 
     @Test
     public void getBytesCanConvertValidStringToByteArray() {
         // Assert:
-        assertGetBytesConversion(
-                "4e454d465457",
-                new byte[]{0x4e, 0x45, 0x4d, 0x46, 0x54, 0x57});
+        assertGetBytesConversion("4e454d465457", new byte[]{0x4e, 0x45, 0x4d, 0x46, 0x54, 0x57});
     }
 
-    //endregion
+    // endregion
 
-    //region tryGetBytes
+    // region tryGetBytes
 
     @Test
     public void getBytesCanConvertValidStringWithOddLengthToByteArray() {
         // Assert:
-        assertGetBytesConversion(
-                "e454d465457",
-                new byte[]{0x0e, 0x45, 0x4d, 0x46, 0x54, 0x57});
+        assertGetBytesConversion("e454d465457", new byte[]{0x0e, 0x45, 0x4d, 0x46, 0x54, 0x57});
     }
 
     @Test
     public void getBytesCanConvertValidStringWithLeadingZerosToByteArray() {
         // Assert:
-        assertGetBytesConversion(
-                "00000d465457",
-                new byte[]{0x00, 0x00, 0x0d, 0x46, 0x54, 0x57});
+        assertGetBytesConversion("00000d465457", new byte[]{0x00, 0x00, 0x0d, 0x46, 0x54, 0x57});
     }
 
     @Test
     public void tryGetBytesCanConvertValidStringToByteArray() {
         // Assert:
-        assertTryGetBytesConversion(
-                "4e454d465457",
-                new byte[]{0x4e, 0x45, 0x4d, 0x46, 0x54, 0x57});
+        assertTryGetBytesConversion("4e454d465457", new byte[]{0x4e, 0x45, 0x4d, 0x46, 0x54, 0x57});
     }
 
     @Test
     public void tryGetBytesCanConvertValidStringWithOddLengthToByteArray() {
         // Assert:
-        assertTryGetBytesConversion(
-                "e454d465457",
-                new byte[]{0x0e, 0x45, 0x4d, 0x46, 0x54, 0x57});
+        assertTryGetBytesConversion("e454d465457", new byte[]{0x0e, 0x45, 0x4d, 0x46, 0x54, 0x57});
     }
 
     @Test
     public void tryGetBytesCanConvertValidStringWithLeadingZerosToByteArray() {
         // Assert:
-        assertTryGetBytesConversion(
-                "00000d465457",
-                new byte[]{0x00, 0x00, 0x0d, 0x46, 0x54, 0x57});
+        assertTryGetBytesConversion("00000d465457", new byte[]{0x00, 0x00, 0x0d, 0x46, 0x54, 0x57});
     }
 
-    //endregion
+    // endregion
 
-    //region getString
+    // region getString
 
     @Test
     public void tryGetBytesCannotConvertMalformedStringToByteArray() {
         // Assert:
-        assertTryGetBytesConversion(
-                "4e454g465457",
-                null);
+        assertTryGetBytesConversion("4e454g465457", null);
     }
 
     @Test
     public void getStringCanConvertBytesToHexString() {
         // Assert:
-        assertGetStringConversion(
-                new byte[]{0x4e, 0x45, 0x4d, 0x46, 0x54, 0x57},
-                "4e454d465457");
+        assertGetStringConversion(new byte[]{0x4e, 0x45, 0x4d, 0x46, 0x54, 0x57}, "4e454d465457");
     }
 
     @Test
     public void getStringCanConvertBytesWithLeadingZerosToHexString() {
         // Assert:
-        assertGetStringConversion(
-                new byte[]{0x00, 0x00, 0x0d, 0x46, 0x54, 0x57},
-                "00000d465457");
+        assertGetStringConversion(new byte[]{0x00, 0x00, 0x0d, 0x46, 0x54, 0x57}, "00000d465457");
     }
 
     @Test
     public void getStringCanConvertEmptyBytesToHexString() {
         // Assert:
-        assertGetStringConversion(
-                new byte[]{},
-                "");
+        assertGetStringConversion(new byte[]{}, "");
     }
 
-    //endregion
+    // endregion
 }

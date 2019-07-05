@@ -16,21 +16,19 @@
 
 package io.nem.core.test;
 
-import org.junit.Assert;
-
 import java.util.concurrent.CompletionException;
 import java.util.function.Consumer;
+import org.junit.Assert;
 
 /**
- * Helper class that contains functions for asserting that specific exceptions
- * are thrown.
+ * Helper class that contains functions for asserting that specific exceptions are thrown.
  */
 public class ExceptionAssert {
 
     /**
      * Asserts that the execution of consumer throws an exception of the specific class.
      *
-     * @param consumer       The consumer.
+     * @param consumer The consumer.
      * @param exceptionClass The expected exception class.
      */
     public static void assertThrows(final Consumer<Void> consumer, final Class<?> exceptionClass) {
@@ -41,11 +39,12 @@ public class ExceptionAssert {
     /**
      * Asserts that the execution of consumer throws an exception of the specific class.
      *
-     * @param consumer       The consumer.
+     * @param consumer The consumer.
      * @param exceptionClass The expected exception class.
-     * @param message        The custom assertion message.
+     * @param message The custom assertion message.
      */
-    public static void assertThrows(final Consumer<Void> consumer, final Class<?> exceptionClass, final String message) {
+    public static void assertThrows(
+        final Consumer<Void> consumer, final Class<?> exceptionClass, final String message) {
         assertThrows(consumer, exceptionClass, ex -> {
         }, message);
     }
@@ -53,31 +52,33 @@ public class ExceptionAssert {
     /**
      * Asserts that the execution of consumer throws an exception of the specific class.
      *
-     * @param consumer                  The consumer.
-     * @param exceptionClass            The expected exception class.
-     * @param assertExceptionProperties Consumer that is passed the matching exception to run any additional validation.
+     * @param consumer The consumer.
+     * @param exceptionClass The expected exception class.
+     * @param assertExceptionProperties Consumer that is passed the matching exception to run any
+     * additional validation.
      */
     public static <T> void assertThrows(
-            final Consumer<Void> consumer,
-            final Class<T> exceptionClass,
-            final Consumer<T> assertExceptionProperties) {
+        final Consumer<Void> consumer,
+        final Class<T> exceptionClass,
+        final Consumer<T> assertExceptionProperties) {
         assertThrows(consumer, exceptionClass, assertExceptionProperties, null);
     }
 
     /**
      * Asserts that the execution of consumer throws an exception of the specific class.
      *
-     * @param consumer                  The consumer.
-     * @param exceptionClass            The expected exception class.
-     * @param assertExceptionProperties Consumer that is passed the matching exception to run any additional validation.
-     * @param message                   The custom assertion message.
+     * @param consumer The consumer.
+     * @param exceptionClass The expected exception class.
+     * @param assertExceptionProperties Consumer that is passed the matching exception to run any
+     * additional validation.
+     * @param message The custom assertion message.
      */
     @SuppressWarnings("unchecked")
     private static <T> void assertThrows(
-            final Consumer<Void> consumer,
-            final Class<T> exceptionClass,
-            final Consumer<T> assertExceptionProperties,
-            final String message) {
+        final Consumer<Void> consumer,
+        final Class<T> exceptionClass,
+        final Consumer<T> assertExceptionProperties,
+        final String message) {
         final String normalizedMessage = null == message ? "" : String.format("[%s]: ", message);
         try {
             consumer.accept(null);
@@ -87,20 +88,27 @@ public class ExceptionAssert {
                 return;
             }
 
-            Assert.fail(String.format("%sunexpected exception of type %s was thrown: '%s'", normalizedMessage, ex.getClass(), ex.getMessage()));
+            Assert.fail(
+                String.format(
+                    "%sunexpected exception of type %s was thrown: '%s'",
+                    normalizedMessage, ex.getClass(), ex.getMessage()));
         }
 
-        Assert.fail(String.format("%sexpected exception of type %s was not thrown", normalizedMessage, exceptionClass));
+        Assert.fail(
+            String.format(
+                "%sexpected exception of type %s was not thrown", normalizedMessage,
+                exceptionClass));
     }
 
     /**
-     * Asserts that the execution of consumer throws a completion exception wrapping an exception of the
-     * specific class.
+     * Asserts that the execution of consumer throws a completion exception wrapping an exception of
+     * the specific class.
      *
-     * @param consumer       The consumer.
+     * @param consumer The consumer.
      * @param exceptionClass The expected exception class.
      */
-    public static void assertThrowsCompletionException(final Consumer<Void> consumer, final Class<?> exceptionClass) {
+    public static void assertThrowsCompletionException(
+        final Consumer<Void> consumer, final Class<?> exceptionClass) {
         try {
             consumer.accept(null);
         } catch (final CompletionException completionEx) {

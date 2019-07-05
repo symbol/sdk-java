@@ -16,46 +16,50 @@
 
 package io.nem.sdk.model.transaction;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 import io.nem.sdk.model.account.Account;
 import io.nem.sdk.model.account.Address;
 import io.nem.sdk.model.account.PublicAccount;
 import io.nem.sdk.model.blockchain.NetworkType;
 import io.nem.sdk.model.mosaic.NetworkCurrencyMosaic;
-
+import java.math.BigInteger;
 import org.bouncycastle.util.encoders.Hex;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.math.BigInteger;
-
-import static org.junit.jupiter.api.Assertions.*;
-
 public class SecretLockTransactionTest {
+
     static Account account;
     static String generationHash;
 
     @BeforeAll
     public static void setup() {
-        account = new Account("787225aaff3d2c71f4ffa32d4f19ec4922f3cd869747f267378f81f8e3fcb12d", NetworkType.MIJIN_TEST);
+        account =
+            new Account(
+                "787225aaff3d2c71f4ffa32d4f19ec4922f3cd869747f267378f81f8e3fcb12d",
+                NetworkType.MIJIN_TEST);
         generationHash = "57F7DA205008026C776CB6AED843393F04CD458E0AA2D9F1D5F31A402072B2D6";
     }
 
     @Test
     @DisplayName("Serialization")
     void serialization() {
-        String expected = "ca000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000019052410000000000000000010000000000000044b262c46ceabb8580969800000000006400000000000000003fc8ba10229ab5778d05d9c4b7f56676a88bf9295c185acfc0f961db5408cafe90e8febd671dd41bee94ec3ba5831cb608a312c2f203ba84ac";
+        String expected =
+            "ca000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000019052410000000000000000010000000000000044b262c46ceabb8580969800000000006400000000000000003fc8ba10229ab5778d05d9c4b7f56676a88bf9295c185acfc0f961db5408cafe90e8febd671dd41bee94ec3ba5831cb608a312c2f203ba84ac";
 
         String secret = "3fc8ba10229ab5778d05d9c4b7f56676a88bf9295c185acfc0f961db5408cafe";
-        SecretLockTransaction secretLocktx = SecretLockTransaction.create(
+        SecretLockTransaction secretLocktx =
+            SecretLockTransaction.create(
                 new FakeDeadline(),
                 NetworkCurrencyMosaic.createRelative(BigInteger.valueOf(10)),
                 BigInteger.valueOf(100),
                 HashType.SHA3_256,
                 secret,
                 Address.createFromRawAddress("SDUP5PLHDXKBX3UU5Q52LAY4WYEKGEWC6IB3VBFM"),
-                NetworkType.MIJIN_TEST
-        );
+                NetworkType.MIJIN_TEST);
         byte[] actual = secretLocktx.generateBytes();
         assertEquals(expected, Hex.toHexString(actual));
     }
@@ -63,54 +67,66 @@ public class SecretLockTransactionTest {
     @Test
     @DisplayName("To aggregate")
     void toAggregate() {
-        String expected = "7a0000009a49366406aca952b88badf5f1e9be6ce4968141035a60be503273ea65456b240190524144b262c46ceabb8580969800000000006400000000000000003fc8ba10229ab5778d05d9c4b7f56676a88bf9295c185acfc0f961db5408cafe90e8febd671dd41bee94ec3ba5831cb608a312c2f203ba84ac";
+        String expected =
+            "7a0000009a49366406aca952b88badf5f1e9be6ce4968141035a60be503273ea65456b240190524144b262c46ceabb8580969800000000006400000000000000003fc8ba10229ab5778d05d9c4b7f56676a88bf9295c185acfc0f961db5408cafe90e8febd671dd41bee94ec3ba5831cb608a312c2f203ba84ac";
 
         String secret = "3fc8ba10229ab5778d05d9c4b7f56676a88bf9295c185acfc0f961db5408cafe";
-        SecretLockTransaction secretLocktx = SecretLockTransaction.create(
+        SecretLockTransaction secretLocktx =
+            SecretLockTransaction.create(
                 new FakeDeadline(),
                 NetworkCurrencyMosaic.createRelative(BigInteger.valueOf(10)),
                 BigInteger.valueOf(100),
                 HashType.SHA3_256,
                 secret,
                 Address.createFromRawAddress("SDUP5PLHDXKBX3UU5Q52LAY4WYEKGEWC6IB3VBFM"),
-                NetworkType.MIJIN_TEST
-        );
-        byte[] actual = secretLocktx.toAggregate(new PublicAccount("9A49366406ACA952B88BADF5F1E9BE6CE4968141035A60BE503273EA65456B24", NetworkType.MIJIN_TEST)).toAggregateTransactionBytes();
+                NetworkType.MIJIN_TEST);
+        byte[] actual =
+            secretLocktx
+                .toAggregate(
+                    new PublicAccount(
+                        "9A49366406ACA952B88BADF5F1E9BE6CE4968141035A60BE503273EA65456B24",
+                        NetworkType.MIJIN_TEST))
+                .toAggregateTransactionBytes();
         assertEquals(expected, Hex.toHexString(actual));
     }
 
     @Test
     void serializeAndSignTransaction() {
         String secret = "3fc8ba10229ab5778d05d9c4b7f56676a88bf9295c185acfc0f961db5408cafe";
-        SecretLockTransaction secretLocktx = SecretLockTransaction.create(
+        SecretLockTransaction secretLocktx =
+            SecretLockTransaction.create(
                 new FakeDeadline(),
                 NetworkCurrencyMosaic.createRelative(BigInteger.valueOf(10)),
                 BigInteger.valueOf(100),
                 HashType.SHA3_256,
                 secret,
                 Address.createFromRawAddress("SDUP5PLHDXKBX3UU5Q52LAY4WYEKGEWC6IB3VBFM"),
-                NetworkType.MIJIN_TEST
-        );
+                NetworkType.MIJIN_TEST);
         SignedTransaction signedTransaction = secretLocktx.signWith(account, generationHash);
         String payload = signedTransaction.getPayload();
-        assertEquals(payload.substring(240), "44B262C46CEABB8580969800000000006400000000000000003FC8BA10229AB5778D05D9C4B7F56676A88BF9295C185ACFC0F961DB5408CAFE90E8FEBD671DD41BEE94EC3BA5831CB608A312C2F203BA84AC");
-        assertEquals("DAF5D06A8C47C636E4C97B5AD3FCB82F2B9D2140A37FE5572A3065CF6D65642A", signedTransaction.getHash());
+        assertEquals(
+            payload.substring(240),
+            "44B262C46CEABB8580969800000000006400000000000000003FC8BA10229AB5778D05D9C4B7F56676A88BF9295C185ACFC0F961DB5408CAFE90E8FEBD671DD41BEE94EC3BA5831CB608A312C2F203BA84AC");
+        assertEquals(
+            "DAF5D06A8C47C636E4C97B5AD3FCB82F2B9D2140A37FE5572A3065CF6D65642A",
+            signedTransaction.getHash());
     }
 
     @Test
     void shouldThrowErrorWhenSecretIsNotValid() {
-        assertThrows(IllegalArgumentException.class, ()-> {
-            SecretLockTransaction secretLocktx = SecretLockTransaction.create(
-                    new FakeDeadline(),
-                    NetworkCurrencyMosaic.createRelative(BigInteger.valueOf(10)),
-                    BigInteger.valueOf(100),
-                    HashType.SHA3_256,
-                    "non valid hash",
-                    Address.createFromRawAddress("SDUP5PLHDXKBX3UU5Q52LAY4WYEKGEWC6IB3VBFM"),
-                    NetworkType.MIJIN_TEST
-            );
-        }, "not a valid secret");
+        assertThrows(
+            IllegalArgumentException.class,
+            () -> {
+                SecretLockTransaction secretLocktx =
+                    SecretLockTransaction.create(
+                        new FakeDeadline(),
+                        NetworkCurrencyMosaic.createRelative(BigInteger.valueOf(10)),
+                        BigInteger.valueOf(100),
+                        HashType.SHA3_256,
+                        "non valid hash",
+                        Address.createFromRawAddress("SDUP5PLHDXKBX3UU5Q52LAY4WYEKGEWC6IB3VBFM"),
+                        NetworkType.MIJIN_TEST);
+            },
+            "not a valid secret");
     }
 }
-
-

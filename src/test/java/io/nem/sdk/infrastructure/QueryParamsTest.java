@@ -16,10 +16,10 @@
 
 package io.nem.sdk.infrastructure;
 
-import org.junit.jupiter.api.Test;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import org.junit.jupiter.api.Test;
 
 class QueryParamsTest {
 
@@ -41,7 +41,6 @@ class QueryParamsTest {
         QueryParams queryParams = new QueryParams(1000, "5A2139FC71C1B9000147D624");
         assertTrue(10 == queryParams.getPageSize());
     }
-
 
     @Test
     void shouldGenerateCorrectQueryParamsUrlWhenIdNullAndPageSizeNull() {
@@ -71,6 +70,5 @@ class QueryParamsTest {
     void shouldGenerateCorrectQueryParamUrlWhenIdNotNullAndPageSizeNotNull() {
         QueryParams queryParams = new QueryParams(15, "5A2139FC71C1B9000147D624");
         assertEquals("?pageSize=15&id=5A2139FC71C1B9000147D624", queryParams.toUrl());
-
     }
 }

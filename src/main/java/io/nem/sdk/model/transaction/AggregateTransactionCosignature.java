@@ -24,29 +24,30 @@ import io.nem.sdk.model.account.PublicAccount;
  * @since 1.0
  */
 public class AggregateTransactionCosignature {
-	private final String signature;
-	private final PublicAccount signer;
 
-	public AggregateTransactionCosignature(String signature, PublicAccount signer) {
-		this.signature = signature;
-		this.signer = signer;
-	}
+    private final String signature;
+    private final PublicAccount signer;
 
-	/**
-	 * Returns the signature of aggregate transaction done by the cosigner.
-	 *
-	 * @return String
-	 */
-	public String getSignature() {
-		return signature;
-	}
+    public AggregateTransactionCosignature(String signature, PublicAccount signer) {
+        this.signature = signature;
+        this.signer = signer;
+    }
 
-	/**
-	 * Returns cosigner public account.
-	 *
-	 * @return {@link PublicAccount}
-	 */
-	public PublicAccount getSigner() {
-		return signer;
-	}
+    /**
+     * Returns the signature of aggregate transaction done by the cosigner.
+     *
+     * @return String
+     */
+    public String getSignature() {
+        return signature;
+    }
+
+    /**
+     * Returns cosigner public account.
+     *
+     * @return {@link PublicAccount}
+     */
+    public PublicAccount getSigner() {
+        return signer;
+    }
 }

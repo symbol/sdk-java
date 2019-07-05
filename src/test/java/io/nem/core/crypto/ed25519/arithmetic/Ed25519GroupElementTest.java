@@ -16,20 +16,20 @@
 
 package io.nem.core.crypto.ed25519.arithmetic;
 
+import java.math.BigInteger;
+import java.util.Arrays;
 import org.hamcrest.core.IsEqual;
 import org.hamcrest.core.IsNot;
 import org.junit.Assert;
 import org.junit.Test;
-
-import java.math.BigInteger;
-import java.util.Arrays;
 
 public class Ed25519GroupElementTest {
 
     @Test
     public void canBeCreatedWithP2Coordinates() {
         // Arrange:
-        final Ed25519GroupElement g = Ed25519GroupElement.p2(Ed25519Field.ZERO, Ed25519Field.ONE, Ed25519Field.ONE);
+        final Ed25519GroupElement g =
+            Ed25519GroupElement.p2(Ed25519Field.ZERO, Ed25519Field.ONE, Ed25519Field.ONE);
 
         // Assert:
         Assert.assertThat(g.getCoordinateSystem(), IsEqual.equalTo(CoordinateSystem.P2));
@@ -42,7 +42,9 @@ public class Ed25519GroupElementTest {
     @Test
     public void canBeCreatedWithP3Coordinates() {
         // Arrange:
-        final Ed25519GroupElement g = Ed25519GroupElement.p3(Ed25519Field.ZERO, Ed25519Field.ONE, Ed25519Field.ONE, Ed25519Field.ZERO);
+        final Ed25519GroupElement g =
+            Ed25519GroupElement.p3(
+                Ed25519Field.ZERO, Ed25519Field.ONE, Ed25519Field.ONE, Ed25519Field.ZERO);
 
         // Assert:
         Assert.assertThat(g.getCoordinateSystem(), IsEqual.equalTo(CoordinateSystem.P3));
@@ -54,7 +56,9 @@ public class Ed25519GroupElementTest {
     @Test
     public void canBeCreatedWithP1P1Coordinates() {
         // Arrange:
-        final Ed25519GroupElement g = Ed25519GroupElement.p1xp1(Ed25519Field.ZERO, Ed25519Field.ONE, Ed25519Field.ONE, Ed25519Field.ONE);
+        final Ed25519GroupElement g =
+            Ed25519GroupElement.p1xp1(
+                Ed25519Field.ZERO, Ed25519Field.ONE, Ed25519Field.ONE, Ed25519Field.ONE);
 
         // Assert:
         Assert.assertThat(g.getCoordinateSystem(), IsEqual.equalTo(CoordinateSystem.P1xP1));
@@ -67,7 +71,8 @@ public class Ed25519GroupElementTest {
     @Test
     public void canBeCreatedWithPrecompCoordinates() {
         // Arrange:
-        final Ed25519GroupElement g = Ed25519GroupElement.precomputed(Ed25519Field.ONE, Ed25519Field.ONE, Ed25519Field.ZERO);
+        final Ed25519GroupElement g =
+            Ed25519GroupElement.precomputed(Ed25519Field.ONE, Ed25519Field.ONE, Ed25519Field.ZERO);
 
         // Assert:
         Assert.assertThat(g.getCoordinateSystem(), IsEqual.equalTo(CoordinateSystem.PRECOMPUTED));
@@ -80,7 +85,9 @@ public class Ed25519GroupElementTest {
     @Test
     public void canBeCreatedWithCachedCoordinates() {
         // Arrange:
-        final Ed25519GroupElement g = Ed25519GroupElement.cached(Ed25519Field.ONE, Ed25519Field.ONE, Ed25519Field.ONE, Ed25519Field.ZERO);
+        final Ed25519GroupElement g =
+            Ed25519GroupElement.cached(
+                Ed25519Field.ONE, Ed25519Field.ONE, Ed25519Field.ONE, Ed25519Field.ZERO);
 
         // Assert:
         Assert.assertThat(g.getCoordinateSystem(), IsEqual.equalTo(CoordinateSystem.CACHED));
@@ -93,7 +100,8 @@ public class Ed25519GroupElementTest {
     @Test
     public void canBeCreatedWithSpecifiedCoordinates() {
         // Arrange:
-        final Ed25519GroupElement g = new Ed25519GroupElement(
+        final Ed25519GroupElement g =
+            new Ed25519GroupElement(
                 CoordinateSystem.P3,
                 Ed25519Field.ZERO,
                 Ed25519Field.ONE,
@@ -133,7 +141,9 @@ public class Ed25519GroupElementTest {
             // Act:
             final Ed25519EncodedGroupElement encoded = g.encode();
             final byte[] bytes = MathUtils.toByteArray(MathUtils.toBigInteger(g.getY()));
-            if (MathUtils.toBigInteger(g.getX()).mod(new BigInteger("2")).equals(MathUtils.toBigInteger(Ed25519Field.ONE))) {
+            if (MathUtils.toBigInteger(g.getX())
+                .mod(new BigInteger("2"))
+                .equals(MathUtils.toBigInteger(Ed25519Field.ONE))) {
                 bytes[31] |= 0x80;
             }
 
@@ -145,7 +155,9 @@ public class Ed25519GroupElementTest {
     @Test(expected = IllegalArgumentException.class)
     public void toP2ThrowsIfGroupElementHasPrecompRepresentation() {
         // Arrange:
-        final Ed25519GroupElement g = MathUtils.toRepresentation(MathUtils.getRandomGroupElement(), CoordinateSystem.PRECOMPUTED);
+        final Ed25519GroupElement g =
+            MathUtils
+                .toRepresentation(MathUtils.getRandomGroupElement(), CoordinateSystem.PRECOMPUTED);
 
         // Assert:
         g.toP2();
@@ -154,7 +166,8 @@ public class Ed25519GroupElementTest {
     @Test(expected = IllegalArgumentException.class)
     public void toP2ThrowsIfGroupElementHasCachedRepresentation() {
         // Arrange:
-        final Ed25519GroupElement g = MathUtils.toRepresentation(MathUtils.getRandomGroupElement(), CoordinateSystem.CACHED);
+        final Ed25519GroupElement g =
+            MathUtils.toRepresentation(MathUtils.getRandomGroupElement(), CoordinateSystem.CACHED);
 
         // Assert:
         g.toP2();
@@ -164,7 +177,8 @@ public class Ed25519GroupElementTest {
     public void toP2ReturnsExpectedResultIfGroupElementHasP2Representation() {
         for (int i = 0; i < 10; i++) {
             // Arrange:
-            final Ed25519GroupElement g = MathUtils.toRepresentation(MathUtils.getRandomGroupElement(), CoordinateSystem.P2);
+            final Ed25519GroupElement g =
+                MathUtils.toRepresentation(MathUtils.getRandomGroupElement(), CoordinateSystem.P2);
 
             // Act:
             final Ed25519GroupElement h = g.toP2();
@@ -203,7 +217,9 @@ public class Ed25519GroupElementTest {
     public void toP2ReturnsExpectedResultIfGroupElementHasP1P1Representation() {
         for (int i = 0; i < 10; i++) {
             // Arrange:
-            final Ed25519GroupElement g = MathUtils.toRepresentation(MathUtils.getRandomGroupElement(), CoordinateSystem.P1xP1);
+            final Ed25519GroupElement g =
+                MathUtils
+                    .toRepresentation(MathUtils.getRandomGroupElement(), CoordinateSystem.P1xP1);
 
             // Act:
             final Ed25519GroupElement h1 = g.toP2();
@@ -222,7 +238,8 @@ public class Ed25519GroupElementTest {
     @Test(expected = IllegalArgumentException.class)
     public void toP3ThrowsIfGroupElementHasP2Representation() {
         // Arrange:
-        final Ed25519GroupElement g = MathUtils.toRepresentation(MathUtils.getRandomGroupElement(), CoordinateSystem.P2);
+        final Ed25519GroupElement g =
+            MathUtils.toRepresentation(MathUtils.getRandomGroupElement(), CoordinateSystem.P2);
 
         // Assert:
         g.toP3();
@@ -231,7 +248,9 @@ public class Ed25519GroupElementTest {
     @Test(expected = IllegalArgumentException.class)
     public void toP3ThrowsIfGroupElementHasPrecompRepresentation() {
         // Arrange:
-        final Ed25519GroupElement g = MathUtils.toRepresentation(MathUtils.getRandomGroupElement(), CoordinateSystem.PRECOMPUTED);
+        final Ed25519GroupElement g =
+            MathUtils
+                .toRepresentation(MathUtils.getRandomGroupElement(), CoordinateSystem.PRECOMPUTED);
 
         // Assert:
         g.toP3();
@@ -240,7 +259,8 @@ public class Ed25519GroupElementTest {
     @Test(expected = IllegalArgumentException.class)
     public void toP3ThrowsIfGroupElementHasCachedRepresentation() {
         // Arrange:
-        final Ed25519GroupElement g = MathUtils.toRepresentation(MathUtils.getRandomGroupElement(), CoordinateSystem.CACHED);
+        final Ed25519GroupElement g =
+            MathUtils.toRepresentation(MathUtils.getRandomGroupElement(), CoordinateSystem.CACHED);
 
         // Assert:
         g.toP3();
@@ -250,7 +270,9 @@ public class Ed25519GroupElementTest {
     public void toP3ReturnsExpectedResultIfGroupElementHasP1P1Representation() {
         for (int i = 0; i < 10; i++) {
             // Arrange:
-            final Ed25519GroupElement g = MathUtils.toRepresentation(MathUtils.getRandomGroupElement(), CoordinateSystem.P1xP1);
+            final Ed25519GroupElement g =
+                MathUtils
+                    .toRepresentation(MathUtils.getRandomGroupElement(), CoordinateSystem.P1xP1);
 
             // Act:
             final Ed25519GroupElement h1 = g.toP3();
@@ -289,7 +311,8 @@ public class Ed25519GroupElementTest {
     @Test(expected = IllegalArgumentException.class)
     public void toCachedThrowsIfGroupElementHasP2Representation() {
         // Arrange:
-        final Ed25519GroupElement g = MathUtils.toRepresentation(MathUtils.getRandomGroupElement(), CoordinateSystem.P2);
+        final Ed25519GroupElement g =
+            MathUtils.toRepresentation(MathUtils.getRandomGroupElement(), CoordinateSystem.P2);
 
         // Assert:
         g.toCached();
@@ -298,7 +321,9 @@ public class Ed25519GroupElementTest {
     @Test(expected = IllegalArgumentException.class)
     public void toCachedThrowsIfGroupElementHasPrecompRepresentation() {
         // Arrange:
-        final Ed25519GroupElement g = MathUtils.toRepresentation(MathUtils.getRandomGroupElement(), CoordinateSystem.PRECOMPUTED);
+        final Ed25519GroupElement g =
+            MathUtils
+                .toRepresentation(MathUtils.getRandomGroupElement(), CoordinateSystem.PRECOMPUTED);
 
         // Assert:
         g.toCached();
@@ -307,7 +332,8 @@ public class Ed25519GroupElementTest {
     @Test(expected = IllegalArgumentException.class)
     public void toCachedThrowsIfGroupElementHasP1P1Representation() {
         // Arrange:
-        final Ed25519GroupElement g = MathUtils.toRepresentation(MathUtils.getRandomGroupElement(), CoordinateSystem.P1xP1);
+        final Ed25519GroupElement g =
+            MathUtils.toRepresentation(MathUtils.getRandomGroupElement(), CoordinateSystem.P1xP1);
 
         // Assert:
         g.toCached();
@@ -317,7 +343,9 @@ public class Ed25519GroupElementTest {
     public void toCachedReturnsExpectedResultIfGroupElementHasCachedRepresentation() {
         for (int i = 0; i < 10; i++) {
             // Arrange:
-            final Ed25519GroupElement g = MathUtils.toRepresentation(MathUtils.getRandomGroupElement(), CoordinateSystem.CACHED);
+            final Ed25519GroupElement g =
+                MathUtils
+                    .toRepresentation(MathUtils.getRandomGroupElement(), CoordinateSystem.CACHED);
 
             // Act:
             final Ed25519GroupElement h = g.toCached();
@@ -350,7 +378,8 @@ public class Ed25519GroupElementTest {
             Assert.assertThat(h1.getX(), IsEqual.equalTo(g.getY().add(g.getX())));
             Assert.assertThat(h1.getY(), IsEqual.equalTo(g.getY().subtract(g.getX())));
             Assert.assertThat(h1.getZ(), IsEqual.equalTo(g.getZ()));
-            Assert.assertThat(h1.getT(), IsEqual.equalTo(g.getT().multiply(Ed25519Field.D_Times_TWO)));
+            Assert.assertThat(h1.getT(),
+                IsEqual.equalTo(g.getT().multiply(Ed25519Field.D_Times_TWO)));
         }
     }
 
@@ -365,8 +394,9 @@ public class Ed25519GroupElementTest {
         for (int i = 0; i < 32; i++) {
             Ed25519GroupElement h = g;
             for (int j = 0; j < 8; j++) {
-                Assert.assertThat(MathUtils.toRepresentation(h, CoordinateSystem.PRECOMPUTED),
-                        IsEqual.equalTo(Ed25519Group.BASE_POINT.getPrecomputedForSingle()[i][j]));
+                Assert.assertThat(
+                    MathUtils.toRepresentation(h, CoordinateSystem.PRECOMPUTED),
+                    IsEqual.equalTo(Ed25519Group.BASE_POINT.getPrecomputedForSingle()[i][j]));
                 h = MathUtils.addGroupElements(h, g);
             }
             for (int k = 0; k < 8; k++) {
@@ -383,8 +413,9 @@ public class Ed25519GroupElementTest {
 
         // Act + Assert:
         for (int i = 0; i < 8; i++) {
-            Assert.assertThat(MathUtils.toRepresentation(g, CoordinateSystem.PRECOMPUTED),
-                    IsEqual.equalTo(Ed25519Group.BASE_POINT.getPrecomputedForDouble()[i]));
+            Assert.assertThat(
+                MathUtils.toRepresentation(g, CoordinateSystem.PRECOMPUTED),
+                IsEqual.equalTo(Ed25519Group.BASE_POINT.getPrecomputedForDouble()[i]));
             g = MathUtils.addGroupElements(g, h);
         }
     }
@@ -406,11 +437,9 @@ public class Ed25519GroupElementTest {
 
     @Test
     public void addingNeutralGroupElementDoesNotChangeGroupElement() {
-        final Ed25519GroupElement neutral = Ed25519GroupElement.p3(
-                Ed25519Field.ZERO,
-                Ed25519Field.ONE,
-                Ed25519Field.ONE,
-                Ed25519Field.ZERO);
+        final Ed25519GroupElement neutral =
+            Ed25519GroupElement.p3(
+                Ed25519Field.ZERO, Ed25519Field.ONE, Ed25519Field.ONE, Ed25519Field.ZERO);
         for (int i = 0; i < 1000; i++) {
             // Arrange:
             final Ed25519GroupElement g = MathUtils.getRandomGroupElement();
@@ -450,7 +479,8 @@ public class Ed25519GroupElementTest {
 
             // Act:
             final Ed25519GroupElement h1 = g1.subtract(g2.toCached());
-            final Ed25519GroupElement h2 = MathUtils.addGroupElements(g1, MathUtils.negateGroupElement(g2));
+            final Ed25519GroupElement h2 =
+                MathUtils.addGroupElements(g1, MathUtils.negateGroupElement(g2));
 
             // Assert:
             Assert.assertThat(h2, IsEqual.equalTo(h1));
@@ -501,11 +531,15 @@ public class Ed25519GroupElementTest {
     @Test
     public void toStringReturnsCorrectRepresentation() {
         // Arrange:
-        final Ed25519GroupElement g = Ed25519GroupElement.p3(Ed25519Field.ZERO, Ed25519Field.ONE, Ed25519Field.ONE, Ed25519Field.ZERO);
+        final Ed25519GroupElement g =
+            Ed25519GroupElement.p3(
+                Ed25519Field.ZERO, Ed25519Field.ONE, Ed25519Field.ONE, Ed25519Field.ZERO);
 
         // Act:
         final String gAsString = g.toString();
-        final String expectedString = String.format("X=%s\nY=%s\nZ=%s\nT=%s\n",
+        final String expectedString =
+            String.format(
+                "X=%s\nY=%s\nZ=%s\nT=%s\n",
                 "0000000000000000000000000000000000000000000000000000000000000000",
                 "0100000000000000000000000000000000000000000000000000000000000000",
                 "0100000000000000000000000000000000000000000000000000000000000000",
@@ -570,8 +604,10 @@ public class Ed25519GroupElementTest {
             final Ed25519FieldElement f2 = MathUtils.getRandomFieldElement();
 
             // Act:
-            final Ed25519GroupElement h1 = basePoint.doubleScalarMultiplyVariableTime(g, f2.encode(), f1.encode());
-            final Ed25519GroupElement h2 = MathUtils.doubleScalarMultiplyGroupElements(basePoint, f1, g, f2);
+            final Ed25519GroupElement h1 =
+                basePoint.doubleScalarMultiplyVariableTime(g, f2.encode(), f1.encode());
+            final Ed25519GroupElement h2 =
+                MathUtils.doubleScalarMultiplyGroupElements(basePoint, f1, g, f2);
 
             // Assert:
             Assert.assertThat(h1, IsEqual.equalTo(h2));
@@ -596,7 +632,8 @@ public class Ed25519GroupElementTest {
         for (int i = 0; i < 100; i++) {
             // Arrange:
             final Ed25519GroupElement g = MathUtils.getRandomGroupElement();
-            final Ed25519GroupElement h = Ed25519GroupElement.p2(g.getX(), g.getY(), g.getZ().multiply(Ed25519Field.TWO));
+            final Ed25519GroupElement h =
+                Ed25519GroupElement.p2(g.getX(), g.getY(), g.getZ().multiply(Ed25519Field.TWO));
 
             // Assert (can only fail for 5*Z^2=1):
             Assert.assertThat(h.satisfiesCurveEquation(), IsEqual.equalTo(false));

@@ -22,6 +22,7 @@ package io.nem.sdk.model.blockchain;
  * @since 1.0
  */
 public class BlockchainStorageInfo {
+
     private final Integer numAccounts;
     private final Integer numBlocks;
     private final Integer numTransactions;

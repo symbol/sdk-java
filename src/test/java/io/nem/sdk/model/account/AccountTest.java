@@ -16,6 +16,9 @@
 
 package io.nem.sdk.model.account;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+
 import io.nem.core.crypto.KeyPair;
 import io.nem.core.crypto.ed25519.Ed25519CryptoEngine;
 import io.nem.sdk.model.blockchain.NetworkType;
@@ -25,76 +28,109 @@ import io.nem.sdk.model.transaction.FakeDeadline;
 import io.nem.sdk.model.transaction.PlainMessage;
 import io.nem.sdk.model.transaction.SignedTransaction;
 import io.nem.sdk.model.transaction.TransferTransaction;
-import org.junit.jupiter.api.Test;
-
 import java.math.BigInteger;
 import java.util.Collections;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import org.junit.jupiter.api.Test;
 
 class AccountTest {
-    private final String generationHash = "57F7DA205008026C776CB6AED843393F04CD458E0AA2D9F1D5F31A402072B2D6";
+
+    private final String generationHash =
+        "57F7DA205008026C776CB6AED843393F04CD458E0AA2D9F1D5F31A402072B2D6";
 
     @Test
     void shouldCreateAccountViaConstructor() {
-        Account account = new Account("787225aaff3d2c71f4ffa32d4f19ec4922f3cd869747f267378f81f8e3fcb12d", NetworkType.MIJIN_TEST);
-        assertEquals("787225AAFF3D2C71F4FFA32D4F19EC4922F3CD869747F267378F81F8E3FCB12D", account.getPrivateKey());
-        assertEquals("1026D70E1954775749C6811084D6450A3184D977383F0E4282CD47118AF37755", account.getPublicKey());
+        Account account =
+            new Account(
+                "787225aaff3d2c71f4ffa32d4f19ec4922f3cd869747f267378f81f8e3fcb12d",
+                NetworkType.MIJIN_TEST);
+        assertEquals(
+            "787225AAFF3D2C71F4FFA32D4F19EC4922F3CD869747F267378F81F8E3FCB12D",
+            account.getPrivateKey());
+        assertEquals(
+            "1026D70E1954775749C6811084D6450A3184D977383F0E4282CD47118AF37755",
+            account.getPublicKey());
         assertEquals("SDRDGFTDLLCB67D4HPGIMIHPNSRYRJRT7DOBGWZY", account.getAddress().plain());
     }
 
     @Test
     void shouldCreateAccountViaStaticConstructor() {
-        Account account = Account.createFromPrivateKey("787225AAFF3D2C71F4FFA32D4F19EC4922F3CD869747F267378F81F8E3FCB12D", NetworkType.MIJIN_TEST);
-        assertEquals("787225AAFF3D2C71F4FFA32D4F19EC4922F3CD869747F267378F81F8E3FCB12D", account.getPrivateKey());
-        assertEquals("1026D70E1954775749C6811084D6450A3184D977383F0E4282CD47118AF37755", account.getPublicKey());
+        Account account =
+            Account.createFromPrivateKey(
+                "787225AAFF3D2C71F4FFA32D4F19EC4922F3CD869747F267378F81F8E3FCB12D",
+                NetworkType.MIJIN_TEST);
+        assertEquals(
+            "787225AAFF3D2C71F4FFA32D4F19EC4922F3CD869747F267378F81F8E3FCB12D",
+            account.getPrivateKey());
+        assertEquals(
+            "1026D70E1954775749C6811084D6450A3184D977383F0E4282CD47118AF37755",
+            account.getPublicKey());
         assertEquals("SDRDGFTDLLCB67D4HPGIMIHPNSRYRJRT7DOBGWZY", account.getAddress().plain());
     }
 
-
     @Test
     void shouldCreateAccountViaStaticConstructor2() {
-        Account account = Account.createFromPrivateKey("5098D500390934F81EA416D9A2F50F276DE446E28488E1801212931E3470DA31", NetworkType.MIJIN_TEST);
-        assertEquals("5098D500390934F81EA416D9A2F50F276DE446E28488E1801212931E3470DA31", account.getPrivateKey());
-        assertEquals("9B800145F7228CE0014FC6FB44AD899BFCAD7B0CDF48DB63A7CC7299E373D734", account.getPublicKey());
-        assertEquals("SAQC5A-K6X2K6-YYAI4L-2TQI2T-4ZRWAO-URYDYT-UO77", account.getAddress().pretty());
+        Account account =
+            Account.createFromPrivateKey(
+                "5098D500390934F81EA416D9A2F50F276DE446E28488E1801212931E3470DA31",
+                NetworkType.MIJIN_TEST);
+        assertEquals(
+            "5098D500390934F81EA416D9A2F50F276DE446E28488E1801212931E3470DA31",
+            account.getPrivateKey());
+        assertEquals(
+            "9B800145F7228CE0014FC6FB44AD899BFCAD7B0CDF48DB63A7CC7299E373D734",
+            account.getPublicKey());
+        assertEquals("SAQC5A-K6X2K6-YYAI4L-2TQI2T-4ZRWAO-URYDYT-UO77",
+            account.getAddress().pretty());
     }
 
     @Test
     void shouldCreateAccountViaStaticConstructor3() {
-        Account account = Account.createFromPrivateKey("B8AFAE6F4AD13A1B8AAD047B488E0738A437C7389D4FF30C359AC068910C1D59", NetworkType.MIJIN_TEST);
-        assertEquals("B8AFAE6F4AD13A1B8AAD047B488E0738A437C7389D4FF30C359AC068910C1D59", account.getPrivateKey());
-        assertEquals("68B3FBB18729C1FDE225C57F8CE080FA828F0067E451A3FD81FA628842B0B763", account.getPublicKey());
+        Account account =
+            Account.createFromPrivateKey(
+                "B8AFAE6F4AD13A1B8AAD047B488E0738A437C7389D4FF30C359AC068910C1D59",
+                NetworkType.MIJIN_TEST);
+        assertEquals(
+            "B8AFAE6F4AD13A1B8AAD047B488E0738A437C7389D4FF30C359AC068910C1D59",
+            account.getPrivateKey());
+        assertEquals(
+            "68B3FBB18729C1FDE225C57F8CE080FA828F0067E451A3FD81FA628842B0B763",
+            account.getPublicKey());
         assertEquals("SBE6CS7LZKJXLDVTNAC3VZ3AUVZDTF3PACNFIXFN", account.getAddress().plain());
     }
 
     @Test
-    void generateNewAccountTest(){
+    void generateNewAccountTest() {
         Account account = Account.generateNewAccount(NetworkType.MIJIN_TEST);
-        assertNotEquals(account.getPrivateKey(),null);
+        assertNotEquals(account.getPrivateKey(), null);
         assertNotEquals(account.getPublicKey(), null);
-        assertEquals(account.getPrivateKey().length(),64);
+        assertEquals(account.getPrivateKey().length(), 64);
     }
 
     @Test
     void shouldSignTransaction() {
-        Account account = new Account("787225aaff3d2c71f4ffa32d4f19ec4922f3cd869747f267378f81f8e3fcb12d", NetworkType.MIJIN_TEST);
-        TransferTransaction transferTransaction = TransferTransaction.create(
+        Account account =
+            new Account(
+                "787225aaff3d2c71f4ffa32d4f19ec4922f3cd869747f267378f81f8e3fcb12d",
+                NetworkType.MIJIN_TEST);
+        TransferTransaction transferTransaction =
+            TransferTransaction.create(
                 new FakeDeadline(),
                 BigInteger.ZERO,
                 new Address("SDUP5PLHDXKBX3UU5Q52LAY4WYEKGEWC6IB3VBFM", NetworkType.MIJIN_TEST),
                 Collections.singletonList(
-                        new Mosaic(new MosaicId(new BigInteger("95442763262823")), BigInteger.valueOf(100))
-                ),
+                    new Mosaic(
+                        new MosaicId(new BigInteger("95442763262823")), BigInteger.valueOf(100))),
                 PlainMessage.Empty,
-                NetworkType.MIJIN_TEST
-        );
+                NetworkType.MIJIN_TEST);
 
         SignedTransaction signedTransaction = account.sign(transferTransaction, generationHash);
         String payload = signedTransaction.getPayload();
-        assertEquals(payload.substring(240), "90E8FEBD671DD41BEE94EC3BA5831CB608A312C2F203BA84AC01000100672B0000CE5600006400000000000000");
-        assertEquals("B54321C382FA3CC53EB6559FDDE03832898E7E89C8F90C10DF8567AD41A926A2", signedTransaction.getHash());
+        assertEquals(
+            payload.substring(240),
+            "90E8FEBD671DD41BEE94EC3BA5831CB608A312C2F203BA84AC01000100672B0000CE5600006400000000000000");
+        assertEquals(
+            "B54321C382FA3CC53EB6559FDDE03832898E7E89C8F90C10DF8567AD41A926A2",
+            signedTransaction.getHash());
     }
 
     @Test

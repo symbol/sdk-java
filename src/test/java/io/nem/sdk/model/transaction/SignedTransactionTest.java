@@ -16,15 +16,16 @@
 
 package io.nem.sdk.model.transaction;
 
-import org.junit.jupiter.api.Test;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import org.junit.jupiter.api.Test;
 
 public class SignedTransactionTest {
 
     @Test
     void createASignedTransactionViaConstructor() {
-        SignedTransaction signedTransaction = new SignedTransaction("payload", "hash", TransactionType.TRANSFER);
+        SignedTransaction signedTransaction =
+            new SignedTransaction("payload", "hash", TransactionType.TRANSFER);
 
         assertEquals("payload", signedTransaction.getPayload());
         assertEquals("hash", signedTransaction.getHash());

@@ -20,29 +20,30 @@ package io.nem.sdk.model.transaction;
  * An abstract message class that serves as the base class of all message types.
  */
 public abstract class Message {
-	private final int type;
-	private final String payload;
 
-	public Message(int type, String payload) {
-		this.type = type;
-		this.payload = payload;
-	}
+    private final int type;
+    private final String payload;
 
-	/**
-	 * Returns message type.
-	 *
-	 * @return int
-	 */
-	public int getType() {
-		return type;
-	}
+    public Message(int type, String payload) {
+        this.type = type;
+        this.payload = payload;
+    }
 
-	/**
-	 * Returns message payload.
-	 *
-	 * @return String
-	 */
-	public String getPayload() {
-		return payload;
-	}
+    /**
+     * Returns message type.
+     *
+     * @return int
+     */
+    public int getType() {
+        return type;
+    }
+
+    /**
+     * Returns message payload.
+     *
+     * @return String
+     */
+    public String getPayload() {
+        return payload;
+    }
 }

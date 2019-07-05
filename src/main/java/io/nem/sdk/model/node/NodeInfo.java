@@ -18,6 +18,7 @@ package io.nem.sdk.model.node;
 import io.nem.sdk.model.blockchain.NetworkType;
 
 public class NodeInfo {
+
     private final String publicKey;
     private final int port;
     private final NetworkType networkIdentifier;
@@ -26,7 +27,14 @@ public class NodeInfo {
     private final String host;
     private final String friendlyName;
 
-    public NodeInfo(String publicKey, int port, NetworkType networkIdentifier, int version, RoleType roles, String host, String friendlyName){
+    public NodeInfo(
+        String publicKey,
+        int port,
+        NetworkType networkIdentifier,
+        int version,
+        RoleType roles,
+        String host,
+        String friendlyName) {
         this.friendlyName = friendlyName;
         this.host = host;
         this.networkIdentifier = networkIdentifier;
@@ -38,6 +46,7 @@ public class NodeInfo {
 
     /**
      * The port used for the communication.
+     *
      * @return int
      */
     public int getPort() {
@@ -46,6 +55,7 @@ public class NodeInfo {
 
     /**
      * The version of the application.
+     *
      * @return int
      */
     public int getVersion() {
@@ -54,6 +64,7 @@ public class NodeInfo {
 
     /**
      * The network identifier.
+     *
      * @return {@link NetworkType}
      */
     public NetworkType getNetworkIdentifier() {
@@ -62,6 +73,7 @@ public class NodeInfo {
 
     /**
      * The roles of the application.
+     *
      * @return {@link RoleType}
      */
     public RoleType getRoles() {
@@ -70,6 +82,7 @@ public class NodeInfo {
 
     /**
      * The name of the node.
+     *
      * @return String
      */
     public String getFriendlyName() {
@@ -78,6 +91,7 @@ public class NodeInfo {
 
     /**
      * The public key used to identify the node.
+     *
      * @return String
      */
     public String getPublicKey() {
@@ -86,6 +100,7 @@ public class NodeInfo {
 
     /**
      * The IP address of the endpoint.
+     *
      * @return String
      */
     public String getHost() {

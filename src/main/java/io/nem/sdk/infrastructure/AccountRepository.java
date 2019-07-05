@@ -16,11 +16,14 @@
 
 package io.nem.sdk.infrastructure;
 
-import io.nem.sdk.model.account.*;
+import io.nem.sdk.model.account.AccountInfo;
+import io.nem.sdk.model.account.Address;
+import io.nem.sdk.model.account.MultisigAccountGraphInfo;
+import io.nem.sdk.model.account.MultisigAccountInfo;
+import io.nem.sdk.model.account.PublicAccount;
 import io.nem.sdk.model.transaction.AggregateTransaction;
 import io.nem.sdk.model.transaction.Transaction;
 import io.reactivex.Observable;
-
 import java.util.List;
 
 /**
@@ -29,6 +32,7 @@ import java.util.List;
  * @since 1.0
  */
 public interface AccountRepository {
+
     /**
      * Gets an AccountInfo for an account.
      *
@@ -70,18 +74,20 @@ public interface AccountRepository {
     Observable<List<Transaction>> transactions(PublicAccount publicAccount);
 
     /**
-     * Gets an list of confirmed transactions for which an account is signer or receiver.
-     * With pagination.
+     * Gets an list of confirmed transactions for which an account is signer or receiver. With
+     * pagination.
      *
      * @param publicAccount PublicAccount
-     * @param queryParams   QueryParams
+     * @param queryParams QueryParams
      * @return Observable of List<{@link Transaction}>
      */
-    Observable<List<Transaction>> transactions(PublicAccount publicAccount, QueryParams queryParams);
+    Observable<List<Transaction>> transactions(PublicAccount publicAccount,
+        QueryParams queryParams);
 
     /**
-     * Gets an list of transactions for which an account is the recipient of a transaction.
-     * A transaction is said to be incoming with respect to an account if the account is the recipient of a transaction.
+     * Gets an list of transactions for which an account is the recipient of a transaction. A
+     * transaction is said to be incoming with respect to an account if the account is the recipient
+     * of a transaction.
      *
      * @param publicAccount PublicAccount
      * @return Observable of List<{@link Transaction}>
@@ -89,19 +95,21 @@ public interface AccountRepository {
     Observable<List<Transaction>> incomingTransactions(PublicAccount publicAccount);
 
     /**
-     * Gets an list of transactions for which an account is the recipient of a transaction.
-     * A transaction is said to be incoming with respect to an account if the account is the recipient of a transaction.
-     * With pagination.
+     * Gets an list of transactions for which an account is the recipient of a transaction. A
+     * transaction is said to be incoming with respect to an account if the account is the recipient
+     * of a transaction. With pagination.
      *
      * @param publicAccount PublicAccount
-     * @param queryParams   QueryParams
+     * @param queryParams QueryParams
      * @return Observable of List<{@link Transaction}>
      */
-    Observable<List<Transaction>> incomingTransactions(PublicAccount publicAccount, QueryParams queryParams);
+    Observable<List<Transaction>> incomingTransactions(
+        PublicAccount publicAccount, QueryParams queryParams);
 
     /**
-     * Gets an list of transactions for which an account is the sender a transaction.
-     * A transaction is said to be outgoing with respect to an account if the account is the sender of a transaction.
+     * Gets an list of transactions for which an account is the sender a transaction. A transaction
+     * is said to be outgoing with respect to an account if the account is the sender of a
+     * transaction.
      *
      * @param publicAccount PublicAccount
      * @return Observable of List<{@link Transaction}>
@@ -109,19 +117,21 @@ public interface AccountRepository {
     Observable<List<Transaction>> outgoingTransactions(PublicAccount publicAccount);
 
     /**
-     * Gets an list of transactions for which an account is the sender a transaction.
-     * A transaction is said to be outgoing with respect to an account if the account is the sender of a transaction.
-     * With pagination.
+     * Gets an list of transactions for which an account is the sender a transaction. A transaction
+     * is said to be outgoing with respect to an account if the account is the sender of a
+     * transaction. With pagination.
      *
      * @param publicAccount PublicAccount
-     * @param queryParams   QueryParams
+     * @param queryParams QueryParams
      * @return Observable of List<{@link Transaction}>
      */
-    Observable<List<Transaction>> outgoingTransactions(PublicAccount publicAccount, QueryParams queryParams);
+    Observable<List<Transaction>> outgoingTransactions(
+        PublicAccount publicAccount, QueryParams queryParams);
 
     /**
      * Gets an list of transactions for which an account is the sender or has sign the transaction.
-     * A transaction is said to be aggregate bonded with respect to an account if there are missing signatures.
+     * A transaction is said to be aggregate bonded with respect to an account if there are missing
+     * signatures.
      *
      * @param publicAccount PublicAccount
      * @return Observable of List<{@link Transaction}>
@@ -130,19 +140,21 @@ public interface AccountRepository {
 
     /**
      * Gets an list of transactions for which an account is the sender or has sign the transaction.
-     * A transaction is said to be aggregate bonded with respect to an account if there are missing signatures.
-     * With pagination.
+     * A transaction is said to be aggregate bonded with respect to an account if there are missing
+     * signatures. With pagination.
      *
      * @param publicAccount PublicAccount
-     * @param queryParams   QueryParams
+     * @param queryParams QueryParams
      * @return Observable of List<{@link Transaction}>
      */
-    Observable<List<AggregateTransaction>> aggregateBondedTransactions(PublicAccount publicAccount, QueryParams queryParams);
+    Observable<List<AggregateTransaction>> aggregateBondedTransactions(
+        PublicAccount publicAccount, QueryParams queryParams);
 
     /**
-     * Gets the list of transactions for which an account is the sender or receiver and which have not yet been included in a block.
-     * Unconfirmed transactions are those transactions that have not yet been included in a block.
-     * Unconfirmed transactions are not guaranteed to be included in any block.
+     * Gets the list of transactions for which an account is the sender or receiver and which have
+     * not yet been included in a block. Unconfirmed transactions are those transactions that have
+     * not yet been included in a block. Unconfirmed transactions are not guaranteed to be included
+     * in any block.
      *
      * @param publicAccount PublicAccount
      * @return Observable of List<{@link Transaction}>
@@ -150,14 +162,15 @@ public interface AccountRepository {
     Observable<List<Transaction>> unconfirmedTransactions(PublicAccount publicAccount);
 
     /**
-     * Gets the list of transactions for which an account is the sender or receiver and which have not yet been included in a block.
-     * Unconfirmed transactions are those transactions that have not yet been included in a block.
-     * Unconfirmed transactions are not guaranteed to be included in any block.
-     * With pagination.
+     * Gets the list of transactions for which an account is the sender or receiver and which have
+     * not yet been included in a block. Unconfirmed transactions are those transactions that have
+     * not yet been included in a block. Unconfirmed transactions are not guaranteed to be included
+     * in any block. With pagination.
      *
      * @param publicAccount PublicAccount
-     * @param queryParams   QueryParams
+     * @param queryParams QueryParams
      * @return Observable of List<{@link Transaction}>
      */
-    Observable<List<Transaction>> unconfirmedTransactions(PublicAccount publicAccount, QueryParams queryParams);
+    Observable<List<Transaction>> unconfirmedTransactions(
+        PublicAccount publicAccount, QueryParams queryParams);
 }

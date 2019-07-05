@@ -22,33 +22,33 @@ package io.nem.sdk.model.mosaic;
  * @since 1.0
  */
 public enum MosaicSupplyType {
-	/**
-	 * Decrease the supply.
-	 */
-	DECREASE(0),
-	/**
-	 * Increase the supply.
-	 */
-	INCREASE(1);
+    /**
+     * Decrease the supply.
+     */
+    DECREASE(0),
+    /**
+     * Increase the supply.
+     */
+    INCREASE(1);
 
-	private int value;
+    private int value;
 
-	MosaicSupplyType(int value) {
-		this.value = value;
-	}
+    MosaicSupplyType(int value) {
+        this.value = value;
+    }
 
-	public static MosaicSupplyType rawValueOf(int value) {
-		switch (value) {
-			case 0:
-				return MosaicSupplyType.DECREASE;
-			case 1:
-				return MosaicSupplyType.INCREASE;
-			default:
-				throw new IllegalArgumentException(value + " is not a valid value");
-		}
-	}
+    public static MosaicSupplyType rawValueOf(int value) {
+        switch (value) {
+            case 0:
+                return MosaicSupplyType.DECREASE;
+            case 1:
+                return MosaicSupplyType.INCREASE;
+            default:
+                throw new IllegalArgumentException(value + " is not a valid value");
+        }
+    }
 
-	public int getValue() {
-		return value;
-	}
+    public int getValue() {
+        return value;
+    }
 }

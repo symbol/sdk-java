@@ -16,13 +16,12 @@
 
 package io.nem.sdk.model.transaction;
 
-import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import org.junit.jupiter.api.Test;
 
 class DeadlineTest {
 
@@ -31,17 +30,24 @@ class DeadlineTest {
         LocalDateTime now = LocalDateTime.now(ZoneId.systemDefault());
         Deadline deadline = new Deadline(2, ChronoUnit.HOURS);
         assertTrue(now.isBefore(deadline.getLocalDateTime()), "now is before deadline localtime");
-        assertTrue(now.plusHours(2).minusSeconds(1).isBefore(deadline.getLocalDateTime()), "now plus 2 hours is before deadline localtime");
-        assertTrue(now.plusMinutes(2 * 60 + 2).isAfter(deadline.getLocalDateTime()), "now plus 2 hours and 2 seconds is after deadline localtime");
+        assertTrue(
+            now.plusHours(2).minusSeconds(1).isBefore(deadline.getLocalDateTime()),
+            "now plus 2 hours is before deadline localtime");
+        assertTrue(
+            now.plusMinutes(2 * 60 + 2).isAfter(deadline.getLocalDateTime()),
+            "now plus 2 hours and 2 seconds is after deadline localtime");
     }
-
 
     @Test
     void shouldCreateADeadlineForTwoHoursFromNowWithStaticConstructor() {
         LocalDateTime now = LocalDateTime.now(ZoneId.systemDefault());
         Deadline deadline = Deadline.create(2, ChronoUnit.HOURS);
         assertTrue(now.isBefore(deadline.getLocalDateTime()), "now is before deadline localtime");
-        assertTrue(now.plusHours(2).minusSeconds(1).isBefore(deadline.getLocalDateTime()), "now plus 2 hours is before deadline localtime");
-        assertTrue(now.plusMinutes(2 * 60 + 2).isAfter(deadline.getLocalDateTime()), "now plus 2 hours and 2 seconds is after deadline localtime");
+        assertTrue(
+            now.plusHours(2).minusSeconds(1).isBefore(deadline.getLocalDateTime()),
+            "now plus 2 hours is before deadline localtime");
+        assertTrue(
+            now.plusMinutes(2 * 60 + 2).isAfter(deadline.getLocalDateTime()),
+            "now plus 2 hours and 2 seconds is after deadline localtime");
     }
 }

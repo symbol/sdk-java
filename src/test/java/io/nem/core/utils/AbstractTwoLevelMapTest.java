@@ -17,15 +17,14 @@
 package io.nem.core.utils;
 
 import io.nem.core.test.IsEquivalent;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Map;
 import org.hamcrest.core.IsNot;
 import org.hamcrest.core.IsNull;
 import org.hamcrest.core.IsSame;
 import org.junit.Assert;
 import org.junit.Test;
-
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Map;
 
 public class AbstractTwoLevelMapTest {
 
@@ -101,7 +100,8 @@ public class AbstractTwoLevelMapTest {
         map.getItems("baz");
 
         // Sanity:
-        Assert.assertThat(map.keySet(), IsEquivalent.equivalentTo(Arrays.asList("foo", "bar", "baz")));
+        Assert.assertThat(map.keySet(),
+            IsEquivalent.equivalentTo(Arrays.asList("foo", "bar", "baz")));
 
         // Act:
         map.remove("bar");
@@ -119,14 +119,16 @@ public class AbstractTwoLevelMapTest {
         map.getItems("baz");
 
         // Sanity:
-        Assert.assertThat(map.keySet(), IsEquivalent.equivalentTo(Arrays.asList("foo", "bar", "baz")));
+        Assert.assertThat(map.keySet(),
+            IsEquivalent.equivalentTo(Arrays.asList("foo", "bar", "baz")));
 
         // Act:
         map.remove("qux");
         map.remove("alice");
 
         // Assert:
-        Assert.assertThat(map.keySet(), IsEquivalent.equivalentTo(Arrays.asList("foo", "bar", "baz")));
+        Assert.assertThat(map.keySet(),
+            IsEquivalent.equivalentTo(Arrays.asList("foo", "bar", "baz")));
     }
 
     @Test
@@ -138,7 +140,8 @@ public class AbstractTwoLevelMapTest {
         map.getItems("baz");
 
         // Assert:
-        Assert.assertThat(map.keySet(), IsEquivalent.equivalentTo(Arrays.asList("foo", "bar", "baz")));
+        Assert.assertThat(map.keySet(),
+            IsEquivalent.equivalentTo(Arrays.asList("foo", "bar", "baz")));
     }
 
     @Test
@@ -151,6 +154,7 @@ public class AbstractTwoLevelMapTest {
     }
 
     private static class MockValue {
+
     }
 
     private static class MockTwoLevelMap extends AbstractTwoLevelMap<String, MockValue> {

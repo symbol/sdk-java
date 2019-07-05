@@ -18,11 +18,11 @@ package io.nem.sdk.model.receipt;
 
 import io.nem.sdk.model.account.PublicAccount;
 import io.nem.sdk.model.mosaic.MosaicId;
-
 import java.math.BigInteger;
 import java.util.Optional;
 
 public class BalanceChangeReceipt extends Receipt {
+
     private final PublicAccount account;
     private final MosaicId mosaicId;
     private final BigInteger amount;
@@ -30,14 +30,20 @@ public class BalanceChangeReceipt extends Receipt {
     /**
      * Constructor BalanceChangeReceipt
      *
-     * @param account   Public Account
-     * @param mosaicId  Mosaic Id
-     * @param amount    Amount
-     * @param type      Receipt Type
-     * @param version   Receipt Version
-     * @param size      Receipt Size
+     * @param account Public Account
+     * @param mosaicId Mosaic Id
+     * @param amount Amount
+     * @param type Receipt Type
+     * @param version Receipt Version
+     * @param size Receipt Size
      */
-    public BalanceChangeReceipt (PublicAccount account, MosaicId mosaicId, BigInteger amount, ReceiptType type, ReceiptVersion version, Optional<Integer> size) {
+    public BalanceChangeReceipt(
+        PublicAccount account,
+        MosaicId mosaicId,
+        BigInteger amount,
+        ReceiptType type,
+        ReceiptVersion version,
+        Optional<Integer> size) {
         super(type, version, size);
         this.account = account;
         this.amount = amount;
@@ -48,13 +54,18 @@ public class BalanceChangeReceipt extends Receipt {
     /**
      * Constructor BalanceChangeReceipt
      *
-     * @param account   Public Account
-     * @param mosaicId  Mosaic Id
-     * @param amount    Amount
-     * @param type      Receipt Type
-     * @param version   Receipt Version
+     * @param account Public Account
+     * @param mosaicId Mosaic Id
+     * @param amount Amount
+     * @param type Receipt Type
+     * @param version Receipt Version
      */
-    public BalanceChangeReceipt (PublicAccount account, MosaicId mosaicId, BigInteger amount, ReceiptType type, ReceiptVersion version) {
+    public BalanceChangeReceipt(
+        PublicAccount account,
+        MosaicId mosaicId,
+        BigInteger amount,
+        ReceiptType type,
+        ReceiptVersion version) {
         super(type, version, null);
         this.account = account;
         this.amount = amount;
@@ -88,6 +99,7 @@ public class BalanceChangeReceipt extends Receipt {
     public BigInteger getAmount() {
         return this.amount;
     }
+
     /**
      * Validate receipt type
      *

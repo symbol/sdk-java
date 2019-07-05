@@ -16,13 +16,12 @@
 
 package io.nem.core.crypto.ed25519.arithmetic;
 
+import java.math.BigInteger;
+import java.security.SecureRandom;
 import org.hamcrest.core.IsEqual;
 import org.hamcrest.core.IsNot;
 import org.junit.Assert;
 import org.junit.Test;
-
-import java.math.BigInteger;
-import java.security.SecureRandom;
 
 public class Ed25519EncodedFieldElementTest {
 
@@ -112,15 +111,19 @@ public class Ed25519EncodedFieldElementTest {
     public void modQReturnsExpectedResult() {
         for (int i = 0; i < 1000; i++) {
             // Arrange:
-            final Ed25519EncodedFieldElement encoded = new Ed25519EncodedFieldElement(MathUtils.getRandomByteArray(64));
+            final Ed25519EncodedFieldElement encoded =
+                new Ed25519EncodedFieldElement(MathUtils.getRandomByteArray(64));
 
             // Act:
             final Ed25519EncodedFieldElement reduced1 = encoded.modQ();
             final Ed25519EncodedFieldElement reduced2 = MathUtils.reduceModGroupOrder(encoded);
 
             // Assert:
-            Assert.assertThat(MathUtils.toBigInteger(reduced1).compareTo(Ed25519Field.P), IsEqual.equalTo(-1));
-            Assert.assertThat(MathUtils.toBigInteger(reduced1).compareTo(new BigInteger("-1")), IsEqual.equalTo(1));
+            Assert.assertThat(
+                MathUtils.toBigInteger(reduced1).compareTo(Ed25519Field.P), IsEqual.equalTo(-1));
+            Assert.assertThat(
+                MathUtils.toBigInteger(reduced1).compareTo(new BigInteger("-1")),
+                IsEqual.equalTo(1));
             Assert.assertThat(reduced1, IsEqual.equalTo(reduced2));
         }
     }
@@ -134,12 +137,17 @@ public class Ed25519EncodedFieldElementTest {
             final Ed25519EncodedFieldElement encoded3 = MathUtils.getRandomEncodedFieldElement(32);
 
             // Act:
-            final Ed25519EncodedFieldElement result1 = encoded1.multiplyAndAddModQ(encoded2, encoded3);
-            final Ed25519EncodedFieldElement result2 = MathUtils.multiplyAndAddModGroupOrder(encoded1, encoded2, encoded3);
+            final Ed25519EncodedFieldElement result1 = encoded1
+                .multiplyAndAddModQ(encoded2, encoded3);
+            final Ed25519EncodedFieldElement result2 =
+                MathUtils.multiplyAndAddModGroupOrder(encoded1, encoded2, encoded3);
 
             // Assert:
-            Assert.assertThat(MathUtils.toBigInteger(result1).compareTo(Ed25519Field.P), IsEqual.equalTo(-1));
-            Assert.assertThat(MathUtils.toBigInteger(result1).compareTo(new BigInteger("-1")), IsEqual.equalTo(1));
+            Assert.assertThat(
+                MathUtils.toBigInteger(result1).compareTo(Ed25519Field.P), IsEqual.equalTo(-1));
+            Assert.assertThat(
+                MathUtils.toBigInteger(result1).compareTo(new BigInteger("-1")),
+                IsEqual.equalTo(1));
             Assert.assertThat(result1, IsEqual.equalTo(result2));
         }
     }
@@ -162,8 +170,10 @@ public class Ed25519EncodedFieldElementTest {
         final Ed25519EncodedFieldElement encoded2 = fieldElement2.encode();
 
         // Assert:
-        Assert.assertThat(encoded1, IsEqual.equalTo(MathUtils.toEncodedFieldElement(BigInteger.ZERO)));
-        Assert.assertThat(encoded2, IsEqual.equalTo(MathUtils.toEncodedFieldElement(BigInteger.ONE)));
+        Assert.assertThat(encoded1,
+            IsEqual.equalTo(MathUtils.toEncodedFieldElement(BigInteger.ZERO)));
+        Assert
+            .assertThat(encoded2, IsEqual.equalTo(MathUtils.toEncodedFieldElement(BigInteger.ONE)));
     }
 
     @Test
@@ -201,7 +211,8 @@ public class Ed25519EncodedFieldElementTest {
             final Ed25519EncodedFieldElement encoded = fieldElement.encode();
 
             // Assert:
-            Assert.assertThat(encoded, IsEqual.equalTo(MathUtils.toEncodedFieldElement(b.mod(Ed25519Field.P))));
+            Assert.assertThat(
+                encoded, IsEqual.equalTo(MathUtils.toEncodedFieldElement(b.mod(Ed25519Field.P))));
         }
     }
 
@@ -216,7 +227,11 @@ public class Ed25519EncodedFieldElementTest {
             random.nextBytes(values);
             values[31] &= 0x7F;
             final Ed25519EncodedFieldElement encoded = new Ed25519EncodedFieldElement(values);
-            final boolean isNegative = MathUtils.toBigInteger(encoded).mod(Ed25519Field.P).mod(new BigInteger("2")).equals(BigInteger.ONE);
+            final boolean isNegative =
+                MathUtils.toBigInteger(encoded)
+                    .mod(Ed25519Field.P)
+                    .mod(new BigInteger("2"))
+                    .equals(BigInteger.ONE);
 
             // Assert:
             Assert.assertThat(encoded.isNegative(), IsEqual.equalTo(isNegative));
@@ -259,7 +274,7 @@ public class Ed25519EncodedFieldElementTest {
 
     // endregion
 
-    //region toString
+    // region toString
 
     @Test
     public void toStringReturnsCorrectRepresentation() {

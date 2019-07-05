@@ -16,7 +16,11 @@
 
 package io.nem.core.crypto.ed25519;
 
-import io.nem.core.crypto.*;
+import io.nem.core.crypto.BlockCipher;
+import io.nem.core.crypto.BlockCipherTest;
+import io.nem.core.crypto.CryptoEngine;
+import io.nem.core.crypto.CryptoEngines;
+import io.nem.core.crypto.KeyPair;
 import org.hamcrest.core.IsNull;
 import org.junit.Assert;
 import org.junit.Test;
@@ -38,7 +42,8 @@ public class Ed25519BlockCipherTest extends BlockCipherTest {
     }
 
     @Override
-    protected BlockCipher getBlockCipher(final KeyPair senderKeyPair, final KeyPair recipientKeyPair) {
+    protected BlockCipher getBlockCipher(
+        final KeyPair senderKeyPair, final KeyPair recipientKeyPair) {
         return new Ed25519BlockCipher(senderKeyPair, recipientKeyPair);
     }
 

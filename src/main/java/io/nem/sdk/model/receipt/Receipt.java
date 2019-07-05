@@ -16,9 +16,7 @@
 
 package io.nem.sdk.model.receipt;
 
-
 import java.util.Optional;
-import java.util.OptionalInt;
 
 /**
  * The receipt abstract class
@@ -32,9 +30,9 @@ public abstract class Receipt {
     /**
      * Constructor
      *
-     * @param type      Receipt Type
-     * @param version   Receipt Version
-     * @param size      Receipt Size
+     * @param type Receipt Type
+     * @param version Receipt Version
+     * @param size Receipt Size
      */
     public Receipt(ReceiptType type, ReceiptVersion version, Optional<Integer> size) {
         this.type = type;

@@ -16,26 +16,26 @@
 
 package io.nem.core.math;
 
+import java.util.HashMap;
+import java.util.Map;
 import org.hamcrest.core.IsEqual;
 import org.hamcrest.core.IsNot;
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.util.HashMap;
-import java.util.Map;
-
 public class MatrixElementTest {
 
-    private static final Map<String, MatrixElement> DESC_TO_ELEMENT_MAP = new HashMap<String, MatrixElement>() {
-        {
-            this.put("default", new MatrixElement(5, 4, 7.0));
-            this.put("diff-row", new MatrixElement(6, 4, 7.0));
-            this.put("diff-col", new MatrixElement(5, 3, 7.0));
-            this.put("diff-val", new MatrixElement(5, 4, 7.2));
-        }
-    };
+    private static final Map<String, MatrixElement> DESC_TO_ELEMENT_MAP =
+        new HashMap<String, MatrixElement>() {
+            {
+                this.put("default", new MatrixElement(5, 4, 7.0));
+                this.put("diff-row", new MatrixElement(6, 4, 7.0));
+                this.put("diff-col", new MatrixElement(5, 3, 7.0));
+                this.put("diff-val", new MatrixElement(5, 4, 7.2));
+            }
+        };
 
-    //region equals / hashCode
+    // region equals / hashCode
 
     @Test
     public void canCreateMatrixElement() {
@@ -70,10 +70,13 @@ public class MatrixElementTest {
 
         // Assert:
         Assert.assertThat(DESC_TO_ELEMENT_MAP.get("default").hashCode(), IsEqual.equalTo(hashCode));
-        Assert.assertThat(DESC_TO_ELEMENT_MAP.get("diff-row").hashCode(), IsNot.not(IsEqual.equalTo(hashCode)));
-        Assert.assertThat(DESC_TO_ELEMENT_MAP.get("diff-col").hashCode(), IsNot.not(IsEqual.equalTo(hashCode)));
-        Assert.assertThat(DESC_TO_ELEMENT_MAP.get("diff-val").hashCode(), IsEqual.equalTo(hashCode));
+        Assert.assertThat(
+            DESC_TO_ELEMENT_MAP.get("diff-row").hashCode(), IsNot.not(IsEqual.equalTo(hashCode)));
+        Assert.assertThat(
+            DESC_TO_ELEMENT_MAP.get("diff-col").hashCode(), IsNot.not(IsEqual.equalTo(hashCode)));
+        Assert
+            .assertThat(DESC_TO_ELEMENT_MAP.get("diff-val").hashCode(), IsEqual.equalTo(hashCode));
     }
 
-    //endregion
+    // endregion
 }

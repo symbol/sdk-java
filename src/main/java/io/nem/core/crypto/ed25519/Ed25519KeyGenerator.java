@@ -16,11 +16,14 @@
 
 package io.nem.core.crypto.ed25519;
 
-import io.nem.core.crypto.*;
+import io.nem.core.crypto.CryptoEngines;
+import io.nem.core.crypto.KeyGenerator;
+import io.nem.core.crypto.KeyPair;
+import io.nem.core.crypto.PrivateKey;
+import io.nem.core.crypto.PublicKey;
 import io.nem.core.crypto.ed25519.arithmetic.Ed25519EncodedFieldElement;
 import io.nem.core.crypto.ed25519.arithmetic.Ed25519Group;
 import io.nem.core.crypto.ed25519.arithmetic.Ed25519GroupElement;
-
 import java.math.BigInteger;
 import java.security.SecureRandom;
 
@@ -28,32 +31,33 @@ import java.security.SecureRandom;
  * Implementation of the key generator for Ed25519.
  */
 public class Ed25519KeyGenerator implements KeyGenerator {
-	private final SecureRandom random;
 
-	public Ed25519KeyGenerator() {
-		this.random = new SecureRandom();
-	}
+    private final SecureRandom random;
 
-	@Override
-	public KeyPair generateKeyPair() {
-		final byte[] seed = new byte[32];
-		this.random.nextBytes(seed);
+    public Ed25519KeyGenerator() {
+        this.random = new SecureRandom();
+    }
 
-		// seed is the private key.
-		final PrivateKey privateKey = new PrivateKey(new BigInteger(seed));
+    @Override
+    public KeyPair generateKeyPair() {
+        final byte[] seed = new byte[32];
+        this.random.nextBytes(seed);
 
-		return new KeyPair(privateKey, CryptoEngines.ed25519Engine());
-	}
+        // seed is the private key.
+        final PrivateKey privateKey = new PrivateKey(new BigInteger(seed));
 
-	@Override
-	public PublicKey derivePublicKey(final PrivateKey privateKey) {
-		final Ed25519EncodedFieldElement a = Ed25519Utils.prepareForScalarMultiply(privateKey);
+        return new KeyPair(privateKey, CryptoEngines.ed25519Engine());
+    }
 
-		// a * base point is the public key.
-		final Ed25519GroupElement pubKey = Ed25519Group.BASE_POINT.scalarMultiply(a);
+    @Override
+    public PublicKey derivePublicKey(final PrivateKey privateKey) {
+        final Ed25519EncodedFieldElement a = Ed25519Utils.prepareForScalarMultiply(privateKey);
 
-		// verification of signatures will be about twice as fast when pre-calculating
-		// a suitable table of group elements.
-		return new PublicKey(pubKey.encode().getRaw());
-	}
+        // a * base point is the public key.
+        final Ed25519GroupElement pubKey = Ed25519Group.BASE_POINT.scalarMultiply(a);
+
+        // verification of signatures will be about twice as fast when pre-calculating
+        // a suitable table of group elements.
+        return new PublicKey(pubKey.encode().getRaw());
+    }
 }

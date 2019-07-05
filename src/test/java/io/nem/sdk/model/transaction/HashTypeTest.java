@@ -16,14 +16,13 @@
 
 package io.nem.sdk.model.transaction;
 
-import io.nem.core.crypto.Hashes;
-import org.apache.commons.codec.binary.Hex;
-import org.junit.jupiter.api.Test;
-
-import java.util.Random;
-
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import io.nem.core.crypto.Hashes;
+import java.util.Random;
+import org.apache.commons.codec.binary.Hex;
+import org.junit.jupiter.api.Test;
 
 class HashTypeTest {
 
@@ -51,7 +50,6 @@ class HashTypeTest {
     void SHA3_256ShouldReturnFalseIfItIsNotAValidHash() {
         String secret = "zyz6053bb910a6027f138ac5ebe92d43a9a18b7239b3c4d5ea69f1632e50aeef";
         assertFalse(HashType.Validator(HashType.SHA3_256, secret));
-
     }
 
     @Test
@@ -132,4 +130,3 @@ class HashTypeTest {
         assertFalse(HashType.Validator(HashType.HASH_256, secret));
     }
 }
-

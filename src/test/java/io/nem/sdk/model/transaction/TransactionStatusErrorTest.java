@@ -16,30 +16,32 @@
 
 package io.nem.sdk.model.transaction;
 
-import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.math.BigInteger;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import org.junit.jupiter.api.Test;
 
 class TransactionStatusErrorTest {
 
     @Test
     void getHash() {
-        final TransactionStatusError transactionStatusError = new TransactionStatusError("hash", "error", new Deadline(BigInteger.valueOf(1)));
+        final TransactionStatusError transactionStatusError =
+            new TransactionStatusError("hash", "error", new Deadline(BigInteger.valueOf(1)));
         assertEquals("hash", transactionStatusError.getHash());
     }
 
     @Test
     void getStatus() {
-        final TransactionStatusError transactionStatusError = new TransactionStatusError("hash", "error", new Deadline(BigInteger.valueOf(1)));
+        final TransactionStatusError transactionStatusError =
+            new TransactionStatusError("hash", "error", new Deadline(BigInteger.valueOf(1)));
         assertEquals("error", transactionStatusError.getStatus());
     }
 
     @Test
     void getDeadline() {
         Deadline deadline = new Deadline(BigInteger.valueOf(1));
-        final TransactionStatusError transactionStatusError = new TransactionStatusError("hash", "error", deadline);
+        final TransactionStatusError transactionStatusError =
+            new TransactionStatusError("hash", "error", deadline);
         assertEquals(deadline, transactionStatusError.getDeadline());
     }
 }
