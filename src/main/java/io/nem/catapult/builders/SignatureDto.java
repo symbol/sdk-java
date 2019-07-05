@@ -21,7 +21,6 @@
 package io.nem.catapult.builders;
 
 import io.nem.core.utils.HexEncoder;
-import io.nem.core.utils.StringEncoder;
 
 import java.io.DataInput;
 import java.nio.ByteBuffer;
@@ -29,7 +28,6 @@ import java.nio.ByteBuffer;
 /** Signature. */
 public final class SignatureDto {
     /** Signature. */
-    public final static int SIZE = 64;
     private final ByteBuffer signature;
 
     /**
@@ -39,7 +37,7 @@ public final class SignatureDto {
      */
     public SignatureDto(final ByteBuffer signature) {
         GeneratorUtils.notNull(signature, "signature is null");
-        GeneratorUtils.isTrue(signature.array().length == SIZE, "signature should be " + SIZE + " bytes");
+        GeneratorUtils.isTrue(signature.array().length == 64, "signature should be 64 bytes");
         this.signature = signature;
     }
 
@@ -50,20 +48,11 @@ public final class SignatureDto {
      */
     public SignatureDto(final DataInput stream) {
         try {
-            this.signature = ByteBuffer.allocate(SIZE);
+            this.signature = ByteBuffer.allocate(64);
             stream.readFully(this.signature.array());
         } catch(Exception e) {
             throw GeneratorUtils.getExceptionToPropagate(e);
         }
-    }
-
-    /**
-     * Create a SignatureDto from a signature string.
-     *
-     * @param signature String.
-     */
-    public static SignatureDto create(final String signature) {
-        return new SignatureDto(StringEncoder.getByteBuffer(signature, SIZE));
     }
 
     /**
@@ -81,7 +70,7 @@ public final class SignatureDto {
      * @return Size in bytes.
      */
     public int getSize() {
-        return SIZE;
+        return 64;
     }
 
     /**

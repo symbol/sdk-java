@@ -16,8 +16,6 @@
 
 package io.nem.sdk.model.transaction;
 
-import io.nem.catapult.builders.TransferTransactionBuilder;
-import io.nem.core.utils.ByteUtils;
 import io.nem.sdk.model.account.Account;
 import io.nem.sdk.model.account.Address;
 import io.nem.sdk.model.account.PublicAccount;
@@ -28,9 +26,6 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.io.ByteArrayInputStream;
-import java.io.DataInput;
-import java.io.DataInputStream;
 import java.math.BigInteger;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -60,7 +55,7 @@ class TransferTransactionTest {
         assertEquals(NetworkType.MIJIN_TEST, transferTx.getNetworkType());
         assertTrue(3 == transferTx.getVersion());
         assertTrue(LocalDateTime.now().isBefore(transferTx.getDeadline().getLocalDateTime()));
-        assertEquals(BigInteger.valueOf(0), transferTx.getMaxFee());
+        assertEquals(BigInteger.valueOf(0), transferTx.getFee());
         assertTrue(new Address("SDGLFW-DSHILT-IUHGIB-H5UGX2-VYF5VN-JEKCCD-BR26", NetworkType.MIJIN_TEST)
                 .equals(transferTx.getRecipient()));
         assertEquals(0, transferTx.getMosaics().size());
@@ -73,7 +68,7 @@ class TransferTransactionTest {
         // Generated at nem2-library-js/test/transactions/TransferTransaction.spec.js
         byte[] expected = new byte[]{(byte) 165, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                 3, (byte) 144, 84, 65, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, (byte) 144, (byte) 232, (byte) 254, (byte) 189, (byte) 103, (byte) 29, (byte) 212, (byte) 27, (byte) 238, (byte) 148, (byte) 236, (byte) 59, (byte) 165, (byte) 131, (byte) 28, (byte) 182, (byte) 8, (byte) 163, (byte) 18, (byte) 194, (byte) 242, (byte) 3, (byte) 186, (byte) 132, (byte) 172,
-                1, 0, 1, 48, 103, 43, 0, 0, (byte) 206, 86, 0, 0, 100, 0, 0, 0, 0, 0, 0, 0};
+                1, 0, 1, 0, 103, 43, 0, 0, (byte) 206, 86, 0, 0, 100, 0, 0, 0, 0, 0, 0, 0};
 
         TransferTransaction transferTransaction = TransferTransaction.create(
                 new FakeDeadline(),
@@ -84,46 +79,8 @@ class TransferTransactionTest {
                 PlainMessage.Empty,
                 NetworkType.MIJIN_TEST
         );
-        byte[] actual = transferTransaction.serialize();
-
-        assertEquals(expected.length, actual.length);
+        byte[] actual = transferTransaction.generateBytes();
         assertArrayEquals(expected, actual);
-    }
-
-    @Test
-    @DisplayName("Serialization with Builder")
-    void compareSerializationFlatBufferAndBuilder() {
-        // Generated at nem2-library-js/test/transactions/TransferTransaction.spec.js
-        byte[] expected = new byte[]{(byte) 165, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                3, (byte) 144, 84, 65, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, (byte) 144, (byte) 232, (byte) 254, (byte) 189, (byte) 103, (byte) 29, (byte) 212, (byte) 27, (byte) 238, (byte) 148, (byte) 236, (byte) 59, (byte) 165, (byte) 131, (byte) 28, (byte) 182, (byte) 8, (byte) 163, (byte) 18, (byte) 194, (byte) 242, (byte) 3, (byte) 186, (byte) 132, (byte) 172,
-                1, 0, 1, 48, 103, 43, 0, 0, (byte) 206, 86, 0, 0, 100, 0, 0, 0, 0, 0, 0, 0};
-
-        TransferTransaction txModel = TransferTransaction.create(
-                new FakeDeadline(),
-                new Address("SDUP5PLHDXKBX3UU5Q52LAY4WYEKGEWC6IB3VBFM", NetworkType.MIJIN_TEST),
-                Arrays.asList(
-                        new Mosaic(new MosaicId(new BigInteger("95442763262823")), BigInteger.valueOf(100))
-                ),
-                PlainMessage.Empty,
-                NetworkType.MIJIN_TEST
-        );
-        byte[] actual = txModel.generateBytes();  // Uses FlatBuffer
-        //System.out.println(ByteUtils.unsignedBytesToString(actual));
-        assertEquals(expected.length, actual.length);
-        //assertArrayEquals(expected, actual);   // message type byte value is 0 instead of 48 (first is in bits, expected is in decimal)
-
-        byte[] actual2 = txModel.serialize();   // Uses catbuffer
-        //System.out.println(ByteUtils.unsignedBytesToString(actual2));
-        assertEquals(expected.length, actual2.length);
-        assertArrayEquals(expected, actual2);
-
-        // deserialize
-        ByteArrayInputStream bs = new ByteArrayInputStream(actual2);
-        DataInput di = new DataInputStream(bs);
-        TransferTransactionBuilder txBuilder = TransferTransactionBuilder.loadFromBinary(di);
-        //System.out.println(txBuilder.asString());
-        assertEquals(txModel.getRecipient().plain(), txBuilder.getRecipient().asString());
-
     }
 
     @Test
@@ -143,7 +100,6 @@ class TransferTransactionTest {
                 NetworkType.MIJIN_TEST
         );
         byte[] actual = transferTransaction.toAggregate(new PublicAccount("9A49366406ACA952B88BADF5F1E9BE6CE4968141035A60BE503273EA65456B24", NetworkType.MIJIN_TEST)).toAggregateTransactionBytes();
-        assertEquals(expected.length, actual.length);
         assertArrayEquals(expected, actual);
     }
 

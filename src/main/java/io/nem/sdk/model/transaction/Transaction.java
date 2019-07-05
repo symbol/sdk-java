@@ -39,7 +39,7 @@ public abstract class Transaction {
     private final NetworkType networkType;
     private final Integer version;
     private final Deadline deadline;
-    private final BigInteger maxFee;
+    private final BigInteger fee;
     private final Optional<String> signature;
     private Optional<PublicAccount> signer;
     private final Optional<TransactionInfo> transactionInfo;
@@ -51,22 +51,22 @@ public abstract class Transaction {
      * @param networkType     Network type.
      * @param version         Transaction version.
      * @param deadline        Transaction deadline.
-     * @param maxFee             Transaction maxFee.
+     * @param fee             Transaction fee.
      * @param signature       Transaction signature.
      * @param signer          Transaction signer.
      * @param transactionInfo Transaction meta data info.
      */
-    public Transaction(TransactionType type, NetworkType networkType, Integer version, Deadline deadline, BigInteger maxFee, Optional<String> signature, Optional<PublicAccount> signer, Optional<TransactionInfo> transactionInfo) {
+    public Transaction(TransactionType type, NetworkType networkType, Integer version, Deadline deadline, BigInteger fee, Optional<String> signature, Optional<PublicAccount> signer, Optional<TransactionInfo> transactionInfo) {
         Validate.notNull(type, "Type must not be null");
         Validate.notNull(networkType, "NetworkType must not be null");
         Validate.notNull(version, "Version must not be null");
         Validate.notNull(deadline, "Deadline must not be null");
-        Validate.notNull(maxFee, "Fee must not be null");
+        Validate.notNull(fee, "Fee must not be null");
         this.type = type;
         this.networkType = networkType;
         this.version = version;
         this.deadline = deadline;
-        this.maxFee = maxFee;
+        this.fee = fee;
 
         this.signature = signature;
         this.signer = signer;
@@ -126,13 +126,13 @@ public abstract class Transaction {
     }
 
     /**
-     * Returns the maxFee for the transaction. The higher the maxFee, the higher the priority of the transaction.
+     * Returns the fee for the transaction. The higher the fee, the higher the priority of the transaction.
      * Transactions with high priority get included in a block before transactions with lower priority.
      *
-     * @return maxFee amount
+     * @return fee amount
      */
-    public BigInteger getMaxFee() {
-        return maxFee;
+    public BigInteger getFee() {
+        return fee;
     }
 
     /**

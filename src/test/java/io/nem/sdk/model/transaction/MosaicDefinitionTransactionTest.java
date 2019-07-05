@@ -20,6 +20,7 @@ import io.nem.sdk.model.blockchain.NetworkType;
 import io.nem.sdk.model.mosaic.MosaicId;
 import io.nem.sdk.model.mosaic.MosaicNonce;
 import io.nem.sdk.model.mosaic.MosaicProperties;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigInteger;
@@ -43,7 +44,7 @@ class MosaicDefinitionTransactionTest {
         assertEquals(NetworkType.MIJIN_TEST, mosaicCreationTx.getNetworkType());
         assertTrue(3 == mosaicCreationTx.getVersion());
         assertTrue(LocalDateTime.now().isBefore(mosaicCreationTx.getDeadline().getLocalDateTime()));
-        assertEquals(BigInteger.valueOf(0), mosaicCreationTx.getMaxFee());
+        assertEquals(BigInteger.valueOf(0), mosaicCreationTx.getFee());
         assertEquals(new BigInteger("0"), mosaicCreationTx.getMosaicId().getId());
         assertEquals(true, mosaicCreationTx.getMosaicProperties().isSupplyMutable());
         assertEquals(true, mosaicCreationTx.getMosaicProperties().isTransferable());

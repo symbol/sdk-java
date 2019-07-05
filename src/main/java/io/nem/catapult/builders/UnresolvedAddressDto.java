@@ -21,18 +21,13 @@
 package io.nem.catapult.builders;
 
 import io.nem.core.utils.Base32Encoder;
-import io.nem.core.utils.ByteUtils;
-import io.nem.core.utils.StringEncoder;
-import org.apache.commons.codec.binary.Base32;
 
 import java.io.DataInput;
 import java.nio.ByteBuffer;
-import java.nio.charset.StandardCharsets;
 
 /** Unresolved address. */
 public final class UnresolvedAddressDto {
     /** Unresolved address. */
-    public final static int SIZE = 25;
     private final ByteBuffer unresolvedAddress;
 
     /**
@@ -42,7 +37,7 @@ public final class UnresolvedAddressDto {
      */
     public UnresolvedAddressDto(final ByteBuffer unresolvedAddress) {
         GeneratorUtils.notNull(unresolvedAddress, "unresolvedAddress is null");
-        GeneratorUtils.isTrue(unresolvedAddress.array().length == SIZE, "unresolvedAddress should be " + SIZE + " bytes but is " + unresolvedAddress.array().length);
+        GeneratorUtils.isTrue(unresolvedAddress.array().length == 25, "unresolvedAddress should be 25 bytes");
         this.unresolvedAddress = unresolvedAddress;
     }
 
@@ -53,21 +48,11 @@ public final class UnresolvedAddressDto {
      */
     public UnresolvedAddressDto(final DataInput stream) {
         try {
-            this.unresolvedAddress = ByteBuffer.allocate(SIZE);
+            this.unresolvedAddress = ByteBuffer.allocate(25);
             stream.readFully(this.unresolvedAddress.array());
         } catch(Exception e) {
             throw GeneratorUtils.getExceptionToPropagate(e);
         }
-    }
-
-    /**
-     * Create a UnresolvedAddressDto from a unresolvedAddress string.
-     *
-     * @param plainAddress Unresolved address.
-     */
-    public static UnresolvedAddressDto create(final String plainAddress) {
-        byte[] address = new Base32().decode(plainAddress.getBytes(StandardCharsets.UTF_8));
-        return new UnresolvedAddressDto(ByteBuffer.wrap(address));
     }
 
     /**
@@ -85,7 +70,7 @@ public final class UnresolvedAddressDto {
      * @return Size in bytes.
      */
     public int getSize() {
-        return SIZE;
+        return 25;
     }
 
     /**

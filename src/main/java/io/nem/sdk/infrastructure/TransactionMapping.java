@@ -136,18 +136,11 @@ class TransferTransactionMapping extends TransactionMapping {
             message = new PlainMessage(new String(Hex.decode(transaction.getJsonObject("message").getString("payload")), StandardCharsets.UTF_8));
         }
 
-        // TODO revert temporary workaround for issue with websocket/api-node returning fee instead of maxFee in json object
-        BigInteger maxFee = BigInteger.ZERO;
-        JsonArray jsonArray = transaction.getJsonArray("maxFee");
-        if (jsonArray == null) jsonArray = transaction.getJsonArray("fee");
-        if (jsonArray != null) maxFee = extractBigInteger(jsonArray);
-
         return new TransferTransaction(
                 extractNetworkType(transaction.getInteger("version")),
                 extractTransactionVersion(transaction.getInteger("version")),
                 deadline,
-                //extractBigInteger(transaction.getJsonArray("maxFee")),
-                maxFee,
+                extractBigInteger(transaction.getJsonArray("maxFee")),
                 Address.createFromEncoded(transaction.getString("recipient")),
                 mosaics,
                 message,
@@ -313,18 +306,12 @@ class AggregateTransactionMapping extends TransactionMapping {
                     .collect(Collectors.toList());
         }
 
-        // TODO revert temporary workaround for issue with websocket/api-node returning fee instead of maxFee in json object
-        BigInteger maxFee = BigInteger.ZERO;
-        JsonArray jsonArray = transaction.getJsonArray("maxFee");
-        if (jsonArray == null) jsonArray = transaction.getJsonArray("fee");
-        if (jsonArray != null) maxFee = extractBigInteger(jsonArray);
-
         return new AggregateTransaction(
                 networkType,
                 TransactionType.rawValueOf(transaction.getInteger("type")),
                 extractTransactionVersion(transaction.getInteger("version")),
                 deadline,
-                maxFee,
+                extractBigInteger(transaction.getJsonArray("maxFee")),
                 transactions,
                 cosignatures,
                 transaction.getString("signature"),
@@ -435,7 +422,7 @@ class AccountLinkTransactionMapping extends TransactionMapping{
                 networkType,
                 extractTransactionVersion(transaction.getInteger("version")),
                 deadline,
-                extractBigInteger(transaction.getJsonArray("maxFee")),
+                extractBigInteger(transaction.getJsonArray("fee")),
                 transaction.getString("remoteAccountKey"),
                 LinkActionType.rawValueOf(transaction.getInteger("linkAction")),
                 transaction.getString("signature"),

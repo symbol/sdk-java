@@ -20,12 +20,10 @@
 
 package io.nem.catapult.builders;
 
-import io.nem.core.crypto.Signature;
 import io.nem.core.utils.ByteUtils;
 import io.nem.sdk.model.blockchain.NetworkType;
 
 import java.io.DataInput;
-import java.nio.ByteBuffer;
 
 /** Binary layout for a transaction. */
 public class TransactionBuilder {
@@ -39,7 +37,7 @@ public class TransactionBuilder {
     private final short version;
     /** Entity type. */
     private final EntityTypeDto type;
-    /** Transaction maxFee. */
+    /** Transaction fee. */
     private final AmountDto fee;
     /** Transaction deadline. */
     private final TimestampDto deadline;
@@ -74,14 +72,14 @@ public class TransactionBuilder {
      * @param signer Entity signer's public key.
      * @param version Entity version.
      * @param type Entity type.
-     * @param fee Transaction maxFee.
+     * @param fee Transaction fee.
      * @param deadline Transaction deadline.
      */
     protected TransactionBuilder(final SignatureDto signature, final KeyDto signer, final short version, final EntityTypeDto type, final AmountDto fee, final TimestampDto deadline) {
         GeneratorUtils.notNull(signature, "signature is null");
         GeneratorUtils.notNull(signer, "signer is null");
         GeneratorUtils.notNull(type, "type is null");
-        GeneratorUtils.notNull(fee, "maxFee is null");
+        GeneratorUtils.notNull(fee, "fee is null");
         GeneratorUtils.notNull(deadline, "deadline is null");
         this.signature = signature;
         this.signer = signer;
@@ -98,62 +96,12 @@ public class TransactionBuilder {
      * @param signer Entity signer's public key.
      * @param version Entity version.
      * @param type Entity type.
-     * @param fee Transaction maxFee.
+     * @param fee Transaction fee.
      * @param deadline Transaction deadline.
      * @return Instance of TransactionBuilder.
      */
     public static TransactionBuilder create(final SignatureDto signature, final KeyDto signer, final short version, final EntityTypeDto type, final AmountDto fee, final TimestampDto deadline) {
         return new TransactionBuilder(signature, signer, version, type, fee, deadline);
-    }
-
-    /**
-     * Creates an instance of TransactionBuilder.
-     *
-     * @param signature Entity signature.
-     * @param signer Entity signer's public key.
-     * @param version Entity version.
-     * @param type Entity type.
-     * @param fee Transaction maxFee.
-     * @param deadline Transaction deadline.
-     * @return Instance of TransactionBuilder.
-     */
-    public static TransactionBuilder create(final String signature, final String signer, final short version, final short type, final long fee, final long deadline) {
-        SignatureDto signatureDto = SignatureDto.create(signature);
-        KeyDto signerDto = KeyDto.create(signer);
-        EntityTypeDto entityTypeDto = EntityTypeDto.rawValueOf(type);
-        AmountDto amountDto = new AmountDto(fee);
-        TimestampDto timestampDto = new TimestampDto(deadline);
-
-        return new TransactionBuilder(signatureDto, signerDto, version, entityTypeDto, amountDto, timestampDto);
-    }
-
-    /**
-     * Creates an instance of TransactionBuilder.
-     *
-     * @param signature
-     * @param signer
-     * @param transactionVersion
-     * @param networkType
-     * @param type
-     * @param fee
-     * @param deadline
-     * @return Instance of TransactionBuilder
-     */
-    public static TransactionBuilder create(final String signature, final String signer, final byte transactionVersion, final byte networkType, final short type, final long fee, final long deadline) {
-        short version = getVersion(transactionVersion, networkType);
-        return TransactionBuilder.create(signature, signer, version, type, fee, deadline);
-    }
-
-    /**
-     * Get version from transaction version and network type.
-     *
-     * @param transactionVersion
-     * @param networkType
-     * @return short
-     */
-    public static short getVersion(byte transactionVersion, byte networkType) {
-        byte[] bytes = ByteBuffer.allocate(2).put(networkType).put(transactionVersion).array();
-        return ByteUtils.bytesToShort(bytes);
     }
 
     /**
@@ -200,9 +148,9 @@ public class TransactionBuilder {
     }
 
     /**
-     * Gets transaction maxFee..
+     * Gets transaction fee..
      *
-     * @return Transaction maxFee.
+     * @return Transaction fee.
      */
     public AmountDto getFee() {
         return this.fee;
@@ -271,9 +219,8 @@ public class TransactionBuilder {
         sb.append("\nSize: "+this.getSize());
         sb.append("\nSignature: "+this.getSignature().asString());
         sb.append("\nSigner: "+this.getSigner().asString());
-        sb.append("\nVersion: "+this.getVersion());
-        sb.append("\n  TransactionVersion: "+this.getTransactionVersion());
-        sb.append("\n  NetworkType: "+this.getNetworkType());
+        sb.append("\nTransactionVersion: "+this.getTransactionVersion());
+        sb.append("\nNetworkType: "+this.getNetworkType());
         sb.append("\nType: "+this.getType().asString());
         sb.append("\nFee: "+this.getFee().asString());
         sb.append("\nDeadline: "+this.getDeadline().asString());

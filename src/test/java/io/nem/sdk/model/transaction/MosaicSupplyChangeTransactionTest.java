@@ -44,7 +44,7 @@ class MosaicSupplyChangeTransactionTest {
         assertEquals(NetworkType.MIJIN_TEST, mosaicSupplyChangeTx.getNetworkType());
         assertTrue(2 == mosaicSupplyChangeTx.getVersion());
         assertTrue(LocalDateTime.now().isBefore(mosaicSupplyChangeTx.getDeadline().getLocalDateTime()));
-        assertEquals(BigInteger.valueOf(0), mosaicSupplyChangeTx.getMaxFee());
+        assertEquals(BigInteger.valueOf(0), mosaicSupplyChangeTx.getFee());
         assertEquals(new BigInteger("6300565133566699912"), mosaicSupplyChangeTx.getMosaicId().getId());
         assertEquals(MosaicSupplyType.INCREASE, mosaicSupplyChangeTx.getMosaicSupplyType());
         assertEquals(BigInteger.valueOf(10), mosaicSupplyChangeTx.getDelta());

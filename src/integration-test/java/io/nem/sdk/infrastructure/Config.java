@@ -14,7 +14,7 @@ public class Config {
         return ourInstance;
     }
 
-    private static final String CONFIG_JSON = "config.localhost.json";
+    private static final String CONFIG_JSON = "config.json";
 
     private JsonObject config;
 

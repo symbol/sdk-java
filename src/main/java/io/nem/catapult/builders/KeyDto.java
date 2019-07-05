@@ -21,7 +21,6 @@
 package io.nem.catapult.builders;
 
 import io.nem.core.utils.HexEncoder;
-import io.nem.core.utils.StringEncoder;
 
 import java.io.DataInput;
 import java.nio.ByteBuffer;
@@ -29,7 +28,6 @@ import java.nio.ByteBuffer;
 /** Key. */
 public final class KeyDto {
     /** Key. */
-    public final static int SIZE = 32;
     private final ByteBuffer key;
 
     /**
@@ -39,7 +37,7 @@ public final class KeyDto {
      */
     public KeyDto(final ByteBuffer key) {
         GeneratorUtils.notNull(key, "key is null");
-        GeneratorUtils.isTrue(key.array().length == SIZE, "key should be " + SIZE + " bytes");
+        GeneratorUtils.isTrue(key.array().length == 32, "key should be 32 bytes");
         this.key = key;
     }
 
@@ -50,20 +48,11 @@ public final class KeyDto {
      */
     public KeyDto(final DataInput stream) {
         try {
-            this.key = ByteBuffer.allocate(SIZE);
+            this.key = ByteBuffer.allocate(32);
             stream.readFully(this.key.array());
         } catch(Exception e) {
             throw GeneratorUtils.getExceptionToPropagate(e);
         }
-    }
-
-    /**
-     * Creates a KeyDto from a key string.
-     *
-     * @param key String.
-     */
-    public static KeyDto create(final String key) {
-        return new KeyDto(StringEncoder.getByteBuffer(key, SIZE));
     }
 
     /**
@@ -81,7 +70,7 @@ public final class KeyDto {
      * @return Size in bytes.
      */
     public int getSize() {
-        return SIZE;
+        return 32;
     }
 
     /**

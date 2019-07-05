@@ -47,7 +47,7 @@ class ModifyMultisigAccountTransactionTest {
         assertEquals(NetworkType.MIJIN_TEST, modifyMultisigAccountTransaction.getNetworkType());
         assertTrue(3 == modifyMultisigAccountTransaction.getVersion());
         assertTrue(LocalDateTime.now().isBefore(modifyMultisigAccountTransaction.getDeadline().getLocalDateTime()));
-        assertEquals(BigInteger.valueOf(0), modifyMultisigAccountTransaction.getMaxFee());
+        assertEquals(BigInteger.valueOf(0), modifyMultisigAccountTransaction.getFee());
         assertEquals(2, modifyMultisigAccountTransaction.getMinApprovalDelta());
         assertEquals(1, modifyMultisigAccountTransaction.getMinRemovalDelta());
         assertEquals("68b3fbb18729c1fde225c57f8ce080fa828f0067e451a3fd81fa628842b0b763", modifyMultisigAccountTransaction.getModifications().get(0).getCosignatoryPublicAccount().getPublicKey());

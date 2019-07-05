@@ -16,8 +16,6 @@
 
 package io.nem.sdk.model.transaction;
 
-import io.nem.core.utils.ByteUtils;
-
 /**
  * An abstract message class that serves as the base class of all message types.
  *
@@ -42,55 +40,11 @@ public abstract class Message {
     }
 
     /**
-     * Returns message type as char.
-     *
-     * @return char
-     */
-    public char getTypeAsChar() {
-        char plain = '\0';
-        char encrypted = '\1';
-
-        if (this.type == 0)
-            return plain;
-        else if (this.type == 1)
-            return encrypted;
-        else
-            return (char)this.type;
-    }
-
-    /**
-     * Returns message type as byte.
-     *
-     * @return byte
-     */
-    public byte getTypeAsByte() {
-        byte plain = 0;
-        byte encrypted = 1;
-
-        if (this.type == 0)
-            return plain;
-        else if (this.type == 1)
-            return encrypted;
-        else
-            return (byte) this.type;
-    }
-
-    /**
      * Returns message payload.
      *
      * @return String
      */
     public String getPayload() {
         return payload;
-    }
-
-
-    /**
-     * Returns message type + payload.
-     *
-     * @return String
-     */
-    public String asString() {
-        return this.type + this.payload;
     }
 }
