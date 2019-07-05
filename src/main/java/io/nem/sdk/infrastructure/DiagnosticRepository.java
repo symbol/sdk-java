@@ -21,6 +21,7 @@ import io.nem.sdk.model.blockchain.ServerInfo;
 import io.reactivex.Observable;
 
 public interface DiagnosticRepository {
+
     /**
      * Gets blockchain storage info.
      *
@@ -30,6 +31,7 @@ public interface DiagnosticRepository {
 
     /**
      * Gets blockchain server info.
+     *
      * @returns Observable<Server>
      */
     Observable<ServerInfo> getServerInfo();

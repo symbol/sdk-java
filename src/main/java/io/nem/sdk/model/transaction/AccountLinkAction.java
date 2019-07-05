@@ -20,49 +20,49 @@ package io.nem.sdk.model.transaction;
  * Account link action.
  */
 public enum AccountLinkAction {
-	/**
-	 * Link account.
-	 */
-	LINK((byte) 0),
-	/**
-	 * Unlink account.
-	 */
-	UNLINK((byte) 1);
+    /**
+     * Link account.
+     */
+    LINK((byte) 0),
+    /**
+     * Unlink account.
+     */
+    UNLINK((byte) 1);
 
-	private final byte value;
+    private final byte value;
 
-	/**
-	 * Constructor.
-	 *
-	 * @param value Link action value.
-	 */
-	AccountLinkAction(final byte value) {
-		this.value = value;
-	}
+    /**
+     * Constructor.
+     *
+     * @param value Link action value.
+     */
+    AccountLinkAction(final byte value) {
+        this.value = value;
+    }
 
-	/**
-	 * Gets enum value from raw.
-	 *
-	 * @param value Raw value.
-	 * @return Enum value.
-	 */
-	public static AccountLinkAction rawValueOf(final int value) {
-		switch (value) {
-			case 0:
-				return AccountLinkAction.LINK;
-			case 1:
-				return AccountLinkAction.UNLINK;
-			default:
-				throw new IllegalArgumentException(value + " is not a valid value");
-		}
-	}
+    /**
+     * Gets enum value from raw.
+     *
+     * @param value Raw value.
+     * @return Enum value.
+     */
+    public static AccountLinkAction rawValueOf(final int value) {
+        switch (value) {
+            case 0:
+                return AccountLinkAction.LINK;
+            case 1:
+                return AccountLinkAction.UNLINK;
+            default:
+                throw new IllegalArgumentException(value + " is not a valid value");
+        }
+    }
 
-	/**
-	 * Gets the raw value.
-	 *
-	 * @return Ram value.
-	 */
-	public byte getValue() {
-		return value;
-	}
+    /**
+     * Gets the raw value.
+     *
+     * @return Ram value.
+     */
+    public byte getValue() {
+        return value;
+    }
 }

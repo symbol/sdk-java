@@ -16,9 +16,9 @@
 
 package io.nem.sdk.model.blockchain;
 
-import org.junit.jupiter.api.Test;
-
 import static junit.framework.TestCase.assertTrue;
+
+import org.junit.jupiter.api.Test;
 
 public class NetworkTypeTest {
 

@@ -1,13 +1,12 @@
 package io.nem.sdk.model.blockchain;
 
 public class MerkelPathItem {
+
     private final Integer position;
     private final String hash;
 
     /**
      * Constructor
-     * @param position
-     * @param hash
      */
     public MerkelPathItem(Integer position, String hash) {
         this.position = position;
@@ -16,6 +15,7 @@ public class MerkelPathItem {
 
     /**
      * Return position
+     *
      * @return Integer
      */
     public Integer getPosition() {
@@ -24,6 +24,7 @@ public class MerkelPathItem {
 
     /**
      * Return hash
+     *
      * @return String
      */
     public String getHash() {

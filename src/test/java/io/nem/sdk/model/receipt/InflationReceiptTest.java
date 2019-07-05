@@ -16,17 +16,17 @@
 
 package io.nem.sdk.model.receipt;
 
-import io.nem.sdk.model.mosaic.MosaicId;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
-
-import java.math.BigInteger;
-import java.util.Optional;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import io.nem.sdk.model.mosaic.MosaicId;
+import java.math.BigInteger;
+import java.util.Optional;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+
 public class InflationReceiptTest {
+
     static MosaicId mosaicId;
 
     @BeforeAll
@@ -38,7 +38,11 @@ public class InflationReceiptTest {
     void shouldCreateInflationReceipt() {
 
         InflationReceipt inflationReceipt =
-                new InflationReceipt(mosaicId, BigInteger.valueOf(10), ReceiptType.Inflation, ReceiptVersion.INFLATION_RECEIPT);
+            new InflationReceipt(
+                mosaicId,
+                BigInteger.valueOf(10),
+                ReceiptType.Inflation,
+                ReceiptVersion.INFLATION_RECEIPT);
         assertEquals(inflationReceipt.getType(), ReceiptType.Inflation);
         assertEquals(inflationReceipt.getSize(), null);
         assertEquals(inflationReceipt.getVersion(), ReceiptVersion.INFLATION_RECEIPT);
@@ -50,7 +54,12 @@ public class InflationReceiptTest {
     void shouldCreateInflationReceiptWithSize() {
 
         InflationReceipt inflationReceipt =
-                new InflationReceipt(mosaicId, BigInteger.valueOf(10), ReceiptType.Inflation, ReceiptVersion.INFLATION_RECEIPT, Optional.of(100));
+            new InflationReceipt(
+                mosaicId,
+                BigInteger.valueOf(10),
+                ReceiptType.Inflation,
+                ReceiptVersion.INFLATION_RECEIPT,
+                Optional.of(100));
         assertEquals(inflationReceipt.getType(), ReceiptType.Inflation);
         assertEquals(inflationReceipt.getSize(), Optional.of(100));
         assertEquals(inflationReceipt.getVersion(), ReceiptVersion.INFLATION_RECEIPT);
@@ -61,8 +70,14 @@ public class InflationReceiptTest {
 
     @Test
     void shouldThrowIllegalArgumentExceptionWithWrongReceiptType() {
-        assertThrows(IllegalArgumentException.class, () -> {
-            new InflationReceipt(mosaicId, BigInteger.valueOf(10), ReceiptType.Namespace_Rental_Fee, ReceiptVersion.INFLATION_RECEIPT);
-        });
+        assertThrows(
+            IllegalArgumentException.class,
+            () -> {
+                new InflationReceipt(
+                    mosaicId,
+                    BigInteger.valueOf(10),
+                    ReceiptType.Namespace_Rental_Fee,
+                    ReceiptVersion.INFLATION_RECEIPT);
+            });
     }
 }

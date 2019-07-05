@@ -5,16 +5,13 @@ import java.io.InputStream;
 import java.util.Properties;
 
 public class ConfigProperties {
+
     private static ConfigProperties ourInstance = new ConfigProperties();
-
-    public static ConfigProperties getInstance() {
-        return ourInstance;
-    }
-
     private final Properties properties = new Properties();
 
     private ConfigProperties() {
-        try (InputStream inputStream = BaseTest.class.getClassLoader().getResourceAsStream("config.properties")) {
+        try (InputStream inputStream =
+            BaseTest.class.getClassLoader().getResourceAsStream("config.properties")) {
             if (inputStream == null) {
                 throw new IOException("config.properties not found");
             }
@@ -23,9 +20,17 @@ public class ConfigProperties {
         }
     }
 
-    public String getNodeUrl() { return this.properties.getProperty("nem2sdk.conf.apiurl"); }
+    public static ConfigProperties getInstance() {
+        return ourInstance;
+    }
 
-    public String getNetworkTypeName() { return this.properties.getProperty("network.type.name").toUpperCase(); }
+    public String getNodeUrl() {
+        return this.properties.getProperty("nem2sdk.conf.apiurl");
+    }
+
+    public String getNetworkTypeName() {
+        return this.properties.getProperty("network.type.name").toUpperCase();
+    }
 
     public String getAccountPublicKey() {
         return this.properties.getProperty("account.publickey");

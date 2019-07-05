@@ -16,9 +16,12 @@
 
 package io.nem.sdk.infrastructure;
 
-import io.nem.sdk.model.transaction.*;
+import io.nem.sdk.model.transaction.CosignatureSignedTransaction;
+import io.nem.sdk.model.transaction.SignedTransaction;
+import io.nem.sdk.model.transaction.Transaction;
+import io.nem.sdk.model.transaction.TransactionAnnounceResponse;
+import io.nem.sdk.model.transaction.TransactionStatus;
 import io.reactivex.Observable;
-
 import java.util.List;
 
 /**
@@ -74,7 +77,8 @@ public interface TransactionRepository {
      * @param signedTransaction SignedTransaction
      * @return Observable of TransactionAnnounceResponse
      */
-    Observable<TransactionAnnounceResponse> announceAggregateBonded(SignedTransaction signedTransaction);
+    Observable<TransactionAnnounceResponse> announceAggregateBonded(
+        SignedTransaction signedTransaction);
 
     /**
      * Send a cosignature signed transaction of an already announced transaction.
@@ -82,5 +86,6 @@ public interface TransactionRepository {
      * @param cosignatureSignedTransaction CosignatureSignedTransaction
      * @return Observable of TransactionAnnounceResponse
      */
-    Observable<TransactionAnnounceResponse> announceAggregateBondedCosignature(CosignatureSignedTransaction cosignatureSignedTransaction);
+    Observable<TransactionAnnounceResponse> announceAggregateBondedCosignature(
+        CosignatureSignedTransaction cosignatureSignedTransaction);
 }

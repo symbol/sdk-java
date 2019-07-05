@@ -16,28 +16,28 @@
 
 package io.nem.sdk.infrastructure;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import io.nem.sdk.model.transaction.Transaction;
 import io.nem.sdk.model.transaction.TransactionStatus;
 import io.nem.sdk.model.transaction.TransactionType;
 import io.reactivex.observers.TestObserver;
 import io.reactivex.schedulers.Schedulers;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.jupiter.api.TestInstance;
-
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.jupiter.api.TestInstance;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class TransactionHttpTest extends BaseTest {
+
+    private final String transactionHash =
+        "EE5B39DBDA00BA39D06B9E67AE5B43162366C862D9B8F656F7E7068D327377BE";
     private TransactionHttp transactionHttp;
-    private final String transactionHash = "EE5B39DBDA00BA39D06B9E67AE5B43162366C862D9B8F656F7E7068D327377BE";
 
     @Before
     public void setup() throws IOException {
@@ -46,10 +46,7 @@ public class TransactionHttpTest extends BaseTest {
 
     @Test
     public void getTransaction() throws ExecutionException, InterruptedException {
-        Transaction transaction = transactionHttp
-                .getTransaction(transactionHash)
-                .toFuture()
-                .get();
+        Transaction transaction = transactionHttp.getTransaction(transactionHash).toFuture().get();
 
         assertEquals(TransactionType.TRANSFER.getValue(), transaction.getType().getValue());
         assertEquals(transactionHash, transaction.getTransactionInfo().get().getHash().get());
@@ -57,28 +54,29 @@ public class TransactionHttpTest extends BaseTest {
 
     @Test
     public void getTransactions() throws ExecutionException, InterruptedException {
-        List<Transaction> transaction = transactionHttp
+        List<Transaction> transaction =
+            transactionHttp
                 .getTransactions(Collections.singletonList(transactionHash))
                 .toFuture()
                 .get();
 
         assertEquals(TransactionType.TRANSFER.getValue(), transaction.get(0).getType().getValue());
-        assertEquals(transactionHash, transaction.get(0).getTransactionInfo().get().getHash().get());
+        assertEquals(transactionHash,
+            transaction.get(0).getTransactionInfo().get().getHash().get());
     }
 
     @Test
     public void getTransactionStatus() throws ExecutionException, InterruptedException {
-        TransactionStatus transactionStatus = transactionHttp
-                .getTransactionStatus(transactionHash)
-                .toFuture()
-                .get();
+        TransactionStatus transactionStatus =
+            transactionHttp.getTransactionStatus(transactionHash).toFuture().get();
 
         assertEquals(transactionHash, transactionStatus.getHash());
     }
 
     @Test
     public void getTransactionsStatuses() throws ExecutionException, InterruptedException {
-        List<TransactionStatus> transactionStatuses = transactionHttp
+        List<TransactionStatus> transactionStatuses =
+            transactionHttp
                 .getTransactionStatuses(Collections.singletonList(transactionHash))
                 .toFuture()
                 .get();
@@ -86,27 +84,25 @@ public class TransactionHttpTest extends BaseTest {
         assertEquals(transactionHash, transactionStatuses.get(0).getHash());
     }
 
-
     @Test
     public void throwExceptionWhenTransactionStatusOfATransactionDoesNotExists() {
         TestObserver<TransactionStatus> testObserver = new TestObserver<>();
         transactionHttp
-                .getTransactionStatus(transactionHash)
-                .subscribeOn(Schedulers.single())
-                .test()
-                .awaitDone(2, TimeUnit.SECONDS)
-                .assertFailure(RuntimeException.class);
+            .getTransactionStatus(transactionHash)
+            .subscribeOn(Schedulers.single())
+            .test()
+            .awaitDone(2, TimeUnit.SECONDS)
+            .assertFailure(RuntimeException.class);
     }
-
 
     @Test
     public void throwExceptionWhenTransactionDoesNotExists() {
         TestObserver<Transaction> testObserver = new TestObserver<>();
         transactionHttp
-                .getTransaction(transactionHash)
-                .subscribeOn(Schedulers.single())
-                .test()
-                .awaitDone(2, TimeUnit.SECONDS)
-                .assertFailure(RuntimeException.class);
+            .getTransaction(transactionHash)
+            .subscribeOn(Schedulers.single())
+            .test()
+            .awaitDone(2, TimeUnit.SECONDS)
+            .assertFailure(RuntimeException.class);
     }
 }

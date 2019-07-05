@@ -21,32 +21,34 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * The multisig account graph info structure describes the information of all the mutlisig levels an account is involved in.
+ * The multisig account graph info structure describes the information of all the mutlisig levels an
+ * account is involved in.
  *
  * @since 1.0
  */
 public class MultisigAccountGraphInfo {
-	private final Map<Integer, List<MultisigAccountInfo>> multisigAccounts;
 
-	public MultisigAccountGraphInfo(Map<Integer, List<MultisigAccountInfo>> multisigAccounts) {
-		this.multisigAccounts = multisigAccounts;
-	}
+    private final Map<Integer, List<MultisigAccountInfo>> multisigAccounts;
 
-	/**
-	 * Returns multisig accounts levels number.
-	 *
-	 * @return Set<Integer>
-	 */
-	public Set<Integer> getLevelsNumber() {
-		return this.multisigAccounts.keySet();
-	}
+    public MultisigAccountGraphInfo(Map<Integer, List<MultisigAccountInfo>> multisigAccounts) {
+        this.multisigAccounts = multisigAccounts;
+    }
 
-	/**
-	 * Returns multisig accounts.
-	 *
-	 * @return Map<Integer, List < { @ link MultisigAccountInfo }>>
-	 */
-	public Map<Integer, List<MultisigAccountInfo>> getMultisigAccounts() {
-		return multisigAccounts;
-	}
+    /**
+     * Returns multisig accounts levels number.
+     *
+     * @return Set<Integer>
+     */
+    public Set<Integer> getLevelsNumber() {
+        return this.multisigAccounts.keySet();
+    }
+
+    /**
+     * Returns multisig accounts.
+     *
+     * @return Map<Integer, List < { @ link MultisigAccountInfo }>>
+     */
+    public Map<Integer, List<MultisigAccountInfo>> getMultisigAccounts() {
+        return multisigAccounts;
+    }
 }

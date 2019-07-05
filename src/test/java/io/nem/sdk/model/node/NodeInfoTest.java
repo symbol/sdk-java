@@ -16,12 +16,12 @@
 
 package io.nem.sdk.model.node;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import io.nem.sdk.model.account.Account;
 import io.nem.sdk.model.blockchain.NetworkType;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class NodeInfoTest {
 
@@ -29,12 +29,23 @@ public class NodeInfoTest {
 
     @BeforeAll
     public static void setup() {
-        account = new Account("787225aaff3d2c71f4ffa32d4f19ec4922f3cd869747f267378f81f8e3fcb12d", NetworkType.MIJIN_TEST);
+        account =
+            new Account(
+                "787225aaff3d2c71f4ffa32d4f19ec4922f3cd869747f267378f81f8e3fcb12d",
+                NetworkType.MIJIN_TEST);
     }
 
     @Test
     void shouldCreateNodeInfo() {
-        NodeInfo nodeInfo = new NodeInfo(account.getPublicKey(), 3000, NetworkType.MIJIN_TEST, 0, RoleType.ApiNode, "localhost", "test");
+        NodeInfo nodeInfo =
+            new NodeInfo(
+                account.getPublicKey(),
+                3000,
+                NetworkType.MIJIN_TEST,
+                0,
+                RoleType.ApiNode,
+                "localhost",
+                "test");
         assertEquals(nodeInfo.getHost(), "localhost");
         assertEquals(nodeInfo.getVersion(), 0);
         assertEquals(nodeInfo.getPort(), 3000);

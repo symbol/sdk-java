@@ -16,18 +16,18 @@
 
 package io.nem.sdk.infrastructure;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import io.nem.sdk.model.blockchain.NetworkType;
+import java.io.IOException;
+import java.util.concurrent.ExecutionException;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 
-import java.io.IOException;
-import java.util.concurrent.ExecutionException;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class NetworkHttpTest extends BaseTest {
+
     private NetworkHttp networkHttp;
 
     @BeforeAll

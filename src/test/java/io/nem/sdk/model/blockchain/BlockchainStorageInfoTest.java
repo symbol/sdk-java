@@ -16,15 +16,15 @@
 
 package io.nem.sdk.model.blockchain;
 
-import org.junit.jupiter.api.Test;
-
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import org.junit.jupiter.api.Test;
 
 class BlockchainStorageInfoTest {
 
     @Test
     void createANewBlockchainStorageInfo() {
-        BlockchainStorageInfo blockchainStorageInfo = new BlockchainStorageInfo(1,2,3);
+        BlockchainStorageInfo blockchainStorageInfo = new BlockchainStorageInfo(1, 2, 3);
 
         assertTrue(blockchainStorageInfo.getNumAccounts() == 1);
         assertTrue(blockchainStorageInfo.getNumBlocks() == 2);

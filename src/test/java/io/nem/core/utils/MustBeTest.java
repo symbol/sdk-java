@@ -17,54 +17,53 @@
 package io.nem.core.utils;
 
 import io.nem.core.test.ExceptionAssert;
-import org.junit.Test;
-
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.regex.Pattern;
+import org.junit.Test;
 
 public class MustBeTest {
 
-    //region notNull
+    // region notNull
 
-	/*
-	@Test
-	public void notNullThrowsIfObjectIsNull() {
-		// Assert:
-		ExceptionAssert.assertThrows(
-				v -> MustBe.notNull(null, "test"),
-				IllegalArgumentException.class,
-				ex -> ex.getMessage().contains("test"));
-	}*/
+  /*
+  @Test
+  public void notNullThrowsIfObjectIsNull() {
+  	// Assert:
+  	ExceptionAssert.assertThrows(
+  			v -> MustBe.notNull(null, "test"),
+  			IllegalArgumentException.class,
+  			ex -> ex.getMessage().contains("test"));
+  }*/
 
     private static void assertNotWhitespaceThrows(final String input) {
         ExceptionAssert.assertThrows(
-                v -> MustBe.notWhitespace(input, "input", 10),
-                IllegalArgumentException.class,
-                ex -> ex.getMessage().contains("input"));
+            v -> MustBe.notWhitespace(input, "input", 10),
+            IllegalArgumentException.class,
+            ex -> ex.getMessage().contains("input"));
     }
 
-    //region notWhitespace
+    // region notWhitespace
 
     private static void assertMatchThrows(final String input) {
         ExceptionAssert.assertThrows(
-                v -> MustBe.match(input, "input", Pattern.compile("[0-9]*"), 10),
-                IllegalArgumentException.class,
-                ex -> ex.getMessage().contains("input"));
+            v -> MustBe.match(input, "input", Pattern.compile("[0-9]*"), 10),
+            IllegalArgumentException.class,
+            ex -> ex.getMessage().contains("input"));
     }
 
     private static void assertInRangeThrows(final int input) {
         ExceptionAssert.assertThrows(
-                v -> MustBe.inRange(input, "val", -2, 5),
-                IllegalArgumentException.class,
-                ex -> ex.getMessage().contains("val"));
+            v -> MustBe.inRange(input, "val", -2, 5),
+            IllegalArgumentException.class,
+            ex -> ex.getMessage().contains("val"));
     }
 
     private static void assertLongInRangeThrows(final long input) {
         ExceptionAssert.assertThrows(
-                v -> MustBe.inRange(input, "val", -2L, 5L),
-                IllegalArgumentException.class,
-                ex -> ex.getMessage().contains("val"));
+            v -> MustBe.inRange(input, "val", -2L, 5L),
+            IllegalArgumentException.class,
+            ex -> ex.getMessage().contains("val"));
     }
 
     @Test
@@ -73,15 +72,14 @@ public class MustBeTest {
         MustBe.notNull(new Object(), "test");
     }
 
-    //endregion
+    // endregion
 
-    //region match
+    // region match
 
     @Test
     public void notWhitespaceThrowsIfStringContainsNoNonWhitespaceChars() {
         // Assert:
-        Arrays.asList(null, "", " ", " \t \t  ")
-                .forEach(MustBeTest::assertNotWhitespaceThrows);
+        Arrays.asList(null, "", " ", " \t \t  ").forEach(MustBeTest::assertNotWhitespaceThrows);
     }
 
     @Test
@@ -116,9 +114,9 @@ public class MustBeTest {
         assertMatchThrows("13G74");
     }
 
-    //endregion
+    // endregion
 
-    //region inRange (integer)
+    // region inRange (integer)
 
     @Test
     public void matchThrowsIfStringIsTooLong() {
@@ -147,7 +145,7 @@ public class MustBeTest {
         assertInRangeThrows(1000);
     }
 
-    //region inRange (long)
+    // region inRange (long)
 
     @Test
     public void inRangeDoesNotThrowIfValueIsInRange() {
@@ -179,17 +177,17 @@ public class MustBeTest {
         MustBe.inRange(5L, "val", -2L, 5L);
     }
 
-    //endregion
+    // endregion
 
-    //region empty
+    // region empty
 
     @Test
     public void emptyThrowsIfCollectionIsNotEmpty() {
         // Assert:
         ExceptionAssert.assertThrows(
-                v -> MustBe.empty(Collections.singletonList(123), "list"),
-                IllegalArgumentException.class,
-                ex -> ex.getMessage().contains("list"));
+            v -> MustBe.empty(Collections.singletonList(123), "list"),
+            IllegalArgumentException.class,
+            ex -> ex.getMessage().contains("list"));
     }
 
     @Test
@@ -198,17 +196,17 @@ public class MustBeTest {
         MustBe.empty(Collections.emptyList(), "list");
     }
 
-    //endregion
+    // endregion
 
-    //region trueValue / falseValue
+    // region trueValue / falseValue
 
     @Test
     public void trueValueThrowsIfValueIsFalse() {
         // Assert:
         ExceptionAssert.assertThrows(
-                v -> MustBe.trueValue(false, "bool"),
-                IllegalArgumentException.class,
-                ex -> ex.getMessage().contains("bool"));
+            v -> MustBe.trueValue(false, "bool"),
+            IllegalArgumentException.class,
+            ex -> ex.getMessage().contains("bool"));
     }
 
     @Test
@@ -221,9 +219,9 @@ public class MustBeTest {
     public void falseValueThrowsIfValueIsTrue() {
         // Assert:
         ExceptionAssert.assertThrows(
-                v -> MustBe.falseValue(true, "bool"),
-                IllegalArgumentException.class,
-                ex -> ex.getMessage().contains("bool"));
+            v -> MustBe.falseValue(true, "bool"),
+            IllegalArgumentException.class,
+            ex -> ex.getMessage().contains("bool"));
     }
 
     @Test
@@ -232,5 +230,5 @@ public class MustBeTest {
         MustBe.falseValue(false, "bool");
     }
 
-    //endregion
+    // endregion
 }

@@ -18,15 +18,14 @@ package io.nem.core.crypto.ed25519;
 
 import io.nem.core.crypto.PrivateKey;
 import io.nem.core.test.Utils;
+import java.math.BigInteger;
 import org.hamcrest.core.IsEqual;
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.math.BigInteger;
-
 public class Ed25519UtilsTest {
 
-    //region prepareForScalarMultiply
+    // region prepareForScalarMultiply
 
     @Test
     public void prepareForScalarMultiplyReturnsClampedValue() {
@@ -42,5 +41,5 @@ public class Ed25519UtilsTest {
         Assert.assertThat(a[0] & 0x7, IsEqual.equalTo(0x0));
     }
 
-    //endregion
+    // endregion
 }

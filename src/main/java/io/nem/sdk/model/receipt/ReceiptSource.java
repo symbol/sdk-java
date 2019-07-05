@@ -27,8 +27,8 @@ public class ReceiptSource {
     /**
      * Constructor
      *
-     * @param primaryId      Receipt source primary id
-     * @param secondaryId    Receipt source secondary id
+     * @param primaryId Receipt source primary id
+     * @param secondaryId Receipt source secondary id
      */
     public ReceiptSource(int primaryId, int secondaryId) {
         this.primaryId = primaryId;
@@ -52,5 +52,4 @@ public class ReceiptSource {
     public int getSecondaryId() {
         return this.secondaryId;
     }
-
 }

@@ -17,10 +17,9 @@
 package io.nem.core.crypto;
 
 import io.nem.core.test.Utils;
+import java.math.BigInteger;
 import org.junit.Test;
 import org.mockito.Mockito;
-
-import java.math.BigInteger;
 
 public class SignerTest {
 
@@ -105,10 +104,12 @@ public class SignerTest {
         signer.makeSignatureCanonical(context.signature);
 
         // Assert:
-        Mockito.verify(context.dsaSigner, Mockito.times(1)).makeSignatureCanonical(context.signature);
+        Mockito.verify(context.dsaSigner, Mockito.times(1))
+            .makeSignatureCanonical(context.signature);
     }
 
     private class SignerContext {
+
         private final KeyAnalyzer analyzer = Mockito.mock(KeyAnalyzer.class);
         private final DsaSigner dsaSigner = Mockito.mock(DsaSigner.class);
         private final byte[] data = Utils.generateRandomBytes();
@@ -117,7 +118,8 @@ public class SignerTest {
         private SignerContext() {
             Mockito.when(this.analyzer.isKeyCompressed(Mockito.any())).thenReturn(true);
             Mockito.when(this.dsaSigner.isCanonicalSignature(this.signature)).thenReturn(true);
-            Mockito.when(this.dsaSigner.makeSignatureCanonical(this.signature)).thenReturn(this.signature);
+            Mockito.when(this.dsaSigner.makeSignatureCanonical(this.signature))
+                .thenReturn(this.signature);
         }
     }
 }

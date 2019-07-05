@@ -16,12 +16,11 @@
 
 package io.nem.core.utils;
 
+import java.text.DecimalFormat;
+import java.util.function.Function;
 import org.hamcrest.core.IsEqual;
 import org.junit.Assert;
 import org.junit.Test;
-
-import java.text.DecimalFormat;
-import java.util.function.Function;
 
 public class FormatUtilsTest {
 

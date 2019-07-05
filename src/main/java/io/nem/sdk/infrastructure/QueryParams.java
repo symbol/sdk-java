@@ -22,6 +22,7 @@ package io.nem.sdk.infrastructure;
  * @since 1.0
  */
 public class QueryParams {
+
     private final Integer pageSize;
     private final String id;
 
@@ -54,7 +55,6 @@ public class QueryParams {
      * @return params in url format
      */
     public String toUrl() {
-        return "?pageSize=" + pageSize +
-                ((id != null && !id.isEmpty()) ? "&id=" + id : "");
+        return "?pageSize=" + pageSize + ((id != null && !id.isEmpty()) ? "&id=" + id : "");
     }
 }

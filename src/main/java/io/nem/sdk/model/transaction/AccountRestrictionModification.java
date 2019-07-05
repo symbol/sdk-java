@@ -19,46 +19,43 @@ import io.nem.sdk.model.account.Address;
 import io.nem.sdk.model.mosaic.MosaicId;
 
 public class AccountRestrictionModification<T> {
+
     private final AccountRestrictionModificationType modificationType;
     private final T value;
 
-    private AccountRestrictionModification(AccountRestrictionModificationType modificationType, T value) {
+    private AccountRestrictionModification(
+        AccountRestrictionModificationType modificationType, T value) {
         this.modificationType = modificationType;
         this.value = value;
     }
 
     /**
-     *
-     * @param modificationType
-     * @param address
      * @return AccountRestrictionModification<Address>
      */
-    public static AccountRestrictionModification<Address> createForAddress(AccountRestrictionModificationType modificationType, Address address) {
+    public static AccountRestrictionModification<Address> createForAddress(
+        AccountRestrictionModificationType modificationType, Address address) {
         return new AccountRestrictionModification(modificationType, address);
     }
 
     /**
-     *
-     * @param modificationType
-     * @param mosaicId
      * @return AccountRestrictionModification<MosaicId>
      */
-    public static AccountRestrictionModification<Address> createForMosaic(AccountRestrictionModificationType modificationType, MosaicId mosaicId) {
+    public static AccountRestrictionModification<Address> createForMosaic(
+        AccountRestrictionModificationType modificationType, MosaicId mosaicId) {
         return new AccountRestrictionModification(modificationType, mosaicId);
     }
 
     /**
-     *
-     * @param modificationType
-     * @param transactionType
      * @return AccountRestrictionModification<TransactionType>
      */
-    public static AccountRestrictionModification<TransactionType> createForEntityType(AccountRestrictionModificationType modificationType, TransactionType transactionType) {
+    public static AccountRestrictionModification<TransactionType> createForEntityType(
+        AccountRestrictionModificationType modificationType, TransactionType transactionType) {
         return new AccountRestrictionModification(modificationType, transactionType);
     }
 
     /**
      * Get modification value
+     *
      * @return value
      */
     public T getValue() {
@@ -67,6 +64,7 @@ public class AccountRestrictionModification<T> {
 
     /**
      * Get modification type
+     *
      * @return AccountRestrictionModificationType
      */
     public AccountRestrictionModificationType getModificationType() {

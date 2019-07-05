@@ -18,10 +18,10 @@ package io.nem.sdk.infrastructure;
 
 import io.nem.sdk.model.blockchain.BlockchainScore;
 import io.reactivex.Observable;
-
 import java.math.BigInteger;
 
 public interface ChainRepository {
+
     /**
      * Gets current blockchain height.
      *

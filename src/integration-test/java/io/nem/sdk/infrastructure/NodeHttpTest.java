@@ -16,18 +16,19 @@
 
 package io.nem.sdk.infrastructure;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import io.nem.sdk.model.node.NodeInfo;
 import io.nem.sdk.model.node.NodeTime;
+import java.io.IOException;
+import java.util.concurrent.ExecutionException;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 
-import java.io.IOException;
-import java.util.concurrent.ExecutionException;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class NodeHttpTest extends BaseTest {
+
     private NodeHttp nodeHttp;
 
     @BeforeAll
@@ -37,10 +38,7 @@ class NodeHttpTest extends BaseTest {
 
     @Test
     void getNodeInfo() throws ExecutionException, InterruptedException {
-        NodeInfo nodeInfo = nodeHttp
-                .getNodeInfo()
-                .toFuture()
-                .get();
+        NodeInfo nodeInfo = nodeHttp.getNodeInfo().toFuture().get();
 
         assertTrue(nodeInfo.getPublicKey() != "");
         assertTrue(nodeInfo.getHost() != null);
@@ -50,10 +48,7 @@ class NodeHttpTest extends BaseTest {
 
     @Test
     void getNodeTime() throws ExecutionException, InterruptedException {
-        NodeTime nodeTime = nodeHttp
-                .getNodeTime()
-                .toFuture()
-                .get();
+        NodeTime nodeTime = nodeHttp.getNodeTime().toFuture().get();
 
         assertTrue(nodeTime.getReceiveTimeStamp().longValue() > 0);
         assertTrue(nodeTime.getSendTimeStamp().longValue() > 0);

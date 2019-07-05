@@ -22,7 +22,6 @@ import io.nem.sdk.model.namespace.NamespaceId;
 import io.nem.sdk.model.namespace.NamespaceInfo;
 import io.nem.sdk.model.namespace.NamespaceName;
 import io.reactivex.Observable;
-
 import java.util.List;
 
 /**
@@ -41,14 +40,14 @@ public interface NamespaceRepository {
     Observable<NamespaceInfo> getNamespace(NamespaceId namespaceId);
 
     /**
-     * Gets list of NamespaceInfo for an account.
-     * With pagination.
+     * Gets list of NamespaceInfo for an account. With pagination.
      *
      * @param address Address
-     * @param queryParams   QueryParans
+     * @param queryParams QueryParans
      * @return Observable of List<{@link NamespaceInfo}>
      */
-    Observable<List<NamespaceInfo>> getNamespacesFromAccount(Address address, QueryParams queryParams);
+    Observable<List<NamespaceInfo>> getNamespacesFromAccount(
+        Address address, QueryParams queryParams);
 
     /**
      * Gets list of NamespaceInfo for an account.
@@ -59,14 +58,14 @@ public interface NamespaceRepository {
     Observable<List<NamespaceInfo>> getNamespacesFromAccount(Address address);
 
     /**
-     * Gets list of NamespaceInfo for different account.
-     * With pagination.
+     * Gets list of NamespaceInfo for different account. With pagination.
      *
      * @param addresses List of Address
-     * @param queryParams    QueryParams
+     * @param queryParams QueryParams
      * @return Observable of List<{@link NamespaceInfo}>
      */
-    Observable<List<NamespaceInfo>> getNamespacesFromAccounts(List<Address> addresses, QueryParams queryParams);
+    Observable<List<NamespaceInfo>> getNamespacesFromAccounts(
+        List<Address> addresses, QueryParams queryParams);
 
     /**
      * Gets list of NamespaceInfo for different account.
@@ -86,6 +85,7 @@ public interface NamespaceRepository {
 
     /**
      * Gets the MosaicId from a MosaicAlias
+     *
      * @param namespaceId - the namespaceId of the namespace
      * @return Observable of <{@link MosaicId}>
      */
@@ -93,6 +93,7 @@ public interface NamespaceRepository {
 
     /**
      * Gets the Address from a AddressAlias
+     *
      * @param namespaceId - the namespaceId of the namespace
      * @return Observable of <{@link Address}>
      */

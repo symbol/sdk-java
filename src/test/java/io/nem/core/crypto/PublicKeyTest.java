@@ -26,7 +26,7 @@ public class PublicKeyTest {
     private static final byte[] TEST_BYTES = new byte[]{0x22, (byte) 0xAB, 0x71};
     private static final byte[] MODIFIED_TEST_BYTES = new byte[]{0x22, (byte) 0xAB, 0x72};
 
-    //region constructors / factories
+    // region constructors / factories
 
     @Test
     public void canCreateFromBytes() {
@@ -52,13 +52,13 @@ public class PublicKeyTest {
         PublicKey.fromHexString("22G75");
     }
 
-    //endregion
+    // endregion
 
-    //region serializer
+    // region serializer
 
-    //endregion
+    // endregion
 
-    //region equals / hashCode
+    // region equals / hashCode
 
     @Test
     public void equalsOnlyReturnsTrueForEquivalentObjects() {
@@ -80,18 +80,21 @@ public class PublicKeyTest {
 
         // Assert:
         Assert.assertThat(new PublicKey(TEST_BYTES).hashCode(), IsEqual.equalTo(hashCode));
-        Assert.assertThat(new PublicKey(MODIFIED_TEST_BYTES).hashCode(), IsNot.not(IsEqual.equalTo(hashCode)));
+        Assert.assertThat(
+            new PublicKey(MODIFIED_TEST_BYTES).hashCode(), IsNot.not(IsEqual.equalTo(hashCode)));
     }
 
-    //endregion
+    // endregion
 
-    //region toString
+    // region toString
 
     @Test
     public void toStringReturnsHexRepresentation() {
         // Assert:
-        Assert.assertThat(new PublicKey(TEST_BYTES).toString().toUpperCase(), IsEqual.equalTo("22ab71".toUpperCase()));
+        Assert.assertThat(
+            new PublicKey(TEST_BYTES).toString().toUpperCase(),
+            IsEqual.equalTo("22ab71".toUpperCase()));
     }
 
-    //endregion
+    // endregion
 }

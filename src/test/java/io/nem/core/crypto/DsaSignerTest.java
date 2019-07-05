@@ -17,12 +17,11 @@
 package io.nem.core.crypto;
 
 import io.nem.core.test.Utils;
+import java.math.BigInteger;
 import org.hamcrest.core.IsEqual;
 import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
-
-import java.math.BigInteger;
 
 public abstract class DsaSignerTest {
 

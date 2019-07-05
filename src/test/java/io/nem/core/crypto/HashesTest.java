@@ -17,15 +17,15 @@
 package io.nem.core.crypto;
 
 import io.nem.core.test.Utils;
+import java.util.Arrays;
+import java.util.function.Function;
 import org.hamcrest.core.IsEqual;
 import org.hamcrest.core.IsNot;
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.util.Arrays;
-import java.util.function.Function;
-
 public class HashesTest {
+
     private static final HashTester SHA3_256_TESTER = new HashTester(Hashes::sha3_256, 32);
     private static final HashTester SHA3_512_TESTER = new HashTester(Hashes::sha3_512, 64);
     private static final HashTester RIPEMD160_TESTER = new HashTester(Hashes::ripemd160, 20);
@@ -34,11 +34,11 @@ public class HashesTest {
 
     private static final HashTester KECCAK_256_TESTER = new HashTester(Hashes::keccak256, 32);
 
-    //region sha3_256
+    // region sha3_256
 
     private static void assertHashesAreDifferent(
-            final Function<byte[], byte[]> hashFunction1,
-            final Function<byte[], byte[]> hashFunction2) {
+        final Function<byte[], byte[]> hashFunction1,
+        final Function<byte[], byte[]> hashFunction2) {
 
         // Arrange:
         final byte[] input = Utils.generateRandomBytes();
@@ -75,9 +75,9 @@ public class HashesTest {
         SHA3_256_TESTER.assertHashIsDifferentForDifferentInputs();
     }
 
-    //endregion
+    // endregion
 
-    //region sha3_512
+    // region sha3_512
 
     @Test
     public void sha3_512HashHasExpectedByteLength() {
@@ -103,9 +103,9 @@ public class HashesTest {
         SHA3_512_TESTER.assertHashIsDifferentForDifferentInputs();
     }
 
-    //endregion
+    // endregion
 
-    //region ripemd160
+    // region ripemd160
 
     @Test
     public void ripemd160HashHasExpectedByteLength() {
@@ -131,9 +131,9 @@ public class HashesTest {
         RIPEMD160_TESTER.assertHashIsDifferentForDifferentInputs();
     }
 
-    //endregion
+    // endregion
 
-    //region keccak_256
+    // region keccak_256
 
     @Test
     public void keccak_256HashHasExpectedByteLength() {
@@ -159,9 +159,9 @@ public class HashesTest {
         KECCAK_256_TESTER.assertHashIsDifferentForDifferentInputs();
     }
 
-    //endregion
+    // endregion
 
-    //region HASH_160
+    // region HASH_160
 
     @Test
     public void hash_160HashHasExpectedByteLength() {
@@ -187,9 +187,9 @@ public class HashesTest {
         HASH_160_TESTER.assertHashIsDifferentForDifferentInputs();
     }
 
-    //endregion
+    // endregion
 
-    //region HASH_256
+    // region HASH_256
 
     @Test
     public void hash_256HashHasExpectedByteLength() {
@@ -215,9 +215,9 @@ public class HashesTest {
         HASH_256_TESTER.assertHashIsDifferentForDifferentInputs();
     }
 
-    //endregion
+    // endregion
 
-    //region different hash algorithm
+    // region different hash algorithm
 
     @Test
     public void sha3_256AndRipemd160GenerateDifferentHashForSameInputs() {
@@ -309,21 +309,24 @@ public class HashesTest {
         assertHashesAreDifferent(Hashes::hash256, Hashes::ripemd160);
     }
 
-    //endregion
+    // endregion
 
     private static class HashTester {
+
         private final Function<byte[], byte[]> hashFunction;
         private final Function<byte[][], byte[]> hashMultipleFunction;
         private final int expectedHashLength;
 
-        public HashTester(final Function<byte[][], byte[]> hashMultipleFunction, final int expectedHashLength) {
+        public HashTester(
+            final Function<byte[][], byte[]> hashMultipleFunction, final int expectedHashLength) {
             this.hashMultipleFunction = hashMultipleFunction;
             this.hashFunction = input -> hashMultipleFunction.apply(new byte[][]{input});
             this.expectedHashLength = expectedHashLength;
         }
 
         // this is only for Keccak function, accepting only byte array
-        public HashTester(final int expectedHashLength, final Function<byte[], byte[]> hashFunction) {
+        public HashTester(final int expectedHashLength,
+            final Function<byte[], byte[]> hashFunction) {
             this.hashMultipleFunction = null;
             this.hashFunction = input -> hashFunction.apply(input);
             this.expectedHashLength = expectedHashLength;
@@ -331,9 +334,9 @@ public class HashesTest {
 
         private static byte[][] split(final byte[] input) {
             return new byte[][]{
-                    Arrays.copyOfRange(input, 0, 17),
-                    Arrays.copyOfRange(input, 17, 100),
-                    Arrays.copyOfRange(input, 100, input.length)
+                Arrays.copyOfRange(input, 0, 17),
+                Arrays.copyOfRange(input, 17, 100),
+                Arrays.copyOfRange(input, 100, input.length)
             };
         }
 

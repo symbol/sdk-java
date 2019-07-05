@@ -16,12 +16,9 @@
 
 package io.nem.sdk.infrastructure;
 
-
 import io.nem.sdk.model.blockchain.NetworkType;
 import io.reactivex.Observable;
-import io.vertx.reactivex.ext.web.client.HttpResponse;
 import io.vertx.reactivex.ext.web.codec.BodyCodec;
-
 import java.net.MalformedURLException;
 
 /**
@@ -30,23 +27,26 @@ import java.net.MalformedURLException;
  * @since 1.0
  */
 public class NetworkHttp extends Http implements NetworkRepository {
+
     public NetworkHttp(String host) throws MalformedURLException {
         super(host + "/network");
     }
 
     public Observable<NetworkType> getNetworkType() {
         return this.client
-                .getAbs(this.url.toString())
-                .as(BodyCodec.jsonObject())
-                .rxSend()
-                .toObservable()
-                .map(Http::mapJsonObjectOrError)
-                .map(json -> json.getString("name"))
-                .map(name -> {
-                    if (name.equalsIgnoreCase("mijinTest"))
+            .getAbs(this.url.toString())
+            .as(BodyCodec.jsonObject())
+            .rxSend()
+            .toObservable()
+            .map(Http::mapJsonObjectOrError)
+            .map(json -> json.getString("name"))
+            .map(
+                name -> {
+                    if (name.equalsIgnoreCase("mijinTest")) {
                         return NetworkType.MIJIN_TEST;
-                    else {
-                        throw new IllegalArgumentException("network " + name + " is not supported yet by the sdk");
+                    } else {
+                        throw new IllegalArgumentException(
+                            "network " + name + " is not supported yet by the sdk");
                     }
                 });
     }

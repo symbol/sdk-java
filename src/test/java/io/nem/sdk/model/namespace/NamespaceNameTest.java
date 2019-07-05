@@ -16,13 +16,11 @@
 
 package io.nem.sdk.model.namespace;
 
-import org.junit.jupiter.api.Test;
-
-import java.math.BigInteger;
-import java.util.Optional;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+
+import java.math.BigInteger;
+import org.junit.jupiter.api.Test;
 
 class NamespaceNameTest {
 

@@ -17,7 +17,6 @@
 package io.nem.sdk.model.account;
 
 import io.nem.sdk.model.mosaic.Mosaic;
-
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,94 +27,106 @@ import java.util.List;
  * @since 1.0
  */
 public class AccountInfo {
-	private final Address address;
-	private final BigInteger addressHeight;
-	private final String publicKey;
-	private final BigInteger publicKeyHeight;
-	private final List<Importances> importances;
-	private final List<Mosaic> mosaics;
 
-	public AccountInfo(Address address, BigInteger addressHeight, String publicKey, BigInteger publicKeyHeight, BigInteger importance,
-					   BigInteger importanceHeight, List<Mosaic> mosaics) {
-		this.address = address;
-		this.addressHeight = addressHeight;
-		this.publicKey = publicKey;
-		this.publicKeyHeight = publicKeyHeight;
-		this.importances = new ArrayList<>();
-		this.importances.add(new Importances(importance, importanceHeight));
-		this.mosaics = mosaics;
-	}
+    private final Address address;
+    private final BigInteger addressHeight;
+    private final String publicKey;
+    private final BigInteger publicKeyHeight;
+    private final List<Importances> importances;
+    private final List<Mosaic> mosaics;
 
-	public AccountInfo(Address address, BigInteger addressHeight, String publicKey, BigInteger publicKeyHeight,
-					   List<Importances> importances, List<Mosaic> mosaics) {
-		this.address = address;
-		this.addressHeight = addressHeight;
-		this.publicKey = publicKey;
-		this.publicKeyHeight = publicKeyHeight;
-		this.importances = importances;
-		this.mosaics = mosaics;
-	}
+    public AccountInfo(
+        Address address,
+        BigInteger addressHeight,
+        String publicKey,
+        BigInteger publicKeyHeight,
+        BigInteger importance,
+        BigInteger importanceHeight,
+        List<Mosaic> mosaics) {
+        this.address = address;
+        this.addressHeight = addressHeight;
+        this.publicKey = publicKey;
+        this.publicKeyHeight = publicKeyHeight;
+        this.importances = new ArrayList<>();
+        this.importances.add(new Importances(importance, importanceHeight));
+        this.mosaics = mosaics;
+    }
 
-	/**
-	 * Returns account address.
-	 *
-	 * @return {@link Address}
-	 */
-	public Address getAddress() {
-		return address;
-	}
+    public AccountInfo(
+        Address address,
+        BigInteger addressHeight,
+        String publicKey,
+        BigInteger publicKeyHeight,
+        List<Importances> importances,
+        List<Mosaic> mosaics) {
+        this.address = address;
+        this.addressHeight = addressHeight;
+        this.publicKey = publicKey;
+        this.publicKeyHeight = publicKeyHeight;
+        this.importances = importances;
+        this.mosaics = mosaics;
+    }
 
-	/**
-	 * Returns height when the address was published.
-	 *
-	 * @return BigInteger
-	 */
-	public BigInteger getAddressHeight() {
-		return addressHeight;
-	}
+    /**
+     * Returns account address.
+     *
+     * @return {@link Address}
+     */
+    public Address getAddress() {
+        return address;
+    }
 
-	/**
-	 * Returns public key of the account.
-	 *
-	 * @return String
-	 */
-	public String getPublicKey() {
-		return publicKey;
-	}
+    /**
+     * Returns height when the address was published.
+     *
+     * @return BigInteger
+     */
+    public BigInteger getAddressHeight() {
+        return addressHeight;
+    }
 
-	/**
-	 * Returns height when the public key was published.
-	 *
-	 * @return BigInteger
-	 */
-	public BigInteger getPublicKeyHeight() {
-		return publicKeyHeight;
-	}
+    /**
+     * Returns public key of the account.
+     *
+     * @return String
+     */
+    public String getPublicKey() {
+        return publicKey;
+    }
 
-	/**
-	 * Returns list of importances for the account.
-	 *
-	 * @return BigInteger
-	 */
-	public List<Importances> getImportances() {
-		return importances;
-	}
+    /**
+     * Returns height when the public key was published.
+     *
+     * @return BigInteger
+     */
+    public BigInteger getPublicKeyHeight() {
+        return publicKeyHeight;
+    }
 
-	/**
-	 * Returns mosaics hold by the account.
-	 *
-	 * @return {List<Mosaic>}
-	 */
-	public List<Mosaic> getMosaics() {
-		return mosaics;
-	}
+    /**
+     * Returns list of importances for the account.
+     *
+     * @return BigInteger
+     */
+    public List<Importances> getImportances() {
+        return importances;
+    }
 
-	/**
-	 * Returns height when the address was published.
-	 *
-	 * @return {@link PublicAccount}
-	 */
-	public PublicAccount getPublicAccount() {
-		return PublicAccount.createFromPublicKey(this.publicKey, this.address.getNetworkType());
-	}
+    /**
+     * Returns mosaics hold by the account.
+     *
+     * @return {List<Mosaic>}
+     */
+    public List<Mosaic> getMosaics() {
+        return mosaics;
+    }
+
+    /**
+     * Returns height when the address was published.
+     *
+     * @return {@link PublicAccount}
+     */
+    public PublicAccount getPublicAccount() {
+        return PublicAccount.createFromPublicKey(this.publicKey, this.address.getNetworkType());
+    }
 }

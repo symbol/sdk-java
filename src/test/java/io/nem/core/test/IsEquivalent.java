@@ -16,11 +16,10 @@
 
 package io.nem.core.test;
 
-import org.hamcrest.core.IsEqual;
-
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
+import org.hamcrest.core.IsEqual;
 
 /**
  * Matcher that checks the equivalency of a collection to another collection or array.
@@ -28,6 +27,7 @@ import java.util.HashSet;
  * @param <T> The collection element type.
  */
 public class IsEquivalent<T> extends org.hamcrest.BaseMatcher<Collection<T>> {
+
     private final Collection<T> lhs;
 
     /**
@@ -52,11 +52,12 @@ public class IsEquivalent<T> extends org.hamcrest.BaseMatcher<Collection<T>> {
      * Creates an equivalency matcher that checks equivalence to a collection.
      *
      * @param collection The collection to compare against.
-     * @param <T>        The element type.
+     * @param <T> The element type.
      * @return The matcher.
      */
     @org.hamcrest.Factory
-    public static <T> org.hamcrest.Matcher<Collection<T>> equivalentTo(final Collection<T> collection) {
+    public static <T> org.hamcrest.Matcher<Collection<T>> equivalentTo(
+        final Collection<T> collection) {
         return new IsEquivalent<>(collection);
     }
 
@@ -64,7 +65,7 @@ public class IsEquivalent<T> extends org.hamcrest.BaseMatcher<Collection<T>> {
      * Creates an equivalency matcher that checks equivalence to an array.
      *
      * @param array The collection to compare against.
-     * @param <T>   The element type.
+     * @param <T> The element type.
      * @return The matcher.
      */
     @SafeVarargs

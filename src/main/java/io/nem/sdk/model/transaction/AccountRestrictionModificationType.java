@@ -22,12 +22,12 @@ public enum AccountRestrictionModificationType {
     /**
      * Add account restriction value.
      */
-    ADD((byte)0),
+    ADD((byte) 0),
 
     /**
      * Remove account restriction value
      */
-    REMOVE((byte)1);
+    REMOVE((byte) 1);
 
     private byte value;
 
@@ -42,12 +42,14 @@ public enum AccountRestrictionModificationType {
      * @return Enum value.
      */
     public static AccountRestrictionModificationType rawValueOf(final byte value) {
-        for (AccountRestrictionModificationType current : AccountRestrictionModificationType.values()) {
+        for (AccountRestrictionModificationType current : AccountRestrictionModificationType
+            .values()) {
             if (value == current.value) {
                 return current;
             }
         }
-        throw new IllegalArgumentException(value + " was not a backing value for AccountRestrictionModificationType.");
+        throw new IllegalArgumentException(
+            value + " was not a backing value for AccountRestrictionModificationType.");
     }
 
     /**
@@ -58,6 +60,4 @@ public enum AccountRestrictionModificationType {
     public byte getValue() {
         return value;
     }
-
 }
-

@@ -47,7 +47,8 @@ public abstract class BlockCipherTest {
         final CryptoEngine engine = this.getCryptoEngine();
         final KeyPair skp = KeyPair.random(engine);
         final KeyPair rkp = KeyPair.random(engine);
-        final BlockCipher blockCipher = this.getBlockCipher(skp, new KeyPair(rkp.getPublicKey(), engine));
+        final BlockCipher blockCipher =
+            this.getBlockCipher(skp, new KeyPair(rkp.getPublicKey(), engine));
         final byte[] input = Utils.generateRandomBytes();
 
         // Act:
@@ -63,8 +64,10 @@ public abstract class BlockCipherTest {
         final CryptoEngine engine = this.getCryptoEngine();
         final KeyPair skp = KeyPair.random(engine);
         final KeyPair rkp = KeyPair.random(engine);
-        final BlockCipher blockCipher1 = this.getBlockCipher(skp, new KeyPair(rkp.getPublicKey(), engine));
-        final BlockCipher blockCipher2 = this.getBlockCipher(new KeyPair(skp.getPublicKey(), engine), rkp);
+        final BlockCipher blockCipher1 =
+            this.getBlockCipher(skp, new KeyPair(rkp.getPublicKey(), engine));
+        final BlockCipher blockCipher2 =
+            this.getBlockCipher(new KeyPair(skp.getPublicKey(), engine), rkp);
         final byte[] input = Utils.generateRandomBytes();
 
         // Act:
@@ -81,8 +84,10 @@ public abstract class BlockCipherTest {
         final CryptoEngine engine = this.getCryptoEngine();
         final KeyPair skp = KeyPair.random(engine);
         final KeyPair rkp = KeyPair.random(engine);
-        final BlockCipher blockCipher1 = this.getBlockCipher(skp, new KeyPair(rkp.getPublicKey(), engine));
-        final BlockCipher blockCipher2 = this.getBlockCipher(new KeyPair(rkp.getPublicKey(), engine), skp);
+        final BlockCipher blockCipher1 =
+            this.getBlockCipher(skp, new KeyPair(rkp.getPublicKey(), engine));
+        final BlockCipher blockCipher2 =
+            this.getBlockCipher(new KeyPair(rkp.getPublicKey(), engine), skp);
         final byte[] input = Utils.generateRandomBytes();
 
         // Act:
@@ -97,8 +102,10 @@ public abstract class BlockCipherTest {
     public void dataEncryptedWithPrivateKeyCanOnlyBeDecryptedByMatchingPublicKey() {
         // Arrange:
         final CryptoEngine engine = this.getCryptoEngine();
-        final BlockCipher blockCipher1 = this.getBlockCipher(KeyPair.random(engine), KeyPair.random(engine));
-        final BlockCipher blockCipher2 = this.getBlockCipher(KeyPair.random(engine), KeyPair.random(engine));
+        final BlockCipher blockCipher1 =
+            this.getBlockCipher(KeyPair.random(engine), KeyPair.random(engine));
+        final BlockCipher blockCipher2 =
+            this.getBlockCipher(KeyPair.random(engine), KeyPair.random(engine));
         final byte[] input = Utils.generateRandomBytes();
 
         // Act:
@@ -112,7 +119,8 @@ public abstract class BlockCipherTest {
         Assert.assertThat(blockCipher2.decrypt(encryptedBytes2), IsEqual.equalTo(input));
     }
 
-    protected BlockCipher getBlockCipher(final KeyPair senderKeyPair, final KeyPair recipientKeyPair) {
+    protected BlockCipher getBlockCipher(
+        final KeyPair senderKeyPair, final KeyPair recipientKeyPair) {
         return this.getCryptoEngine().createBlockCipher(senderKeyPair, recipientKeyPair);
     }
 

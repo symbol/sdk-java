@@ -16,15 +16,16 @@
 
 package io.nem.sdk.model.transaction;
 
-import org.junit.jupiter.api.Test;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import org.junit.jupiter.api.Test;
 
 public class TransactionAnnounceResponseTest {
 
     @Test
     void shouldCreateTransactionAnnounceReponseViaConstructor() {
-        TransactionAnnounceResponse transactionAnnounceResponse = new TransactionAnnounceResponse("message");
+        TransactionAnnounceResponse transactionAnnounceResponse =
+            new TransactionAnnounceResponse("message");
 
         assertEquals("message", transactionAnnounceResponse.getMessage());
     }

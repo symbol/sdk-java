@@ -77,7 +77,8 @@ public class Ed25519EncodedGroupElementTest {
 
             // Act:
             final Ed25519FieldElement affineX1 = encoded.getAffineX();
-            final Ed25519FieldElement affineX2 = MathUtils.toRepresentation(encoded.decode(), CoordinateSystem.AFFINE).getX();
+            final Ed25519FieldElement affineX2 =
+                MathUtils.toRepresentation(encoded.decode(), CoordinateSystem.AFFINE).getX();
 
             // Assert:
             Assert.assertThat(affineX1, IsEqual.equalTo(affineX2));
@@ -87,7 +88,8 @@ public class Ed25519EncodedGroupElementTest {
     @Test(expected = IllegalArgumentException.class)
     public void getAffineXThrowsIfEncodedGroupElementIsInvalid() {
         // Arrange:
-        final Ed25519GroupElement g = Ed25519GroupElement.p2(Ed25519Field.ONE, Ed25519Field.D, Ed25519Field.ONE);
+        final Ed25519GroupElement g =
+            Ed25519GroupElement.p2(Ed25519Field.ONE, Ed25519Field.D, Ed25519Field.ONE);
         final Ed25519EncodedGroupElement encoded = g.encode();
 
         // Assert:
@@ -102,7 +104,8 @@ public class Ed25519EncodedGroupElementTest {
 
             // Act:
             final Ed25519FieldElement affineY1 = encoded.getAffineY();
-            final Ed25519FieldElement affineY2 = MathUtils.toRepresentation(encoded.decode(), CoordinateSystem.AFFINE).getY();
+            final Ed25519FieldElement affineY2 =
+                MathUtils.toRepresentation(encoded.decode(), CoordinateSystem.AFFINE).getY();
 
             // Assert:
             Assert.assertThat(affineY1, IsEqual.equalTo(affineY2));
@@ -148,11 +151,14 @@ public class Ed25519EncodedGroupElementTest {
     @Test
     public void toStringReturnsCorrectRepresentation() {
         // Arrange:
-        final Ed25519EncodedGroupElement encoded = Ed25519GroupElement.p2(Ed25519Field.ZERO, Ed25519Field.ONE, Ed25519Field.ONE).encode();
+        final Ed25519EncodedGroupElement encoded =
+            Ed25519GroupElement.p2(Ed25519Field.ZERO, Ed25519Field.ONE, Ed25519Field.ONE).encode();
 
         // Act:
         final String encodedAsString = encoded.toString();
-        final String expectedString = String.format("x=%s\ny=%s\n",
+        final String expectedString =
+            String.format(
+                "x=%s\ny=%s\n",
                 "0000000000000000000000000000000000000000000000000000000000000000",
                 "0100000000000000000000000000000000000000000000000000000000000000");
 

@@ -16,27 +16,25 @@
 
 package io.nem.sdk.infrastructure;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import io.nem.sdk.model.blockchain.BlockInfo;
-import io.nem.sdk.model.blockchain.BlockchainStorageInfo;
 import io.nem.sdk.model.receipt.Statement;
 import io.nem.sdk.model.transaction.Transaction;
 import io.reactivex.observers.TestObserver;
 import io.reactivex.schedulers.Schedulers;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
-
 import java.io.IOException;
 import java.math.BigInteger;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class BlockHttpTest extends BaseTest {
+
     private BlockHttp blockHttp;
 
     @BeforeAll
@@ -46,52 +44,50 @@ class BlockHttpTest extends BaseTest {
 
     @Test
     void getBlockByHeight() throws ExecutionException, InterruptedException {
-        BlockInfo blockInfo = blockHttp
-                .getBlockByHeight(BigInteger.valueOf(1))
-                .toFuture()
-                .get();
+        BlockInfo blockInfo = blockHttp.getBlockByHeight(BigInteger.valueOf(1)).toFuture().get();
 
         assertEquals(1, blockInfo.getHeight().intValue());
         assertEquals(0, blockInfo.getTimestamp().intValue());
-
     }
 
     // TODO to fix after catbuffer integration
     @Test
     void getBlockTransactions() throws ExecutionException, InterruptedException {
-        List<Transaction> transactions = blockHttp
-                .getBlockTransactions(BigInteger.valueOf(1))
-                .toFuture()
-                .get();
+        List<Transaction> transactions =
+            blockHttp.getBlockTransactions(BigInteger.valueOf(1)).toFuture().get();
 
         assertEquals(10, transactions.size());
 
-        List<Transaction> nextTransactions = blockHttp
-                .getBlockTransactions(BigInteger.valueOf(1), new QueryParams(10, transactions.get(0).getTransactionInfo().get().getId().get()))
+        List<Transaction> nextTransactions =
+            blockHttp
+                .getBlockTransactions(
+                    BigInteger.valueOf(1),
+                    new QueryParams(10,
+                        transactions.get(0).getTransactionInfo().get().getId().get()))
                 .toFuture()
                 .get();
 
         assertEquals(10, nextTransactions.size());
-        assertEquals(transactions.get(1).getTransactionInfo().get().getHash(), nextTransactions.get(0).getTransactionInfo().get().getHash());
+        assertEquals(
+            transactions.get(1).getTransactionInfo().get().getHash(),
+            nextTransactions.get(0).getTransactionInfo().get().getHash());
     }
 
     @Test
     void getBlockReceipts() throws ExecutionException, InterruptedException {
-        Statement statement = blockHttp
-                .getBlockReceipts(BigInteger.valueOf(6262))
-                .toFuture()
-                .get();
+        Statement statement = blockHttp.getBlockReceipts(BigInteger.valueOf(6262)).toFuture().get();
 
         assertEquals(statement.getTransactionStatements().isEmpty(), false);
     }
+
     @Test
     void throwExceptionWhenBlockDoesNotExists() {
         TestObserver<BlockInfo> testObserver = new TestObserver<>();
         blockHttp
-                .getBlockByHeight(BigInteger.valueOf(0))
-                .subscribeOn(Schedulers.single())
-                .test()
-                .awaitDone(2, TimeUnit.SECONDS)
-                .assertFailure(RuntimeException.class);
+            .getBlockByHeight(BigInteger.valueOf(0))
+            .subscribeOn(Schedulers.single())
+            .test()
+            .awaitDone(2, TimeUnit.SECONDS)
+            .assertFailure(RuntimeException.class);
     }
 }

@@ -18,33 +18,33 @@ package io.nem.sdk.model.node;
 import java.math.BigInteger;
 
 public class NodeTime {
+
     private final BigInteger sendTimeStamp;
     private final BigInteger receiveTimeStamp;
 
     /**
      * Constructor
-     * @param sendTimeStamp
-     * @param receiveTimeStamp
      */
-    public NodeTime(BigInteger sendTimeStamp, BigInteger receiveTimeStamp)
-    {
+    public NodeTime(BigInteger sendTimeStamp, BigInteger receiveTimeStamp) {
         this.receiveTimeStamp = receiveTimeStamp;
         this.sendTimeStamp = sendTimeStamp;
     }
 
     /**
      * Get send timestamp
+     *
      * @return BigInteger
      */
-    public BigInteger getSendTimeStamp(){
+    public BigInteger getSendTimeStamp() {
         return this.sendTimeStamp;
     }
 
     /**
      * Get receive timestamp
+     *
      * @return BigInteger
      */
-    public BigInteger getReceiveTimeStamp(){
+    public BigInteger getReceiveTimeStamp() {
         return this.receiveTimeStamp;
     }
 }

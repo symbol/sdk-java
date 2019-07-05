@@ -20,11 +20,11 @@ import io.nem.sdk.model.account.Address;
 import io.nem.sdk.model.account.PublicAccount;
 import io.nem.sdk.model.mosaic.MosaicId;
 import io.nem.sdk.model.namespace.AddressAlias;
-
 import java.math.BigInteger;
 import java.util.Optional;
 
 public class BalanceTransferReceipt<T> extends Receipt {
+
     private final PublicAccount sender;
     private final T recipient;
     private final MosaicId mosaicId;
@@ -33,15 +33,22 @@ public class BalanceTransferReceipt<T> extends Receipt {
     /**
      * Constructor
      *
-     * @param sender    Sender's Public Account
+     * @param sender Sender's Public Account
      * @param recipient Recipient (Address | AddressAlias)
-     * @param mosaicId  Mosaic Id
-     * @param amount    Amount
-     * @param type      Receipt Type
-     * @param version   Receipt Version
-     * @param size      Receipt Size
+     * @param mosaicId Mosaic Id
+     * @param amount Amount
+     * @param type Receipt Type
+     * @param version Receipt Version
+     * @param size Receipt Size
      */
-    public BalanceTransferReceipt (PublicAccount sender, T recipient, MosaicId mosaicId, BigInteger amount, ReceiptType type, ReceiptVersion version, Optional<Integer> size) {
+    public BalanceTransferReceipt(
+        PublicAccount sender,
+        T recipient,
+        MosaicId mosaicId,
+        BigInteger amount,
+        ReceiptType type,
+        ReceiptVersion version,
+        Optional<Integer> size) {
         super(type, version, size);
         this.sender = sender;
         this.recipient = recipient;
@@ -54,14 +61,20 @@ public class BalanceTransferReceipt<T> extends Receipt {
     /**
      * Constructor BalanceTransferReceipt
      *
-     * @param sender    Sender's Public Account
+     * @param sender Sender's Public Account
      * @param recipient Recipient (Address | AddressAlias)
-     * @param mosaicId  Mosaic Id
-     * @param amount    Amount
-     * @param type      Receipt Type
-     * @param version   Receipt Version
+     * @param mosaicId Mosaic Id
+     * @param amount Amount
+     * @param type Receipt Type
+     * @param version Receipt Version
      */
-    public BalanceTransferReceipt (PublicAccount sender, T recipient, MosaicId mosaicId, BigInteger amount, ReceiptType type, ReceiptVersion version) {
+    public BalanceTransferReceipt(
+        PublicAccount sender,
+        T recipient,
+        MosaicId mosaicId,
+        BigInteger amount,
+        ReceiptType type,
+        ReceiptVersion version) {
         super(type, version, null);
         this.sender = sender;
         this.recipient = recipient;
@@ -125,8 +138,12 @@ public class BalanceTransferReceipt<T> extends Receipt {
      */
     private void validateRecipientType() {
         Class recipientClass = this.recipient.getClass();
-        if (!Address.class.isAssignableFrom(recipientClass) && !AddressAlias.class.isAssignableFrom(recipientClass)) {
-            throw new IllegalArgumentException("Recipient type: [" + recipientClass.getName() + "] is not valid for BalanceTransferReceipt");
+        if (!Address.class.isAssignableFrom(recipientClass)
+            && !AddressAlias.class.isAssignableFrom(recipientClass)) {
+            throw new IllegalArgumentException(
+                "Recipient type: ["
+                    + recipientClass.getName()
+                    + "] is not valid for BalanceTransferReceipt");
         }
     }
 }

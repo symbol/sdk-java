@@ -17,7 +17,6 @@
 package io.nem.core.crypto;
 
 import io.nem.core.utils.HexEncoder;
-
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 
@@ -25,67 +24,67 @@ import java.util.Arrays;
  * Represents a public key.
  */
 public class PublicKey {
-	private final byte[] value;
 
-	/**
-	 * Creates a new public key.
-	 *
-	 * @param bytes The raw public key value.
-	 */
-	public PublicKey(final byte[] bytes) {
-		this.value = bytes;
-	}
+    private final byte[] value;
 
-	/**
-	 * Creates a public key from a hex string.
-	 *
-	 * @param hex The hex string.
-	 * @return The new public key.
-	 */
-	public static PublicKey fromHexString(final String hex) {
-		try {
-			return new PublicKey(HexEncoder.getBytes(hex));
-		}
-		catch (final IllegalArgumentException e) {
-			throw new CryptoException(e);
-		}
-	}
+    /**
+     * Creates a new public key.
+     *
+     * @param bytes The raw public key value.
+     */
+    public PublicKey(final byte[] bytes) {
+        this.value = bytes;
+    }
 
-	/**
-	 * Gets the raw public key value.
-	 *
-	 * @return The raw public key value.
-	 */
-	public byte[] getBytes() {
-		return this.value;
-	}
+    /**
+     * Creates a public key from a hex string.
+     *
+     * @param hex The hex string.
+     * @return The new public key.
+     */
+    public static PublicKey fromHexString(final String hex) {
+        try {
+            return new PublicKey(HexEncoder.getBytes(hex));
+        } catch (final IllegalArgumentException e) {
+            throw new CryptoException(e);
+        }
+    }
 
-	/**
-	 * Gets raw public key value.
-	 *
-	 * @return The raw public key value.
-	 */
-	public ByteBuffer getByteBuffer() {
-		return ByteBuffer.wrap(this.value);
-	}
+    /**
+     * Gets the raw public key value.
+     *
+     * @return The raw public key value.
+     */
+    public byte[] getBytes() {
+        return this.value;
+    }
 
-	@Override
-	public int hashCode() {
-		return Arrays.hashCode(this.value);
-	}
+    /**
+     * Gets raw public key value.
+     *
+     * @return The raw public key value.
+     */
+    public ByteBuffer getByteBuffer() {
+        return ByteBuffer.wrap(this.value);
+    }
 
-	@Override
-	public boolean equals(final Object obj) {
-		if (obj == null || !(obj instanceof PublicKey)) {
-			return false;
-		}
+    @Override
+    public int hashCode() {
+        return Arrays.hashCode(this.value);
+    }
 
-		final PublicKey rhs = (PublicKey) obj;
-		return Arrays.equals(this.value, rhs.value);
-	}
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj == null || !(obj instanceof PublicKey)) {
+            return false;
+        }
 
-	@Override
-	public String toString() {
-		return HexEncoder.getString(this.value).toUpperCase();
-	}
+        final PublicKey rhs = (PublicKey) obj;
+        return Arrays.equals(this.value, rhs.value);
+    }
+
+    @Override
+    public String toString() {
+        return HexEncoder.getString(this.value).toUpperCase();
+    }
 }
