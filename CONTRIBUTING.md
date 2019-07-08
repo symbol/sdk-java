@@ -58,9 +58,9 @@ We enjoy working with contributors to get their code accepted. There are many ap
 important to find the best approach before writing too much code.
 
 ### Code styles
-The project applies modified [Google Code Style](https://google.github.io/styleguide/javaguide.html) with all indentations set to `4` spaces.
+This SDK project applies modified [Google Code Style](https://google.github.io/styleguide/javaguide.html) with all indentations set to `4` spaces.
 
-IntelliJ users can find the code stype import sheet from `resources/GoogleStyle_IntelliJ.xml`
+IntelliJ users can find the code style import xml from `resources/GoogleStyle_IntelliJ.xml`
 
 ### Contributing License Notice
 
