@@ -57,6 +57,11 @@ are particular issues that you should know about before implementing the change.
 We enjoy working with contributors to get their code accepted. There are many approaches to fixing a problem and it is 
 important to find the best approach before writing too much code.
 
+### Code styles
+This SDK project applies modified [Google Code Style](https://google.github.io/styleguide/javaguide.html) with all indentations set to `4` spaces.
+
+IntelliJ users can find the code style import xml from `resources/GoogleStyle_IntelliJ.xml`
+
 ### Contributing License Notice
 
 When you contribute code, you affirm that the contribution is your original work and that you license the work to the project under the project's open source license.
