@@ -18,11 +18,12 @@ package io.nem.sdk.model.transaction;
 
 import io.nem.core.utils.ByteUtils;
 import io.nem.core.utils.HexEncoder;
+import org.apache.commons.lang.ArrayUtils;
+
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.IntBuffer;
-import org.apache.commons.lang.ArrayUtils;
 
 public class UInt64 {
 
@@ -63,6 +64,11 @@ public class UInt64 {
 
     public static BigInteger fromLowerAndHigher(long lower, long higher) {
         int[] array = new int[]{(int) lower, (int) higher};
+        return UInt64.fromIntArray(array);
+    }
+
+    public static BigInteger fromLowerAndHigher(Number lower, Number higher) {
+        int[] array = new int[] {lower.intValue(), higher.intValue()};
         return UInt64.fromIntArray(array);
     }
 

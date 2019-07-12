@@ -137,16 +137,15 @@ class E2ETest extends BaseTest {
                 this.recipient,
                 Collections
                     .singletonList(NetworkCurrencyMosaic.createAbsolute(BigInteger.valueOf(1))),
-                new PlainMessage(
-                    "E2ETest:aggregateTransferTransaction:message"), // temp use short message for
-                // debugging
-            /*new PlainMessage("E2ETest:aggregateTransferTransaction:messagelooooooooooooooooooooooooooooooooooooooo" +
+                /*new PlainMessage(
+                    "E2ETest:aggregateTransferTransaction:message"), */// short message for debugging
+            new PlainMessage("E2ETest:aggregateTransferTransaction:messagelooooooooooooooooooooooooooooooooooooooo" +
             "ooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo" +
             "ooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo" +
             "ooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo" +
             "ooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo" +
             "ooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo" +
-            "oooooooong"), // Use long message to test if size of inner transaction is calculated correctly*/
+            "oooooooong"), // Use long message to test if size of inner transaction is calculated correctly
                 NetworkType.MIJIN_TEST);
 
         AggregateTransaction aggregateTransaction =
