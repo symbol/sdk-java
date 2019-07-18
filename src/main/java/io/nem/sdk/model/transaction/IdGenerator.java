@@ -21,6 +21,7 @@ import io.nem.core.utils.ByteUtils;
 import io.nem.sdk.model.mosaic.IllegalIdentifierException;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -28,15 +29,23 @@ import java.util.regex.Pattern;
 import org.apache.commons.lang.ArrayUtils;
 
 public class IdGenerator {
+    private static final long ID_GENERATOR_FLAG = 0x8000000000000000L;
 
-    public static BigInteger generateMosaicId(byte[] nonce, byte[] publicKey) {
+/*    public static BigInteger generateMosaicId(byte[] nonce, byte[] publicKey) {
         byte[] hash = IdGenerator.getHashInLittleEndian(nonce, publicKey);
         // Unset the high bit for mosaic id
         hash = (new BigInteger(hash)).and(new BigInteger("7FFFFFFFFFFFFFFF", 16)).toByteArray();
         return new BigInteger(hash);
+    }*/
+
+    public static BigInteger generateMosaicId(final byte[] nonce, final byte[] publicKey) {
+        final byte[] reverseNonce = ByteUtils.reverseCopy(nonce);
+        final byte[] hash = IdGenerator.getHashInLittleEndian(reverseNonce, publicKey);
+        // Unset the high bit for mosaic id
+        return BigInteger.valueOf(ByteBuffer.wrap(hash).getLong() & ~ID_GENERATOR_FLAG);
     }
 
-    public static BigInteger generateNamespaceId(String namespaceName, BigInteger parentId) {
+/*    public static BigInteger generateNamespaceId(String namespaceName, BigInteger parentId) {
         if (!namespaceName.matches("^[a-z0-9][a-z0-9-_]*$")) {
             throw new IllegalIdentifierException("invalid namespace name");
         }
@@ -50,6 +59,13 @@ public class IdGenerator {
         // Set the high bit for namespace id
         hash = (new BigInteger(hash)).or(new BigInteger("8000000000000000", 16)).toByteArray();
         return new BigInteger(hash);
+    }*/
+
+    public static BigInteger generateNamespaceId(final String namespaceName, final BigInteger parentId) {
+        final ByteBuffer parentIdBuffer = ByteBuffer.allocate(8).order(ByteOrder.LITTLE_ENDIAN).putLong(parentId.longValue());
+        final byte[] hash = IdGenerator.getHashInLittleEndian(parentIdBuffer.array(), namespaceName.getBytes());
+        // Set the high bit for namespace id
+        return BigInteger.valueOf(ByteBuffer.wrap(hash).getLong() | ID_GENERATOR_FLAG);
     }
 
     public static BigInteger generateNamespaceId(String namespaceName, String parentNamespaceName) {
@@ -86,38 +102,4 @@ public class IdGenerator {
         ArrayUtils.reverse(result);
         return result;
     }
-
-  /*  public static BigInteger generateNamespaceId2(String name, BigInteger parentId) {
-
-      byte[] parentIdBytes = new byte[8];
-      ByteBuffer.wrap(parentIdBytes).put(parentId.toByteArray()); // GO
-      ArrayUtils.reverse(parentIdBytes);
-
-      byte[] nameBytes = name.getBytes();
-      List<byte[]> hashes = IdGenerator.getHashesInLittleEndian(parentIdBytes, nameBytes);
-
-      byte[] low = hashes.get(0);
-      byte[] high = hashes.get(1);
-
-      // Set the high bit for namespace id
-      high = (new BigInteger(high)).or(new BigInteger("80000000", 16)).toByteArray();
-
-      byte[] last = ArrayUtils.addAll(high, low);
-
-      return new BigInteger(last);
-  }
-
-  private static List<byte[]> getHashesInLittleEndian(final byte[]... inputs) {
-      byte[] result = Hashes.sha3_256(inputs);
-
-      byte[] low = Arrays.copyOfRange(result, 0, 4);
-      byte[] high = Arrays.copyOfRange(result, 4, 8);
-
-      ArrayUtils.reverse(low);
-      ArrayUtils.reverse(high);
-      List<byte[]> hashes = new ArrayList<>(2);
-      hashes.add(low);
-      hashes.add(high);
-      return hashes;
-  }*/
 }

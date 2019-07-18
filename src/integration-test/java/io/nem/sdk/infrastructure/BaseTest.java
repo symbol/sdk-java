@@ -26,6 +26,9 @@ public abstract class BaseTest {
     private static final Config CONFIG = Config.getInstance();
     private NetworkType networkType;
     private Account testAccount;
+    private Account testMultisigAccount;
+    private Account testCosignatoryAccount;
+    private Account testCosignatoryAccount2;
     private PublicAccount testPublicAccount;
     private Address testAccountAddress;
     private Address testRecipient; // Test Account2 Address
@@ -70,6 +73,33 @@ public abstract class BaseTest {
                 .createFromRawAddress(this.config().getTestAccountAddress());
         }
         return this.testAccountAddress;
+    }
+
+    public Account getTestMultisigAccount() {
+        if (this.testMultisigAccount == null) {
+            this.testMultisigAccount =
+                Account.createFromPrivateKey(
+                    this.config().getMultisigAccountPrivateKey(), this.getNetworkType());
+        }
+        return this.testMultisigAccount;
+    }
+
+    public Account getTestCosignatoryAccount() {
+        if (this.testCosignatoryAccount == null) {
+            this.testCosignatoryAccount =
+                Account.createFromPrivateKey(
+                    this.config().getCosignatoryAccountPrivateKey(), this.getNetworkType());
+        }
+        return this.testCosignatoryAccount;
+    }
+
+    public Account getTestCosignatoryAccount2() {
+        if (this.testCosignatoryAccount2 == null) {
+            this.testCosignatoryAccount2 =
+                Account.createFromPrivateKey(
+                    this.config().getCosignatory2AccountPrivateKey(), this.getNetworkType());
+        }
+        return this.testCosignatoryAccount2;
     }
 
     public Address getRecipient() {
