@@ -72,14 +72,14 @@ class NamespaceIdTest {
     void createANamespaceIdFromSubNamespacePathViaConstructor() {
         NamespaceId test = new NamespaceId("subnem");
         NamespaceId namespaceId = new NamespaceId("nem.subnem");
-        assertEquals(namespaceId.getId(), new BigInteger("16440672666685223858"));
+        assertEquals(namespaceId.getId(), new BigInteger("-2006071407024327758"));
         assertEquals(namespaceId.getFullName().get(), "nem.subnem");
     }
 
     @Test
     void createANamespaceIdFromSubNamespaceNameAndParentNamespaceNameViaConstructor() {
         NamespaceId namespaceId = new NamespaceId("subnem", "nem");
-        assertEquals(namespaceId.getId(), new BigInteger("16440672666685223858"));
+        assertEquals(namespaceId.getId(), new BigInteger("-2006071407024327758"));
         assertEquals(namespaceId.getFullName().get(), "nem.subnem");
     }
 
@@ -89,7 +89,7 @@ class NamespaceIdTest {
         NamespaceId parentId = new NamespaceId("subnem", "nem");
         NamespaceId namespaceId2 = new NamespaceId("subsubnem", parentId.getId());
 
-        assertEquals(new BigInteger("10592058992486201054"), namespaceId.getId());
+        assertEquals(new BigInteger("-7854685081223350562"), namespaceId.getId());
         assertEquals("nem.subnem.subsubnem", namespaceId.getFullName().get());
         assertEquals(namespaceId2.getId(), namespaceId.getId());
     }
@@ -97,7 +97,7 @@ class NamespaceIdTest {
     @Test
     void createASubNamespaceIdFromSubNamespaceNameAndParentIdViaConstructor() {
         NamespaceId namespaceId = new NamespaceId("subnem", new BigInteger("-8884663987180930485"));
-        assertEquals(namespaceId.getId(), new BigInteger("16440672666685223858"));
+        assertEquals(namespaceId.getId(), new BigInteger("-2006071407024327758"));
         assertEquals(namespaceId.getFullName().get(), "subnem");
     }
 
@@ -105,7 +105,7 @@ class NamespaceIdTest {
     void createNamespacePathArray() {
         List<BigInteger> path = NamespaceId.getNamespacePath("nem.subnem");
         assertEquals(path.get(0), new BigInteger("-8884663987180930485"));
-        assertEquals(path.get(1), new BigInteger("16440672666685223858"));
+        assertEquals(path.get(1), new BigInteger("-2006071407024327758"));
     }
 
     @Test

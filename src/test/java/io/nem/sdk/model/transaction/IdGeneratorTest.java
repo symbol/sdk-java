@@ -120,15 +120,12 @@ class IdGeneratorTest {
 
     @Test
     void mosaicIdGeneratesCorrectWellKnownId() {
-        int[] nonce = new int[]{0x78, 0xE3, 0x6F, 0xB7};
+        int[] nonce = new int[]{0xB7, 0x6F, 0xE3, 0x78};
         int[] publicKey =
             new int[]{
                 0x4A, 0xFF, 0x7B, 0x4B, 0xA8, 0xC1, 0xC2, 0x6A, 0x79, 0x17, 0x57, 0x59, 0x93, 0x34,
-                0x66,
-                0x27,
-                0xCB, 0x6C, 0x80, 0xDE, 0x62, 0xCD, 0x92, 0xF7, 0xF9, 0xAE, 0xDB, 0x70, 0x64, 0xA3,
-                0xDE,
-                0x62
+                0x66, 0x27, 0xCB, 0x6C, 0x80, 0xDE, 0x62, 0xCD, 0x92, 0xF7, 0xF9, 0xAE, 0xDB, 0x70,
+                0x64, 0xA3, 0xDE, 0x62
             };
         String hexPublicKey = Hex.toHexString(ByteUtils.intArrayToByteArray(publicKey));
         String hexNonce = Hex.toHexString(ByteUtils.intArrayToByteArray(nonce));
@@ -144,7 +141,7 @@ class IdGeneratorTest {
     void mosaicIdGeneratesCorrectGivenNonceAndPublicKey(
         String hexPublicKey, String hexNonce, String hexExpectedMosaicId) {
         byte[] nonceBytes = Hex.decode(hexNonce);
-        ArrayUtils.reverse(nonceBytes);
+        //ArrayUtils.reverse(nonceBytes);
         BigInteger id = IdGenerator.generateMosaicId(nonceBytes, Hex.decode(hexPublicKey));
         assertEquals(hexExpectedMosaicId.toLowerCase(), String.format("%016x", id));
         assertEquals(hexExpectedMosaicId.toLowerCase(), Hex.toHexString(id.toByteArray()));
@@ -174,7 +171,7 @@ class IdGeneratorTest {
 
         assertEquals(ids.size(), 2);
         assertEquals(new BigInteger("-8884663987180930485"), ids.get(0));
-        assertEquals(new BigInteger("16440672666685223858"), ids.get(1));
+        assertEquals(new BigInteger("-2006071407024327758"), ids.get(1));
     }
 
     @Test
