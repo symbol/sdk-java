@@ -45,6 +45,14 @@ public class Config {
         return this.config.getString("networkType");
     }
 
+    public String getGenerationHash() {
+        return this.config.getString("generationHash");
+    }
+
+    public Long getTimeoutSeconds() {
+        return this.config.getLong("timeoutSeconds");
+    }
+
     public String getTestAccountPrivateKey() {
         return this.config.getJsonObject("testAccount").getString("privateKey");
     }
@@ -55,10 +63,6 @@ public class Config {
 
     public String getTestAccountAddress() {
         return this.config.getJsonObject("testAccount").getString("address");
-    }
-
-    public String getGenerationHash() {
-        return this.config.getString("generationHash");
     }
 
     public String getMultisigAccountPrivateKey() {

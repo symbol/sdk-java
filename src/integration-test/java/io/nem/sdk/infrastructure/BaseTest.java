@@ -33,6 +33,8 @@ public abstract class BaseTest {
     private Address testAccountAddress;
     private Address testRecipient; // Test Account2 Address
     private String generationHash;
+    private Long timeoutSeconds;
+
 
     public Config config() {
         return BaseTest.CONFIG;
@@ -115,5 +117,12 @@ public abstract class BaseTest {
             this.generationHash = this.config().getGenerationHash();
         }
         return this.generationHash;
+    }
+
+    public Long getTimeoutSeconds() {
+        if (this.timeoutSeconds == null) {
+            this.timeoutSeconds = this.config().getTimeoutSeconds();
+        }
+        return this.timeoutSeconds;
     }
 }

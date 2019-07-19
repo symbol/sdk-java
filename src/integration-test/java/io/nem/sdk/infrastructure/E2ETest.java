@@ -75,7 +75,7 @@ class E2ETest extends BaseTest {
     private MosaicId mosaicId;
     private Listener listener;
     private String generationHash;
-    private long timeoutSeconds = 20;
+    private long timeoutSeconds;
 
     @BeforeAll
     void setup() throws ExecutionException, InterruptedException, IOException {
@@ -86,6 +86,7 @@ class E2ETest extends BaseTest {
         cosignatoryAccount = this.getTestCosignatoryAccount();
         cosignatoryAccount2 = this.getTestCosignatoryAccount2();
         generationHash = this.getGenerationHash();
+        timeoutSeconds = this.getTimeoutSeconds().longValue();
         listener = new Listener(this.getApiUrl());
         listener.open().get();
     }
@@ -595,7 +596,6 @@ class E2ETest extends BaseTest {
             this.account.getAddress(), secretProofTransactionSigned.getHash());
     }
 
-    /*
     @Test
     void shouldSignModifyMultisigAccountTransactionWithCosignatories()
         throws ExecutionException, InterruptedException, TimeoutException {
@@ -699,7 +699,6 @@ class E2ETest extends BaseTest {
         this.validateAggregateBondedCosignatureTransactionAnnounceCorrectly(
             this.cosignatoryAccount.getAddress(), cosignatureSignedTransaction.getParentHash());
     }
-*/
 
     void validateTransactionAnnounceCorrectly(Address address, String transactionHash)
         throws ExecutionException, InterruptedException, TimeoutException {
