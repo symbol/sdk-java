@@ -310,7 +310,7 @@ public class Listener {
 
     private BigInteger extractBigInteger(JsonArray input) {
         ArrayList<Number> numbers = (ArrayList) input.getList();
-        return UInt64.fromLowerAndHigher((long) numbers.get(0), (long) numbers.get(1));
+        return UInt64.fromLowerAndHigher(numbers.get(0), numbers.get(1));
     }
 
     private boolean transactionFromAddress(final Transaction transaction, final Address address) {

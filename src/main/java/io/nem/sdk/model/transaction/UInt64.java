@@ -18,14 +18,25 @@ package io.nem.sdk.model.transaction;
 
 import io.nem.core.utils.ByteUtils;
 import io.nem.core.utils.HexEncoder;
+import org.apache.commons.lang.ArrayUtils;
+
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.IntBuffer;
-import org.apache.commons.lang.ArrayUtils;
 
+/**
+ * UInt64 data model to enable numeric representation up to 64 bits.
+ * A UInt64 object is composed of two 32-bit numbers: lower and higher.
+ */
 public class UInt64 {
 
+    /**
+     * Static method to convert from BigInteger to UInt64 integer array [lower,higher]
+     *
+     * @param input BigInteger
+     * @return integer array
+     */
     public static int[] fromBigInteger(BigInteger input) {
         byte[] bytes = input.toByteArray();
         ArrayUtils.reverse(bytes);
@@ -49,6 +60,12 @@ public class UInt64 {
         return new int[]{lower, higher};
     }
 
+    /**
+     * Static method to convert from integer array [lower,higher] to BigInteger
+     *
+     * @param input integer array
+     * @return BigInteger
+     */
     public static BigInteger fromIntArray(int[] input) {
         if (input.length != 2) {
             throw new IllegalArgumentException("input must have length 2");
@@ -61,17 +78,37 @@ public class UInt64 {
         return new BigInteger(array);
     }
 
+    /**
+     * Static method to convert from lower and higher to BigInteger
+     *
+     * @param lower long
+     * @param higher long
+     * @return BigInteger
+     */
     public static BigInteger fromLowerAndHigher(long lower, long higher) {
         int[] array = new int[]{(int) lower, (int) higher};
         return UInt64.fromIntArray(array);
     }
 
-    public static String bigIntegerToHex(BigInteger input) {
-    /*        int[] uint64Parts = UInt64.fromBigInteger(input);
-    String lower = String.format("%08x",uint64Parts[0]);
-    String higher = String.format("%08x",uint64Parts[1]);
-    return higher + lower;*/
+    /**
+     * Static method to convert from lower and higher to BigInteger
+     *
+     * @param lower Number
+     * @param higher Number
+     * @return BigInteger
+     */
+    public static BigInteger fromLowerAndHigher(Number lower, Number higher) {
+        int[] array = new int[] {lower.intValue(), higher.intValue()};
+        return UInt64.fromIntArray(array);
+    }
 
+    /**
+     * Static method to convert from BigInteger to Hexadecimal string
+     *
+     * @param input BigInteger
+     * @return String
+     */
+    public static String bigIntegerToHex(BigInteger input) {
         byte[] bytes = ByteUtils.bigIntToBytes(input);
         return HexEncoder.getString(bytes);
     }

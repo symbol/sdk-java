@@ -26,10 +26,15 @@ public abstract class BaseTest {
     private static final Config CONFIG = Config.getInstance();
     private NetworkType networkType;
     private Account testAccount;
+    private Account testMultisigAccount;
+    private Account testCosignatoryAccount;
+    private Account testCosignatoryAccount2;
     private PublicAccount testPublicAccount;
     private Address testAccountAddress;
     private Address testRecipient; // Test Account2 Address
     private String generationHash;
+    private Long timeoutSeconds;
+
 
     public Config config() {
         return BaseTest.CONFIG;
@@ -72,6 +77,33 @@ public abstract class BaseTest {
         return this.testAccountAddress;
     }
 
+    public Account getTestMultisigAccount() {
+        if (this.testMultisigAccount == null) {
+            this.testMultisigAccount =
+                Account.createFromPrivateKey(
+                    this.config().getMultisigAccountPrivateKey(), this.getNetworkType());
+        }
+        return this.testMultisigAccount;
+    }
+
+    public Account getTestCosignatoryAccount() {
+        if (this.testCosignatoryAccount == null) {
+            this.testCosignatoryAccount =
+                Account.createFromPrivateKey(
+                    this.config().getCosignatoryAccountPrivateKey(), this.getNetworkType());
+        }
+        return this.testCosignatoryAccount;
+    }
+
+    public Account getTestCosignatoryAccount2() {
+        if (this.testCosignatoryAccount2 == null) {
+            this.testCosignatoryAccount2 =
+                Account.createFromPrivateKey(
+                    this.config().getCosignatory2AccountPrivateKey(), this.getNetworkType());
+        }
+        return this.testCosignatoryAccount2;
+    }
+
     public Address getRecipient() {
         if (this.testRecipient == null) {
             this.testRecipient = Address
@@ -85,5 +117,12 @@ public abstract class BaseTest {
             this.generationHash = this.config().getGenerationHash();
         }
         return this.generationHash;
+    }
+
+    public Long getTimeoutSeconds() {
+        if (this.timeoutSeconds == null) {
+            this.timeoutSeconds = this.config().getTimeoutSeconds();
+        }
+        return this.timeoutSeconds;
     }
 }

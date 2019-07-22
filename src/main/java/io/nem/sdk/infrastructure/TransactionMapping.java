@@ -248,9 +248,7 @@ class MosaicCreationTransactionMapping extends TransactionMapping {
             extractTransactionVersion(transaction.getInteger("version")),
             deadline,
             extractBigInteger(transaction.getJsonArray("maxFee")),
-            // TODO Reconfirm mosaicNonce is a number (integer), not an array (uint64)
-            // MosaicNonce.createFromBigInteger(extractBigInteger(transaction.getJsonArray("mosaicNonce"))),
-            MosaicNonce.createFromBigInteger(extractBigInteger(transaction.getLong("mosaicNonce"))),
+            MosaicNonce.createFromBigInteger(extractBigInteger(transaction.getLong("nonce"))),
             new MosaicId(extractBigInteger(transaction.getJsonArray("mosaicId"))),
             properties,
             transaction.getString("signature"),
