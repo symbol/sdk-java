@@ -11,7 +11,11 @@ cache:
   directories:
     - $HOME/.gradle/caches/
     - $HOME/.gradle/wrapper/
-install: ./gradlew assemble -x javadoc -x signArchives
-script: ./gradlew test
+install:
+  - ./gradlew -b ./nem2-sdk-openapi-generator/build.gradle clean generate
+  - ./gradlew -b ./nem2-sdk-openapi-generator/build.gradle install
+  - ./gradlew assemble -x javadoc
+script:
+  - ./gradlew test
 after_success:
-- ./gradlew jacocoTestReport coveralls
+  - ./gradlew jacocoTestReport

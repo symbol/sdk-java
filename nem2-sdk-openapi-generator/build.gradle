@@ -1,0 +1,62 @@
+plugins {
+    id "org.openapi.generator" version "4.1.0"
+}
+
+task clean(type: Delete) {
+    delete "$rootDir/target"
+}
+
+ext {
+    generateVersion = "0.7.17"
+}
+
+
+//NOTE - For some reason the library field is ignored. I had to create a configFile per library.
+
+["vertx", "okhttp-gson", "jersey2"].eachWithIndex { library, index ->
+    task "generate_${library}"(type: org.openapitools.generator.gradle.plugin.tasks.GenerateTask) {
+        version = "${generateVersion}".toString()
+        id = "nem2-sdk-java-openapi-${library}".toString()
+        configFile = "$rootDir/${library}.json".toString()
+        library = "${library}".toString()
+        groupId = 'io.nem'.toString()
+        generatorName = "java"
+        inputSpec = "$rootDir/openapi3-any-of-patch.yaml".toString()
+        apiPackage = "io.nem.sdk.openapi.${library}.api".toString()
+        invokerPackage = "io.nem.sdk.openapi.${library}.invoker".toString()
+        modelPackage = "io.nem.sdk.openapi.${library}.model".toString()
+        outputDir = "$rootDir/target/nem2-sdk-java-openapi-${library}".toString()
+    }
+}
+
+task generate
+
+generate.dependsOn "generate_vertx"
+generate.dependsOn "generate_okhttp-gson"
+generate.dependsOn "generate_jersey2"
+
+
+subprojects {
+    apply plugin: 'java'
+    apply plugin: 'maven'
+
+    javadoc {
+        failOnError = false
+    }
+
+    task sourcesJar(type: Jar) {
+        classifier = 'sources'
+        from sourceSets.main.allSource
+    }
+
+    task javadocJar(type: Jar) {
+        classifier = 'javadoc'
+        from javadoc
+    }
+
+    artifacts {
+        archives javadocJar, sourcesJar
+    }
+    
+    build.dependsOn generate
+}

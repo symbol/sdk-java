@@ -1,0 +1,7 @@
+dependencies {
+    compile project(':nem2-sdk-java-api')
+    compile project(':nem2-sdk-java-vertx')
+    compile project(':nem2-sdk-java-vertx-legacy')
+    compile project(':nem2-sdk-java-okhttp')
+}
+
