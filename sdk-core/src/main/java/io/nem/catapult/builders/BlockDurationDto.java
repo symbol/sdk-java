@@ -8,75 +8,80 @@
  * A PARTICULAR PURPOSE. See the ** GNU Lesser General Public License for more details. ** ** You
  * should have received a copy of the GNU Lesser General Public License ** along with Catapult. If
  * not, see <http://www.gnu.org/licenses/>.
- */
+ **/
+
 package io.nem.catapult.builders;
 
 import java.io.DataInput;
 
-/** Block duration. */
+/**
+ * Block duration.
+ */
 public final class BlockDurationDto {
-  /** Block duration. */
-  private final long blockDuration;
 
-  /**
-   * Constructor.
-   *
-   * @param blockDuration Block duration.
-   */
-  public BlockDurationDto(final long blockDuration) {
-    this.blockDuration = blockDuration;
-  }
+    /**
+     * Block duration.
+     */
+    private final long blockDuration;
 
-  /**
-   * Constructor - Creates an object from stream.
-   *
-   * @param stream Byte stream to use to serialize.
-   */
-  public BlockDurationDto(final DataInput stream) {
-    try {
-      this.blockDuration = Long.reverseBytes(stream.readLong());
-    } catch (Exception e) {
-      throw GeneratorUtils.getExceptionToPropagate(e);
+    /**
+     * Constructor.
+     *
+     * @param blockDuration Block duration.
+     */
+    public BlockDurationDto(final long blockDuration) {
+        this.blockDuration = blockDuration;
     }
-  }
 
-  /**
-   * Gets Block duration.
-   *
-   * @return Block duration.
-   */
-  public long getBlockDuration() {
-    return this.blockDuration;
-  }
+    /**
+     * Constructor - Creates an object from stream.
+     *
+     * @param stream Byte stream to use to serialize.
+     */
+    public BlockDurationDto(final DataInput stream) {
+        try {
+            this.blockDuration = Long.reverseBytes(stream.readLong());
+        } catch (Exception e) {
+            throw GeneratorUtils.getExceptionToPropagate(e);
+        }
+    }
 
-  /**
-   * Gets the size of the object.
-   *
-   * @return Size in bytes.
-   */
-  public int getSize() {
-    return 8;
-  }
+    /**
+     * Creates an instance of BlockDurationDto from a stream.
+     *
+     * @param stream Byte stream to use to serialize the object.
+     * @return Instance of BlockDurationDto.
+     */
+    public static BlockDurationDto loadFromBinary(final DataInput stream) {
+        return new BlockDurationDto(stream);
+    }
 
-  /**
-   * Creates an instance of BlockDurationDto from a stream.
-   *
-   * @param stream Byte stream to use to serialize the object.
-   * @return Instance of BlockDurationDto.
-   */
-  public static BlockDurationDto loadFromBinary(final DataInput stream) {
-    return new BlockDurationDto(stream);
-  }
+    /**
+     * Gets Block duration.
+     *
+     * @return Block duration.
+     */
+    public long getBlockDuration() {
+        return this.blockDuration;
+    }
 
-  /**
-   * Serializes an object to bytes.
-   *
-   * @return Serialized bytes.
-   */
-  public byte[] serialize() {
-    return GeneratorUtils.serialize(
-        dataOutputStream -> {
-          dataOutputStream.writeLong(Long.reverseBytes(this.getBlockDuration()));
+    /**
+     * Gets the size of the object.
+     *
+     * @return Size in bytes.
+     */
+    public int getSize() {
+        return 8;
+    }
+
+    /**
+     * Serializes an object to bytes.
+     *
+     * @return Serialized bytes.
+     */
+    public byte[] serialize() {
+        return GeneratorUtils.serialize(dataOutputStream -> {
+            dataOutputStream.writeLong(Long.reverseBytes(this.getBlockDuration()));
         });
-  }
+    }
 }

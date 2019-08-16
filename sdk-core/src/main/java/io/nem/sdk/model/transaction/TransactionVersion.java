@@ -20,8 +20,7 @@ package io.nem.sdk.model.transaction;
  * Enum containing transaction type versions.
  *
  * <p>Transaction format versions are defined in catapult-server in each transaction's plugin
- * source
- * code.
+ * source code.
  *
  * <p>In [catapult-server](https://github.com/nemtech/catapult-server), the
  * `DEFINE_TRANSACTION_CONSTANTS` macro is used to define the `TYPE` and `VERSION` of the

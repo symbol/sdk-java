@@ -8,79 +8,84 @@
  * A PARTICULAR PURPOSE. See the ** GNU Lesser General Public License for more details. ** ** You
  * should have received a copy of the GNU Lesser General Public License ** along with Catapult. If
  * not, see <http://www.gnu.org/licenses/>.
- */
+ **/
+
 package io.nem.catapult.builders;
 
 import java.io.DataInput;
 import java.nio.ByteBuffer;
 
-/** Signature. */
+/**
+ * Signature.
+ */
 public final class SignatureDto {
-  /** Signature. */
-  private final ByteBuffer signature;
 
-  /**
-   * Constructor.
-   *
-   * @param signature Signature.
-   */
-  public SignatureDto(final ByteBuffer signature) {
-    GeneratorUtils.notNull(signature, "signature is null");
-    GeneratorUtils.isTrue(signature.array().length == 64, "signature should be 64 bytes");
-    this.signature = signature;
-  }
+    /**
+     * Signature.
+     */
+    private final ByteBuffer signature;
 
-  /**
-   * Constructor - Creates an object from stream.
-   *
-   * @param stream Byte stream to use to serialize.
-   */
-  public SignatureDto(final DataInput stream) {
-    try {
-      this.signature = ByteBuffer.allocate(64);
-      stream.readFully(this.signature.array());
-    } catch (Exception e) {
-      throw GeneratorUtils.getExceptionToPropagate(e);
+    /**
+     * Constructor.
+     *
+     * @param signature Signature.
+     */
+    public SignatureDto(final ByteBuffer signature) {
+        GeneratorUtils.notNull(signature, "signature is null");
+        GeneratorUtils.isTrue(signature.array().length == 64, "signature should be 64 bytes");
+        this.signature = signature;
     }
-  }
 
-  /**
-   * Gets Signature.
-   *
-   * @return Signature.
-   */
-  public ByteBuffer getSignature() {
-    return this.signature;
-  }
+    /**
+     * Constructor - Creates an object from stream.
+     *
+     * @param stream Byte stream to use to serialize.
+     */
+    public SignatureDto(final DataInput stream) {
+        try {
+            this.signature = ByteBuffer.allocate(64);
+            stream.readFully(this.signature.array());
+        } catch (Exception e) {
+            throw GeneratorUtils.getExceptionToPropagate(e);
+        }
+    }
 
-  /**
-   * Gets the size of the object.
-   *
-   * @return Size in bytes.
-   */
-  public int getSize() {
-    return 64;
-  }
+    /**
+     * Creates an instance of SignatureDto from a stream.
+     *
+     * @param stream Byte stream to use to serialize the object.
+     * @return Instance of SignatureDto.
+     */
+    public static SignatureDto loadFromBinary(final DataInput stream) {
+        return new SignatureDto(stream);
+    }
 
-  /**
-   * Creates an instance of SignatureDto from a stream.
-   *
-   * @param stream Byte stream to use to serialize the object.
-   * @return Instance of SignatureDto.
-   */
-  public static SignatureDto loadFromBinary(final DataInput stream) {
-    return new SignatureDto(stream);
-  }
+    /**
+     * Gets Signature.
+     *
+     * @return Signature.
+     */
+    public ByteBuffer getSignature() {
+        return this.signature;
+    }
 
-  /**
-   * Serializes an object to bytes.
-   *
-   * @return Serialized bytes.
-   */
-  public byte[] serialize() {
-    return GeneratorUtils.serialize(
-        dataOutputStream -> {
-          dataOutputStream.write(this.signature.array(), 0, this.signature.array().length);
+    /**
+     * Gets the size of the object.
+     *
+     * @return Size in bytes.
+     */
+    public int getSize() {
+        return 64;
+    }
+
+    /**
+     * Serializes an object to bytes.
+     *
+     * @return Serialized bytes.
+     */
+    public byte[] serialize() {
+        return GeneratorUtils.serialize(dataOutputStream -> {
+            dataOutputStream.write(this.signature.array(), 0, this.signature.array().length);
         });
-  }
+    }
 }

@@ -62,6 +62,7 @@ public class LegacyAggregateTransactionTest {
         AggregateTransaction aggregateTx =
             AggregateTransaction.createComplete(
                 new Deadline(2, ChronoUnit.HOURS),
+                BigInteger.ZERO,
                 Arrays.asList(
                     transferTx.toAggregate(
                         new PublicAccount(

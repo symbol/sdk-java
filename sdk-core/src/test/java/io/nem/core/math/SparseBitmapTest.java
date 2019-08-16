@@ -469,7 +469,7 @@ public class SparseBitmapTest {
         Assert.assertThat(DESC_TO_SB_MAP.get("diff-long"), IsNot.not(IsEqual.equalTo(sb)));
         Assert.assertThat(DESC_TO_SB_MAP.get("diff-values"), IsNot.not(IsEqual.equalTo(sb)));
         Assert.assertThat(null, IsNot.not(IsEqual.equalTo(sb)));
-        Assert.assertThat(8, IsNot.not(IsEqual.equalTo((Object) sb)));
+        Assert.assertThat(8, IsNot.not(IsEqual.equalTo(sb)));
     }
 
     @Test

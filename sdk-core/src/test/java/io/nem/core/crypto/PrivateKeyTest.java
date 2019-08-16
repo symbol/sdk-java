@@ -112,7 +112,7 @@ public class PrivateKeyTest {
         Assert.assertThat(PrivateKey.fromDecimalString("2276"), IsNot.not(IsEqual.equalTo(key)));
         Assert.assertThat(PrivateKey.fromHexString("2276"), IsNot.not(IsEqual.equalTo(key)));
         Assert.assertThat(null, IsNot.not(IsEqual.equalTo(key)));
-        Assert.assertThat(new BigInteger("1235"), IsNot.not(IsEqual.equalTo((Object) key)));
+        Assert.assertThat(new BigInteger("1235"), IsNot.not(IsEqual.equalTo(key)));
     }
 
     @Test

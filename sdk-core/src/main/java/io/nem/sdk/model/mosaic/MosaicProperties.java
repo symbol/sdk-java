@@ -17,7 +17,6 @@
 package io.nem.sdk.model.mosaic;
 
 import java.math.BigInteger;
-import java.util.Optional;
 import org.apache.commons.lang3.Validate;
 
 /**
@@ -53,13 +52,13 @@ public class MosaicProperties {
      * The duration in blocks a mosaic will be available. After the duration finishes mosaic is
      * inactive and can be renewed. Duration is optional when defining the mosaic
      */
-    private final Optional<BigInteger> duration;
+    private final BigInteger duration;
 
     private MosaicProperties(
-        boolean supplyMutable,
-        boolean transferable,
-        int divisibility,
-        Optional<BigInteger> duration) {
+        final boolean supplyMutable,
+        final boolean transferable,
+        final int divisibility,
+        final BigInteger duration) {
         Validate.notNull(duration, "Duration cannot be null");
         this.supplyMutable = supplyMutable;
         this.transferable = transferable;
@@ -78,8 +77,7 @@ public class MosaicProperties {
      */
     public static MosaicProperties create(
         boolean supplyMutable, boolean transferable, int divisibility, BigInteger duration) {
-        return new MosaicProperties(supplyMutable, transferable, divisibility,
-            Optional.of(duration));
+        return new MosaicProperties(supplyMutable, transferable, divisibility, duration);
     }
 
     /**
@@ -92,7 +90,7 @@ public class MosaicProperties {
      */
     public static MosaicProperties create(
         boolean supplyMutable, boolean transferable, int divisibility) {
-        return new MosaicProperties(supplyMutable, transferable, divisibility, Optional.empty());
+        return new MosaicProperties(supplyMutable, transferable, divisibility, BigInteger.ZERO);
     }
 
     /**
@@ -118,7 +116,7 @@ public class MosaicProperties {
      *
      * @return the number of blocks from height it will be active
      */
-    public Optional<BigInteger> getDuration() {
+    public BigInteger getDuration() {
         return duration;
     }
 

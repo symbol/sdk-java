@@ -152,6 +152,7 @@ class E2EIntegrationTest extends BaseIntegrationTest {
         AggregateTransaction aggregateTransaction =
             AggregateTransaction.createComplete(
                 new Deadline(2, HOURS),
+                BigInteger.ZERO,
                 Collections.singletonList(
                     transferTransaction.toAggregate(this.account.getPublicAccount())),
                 NetworkType.MIJIN_TEST);
@@ -220,6 +221,7 @@ class E2EIntegrationTest extends BaseIntegrationTest {
         AggregateTransaction aggregateTransaction =
             AggregateTransaction.createComplete(
                 new Deadline(2, HOURS),
+                BigInteger.ZERO,
                 Collections.singletonList(
                     registerNamespaceTransaction.toAggregate(this.account.getPublicAccount())),
                 NetworkType.MIJIN_TEST);
@@ -285,6 +287,7 @@ class E2EIntegrationTest extends BaseIntegrationTest {
         AggregateTransaction aggregateTransaction =
             AggregateTransaction.createComplete(
                 new Deadline(2, HOURS),
+                BigInteger.ZERO,
                 Collections.singletonList(
                     registerNamespaceTransaction.toAggregate(this.account.getPublicAccount())),
                 NetworkType.MIJIN_TEST);
@@ -346,6 +349,7 @@ class E2EIntegrationTest extends BaseIntegrationTest {
         AggregateTransaction aggregateTransaction =
             AggregateTransaction.createComplete(
                 new Deadline(2, HOURS),
+                BigInteger.ZERO,
                 Collections.singletonList(
                     mosaicDefinitionTransaction.toAggregate(this.account.getPublicAccount())),
                 NetworkType.MIJIN_TEST);
@@ -403,6 +407,7 @@ class E2EIntegrationTest extends BaseIntegrationTest {
         AggregateTransaction aggregateTransaction =
             AggregateTransaction.createComplete(
                 new Deadline(2, HOURS),
+                BigInteger.ZERO,
                 Collections.singletonList(
                     mosaicSupplyChangeTransaction.toAggregate(this.account.getPublicAccount())),
                 NetworkType.MIJIN_TEST);
@@ -425,7 +430,8 @@ class E2EIntegrationTest extends BaseIntegrationTest {
         throws ExecutionException, InterruptedException, TimeoutException {
         AggregateTransaction aggregateTransaction =
             AggregateTransaction.createBonded(
-                new Deadline(2, HOURS), Collections.emptyList(), NetworkType.MIJIN_TEST);
+                new Deadline(2, HOURS), BigInteger.ZERO, Collections.emptyList(),
+                NetworkType.MIJIN_TEST);
         SignedTransaction signedTransaction = this.account
             .sign(aggregateTransaction, generationHash);
         LockFundsTransaction lockFundstx =
@@ -450,7 +456,8 @@ class E2EIntegrationTest extends BaseIntegrationTest {
         throws ExecutionException, InterruptedException, TimeoutException {
         AggregateTransaction aggregateTransaction =
             AggregateTransaction.createBonded(
-                new Deadline(2, HOURS), Collections.emptyList(), NetworkType.MIJIN_TEST);
+                new Deadline(2, HOURS), BigInteger.ZERO, Collections.emptyList(),
+                NetworkType.MIJIN_TEST);
         SignedTransaction signedTransaction = this.account
             .sign(aggregateTransaction, generationHash);
         LockFundsTransaction lockFundstx =
@@ -464,6 +471,7 @@ class E2EIntegrationTest extends BaseIntegrationTest {
         AggregateTransaction lockFundsAggregatetx =
             AggregateTransaction.createComplete(
                 new Deadline(2, HOURS),
+                BigInteger.ZERO,
                 Collections.singletonList(lockFundstx.toAggregate(this.account.getPublicAccount())),
                 NetworkType.MIJIN_TEST);
 
@@ -524,6 +532,7 @@ class E2EIntegrationTest extends BaseIntegrationTest {
         AggregateTransaction secretLockAggregatetx =
             AggregateTransaction.createComplete(
                 new Deadline(2, HOURS),
+                BigInteger.ZERO,
                 Collections
                     .singletonList(secretLocktx.toAggregate(this.account.getPublicAccount())),
                 NetworkType.MIJIN_TEST);
@@ -623,6 +632,7 @@ class E2EIntegrationTest extends BaseIntegrationTest {
         AggregateTransaction secretProofAggregatetx =
             AggregateTransaction.createComplete(
                 new Deadline(2, HOURS),
+                BigInteger.ZERO,
                 Collections
                     .singletonList(secretProoftx.toAggregate(this.account.getPublicAccount())),
                 NetworkType.MIJIN_TEST);
@@ -653,6 +663,7 @@ class E2EIntegrationTest extends BaseIntegrationTest {
         AggregateTransaction aggregateTransaction =
             AggregateTransaction.createComplete(
                 new Deadline(2, HOURS),
+                BigInteger.ZERO,
                 Collections.singletonList(
                     modifyMultisigAccountTransaction.toAggregate(
                         this.multisigAccount.getPublicAccount())),
@@ -702,6 +713,7 @@ class E2EIntegrationTest extends BaseIntegrationTest {
         AggregateTransaction aggregateTransaction =
             AggregateTransaction.createComplete(
                 new Deadline(2, HOURS),
+                BigInteger.ZERO,
                 Collections.singletonList(
                     transferTransaction.toAggregate(this.multisigAccount.getPublicAccount())),
                 NetworkType.MIJIN_TEST);

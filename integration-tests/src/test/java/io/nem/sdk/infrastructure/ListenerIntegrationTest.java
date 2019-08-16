@@ -319,6 +319,7 @@ class ListenerIntegrationTest extends BaseIntegrationTest {
         AggregateTransaction aggregateTransaction =
             AggregateTransaction.createComplete(
                 new Deadline(2, HOURS),
+                BigInteger.ZERO,
                 Collections.singletonList(
                     transferTransaction.toAggregate(this.multisigAccount.getPublicAccount())),
                 NetworkType.MIJIN_TEST);

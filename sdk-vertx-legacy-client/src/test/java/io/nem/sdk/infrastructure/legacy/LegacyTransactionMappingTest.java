@@ -524,8 +524,8 @@ public class LegacyTransactionMappingTest {
                     .getJsonObject("transaction")
                     .getJsonArray("properties")
                     .getJsonObject(2)
-                    .getJsonArray("value")),
-            transaction.getMosaicProperties().getDuration().get());
+                    .getJsonArray("value")).longValue(),
+            transaction.getMosaicProperties().getDuration().longValue());
         assertTrue(transaction.getMosaicProperties().isSupplyMutable());
         assertTrue(transaction.getMosaicProperties().isTransferable());
     }

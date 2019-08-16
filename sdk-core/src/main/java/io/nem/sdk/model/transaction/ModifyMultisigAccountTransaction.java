@@ -17,12 +17,12 @@
 package io.nem.sdk.model.transaction;
 
 import io.nem.catapult.builders.AmountDto;
+import io.nem.catapult.builders.CosignatoryModificationActionDto;
 import io.nem.catapult.builders.CosignatoryModificationBuilder;
-import io.nem.catapult.builders.CosignatoryModificationTypeDto;
-import io.nem.catapult.builders.EmbeddedModifyMultisigAccountTransactionBuilder;
+import io.nem.catapult.builders.EmbeddedMultisigAccountModificationTransactionBuilder;
 import io.nem.catapult.builders.EntityTypeDto;
 import io.nem.catapult.builders.KeyDto;
-import io.nem.catapult.builders.ModifyMultisigAccountTransactionBuilder;
+import io.nem.catapult.builders.MultisigAccountModificationTransactionBuilder;
 import io.nem.catapult.builders.SignatureDto;
 import io.nem.catapult.builders.TimestampDto;
 import io.nem.sdk.model.account.PublicAccount;
@@ -183,8 +183,8 @@ public class ModifyMultisigAccountTransaction extends Transaction {
         final ByteBuffer signerBuffer = ByteBuffer.allocate(32);
         final ByteBuffer signatureBuffer = ByteBuffer.allocate(64);
 
-        ModifyMultisigAccountTransactionBuilder txBuilder =
-            ModifyMultisigAccountTransactionBuilder.create(
+        MultisigAccountModificationTransactionBuilder txBuilder =
+            MultisigAccountModificationTransactionBuilder.create(
                 new SignatureDto(signatureBuffer),
                 new KeyDto(signerBuffer),
                 getNetworkVersion(),
@@ -203,8 +203,8 @@ public class ModifyMultisigAccountTransaction extends Transaction {
      * @return Embedded tx bytes
      */
     byte[] generateEmbeddedBytes() {
-        EmbeddedModifyMultisigAccountTransactionBuilder txBuilder =
-            EmbeddedModifyMultisigAccountTransactionBuilder.create(
+        EmbeddedMultisigAccountModificationTransactionBuilder txBuilder =
+            EmbeddedMultisigAccountModificationTransactionBuilder.create(
                 new KeyDto(getSignerBytes().get()),
                 getNetworkVersion(),
                 EntityTypeDto.MODIFY_MULTISIG_ACCOUNT_TRANSACTION,
@@ -229,7 +229,7 @@ public class ModifyMultisigAccountTransaction extends Transaction {
             final ByteBuffer keyBuffer = ByteBuffer.wrap(byteCosignatoryPublicKey);
             final CosignatoryModificationBuilder cosignatoryModificationBuilder =
                 CosignatoryModificationBuilder.create(
-                    CosignatoryModificationTypeDto.rawValueOf(
+                    CosignatoryModificationActionDto.rawValueOf(
                         (byte) multisigCosignatoryModification.getType().getValue()),
                     new KeyDto(keyBuffer));
             modificationBuilder.add(cosignatoryModificationBuilder);

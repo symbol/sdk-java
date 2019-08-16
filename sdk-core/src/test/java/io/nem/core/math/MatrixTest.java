@@ -779,7 +779,7 @@ public abstract class MatrixTest<TMatrix extends Matrix> {
         // Assert:
         Assert.assertThat(null, IsNot.not(IsEqual.equalTo(matrix)));
         Assert.assertThat(new double[]{0, 0, 7, 0, 0, 5},
-            IsNot.not(IsEqual.equalTo((Object) matrix)));
+            IsNot.not(IsEqual.equalTo(matrix)));
     }
 
     @Test

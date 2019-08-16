@@ -32,6 +32,6 @@ class MosaicPropertiesTest {
         assertTrue(mosaicProperties.isTransferable());
         assertTrue(1 == mosaicProperties.getDivisibility());
         assertEquals(
-            BigInteger.valueOf(1000).intValue(), mosaicProperties.getDuration().get().intValue());
+            BigInteger.valueOf(1000).intValue(), mosaicProperties.getDuration().longValue());
     }
 }
