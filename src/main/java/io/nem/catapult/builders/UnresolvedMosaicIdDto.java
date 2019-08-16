@@ -8,75 +8,80 @@
  * A PARTICULAR PURPOSE. See the ** GNU Lesser General Public License for more details. ** ** You
  * should have received a copy of the GNU Lesser General Public License ** along with Catapult. If
  * not, see <http://www.gnu.org/licenses/>.
- */
+ **/
+
 package io.nem.catapult.builders;
 
 import java.io.DataInput;
 
-/** Unresolved mosaic id. */
+/**
+ * Unresolved mosaic id.
+ */
 public final class UnresolvedMosaicIdDto {
-  /** Unresolved mosaic id. */
-  private final long unresolvedMosaicId;
 
-  /**
-   * Constructor.
-   *
-   * @param unresolvedMosaicId Unresolved mosaic id.
-   */
-  public UnresolvedMosaicIdDto(final long unresolvedMosaicId) {
-    this.unresolvedMosaicId = unresolvedMosaicId;
-  }
+    /**
+     * Unresolved mosaic id.
+     */
+    private final long unresolvedMosaicId;
 
-  /**
-   * Constructor - Creates an object from stream.
-   *
-   * @param stream Byte stream to use to serialize.
-   */
-  public UnresolvedMosaicIdDto(final DataInput stream) {
-    try {
-      this.unresolvedMosaicId = Long.reverseBytes(stream.readLong());
-    } catch (Exception e) {
-      throw GeneratorUtils.getExceptionToPropagate(e);
+    /**
+     * Constructor.
+     *
+     * @param unresolvedMosaicId Unresolved mosaic id.
+     */
+    public UnresolvedMosaicIdDto(final long unresolvedMosaicId) {
+        this.unresolvedMosaicId = unresolvedMosaicId;
     }
-  }
 
-  /**
-   * Gets Unresolved mosaic id.
-   *
-   * @return Unresolved mosaic id.
-   */
-  public long getUnresolvedMosaicId() {
-    return this.unresolvedMosaicId;
-  }
+    /**
+     * Constructor - Creates an object from stream.
+     *
+     * @param stream Byte stream to use to serialize.
+     */
+    public UnresolvedMosaicIdDto(final DataInput stream) {
+        try {
+            this.unresolvedMosaicId = Long.reverseBytes(stream.readLong());
+        } catch (Exception e) {
+            throw GeneratorUtils.getExceptionToPropagate(e);
+        }
+    }
 
-  /**
-   * Gets the size of the object.
-   *
-   * @return Size in bytes.
-   */
-  public int getSize() {
-    return 8;
-  }
+    /**
+     * Creates an instance of UnresolvedMosaicIdDto from a stream.
+     *
+     * @param stream Byte stream to use to serialize the object.
+     * @return Instance of UnresolvedMosaicIdDto.
+     */
+    public static UnresolvedMosaicIdDto loadFromBinary(final DataInput stream) {
+        return new UnresolvedMosaicIdDto(stream);
+    }
 
-  /**
-   * Creates an instance of UnresolvedMosaicIdDto from a stream.
-   *
-   * @param stream Byte stream to use to serialize the object.
-   * @return Instance of UnresolvedMosaicIdDto.
-   */
-  public static UnresolvedMosaicIdDto loadFromBinary(final DataInput stream) {
-    return new UnresolvedMosaicIdDto(stream);
-  }
+    /**
+     * Gets Unresolved mosaic id.
+     *
+     * @return Unresolved mosaic id.
+     */
+    public long getUnresolvedMosaicId() {
+        return this.unresolvedMosaicId;
+    }
 
-  /**
-   * Serializes an object to bytes.
-   *
-   * @return Serialized bytes.
-   */
-  public byte[] serialize() {
-    return GeneratorUtils.serialize(
-        dataOutputStream -> {
-          dataOutputStream.writeLong(Long.reverseBytes(this.getUnresolvedMosaicId()));
+    /**
+     * Gets the size of the object.
+     *
+     * @return Size in bytes.
+     */
+    public int getSize() {
+        return 8;
+    }
+
+    /**
+     * Serializes an object to bytes.
+     *
+     * @return Serialized bytes.
+     */
+    public byte[] serialize() {
+        return GeneratorUtils.serialize(dataOutputStream -> {
+            dataOutputStream.writeLong(Long.reverseBytes(this.getUnresolvedMosaicId()));
         });
-  }
+    }
 }

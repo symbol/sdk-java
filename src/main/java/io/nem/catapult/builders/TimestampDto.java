@@ -8,75 +8,80 @@
  * A PARTICULAR PURPOSE. See the ** GNU Lesser General Public License for more details. ** ** You
  * should have received a copy of the GNU Lesser General Public License ** along with Catapult. If
  * not, see <http://www.gnu.org/licenses/>.
- */
+ **/
+
 package io.nem.catapult.builders;
 
 import java.io.DataInput;
 
-/** Timestamp. */
+/**
+ * Timestamp.
+ */
 public final class TimestampDto {
-  /** Timestamp. */
-  private final long timestamp;
 
-  /**
-   * Constructor.
-   *
-   * @param timestamp Timestamp.
-   */
-  public TimestampDto(final long timestamp) {
-    this.timestamp = timestamp;
-  }
+    /**
+     * Timestamp.
+     */
+    private final long timestamp;
 
-  /**
-   * Constructor - Creates an object from stream.
-   *
-   * @param stream Byte stream to use to serialize.
-   */
-  public TimestampDto(final DataInput stream) {
-    try {
-      this.timestamp = Long.reverseBytes(stream.readLong());
-    } catch (Exception e) {
-      throw GeneratorUtils.getExceptionToPropagate(e);
+    /**
+     * Constructor.
+     *
+     * @param timestamp Timestamp.
+     */
+    public TimestampDto(final long timestamp) {
+        this.timestamp = timestamp;
     }
-  }
 
-  /**
-   * Gets Timestamp.
-   *
-   * @return Timestamp.
-   */
-  public long getTimestamp() {
-    return this.timestamp;
-  }
+    /**
+     * Constructor - Creates an object from stream.
+     *
+     * @param stream Byte stream to use to serialize.
+     */
+    public TimestampDto(final DataInput stream) {
+        try {
+            this.timestamp = Long.reverseBytes(stream.readLong());
+        } catch (Exception e) {
+            throw GeneratorUtils.getExceptionToPropagate(e);
+        }
+    }
 
-  /**
-   * Gets the size of the object.
-   *
-   * @return Size in bytes.
-   */
-  public int getSize() {
-    return 8;
-  }
+    /**
+     * Creates an instance of TimestampDto from a stream.
+     *
+     * @param stream Byte stream to use to serialize the object.
+     * @return Instance of TimestampDto.
+     */
+    public static TimestampDto loadFromBinary(final DataInput stream) {
+        return new TimestampDto(stream);
+    }
 
-  /**
-   * Creates an instance of TimestampDto from a stream.
-   *
-   * @param stream Byte stream to use to serialize the object.
-   * @return Instance of TimestampDto.
-   */
-  public static TimestampDto loadFromBinary(final DataInput stream) {
-    return new TimestampDto(stream);
-  }
+    /**
+     * Gets Timestamp.
+     *
+     * @return Timestamp.
+     */
+    public long getTimestamp() {
+        return this.timestamp;
+    }
 
-  /**
-   * Serializes an object to bytes.
-   *
-   * @return Serialized bytes.
-   */
-  public byte[] serialize() {
-    return GeneratorUtils.serialize(
-        dataOutputStream -> {
-          dataOutputStream.writeLong(Long.reverseBytes(this.getTimestamp()));
+    /**
+     * Gets the size of the object.
+     *
+     * @return Size in bytes.
+     */
+    public int getSize() {
+        return 8;
+    }
+
+    /**
+     * Serializes an object to bytes.
+     *
+     * @return Serialized bytes.
+     */
+    public byte[] serialize() {
+        return GeneratorUtils.serialize(dataOutputStream -> {
+            dataOutputStream.writeLong(Long.reverseBytes(this.getTimestamp()));
         });
-  }
+    }
 }

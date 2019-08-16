@@ -32,12 +32,13 @@ import org.apache.commons.lang.ArrayUtils;
  * Id generator
  */
 public class IdGenerator {
+
     private static final long ID_GENERATOR_FLAG = 0x8000000000000000L;
 
     /**
      * Generate mosaic id.
      *
-     * @param nonce     Nonce bytes.
+     * @param nonce Nonce bytes.
      * @param publicKey Public key.
      * @return Mosaic id.
      */
@@ -52,16 +53,19 @@ public class IdGenerator {
      * Generate namespace id.
      *
      * @param namespaceName Namespace name.
-     * @param parentId      Parent id.
+     * @param parentId Parent id.
      * @return Namespace id.
      */
-    public static BigInteger generateNamespaceId(final String namespaceName, final BigInteger parentId) {
+    public static BigInteger generateNamespaceId(final String namespaceName,
+        final BigInteger parentId) {
         if (!namespaceName.matches("^[a-z0-9][a-z0-9-_]*$")) {
             throw new IllegalIdentifierException("invalid namespace name");
         }
 
-        final ByteBuffer parentIdBuffer = ByteBuffer.allocate(8).order(ByteOrder.LITTLE_ENDIAN).putLong(parentId.longValue());
-        final byte[] hash = IdGenerator.getHashInLittleEndian(parentIdBuffer.array(), namespaceName.getBytes());
+        final ByteBuffer parentIdBuffer = ByteBuffer.allocate(8).order(ByteOrder.LITTLE_ENDIAN)
+            .putLong(parentId.longValue());
+        final byte[] hash = IdGenerator
+            .getHashInLittleEndian(parentIdBuffer.array(), namespaceName.getBytes());
         // Set the high bit for namespace id
         return BigInteger.valueOf(ByteBuffer.wrap(hash).getLong() | ID_GENERATOR_FLAG);
     }
@@ -69,7 +73,7 @@ public class IdGenerator {
     /**
      * Generate namespace id.
      *
-     * @param namespaceName       Namespace name.
+     * @param namespaceName Namespace name.
      * @param parentNamespaceName Parent name.
      * @return Namespace id.
      */

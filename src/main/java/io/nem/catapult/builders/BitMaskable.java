@@ -8,16 +8,19 @@
  * A PARTICULAR PURPOSE. See the ** GNU Lesser General Public License for more details. ** ** You
  * should have received a copy of the GNU Lesser General Public License ** along with Catapult. If
  * not, see <http://www.gnu.org/licenses/>.
- */
+ **/
+
 package io.nem.catapult.builders;
 
-/** Interface for the flags-based Enum. */
+/**
+ * Interface for the flags-based Enum.
+ */
 public interface BitMaskable {
 
-  /**
-   * Gets the value of the enum.
-   *
-   * @return Value of the enum.
-   */
-  public long getValue();
+    /**
+     * Gets the value of the enum.
+     *
+     * @return Value of the enum.
+     */
+    long getValue();
 }

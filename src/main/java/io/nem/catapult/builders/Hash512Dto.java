@@ -8,79 +8,84 @@
  * A PARTICULAR PURPOSE. See the ** GNU Lesser General Public License for more details. ** ** You
  * should have received a copy of the GNU Lesser General Public License ** along with Catapult. If
  * not, see <http://www.gnu.org/licenses/>.
- */
+ **/
+
 package io.nem.catapult.builders;
 
 import java.io.DataInput;
 import java.nio.ByteBuffer;
 
-/** Hash512. */
+/**
+ * Hash512.
+ */
 public final class Hash512Dto {
-  /** Hash512. */
-  private final ByteBuffer hash512;
 
-  /**
-   * Constructor.
-   *
-   * @param hash512 Hash512.
-   */
-  public Hash512Dto(final ByteBuffer hash512) {
-    GeneratorUtils.notNull(hash512, "hash512 is null");
-    GeneratorUtils.isTrue(hash512.array().length == 64, "hash512 should be 64 bytes");
-    this.hash512 = hash512;
-  }
+    /**
+     * Hash512.
+     */
+    private final ByteBuffer hash512;
 
-  /**
-   * Constructor - Creates an object from stream.
-   *
-   * @param stream Byte stream to use to serialize.
-   */
-  public Hash512Dto(final DataInput stream) {
-    try {
-      this.hash512 = ByteBuffer.allocate(64);
-      stream.readFully(this.hash512.array());
-    } catch (Exception e) {
-      throw GeneratorUtils.getExceptionToPropagate(e);
+    /**
+     * Constructor.
+     *
+     * @param hash512 Hash512.
+     */
+    public Hash512Dto(final ByteBuffer hash512) {
+        GeneratorUtils.notNull(hash512, "hash512 is null");
+        GeneratorUtils.isTrue(hash512.array().length == 64, "hash512 should be 64 bytes");
+        this.hash512 = hash512;
     }
-  }
 
-  /**
-   * Gets Hash512.
-   *
-   * @return Hash512.
-   */
-  public ByteBuffer getHash512() {
-    return this.hash512;
-  }
+    /**
+     * Constructor - Creates an object from stream.
+     *
+     * @param stream Byte stream to use to serialize.
+     */
+    public Hash512Dto(final DataInput stream) {
+        try {
+            this.hash512 = ByteBuffer.allocate(64);
+            stream.readFully(this.hash512.array());
+        } catch (Exception e) {
+            throw GeneratorUtils.getExceptionToPropagate(e);
+        }
+    }
 
-  /**
-   * Gets the size of the object.
-   *
-   * @return Size in bytes.
-   */
-  public int getSize() {
-    return 64;
-  }
+    /**
+     * Creates an instance of Hash512Dto from a stream.
+     *
+     * @param stream Byte stream to use to serialize the object.
+     * @return Instance of Hash512Dto.
+     */
+    public static Hash512Dto loadFromBinary(final DataInput stream) {
+        return new Hash512Dto(stream);
+    }
 
-  /**
-   * Creates an instance of Hash512Dto from a stream.
-   *
-   * @param stream Byte stream to use to serialize the object.
-   * @return Instance of Hash512Dto.
-   */
-  public static Hash512Dto loadFromBinary(final DataInput stream) {
-    return new Hash512Dto(stream);
-  }
+    /**
+     * Gets Hash512.
+     *
+     * @return Hash512.
+     */
+    public ByteBuffer getHash512() {
+        return this.hash512;
+    }
 
-  /**
-   * Serializes an object to bytes.
-   *
-   * @return Serialized bytes.
-   */
-  public byte[] serialize() {
-    return GeneratorUtils.serialize(
-        dataOutputStream -> {
-          dataOutputStream.write(this.hash512.array(), 0, this.hash512.array().length);
+    /**
+     * Gets the size of the object.
+     *
+     * @return Size in bytes.
+     */
+    public int getSize() {
+        return 64;
+    }
+
+    /**
+     * Serializes an object to bytes.
+     *
+     * @return Serialized bytes.
+     */
+    public byte[] serialize() {
+        return GeneratorUtils.serialize(dataOutputStream -> {
+            dataOutputStream.write(this.hash512.array(), 0, this.hash512.array().length);
         });
-  }
+    }
 }

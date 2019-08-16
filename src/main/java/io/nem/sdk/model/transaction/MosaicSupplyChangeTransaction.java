@@ -20,7 +20,7 @@ import io.nem.catapult.builders.AmountDto;
 import io.nem.catapult.builders.EmbeddedMosaicSupplyChangeTransactionBuilder;
 import io.nem.catapult.builders.EntityTypeDto;
 import io.nem.catapult.builders.KeyDto;
-import io.nem.catapult.builders.MosaicSupplyChangeDirectionDto;
+import io.nem.catapult.builders.MosaicSupplyChangeActionDto;
 import io.nem.catapult.builders.MosaicSupplyChangeTransactionBuilder;
 import io.nem.catapult.builders.SignatureDto;
 import io.nem.catapult.builders.TimestampDto;
@@ -191,7 +191,7 @@ public class MosaicSupplyChangeTransaction extends Transaction {
                 new AmountDto(getFee().longValue()),
                 new TimestampDto(getDeadline().getInstant()),
                 new UnresolvedMosaicIdDto(getMosaicId().getId().longValue()),
-                MosaicSupplyChangeDirectionDto.rawValueOf((byte) getMosaicSupplyType().getValue()),
+                MosaicSupplyChangeActionDto.rawValueOf((byte) getMosaicSupplyType().getValue()),
                 new AmountDto(getDelta().longValue()));
         return txBuilder.serialize();
     }
@@ -208,7 +208,7 @@ public class MosaicSupplyChangeTransaction extends Transaction {
                 getNetworkVersion(),
                 EntityTypeDto.MOSAIC_SUPPLY_CHANGE_TRANSACTION,
                 new UnresolvedMosaicIdDto(getMosaicId().getId().longValue()),
-                MosaicSupplyChangeDirectionDto.rawValueOf((byte) getMosaicSupplyType().getValue()),
+                MosaicSupplyChangeActionDto.rawValueOf((byte) getMosaicSupplyType().getValue()),
                 new AmountDto(getDelta().longValue()));
         return txBuilder.serialize();
     }

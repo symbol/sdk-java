@@ -22,7 +22,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import io.nem.core.crypto.Hashes;
 import io.nem.sdk.model.account.Account;
 import io.nem.sdk.model.account.Address;
-import io.nem.sdk.model.account.PublicAccount;
 import io.nem.sdk.model.blockchain.NetworkType;
 import io.nem.sdk.model.mosaic.MosaicId;
 import io.nem.sdk.model.mosaic.MosaicNonce;
@@ -51,7 +50,6 @@ import io.nem.sdk.model.transaction.TransactionAnnounceResponse;
 import io.nem.sdk.model.transaction.TransferTransaction;
 import java.io.IOException;
 import java.math.BigInteger;
-import java.sql.Time;
 import java.util.Collections;
 import java.util.Random;
 import java.util.concurrent.ExecutionException;
@@ -92,7 +90,8 @@ class E2ETest extends BaseTest {
     }
 
     @Test
-    void standaloneTransferTransaction() throws ExecutionException, InterruptedException, TimeoutException {
+    void standaloneTransferTransaction()
+        throws ExecutionException, InterruptedException, TimeoutException {
         TransferTransaction transferTransaction =
             TransferTransaction.create(
                 new Deadline(2, HOURS),
@@ -119,7 +118,8 @@ class E2ETest extends BaseTest {
     }
 
     @Test
-    void aggregateTransferTransaction() throws ExecutionException, InterruptedException, TimeoutException {
+    void aggregateTransferTransaction()
+        throws ExecutionException, InterruptedException, TimeoutException {
         TransferTransaction transferTransaction =
             TransferTransaction.create(
                 new Deadline(2, HOURS),
@@ -128,19 +128,29 @@ class E2ETest extends BaseTest {
                 Collections
                     .singletonList(NetworkCurrencyMosaic.createAbsolute(BigInteger.valueOf(1))),
                 /*new PlainMessage(
-                    "E2ETest:aggregateTransferTransaction:message"), */// short message for debugging
-            new PlainMessage("E2ETest:aggregateTransferTransaction:messagelooooooooooooooooooooooooooooooooooooooo" +
-            "ooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo" +
-            "ooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo" +
-            "ooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo" +
-            "ooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo" +
-            "ooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo" +
-            "oooooooong"), // Use long message to test if size of inner transaction is calculated correctly
+                    "E2ETest:aggregateTransferTransaction:message"), */
+// short message for debugging
+                new PlainMessage(
+                    "E2ETest:aggregateTransferTransaction:messagelooooooooooooooooooooooooooooooooooooooo"
+                        +
+                        "ooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo"
+                        +
+                        "ooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo"
+                        +
+                        "ooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo"
+                        +
+                        "ooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo"
+                        +
+                        "ooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo"
+                        +
+                        "oooooooong"),
+                // Use long message to test if size of inner transaction is calculated correctly
                 NetworkType.MIJIN_TEST);
 
         AggregateTransaction aggregateTransaction =
             AggregateTransaction.createComplete(
                 new Deadline(2, HOURS),
+                BigInteger.ZERO,
                 Collections.singletonList(
                     transferTransaction.toAggregate(this.account.getPublicAccount())),
                 NetworkType.MIJIN_TEST);
@@ -202,6 +212,7 @@ class E2ETest extends BaseTest {
         AggregateTransaction aggregateTransaction =
             AggregateTransaction.createComplete(
                 new Deadline(2, HOURS),
+                BigInteger.ZERO,
                 Collections.singletonList(
                     registerNamespaceTransaction.toAggregate(this.account.getPublicAccount())),
                 NetworkType.MIJIN_TEST);
@@ -265,6 +276,7 @@ class E2ETest extends BaseTest {
         AggregateTransaction aggregateTransaction =
             AggregateTransaction.createComplete(
                 new Deadline(2, HOURS),
+                BigInteger.ZERO,
                 Collections.singletonList(
                     registerNamespaceTransaction.toAggregate(this.account.getPublicAccount())),
                 NetworkType.MIJIN_TEST);
@@ -281,7 +293,8 @@ class E2ETest extends BaseTest {
     }
 
     @Test
-    void standaloneMosaicDefinitionTransaction() throws ExecutionException, InterruptedException, TimeoutException {
+    void standaloneMosaicDefinitionTransaction()
+        throws ExecutionException, InterruptedException, TimeoutException {
         MosaicNonce nonce = MosaicNonce.createRandom();
         this.mosaicId = MosaicId.createFromNonce(nonce, this.account.getPublicAccount());
 
@@ -306,7 +319,8 @@ class E2ETest extends BaseTest {
     }
 
     @Test
-    void aggregateMosaicDefinitionTransaction() throws ExecutionException, InterruptedException, TimeoutException {
+    void aggregateMosaicDefinitionTransaction()
+        throws ExecutionException, InterruptedException, TimeoutException {
         MosaicNonce nonce = MosaicNonce.createRandom();
         this.mosaicId = MosaicId.createFromNonce(nonce, this.account.getPublicAccount());
 
@@ -322,6 +336,7 @@ class E2ETest extends BaseTest {
         AggregateTransaction aggregateTransaction =
             AggregateTransaction.createComplete(
                 new Deadline(2, HOURS),
+                BigInteger.ZERO,
                 Collections.singletonList(
                     mosaicDefinitionTransaction.toAggregate(this.account.getPublicAccount())),
                 NetworkType.MIJIN_TEST);
@@ -338,7 +353,8 @@ class E2ETest extends BaseTest {
     }
 
     @Test
-    void standaloneMosaicSupplyChangeTransaction() throws ExecutionException, InterruptedException, TimeoutException {
+    void standaloneMosaicSupplyChangeTransaction()
+        throws ExecutionException, InterruptedException, TimeoutException {
         this.standaloneMosaicDefinitionTransaction();
 
         MosaicSupplyChangeTransaction mosaicSupplyChangeTransaction =
@@ -361,7 +377,8 @@ class E2ETest extends BaseTest {
     }
 
     @Test
-    void aggregateMosaicSupplyChangeTransaction() throws ExecutionException, InterruptedException, TimeoutException {
+    void aggregateMosaicSupplyChangeTransaction()
+        throws ExecutionException, InterruptedException, TimeoutException {
         this.aggregateMosaicDefinitionTransaction();
 
         MosaicSupplyChangeTransaction mosaicSupplyChangeTransaction =
@@ -375,6 +392,7 @@ class E2ETest extends BaseTest {
         AggregateTransaction aggregateTransaction =
             AggregateTransaction.createComplete(
                 new Deadline(2, HOURS),
+                BigInteger.ZERO,
                 Collections.singletonList(
                     mosaicSupplyChangeTransaction.toAggregate(this.account.getPublicAccount())),
                 NetworkType.MIJIN_TEST);
@@ -392,10 +410,12 @@ class E2ETest extends BaseTest {
 
 
     @Test
-    void standaloneLockFundsTransaction() throws ExecutionException, InterruptedException, TimeoutException {
+    void standaloneLockFundsTransaction()
+        throws ExecutionException, InterruptedException, TimeoutException {
         AggregateTransaction aggregateTransaction =
             AggregateTransaction.createBonded(
-                new Deadline(2, HOURS), Collections.emptyList(), NetworkType.MIJIN_TEST);
+                new Deadline(2, HOURS), BigInteger.ZERO, Collections.emptyList(),
+                NetworkType.MIJIN_TEST);
         SignedTransaction signedTransaction = this.account
             .sign(aggregateTransaction, generationHash);
         LockFundsTransaction lockFundstx =
@@ -415,10 +435,12 @@ class E2ETest extends BaseTest {
     }
 
     @Test
-    void aggregateLockFundsTransaction() throws ExecutionException, InterruptedException, TimeoutException {
+    void aggregateLockFundsTransaction()
+        throws ExecutionException, InterruptedException, TimeoutException {
         AggregateTransaction aggregateTransaction =
             AggregateTransaction.createBonded(
-                new Deadline(2, HOURS), Collections.emptyList(), NetworkType.MIJIN_TEST);
+                new Deadline(2, HOURS), BigInteger.ZERO, Collections.emptyList(),
+                NetworkType.MIJIN_TEST);
         SignedTransaction signedTransaction = this.account
             .sign(aggregateTransaction, generationHash);
         LockFundsTransaction lockFundstx =
@@ -432,6 +454,7 @@ class E2ETest extends BaseTest {
         AggregateTransaction lockFundsAggregatetx =
             AggregateTransaction.createComplete(
                 new Deadline(2, HOURS),
+                BigInteger.ZERO,
                 Collections.singletonList(lockFundstx.toAggregate(this.account.getPublicAccount())),
                 NetworkType.MIJIN_TEST);
 
@@ -445,7 +468,8 @@ class E2ETest extends BaseTest {
     }
 
     @Test
-    void standaloneSecretLockTransaction() throws ExecutionException, InterruptedException, TimeoutException {
+    void standaloneSecretLockTransaction()
+        throws ExecutionException, InterruptedException, TimeoutException {
         byte[] secretBytes = new byte[20];
         new Random().nextBytes(secretBytes);
         byte[] result = Hashes.sha3_256(secretBytes);
@@ -470,7 +494,8 @@ class E2ETest extends BaseTest {
     }
 
     @Test
-    void aggregateSecretLockTransaction() throws ExecutionException, InterruptedException, TimeoutException {
+    void aggregateSecretLockTransaction()
+        throws ExecutionException, InterruptedException, TimeoutException {
         byte[] secretBytes = new byte[20];
         new Random().nextBytes(secretBytes);
         byte[] result = Hashes.sha3_256(secretBytes);
@@ -488,6 +513,7 @@ class E2ETest extends BaseTest {
         AggregateTransaction secretLockAggregatetx =
             AggregateTransaction.createComplete(
                 new Deadline(2, HOURS),
+                BigInteger.ZERO,
                 Collections
                     .singletonList(secretLocktx.toAggregate(this.account.getPublicAccount())),
                 NetworkType.MIJIN_TEST);
@@ -502,7 +528,8 @@ class E2ETest extends BaseTest {
     }
 
     @Test
-    void standaloneSecretProofTransaction() throws ExecutionException, InterruptedException, TimeoutException {
+    void standaloneSecretProofTransaction()
+        throws ExecutionException, InterruptedException, TimeoutException {
         byte[] secretBytes = new byte[20];
         new Random().nextBytes(secretBytes);
         byte[] result = Hashes.sha3_256(secretBytes);
@@ -546,7 +573,8 @@ class E2ETest extends BaseTest {
     }
 
     @Test
-    void aggregateSecretProofTransaction() throws ExecutionException, InterruptedException, TimeoutException {
+    void aggregateSecretProofTransaction()
+        throws ExecutionException, InterruptedException, TimeoutException {
         byte[] secretBytes = new byte[20];
         new Random().nextBytes(secretBytes);
         byte[] result = Hashes.sha3_256(secretBytes);
@@ -583,6 +611,7 @@ class E2ETest extends BaseTest {
         AggregateTransaction secretProofAggregatetx =
             AggregateTransaction.createComplete(
                 new Deadline(2, HOURS),
+                BigInteger.ZERO,
                 Collections
                     .singletonList(secretProoftx.toAggregate(this.account.getPublicAccount())),
                 NetworkType.MIJIN_TEST);
@@ -612,6 +641,7 @@ class E2ETest extends BaseTest {
         AggregateTransaction aggregateTransaction =
             AggregateTransaction.createComplete(
                 new Deadline(2, HOURS),
+                BigInteger.ZERO,
                 Collections.singletonList(
                     modifyMultisigAccountTransaction.toAggregate(
                         this.multisigAccount.getPublicAccount())),
@@ -645,7 +675,8 @@ class E2ETest extends BaseTest {
     }
 
     @Test
-    void cosignatureTransaction() throws ExecutionException, InterruptedException, TimeoutException {
+    void cosignatureTransaction()
+        throws ExecutionException, InterruptedException, TimeoutException {
         TransferTransaction transferTransaction =
             TransferTransaction.create(
                 new Deadline(2, HOURS),
@@ -659,6 +690,7 @@ class E2ETest extends BaseTest {
         AggregateTransaction aggregateTransaction =
             AggregateTransaction.createComplete(
                 new Deadline(2, HOURS),
+                BigInteger.ZERO,
                 Collections.singletonList(
                     transferTransaction.toAggregate(this.multisigAccount.getPublicAccount())),
                 NetworkType.MIJIN_TEST);
@@ -702,7 +734,8 @@ class E2ETest extends BaseTest {
 
     void validateTransactionAnnounceCorrectly(Address address, String transactionHash)
         throws ExecutionException, InterruptedException, TimeoutException {
-        Transaction transaction = listener.confirmed(address).take(1).toFuture().get(this.timeoutSeconds, TimeUnit.SECONDS);
+        Transaction transaction = listener.confirmed(address).take(1).toFuture()
+            .get(this.timeoutSeconds, TimeUnit.SECONDS);
 
         assertEquals(transactionHash, transaction.getTransactionInfo().get().getHash().get());
     }
@@ -711,14 +744,17 @@ class E2ETest extends BaseTest {
         String transactionHash)
         throws ExecutionException, InterruptedException, TimeoutException {
         AggregateTransaction aggregateTransaction =
-            listener.aggregateBondedAdded(address).take(1).toFuture().get(this.timeoutSeconds, TimeUnit.SECONDS);
+            listener.aggregateBondedAdded(address).take(1).toFuture()
+                .get(this.timeoutSeconds, TimeUnit.SECONDS);
         assertEquals(transactionHash,
             aggregateTransaction.getTransactionInfo().get().getHash().get());
     }
 
     void validateAggregateBondedCosignatureTransactionAnnounceCorrectly(
-        Address address, String transactionHash) throws ExecutionException, InterruptedException, TimeoutException {
-        String hash = listener.cosignatureAdded(address).take(1).toFuture().get(this.timeoutSeconds, TimeUnit.SECONDS).getParentHash();
+        Address address, String transactionHash)
+        throws ExecutionException, InterruptedException, TimeoutException {
+        String hash = listener.cosignatureAdded(address).take(1).toFuture()
+            .get(this.timeoutSeconds, TimeUnit.SECONDS).getParentHash();
         assertEquals(transactionHash, hash);
     }
 }

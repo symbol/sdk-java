@@ -58,6 +58,7 @@ public class AggregateTransactionTest {
         AggregateTransaction aggregateTx =
             AggregateTransaction.createComplete(
                 new Deadline(2, ChronoUnit.HOURS),
+                BigInteger.ZERO,
                 Arrays.asList(
                     transferTx.toAggregate(
                         new PublicAccount(
@@ -92,6 +93,7 @@ public class AggregateTransactionTest {
         AggregateTransaction aggregateTx =
             AggregateTransaction.createComplete(
                 new FakeDeadline(),
+                BigInteger.ZERO,
                 Collections.singletonList(
                     transferTx.toAggregate(
                         new PublicAccount(
@@ -118,6 +120,7 @@ public class AggregateTransactionTest {
         AggregateTransaction aggregateTx =
             AggregateTransaction.createComplete(
                 new FakeDeadline(),
+                BigInteger.ZERO,
                 Collections.singletonList(
                     transferTx.toAggregate(
                         new PublicAccount(

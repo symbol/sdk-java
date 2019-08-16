@@ -8,147 +8,142 @@
  * A PARTICULAR PURPOSE. See the ** GNU Lesser General Public License for more details. ** ** You
  * should have received a copy of the GNU Lesser General Public License ** along with Catapult. If
  * not, see <http://www.gnu.org/licenses/>.
- */
+ **/
+
 package io.nem.catapult.builders;
 
 import java.io.DataInput;
 import java.nio.ByteBuffer;
 
-/** Binary layout for an embedded secret proof transaction. */
+/**
+ * Binary layout for an embedded secret proof transaction.
+ */
 public final class EmbeddedSecretProofTransactionBuilder extends EmbeddedTransactionBuilder {
-  /** Secret proof transaction body. */
-  private final SecretProofTransactionBodyBuilder secretProofTransactionBody;
 
-  /**
-   * Constructor - Creates an object from stream.
-   *
-   * @param stream Byte stream to use to serialize the object.
-   */
-  protected EmbeddedSecretProofTransactionBuilder(final DataInput stream) {
-    super(stream);
-    this.secretProofTransactionBody = SecretProofTransactionBodyBuilder.loadFromBinary(stream);
-  }
+    /**
+     * Secret proof transaction body.
+     */
+    private final SecretProofTransactionBodyBuilder secretProofTransactionBody;
 
-  /**
-   * Constructor.
-   *
-   * @param signer Entity signer's public key.
-   * @param version Entity version.
-   * @param type Entity type.
-   * @param hashAlgorithm Hash algorithm.
-   * @param secret Secret.
-   * @param recipient Recipient.
-   * @param proof Proof data.
-   */
-  protected EmbeddedSecretProofTransactionBuilder(
-      final KeyDto signer,
-      final short version,
-      final EntityTypeDto type,
-      final LockHashAlgorithmDto hashAlgorithm,
-      final Hash256Dto secret,
-      final UnresolvedAddressDto recipient,
-      final ByteBuffer proof) {
-    super(signer, version, type);
-    this.secretProofTransactionBody =
-        SecretProofTransactionBodyBuilder.create(hashAlgorithm, secret, recipient, proof);
-  }
+    /**
+     * Constructor - Creates an object from stream.
+     *
+     * @param stream Byte stream to use to serialize the object.
+     */
+    protected EmbeddedSecretProofTransactionBuilder(final DataInput stream) {
+        super(stream);
+        this.secretProofTransactionBody = SecretProofTransactionBodyBuilder.loadFromBinary(stream);
+    }
 
-  /**
-   * Creates an instance of EmbeddedSecretProofTransactionBuilder.
-   *
-   * @param signer Entity signer's public key.
-   * @param version Entity version.
-   * @param type Entity type.
-   * @param hashAlgorithm Hash algorithm.
-   * @param secret Secret.
-   * @param recipient Recipient.
-   * @param proof Proof data.
-   * @return Instance of EmbeddedSecretProofTransactionBuilder.
-   */
-  public static EmbeddedSecretProofTransactionBuilder create(
-      final KeyDto signer,
-      final short version,
-      final EntityTypeDto type,
-      final LockHashAlgorithmDto hashAlgorithm,
-      final Hash256Dto secret,
-      final UnresolvedAddressDto recipient,
-      final ByteBuffer proof) {
-    return new EmbeddedSecretProofTransactionBuilder(
-        signer, version, type, hashAlgorithm, secret, recipient, proof);
-  }
+    /**
+     * Constructor.
+     *
+     * @param signer Entity signer's public key.
+     * @param version Entity version.
+     * @param type Entity type.
+     * @param hashAlgorithm Hash algorithm.
+     * @param secret Secret.
+     * @param recipient Recipient.
+     * @param proof Proof data.
+     */
+    protected EmbeddedSecretProofTransactionBuilder(final KeyDto signer, final short version,
+        final EntityTypeDto type, final LockHashAlgorithmDto hashAlgorithm, final Hash256Dto secret,
+        final UnresolvedAddressDto recipient, final ByteBuffer proof) {
+        super(signer, version, type);
+        this.secretProofTransactionBody = SecretProofTransactionBodyBuilder
+            .create(hashAlgorithm, secret, recipient, proof);
+    }
 
-  /**
-   * Gets hash algorithm.
-   *
-   * @return Hash algorithm.
-   */
-  public LockHashAlgorithmDto getHashAlgorithm() {
-    return this.secretProofTransactionBody.getHashAlgorithm();
-  }
+    /**
+     * Creates an instance of EmbeddedSecretProofTransactionBuilder.
+     *
+     * @param signer Entity signer's public key.
+     * @param version Entity version.
+     * @param type Entity type.
+     * @param hashAlgorithm Hash algorithm.
+     * @param secret Secret.
+     * @param recipient Recipient.
+     * @param proof Proof data.
+     * @return Instance of EmbeddedSecretProofTransactionBuilder.
+     */
+    public static EmbeddedSecretProofTransactionBuilder create(final KeyDto signer,
+        final short version, final EntityTypeDto type, final LockHashAlgorithmDto hashAlgorithm,
+        final Hash256Dto secret, final UnresolvedAddressDto recipient, final ByteBuffer proof) {
+        return new EmbeddedSecretProofTransactionBuilder(signer, version, type, hashAlgorithm,
+            secret, recipient, proof);
+    }
 
-  /**
-   * Gets secret.
-   *
-   * @return Secret.
-   */
-  public Hash256Dto getSecret() {
-    return this.secretProofTransactionBody.getSecret();
-  }
+    /**
+     * Creates an instance of EmbeddedSecretProofTransactionBuilder from a stream.
+     *
+     * @param stream Byte stream to use to serialize the object.
+     * @return Instance of EmbeddedSecretProofTransactionBuilder.
+     */
+    public static EmbeddedSecretProofTransactionBuilder loadFromBinary(final DataInput stream) {
+        return new EmbeddedSecretProofTransactionBuilder(stream);
+    }
 
-  /**
-   * Gets recipient.
-   *
-   * @return Recipient.
-   */
-  public UnresolvedAddressDto getRecipient() {
-    return this.secretProofTransactionBody.getRecipient();
-  }
+    /**
+     * Gets hash algorithm.
+     *
+     * @return Hash algorithm.
+     */
+    public LockHashAlgorithmDto getHashAlgorithm() {
+        return this.secretProofTransactionBody.getHashAlgorithm();
+    }
 
-  /**
-   * Gets proof data.
-   *
-   * @return Proof data.
-   */
-  public ByteBuffer getProof() {
-    return this.secretProofTransactionBody.getProof();
-  }
+    /**
+     * Gets secret.
+     *
+     * @return Secret.
+     */
+    public Hash256Dto getSecret() {
+        return this.secretProofTransactionBody.getSecret();
+    }
 
-  /**
-   * Gets the size of the object.
-   *
-   * @return Size in bytes.
-   */
-  @Override
-  public int getSize() {
-    int size = super.getSize();
-    size += this.secretProofTransactionBody.getSize();
-    return size;
-  }
+    /**
+     * Gets recipient.
+     *
+     * @return Recipient.
+     */
+    public UnresolvedAddressDto getRecipient() {
+        return this.secretProofTransactionBody.getRecipient();
+    }
 
-  /**
-   * Creates an instance of EmbeddedSecretProofTransactionBuilder from a stream.
-   *
-   * @param stream Byte stream to use to serialize the object.
-   * @return Instance of EmbeddedSecretProofTransactionBuilder.
-   */
-  public static EmbeddedSecretProofTransactionBuilder loadFromBinary(final DataInput stream) {
-    return new EmbeddedSecretProofTransactionBuilder(stream);
-  }
+    /**
+     * Gets proof data.
+     *
+     * @return Proof data.
+     */
+    public ByteBuffer getProof() {
+        return this.secretProofTransactionBody.getProof();
+    }
 
-  /**
-   * Serializes an object to bytes.
-   *
-   * @return Serialized bytes.
-   */
-  public byte[] serialize() {
-    return GeneratorUtils.serialize(
-        dataOutputStream -> {
-          final byte[] superBytes = super.serialize();
-          dataOutputStream.write(superBytes, 0, superBytes.length);
-          final byte[] secretProofTransactionBodyBytes =
-              this.secretProofTransactionBody.serialize();
-          dataOutputStream.write(
-              secretProofTransactionBodyBytes, 0, secretProofTransactionBodyBytes.length);
+    /**
+     * Gets the size of the object.
+     *
+     * @return Size in bytes.
+     */
+    @Override
+    public int getSize() {
+        int size = super.getSize();
+        size += this.secretProofTransactionBody.getSize();
+        return size;
+    }
+
+    /**
+     * Serializes an object to bytes.
+     *
+     * @return Serialized bytes.
+     */
+    public byte[] serialize() {
+        return GeneratorUtils.serialize(dataOutputStream -> {
+            final byte[] superBytes = super.serialize();
+            dataOutputStream.write(superBytes, 0, superBytes.length);
+            final byte[] secretProofTransactionBodyBytes = this.secretProofTransactionBody
+                .serialize();
+            dataOutputStream
+                .write(secretProofTransactionBodyBytes, 0, secretProofTransactionBodyBytes.length);
         });
-  }
+    }
 }

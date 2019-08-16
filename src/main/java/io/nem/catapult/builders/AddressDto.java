@@ -8,79 +8,84 @@
  * A PARTICULAR PURPOSE. See the ** GNU Lesser General Public License for more details. ** ** You
  * should have received a copy of the GNU Lesser General Public License ** along with Catapult. If
  * not, see <http://www.gnu.org/licenses/>.
- */
+ **/
+
 package io.nem.catapult.builders;
 
 import java.io.DataInput;
 import java.nio.ByteBuffer;
 
-/** Address. */
+/**
+ * Address.
+ */
 public final class AddressDto {
-  /** Address. */
-  private final ByteBuffer address;
 
-  /**
-   * Constructor.
-   *
-   * @param address Address.
-   */
-  public AddressDto(final ByteBuffer address) {
-    GeneratorUtils.notNull(address, "address is null");
-    GeneratorUtils.isTrue(address.array().length == 25, "address should be 25 bytes");
-    this.address = address;
-  }
+    /**
+     * Address.
+     */
+    private final ByteBuffer address;
 
-  /**
-   * Constructor - Creates an object from stream.
-   *
-   * @param stream Byte stream to use to serialize.
-   */
-  public AddressDto(final DataInput stream) {
-    try {
-      this.address = ByteBuffer.allocate(25);
-      stream.readFully(this.address.array());
-    } catch (Exception e) {
-      throw GeneratorUtils.getExceptionToPropagate(e);
+    /**
+     * Constructor.
+     *
+     * @param address Address.
+     */
+    public AddressDto(final ByteBuffer address) {
+        GeneratorUtils.notNull(address, "address is null");
+        GeneratorUtils.isTrue(address.array().length == 25, "address should be 25 bytes");
+        this.address = address;
     }
-  }
 
-  /**
-   * Gets Address.
-   *
-   * @return Address.
-   */
-  public ByteBuffer getAddress() {
-    return this.address;
-  }
+    /**
+     * Constructor - Creates an object from stream.
+     *
+     * @param stream Byte stream to use to serialize.
+     */
+    public AddressDto(final DataInput stream) {
+        try {
+            this.address = ByteBuffer.allocate(25);
+            stream.readFully(this.address.array());
+        } catch (Exception e) {
+            throw GeneratorUtils.getExceptionToPropagate(e);
+        }
+    }
 
-  /**
-   * Gets the size of the object.
-   *
-   * @return Size in bytes.
-   */
-  public int getSize() {
-    return 25;
-  }
+    /**
+     * Creates an instance of AddressDto from a stream.
+     *
+     * @param stream Byte stream to use to serialize the object.
+     * @return Instance of AddressDto.
+     */
+    public static AddressDto loadFromBinary(final DataInput stream) {
+        return new AddressDto(stream);
+    }
 
-  /**
-   * Creates an instance of AddressDto from a stream.
-   *
-   * @param stream Byte stream to use to serialize the object.
-   * @return Instance of AddressDto.
-   */
-  public static AddressDto loadFromBinary(final DataInput stream) {
-    return new AddressDto(stream);
-  }
+    /**
+     * Gets Address.
+     *
+     * @return Address.
+     */
+    public ByteBuffer getAddress() {
+        return this.address;
+    }
 
-  /**
-   * Serializes an object to bytes.
-   *
-   * @return Serialized bytes.
-   */
-  public byte[] serialize() {
-    return GeneratorUtils.serialize(
-        dataOutputStream -> {
-          dataOutputStream.write(this.address.array(), 0, this.address.array().length);
+    /**
+     * Gets the size of the object.
+     *
+     * @return Size in bytes.
+     */
+    public int getSize() {
+        return 25;
+    }
+
+    /**
+     * Serializes an object to bytes.
+     *
+     * @return Serialized bytes.
+     */
+    public byte[] serialize() {
+        return GeneratorUtils.serialize(dataOutputStream -> {
+            dataOutputStream.write(this.address.array(), 0, this.address.array().length);
         });
-  }
+    }
 }

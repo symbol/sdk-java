@@ -8,106 +8,115 @@
  * A PARTICULAR PURPOSE. See the ** GNU Lesser General Public License for more details. ** ** You
  * should have received a copy of the GNU Lesser General Public License ** along with Catapult. If
  * not, see <http://www.gnu.org/licenses/>.
- */
+ **/
+
 package io.nem.catapult.builders;
 
 import java.io.DataInput;
 
-/** Binary layout for a cosignatory modification. */
+/**
+ * Binary layout for a cosignatory modification.
+ */
 public class CosignatoryModificationBuilder {
-  /** Modification type. */
-  private final CosignatoryModificationTypeDto modificationType;
-  /** Cosignatory account public key. */
-  private final KeyDto cosignatoryPublicKey;
 
-  /**
-   * Constructor - Creates an object from stream.
-   *
-   * @param stream Byte stream to use to serialize the object.
-   */
-  protected CosignatoryModificationBuilder(final DataInput stream) {
-    this.modificationType = CosignatoryModificationTypeDto.loadFromBinary(stream);
-    this.cosignatoryPublicKey = KeyDto.loadFromBinary(stream);
-  }
+    /**
+     * Modification action.
+     */
+    private final CosignatoryModificationActionDto modificationAction;
+    /**
+     * Cosignatory account public key.
+     */
+    private final KeyDto cosignatoryPublicKey;
 
-  /**
-   * Constructor.
-   *
-   * @param modificationType Modification type.
-   * @param cosignatoryPublicKey Cosignatory account public key.
-   */
-  protected CosignatoryModificationBuilder(
-      final CosignatoryModificationTypeDto modificationType, final KeyDto cosignatoryPublicKey) {
-    GeneratorUtils.notNull(modificationType, "modificationType is null");
-    GeneratorUtils.notNull(cosignatoryPublicKey, "cosignatoryPublicKey is null");
-    this.modificationType = modificationType;
-    this.cosignatoryPublicKey = cosignatoryPublicKey;
-  }
+    /**
+     * Constructor - Creates an object from stream.
+     *
+     * @param stream Byte stream to use to serialize the object.
+     */
+    protected CosignatoryModificationBuilder(final DataInput stream) {
+        this.modificationAction = CosignatoryModificationActionDto.loadFromBinary(stream);
+        this.cosignatoryPublicKey = KeyDto.loadFromBinary(stream);
+    }
 
-  /**
-   * Creates an instance of CosignatoryModificationBuilder.
-   *
-   * @param modificationType Modification type.
-   * @param cosignatoryPublicKey Cosignatory account public key.
-   * @return Instance of CosignatoryModificationBuilder.
-   */
-  public static CosignatoryModificationBuilder create(
-      final CosignatoryModificationTypeDto modificationType, final KeyDto cosignatoryPublicKey) {
-    return new CosignatoryModificationBuilder(modificationType, cosignatoryPublicKey);
-  }
+    /**
+     * Constructor.
+     *
+     * @param modificationAction Modification action.
+     * @param cosignatoryPublicKey Cosignatory account public key.
+     */
+    protected CosignatoryModificationBuilder(
+        final CosignatoryModificationActionDto modificationAction,
+        final KeyDto cosignatoryPublicKey) {
+        GeneratorUtils.notNull(modificationAction, "modificationAction is null");
+        GeneratorUtils.notNull(cosignatoryPublicKey, "cosignatoryPublicKey is null");
+        this.modificationAction = modificationAction;
+        this.cosignatoryPublicKey = cosignatoryPublicKey;
+    }
 
-  /**
-   * Gets modification type.
-   *
-   * @return Modification type.
-   */
-  public CosignatoryModificationTypeDto getModificationType() {
-    return this.modificationType;
-  }
+    /**
+     * Creates an instance of CosignatoryModificationBuilder.
+     *
+     * @param modificationAction Modification action.
+     * @param cosignatoryPublicKey Cosignatory account public key.
+     * @return Instance of CosignatoryModificationBuilder.
+     */
+    public static CosignatoryModificationBuilder create(
+        final CosignatoryModificationActionDto modificationAction,
+        final KeyDto cosignatoryPublicKey) {
+        return new CosignatoryModificationBuilder(modificationAction, cosignatoryPublicKey);
+    }
 
-  /**
-   * Gets cosignatory account public key.
-   *
-   * @return Cosignatory account public key.
-   */
-  public KeyDto getCosignatoryPublicKey() {
-    return this.cosignatoryPublicKey;
-  }
+    /**
+     * Creates an instance of CosignatoryModificationBuilder from a stream.
+     *
+     * @param stream Byte stream to use to serialize the object.
+     * @return Instance of CosignatoryModificationBuilder.
+     */
+    public static CosignatoryModificationBuilder loadFromBinary(final DataInput stream) {
+        return new CosignatoryModificationBuilder(stream);
+    }
 
-  /**
-   * Gets the size of the object.
-   *
-   * @return Size in bytes.
-   */
-  public int getSize() {
-    int size = 0;
-    size += this.modificationType.getSize();
-    size += this.cosignatoryPublicKey.getSize();
-    return size;
-  }
+    /**
+     * Gets modification action.
+     *
+     * @return Modification action.
+     */
+    public CosignatoryModificationActionDto getModificationAction() {
+        return this.modificationAction;
+    }
 
-  /**
-   * Creates an instance of CosignatoryModificationBuilder from a stream.
-   *
-   * @param stream Byte stream to use to serialize the object.
-   * @return Instance of CosignatoryModificationBuilder.
-   */
-  public static CosignatoryModificationBuilder loadFromBinary(final DataInput stream) {
-    return new CosignatoryModificationBuilder(stream);
-  }
+    /**
+     * Gets cosignatory account public key.
+     *
+     * @return Cosignatory account public key.
+     */
+    public KeyDto getCosignatoryPublicKey() {
+        return this.cosignatoryPublicKey;
+    }
 
-  /**
-   * Serializes an object to bytes.
-   *
-   * @return Serialized bytes.
-   */
-  public byte[] serialize() {
-    return GeneratorUtils.serialize(
-        dataOutputStream -> {
-          final byte[] modificationTypeBytes = this.modificationType.serialize();
-          dataOutputStream.write(modificationTypeBytes, 0, modificationTypeBytes.length);
-          final byte[] cosignatoryPublicKeyBytes = this.cosignatoryPublicKey.serialize();
-          dataOutputStream.write(cosignatoryPublicKeyBytes, 0, cosignatoryPublicKeyBytes.length);
+    /**
+     * Gets the size of the object.
+     *
+     * @return Size in bytes.
+     */
+    public int getSize() {
+        int size = 0;
+        size += this.modificationAction.getSize();
+        size += this.cosignatoryPublicKey.getSize();
+        return size;
+    }
+
+    /**
+     * Serializes an object to bytes.
+     *
+     * @return Serialized bytes.
+     */
+    public byte[] serialize() {
+        return GeneratorUtils.serialize(dataOutputStream -> {
+            final byte[] modificationActionBytes = this.modificationAction.serialize();
+            dataOutputStream.write(modificationActionBytes, 0, modificationActionBytes.length);
+            final byte[] cosignatoryPublicKeyBytes = this.cosignatoryPublicKey.serialize();
+            dataOutputStream.write(cosignatoryPublicKeyBytes, 0, cosignatoryPublicKeyBytes.length);
         });
-  }
+    }
 }

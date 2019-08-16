@@ -24,6 +24,7 @@ import io.nem.sdk.infrastructure.TransactionMapping;
 import io.nem.sdk.model.account.Account;
 import io.nem.sdk.model.blockchain.NetworkType;
 import io.vertx.core.json.JsonObject;
+import java.math.BigInteger;
 import java.time.temporal.ChronoUnit;
 import java.util.Collections;
 import org.junit.jupiter.api.BeforeAll;
@@ -75,7 +76,9 @@ public class CosignatureTransactionTest {
 
         AggregateTransaction aggregateTransaction =
             AggregateTransaction.createComplete(
-                Deadline.create(2, ChronoUnit.HOURS), Collections.emptyList(),
+                Deadline.create(2, ChronoUnit.HOURS),
+                BigInteger.ZERO,
+                Collections.emptyList(),
                 NetworkType.MIJIN_TEST);
 
         assertThrows(

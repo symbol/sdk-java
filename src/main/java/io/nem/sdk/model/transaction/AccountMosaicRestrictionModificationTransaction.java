@@ -17,15 +17,15 @@ package io.nem.sdk.model.transaction;
 
 import io.nem.catapult.builders.AccountMosaicRestrictionModificationBuilder;
 import io.nem.catapult.builders.AccountMosaicRestrictionTransactionBuilder;
-import io.nem.catapult.builders.AccountRestrictionModificationTypeDto;
+import io.nem.catapult.builders.AccountRestrictionModificationActionDto;
 import io.nem.catapult.builders.AccountRestrictionTypeDto;
 import io.nem.catapult.builders.AmountDto;
 import io.nem.catapult.builders.EmbeddedAccountMosaicRestrictionTransactionBuilder;
 import io.nem.catapult.builders.EntityTypeDto;
 import io.nem.catapult.builders.KeyDto;
-import io.nem.catapult.builders.MosaicIdDto;
 import io.nem.catapult.builders.SignatureDto;
 import io.nem.catapult.builders.TimestampDto;
+import io.nem.catapult.builders.UnresolvedMosaicIdDto;
 import io.nem.sdk.model.account.PublicAccount;
 import io.nem.sdk.model.blockchain.NetworkType;
 import io.nem.sdk.model.mosaic.MosaicId;
@@ -203,9 +203,10 @@ public class AccountMosaicRestrictionModificationTransaction extends Transaction
         for (AccountRestrictionModification<MosaicId> accountRestrictionModification : modifications) {
             final AccountMosaicRestrictionModificationBuilder builder =
                 AccountMosaicRestrictionModificationBuilder.create(
-                    AccountRestrictionModificationTypeDto.rawValueOf(
+                    AccountRestrictionModificationActionDto.rawValueOf(
                         accountRestrictionModification.getModificationType().getValue()),
-                    new MosaicIdDto(accountRestrictionModification.getValue().getIdAsLong()));
+                    new UnresolvedMosaicIdDto(
+                        accountRestrictionModification.getValue().getIdAsLong()));
             modificationBuilder.add(builder);
         }
         return modificationBuilder;

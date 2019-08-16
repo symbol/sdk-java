@@ -8,75 +8,80 @@
  * A PARTICULAR PURPOSE. See the ** GNU Lesser General Public License for more details. ** ** You
  * should have received a copy of the GNU Lesser General Public License ** along with Catapult. If
  * not, see <http://www.gnu.org/licenses/>.
- */
+ **/
+
 package io.nem.catapult.builders;
 
 import java.io.DataInput;
 
-/** Mosaic id. */
+/**
+ * Mosaic id.
+ */
 public final class MosaicIdDto {
-  /** Mosaic id. */
-  private final long mosaicId;
 
-  /**
-   * Constructor.
-   *
-   * @param mosaicId Mosaic id.
-   */
-  public MosaicIdDto(final long mosaicId) {
-    this.mosaicId = mosaicId;
-  }
+    /**
+     * Mosaic id.
+     */
+    private final long mosaicId;
 
-  /**
-   * Constructor - Creates an object from stream.
-   *
-   * @param stream Byte stream to use to serialize.
-   */
-  public MosaicIdDto(final DataInput stream) {
-    try {
-      this.mosaicId = Long.reverseBytes(stream.readLong());
-    } catch (Exception e) {
-      throw GeneratorUtils.getExceptionToPropagate(e);
+    /**
+     * Constructor.
+     *
+     * @param mosaicId Mosaic id.
+     */
+    public MosaicIdDto(final long mosaicId) {
+        this.mosaicId = mosaicId;
     }
-  }
 
-  /**
-   * Gets Mosaic id.
-   *
-   * @return Mosaic id.
-   */
-  public long getMosaicId() {
-    return this.mosaicId;
-  }
+    /**
+     * Constructor - Creates an object from stream.
+     *
+     * @param stream Byte stream to use to serialize.
+     */
+    public MosaicIdDto(final DataInput stream) {
+        try {
+            this.mosaicId = Long.reverseBytes(stream.readLong());
+        } catch (Exception e) {
+            throw GeneratorUtils.getExceptionToPropagate(e);
+        }
+    }
 
-  /**
-   * Gets the size of the object.
-   *
-   * @return Size in bytes.
-   */
-  public int getSize() {
-    return 8;
-  }
+    /**
+     * Creates an instance of MosaicIdDto from a stream.
+     *
+     * @param stream Byte stream to use to serialize the object.
+     * @return Instance of MosaicIdDto.
+     */
+    public static MosaicIdDto loadFromBinary(final DataInput stream) {
+        return new MosaicIdDto(stream);
+    }
 
-  /**
-   * Creates an instance of MosaicIdDto from a stream.
-   *
-   * @param stream Byte stream to use to serialize the object.
-   * @return Instance of MosaicIdDto.
-   */
-  public static MosaicIdDto loadFromBinary(final DataInput stream) {
-    return new MosaicIdDto(stream);
-  }
+    /**
+     * Gets Mosaic id.
+     *
+     * @return Mosaic id.
+     */
+    public long getMosaicId() {
+        return this.mosaicId;
+    }
 
-  /**
-   * Serializes an object to bytes.
-   *
-   * @return Serialized bytes.
-   */
-  public byte[] serialize() {
-    return GeneratorUtils.serialize(
-        dataOutputStream -> {
-          dataOutputStream.writeLong(Long.reverseBytes(this.getMosaicId()));
+    /**
+     * Gets the size of the object.
+     *
+     * @return Size in bytes.
+     */
+    public int getSize() {
+        return 8;
+    }
+
+    /**
+     * Serializes an object to bytes.
+     *
+     * @return Serialized bytes.
+     */
+    public byte[] serialize() {
+        return GeneratorUtils.serialize(dataOutputStream -> {
+            dataOutputStream.writeLong(Long.reverseBytes(this.getMosaicId()));
         });
-  }
+    }
 }

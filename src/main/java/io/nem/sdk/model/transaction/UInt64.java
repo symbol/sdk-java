@@ -18,16 +18,15 @@ package io.nem.sdk.model.transaction;
 
 import io.nem.core.utils.ByteUtils;
 import io.nem.core.utils.HexEncoder;
-import org.apache.commons.lang.ArrayUtils;
-
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.IntBuffer;
+import org.apache.commons.lang.ArrayUtils;
 
 /**
- * UInt64 data model to enable numeric representation up to 64 bits.
- * A UInt64 object is composed of two 32-bit numbers: lower and higher.
+ * UInt64 data model to enable numeric representation up to 64 bits. A UInt64 object is composed of
+ * two 32-bit numbers: lower and higher.
  */
 public class UInt64 {
 
@@ -98,7 +97,7 @@ public class UInt64 {
      * @return BigInteger
      */
     public static BigInteger fromLowerAndHigher(Number lower, Number higher) {
-        int[] array = new int[] {lower.intValue(), higher.intValue()};
+        int[] array = new int[]{lower.intValue(), higher.intValue()};
         return UInt64.fromIntArray(array);
     }
 

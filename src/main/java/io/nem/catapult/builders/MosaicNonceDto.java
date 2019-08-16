@@ -8,75 +8,80 @@
  * A PARTICULAR PURPOSE. See the ** GNU Lesser General Public License for more details. ** ** You
  * should have received a copy of the GNU Lesser General Public License ** along with Catapult. If
  * not, see <http://www.gnu.org/licenses/>.
- */
+ **/
+
 package io.nem.catapult.builders;
 
 import java.io.DataInput;
 
-/** Mosaic nonce. */
+/**
+ * Mosaic nonce.
+ */
 public final class MosaicNonceDto {
-  /** Mosaic nonce. */
-  private final int mosaicNonce;
 
-  /**
-   * Constructor.
-   *
-   * @param mosaicNonce Mosaic nonce.
-   */
-  public MosaicNonceDto(final int mosaicNonce) {
-    this.mosaicNonce = mosaicNonce;
-  }
+    /**
+     * Mosaic nonce.
+     */
+    private final int mosaicNonce;
 
-  /**
-   * Constructor - Creates an object from stream.
-   *
-   * @param stream Byte stream to use to serialize.
-   */
-  public MosaicNonceDto(final DataInput stream) {
-    try {
-      this.mosaicNonce = Integer.reverseBytes(stream.readInt());
-    } catch (Exception e) {
-      throw GeneratorUtils.getExceptionToPropagate(e);
+    /**
+     * Constructor.
+     *
+     * @param mosaicNonce Mosaic nonce.
+     */
+    public MosaicNonceDto(final int mosaicNonce) {
+        this.mosaicNonce = mosaicNonce;
     }
-  }
 
-  /**
-   * Gets Mosaic nonce.
-   *
-   * @return Mosaic nonce.
-   */
-  public int getMosaicNonce() {
-    return this.mosaicNonce;
-  }
+    /**
+     * Constructor - Creates an object from stream.
+     *
+     * @param stream Byte stream to use to serialize.
+     */
+    public MosaicNonceDto(final DataInput stream) {
+        try {
+            this.mosaicNonce = Integer.reverseBytes(stream.readInt());
+        } catch (Exception e) {
+            throw GeneratorUtils.getExceptionToPropagate(e);
+        }
+    }
 
-  /**
-   * Gets the size of the object.
-   *
-   * @return Size in bytes.
-   */
-  public int getSize() {
-    return 4;
-  }
+    /**
+     * Creates an instance of MosaicNonceDto from a stream.
+     *
+     * @param stream Byte stream to use to serialize the object.
+     * @return Instance of MosaicNonceDto.
+     */
+    public static MosaicNonceDto loadFromBinary(final DataInput stream) {
+        return new MosaicNonceDto(stream);
+    }
 
-  /**
-   * Creates an instance of MosaicNonceDto from a stream.
-   *
-   * @param stream Byte stream to use to serialize the object.
-   * @return Instance of MosaicNonceDto.
-   */
-  public static MosaicNonceDto loadFromBinary(final DataInput stream) {
-    return new MosaicNonceDto(stream);
-  }
+    /**
+     * Gets Mosaic nonce.
+     *
+     * @return Mosaic nonce.
+     */
+    public int getMosaicNonce() {
+        return this.mosaicNonce;
+    }
 
-  /**
-   * Serializes an object to bytes.
-   *
-   * @return Serialized bytes.
-   */
-  public byte[] serialize() {
-    return GeneratorUtils.serialize(
-        dataOutputStream -> {
-          dataOutputStream.writeInt(Integer.reverseBytes(this.getMosaicNonce()));
+    /**
+     * Gets the size of the object.
+     *
+     * @return Size in bytes.
+     */
+    public int getSize() {
+        return 4;
+    }
+
+    /**
+     * Serializes an object to bytes.
+     *
+     * @return Serialized bytes.
+     */
+    public byte[] serialize() {
+        return GeneratorUtils.serialize(dataOutputStream -> {
+            dataOutputStream.writeInt(Integer.reverseBytes(this.getMosaicNonce()));
         });
-  }
+    }
 }

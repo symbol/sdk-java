@@ -8,78 +8,86 @@
  * A PARTICULAR PURPOSE. See the ** GNU Lesser General Public License for more details. ** ** You
  * should have received a copy of the GNU Lesser General Public License ** along with Catapult. If
  * not, see <http://www.gnu.org/licenses/>.
- */
+ **/
+
 package io.nem.catapult.builders;
 
 import java.io.DataInput;
 
-/** Alias transaction action. */
+/**
+ * Enumeration of alias actions.
+ */
 public enum AliasActionDto {
-  /** Link alias. */
-  LINK((byte) 0),
-  /** Unlink alias. */
-  UNLINK((byte) 1);
+    /**
+     * Unlink alias.
+     */
+    UNLINK((byte) 0),
+    /**
+     * Link alias.
+     */
+    LINK((byte) 1);
 
-  /** Enum value. */
-  private final byte value;
+    /**
+     * Enum value.
+     */
+    private final byte value;
 
-  /**
-   * Constructor.
-   *
-   * @param value Enum value.
-   */
-  AliasActionDto(final byte value) {
-    this.value = value;
-  }
-
-  /**
-   * Gets enum value.
-   *
-   * @param value Raw value of the enum.
-   * @return Enum value.
-   */
-  public static AliasActionDto rawValueOf(final byte value) {
-    for (AliasActionDto current : AliasActionDto.values()) {
-      if (value == current.value) {
-        return current;
-      }
+    /**
+     * Constructor.
+     *
+     * @param value Enum value.
+     */
+    AliasActionDto(final byte value) {
+        this.value = value;
     }
-    throw new IllegalArgumentException(value + " was not a backing value for AliasActionDto.");
-  }
 
-  /**
-   * Gets the size of the object.
-   *
-   * @return Size in bytes.
-   */
-  public int getSize() {
-    return 1;
-  }
-
-  /**
-   * Creates an instance of AliasActionDto from a stream.
-   *
-   * @param stream Byte stream to use to serialize the object.
-   * @return Instance of AliasActionDto.
-   */
-  public static AliasActionDto loadFromBinary(final DataInput stream) {
-    try {
-      final byte streamValue = stream.readByte();
-      return rawValueOf(streamValue);
-    } catch (Exception e) {
-      throw GeneratorUtils.getExceptionToPropagate(e);
+    /**
+     * Gets enum value.
+     *
+     * @param value Raw value of the enum.
+     * @return Enum value.
+     */
+    public static AliasActionDto rawValueOf(final byte value) {
+        for (AliasActionDto current : AliasActionDto.values()) {
+            if (value == current.value) {
+                return current;
+            }
+        }
+        throw new IllegalArgumentException(value + " was not a backing value for AliasActionDto.");
     }
-  }
 
-  /**
-   * Serializes an object to bytes.
-   *
-   * @return Serialized bytes.
-   */
-  public byte[] serialize() {
-    return GeneratorUtils.serialize(
-        dataOutputStream -> {
-          dataOutputStream.writeByte(this.value);
+    /**
+     * Creates an instance of AliasActionDto from a stream.
+     *
+     * @param stream Byte stream to use to serialize the object.
+     * @return Instance of AliasActionDto.
+     */
+    public static AliasActionDto loadFromBinary(final DataInput stream) {
+        try {
+            final byte streamValue = stream.readByte();
+            return rawValueOf(streamValue);
+        } catch (Exception e) {
+            throw GeneratorUtils.getExceptionToPropagate(e);
+        }
+    }
+
+    /**
+     * Gets the size of the object.
+     *
+     * @return Size in bytes.
+     */
+    public int getSize() {
+        return 1;
+    }
+
+    /**
+     * Serializes an object to bytes.
+     *
+     * @return Serialized bytes.
+     */
+    public byte[] serialize() {
+        return GeneratorUtils.serialize(dataOutputStream -> {
+            dataOutputStream.writeByte(this.value);
         });
-  }
+    }
 }

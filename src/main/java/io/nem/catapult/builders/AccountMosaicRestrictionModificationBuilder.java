@@ -8,95 +8,103 @@
  * A PARTICULAR PURPOSE. See the ** GNU Lesser General Public License for more details. ** ** You
  * should have received a copy of the GNU Lesser General Public License ** along with Catapult. If
  * not, see <http://www.gnu.org/licenses/>.
- */
+ **/
+
 package io.nem.catapult.builders;
 
 import java.io.DataInput;
 
-/** Account mosaic restriction modification. */
-public final class AccountMosaicRestrictionModificationBuilder
-    extends AccountRestrictionModificationBuilder {
-  /** Value. */
-  private final MosaicIdDto value;
+/**
+ * Account mosaic restriction modification.
+ */
+public final class AccountMosaicRestrictionModificationBuilder extends
+    AccountRestrictionModificationBuilder {
 
-  /**
-   * Constructor - Creates an object from stream.
-   *
-   * @param stream Byte stream to use to serialize the object.
-   */
-  protected AccountMosaicRestrictionModificationBuilder(final DataInput stream) {
-    super(stream);
-    this.value = MosaicIdDto.loadFromBinary(stream);
-  }
+    /**
+     * Mosaic identifier restriction value.
+     */
+    private final UnresolvedMosaicIdDto value;
 
-  /**
-   * Constructor.
-   *
-   * @param modificationType Modification type.
-   * @param value Value.
-   */
-  protected AccountMosaicRestrictionModificationBuilder(
-      final AccountRestrictionModificationTypeDto modificationType, final MosaicIdDto value) {
-    super(modificationType);
-    GeneratorUtils.notNull(value, "value is null");
-    this.value = value;
-  }
+    /**
+     * Constructor - Creates an object from stream.
+     *
+     * @param stream Byte stream to use to serialize the object.
+     */
+    protected AccountMosaicRestrictionModificationBuilder(final DataInput stream) {
+        super(stream);
+        this.value = UnresolvedMosaicIdDto.loadFromBinary(stream);
+    }
 
-  /**
-   * Creates an instance of AccountMosaicRestrictionModificationBuilder.
-   *
-   * @param modificationType Modification type.
-   * @param value Value.
-   * @return Instance of AccountMosaicRestrictionModificationBuilder.
-   */
-  public static AccountMosaicRestrictionModificationBuilder create(
-      final AccountRestrictionModificationTypeDto modificationType, final MosaicIdDto value) {
-    return new AccountMosaicRestrictionModificationBuilder(modificationType, value);
-  }
+    /**
+     * Constructor.
+     *
+     * @param modificationAction Modification action.
+     * @param value Mosaic identifier restriction value.
+     */
+    protected AccountMosaicRestrictionModificationBuilder(
+        final AccountRestrictionModificationActionDto modificationAction,
+        final UnresolvedMosaicIdDto value) {
+        super(modificationAction);
+        GeneratorUtils.notNull(value, "value is null");
+        this.value = value;
+    }
 
-  /**
-   * Gets Value.
-   *
-   * @return Value.
-   */
-  public MosaicIdDto getValue() {
-    return this.value;
-  }
+    /**
+     * Creates an instance of AccountMosaicRestrictionModificationBuilder.
+     *
+     * @param modificationAction Modification action.
+     * @param value Mosaic identifier restriction value.
+     * @return Instance of AccountMosaicRestrictionModificationBuilder.
+     */
+    public static AccountMosaicRestrictionModificationBuilder create(
+        final AccountRestrictionModificationActionDto modificationAction,
+        final UnresolvedMosaicIdDto value) {
+        return new AccountMosaicRestrictionModificationBuilder(modificationAction, value);
+    }
 
-  /**
-   * Gets the size of the object.
-   *
-   * @return Size in bytes.
-   */
-  @Override
-  public int getSize() {
-    int size = super.getSize();
-    size += this.value.getSize();
-    return size;
-  }
+    /**
+     * Creates an instance of AccountMosaicRestrictionModificationBuilder from a stream.
+     *
+     * @param stream Byte stream to use to serialize the object.
+     * @return Instance of AccountMosaicRestrictionModificationBuilder.
+     */
+    public static AccountMosaicRestrictionModificationBuilder loadFromBinary(
+        final DataInput stream) {
+        return new AccountMosaicRestrictionModificationBuilder(stream);
+    }
 
-  /**
-   * Creates an instance of AccountMosaicRestrictionModificationBuilder from a stream.
-   *
-   * @param stream Byte stream to use to serialize the object.
-   * @return Instance of AccountMosaicRestrictionModificationBuilder.
-   */
-  public static AccountMosaicRestrictionModificationBuilder loadFromBinary(final DataInput stream) {
-    return new AccountMosaicRestrictionModificationBuilder(stream);
-  }
+    /**
+     * Gets mosaic identifier restriction value.
+     *
+     * @return Mosaic identifier restriction value.
+     */
+    public UnresolvedMosaicIdDto getValue() {
+        return this.value;
+    }
 
-  /**
-   * Serializes an object to bytes.
-   *
-   * @return Serialized bytes.
-   */
-  public byte[] serialize() {
-    return GeneratorUtils.serialize(
-        dataOutputStream -> {
-          final byte[] superBytes = super.serialize();
-          dataOutputStream.write(superBytes, 0, superBytes.length);
-          final byte[] valueBytes = this.value.serialize();
-          dataOutputStream.write(valueBytes, 0, valueBytes.length);
+    /**
+     * Gets the size of the object.
+     *
+     * @return Size in bytes.
+     */
+    @Override
+    public int getSize() {
+        int size = super.getSize();
+        size += this.value.getSize();
+        return size;
+    }
+
+    /**
+     * Serializes an object to bytes.
+     *
+     * @return Serialized bytes.
+     */
+    public byte[] serialize() {
+        return GeneratorUtils.serialize(dataOutputStream -> {
+            final byte[] superBytes = super.serialize();
+            dataOutputStream.write(superBytes, 0, superBytes.length);
+            final byte[] valueBytes = this.value.serialize();
+            dataOutputStream.write(valueBytes, 0, valueBytes.length);
         });
-  }
+    }
 }

@@ -8,79 +8,84 @@
  * A PARTICULAR PURPOSE. See the ** GNU Lesser General Public License for more details. ** ** You
  * should have received a copy of the GNU Lesser General Public License ** along with Catapult. If
  * not, see <http://www.gnu.org/licenses/>.
- */
+ **/
+
 package io.nem.catapult.builders;
 
 import java.io.DataInput;
 import java.nio.ByteBuffer;
 
-/** Key. */
+/**
+ * Key.
+ */
 public final class KeyDto {
-  /** Key. */
-  private final ByteBuffer key;
 
-  /**
-   * Constructor.
-   *
-   * @param key Key.
-   */
-  public KeyDto(final ByteBuffer key) {
-    GeneratorUtils.notNull(key, "key is null");
-    GeneratorUtils.isTrue(key.array().length == 32, "key should be 32 bytes");
-    this.key = key;
-  }
+    /**
+     * Key.
+     */
+    private final ByteBuffer key;
 
-  /**
-   * Constructor - Creates an object from stream.
-   *
-   * @param stream Byte stream to use to serialize.
-   */
-  public KeyDto(final DataInput stream) {
-    try {
-      this.key = ByteBuffer.allocate(32);
-      stream.readFully(this.key.array());
-    } catch (Exception e) {
-      throw GeneratorUtils.getExceptionToPropagate(e);
+    /**
+     * Constructor.
+     *
+     * @param key Key.
+     */
+    public KeyDto(final ByteBuffer key) {
+        GeneratorUtils.notNull(key, "key is null");
+        GeneratorUtils.isTrue(key.array().length == 32, "key should be 32 bytes");
+        this.key = key;
     }
-  }
 
-  /**
-   * Gets Key.
-   *
-   * @return Key.
-   */
-  public ByteBuffer getKey() {
-    return this.key;
-  }
+    /**
+     * Constructor - Creates an object from stream.
+     *
+     * @param stream Byte stream to use to serialize.
+     */
+    public KeyDto(final DataInput stream) {
+        try {
+            this.key = ByteBuffer.allocate(32);
+            stream.readFully(this.key.array());
+        } catch (Exception e) {
+            throw GeneratorUtils.getExceptionToPropagate(e);
+        }
+    }
 
-  /**
-   * Gets the size of the object.
-   *
-   * @return Size in bytes.
-   */
-  public int getSize() {
-    return 32;
-  }
+    /**
+     * Creates an instance of KeyDto from a stream.
+     *
+     * @param stream Byte stream to use to serialize the object.
+     * @return Instance of KeyDto.
+     */
+    public static KeyDto loadFromBinary(final DataInput stream) {
+        return new KeyDto(stream);
+    }
 
-  /**
-   * Creates an instance of KeyDto from a stream.
-   *
-   * @param stream Byte stream to use to serialize the object.
-   * @return Instance of KeyDto.
-   */
-  public static KeyDto loadFromBinary(final DataInput stream) {
-    return new KeyDto(stream);
-  }
+    /**
+     * Gets Key.
+     *
+     * @return Key.
+     */
+    public ByteBuffer getKey() {
+        return this.key;
+    }
 
-  /**
-   * Serializes an object to bytes.
-   *
-   * @return Serialized bytes.
-   */
-  public byte[] serialize() {
-    return GeneratorUtils.serialize(
-        dataOutputStream -> {
-          dataOutputStream.write(this.key.array(), 0, this.key.array().length);
+    /**
+     * Gets the size of the object.
+     *
+     * @return Size in bytes.
+     */
+    public int getSize() {
+        return 32;
+    }
+
+    /**
+     * Serializes an object to bytes.
+     *
+     * @return Serialized bytes.
+     */
+    public byte[] serialize() {
+        return GeneratorUtils.serialize(dataOutputStream -> {
+            dataOutputStream.write(this.key.array(), 0, this.key.array().length);
         });
-  }
+    }
 }

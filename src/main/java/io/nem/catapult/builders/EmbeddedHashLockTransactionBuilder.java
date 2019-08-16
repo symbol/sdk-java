@@ -8,130 +8,129 @@
  * A PARTICULAR PURPOSE. See the ** GNU Lesser General Public License for more details. ** ** You
  * should have received a copy of the GNU Lesser General Public License ** along with Catapult. If
  * not, see <http://www.gnu.org/licenses/>.
- */
+ **/
+
 package io.nem.catapult.builders;
 
 import java.io.DataInput;
 
-/** Binary layout for an embedded hash lock transaction. */
+/**
+ * Binary layout for an embedded hash lock transaction.
+ */
 public final class EmbeddedHashLockTransactionBuilder extends EmbeddedTransactionBuilder {
-  /** Hash lock transaction body. */
-  private final HashLockTransactionBodyBuilder hashLockTransactionBody;
 
-  /**
-   * Constructor - Creates an object from stream.
-   *
-   * @param stream Byte stream to use to serialize the object.
-   */
-  protected EmbeddedHashLockTransactionBuilder(final DataInput stream) {
-    super(stream);
-    this.hashLockTransactionBody = HashLockTransactionBodyBuilder.loadFromBinary(stream);
-  }
+    /**
+     * Hash lock transaction body.
+     */
+    private final HashLockTransactionBodyBuilder hashLockTransactionBody;
 
-  /**
-   * Constructor.
-   *
-   * @param signer Entity signer's public key.
-   * @param version Entity version.
-   * @param type Entity type.
-   * @param mosaic Lock mosaic.
-   * @param duration Number of blocks for which a lock should be valid.
-   * @param hash Lock hash.
-   */
-  protected EmbeddedHashLockTransactionBuilder(
-      final KeyDto signer,
-      final short version,
-      final EntityTypeDto type,
-      final UnresolvedMosaicBuilder mosaic,
-      final BlockDurationDto duration,
-      final Hash256Dto hash) {
-    super(signer, version, type);
-    this.hashLockTransactionBody = HashLockTransactionBodyBuilder.create(mosaic, duration, hash);
-  }
+    /**
+     * Constructor - Creates an object from stream.
+     *
+     * @param stream Byte stream to use to serialize the object.
+     */
+    protected EmbeddedHashLockTransactionBuilder(final DataInput stream) {
+        super(stream);
+        this.hashLockTransactionBody = HashLockTransactionBodyBuilder.loadFromBinary(stream);
+    }
 
-  /**
-   * Creates an instance of EmbeddedHashLockTransactionBuilder.
-   *
-   * @param signer Entity signer's public key.
-   * @param version Entity version.
-   * @param type Entity type.
-   * @param mosaic Lock mosaic.
-   * @param duration Number of blocks for which a lock should be valid.
-   * @param hash Lock hash.
-   * @return Instance of EmbeddedHashLockTransactionBuilder.
-   */
-  public static EmbeddedHashLockTransactionBuilder create(
-      final KeyDto signer,
-      final short version,
-      final EntityTypeDto type,
-      final UnresolvedMosaicBuilder mosaic,
-      final BlockDurationDto duration,
-      final Hash256Dto hash) {
-    return new EmbeddedHashLockTransactionBuilder(signer, version, type, mosaic, duration, hash);
-  }
+    /**
+     * Constructor.
+     *
+     * @param signer Entity signer's public key.
+     * @param version Entity version.
+     * @param type Entity type.
+     * @param mosaic Lock mosaic.
+     * @param duration Number of blocks for which a lock should be valid.
+     * @param hash Lock hash.
+     */
+    protected EmbeddedHashLockTransactionBuilder(final KeyDto signer, final short version,
+        final EntityTypeDto type, final UnresolvedMosaicBuilder mosaic,
+        final BlockDurationDto duration, final Hash256Dto hash) {
+        super(signer, version, type);
+        this.hashLockTransactionBody = HashLockTransactionBodyBuilder
+            .create(mosaic, duration, hash);
+    }
 
-  /**
-   * Gets lock mosaic.
-   *
-   * @return Lock mosaic.
-   */
-  public UnresolvedMosaicBuilder getMosaic() {
-    return this.hashLockTransactionBody.getMosaic();
-  }
+    /**
+     * Creates an instance of EmbeddedHashLockTransactionBuilder.
+     *
+     * @param signer Entity signer's public key.
+     * @param version Entity version.
+     * @param type Entity type.
+     * @param mosaic Lock mosaic.
+     * @param duration Number of blocks for which a lock should be valid.
+     * @param hash Lock hash.
+     * @return Instance of EmbeddedHashLockTransactionBuilder.
+     */
+    public static EmbeddedHashLockTransactionBuilder create(final KeyDto signer,
+        final short version, final EntityTypeDto type, final UnresolvedMosaicBuilder mosaic,
+        final BlockDurationDto duration, final Hash256Dto hash) {
+        return new EmbeddedHashLockTransactionBuilder(signer, version, type, mosaic, duration,
+            hash);
+    }
 
-  /**
-   * Gets number of blocks for which a lock should be valid.
-   *
-   * @return Number of blocks for which a lock should be valid.
-   */
-  public BlockDurationDto getDuration() {
-    return this.hashLockTransactionBody.getDuration();
-  }
+    /**
+     * Creates an instance of EmbeddedHashLockTransactionBuilder from a stream.
+     *
+     * @param stream Byte stream to use to serialize the object.
+     * @return Instance of EmbeddedHashLockTransactionBuilder.
+     */
+    public static EmbeddedHashLockTransactionBuilder loadFromBinary(final DataInput stream) {
+        return new EmbeddedHashLockTransactionBuilder(stream);
+    }
 
-  /**
-   * Gets lock hash.
-   *
-   * @return Lock hash.
-   */
-  public Hash256Dto getHash() {
-    return this.hashLockTransactionBody.getHash();
-  }
+    /**
+     * Gets lock mosaic.
+     *
+     * @return Lock mosaic.
+     */
+    public UnresolvedMosaicBuilder getMosaic() {
+        return this.hashLockTransactionBody.getMosaic();
+    }
 
-  /**
-   * Gets the size of the object.
-   *
-   * @return Size in bytes.
-   */
-  @Override
-  public int getSize() {
-    int size = super.getSize();
-    size += this.hashLockTransactionBody.getSize();
-    return size;
-  }
+    /**
+     * Gets number of blocks for which a lock should be valid.
+     *
+     * @return Number of blocks for which a lock should be valid.
+     */
+    public BlockDurationDto getDuration() {
+        return this.hashLockTransactionBody.getDuration();
+    }
 
-  /**
-   * Creates an instance of EmbeddedHashLockTransactionBuilder from a stream.
-   *
-   * @param stream Byte stream to use to serialize the object.
-   * @return Instance of EmbeddedHashLockTransactionBuilder.
-   */
-  public static EmbeddedHashLockTransactionBuilder loadFromBinary(final DataInput stream) {
-    return new EmbeddedHashLockTransactionBuilder(stream);
-  }
+    /**
+     * Gets lock hash.
+     *
+     * @return Lock hash.
+     */
+    public Hash256Dto getHash() {
+        return this.hashLockTransactionBody.getHash();
+    }
 
-  /**
-   * Serializes an object to bytes.
-   *
-   * @return Serialized bytes.
-   */
-  public byte[] serialize() {
-    return GeneratorUtils.serialize(
-        dataOutputStream -> {
-          final byte[] superBytes = super.serialize();
-          dataOutputStream.write(superBytes, 0, superBytes.length);
-          final byte[] hashLockTransactionBodyBytes = this.hashLockTransactionBody.serialize();
-          dataOutputStream.write(
-              hashLockTransactionBodyBytes, 0, hashLockTransactionBodyBytes.length);
+    /**
+     * Gets the size of the object.
+     *
+     * @return Size in bytes.
+     */
+    @Override
+    public int getSize() {
+        int size = super.getSize();
+        size += this.hashLockTransactionBody.getSize();
+        return size;
+    }
+
+    /**
+     * Serializes an object to bytes.
+     *
+     * @return Serialized bytes.
+     */
+    public byte[] serialize() {
+        return GeneratorUtils.serialize(dataOutputStream -> {
+            final byte[] superBytes = super.serialize();
+            dataOutputStream.write(superBytes, 0, superBytes.length);
+            final byte[] hashLockTransactionBodyBytes = this.hashLockTransactionBody.serialize();
+            dataOutputStream
+                .write(hashLockTransactionBodyBytes, 0, hashLockTransactionBodyBytes.length);
         });
-  }
+    }
 }

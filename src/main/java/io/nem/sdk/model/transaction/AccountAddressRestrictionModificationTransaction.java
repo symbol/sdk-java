@@ -17,15 +17,15 @@ package io.nem.sdk.model.transaction;
 
 import io.nem.catapult.builders.AccountAddressRestrictionModificationBuilder;
 import io.nem.catapult.builders.AccountAddressRestrictionTransactionBuilder;
-import io.nem.catapult.builders.AccountRestrictionModificationTypeDto;
+import io.nem.catapult.builders.AccountRestrictionModificationActionDto;
 import io.nem.catapult.builders.AccountRestrictionTypeDto;
-import io.nem.catapult.builders.AddressDto;
 import io.nem.catapult.builders.AmountDto;
 import io.nem.catapult.builders.EmbeddedAccountAddressRestrictionTransactionBuilder;
 import io.nem.catapult.builders.EntityTypeDto;
 import io.nem.catapult.builders.KeyDto;
 import io.nem.catapult.builders.SignatureDto;
 import io.nem.catapult.builders.TimestampDto;
+import io.nem.catapult.builders.UnresolvedAddressDto;
 import io.nem.sdk.model.account.Address;
 import io.nem.sdk.model.account.PublicAccount;
 import io.nem.sdk.model.blockchain.NetworkType;
@@ -205,9 +205,9 @@ public class AccountAddressRestrictionModificationTransaction extends Transactio
                 accountRestrictionModification.getValue().getByteBuffer();
             final AccountAddressRestrictionModificationBuilder builder =
                 AccountAddressRestrictionModificationBuilder.create(
-                    AccountRestrictionModificationTypeDto.rawValueOf(
+                    AccountRestrictionModificationActionDto.rawValueOf(
                         accountRestrictionModification.getModificationType().getValue()),
-                    new AddressDto(addressByteBuffer));
+                    new UnresolvedAddressDto(addressByteBuffer));
             modificationBuilder.add(builder);
         }
         return modificationBuilder;

@@ -8,87 +8,92 @@
  * A PARTICULAR PURPOSE. See the ** GNU Lesser General Public License for more details. ** ** You
  * should have received a copy of the GNU Lesser General Public License ** along with Catapult. If
  * not, see <http://www.gnu.org/licenses/>.
- */
+ **/
+
 package io.nem.catapult.builders;
 
 import java.io.DataInput;
 
-/** Account restriction basic modification. */
+/**
+ * Account restriction basic modification.
+ */
 public class AccountRestrictionModificationBuilder {
-  /** Modification type. */
-  private final AccountRestrictionModificationTypeDto modificationType;
 
-  /**
-   * Constructor - Creates an object from stream.
-   *
-   * @param stream Byte stream to use to serialize the object.
-   */
-  protected AccountRestrictionModificationBuilder(final DataInput stream) {
-    this.modificationType = AccountRestrictionModificationTypeDto.loadFromBinary(stream);
-  }
+    /**
+     * Modification action.
+     */
+    private final AccountRestrictionModificationActionDto modificationAction;
 
-  /**
-   * Constructor.
-   *
-   * @param modificationType Modification type.
-   */
-  protected AccountRestrictionModificationBuilder(
-      final AccountRestrictionModificationTypeDto modificationType) {
-    GeneratorUtils.notNull(modificationType, "modificationType is null");
-    this.modificationType = modificationType;
-  }
+    /**
+     * Constructor - Creates an object from stream.
+     *
+     * @param stream Byte stream to use to serialize the object.
+     */
+    protected AccountRestrictionModificationBuilder(final DataInput stream) {
+        this.modificationAction = AccountRestrictionModificationActionDto.loadFromBinary(stream);
+    }
 
-  /**
-   * Creates an instance of AccountRestrictionModificationBuilder.
-   *
-   * @param modificationType Modification type.
-   * @return Instance of AccountRestrictionModificationBuilder.
-   */
-  public static AccountRestrictionModificationBuilder create(
-      final AccountRestrictionModificationTypeDto modificationType) {
-    return new AccountRestrictionModificationBuilder(modificationType);
-  }
+    /**
+     * Constructor.
+     *
+     * @param modificationAction Modification action.
+     */
+    protected AccountRestrictionModificationBuilder(
+        final AccountRestrictionModificationActionDto modificationAction) {
+        GeneratorUtils.notNull(modificationAction, "modificationAction is null");
+        this.modificationAction = modificationAction;
+    }
 
-  /**
-   * Gets Modification type.
-   *
-   * @return Modification type.
-   */
-  public AccountRestrictionModificationTypeDto getModificationType() {
-    return this.modificationType;
-  }
+    /**
+     * Creates an instance of AccountRestrictionModificationBuilder.
+     *
+     * @param modificationAction Modification action.
+     * @return Instance of AccountRestrictionModificationBuilder.
+     */
+    public static AccountRestrictionModificationBuilder create(
+        final AccountRestrictionModificationActionDto modificationAction) {
+        return new AccountRestrictionModificationBuilder(modificationAction);
+    }
 
-  /**
-   * Gets the size of the object.
-   *
-   * @return Size in bytes.
-   */
-  public int getSize() {
-    int size = 0;
-    size += this.modificationType.getSize();
-    return size;
-  }
+    /**
+     * Creates an instance of AccountRestrictionModificationBuilder from a stream.
+     *
+     * @param stream Byte stream to use to serialize the object.
+     * @return Instance of AccountRestrictionModificationBuilder.
+     */
+    public static AccountRestrictionModificationBuilder loadFromBinary(final DataInput stream) {
+        return new AccountRestrictionModificationBuilder(stream);
+    }
 
-  /**
-   * Creates an instance of AccountRestrictionModificationBuilder from a stream.
-   *
-   * @param stream Byte stream to use to serialize the object.
-   * @return Instance of AccountRestrictionModificationBuilder.
-   */
-  public static AccountRestrictionModificationBuilder loadFromBinary(final DataInput stream) {
-    return new AccountRestrictionModificationBuilder(stream);
-  }
+    /**
+     * Gets modification action.
+     *
+     * @return Modification action.
+     */
+    public AccountRestrictionModificationActionDto getModificationAction() {
+        return this.modificationAction;
+    }
 
-  /**
-   * Serializes an object to bytes.
-   *
-   * @return Serialized bytes.
-   */
-  public byte[] serialize() {
-    return GeneratorUtils.serialize(
-        dataOutputStream -> {
-          final byte[] modificationTypeBytes = this.modificationType.serialize();
-          dataOutputStream.write(modificationTypeBytes, 0, modificationTypeBytes.length);
+    /**
+     * Gets the size of the object.
+     *
+     * @return Size in bytes.
+     */
+    public int getSize() {
+        int size = 0;
+        size += this.modificationAction.getSize();
+        return size;
+    }
+
+    /**
+     * Serializes an object to bytes.
+     *
+     * @return Serialized bytes.
+     */
+    public byte[] serialize() {
+        return GeneratorUtils.serialize(dataOutputStream -> {
+            final byte[] modificationActionBytes = this.modificationAction.serialize();
+            dataOutputStream.write(modificationActionBytes, 0, modificationActionBytes.length);
         });
-  }
+    }
 }

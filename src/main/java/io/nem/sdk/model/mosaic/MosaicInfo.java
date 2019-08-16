@@ -13,7 +13,6 @@ package io.nem.sdk.model.mosaic;
 
 import io.nem.sdk.model.account.PublicAccount;
 import java.math.BigInteger;
-import java.util.Optional;
 
 /**
  * The mosaic info structure contains its properties, the owner and the namespace to which it
@@ -29,14 +28,9 @@ public class MosaicInfo {
     private final Integer revision;
     private final MosaicProperties properties;
 
-    private MosaicInfo(
-        final String metaId,
-        final MosaicId mosaicId,
-        final BigInteger supply,
+    private MosaicInfo(final String metaId, final MosaicId mosaicId, final BigInteger supply,
         final BigInteger height,
-        final PublicAccount owner,
-        final Integer revision,
-        final MosaicProperties properties) {
+        final PublicAccount owner, final Integer revision, final MosaicProperties properties) {
         this.metaId = metaId;
         this.mosaicId = mosaicId;
         this.supply = supply;
@@ -46,14 +40,9 @@ public class MosaicInfo {
         this.properties = properties;
     }
 
-    public static MosaicInfo create(
-        final String metaId,
-        final MosaicId mosaicId,
-        final BigInteger supply,
-        final BigInteger height,
-        final PublicAccount owner,
-        final Integer revision,
-        final MosaicProperties properties) {
+    public static MosaicInfo create(final String metaId, final MosaicId mosaicId,
+        final BigInteger supply, final BigInteger height,
+        final PublicAccount owner, final Integer revision, final MosaicProperties properties) {
         return new MosaicInfo(metaId, mosaicId, supply, height, owner, revision, properties);
     }
 
@@ -134,7 +123,7 @@ public class MosaicInfo {
      *
      * @return the number of blocks from height it will be active
      */
-    public Optional<BigInteger> getDuration() {
+    public BigInteger getDuration() {
         return properties.getDuration();
     }
 
