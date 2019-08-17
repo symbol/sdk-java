@@ -16,6 +16,4 @@ install:
   - ./gradlew -b ./nem2-sdk-openapi-generator/build.gradle install
   - ./gradlew assemble -x javadoc
 script:
-  - ./gradlew test
-after_success:
-  - ./gradlew jacocoTestReport coveralls
+  - ./gradlew test jacocoTestReport coveralls
