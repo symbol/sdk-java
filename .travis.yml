@@ -18,4 +18,4 @@ install:
 script:
   - ./gradlew test
 after_success:
-  - ./gradlew jacocoTestReport
+  - ./gradlew jacocoTestReport coveralls
