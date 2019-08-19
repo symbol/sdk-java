@@ -24,6 +24,7 @@ import io.nem.sdk.model.account.Account;
 import io.nem.sdk.model.account.Address;
 import io.nem.sdk.model.account.PublicAccount;
 import io.nem.sdk.model.blockchain.NetworkType;
+import org.junit.Assert;
 
 /**
  * Abstract class for all the repository integration tests.

@@ -23,7 +23,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import io.nem.sdk.api.AccountRepository;
 import io.nem.sdk.api.TransactionRepository;
-import io.nem.sdk.infrastructure.legacy.Listener;
 import io.nem.sdk.model.account.Account;
 import io.nem.sdk.model.account.Address;
 import io.nem.sdk.model.blockchain.BlockInfo;
@@ -38,13 +37,14 @@ import io.nem.sdk.model.transaction.SignedTransaction;
 import io.nem.sdk.model.transaction.Transaction;
 import io.nem.sdk.model.transaction.TransactionStatusError;
 import io.nem.sdk.model.transaction.TransferTransaction;
-import java.io.IOException;
 import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.TestInstance;
@@ -52,8 +52,11 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-@Disabled
-class ListenerTest extends BaseIntegrationTest {
+class ListenerIntegrationTest extends BaseIntegrationTest {
+
+    private static final int TIMEOUT = 10;
+
+    private static final TimeUnit TIMEOUT_UNIT = TimeUnit.SECONDS;
 
     private Account account;
     private Account multisigAccount;
@@ -81,8 +84,9 @@ class ListenerTest extends BaseIntegrationTest {
 
     @ParameterizedTest
     @EnumSource(RepositoryType.class)
-    void shouldConnectToWebSocket() throws ExecutionException, InterruptedException, IOException {
-        Listener listener = new Listener(this.getApiUrl());
+    void shouldConnectToWebSocket(RepositoryType type)
+        throws ExecutionException, InterruptedException {
+        Listener listener = getRepositoryFactory(type).createListener();
         CompletableFuture<Void> connected = listener.open();
         connected.get();
         assertTrue(connected.isDone());
@@ -91,15 +95,14 @@ class ListenerTest extends BaseIntegrationTest {
 
     @ParameterizedTest
     @EnumSource(RepositoryType.class)
-    void shouldReturnNewBlockViaListener(
-        RepositoryType type)
-        throws ExecutionException, InterruptedException, IOException {
-        Listener listener = new Listener(this.getApiUrl());
+    void shouldReturnNewBlockViaListener(RepositoryType type)
+        throws ExecutionException, InterruptedException, TimeoutException {
+        Listener listener = getRepositoryFactory(type).createListener();
         listener.open().get();
 
         this.announceStandaloneTransferTransaction(type);
 
-        BlockInfo blockInfo = listener.newBlock().take(1).toFuture().get();
+        BlockInfo blockInfo = listener.newBlock().take(1).toFuture().get(TIMEOUT, TIMEOUT_UNIT);
 
         assertTrue(blockInfo.getHeight().intValue() > 0);
     }
@@ -108,24 +111,24 @@ class ListenerTest extends BaseIntegrationTest {
     @EnumSource(RepositoryType.class)
     void shouldReturnConfirmedTransactionAddressSignerViaListener(
         RepositoryType type)
-        throws ExecutionException, InterruptedException, IOException {
-        Listener listener = new Listener(this.getApiUrl());
+        throws ExecutionException, InterruptedException, TimeoutException {
+        Listener listener = getRepositoryFactory(type).createListener();
         listener.open().get();
 
         SignedTransaction signedTransaction = this.announceStandaloneTransferTransaction(type);
 
         Transaction transaction =
-            listener.confirmed(this.account.getAddress()).take(1).toFuture().get();
+            listener.confirmed(this.account.getAddress()).take(1).toFuture()
+                .get(TIMEOUT, TIMEOUT_UNIT);
         assertEquals(
             signedTransaction.getHash(), transaction.getTransactionInfo().get().getHash().get());
     }
 
     @ParameterizedTest
     @EnumSource(RepositoryType.class)
-    void shouldReturnConfirmedTransactionAddressRecipientViaListener(
-        RepositoryType type)
-        throws ExecutionException, InterruptedException, IOException {
-        Listener listener = new Listener(this.getApiUrl());
+    void shouldReturnConfirmedTransactionAddressRecipientViaListener(RepositoryType type)
+        throws ExecutionException, InterruptedException, TimeoutException {
+        Listener listener = getRepositoryFactory(type).createListener();
         listener.open().get();
 
         SignedTransaction signedTransaction = this.announceStandaloneTransferTransaction(type);
@@ -133,25 +136,23 @@ class ListenerTest extends BaseIntegrationTest {
         Transaction transaction =
             listener
                 .confirmed(Address.createFromRawAddress("SBILTA367K2LX2FEXG5TFWAS7GEFYAGY7QLFBYKC"))
-                .take(1)
-                .toFuture()
-                .get();
+                .take(1).toFuture().get(TIMEOUT, TIMEOUT_UNIT);
         assertEquals(
             signedTransaction.getHash(), transaction.getTransactionInfo().get().getHash().get());
     }
 
     @ParameterizedTest
     @EnumSource(RepositoryType.class)
-    void shouldReturnUnconfirmedAddedTransactionViaListener(
-        RepositoryType type)
-        throws ExecutionException, InterruptedException, IOException {
-        Listener listener = new Listener(this.getApiUrl());
+    void shouldReturnUnconfirmedAddedTransactionViaListener(RepositoryType type)
+        throws ExecutionException, InterruptedException, TimeoutException {
+        Listener listener = getRepositoryFactory(type).createListener();
         listener.open().get();
 
         SignedTransaction signedTransaction = this.announceStandaloneTransferTransaction(type);
 
         Transaction transaction =
-            listener.unconfirmedAdded(this.account.getAddress()).take(1).toFuture().get();
+            listener.unconfirmedAdded(this.account.getAddress()).take(1).toFuture()
+                .get(TIMEOUT, TIMEOUT_UNIT);
         assertEquals(
             signedTransaction.getHash(), transaction.getTransactionInfo().get().getHash().get());
     }
@@ -159,32 +160,32 @@ class ListenerTest extends BaseIntegrationTest {
     @ParameterizedTest
     @EnumSource(RepositoryType.class)
     @Disabled
-    void shouldReturnUnconfirmedRemovedTransactionViaListener(
-        RepositoryType type)
-        throws ExecutionException, InterruptedException, IOException {
-        Listener listener = new Listener(this.getApiUrl());
+    void shouldReturnUnconfirmedRemovedTransactionViaListener(RepositoryType type)
+        throws ExecutionException, InterruptedException, TimeoutException {
+        Listener listener = getRepositoryFactory(type).createListener();
         listener.open().get();
 
         SignedTransaction signedTransaction = this.announceStandaloneTransferTransaction(type);
 
         String transactionHash =
-            listener.unconfirmedRemoved(this.account.getAddress()).take(1).toFuture().get();
+            listener.unconfirmedRemoved(this.account.getAddress()).take(1).toFuture()
+                .get(TIMEOUT, TIMEOUT_UNIT);
         assertEquals(signedTransaction.getHash(), transactionHash);
     }
 
     @Disabled
     @ParameterizedTest
     @EnumSource(RepositoryType.class)
-    void shouldReturnAggregateBondedAddedTransactionViaListener(
-        RepositoryType type)
-        throws ExecutionException, InterruptedException, IOException {
-        Listener listener = new Listener(this.getApiUrl());
+    void shouldReturnAggregateBondedAddedTransactionViaListener(RepositoryType type)
+        throws ExecutionException, InterruptedException, TimeoutException {
+        Listener listener = getRepositoryFactory(type).createListener();
         listener.open().get();
 
         SignedTransaction signedTransaction = this.announceAggregateBondedTransaction(type);
 
         AggregateTransaction aggregateTransaction =
-            listener.aggregateBondedAdded(this.account.getAddress()).take(1).toFuture().get();
+            listener.aggregateBondedAdded(this.account.getAddress()).take(1).toFuture()
+                .get(TIMEOUT, TIMEOUT_UNIT);
         assertEquals(
             signedTransaction.getHash(), aggregateTransaction.getTransactionInfo().get().getHash());
     }
@@ -192,26 +193,25 @@ class ListenerTest extends BaseIntegrationTest {
     @Disabled
     @ParameterizedTest
     @EnumSource(RepositoryType.class)
-    void shouldReturnAggregateBondedRemovedTransactionViaListener(
-        RepositoryType type)
-        throws ExecutionException, InterruptedException, IOException {
-        Listener listener = new Listener(this.getApiUrl());
+    void shouldReturnAggregateBondedRemovedTransactionViaListener(RepositoryType type)
+        throws ExecutionException, InterruptedException, TimeoutException {
+        Listener listener = getRepositoryFactory(type).createListener();
         listener.open().get();
 
         SignedTransaction signedTransaction = this.announceAggregateBondedTransaction(type);
 
         String transactionHash =
-            listener.aggregateBondedRemoved(this.account.getAddress()).take(1).toFuture().get();
+            listener.aggregateBondedRemoved(this.account.getAddress()).take(1).toFuture()
+                .get(TIMEOUT, TIMEOUT_UNIT);
         assertEquals(signedTransaction.getHash(), transactionHash);
     }
 
     @Disabled
     @ParameterizedTest
     @EnumSource(RepositoryType.class)
-    void shouldReturnCosignatureAddedViaListener(
-        RepositoryType type)
-        throws ExecutionException, InterruptedException, IOException {
-        Listener listener = new Listener(this.getApiUrl());
+    void shouldReturnCosignatureAddedViaListener(RepositoryType type)
+        throws ExecutionException, InterruptedException, TimeoutException {
+        Listener listener = getRepositoryFactory(type).createListener();
         listener.open().get();
 
         SignedTransaction signedTransaction = this.announceAggregateBondedTransaction(type);
@@ -219,9 +219,7 @@ class ListenerTest extends BaseIntegrationTest {
         AggregateTransaction announcedTransaction =
             listener
                 .aggregateBondedAdded(this.cosignatoryAccount.getAddress())
-                .take(1)
-                .toFuture()
-                .get();
+                .take(1).toFuture().get(TIMEOUT, TIMEOUT_UNIT);
 
         assertEquals(
             signedTransaction.getHash(), announcedTransaction.getTransactionInfo().get().getHash());
@@ -229,8 +227,7 @@ class ListenerTest extends BaseIntegrationTest {
         List<AggregateTransaction> transactions =
             getAccountRepository(type)
                 .aggregateBondedTransactions(this.cosignatoryAccount.getPublicAccount())
-                .toFuture()
-                .get();
+                .toFuture().get(TIMEOUT, TIMEOUT_UNIT);
 
         AggregateTransaction transactionToCosign = transactions.get(0);
 
@@ -238,35 +235,34 @@ class ListenerTest extends BaseIntegrationTest {
 
         CosignatureSignedTransaction cosignatureSignedTransaction =
             listener.cosignatureAdded(this.cosignatoryAccount.getAddress()).take(1).toFuture()
-                .get();
+                .get(TIMEOUT, TIMEOUT_UNIT);
 
         assertEquals(cosignatureSignedTransaction.getSigner(),
             this.cosignatoryAccount2.getPublicKey());
     }
 
-    private AccountRepository getAccountRepository(
-        RepositoryType type) {
+    private AccountRepository getAccountRepository(RepositoryType type) {
         return getRepositoryFactory(type).createAccountRepository();
     }
 
     @ParameterizedTest
     @EnumSource(RepositoryType.class)
-    void shouldReturnTransactionStatusGivenAddedViaListener(
-        RepositoryType type)
-        throws ExecutionException, InterruptedException, IOException {
-        Listener listener = new Listener(this.getApiUrl());
+    void shouldReturnTransactionStatusGivenAddedViaListener(RepositoryType type)
+        throws ExecutionException, InterruptedException, TimeoutException {
+        Listener listener = getRepositoryFactory(type).createListener();
         listener.open().get();
 
         SignedTransaction signedTransaction =
             this.announceStandaloneTransferTransactionWithInsufficientBalance(type);
 
         TransactionStatusError transactionHash =
-            listener.status(this.account.getAddress()).take(1).toFuture().get();
+            listener.status(this.account.getAddress()).take(1).toFuture()
+                .get(TIMEOUT, TIMEOUT_UNIT);
         assertEquals(signedTransaction.getHash(), transactionHash.getHash());
     }
 
     private SignedTransaction announceStandaloneTransferTransaction(RepositoryType type)
-        throws ExecutionException, InterruptedException {
+        throws ExecutionException, InterruptedException, TimeoutException {
         TransferTransaction transferTransaction =
             TransferTransaction.create(
                 new Deadline(2, HOURS),
@@ -278,7 +274,8 @@ class ListenerTest extends BaseIntegrationTest {
 
         SignedTransaction signedTransaction = this.account
             .sign(transferTransaction, generationHash);
-        getTransactionRepository(type).announce(signedTransaction).toFuture().get();
+        getTransactionRepository(type).announce(signedTransaction).toFuture()
+            .get(TIMEOUT, TIMEOUT_UNIT);
         return signedTransaction;
     }
 
@@ -289,25 +286,27 @@ class ListenerTest extends BaseIntegrationTest {
 
     private SignedTransaction announceStandaloneTransferTransactionWithInsufficientBalance(
         RepositoryType type)
-        throws ExecutionException, InterruptedException {
+        throws ExecutionException, InterruptedException, TimeoutException {
         TransferTransaction transferTransaction =
             TransferTransaction.create(
                 new Deadline(2, HOURS),
                 BigInteger.ZERO,
                 new Address("SBILTA367K2LX2FEXG5TFWAS7GEFYAGY7QLFBYKC", NetworkType.MIJIN_TEST),
-                Arrays.asList(NetworkCurrencyMosaic.createRelative(new BigInteger("100000000000"))),
+                Collections.singletonList(
+                    NetworkCurrencyMosaic.createRelative(new BigInteger("100000000000"))),
                 PlainMessage.create("test-message"),
                 NetworkType.MIJIN_TEST);
 
         SignedTransaction signedTransaction = this.account
             .sign(transferTransaction, generationHash);
-        getTransactionRepository(type).announce(signedTransaction).toFuture().get();
+        getTransactionRepository(type).announce(signedTransaction).toFuture()
+            .get(TIMEOUT, TIMEOUT_UNIT);
         return signedTransaction;
     }
 
     private SignedTransaction announceAggregateBondedTransaction(
         RepositoryType type)
-        throws ExecutionException, InterruptedException {
+        throws ExecutionException, InterruptedException, TimeoutException {
         TransferTransaction transferTransaction =
             TransferTransaction.create(
                 new Deadline(2, HOURS),
@@ -327,14 +326,15 @@ class ListenerTest extends BaseIntegrationTest {
         SignedTransaction signedTransaction =
             this.cosignatoryAccount.sign(aggregateTransaction, generationHash);
 
-        getTransactionRepository(type).announceAggregateBonded(signedTransaction).toFuture().get();
+        getTransactionRepository(type).announceAggregateBonded(signedTransaction).toFuture()
+            .get(TIMEOUT, TIMEOUT_UNIT);
 
         return signedTransaction;
     }
 
     private CosignatureSignedTransaction announceCosignatureTransaction(
         AggregateTransaction transactionToCosign,
-        RepositoryType type) throws ExecutionException, InterruptedException {
+        RepositoryType type) throws ExecutionException, InterruptedException, TimeoutException {
         CosignatureTransaction cosignatureTransaction = new CosignatureTransaction(
             transactionToCosign);
 
@@ -343,8 +343,7 @@ class ListenerTest extends BaseIntegrationTest {
 
         getTransactionRepository(type)
             .announceAggregateBondedCosignature(cosignatureSignedTransaction)
-            .toFuture()
-            .get();
+            .toFuture().get(TIMEOUT, TIMEOUT_UNIT);
 
         return cosignatureSignedTransaction;
     }

@@ -59,7 +59,7 @@ public class BlockRepositoryVertxImpl extends AbstractRepositoryVertxImpl implem
     public Observable<BlockInfo> getBlockByHeight(BigInteger height) {
         Consumer<Handler<AsyncResult<BlockInfoDTO>>> callback = handler -> getClient()
             .getBlockByHeight(height.longValue(), handler);
-        return exceptionHandling(call(callback).map(this::toBlockInfo));
+        return exceptionHandling(call(callback).map(BlockRepositoryVertxImpl::toBlockInfo));
     }
 
     public Observable<List<Transaction>> getBlockTransactions(
@@ -78,7 +78,7 @@ public class BlockRepositoryVertxImpl extends AbstractRepositoryVertxImpl implem
             client.getBlocksByHeightWithLimit(height.longValue(), limit, handler);
 
         return exceptionHandling(
-            call(callback).flatMapIterable(item -> item).map(this::toBlockInfo).toList()
+            call(callback).flatMapIterable(item -> item).map(BlockRepositoryVertxImpl::toBlockInfo).toList()
                 .toObservable());
     }
 
@@ -134,7 +134,7 @@ public class BlockRepositoryVertxImpl extends AbstractRepositoryVertxImpl implem
         return new TransactionMappingVertx(getJsonHelper()).apply(input);
     }
 
-    private BlockInfo toBlockInfo(BlockInfoDTO blockInfoDTO) {
+    public static BlockInfo toBlockInfo(BlockInfoDTO blockInfoDTO) {
         return BlockInfo.create(
             blockInfoDTO.getMeta().getHash(),
             blockInfoDTO.getMeta().getGenerationHash(),

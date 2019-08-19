@@ -32,7 +32,6 @@ import io.nem.sdk.model.namespace.NamespaceName;
 import io.nem.sdk.model.namespace.NamespaceType;
 import io.nem.sdk.model.transaction.UInt64;
 import io.nem.sdk.openapi.okhttp_gson.api.NamespaceRoutesApi;
-import io.nem.sdk.openapi.okhttp_gson.invoker.ApiCallback;
 import io.nem.sdk.openapi.okhttp_gson.invoker.ApiClient;
 import io.nem.sdk.openapi.okhttp_gson.model.AccountIds;
 import io.nem.sdk.openapi.okhttp_gson.model.NamespaceDTO;
@@ -44,6 +43,7 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.Callable;
 import java.util.stream.Collectors;
 
 /**
@@ -67,8 +67,8 @@ public class NamespaceRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl 
 
     @Override
     public Observable<NamespaceInfo> getNamespace(NamespaceId namespaceId) {
-        ApiCall<ApiCallback<NamespaceInfoDTO>> callback = handler -> getClient()
-            .getNamespaceAsync(UInt64.bigIntegerToHex(namespaceId.getId()), handler);
+        Callable<NamespaceInfoDTO> callback = () -> getClient()
+            .getNamespace(UInt64.bigIntegerToHex(namespaceId.getId()));
         return exceptionHandling(call(callback).map(this::toNamespaceInfo));
     }
 
@@ -86,11 +86,11 @@ public class NamespaceRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl 
     private Observable<List<NamespaceInfo>> getNamespacesFromAccount(
         Address address, Optional<QueryParams> queryParams) {
 
-        ApiCall<ApiCallback<List<NamespaceInfoDTO>>> callback = (handler) ->
-            client.getNamespacesFromAccountAsync(address.plain(),
+        Callable<List<NamespaceInfoDTO>> callback = () ->
+            client.getNamespacesFromAccount(address.plain(),
                 getPageSize(queryParams),
-                getId(queryParams),
-                handler);
+                getId(queryParams)
+            );
 
         return exceptionHandling(
             call(callback).flatMapIterable(item -> item).map(this::toNamespaceInfo).toList()
@@ -116,8 +116,8 @@ public class NamespaceRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl 
             .addresses(addresses.stream().map(Address::plain).collect(
                 Collectors.toList()));
 
-        ApiCall<ApiCallback<List<NamespaceInfoDTO>>> callback = (handler) ->
-            client.getNamespacesFromAccountsAsync(accounts, handler);
+        Callable<List<NamespaceInfoDTO>> callback = () ->
+            client.getNamespacesFromAccounts(accounts);
 
         return exceptionHandling(
             call(callback).flatMapIterable(item -> item).map(this::toNamespaceInfo).toList()
@@ -133,8 +133,8 @@ public class NamespaceRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl 
                 .map(id -> UInt64.bigIntegerToHex(id.getId()))
                 .collect(Collectors.toList()));
 
-        ApiCall<ApiCallback<List<NamespaceNameDTO>>> callback = (handler) ->
-            client.getNamespacesNamesAsync(ids, handler);
+        Callable<List<NamespaceNameDTO>> callback = () ->
+            client.getNamespacesNames(ids);
 
         return exceptionHandling(
             call(callback).flatMapIterable(item -> item).map(this::toNamespaceName).toList()
@@ -163,8 +163,8 @@ public class NamespaceRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl 
      */
     @Override
     public Observable<MosaicId> getLinkedMosaicId(NamespaceId namespaceId) {
-        ApiCall<ApiCallback<NamespaceInfoDTO>> callback = handler -> getClient()
-            .getNamespaceAsync(UInt64.bigIntegerToHex(namespaceId.getId()), handler);
+        Callable<NamespaceInfoDTO> callback = () -> getClient()
+            .getNamespace(UInt64.bigIntegerToHex(namespaceId.getId()));
         return exceptionHandling(call(callback).map(namespaceInfoDTO -> this
             .toMosaicId(namespaceInfoDTO.getNamespace())));
     }
@@ -177,8 +177,8 @@ public class NamespaceRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl 
      */
     @Override
     public Observable<Address> getLinkedAddress(NamespaceId namespaceId) {
-        ApiCall<ApiCallback<NamespaceInfoDTO>> callback = handler -> getClient()
-            .getNamespaceAsync(UInt64.bigIntegerToHex(namespaceId.getId()), handler);
+        Callable<NamespaceInfoDTO> callback = () -> getClient()
+            .getNamespace(UInt64.bigIntegerToHex(namespaceId.getId()));
         return exceptionHandling(call(callback).map(namespaceInfoDTO -> this
             .toAddress(namespaceInfoDTO.getNamespace())));
     }

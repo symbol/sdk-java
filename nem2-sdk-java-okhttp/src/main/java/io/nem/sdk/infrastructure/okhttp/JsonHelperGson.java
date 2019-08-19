@@ -125,6 +125,12 @@ public class JsonHelperGson implements JsonHelper {
         return array;
     }
 
+    @Override
+    public boolean contains(Object object, String... path) {
+        JsonElement child = getNode(convert(object, JsonObject.class), path);
+        return child != null && !child.isJsonNull();
+    }
+
 
     private JsonElement getNode(final JsonObject parent, final String... path) {
         JsonElement child = parent;

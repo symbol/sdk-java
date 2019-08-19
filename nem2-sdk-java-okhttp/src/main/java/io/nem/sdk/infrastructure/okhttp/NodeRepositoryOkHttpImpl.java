@@ -22,12 +22,12 @@ import io.nem.sdk.model.node.NodeInfo;
 import io.nem.sdk.model.node.NodeTime;
 import io.nem.sdk.model.node.RoleType;
 import io.nem.sdk.openapi.okhttp_gson.api.NodeRoutesApi;
-import io.nem.sdk.openapi.okhttp_gson.invoker.ApiCallback;
 import io.nem.sdk.openapi.okhttp_gson.invoker.ApiClient;
 import io.nem.sdk.openapi.okhttp_gson.model.NodeInfoDTO;
 import io.nem.sdk.openapi.okhttp_gson.model.NodeTimeDTO;
 import io.reactivex.Observable;
 import java.math.BigInteger;
+import java.util.concurrent.Callable;
 
 /**
  * Node http repository.
@@ -53,10 +53,7 @@ public class NodeRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl imple
      * @return Observable<NodeInfo>
      */
     public Observable<NodeInfo> getNodeInfo() {
-        ApiCall<ApiCallback<NodeInfoDTO>> callback = handler -> getClient()
-            .getNodeInfoAsync(handler);
-        return exceptionHandling(
-            call(callback).map(this::toNodeInfo));
+        return exceptionHandling(call(getClient()::getNodeInfo).map(this::toNodeInfo));
     }
 
     private NodeInfo toNodeInfo(NodeInfoDTO nodeInfoDTO) {
@@ -76,8 +73,8 @@ public class NodeRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl imple
      * @return Observable<NodeTime>
      */
     public Observable<NodeTime> getNodeTime() {
-        ApiCall<ApiCallback<NodeTimeDTO>> callback = handler -> getClient()
-            .getNodeTimeAsync(handler);
+        Callable<NodeTimeDTO> callback = () -> getClient()
+            .getNodeTime();
         return exceptionHandling(
             call(callback).map(this::toNodeTime));
     }

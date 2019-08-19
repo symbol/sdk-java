@@ -50,7 +50,6 @@ class NodeRepositoryIntegrationTest extends BaseIntegrationTest {
     @EnumSource(RepositoryType.class)
     void getNodeTime(RepositoryType type) throws ExecutionException, InterruptedException {
         NodeTime nodeTime = getNodeRepository(type).getNodeTime().toFuture().get();
-
         assertTrue(nodeTime.getReceiveTimeStamp().longValue() > 0);
         assertTrue(nodeTime.getSendTimeStamp().longValue() > 0);
     }

@@ -25,13 +25,13 @@ import io.nem.sdk.model.mosaic.MosaicProperties;
 import io.nem.sdk.model.transaction.UInt64;
 import io.nem.sdk.model.transaction.UInt64Id;
 import io.nem.sdk.openapi.okhttp_gson.api.MosaicRoutesApi;
-import io.nem.sdk.openapi.okhttp_gson.invoker.ApiCallback;
 import io.nem.sdk.openapi.okhttp_gson.invoker.ApiClient;
 import io.nem.sdk.openapi.okhttp_gson.model.MosaicIds;
 import io.nem.sdk.openapi.okhttp_gson.model.MosaicInfoDTO;
 import io.nem.sdk.openapi.okhttp_gson.model.MosaicPropertyDTO;
 import io.reactivex.Observable;
 import java.util.List;
+import java.util.concurrent.Callable;
 import java.util.stream.Collectors;
 
 /**
@@ -57,8 +57,8 @@ public class MosaicRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl imp
     @Override
     public Observable<MosaicInfo> getMosaic(UInt64Id mosaicId) {
 
-        ApiCall<ApiCallback<MosaicInfoDTO>> callback = handler -> getClient()
-            .getMosaicAsync(UInt64.bigIntegerToHex(mosaicId.getId()), handler);
+        Callable<MosaicInfoDTO> callback = () -> getClient()
+            .getMosaic(UInt64.bigIntegerToHex(mosaicId.getId()));
         return exceptionHandling(call(callback).map(this::createMosaicInfo));
     }
 
@@ -69,8 +69,8 @@ public class MosaicRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl imp
         mosaicIds.mosaicIds(ids.stream()
             .map(id -> UInt64.bigIntegerToHex(id.getId()))
             .collect(Collectors.toList()));
-        ApiCall<ApiCallback<List<MosaicInfoDTO>>> callback = handler -> getClient()
-            .getMosaicsAsync(mosaicIds, handler);
+        Callable<List<MosaicInfoDTO>> callback = () -> getClient()
+            .getMosaics(mosaicIds);
         return exceptionHandling(
             call(callback).flatMapIterable(item -> item).map(this::createMosaicInfo).toList()
                 .toObservable());

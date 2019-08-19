@@ -24,7 +24,6 @@ import io.nem.sdk.model.transaction.Transaction;
 import io.nem.sdk.model.transaction.TransactionAnnounceResponse;
 import io.nem.sdk.model.transaction.TransactionStatus;
 import io.nem.sdk.openapi.okhttp_gson.api.TransactionRoutesApi;
-import io.nem.sdk.openapi.okhttp_gson.invoker.ApiCallback;
 import io.nem.sdk.openapi.okhttp_gson.invoker.ApiClient;
 import io.nem.sdk.openapi.okhttp_gson.model.AnnounceTransactionInfoDTO;
 import io.nem.sdk.openapi.okhttp_gson.model.Cosignature;
@@ -35,6 +34,7 @@ import io.nem.sdk.openapi.okhttp_gson.model.TransactionPayload;
 import io.nem.sdk.openapi.okhttp_gson.model.TransactionStatusDTO;
 import io.reactivex.Observable;
 import java.util.List;
+import java.util.concurrent.Callable;
 
 /**
  * Transaction http repository.
@@ -58,8 +58,8 @@ public class TransactionRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImp
 
     @Override
     public Observable<Transaction> getTransaction(String transactionHash) {
-        ApiCall<ApiCallback<TransactionInfoDTO>> callback = handler -> getClient()
-            .getTransactionAsync(transactionHash, handler);
+        Callable<TransactionInfoDTO> callback = () -> getClient()
+            .getTransaction(transactionHash);
         return exceptionHandling(call(callback).map(this::toTransaction));
     }
 
@@ -69,9 +69,8 @@ public class TransactionRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImp
 
     @Override
     public Observable<List<Transaction>> getTransactions(List<String> transactionHashes) {
-        ApiCall<ApiCallback<List<TransactionInfoDTO>>> callback = (handler) ->
-            client.getTransactionsAsync(new TransactionIds().transactionIds(transactionHashes),
-                handler);
+        Callable<List<TransactionInfoDTO>> callback = () ->
+            client.getTransactions(new TransactionIds().transactionIds(transactionHashes));
         return exceptionHandling(
             call(callback).flatMapIterable(item -> item).map(this::toTransaction).toList()
                 .toObservable());
@@ -81,8 +80,8 @@ public class TransactionRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImp
 
     @Override
     public Observable<TransactionStatus> getTransactionStatus(String transactionHash) {
-        ApiCall<ApiCallback<TransactionStatusDTO>> callback = handler -> getClient()
-            .getTransactionStatusAsync(transactionHash, handler);
+        Callable<TransactionStatusDTO> callback = () -> getClient()
+            .getTransactionStatus(transactionHash);
         return exceptionHandling(call(callback).map(this::toTransactionStatus));
     }
 
@@ -98,9 +97,8 @@ public class TransactionRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImp
     @Override
     public Observable<List<TransactionStatus>> getTransactionStatuses(
         List<String> transactionHashes) {
-        ApiCall<ApiCallback<List<TransactionStatusDTO>>> callback = (handler) ->
-            client.getTransactionsStatusesAsync(new TransactionHashes().hashes(transactionHashes),
-                handler);
+        Callable<List<TransactionStatusDTO>> callback = () ->
+            client.getTransactionsStatuses(new TransactionHashes().hashes(transactionHashes));
         return exceptionHandling(
             call(callback).flatMapIterable(item -> item).map(this::toTransactionStatus).toList()
                 .toObservable());
@@ -110,10 +108,9 @@ public class TransactionRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImp
     @Override
     public Observable<TransactionAnnounceResponse> announce(SignedTransaction signedTransaction) {
 
-        ApiCall<ApiCallback<AnnounceTransactionInfoDTO>> callback = handler -> getClient()
-            .announceTransactionAsync(
-                new TransactionPayload().payload(signedTransaction.getPayload()),
-                handler);
+        Callable<AnnounceTransactionInfoDTO> callback = () -> getClient()
+            .announceTransaction(
+                new TransactionPayload().payload(signedTransaction.getPayload()));
         return exceptionHandling(
             call(callback).map(dto -> new TransactionAnnounceResponse(dto.getMessage())));
     }
@@ -121,10 +118,9 @@ public class TransactionRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImp
     @Override
     public Observable<TransactionAnnounceResponse> announceAggregateBonded(
         SignedTransaction signedTransaction) {
-        ApiCall<ApiCallback<AnnounceTransactionInfoDTO>> callback = handler -> getClient()
-            .announcePartialTransactionAsync(
-                new TransactionPayload().payload(signedTransaction.getPayload()),
-                handler);
+        Callable<AnnounceTransactionInfoDTO> callback = () -> getClient()
+            .announcePartialTransaction(
+                new TransactionPayload().payload(signedTransaction.getPayload()));
         return exceptionHandling(
             call(callback).map(dto -> new TransactionAnnounceResponse(dto.getMessage())));
     }
@@ -133,12 +129,11 @@ public class TransactionRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImp
     public Observable<TransactionAnnounceResponse> announceAggregateBondedCosignature(
         CosignatureSignedTransaction cosignatureSignedTransaction) {
 
-        ApiCall<ApiCallback<AnnounceTransactionInfoDTO>> callback = handler -> getClient()
-            .announceCosignatureTransactionAsync(
+        Callable<AnnounceTransactionInfoDTO> callback = () -> getClient()
+            .announceCosignatureTransaction(
                 new Cosignature().parentHash(cosignatureSignedTransaction.getParentHash())
                     .signature(cosignatureSignedTransaction.getSignature())
-                    .signature(cosignatureSignedTransaction.getSigner()),
-                handler);
+                    .signature(cosignatureSignedTransaction.getSigner()));
         return exceptionHandling(
             call(callback).map(dto -> new TransactionAnnounceResponse(dto.getMessage())));
 

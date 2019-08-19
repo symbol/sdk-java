@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import io.nem.core.crypto.Hashes;
 import io.nem.sdk.api.TransactionRepository;
-import io.nem.sdk.infrastructure.legacy.Listener;
+import io.nem.sdk.infrastructure.legacy.ListenerLegacy;
 import io.nem.sdk.model.account.Account;
 import io.nem.sdk.model.account.Address;
 import io.nem.sdk.model.blockchain.NetworkType;
@@ -50,7 +50,6 @@ import io.nem.sdk.model.transaction.SignedTransaction;
 import io.nem.sdk.model.transaction.Transaction;
 import io.nem.sdk.model.transaction.TransactionAnnounceResponse;
 import io.nem.sdk.model.transaction.TransferTransaction;
-import java.io.IOException;
 import java.math.BigInteger;
 import java.util.Collections;
 import java.util.Random;
@@ -78,7 +77,7 @@ class E2EIntegrationTest extends BaseIntegrationTest {
     private long timeoutSeconds;
 
     @BeforeAll
-    void setup() throws ExecutionException, InterruptedException, IOException {
+    void setup() throws ExecutionException, InterruptedException {
         account = this.getTestAccount();
         recipient = this.getRecipient();
         multisigAccount = this.getTestMultisigAccount();
@@ -86,7 +85,7 @@ class E2EIntegrationTest extends BaseIntegrationTest {
         cosignatoryAccount2 = this.getTestCosignatoryAccount2();
         generationHash = this.getGenerationHash();
         timeoutSeconds = this.getTimeoutSeconds();
-        listener = new Listener(this.getApiUrl());
+        listener = new ListenerLegacy(this.getApiUrl());
         listener.open().get();
     }
 

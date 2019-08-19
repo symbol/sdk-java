@@ -26,9 +26,11 @@ import io.nem.sdk.api.NetworkRepository;
 import io.nem.sdk.api.NodeRepository;
 import io.nem.sdk.api.RepositoryFactory;
 import io.nem.sdk.api.TransactionRepository;
+import io.nem.sdk.infrastructure.Listener;
 
 /**
- * Legacy implementation of a {@link io.nem.sdk.api.RepositoryFactory} that uses manual endpoints and mappers.
+ * Legacy implementation of a {@link io.nem.sdk.api.RepositoryFactory} that uses manual endpoints
+ * and mappers.
  *
  * @author Fernando Boucquez
  */
@@ -92,5 +94,10 @@ public class RepositoryFactoryLegacyImpl implements RepositoryFactory {
     @Override
     public TransactionRepository createTransactionRepository() {
         return new TransactionHttp(host, networkHttp);
+    }
+
+    @Override
+    public Listener createListener() {
+        return new ListenerLegacy(host);
     }
 }

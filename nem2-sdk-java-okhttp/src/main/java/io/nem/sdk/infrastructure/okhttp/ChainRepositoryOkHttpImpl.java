@@ -20,12 +20,12 @@ import io.nem.sdk.api.ChainRepository;
 import io.nem.sdk.model.blockchain.BlockchainScore;
 import io.nem.sdk.model.transaction.UInt64;
 import io.nem.sdk.openapi.okhttp_gson.api.ChainRoutesApi;
-import io.nem.sdk.openapi.okhttp_gson.invoker.ApiCallback;
 import io.nem.sdk.openapi.okhttp_gson.invoker.ApiClient;
 import io.nem.sdk.openapi.okhttp_gson.model.ChainScoreDTO;
 import io.nem.sdk.openapi.okhttp_gson.model.HeightInfoDTO;
 import io.reactivex.Observable;
 import java.math.BigInteger;
+import java.util.concurrent.Callable;
 
 /**
  * Chain http repository.
@@ -47,11 +47,11 @@ public class ChainRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl impl
     /**
      * Get Block chain height
      *
-     * @return Observable<BigInteger>
+     * @return io.reactivex.Observable of {@link BigInteger}
      */
     public Observable<BigInteger> getBlockchainHeight() {
 
-        ApiCall<ApiCallback<HeightInfoDTO>> callback = client::getBlockchainHeightAsync;
+        Callable<HeightInfoDTO> callback = client::getBlockchainHeight;
         return exceptionHandling(
             call(callback).map(blockchainHeight -> extractIntArray(blockchainHeight.getHeight())));
 
@@ -60,10 +60,10 @@ public class ChainRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl impl
     /**
      * Get Block chain score
      *
-     * @return Observable<BigInteger>
+     * @return io.reactivex.Observable of {@link BigInteger}
      */
     public Observable<BlockchainScore> getBlockchainScore() {
-        ApiCall<ApiCallback<ChainScoreDTO>> callback = client::getChainScoreAsync;
+        Callable<ChainScoreDTO> callback = client::getChainScore;
         return exceptionHandling(call(callback).map(
             blockchainScoreDTO ->
                 new BlockchainScore(

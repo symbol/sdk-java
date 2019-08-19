@@ -26,6 +26,7 @@ import io.nem.sdk.api.NetworkRepository;
 import io.nem.sdk.api.NodeRepository;
 import io.nem.sdk.api.RepositoryFactory;
 import io.nem.sdk.api.TransactionRepository;
+import io.nem.sdk.infrastructure.Listener;
 import io.nem.sdk.openapi.okhttp_gson.invoker.ApiClient;
 import io.nem.sdk.openapi.okhttp_gson.invoker.JSON;
 import io.nem.sdk.openapi.okhttp_gson.invoker.JSON.ByteArrayAdapter;
@@ -49,9 +50,12 @@ public class RepositoryFactoryOkHttpImpl implements RepositoryFactory {
 
     private final ApiClient apiClient;
 
-    public RepositoryFactoryOkHttpImpl(String host) {
+    private final String baseUrl;
+
+    public RepositoryFactoryOkHttpImpl(String baseUrl) {
+        this.baseUrl = baseUrl;
         this.apiClient = new ApiClient();
-        this.apiClient.setBasePath(host);
+        this.apiClient.setBasePath(baseUrl);
 
         JSON json = apiClient.getJSON();
 
@@ -114,5 +118,10 @@ public class RepositoryFactoryOkHttpImpl implements RepositoryFactory {
     @Override
     public TransactionRepository createTransactionRepository() {
         return new TransactionRepositoryOkHttpImpl(apiClient);
+    }
+
+    @Override
+    public Listener createListener() {
+        return new ListenerOkHttp(baseUrl, apiClient.getJSON());
     }
 }

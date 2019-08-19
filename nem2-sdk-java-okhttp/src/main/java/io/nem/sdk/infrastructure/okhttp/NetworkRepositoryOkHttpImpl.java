@@ -19,7 +19,6 @@ package io.nem.sdk.infrastructure.okhttp;
 import io.nem.sdk.api.NetworkRepository;
 import io.nem.sdk.model.blockchain.NetworkType;
 import io.nem.sdk.openapi.okhttp_gson.api.NetworkRoutesApi;
-import io.nem.sdk.openapi.okhttp_gson.invoker.ApiCallback;
 import io.nem.sdk.openapi.okhttp_gson.invoker.ApiClient;
 import io.nem.sdk.openapi.okhttp_gson.model.NetworkTypeDTO;
 import io.reactivex.Observable;
@@ -41,9 +40,8 @@ public class NetworkRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl im
 
     @Override
     public Observable<NetworkType> getNetworkType() {
-        ApiCall<ApiCallback<NetworkTypeDTO>> callback = client::getNetworkTypeAsync;
         return exceptionHandling(
-            call(callback).map(NetworkTypeDTO::getName).map(this::getNetworkType));
+            call(client::getNetworkType).map(NetworkTypeDTO::getName).map(this::getNetworkType));
     }
 
     private NetworkType getNetworkType(String name) {

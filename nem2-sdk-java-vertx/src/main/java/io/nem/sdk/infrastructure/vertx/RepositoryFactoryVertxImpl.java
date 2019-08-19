@@ -27,6 +27,7 @@ import io.nem.sdk.api.NetworkRepository;
 import io.nem.sdk.api.NodeRepository;
 import io.nem.sdk.api.RepositoryFactory;
 import io.nem.sdk.api.TransactionRepository;
+import io.nem.sdk.infrastructure.Listener;
 import io.nem.sdk.model.blockchain.NetworkType;
 import io.nem.sdk.openapi.vertx.invoker.ApiClient;
 import io.vertx.core.Vertx;
@@ -49,11 +50,15 @@ public class RepositoryFactoryVertxImpl implements RepositoryFactory {
 
     private final Supplier<NetworkType> networkType;
 
-    public RepositoryFactoryVertxImpl(String host) {
+    private final WebClient webClient;
 
+    private final String baseUrl;
+
+    public RepositoryFactoryVertxImpl(String baseUrl) {
+        this.baseUrl = baseUrl;
         Vertx vertx = Vertx.vertx();
-        final WebClient webClient = WebClient.create(vertx);
-        this.apiClient = new ApiClient(vertx, new JsonObject().put("basePath", host)) {
+        webClient = WebClient.create(vertx);
+        this.apiClient = new ApiClient(vertx, new JsonObject().put("basePath", baseUrl)) {
             @Override
             public synchronized WebClient getWebClient() {
                 return webClient;
@@ -121,5 +126,10 @@ public class RepositoryFactoryVertxImpl implements RepositoryFactory {
     @Override
     public TransactionRepository createTransactionRepository() {
         return new TransactionRepositoryVertxImpl(apiClient, networkType);
+    }
+
+    @Override
+    public Listener createListener() {
+        return new ListenerVertx(baseUrl);
     }
 }

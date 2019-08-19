@@ -30,7 +30,6 @@ import io.nem.sdk.model.transaction.AggregateTransaction;
 import io.nem.sdk.model.transaction.Transaction;
 import io.nem.sdk.model.transaction.UInt64;
 import io.nem.sdk.openapi.okhttp_gson.api.AccountRoutesApi;
-import io.nem.sdk.openapi.okhttp_gson.invoker.ApiCallback;
 import io.nem.sdk.openapi.okhttp_gson.invoker.ApiClient;
 import io.nem.sdk.openapi.okhttp_gson.model.AccountDTO;
 import io.nem.sdk.openapi.okhttp_gson.model.AccountIds;
@@ -44,6 +43,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.Callable;
 import java.util.stream.Collectors;
 import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.binary.Base32;
@@ -72,8 +72,8 @@ public class AccountRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl im
     @Override
     public Observable<AccountInfo> getAccountInfo(Address address) {
 
-        ApiCall<ApiCallback<AccountInfoDTO>> callback = handler -> getClient()
-            .getAccountInfoAsync(address.plain(), handler);
+        Callable<AccountInfoDTO> callback = () -> getClient()
+            .getAccountInfo(address.plain());
         return exceptionHandling(
             call(callback).map(AccountInfoDTO::getAccount).map(this::toAccountInfo));
     }
@@ -82,8 +82,8 @@ public class AccountRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl im
     public Observable<List<AccountInfo>> getAccountsInfo(List<Address> addresses) {
         AccountIds accountIds = new AccountIds()
             .addresses(addresses.stream().map(Address::plain).collect(Collectors.toList()));
-        ApiCall<ApiCallback<List<AccountInfoDTO>>> callback = handler -> getClient()
-            .getAccountsInfoAsync(accountIds, handler);
+        Callable<List<AccountInfoDTO>> callback = () -> getClient()
+            .getAccountsInfo(accountIds);
         return exceptionHandling(
             call(callback).flatMapIterable(item -> item)
                 .map(AccountInfoDTO::getAccount)
@@ -93,8 +93,7 @@ public class AccountRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl im
     @Override
     public Observable<MultisigAccountInfo> getMultisigAccountInfo(Address address) {
         return exceptionHandling(call(
-            (ApiCallback<MultisigAccountInfoDTO> handler) -> getClient()
-                .getAccountMultisigAsync(address.plain(), handler))
+            () -> getClient().getAccountMultisig(address.plain()))
             .map(MultisigAccountInfoDTO::getMultisig)
             .map(this::toMultisigAccountInfo));
 
@@ -105,8 +104,8 @@ public class AccountRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl im
     public Observable<MultisigAccountGraphInfo> getMultisigAccountGraphInfo(Address address) {
 
         return exceptionHandling(call(
-            (ApiCallback<List<MultisigAccountGraphInfoDTO>> handler) -> getClient()
-                .getAccountMultisigGraphAsync(address.plain(), handler))
+            () -> getClient()
+                .getAccountMultisigGraph(address.plain()))
             .map(
                 multisigAccountGraphInfoDTOList -> {
                     Map<Integer, List<MultisigAccountInfo>> multisigAccountInfoMap =
@@ -142,12 +141,11 @@ public class AccountRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl im
     private Observable<List<Transaction>> transactions(
         PublicAccount publicAccount, Optional<QueryParams> queryParams) {
 
-        ApiCall<ApiCallback<List<TransactionInfoDTO>>> callback = (handler) ->
-            client.transactionsAsync(publicAccount.getPublicKey().toString(),
+        Callable<List<TransactionInfoDTO>> callback = () ->
+            client.transactions(publicAccount.getPublicKey().toString(),
                 getPageSize(queryParams),
                 getId(queryParams),
-                null,
-                handler);
+                null);
 
         return exceptionHandling(
             call(callback).flatMapIterable(item -> item).map(this::toTransaction).toList()
@@ -168,12 +166,9 @@ public class AccountRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl im
     private Observable<List<Transaction>> incomingTransactions(
         PublicAccount publicAccount, Optional<QueryParams> queryParams) {
 
-        ApiCall<ApiCallback<List<TransactionInfoDTO>>> callback = (handler) ->
-            client.incomingTransactionsAsync(publicAccount.getPublicKey().toString(),
-                getPageSize(queryParams),
-                getId(queryParams),
-                null,
-                handler);
+        Callable<List<TransactionInfoDTO>> callback = () ->
+            client.incomingTransactions(publicAccount.getPublicKey().toString(),
+                getPageSize(queryParams), getId(queryParams), null);
 
         return exceptionHandling(
             call(callback).flatMapIterable(item -> item).map(this::toTransaction).toList()
@@ -194,12 +189,10 @@ public class AccountRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl im
     private Observable<List<Transaction>> outgoingTransactions(
         PublicAccount publicAccount, Optional<QueryParams> queryParams) {
 
-        ApiCall<ApiCallback<List<TransactionInfoDTO>>> callback = (handler) ->
-            client.outgoingTransactionsAsync(publicAccount.getPublicKey().toString(),
+        Callable<List<TransactionInfoDTO>> callback = () ->
+            client.outgoingTransactions(publicAccount.getPublicKey().toString(),
                 getPageSize(queryParams),
-                getId(queryParams),
-                null,
-                handler);
+                getId(queryParams), null);
 
         return exceptionHandling(
             call(callback).flatMapIterable(item -> item).map(this::toTransaction).toList()
@@ -226,12 +219,9 @@ public class AccountRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl im
     private Observable<List<AggregateTransaction>> aggregateBondedTransactions(
         PublicAccount publicAccount, Optional<QueryParams> queryParams) {
 
-        ApiCall<ApiCallback<List<TransactionInfoDTO>>> callback = (handler) ->
-            client.partialTransactionsAsync(publicAccount.getPublicKey().toString(),
-                getPageSize(queryParams),
-                getId(queryParams),
-                null,
-                handler);
+        Callable<List<TransactionInfoDTO>> callback = () ->
+            client.partialTransactions(publicAccount.getPublicKey().toString(),
+                getPageSize(queryParams), getId(queryParams), null);
 
         return exceptionHandling(
             call(callback).flatMapIterable(item -> item).map(this::toTransaction)
@@ -252,12 +242,10 @@ public class AccountRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl im
 
     private Observable<List<Transaction>> unconfirmedTransactions(
         PublicAccount publicAccount, Optional<QueryParams> queryParams) {
-        ApiCall<ApiCallback<List<TransactionInfoDTO>>> callback = (handler) ->
-            client.unconfirmedTransactionsAsync(publicAccount.getPublicKey().toString(),
+        Callable<List<TransactionInfoDTO>> callback = () ->
+            client.unconfirmedTransactions(publicAccount.getPublicKey().toString(),
                 getPageSize(queryParams),
-                getId(queryParams),
-                null,
-                handler);
+                getId(queryParams), null);
         return exceptionHandling(
             call(callback).flatMapIterable(item -> item).map(this::toTransaction).toList()
                 .toObservable());

@@ -369,7 +369,7 @@ public class VertxTransactionMappingTest {
         assertTrue(transaction.getNetworkType().getValue() == networkType);
         assertEquals(
             extractBigInteger(
-                jsonHelper.getLongList(parentTransaction.getTransaction(), "max_fee")),
+                jsonHelper.getLongList(parentTransaction.getTransaction(), "maxFee")),
             transaction.getFee());
         assertNotNull(transaction.getDeadline());
 
@@ -448,7 +448,7 @@ public class VertxTransactionMappingTest {
         assertEquals(aggregateTransaction.getType().getValue(),
             (int) jsonHelper.getInteger(transactionDto.getTransaction(), "type"));
         assertEquals(
-            extractBigInteger(jsonHelper.getLongList(transactionDto.getTransaction(), "max_fee")),
+            extractBigInteger(jsonHelper.getLongList(transactionDto.getTransaction(), "maxFee")),
             aggregateTransaction.getFee());
         assertNotNull(aggregateTransaction.getDeadline());
 

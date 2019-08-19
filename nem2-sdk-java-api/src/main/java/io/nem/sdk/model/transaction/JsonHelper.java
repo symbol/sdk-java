@@ -140,4 +140,13 @@ public interface JsonHelper {
      * @return an Long or null if the path doesn't exist or is null.
      */
     List<Long> getLongList(Object object, String... path);
+
+    /**
+     * This method retrieves if there is a field/value for the given path.
+     *
+     * @param object the object
+     * @param path the path
+     * @return if there is a attribute set in the object following the giving path.
+     */
+    boolean contains(Object object, String... path);
 }

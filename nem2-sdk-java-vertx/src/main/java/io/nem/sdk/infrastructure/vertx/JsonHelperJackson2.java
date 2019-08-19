@@ -133,6 +133,12 @@ public class JsonHelperJackson2 implements JsonHelper {
         return array;
     }
 
+    @Override
+    public boolean contains(Object object, String... path) {
+        JsonNode child = getNode(convert(object, JsonNode.class), path);
+        return child != null && !child.isNull();
+    }
+
     private JsonNode getNode(final JsonNode parent, final String... path) {
         JsonNode child = parent;
         if (child == null) {

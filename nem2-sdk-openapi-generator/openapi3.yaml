@@ -1775,8 +1775,7 @@ components:
         aggregateHash:
           $ref: "#/components/schemas/Hash256"
         aggregateId:
-          type: integer
-          format: int32
+          type: string
         hash:
           $ref: "#/components/schemas/Hash256"
         merkleComponentHash:
@@ -1818,8 +1817,6 @@ components:
       type: object
       required:
       - height
-      - hash
-      - merkleComponentHash
       - index
       - id
       properties:
@@ -1827,6 +1824,10 @@ components:
           $ref: "#/components/schemas/Height"
         hash:
           $ref: "#/components/schemas/Hash256"
+        aggregateHash:
+          $ref: "#/components/schemas/Hash256"
+        aggregateId:
+          type: string
         merkleComponentHash:
           $ref: "#/components/schemas/Hash256"
         index:
@@ -1863,10 +1864,10 @@ components:
     TransactionBodyDTO:
       type: object
       required:
-      - max_fee
+      - maxFee
       - deadline
       properties:
-        max_fee:
+        maxFee:
           $ref: "#/components/schemas/Amount"
         deadline:
           $ref: "#/components/schemas/BlockDuration"

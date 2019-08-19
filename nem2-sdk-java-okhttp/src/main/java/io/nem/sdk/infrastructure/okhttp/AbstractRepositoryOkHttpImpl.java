@@ -22,7 +22,6 @@ import io.nem.sdk.api.RepositoryCallException;
 import io.nem.sdk.model.blockchain.NetworkType;
 import io.nem.sdk.model.transaction.JsonHelper;
 import io.nem.sdk.model.transaction.UInt64;
-import io.nem.sdk.openapi.okhttp_gson.invoker.ApiCallback;
 import io.nem.sdk.openapi.okhttp_gson.invoker.ApiClient;
 import io.reactivex.Observable;
 import io.reactivex.ObservableSource;
@@ -30,6 +29,7 @@ import io.reactivex.functions.Function;
 import java.math.BigInteger;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.Callable;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
@@ -47,20 +47,22 @@ public abstract class AbstractRepositoryOkHttpImpl {
     private final JsonHelper jsonHelper;
 
     public AbstractRepositoryOkHttpImpl(ApiClient apiClient) {
-
         this.apiClient = apiClient;
         networkTypeObservable = Suppliers
             .memoize(() -> new NetworkRepositoryOkHttpImpl(apiClient).getNetworkType().cache());
-
         jsonHelper = new JsonHelperGson(apiClient.getJSON().getGson());
 
     }
 
-
-    public <T> Observable<T> call(ApiCall<ApiCallback<T>> callback) {
+    public <T> Observable<T> call(Callable<T> callback) {
         Function<? super Throwable, ? extends ObservableSource<? extends T>> resumeFunction = this::onError;
-        return new ApiCallbackObservable<T>(callback).toObservable()
-            .onErrorResumeNext(resumeFunction);
+        return Observable.defer(() -> {
+            try {
+                return Observable.just(callback.call());
+            } catch (Exception e) {
+                return onError(e);
+            }
+        }).onErrorResumeNext(resumeFunction);
     }
 
     public RepositoryCallException exceptionHandling(Throwable e) {

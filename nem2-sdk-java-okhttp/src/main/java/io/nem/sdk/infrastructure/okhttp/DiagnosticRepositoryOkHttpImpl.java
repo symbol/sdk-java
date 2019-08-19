@@ -26,6 +26,7 @@ import io.nem.sdk.openapi.okhttp_gson.model.ServerDTO;
 import io.nem.sdk.openapi.okhttp_gson.model.ServerInfoDTO;
 import io.nem.sdk.openapi.okhttp_gson.model.StorageInfoDTO;
 import io.reactivex.Observable;
+import java.util.concurrent.Callable;
 
 /**
  * Diagnostic http repository.
@@ -50,7 +51,7 @@ public class DiagnosticRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl
      * @return Observable<BlockchainStorageInfo>
      */
     public Observable<BlockchainStorageInfo> getBlockchainStorage() {
-        ApiCall<ApiCallback<StorageInfoDTO>> callback = client::getDiagnosticStorageAsync;
+        Callable<StorageInfoDTO> callback = client::getDiagnosticStorage;
         return exceptionHandling(call(callback).map(this::toBlockchainStorageInfo));
     }
 
@@ -67,7 +68,7 @@ public class DiagnosticRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl
      * @return Observable<ServerInfo>
      */
     public Observable<ServerInfo> getServerInfo() {
-        ApiCall<ApiCallback<ServerDTO>> callback = client::getServerInfoAsync;
+        Callable<ServerDTO> callback = client::getServerInfo;
         return exceptionHandling(call(callback).map(ServerDTO::getServerInfo).map(this::toServerInfo));
     }
 

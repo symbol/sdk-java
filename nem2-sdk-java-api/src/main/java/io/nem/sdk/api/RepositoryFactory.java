@@ -16,6 +16,8 @@
 
 package io.nem.sdk.api;
 
+import io.nem.sdk.infrastructure.Listener;
+
 /**
  * A repository factory allows clients to create repositories to access NEM Server without knowing
  * the underline implementation.
@@ -25,7 +27,7 @@ package io.nem.sdk.api;
 public interface RepositoryFactory {
 
     /**
-         * @return a newly created {@link AccountRepository}
+     * @return a newly created {@link AccountRepository}
      */
     AccountRepository createAccountRepository();
 
@@ -68,5 +70,10 @@ public interface RepositoryFactory {
      * @return a newly created {@link NodeRepository}
      */
     TransactionRepository createTransactionRepository();
+
+    /**
+     * @return a newly created {@link Listener}
+     */
+    Listener createListener();
 
 }

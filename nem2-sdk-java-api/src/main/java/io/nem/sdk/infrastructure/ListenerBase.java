@@ -14,172 +14,33 @@
  * limitations under the License.
  */
 
-package io.nem.sdk.infrastructure.legacy;
+package io.nem.sdk.infrastructure;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import io.nem.sdk.infrastructure.ListenerChannel;
-import io.nem.sdk.infrastructure.ListenerMessage;
-import io.nem.sdk.infrastructure.ListenerSubscribeMessage;
 import io.nem.sdk.model.account.Address;
 import io.nem.sdk.model.blockchain.BlockInfo;
 import io.nem.sdk.model.transaction.AggregateTransaction;
 import io.nem.sdk.model.transaction.CosignatureSignedTransaction;
-import io.nem.sdk.model.transaction.Deadline;
 import io.nem.sdk.model.transaction.Transaction;
 import io.nem.sdk.model.transaction.TransactionStatusError;
 import io.nem.sdk.model.transaction.TransferTransaction;
-import io.nem.sdk.model.transaction.UInt64;
 import io.reactivex.Observable;
 import io.reactivex.subjects.PublishSubject;
 import io.reactivex.subjects.Subject;
-import io.vertx.core.Vertx;
-import io.vertx.core.http.HttpClient;
-import io.vertx.core.http.RequestOptions;
-import io.vertx.core.http.WebSocket;
-import io.vertx.core.json.JsonArray;
-import io.vertx.core.json.JsonObject;
-import java.math.BigInteger;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.stream.Collectors;
 
 /**
- * Listener
+ * Created by fernando on 19/08/19.
  *
- * @since 1.0
+ * @author Fernando Boucquez
  */
-public class Listener {
+public abstract class ListenerBase implements Listener {
 
-    private final URL url;
-    private final Subject<ListenerMessage> messageSubject;
-    private String UID;
-    private WebSocket webSocket;
-    private ObjectMapper objectMapper = new ObjectMapper();
+    private final Subject<ListenerMessage> messageSubject = PublishSubject.create();
 
-    /**
-     * @param url nis host
-     */
-    public Listener(final String url) throws MalformedURLException {
-        this.url = new URL(url);
-        this.messageSubject = PublishSubject.create();
-    }
-
-    /**
-     * @return a {@link CompletableFuture} that resolves when the websocket connection is opened
-     */
-    public CompletableFuture<Void> open() {
-        HttpClient httpClient = Vertx.vertx().createHttpClient();
-
-        CompletableFuture<Void> future = new CompletableFuture<>();
-        if (this.webSocket != null) {
-            return CompletableFuture.completedFuture(null);
-        }
-        RequestOptions requestOptions = new RequestOptions();
-        requestOptions.setHost(this.url.getHost());
-        requestOptions.setPort(this.url.getPort());
-        requestOptions.setURI("/ws");
-        httpClient.websocket(
-            requestOptions,
-            webSocket -> {
-                this.webSocket = webSocket;
-                webSocket.handler(
-                    handler -> {
-                        JsonObject message = handler.toJsonObject();
-                        if (message.containsKey("uid")) {
-                            this.UID = message.getString("uid");
-                            future.complete(null);
-                        } else if (message.containsKey("transaction")) {
-                            this.messageSubject.onNext(
-                                new ListenerMessage(
-                                    ListenerChannel.rawValueOf(
-                                        message.getJsonObject("meta").getString("channelName")),
-                                    new TransactionMappingLegacy().apply(message)));
-                        } else if (message.containsKey("block")) {
-                            final JsonObject meta = message.getJsonObject("meta");
-                            final JsonObject block = message.getJsonObject("block");
-
-                            this.messageSubject.onNext(
-                                new ListenerMessage(
-                                    ListenerChannel.BLOCK,
-                                    BlockInfo.create(
-                                        meta.getString("hash"),
-                                        meta.getString("generationHash"),
-                                        extractBigInteger(block.getJsonArray("totalFee")),
-                                        block.getInteger("numTransactions"),
-                                        block.getJsonArray("subCacheMerkleRoots").stream()
-                                            .map(o -> o.toString())
-                                            .collect(Collectors.toList()),
-                                        block.getString("signature"),
-                                        block.getString("signer"),
-                                        block.getInteger("version"),
-                                        block.getInteger("type"),
-                                        extractBigInteger(block.getJsonArray("height")),
-                                        extractBigInteger(block.getJsonArray("timestamp")),
-                                        extractBigInteger(block.getJsonArray("difficulty")),
-                                        block.getInteger("feeMultiplier"),
-                                        block.getString("previousBlockHash"),
-                                        block.getString("blockTransactionsHash"),
-                                        block.getString("blockReceiptsHash"),
-                                        block.getString("stateHash"),
-                                        block.getString("beneficiaryPublicKey"))));
-                        } else if (message.containsKey("status")) {
-                            this.messageSubject.onNext(
-                                new ListenerMessage(
-                                    ListenerChannel.STATUS,
-                                    new TransactionStatusError(
-                                        message.getString("hash"),
-                                        message.getString("status"),
-                                        new Deadline(
-                                            extractBigInteger(message.getJsonArray("deadline"))))));
-                        } else if (message.containsKey("meta")) {
-                            this.messageSubject.onNext(
-                                new ListenerMessage(
-                                    ListenerChannel.rawValueOf(
-                                        message.getJsonObject("meta").getString("channelName")),
-                                    message.getJsonObject("meta").getString("hash")));
-                        } else if (message.containsKey("parentHash")) {
-                            this.messageSubject.onNext(
-                                new ListenerMessage(
-                                    ListenerChannel.COSIGNATURE,
-                                    new CosignatureSignedTransaction(
-                                        message.getString("parenthash"),
-                                        message.getString("signature"),
-                                        message.getString("signer"))));
-                        }
-                    });
-            });
-        return future;
-    }
-
-    /**
-     * // TODO: should we remove it?
-     *
-     * @return the UID connected to
-     */
-    public String getUID() {
-        return UID;
-    }
-
-    /**
-     * Close webSocket connection
-     */
-    public void close() {
-        this.webSocket.close();
-    }
-
-    /**
-     * Returns an observable stream of BlockInfo. Each time a new Block is added into the
-     * blockchain, it emits a new BlockInfo in the event stream.
-     *
-     * @return an observable stream of BlockInfo
-     */
+    @Override
     public Observable<BlockInfo> newBlock() {
         this.subscribeTo(ListenerChannel.BLOCK.toString());
-        return this.messageSubject
+        return getMessageSubject()
             .filter(rawMessage -> rawMessage.getChannel().equals(ListenerChannel.BLOCK))
             .map(rawMessage -> (BlockInfo) rawMessage.getMessage());
     }
@@ -192,10 +53,11 @@ public class Listener {
      * @param address address we listen when a transaction is in confirmed state
      * @return an observable stream of Transaction with state confirmed
      */
+    @Override
     public Observable<Transaction> confirmed(final Address address) {
         this.subscribeTo(ListenerChannel.STATUS.toString() + "/" + address.plain());
         this.subscribeTo(ListenerChannel.CONFIRMED_ADDED.toString() + "/" + address.plain());
-        return this.messageSubject
+        return getMessageSubject()
             .filter(rawMessage -> rawMessage.getChannel().equals(ListenerChannel.CONFIRMED_ADDED))
             .map(rawMessage -> (Transaction) rawMessage.getMessage())
             .filter(transaction -> this.transactionFromAddress(transaction, address));
@@ -209,9 +71,10 @@ public class Listener {
      * @param address address we listen when a transaction is in unconfirmed state
      * @return an observable stream of Transaction with state unconfirmed
      */
+    @Override
     public Observable<Transaction> unconfirmedAdded(Address address) {
         this.subscribeTo(ListenerChannel.UNCONFIRMED_ADDED + "/" + address.plain());
-        return this.messageSubject
+        return getMessageSubject()
             .filter(rawMessage -> rawMessage.getChannel().equals(ListenerChannel.UNCONFIRMED_ADDED))
             .map(rawMessage -> (Transaction) rawMessage.getMessage())
             .filter(transaction -> this.transactionFromAddress(transaction, address));
@@ -225,9 +88,10 @@ public class Listener {
      * @param address address we listen when a transaction is removed from unconfirmed state
      * @return an observable stream of Strings with the transaction hash
      */
+    @Override
     public Observable<String> unconfirmedRemoved(Address address) {
         this.subscribeTo(ListenerChannel.UNCONFIRMED_REMOVED + "/" + address.plain());
-        return this.messageSubject
+        return getMessageSubject()
             .filter(
                 rawMessage -> rawMessage.getChannel().equals(ListenerChannel.UNCONFIRMED_REMOVED))
             .map(rawMessage -> (String) rawMessage.getMessage());
@@ -241,9 +105,10 @@ public class Listener {
      * @param address address we listen when a transaction with missing signatures state
      * @return an observable stream of AggregateTransaction with missing signatures state
      */
+    @Override
     public Observable<AggregateTransaction> aggregateBondedAdded(Address address) {
         this.subscribeTo(ListenerChannel.AGGREGATE_BONDED_ADDED + "/" + address.plain());
-        return this.messageSubject
+        return getMessageSubject()
             .filter(
                 rawMessage -> rawMessage.getChannel()
                     .equals(ListenerChannel.AGGREGATE_BONDED_ADDED))
@@ -259,9 +124,10 @@ public class Listener {
      * @param address address we listen when a transaction is confirmed or rejected
      * @return an observable stream of Strings with the transaction hash
      */
+    @Override
     public Observable<String> aggregateBondedRemoved(Address address) {
         this.subscribeTo(ListenerChannel.AGGREGATE_BONDED_REMOVED + "/" + address.plain());
-        return this.messageSubject
+        return getMessageSubject()
             .filter(
                 rawMessage -> rawMessage.getChannel()
                     .equals(ListenerChannel.AGGREGATE_BONDED_REMOVED))
@@ -276,9 +142,10 @@ public class Listener {
      * @param address address we listen to be notified when some error happened
      * @return an observable stream of {@link TransactionStatusError}
      */
+    @Override
     public Observable<TransactionStatusError> status(Address address) {
         this.subscribeTo(ListenerChannel.STATUS + "/" + address.plain());
-        return this.messageSubject
+        return getMessageSubject()
             .filter(rawMessage -> rawMessage.getChannel().equals(ListenerChannel.STATUS))
             .map(rawMessage -> (TransactionStatusError) rawMessage.getMessage());
     }
@@ -292,29 +159,14 @@ public class Listener {
      * sent
      * @return an observable stream of {@link CosignatureSignedTransaction}
      */
+    @Override
     public Observable<CosignatureSignedTransaction> cosignatureAdded(Address address) {
         this.subscribeTo(ListenerChannel.CONFIRMED_ADDED + "/" + address.plain());
-        return this.messageSubject
+        return getMessageSubject()
             .filter(rawMessage -> rawMessage.getChannel().equals(ListenerChannel.COSIGNATURE))
             .map(rawMessage -> (CosignatureSignedTransaction) rawMessage.getMessage());
     }
 
-    private void subscribeTo(String channel) {
-        final ListenerSubscribeMessage subscribeMessage =
-            new ListenerSubscribeMessage(this.UID, channel);
-        String json;
-        try {
-            json = objectMapper.writeValueAsString(subscribeMessage);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e.getCause());
-        }
-        this.webSocket.writeTextMessage(json);
-    }
-
-    private BigInteger extractBigInteger(JsonArray input) {
-        ArrayList<Number> numbers = (ArrayList) input.getList();
-        return UInt64.fromLowerAndHigher(numbers.get(0), numbers.get(1));
-    }
 
     private boolean transactionFromAddress(final Transaction transaction, final Address address) {
         AtomicBoolean transactionFromAddress =
@@ -346,8 +198,19 @@ public class Listener {
         final Transaction transaction, final Address address) {
         boolean isReceptor = false;
         if (transaction instanceof TransferTransaction) {
-            isReceptor = ((TransferTransaction) transaction).getRecipient().equals(address);
+            isReceptor = ((TransferTransaction) transaction).getRecipient().get().equals(address);
         }
         return transaction.getSigner().get().getAddress().equals(address) || isReceptor;
+    }
+
+
+    protected void onNext(ListenerChannel channel, Object messageObject) {
+        this.getMessageSubject().onNext(new ListenerMessage(channel, messageObject));
+    }
+
+    protected abstract void subscribeTo(String channel);
+
+    public Subject<ListenerMessage> getMessageSubject() {
+        return messageSubject;
     }
 }

@@ -393,7 +393,7 @@ class AggregateTransactionMapping extends TransactionMappingVertx {
 //                    .put("deadline", transaction.getJsonArray("deadline"));
 //                innerTransaction
 //                    .getJsonObject("transaction")
-//                    .put("max_fee", transaction.getJsonArray("max_fee"));
+//                    .put("maxFee", transaction.getJsonArray("maxFee"));
 //                innerTransaction
 //                    .getJsonObject("transaction")
 //                    .put("signature", transaction.getString("signature"));
@@ -410,7 +410,7 @@ class AggregateTransactionMapping extends TransactionMappingVertx {
                     .put("deadline",
                         ((Map<String, Object>) input.getTransaction()).get("deadline"));
                 innerTransaction
-                    .put("max_fee", ((Map<String, Object>) input.getTransaction()).get("max_fee"));
+                    .put("maxFee", ((Map<String, Object>) input.getTransaction()).get("maxFee"));
 
                 innerTransaction.put("signature",
                     getJsonHelper().getString(input.getTransaction(), "signature"));

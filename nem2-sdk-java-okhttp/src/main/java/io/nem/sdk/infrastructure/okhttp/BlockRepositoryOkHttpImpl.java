@@ -24,7 +24,6 @@ import io.nem.sdk.model.blockchain.MerkelProofInfo;
 import io.nem.sdk.model.receipt.Statement;
 import io.nem.sdk.model.transaction.Transaction;
 import io.nem.sdk.openapi.okhttp_gson.api.BlockRoutesApi;
-import io.nem.sdk.openapi.okhttp_gson.invoker.ApiCallback;
 import io.nem.sdk.openapi.okhttp_gson.invoker.ApiClient;
 import io.nem.sdk.openapi.okhttp_gson.model.BlockInfoDTO;
 import io.nem.sdk.openapi.okhttp_gson.model.MerkleProofInfoDTO;
@@ -34,6 +33,7 @@ import io.reactivex.Observable;
 import java.math.BigInteger;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.Callable;
 import java.util.stream.Collectors;
 
 /**
@@ -52,9 +52,8 @@ public class BlockRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl impl
     }
 
     public Observable<BlockInfo> getBlockByHeight(BigInteger height) {
-        ApiCall<ApiCallback<BlockInfoDTO>> callback = handler -> getClient()
-            .getBlockByHeightAsync(height.longValue(), handler);
-        return exceptionHandling(call(callback).map(this::toBlockInfo));
+        Callable<BlockInfoDTO> callback = () -> getClient().getBlockByHeight(height.longValue());
+        return exceptionHandling(call(callback).map(BlockRepositoryOkHttpImpl::toBlockInfo));
     }
 
     public Observable<List<Transaction>> getBlockTransactions(
@@ -69,18 +68,19 @@ public class BlockRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl impl
     public Observable<List<BlockInfo>> getBlocksByHeightWithLimit(
         BigInteger height, int limit, Optional<QueryParams> queryParams) {
         //TODO queryParams not defined in the descriptor nor generated.
-        ApiCall<ApiCallback<List<BlockInfoDTO>>> callback = (handler) ->
-            client.getBlocksByHeightWithLimitAsync(height.longValue(), limit, handler);
+        Callable<List<BlockInfoDTO>> callback = () ->
+            client.getBlocksByHeightWithLimit(height.longValue(), limit);
 
         return exceptionHandling(
-            call(callback).flatMapIterable(item -> item).map(this::toBlockInfo).toList()
+            call(callback).flatMapIterable(item -> item).map(BlockRepositoryOkHttpImpl::toBlockInfo)
+                .toList()
                 .toObservable());
     }
 
     public Observable<MerkelProofInfo> getMerkleReceipts(BigInteger height, String hash) {
 
-        ApiCall<ApiCallback<MerkleProofInfoDTO>> callback = (handler) ->
-            client.getMerkleReceiptsAsync(height.longValue(), hash, handler);
+        Callable<MerkleProofInfoDTO> callback = () ->
+            client.getMerkleReceipts(height.longValue(), hash);
         return exceptionHandling(call(callback).map(this::toMerkelProofInfo));
 
 
@@ -97,15 +97,15 @@ public class BlockRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl impl
     }
 
     public Observable<MerkelProofInfo> getMerkleTransaction(BigInteger height, String hash) {
-        ApiCall<ApiCallback<MerkleProofInfoDTO>> callback = (handler) ->
-            client.getMerkleTransactionAsync(height.longValue(), hash, handler);
+        Callable<MerkleProofInfoDTO> callback = () ->
+            client.getMerkleTransaction(height.longValue(), hash);
         return exceptionHandling(call(callback).map(this::toMerkelProofInfo));
 
     }
 
     public Observable<Statement> getBlockReceipts(BigInteger height) {
-        ApiCall<ApiCallback<StatementsDTO>> callback = (handler) ->
-            client.getBlockReceiptsAsync(height.longValue(), handler);
+        Callable<StatementsDTO> callback = () ->
+            client.getBlockReceipts(height.longValue());
         return exceptionHandling(call(callback).map(statementsDTO ->
             new ReceiptMappingOkHttp(getJsonHelper())
                 .createStatementFromDto(statementsDTO, getNetworkTypeBlocking())));
@@ -113,12 +113,12 @@ public class BlockRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl impl
 
     private Observable<List<Transaction>> getBlockTransactions(
         BigInteger height, Optional<QueryParams> queryParams) {
-        ApiCall<ApiCallback<List<TransactionInfoDTO>>> callback = (handler) ->
-            client.getBlockTransactionsAsync(height.longValue(),
+        Callable<List<TransactionInfoDTO>> callback = () ->
+            client.getBlockTransactions(height.longValue(),
                 getPageSize(queryParams),
                 getId(queryParams),
-                null,
-                handler);
+                null
+            );
 
         return exceptionHandling(
             call(callback).flatMapIterable(item -> item).map(this::toTransaction).toList()
@@ -129,7 +129,7 @@ public class BlockRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl impl
         return new TransactionMappingOkHttp(getJsonHelper()).apply(input);
     }
 
-    private BlockInfo toBlockInfo(BlockInfoDTO blockInfoDTO) {
+    public static BlockInfo toBlockInfo(BlockInfoDTO blockInfoDTO) {
         return BlockInfo.create(
             blockInfoDTO.getMeta().getHash(),
             blockInfoDTO.getMeta().getGenerationHash(),
