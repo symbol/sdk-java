@@ -4,6 +4,11 @@ jdk:
   - oraclejdk8
   - oraclejdk9
   - openjdk8
+addons:
+  sonarcloud:
+    organization: "fboucquez"
+    token:
+      secure: "5c0f512629a2d9b69e800df09cdae1dfd7d40b8e"
 before_cache:
   - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
   - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
@@ -14,4 +19,4 @@ cache:
 install: ./gradlew assemble -x javadoc -x signArchives
 script: ./gradlew test
 after_success:
-- ./gradlew jacocoTestReport coveralls
+- ./gradlew jacocoTestReport coveralls sonarqube
