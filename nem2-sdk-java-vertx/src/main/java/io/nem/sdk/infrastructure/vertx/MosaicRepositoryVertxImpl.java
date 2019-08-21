@@ -21,6 +21,7 @@ import io.nem.sdk.model.account.PublicAccount;
 import io.nem.sdk.model.blockchain.NetworkType;
 import io.nem.sdk.model.mosaic.MosaicId;
 import io.nem.sdk.model.mosaic.MosaicInfo;
+import io.nem.sdk.model.mosaic.MosaicNames;
 import io.nem.sdk.model.mosaic.MosaicProperties;
 import io.nem.sdk.model.transaction.UInt64;
 import io.nem.sdk.model.transaction.UInt64Id;
@@ -29,7 +30,9 @@ import io.nem.sdk.openapi.vertx.api.MosaicRoutesApiImpl;
 import io.nem.sdk.openapi.vertx.invoker.ApiClient;
 import io.nem.sdk.openapi.vertx.model.MosaicIds;
 import io.nem.sdk.openapi.vertx.model.MosaicInfoDTO;
+import io.nem.sdk.openapi.vertx.model.MosaicNamesDTO;
 import io.nem.sdk.openapi.vertx.model.MosaicPropertyDTO;
+import io.nem.sdk.openapi.vertx.model.MosaicsNamesDTO;
 import io.reactivex.Observable;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Handler;
@@ -90,6 +93,26 @@ public class MosaicRepositoryVertxImpl extends AbstractRepositoryVertxImpl imple
             new PublicAccount(mosaicInfoDTO.getMosaic().getOwner(), networkType),
             mosaicInfoDTO.getMosaic().getRevision(),
             extractMosaicProperties(mosaicInfoDTO.getMosaic().getProperties()));
+    }
+
+    @Override
+    public Observable<List<MosaicNames>> getMosaicsNames(List<UInt64Id> ids) {
+        MosaicIds mosaicIds = new MosaicIds();
+        mosaicIds.mosaicIds(ids.stream()
+            .map(id -> UInt64.bigIntegerToHex(id.getId()))
+            .collect(Collectors.toList()));
+        Consumer<Handler<AsyncResult<MosaicsNamesDTO>>> callback = handler -> getClient()
+            .getMosaicsNames(mosaicIds, handler);
+        return exceptionHandling(
+            call(callback).map(MosaicsNamesDTO::getAccountNames).flatMapIterable(item -> item)
+                .map(this::toMosaicNames).toList()
+                .toObservable());
+    }
+
+    private MosaicNames toMosaicNames(MosaicNamesDTO dto) {
+        return new MosaicNames(
+            new MosaicId(extractBigInteger(dto.getMosaicId())),
+            dto.getNames());
     }
 
     private MosaicProperties extractMosaicProperties(List<MosaicPropertyDTO> mosaicPropertiesDTO) {

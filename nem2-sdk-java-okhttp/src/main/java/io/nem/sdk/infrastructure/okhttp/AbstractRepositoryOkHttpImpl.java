@@ -100,9 +100,7 @@ public abstract class AbstractRepositoryOkHttpImpl {
         return apiClient;
     }
 
-    protected BigInteger extractIntArray(List<Long> list) {
-        return UInt64.extractBigInteger(list);
-    }
+
 
     protected Integer getPageSize(Optional<QueryParams> queryParams) {
         return queryParams.map(QueryParams::getPageSize).orElse(null);

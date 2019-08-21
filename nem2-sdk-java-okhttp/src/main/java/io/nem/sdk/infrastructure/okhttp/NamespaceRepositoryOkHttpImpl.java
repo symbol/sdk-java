@@ -144,12 +144,12 @@ public class NamespaceRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl 
     private NamespaceName toNamespaceName(NamespaceNameDTO namespaceNameDTO) {
         if (namespaceNameDTO.getParentId() != null) {
             return new NamespaceName(
-                new NamespaceId(extractIntArray(namespaceNameDTO.getNamespaceId())),
+                new NamespaceId(extractBigInteger(namespaceNameDTO.getNamespaceId())),
                 namespaceNameDTO.getName(),
-                new NamespaceId(extractIntArray(namespaceNameDTO.getParentId())));
+                new NamespaceId(extractBigInteger(namespaceNameDTO.getParentId())));
         } else {
             return new NamespaceName(
-                new NamespaceId(extractIntArray(namespaceNameDTO.getNamespaceId())),
+                new NamespaceId(extractBigInteger(namespaceNameDTO.getNamespaceId())),
                 namespaceNameDTO.getName());
         }
     }
@@ -199,11 +199,11 @@ public class NamespaceRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl 
             NamespaceType.rawValueOf(namespaceInfoDTO.getNamespace().getType().getValue()),
             namespaceInfoDTO.getNamespace().getDepth(),
             this.extractLevels(namespaceInfoDTO),
-            new NamespaceId(extractIntArray(namespaceInfoDTO.getNamespace().getParentId())),
+            new NamespaceId(extractBigInteger(namespaceInfoDTO.getNamespace().getParentId())),
             new PublicAccount(namespaceInfoDTO.getNamespace().getOwner(),
                 getNetworkTypeBlocking()),
-            extractIntArray(namespaceInfoDTO.getNamespace().getStartHeight()),
-            extractIntArray(namespaceInfoDTO.getNamespace().getEndHeight()),
+            extractBigInteger(namespaceInfoDTO.getNamespace().getStartHeight()),
+            extractBigInteger(namespaceInfoDTO.getNamespace().getEndHeight()),
             this.extractAlias(namespaceInfoDTO.getNamespace()));
     }
 
@@ -217,7 +217,7 @@ public class NamespaceRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl 
         MosaicId mosaicId = null;
         if (namespaceDTO.getAlias() != null) {
             if (AliasType.Mosaic.getValue().equals(namespaceDTO.getAlias().getType().getValue())) {
-                mosaicId = new MosaicId(extractIntArray(namespaceDTO.getAlias().getMosaicId()));
+                mosaicId = new MosaicId(extractBigInteger(namespaceDTO.getAlias().getMosaicId()));
             }
         }
         return mosaicId;
@@ -251,19 +251,19 @@ public class NamespaceRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl 
         if (namespaceInfoDTO.getNamespace().getLevel0() != null) {
             levels
                 .add(new NamespaceId(
-                    extractIntArray(namespaceInfoDTO.getNamespace().getLevel0())));
+                    extractBigInteger(namespaceInfoDTO.getNamespace().getLevel0())));
         }
 
         if (namespaceInfoDTO.getNamespace().getLevel1() != null) {
             levels
                 .add(new NamespaceId(
-                    extractIntArray(namespaceInfoDTO.getNamespace().getLevel1())));
+                    extractBigInteger(namespaceInfoDTO.getNamespace().getLevel1())));
         }
 
         if (namespaceInfoDTO.getNamespace().getLevel2() != null) {
             levels
                 .add(new NamespaceId(
-                    extractIntArray(namespaceInfoDTO.getNamespace().getLevel2())));
+                    extractBigInteger(namespaceInfoDTO.getNamespace().getLevel2())));
         }
 
         return levels;
@@ -280,7 +280,7 @@ public class NamespaceRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl 
         Alias alias = new EmptyAlias();
         if (namespaceDTO.getAlias() != null) {
             if (namespaceDTO.getAlias().getType().getValue() == AliasType.Mosaic.getValue()) {
-                BigInteger mosaicId = extractIntArray(namespaceDTO.getAlias().getMosaicId());
+                BigInteger mosaicId = extractBigInteger(namespaceDTO.getAlias().getMosaicId());
                 return new MosaicAlias(new MosaicId(mosaicId));
             } else if (namespaceDTO.getAlias().getType().getValue() == AliasType.Address
                 .getValue()) {

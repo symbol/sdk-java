@@ -17,6 +17,7 @@
 package io.nem.sdk.api;
 
 import io.nem.sdk.model.account.AccountInfo;
+import io.nem.sdk.model.account.AccountNames;
 import io.nem.sdk.model.account.Address;
 import io.nem.sdk.model.account.MultisigAccountGraphInfo;
 import io.nem.sdk.model.account.MultisigAccountInfo;
@@ -48,6 +49,14 @@ public interface AccountRepository {
      * @return Observable of List<{@link AccountInfo}>
      */
     Observable<List<AccountInfo>> getAccountsInfo(List<Address> addresses);
+
+    /**
+     * Gets AccountNames for different accounts.
+     *
+     * @param addresses List of Address
+     * @return Observable of List<{@link AccountNames}>
+     */
+    Observable<List<AccountNames>> getAccountsNames(List<Address> addresses);
 
     /**
      * Gets a MultisigAccountInfo for an account.

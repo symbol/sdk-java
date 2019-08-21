@@ -90,8 +90,8 @@ public class TransactionRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImp
             transactionStatusDTO.getGroup(),
             transactionStatusDTO.getStatus(),
             transactionStatusDTO.getHash(),
-            new Deadline(extractIntArray(transactionStatusDTO.getDeadline())),
-            extractIntArray(transactionStatusDTO.getHeight()));
+            new Deadline(extractBigInteger(transactionStatusDTO.getDeadline())),
+            extractBigInteger(transactionStatusDTO.getHeight()));
     }
 
     @Override

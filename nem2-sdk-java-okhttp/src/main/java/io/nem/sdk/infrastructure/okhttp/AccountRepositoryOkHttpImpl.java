@@ -19,6 +19,7 @@ package io.nem.sdk.infrastructure.okhttp;
 import io.nem.sdk.api.AccountRepository;
 import io.nem.sdk.api.QueryParams;
 import io.nem.sdk.model.account.AccountInfo;
+import io.nem.sdk.model.account.AccountNames;
 import io.nem.sdk.model.account.Address;
 import io.nem.sdk.model.account.MultisigAccountGraphInfo;
 import io.nem.sdk.model.account.MultisigAccountInfo;
@@ -34,6 +35,8 @@ import io.nem.sdk.openapi.okhttp_gson.invoker.ApiClient;
 import io.nem.sdk.openapi.okhttp_gson.model.AccountDTO;
 import io.nem.sdk.openapi.okhttp_gson.model.AccountIds;
 import io.nem.sdk.openapi.okhttp_gson.model.AccountInfoDTO;
+import io.nem.sdk.openapi.okhttp_gson.model.AccountNamesDTO;
+import io.nem.sdk.openapi.okhttp_gson.model.AccountsNamesDTO;
 import io.nem.sdk.openapi.okhttp_gson.model.MultisigAccountGraphInfoDTO;
 import io.nem.sdk.openapi.okhttp_gson.model.MultisigAccountInfoDTO;
 import io.nem.sdk.openapi.okhttp_gson.model.MultisigDTO;
@@ -88,6 +91,23 @@ public class AccountRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl im
             call(callback).flatMapIterable(item -> item)
                 .map(AccountInfoDTO::getAccount)
                 .map(this::toAccountInfo).toList().toObservable());
+    }
+
+    @Override
+    public Observable<List<AccountNames>> getAccountsNames(List<Address> addresses) {
+        AccountIds accountIds = new AccountIds()
+            .addresses(addresses.stream().map(Address::plain).collect(Collectors.toList()));
+        Callable<AccountsNamesDTO> callback = () -> getClient()
+            .getAccountsNames(accountIds);
+        return exceptionHandling(
+            call(callback).map(AccountsNamesDTO::getAccountNames).flatMapIterable(item -> item)
+                .map(this::toAccountNames).toList().toObservable());
+    }
+
+    private AccountNames toAccountNames(AccountNamesDTO accountNamesDTO) throws DecoderException {
+        return new AccountNames(
+            Address.createFromRawAddress(getAddressEncoded(accountNamesDTO.getAddress())),
+            accountNamesDTO.getNames());
     }
 
     @Override

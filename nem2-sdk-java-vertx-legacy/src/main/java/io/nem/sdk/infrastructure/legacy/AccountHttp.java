@@ -17,15 +17,10 @@
 package io.nem.sdk.infrastructure.legacy;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import io.nem.sdk.api.AccountRepository;
 import io.nem.sdk.api.QueryParams;
-import io.nem.sdk.openapi.vertx.model.AccountIds;
-import io.nem.sdk.openapi.vertx.model.AccountInfoDTO;
-import io.nem.sdk.openapi.vertx.model.MultisigAccountGraphInfoDTO;
-import io.nem.sdk.openapi.vertx.model.MultisigAccountInfoDTO;
-import io.nem.sdk.openapi.vertx.model.MultisigDTO;
 import io.nem.sdk.model.account.AccountInfo;
+import io.nem.sdk.model.account.AccountNames;
 import io.nem.sdk.model.account.Address;
 import io.nem.sdk.model.account.MultisigAccountGraphInfo;
 import io.nem.sdk.model.account.MultisigAccountInfo;
@@ -35,9 +30,13 @@ import io.nem.sdk.model.mosaic.Mosaic;
 import io.nem.sdk.model.mosaic.MosaicId;
 import io.nem.sdk.model.transaction.AggregateTransaction;
 import io.nem.sdk.model.transaction.Transaction;
+import io.nem.sdk.openapi.vertx.model.AccountInfoDTO;
+import io.nem.sdk.openapi.vertx.model.AccountsNamesDTO;
+import io.nem.sdk.openapi.vertx.model.MultisigAccountGraphInfoDTO;
+import io.nem.sdk.openapi.vertx.model.MultisigAccountInfoDTO;
+import io.nem.sdk.openapi.vertx.model.MultisigDTO;
 import io.reactivex.Observable;
 import io.reactivex.functions.Function;
-import io.vertx.core.json.Json;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.reactivex.ext.web.codec.BodyCodec;
@@ -99,21 +98,10 @@ public class AccountHttp extends Http implements AccountRepository {
 
     @Override
     public Observable<List<AccountInfo>> getAccountsInfo(List<Address> addresses) {
-//        JsonObject requestBody = new JsonObject();
-//        requestBody.put(
-//            "addresses",
-//            addresses.stream().map(Address::plain).collect(Collectors.toList()));
-
-        AccountIds accountIds = new AccountIds()
-            .addresses(addresses.stream().map(Address::plain).collect(Collectors.toList()));
-
-        Json.mapper.configure(SerializationFeature.WRITE_EMPTY_JSON_ARRAYS, false);
-//
-//        AccountRoutesApi accountRoutesApi = new AccountRoutesApi();
-//
-//
-//
-//        accountRoutesApi.getAccountsInfo(accountIds);
+        JsonObject requestBody = new JsonObject();
+        requestBody.put(
+            "addresses",
+            addresses.stream().map(Address::plain).collect(Collectors.toList()));
 
         Observable<NetworkType> networkTypeResolve = getNetworkTypeObservable();
         return networkTypeResolve.flatMap(
@@ -121,7 +109,7 @@ public class AccountHttp extends Http implements AccountRepository {
                 this.client
                     .postAbs(this.url.toString())
                     .as(BodyCodec.jsonArray())
-                    .rxSendJson(accountIds)
+                    .rxSendJson(requestBody)
                     .toObservable()
                     .map(Http::mapJsonArrayOrError)
                     .map(
@@ -150,6 +138,29 @@ public class AccountHttp extends Http implements AccountRepository {
                                     .collect(Collectors.toList())))
                     .toList()
                     .toObservable());
+    }
+
+    @Override
+    public Observable<List<AccountNames>> getAccountsNames(List<Address> addresses) {
+        JsonObject requestBody = new JsonObject();
+        requestBody.put(
+            "addresses",
+            addresses.stream().map(Address::plain).collect(Collectors.toList()));
+        return
+            this.client
+                .postAbs(this.url.toString() + "names")
+                .as(BodyCodec.jsonObject())
+                .rxSendJson(requestBody)
+                .toObservable()
+                .map(Http::mapJsonObjectOrError)
+                .map(json -> objectMapper
+                    .readValue(json.toString(), AccountsNamesDTO.class))
+                .map(AccountsNamesDTO::getAccountNames).flatMapIterable(item -> item)
+                .map(dto -> new AccountNames(Address
+                    .createFromRawAddress(getAddressEncoded(dto.getAddress())),
+                    dto.getNames()))
+                .toList()
+                .toObservable();
     }
 
     @Override

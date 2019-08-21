@@ -22,6 +22,7 @@ import io.nem.sdk.api.AccountRepository;
 import io.nem.sdk.api.QueryParams;
 import io.nem.sdk.api.RepositoryCallException;
 import io.nem.sdk.model.account.AccountInfo;
+import io.nem.sdk.model.account.AccountNames;
 import io.nem.sdk.model.account.Address;
 import io.nem.sdk.model.account.MultisigAccountGraphInfo;
 import io.nem.sdk.model.account.MultisigAccountInfo;
@@ -75,7 +76,23 @@ class AccountRepositoryIntegrationTest extends BaseIntegrationTest {
 
     @ParameterizedTest
     @EnumSource(RepositoryType.class)
-    void getMultipleAccountsInfo(RepositoryType type) throws ExecutionException, InterruptedException {
+    void getAccountNames(RepositoryType type) throws ExecutionException, InterruptedException {
+        List<AccountNames> accountNames =
+            this.getAccountRepository(type)
+                .getAccountsNames(Collections.singletonList(this.getTestAccountAddress()))
+                .toFuture()
+                .get();
+
+        assertEquals(1, accountNames.size());
+        assertEquals(this.config().getTestAccountAddress(),
+            accountNames.get(0).getAddress().plain());
+        assertEquals(0, accountNames.get(0).getNames().size());
+    }
+
+    @ParameterizedTest
+    @EnumSource(RepositoryType.class)
+    void getMultipleAccountsInfo(RepositoryType type)
+        throws ExecutionException, InterruptedException {
         List<AccountInfo> accountInfos =
             this.getAccountRepository(type)
                 .getAccountsInfo(Collections.singletonList(this.getTestAccountAddress()))
