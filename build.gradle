@@ -34,7 +34,13 @@ ext {
     restApiVersion = "0.7.17-SNAPSHOT"
 }
 
-
+repositories {
+    mavenLocal()
+    mavenCentral()
+    maven {
+        url "https://oss.sonatype.org/content/repositories/snapshots"
+    }
+}
 
 subprojects {
 
