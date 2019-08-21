@@ -7,9 +7,8 @@ task clean(type: Delete) {
 }
 
 ext {
-    generateVersion = "0.7.17"
+    generateVersion = "0.7.17-SNAPSHOT"
 }
-
 
 //NOTE - For some reason the library field is ignored. I had to create a configFile per library.
 
@@ -57,6 +56,49 @@ subprojects {
     artifacts {
         archives javadocJar, sourcesJar
     }
-    
+
     build.dependsOn generate
+
+    if (project.hasProperty("signing.keyId")) {
+        apply plugin: 'signing'
+        signing {
+            sign configurations.archives
+        }
+    }
+    uploadArchives {
+
+        def username = project.hasProperty("ossrhUsername") ? project.ossrhUsername : ""
+
+        def password = project.hasProperty("ossrhPassword") ? project.ossrhPassword : ""
+
+        repositories {
+            mavenDeployer {
+                beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+
+                repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
+                    authentication(userName: username, password: password)
+                }
+
+                snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
+                    authentication(userName: username, password: password)
+                }
+
+                pom.project {
+                    packaging 'jar'
+                    url 'https://github.com/nemtech/nem2-sdk-java'
+                    scm {
+                        connection 'scm:git:https://github.com/nemtech/nem2-sdk-java.git'
+                        developerConnection 'scm:svn:https://github.com/nemtech/nem2-sdk-java'
+                        url 'https://github.com/nemtech/nem2-sdk-java'
+                    }
+                    licenses {
+                        license {
+                            name 'The Apache License, Version 2.0'
+                            url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                        }
+                    }
+                }
+            }
+        }
+    }
 }

@@ -2,7 +2,7 @@
 set -e
 set -o pipefail
 
-VERSION="0.7.17"
+VERSION="0.7.17-SNAPSHOT"
 CURRENT_FOLDER="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
 function exe() { echo "\$ $@" ; "$@" ; }
