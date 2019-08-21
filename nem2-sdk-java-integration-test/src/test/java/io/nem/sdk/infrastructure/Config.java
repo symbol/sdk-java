@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 
 public class Config {
 
-    private static final String CONFIG_JSON = "config-fernando.json";
+    private static final String CONFIG_JSON = "config.json";
     private static Config ourInstance = new Config();
     private JsonObject config;
 
