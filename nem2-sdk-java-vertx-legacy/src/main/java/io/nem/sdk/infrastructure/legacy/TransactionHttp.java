@@ -40,11 +40,11 @@ import java.util.stream.Collectors;
 public class TransactionHttp extends Http implements TransactionRepository {
 
     public TransactionHttp(String host) {
-        this(host + "/transaction/", new NetworkHttp(host));
+        super(host + "/transaction/", new NetworkHttp(host));
     }
 
     public TransactionHttp(String host, NetworkHttp networkHttp) {
-        super(host, networkHttp);
+        super(host + "/transaction/", networkHttp);
     }
 
     @Override

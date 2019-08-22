@@ -23,10 +23,12 @@ import io.nem.sdk.model.mosaic.MosaicId;
 import io.nem.sdk.model.mosaic.MosaicNonce;
 import io.nem.sdk.model.mosaic.MosaicProperties;
 import io.nem.sdk.model.mosaic.MosaicSupplyType;
+import io.nem.sdk.model.namespace.AliasAction;
 import io.nem.sdk.model.namespace.NamespaceId;
 import io.nem.sdk.model.namespace.NamespaceType;
 import io.nem.sdk.model.transaction.AccountLinkAction;
 import io.nem.sdk.model.transaction.AccountLinkTransaction;
+import io.nem.sdk.model.transaction.AddressAliasTransaction;
 import io.nem.sdk.model.transaction.AggregateTransaction;
 import io.nem.sdk.model.transaction.AggregateTransactionCosignature;
 import io.nem.sdk.model.transaction.Deadline;
@@ -75,6 +77,8 @@ public class TransactionMappingLegacy implements Function<JsonObject, Transactio
             return new MosaicCreationTransactionMapping().apply(input);
         } else if (type == TransactionType.MOSAIC_SUPPLY_CHANGE.getValue()) {
             return new MosaicSupplyChangeTransactionMapping().apply(input);
+        } else if (type == TransactionType.ADDRESS_ALIAS.getValue()) {
+            return new AddressAliasTransactionMapping().apply(input);
             // } else if (type == TransactionType.MOSAIC_ALIAS.getValue()) {
             //    return new MosaicAliasTransactionMapping().apply(input);
         } else if (type == TransactionType.MODIFY_MULTISIG_ACCOUNT.getValue()) {
@@ -457,6 +461,36 @@ class SecretLockTransactionMapping extends TransactionMappingLegacy {
             new PublicAccount(transaction.getString("signer"), networkType),
             transactionInfo);
     }
+}
+
+class AddressAliasTransactionMapping extends TransactionMappingLegacy {
+
+
+    @Override
+    public AddressAliasTransaction apply(JsonObject input) {
+
+        TransactionInfo transactionInfo = this.createTransactionInfo(input.getJsonObject("meta"));
+
+        JsonObject transaction = input.getJsonObject("transaction");
+        Deadline deadline = new Deadline(extractBigInteger(transaction.getJsonArray("deadline")));
+        NetworkType networkType = extractNetworkType(transaction.getInteger("version"));
+        AliasAction aliasAction = AliasAction
+            .rawValueOf(transaction.getInteger("aliasAction").byteValue());
+        NamespaceId namespaceId = new NamespaceId(
+            extractBigInteger(transaction.getJsonArray("namespaceId")));
+        return new AddressAliasTransaction(
+            networkType,
+            extractTransactionVersion(transaction.getInteger("version")),
+            deadline,
+            extractBigInteger(transaction.getJsonArray("maxFee")),
+            aliasAction,
+            namespaceId,
+            Address.createFromEncoded(transaction.getString("address")),
+            Optional.ofNullable(transaction.getString("signature")),
+            Optional.of(new PublicAccount(transaction.getString("signer"), networkType)),
+            Optional.of(transactionInfo));
+    }
+
 }
 
 class SecretProofTransactionMapping extends TransactionMappingLegacy {

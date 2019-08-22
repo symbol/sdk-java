@@ -23,10 +23,12 @@ import io.nem.sdk.model.mosaic.MosaicId;
 import io.nem.sdk.model.mosaic.MosaicNonce;
 import io.nem.sdk.model.mosaic.MosaicProperties;
 import io.nem.sdk.model.mosaic.MosaicSupplyType;
+import io.nem.sdk.model.namespace.AliasAction;
 import io.nem.sdk.model.namespace.NamespaceId;
 import io.nem.sdk.model.namespace.NamespaceType;
 import io.nem.sdk.model.transaction.AccountLinkAction;
 import io.nem.sdk.model.transaction.AccountLinkTransaction;
+import io.nem.sdk.model.transaction.AddressAliasTransaction;
 import io.nem.sdk.model.transaction.AggregateTransaction;
 import io.nem.sdk.model.transaction.AggregateTransactionCosignature;
 import io.nem.sdk.model.transaction.Deadline;
@@ -50,6 +52,7 @@ import io.nem.sdk.model.transaction.TransactionType;
 import io.nem.sdk.model.transaction.TransferTransaction;
 import io.nem.sdk.model.transaction.UInt64;
 import io.nem.sdk.openapi.vertx.model.AccountLinkTransactionDTO;
+import io.nem.sdk.openapi.vertx.model.AddressAliasTransactionDTO;
 import io.nem.sdk.openapi.vertx.model.AggregateBondedTransactionDTO;
 import io.nem.sdk.openapi.vertx.model.HashLockTransactionDTO;
 import io.nem.sdk.openapi.vertx.model.ModifyMultisigAccountTransactionDTO;
@@ -95,6 +98,8 @@ public class TransactionMappingVertx implements Function<TransactionInfoDTO, Tra
             return new MosaicCreationTransactionMapping(jsonHelper).apply(input);
         } else if (type == TransactionType.MOSAIC_SUPPLY_CHANGE.getValue()) {
             return new MosaicSupplyChangeTransactionMapping(jsonHelper).apply(input);
+        } else if (type == TransactionType.ADDRESS_ALIAS.getValue()) {
+            return new AddressAliasTransactionMapping(jsonHelper).apply(input);
             // } else if (type == TransactionType.MOSAIC_ALIAS.getValue()) {
             //    return new MosaicAliasTransactionMapping().apply(input);
         } else if (type == TransactionType.MODIFY_MULTISIG_ACCOUNT.getValue()) {
@@ -516,6 +521,37 @@ class SecretLockTransactionMapping extends TransactionMappingVertx {
             transaction.getSignature(),
             new PublicAccount(transaction.getSigner(), networkType),
             transactionInfo);
+    }
+}
+
+
+class AddressAliasTransactionMapping extends TransactionMappingVertx {
+
+    public AddressAliasTransactionMapping(JsonHelper jsonHelper) {
+        super(jsonHelper);
+    }
+
+    @Override
+    public AddressAliasTransaction apply(TransactionInfoDTO input) {
+        TransactionInfo transactionInfo = this.createTransactionInfo(input.getMeta());
+        AddressAliasTransactionDTO transaction = getJsonHelper()
+            .convert(input.getTransaction(), AddressAliasTransactionDTO.class);
+        NamespaceId namespaceId = new NamespaceId(extractBigInteger(transaction.getNamespaceId()));
+        Deadline deadline = new Deadline(extractBigInteger(transaction.getDeadline()));
+        NetworkType networkType = extractNetworkType(transaction.getVersion());
+        AliasAction aliasAction = AliasAction
+            .rawValueOf(transaction.getAliasAction().getValue().byteValue());
+        return new AddressAliasTransaction(
+            networkType,
+            extractTransactionVersion(transaction.getVersion()),
+            deadline,
+            extractBigInteger(transaction.getMaxFee()),
+            aliasAction,
+            namespaceId,
+            Address.createFromEncoded(transaction.getAddress()),
+            Optional.ofNullable(transaction.getSignature()),
+            Optional.of(new PublicAccount(transaction.getSigner(), networkType)),
+            Optional.of(transactionInfo));
     }
 }
 

@@ -67,7 +67,7 @@ public class ListenerVertx extends ListenerBase implements Listener {
             throw new IllegalArgumentException("Parameter '" + url +
                 "' is not a valid URL. " + ExceptionUtils.getMessage(e));
         }
-        this.jsonHelper = new JsonHelperJackson2(Json.mapper);
+        this.jsonHelper = new JsonHelperJackson2(JsonHelperJackson2.configureMapper(Json.mapper));
     }
 
     /**
