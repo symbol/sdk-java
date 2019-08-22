@@ -44,7 +44,7 @@ public class TransactionHttp extends Http implements TransactionRepository {
     }
 
     public TransactionHttp(String host, NetworkHttp networkHttp) {
-        super(host, networkHttp);
+        super(host + "/transaction/", networkHttp);
     }
 
     @Override
