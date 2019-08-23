@@ -285,9 +285,8 @@ class MosaicCreationTransactionMapping extends TransactionMappingOkHttp {
             extractTransactionVersion(transaction.getVersion()),
             deadline,
             extractBigInteger(transaction.getMaxFee()),
-            //TODO it was "nonce"
             MosaicNonce
-                .createFromBigInteger(extractBigInteger(transaction.getMosaicNonce().longValue())),
+                .createFromBigInteger(extractBigInteger(transaction.getNonce())),
             new MosaicId(extractBigInteger(transaction.getMosaicId())),
             properties,
             transaction.getSignature(),

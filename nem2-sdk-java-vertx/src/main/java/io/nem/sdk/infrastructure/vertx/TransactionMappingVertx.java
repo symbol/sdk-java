@@ -286,7 +286,7 @@ class MosaicCreationTransactionMapping extends TransactionMappingVertx {
             deadline,
             extractBigInteger(transaction.getMaxFee()),
             MosaicNonce
-                .createFromBigInteger(extractBigInteger(transaction.getMosaicNonce().longValue())),
+                .createFromBigInteger(extractBigInteger(transaction.getNonce())),
             new MosaicId(extractBigInteger(transaction.getMosaicId())),
             properties,
             transaction.getSignature(),
