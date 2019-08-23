@@ -14,6 +14,10 @@
  * limitations under the License.
  */
 
-rootProject.name = 'nem2-sdk-java'
+rootProject.name = 'nem2-sdk-openapi-generator'
 
-include ":sdk-core", ":sdk-okhttp-client", ":sdk-vertx-client", ":sdk-vertx-legacy-client", ":integration-tests"
+include ":api-jersey2-client", ":api-okhttp-gson-client", ":api-vertx-client"
+
+project(':api-jersey2-client').projectDir = new File('targetapi-jersey2-client')
+project(':api-okhttp-gson-client').projectDir = new File('target/api-okhttp-gson-client')
+project(':api-vertx-client').projectDir = new File('target/api-vertx-client')
