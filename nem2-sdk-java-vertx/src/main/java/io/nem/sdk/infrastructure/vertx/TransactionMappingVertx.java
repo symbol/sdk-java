@@ -37,6 +37,7 @@ import io.nem.sdk.model.transaction.JsonHelper;
 import io.nem.sdk.model.transaction.LockFundsTransaction;
 import io.nem.sdk.model.transaction.Message;
 import io.nem.sdk.model.transaction.ModifyMultisigAccountTransaction;
+import io.nem.sdk.model.transaction.MosaicAliasTransaction;
 import io.nem.sdk.model.transaction.MosaicDefinitionTransaction;
 import io.nem.sdk.model.transaction.MosaicSupplyChangeTransaction;
 import io.nem.sdk.model.transaction.MultisigCosignatoryModification;
@@ -56,6 +57,7 @@ import io.nem.sdk.openapi.vertx.model.AddressAliasTransactionDTO;
 import io.nem.sdk.openapi.vertx.model.AggregateBondedTransactionDTO;
 import io.nem.sdk.openapi.vertx.model.HashLockTransactionDTO;
 import io.nem.sdk.openapi.vertx.model.ModifyMultisigAccountTransactionDTO;
+import io.nem.sdk.openapi.vertx.model.MosaicAliasTransactionDTO;
 import io.nem.sdk.openapi.vertx.model.MosaicDefinitionTransactionDTO;
 import io.nem.sdk.openapi.vertx.model.MosaicPropertyDTO;
 import io.nem.sdk.openapi.vertx.model.MosaicSupplyChangeTransactionDTO;
@@ -100,8 +102,8 @@ public class TransactionMappingVertx implements Function<TransactionInfoDTO, Tra
             return new MosaicSupplyChangeTransactionMapping(jsonHelper).apply(input);
         } else if (type == TransactionType.ADDRESS_ALIAS.getValue()) {
             return new AddressAliasTransactionMapping(jsonHelper).apply(input);
-            // } else if (type == TransactionType.MOSAIC_ALIAS.getValue()) {
-            //    return new MosaicAliasTransactionMapping().apply(input);
+        } else if (type == TransactionType.MOSAIC_ALIAS.getValue()) {
+            return new MosaicAliasTransactionMapping(jsonHelper).apply(input);
         } else if (type == TransactionType.MODIFY_MULTISIG_ACCOUNT.getValue()) {
             return new MultisigModificationTransactionMapping(jsonHelper).apply(input);
         } else if (type == TransactionType.AGGREGATE_COMPLETE.getValue()
@@ -291,7 +293,7 @@ class MosaicCreationTransactionMapping extends TransactionMappingVertx {
             deadline,
             extractBigInteger(transaction.getMaxFee()),
             MosaicNonce
-                .createFromBigInteger(extractBigInteger(transaction.getMosaicNonce().longValue())),
+                .createFromBigInteger(extractBigInteger(transaction.getNonce())),
             new MosaicId(extractBigInteger(transaction.getMosaicId())),
             properties,
             transaction.getSignature(),
@@ -549,6 +551,35 @@ class AddressAliasTransactionMapping extends TransactionMappingVertx {
             aliasAction,
             namespaceId,
             Address.createFromEncoded(transaction.getAddress()),
+            Optional.ofNullable(transaction.getSignature()),
+            Optional.of(new PublicAccount(transaction.getSigner(), networkType)),
+            Optional.of(transactionInfo));
+    }
+}
+
+class MosaicAliasTransactionMapping extends TransactionMappingVertx {
+
+    public MosaicAliasTransactionMapping(JsonHelper jsonHelper) {
+        super(jsonHelper);
+    }
+
+    @Override
+    public MosaicAliasTransaction apply(TransactionInfoDTO input) {
+        TransactionInfo transactionInfo = this.createTransactionInfo(input.getMeta());
+        MosaicAliasTransactionDTO transaction = getJsonHelper().convert(input.getTransaction(), MosaicAliasTransactionDTO.class);
+        NamespaceId namespaceId = new NamespaceId(extractBigInteger(transaction.getNamespaceId()));
+        Deadline deadline = new Deadline(extractBigInteger(transaction.getDeadline()));
+        NetworkType networkType = extractNetworkType(transaction.getVersion());
+        AliasAction aliasAction = AliasAction
+            .rawValueOf(transaction.getAliasAction().getValue().byteValue());
+        return new MosaicAliasTransaction(
+            networkType,
+            extractTransactionVersion(transaction.getVersion()),
+            deadline,
+            extractBigInteger(transaction.getMaxFee()),
+            aliasAction,
+            namespaceId,
+            new MosaicId(extractBigInteger(transaction.getMosaicId())),
             Optional.ofNullable(transaction.getSignature()),
             Optional.of(new PublicAccount(transaction.getSigner(), networkType)),
             Optional.of(transactionInfo));

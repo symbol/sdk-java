@@ -2087,9 +2087,9 @@ components:
       - mosaicId
       - properties
       properties:
-        mosaicNonce:
+        nonce:
           type: integer
-          format: int32
+          format: int64
           description: Random nonce used to generate the mosaic id.
           example: 0
         mosaicId:

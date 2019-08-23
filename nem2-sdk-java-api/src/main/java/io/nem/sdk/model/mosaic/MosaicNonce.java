@@ -2,10 +2,10 @@ package io.nem.sdk.model.mosaic;
 
 import io.nem.core.utils.ByteUtils;
 import java.math.BigInteger;
-import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.binary.Hex;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 
 /**
  * Mosaic nonce class
@@ -33,9 +33,9 @@ public class MosaicNonce {
         final byte NO_OF_RANDOM_BYTES = 4;
         byte[] bytes = new byte[NO_OF_RANDOM_BYTES]; // the array to be filled in with random bytes
         try {
-            SecureRandom.getInstanceStrong().nextBytes(bytes);
-        } catch (NoSuchAlgorithmException e) {
-            throw new IllegalIdentifierException("NoSuchAlgorithmException:" + e);
+            new SecureRandom().nextBytes(bytes);
+        } catch (Exception e) {
+            throw new IllegalIdentifierException(ExceptionUtils.getMessage(e), e);
         }
         return new MosaicNonce(bytes);
     }
