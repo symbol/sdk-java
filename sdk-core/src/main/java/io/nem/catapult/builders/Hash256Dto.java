@@ -1,28 +1,31 @@
 /**
- * ** Copyright (c) 2016-present, ** Jaguar0625, gimre, BloodyRookie, Tech Bureau, Corp. All rights
- * reserved. ** ** This file is part of Catapult. ** ** Catapult is free software: you can
- * redistribute it and/or modify ** it under the terms of the GNU Lesser General Public License as
- * published by ** the Free Software Foundation, either version 3 of the License, or ** (at your
- * option) any later version. ** ** Catapult is distributed in the hope that it will be useful, **
- * but WITHOUT ANY WARRANTY; without even the implied warranty of ** MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE. See the ** GNU Lesser General Public License for more details. ** ** You
- * should have received a copy of the GNU Lesser General Public License ** along with Catapult. If
- * not, see <http://www.gnu.org/licenses/>.
- **/
+*** Copyright (c) 2016-present,
+*** Jaguar0625, gimre, BloodyRookie, Tech Bureau, Corp. All rights reserved.
+***
+*** This file is part of Catapult.
+***
+*** Catapult is free software: you can redistribute it and/or modify
+*** it under the terms of the GNU Lesser General Public License as published by
+*** the Free Software Foundation, either version 3 of the License, or
+*** (at your option) any later version.
+***
+*** Catapult is distributed in the hope that it will be useful,
+*** but WITHOUT ANY WARRANTY; without even the implied warranty of
+*** MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+*** GNU Lesser General Public License for more details.
+***
+*** You should have received a copy of the GNU Lesser General Public License
+*** along with Catapult. If not, see <http://www.gnu.org/licenses/>.
+**/
 
 package io.nem.catapult.builders;
 
 import java.io.DataInput;
 import java.nio.ByteBuffer;
 
-/**
- * Hash256.
- */
+/** Hash256. */
 public final class Hash256Dto {
-
-    /**
-     * Hash256.
-     */
+    /** Hash256. */
     private final ByteBuffer hash256;
 
     /**
@@ -45,19 +48,9 @@ public final class Hash256Dto {
         try {
             this.hash256 = ByteBuffer.allocate(32);
             stream.readFully(this.hash256.array());
-        } catch (Exception e) {
+        } catch(Exception e) {
             throw GeneratorUtils.getExceptionToPropagate(e);
         }
-    }
-
-    /**
-     * Creates an instance of Hash256Dto from a stream.
-     *
-     * @param stream Byte stream to use to serialize the object.
-     * @return Instance of Hash256Dto.
-     */
-    public static Hash256Dto loadFromBinary(final DataInput stream) {
-        return new Hash256Dto(stream);
     }
 
     /**
@@ -76,6 +69,16 @@ public final class Hash256Dto {
      */
     public int getSize() {
         return 32;
+    }
+
+    /**
+     * Creates an instance of Hash256Dto from a stream.
+     *
+     * @param stream Byte stream to use to serialize the object.
+     * @return Instance of Hash256Dto.
+     */
+    public static Hash256Dto loadFromBinary(final DataInput stream) {
+        return new Hash256Dto(stream);
     }
 
     /**

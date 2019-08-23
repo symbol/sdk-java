@@ -1,27 +1,30 @@
 /**
- * ** Copyright (c) 2016-present, ** Jaguar0625, gimre, BloodyRookie, Tech Bureau, Corp. All rights
- * reserved. ** ** This file is part of Catapult. ** ** Catapult is free software: you can
- * redistribute it and/or modify ** it under the terms of the GNU Lesser General Public License as
- * published by ** the Free Software Foundation, either version 3 of the License, or ** (at your
- * option) any later version. ** ** Catapult is distributed in the hope that it will be useful, **
- * but WITHOUT ANY WARRANTY; without even the implied warranty of ** MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE. See the ** GNU Lesser General Public License for more details. ** ** You
- * should have received a copy of the GNU Lesser General Public License ** along with Catapult. If
- * not, see <http://www.gnu.org/licenses/>.
- **/
+*** Copyright (c) 2016-present,
+*** Jaguar0625, gimre, BloodyRookie, Tech Bureau, Corp. All rights reserved.
+***
+*** This file is part of Catapult.
+***
+*** Catapult is free software: you can redistribute it and/or modify
+*** it under the terms of the GNU Lesser General Public License as published by
+*** the Free Software Foundation, either version 3 of the License, or
+*** (at your option) any later version.
+***
+*** Catapult is distributed in the hope that it will be useful,
+*** but WITHOUT ANY WARRANTY; without even the implied warranty of
+*** MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+*** GNU Lesser General Public License for more details.
+***
+*** You should have received a copy of the GNU Lesser General Public License
+*** along with Catapult. If not, see <http://www.gnu.org/licenses/>.
+**/
 
 package io.nem.catapult.builders;
 
 import java.io.DataInput;
 
-/**
- * Namespace id.
- */
+/** Namespace id. */
 public final class NamespaceIdDto {
-
-    /**
-     * Namespace id.
-     */
+    /** Namespace id. */
     private final long namespaceId;
 
     /**
@@ -41,19 +44,9 @@ public final class NamespaceIdDto {
     public NamespaceIdDto(final DataInput stream) {
         try {
             this.namespaceId = Long.reverseBytes(stream.readLong());
-        } catch (Exception e) {
+        } catch(Exception e) {
             throw GeneratorUtils.getExceptionToPropagate(e);
         }
-    }
-
-    /**
-     * Creates an instance of NamespaceIdDto from a stream.
-     *
-     * @param stream Byte stream to use to serialize the object.
-     * @return Instance of NamespaceIdDto.
-     */
-    public static NamespaceIdDto loadFromBinary(final DataInput stream) {
-        return new NamespaceIdDto(stream);
     }
 
     /**
@@ -72,6 +65,16 @@ public final class NamespaceIdDto {
      */
     public int getSize() {
         return 8;
+    }
+
+    /**
+     * Creates an instance of NamespaceIdDto from a stream.
+     *
+     * @param stream Byte stream to use to serialize the object.
+     * @return Instance of NamespaceIdDto.
+     */
+    public static NamespaceIdDto loadFromBinary(final DataInput stream) {
+        return new NamespaceIdDto(stream);
     }
 
     /**

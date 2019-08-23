@@ -538,8 +538,8 @@ public class OkHttpTransactionMappingTest {
             (long) mosaicDefinitionTransactionDTO.getProperties().get(1).getValue().get(0));
         assertEquals(
             extractBigInteger(
-                mosaicDefinitionTransactionDTO.getProperties().get(2).getValue()),
-            transaction.getMosaicProperties().getDuration().get());
+                mosaicDefinitionTransactionDTO.getProperties().get(2).getValue()).longValue(),
+            transaction.getMosaicProperties().getDuration().longValue());
         assertTrue(transaction.getMosaicProperties().isSupplyMutable());
         assertTrue(transaction.getMosaicProperties().isTransferable());
     }

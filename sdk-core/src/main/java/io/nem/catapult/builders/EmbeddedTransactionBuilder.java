@@ -1,40 +1,37 @@
 /**
- * ** Copyright (c) 2016-present, ** Jaguar0625, gimre, BloodyRookie, Tech Bureau, Corp. All rights
- * reserved. ** ** This file is part of Catapult. ** ** Catapult is free software: you can
- * redistribute it and/or modify ** it under the terms of the GNU Lesser General Public License as
- * published by ** the Free Software Foundation, either version 3 of the License, or ** (at your
- * option) any later version. ** ** Catapult is distributed in the hope that it will be useful, **
- * but WITHOUT ANY WARRANTY; without even the implied warranty of ** MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE. See the ** GNU Lesser General Public License for more details. ** ** You
- * should have received a copy of the GNU Lesser General Public License ** along with Catapult. If
- * not, see <http://www.gnu.org/licenses/>.
- **/
+*** Copyright (c) 2016-present,
+*** Jaguar0625, gimre, BloodyRookie, Tech Bureau, Corp. All rights reserved.
+***
+*** This file is part of Catapult.
+***
+*** Catapult is free software: you can redistribute it and/or modify
+*** it under the terms of the GNU Lesser General Public License as published by
+*** the Free Software Foundation, either version 3 of the License, or
+*** (at your option) any later version.
+***
+*** Catapult is distributed in the hope that it will be useful,
+*** but WITHOUT ANY WARRANTY; without even the implied warranty of
+*** MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+*** GNU Lesser General Public License for more details.
+***
+*** You should have received a copy of the GNU Lesser General Public License
+*** along with Catapult. If not, see <http://www.gnu.org/licenses/>.
+**/
 
 package io.nem.catapult.builders;
 
 import java.io.DataInput;
 
-/**
- * Binary layout for an embedded transaction.
- */
+/** Binary layout for an embedded transaction. */
 public class EmbeddedTransactionBuilder {
-
-    /**
-     * Entity signer's public key.
-     */
-    private final KeyDto signer;
-    /**
-     * Entity version.
-     */
-    private final short version;
-    /**
-     * Entity type.
-     */
-    private final EntityTypeDto type;
-    /**
-     * Entity size.
-     */
+    /** Entity size. */
     private int size;
+    /** Entity signer's public key. */
+    private final KeyDto signer;
+    /** Entity version. */
+    private final short version;
+    /** Entity type. */
+    private final EntityTypeDto type;
 
     /**
      * Constructor - Creates an object from stream.
@@ -47,7 +44,7 @@ public class EmbeddedTransactionBuilder {
             this.signer = KeyDto.loadFromBinary(stream);
             this.version = Short.reverseBytes(stream.readShort());
             this.type = EntityTypeDto.loadFromBinary(stream);
-        } catch (Exception e) {
+        } catch(Exception e) {
             throw GeneratorUtils.getExceptionToPropagate(e);
         }
     }
@@ -59,8 +56,7 @@ public class EmbeddedTransactionBuilder {
      * @param version Entity version.
      * @param type Entity type.
      */
-    protected EmbeddedTransactionBuilder(final KeyDto signer, final short version,
-        final EntityTypeDto type) {
+    protected EmbeddedTransactionBuilder(final KeyDto signer, final short version, final EntityTypeDto type) {
         GeneratorUtils.notNull(signer, "signer is null");
         GeneratorUtils.notNull(type, "type is null");
         this.signer = signer;
@@ -76,19 +72,8 @@ public class EmbeddedTransactionBuilder {
      * @param type Entity type.
      * @return Instance of EmbeddedTransactionBuilder.
      */
-    public static EmbeddedTransactionBuilder create(final KeyDto signer, final short version,
-        final EntityTypeDto type) {
+    public static EmbeddedTransactionBuilder create(final KeyDto signer, final short version, final EntityTypeDto type) {
         return new EmbeddedTransactionBuilder(signer, version, type);
-    }
-
-    /**
-     * Creates an instance of EmbeddedTransactionBuilder from a stream.
-     *
-     * @param stream Byte stream to use to serialize the object.
-     * @return Instance of EmbeddedTransactionBuilder.
-     */
-    public static EmbeddedTransactionBuilder loadFromBinary(final DataInput stream) {
-        return new EmbeddedTransactionBuilder(stream);
     }
 
     /**
@@ -139,6 +124,16 @@ public class EmbeddedTransactionBuilder {
         size += 2; // version
         size += this.type.getSize();
         return size;
+    }
+
+    /**
+     * Creates an instance of EmbeddedTransactionBuilder from a stream.
+     *
+     * @param stream Byte stream to use to serialize the object.
+     * @return Instance of EmbeddedTransactionBuilder.
+     */
+    public static EmbeddedTransactionBuilder loadFromBinary(final DataInput stream) {
+        return new EmbeddedTransactionBuilder(stream);
     }
 
     /**

@@ -1,27 +1,30 @@
 /**
- * ** Copyright (c) 2016-present, ** Jaguar0625, gimre, BloodyRookie, Tech Bureau, Corp. All rights
- * reserved. ** ** This file is part of Catapult. ** ** Catapult is free software: you can
- * redistribute it and/or modify ** it under the terms of the GNU Lesser General Public License as
- * published by ** the Free Software Foundation, either version 3 of the License, or ** (at your
- * option) any later version. ** ** Catapult is distributed in the hope that it will be useful, **
- * but WITHOUT ANY WARRANTY; without even the implied warranty of ** MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE. See the ** GNU Lesser General Public License for more details. ** ** You
- * should have received a copy of the GNU Lesser General Public License ** along with Catapult. If
- * not, see <http://www.gnu.org/licenses/>.
- **/
+*** Copyright (c) 2016-present,
+*** Jaguar0625, gimre, BloodyRookie, Tech Bureau, Corp. All rights reserved.
+***
+*** This file is part of Catapult.
+***
+*** Catapult is free software: you can redistribute it and/or modify
+*** it under the terms of the GNU Lesser General Public License as published by
+*** the Free Software Foundation, either version 3 of the License, or
+*** (at your option) any later version.
+***
+*** Catapult is distributed in the hope that it will be useful,
+*** but WITHOUT ANY WARRANTY; without even the implied warranty of
+*** MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+*** GNU Lesser General Public License for more details.
+***
+*** You should have received a copy of the GNU Lesser General Public License
+*** along with Catapult. If not, see <http://www.gnu.org/licenses/>.
+**/
 
 package io.nem.catapult.builders;
 
 import java.io.DataInput;
 
-/**
- * Binary layout for a non-embedded secret lock transaction.
- */
+/** Binary layout for a non-embedded secret lock transaction. */
 public final class SecretLockTransactionBuilder extends TransactionBuilder {
-
-    /**
-     * Secret lock transaction body.
-     */
+    /** Secret lock transaction body. */
     private final SecretLockTransactionBodyBuilder secretLockTransactionBody;
 
     /**
@@ -49,14 +52,9 @@ public final class SecretLockTransactionBuilder extends TransactionBuilder {
      * @param secret Secret.
      * @param recipient Locked mosaic recipient.
      */
-    protected SecretLockTransactionBuilder(final SignatureDto signature, final KeyDto signer,
-        final short version, final EntityTypeDto type, final AmountDto fee,
-        final TimestampDto deadline, final UnresolvedMosaicBuilder mosaic,
-        final BlockDurationDto duration, final LockHashAlgorithmDto hashAlgorithm,
-        final Hash256Dto secret, final UnresolvedAddressDto recipient) {
+    protected SecretLockTransactionBuilder(final SignatureDto signature, final KeyDto signer, final short version, final EntityTypeDto type, final AmountDto fee, final TimestampDto deadline, final UnresolvedMosaicBuilder mosaic, final BlockDurationDto duration, final LockHashAlgorithmDto hashAlgorithm, final Hash256Dto secret, final UnresolvedAddressDto recipient) {
         super(signature, signer, version, type, fee, deadline);
-        this.secretLockTransactionBody = SecretLockTransactionBodyBuilder
-            .create(mosaic, duration, hashAlgorithm, secret, recipient);
+        this.secretLockTransactionBody = SecretLockTransactionBodyBuilder.create(mosaic, duration, hashAlgorithm, secret, recipient);
     }
 
     /**
@@ -75,23 +73,8 @@ public final class SecretLockTransactionBuilder extends TransactionBuilder {
      * @param recipient Locked mosaic recipient.
      * @return Instance of SecretLockTransactionBuilder.
      */
-    public static SecretLockTransactionBuilder create(final SignatureDto signature,
-        final KeyDto signer, final short version, final EntityTypeDto type, final AmountDto fee,
-        final TimestampDto deadline, final UnresolvedMosaicBuilder mosaic,
-        final BlockDurationDto duration, final LockHashAlgorithmDto hashAlgorithm,
-        final Hash256Dto secret, final UnresolvedAddressDto recipient) {
-        return new SecretLockTransactionBuilder(signature, signer, version, type, fee, deadline,
-            mosaic, duration, hashAlgorithm, secret, recipient);
-    }
-
-    /**
-     * Creates an instance of SecretLockTransactionBuilder from a stream.
-     *
-     * @param stream Byte stream to use to serialize the object.
-     * @return Instance of SecretLockTransactionBuilder.
-     */
-    public static SecretLockTransactionBuilder loadFromBinary(final DataInput stream) {
-        return new SecretLockTransactionBuilder(stream);
+    public static SecretLockTransactionBuilder create(final SignatureDto signature, final KeyDto signer, final short version, final EntityTypeDto type, final AmountDto fee, final TimestampDto deadline, final UnresolvedMosaicBuilder mosaic, final BlockDurationDto duration, final LockHashAlgorithmDto hashAlgorithm, final Hash256Dto secret, final UnresolvedAddressDto recipient) {
+        return new SecretLockTransactionBuilder(signature, signer, version, type, fee, deadline, mosaic, duration, hashAlgorithm, secret, recipient);
     }
 
     /**
@@ -152,6 +135,16 @@ public final class SecretLockTransactionBuilder extends TransactionBuilder {
     }
 
     /**
+     * Creates an instance of SecretLockTransactionBuilder from a stream.
+     *
+     * @param stream Byte stream to use to serialize the object.
+     * @return Instance of SecretLockTransactionBuilder.
+     */
+    public static SecretLockTransactionBuilder loadFromBinary(final DataInput stream) {
+        return new SecretLockTransactionBuilder(stream);
+    }
+
+    /**
      * Serializes an object to bytes.
      *
      * @return Serialized bytes.
@@ -160,10 +153,8 @@ public final class SecretLockTransactionBuilder extends TransactionBuilder {
         return GeneratorUtils.serialize(dataOutputStream -> {
             final byte[] superBytes = super.serialize();
             dataOutputStream.write(superBytes, 0, superBytes.length);
-            final byte[] secretLockTransactionBodyBytes = this.secretLockTransactionBody
-                .serialize();
-            dataOutputStream
-                .write(secretLockTransactionBodyBytes, 0, secretLockTransactionBodyBytes.length);
+            final byte[] secretLockTransactionBodyBytes = this.secretLockTransactionBody.serialize();
+            dataOutputStream.write(secretLockTransactionBodyBytes, 0, secretLockTransactionBodyBytes.length);
         });
     }
 }

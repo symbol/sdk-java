@@ -13,82 +13,74 @@ package io.nem.catapult.builders;
 
 import java.io.DataInput;
 
-/**
- * Cosignatory modification type.
- */
+/** Cosignatory modification type. */
 public enum CosignatoryModificationTypeDto {
-    /**
-     * Add cosignatory.
-     */
-    ADD((byte) 0),
-    /**
-     * Remove cosignatory.
-     */
-    DEL((byte) 1);
+  /** Add cosignatory. */
+  ADD((byte) 0),
+  /** Remove cosignatory. */
+  DEL((byte) 1);
 
-    /**
-     * Enum value.
-     */
-    private final byte value;
+  /** Enum value. */
+  private final byte value;
 
-    /**
-     * Constructor.
-     *
-     * @param value Enum value.
-     */
-    CosignatoryModificationTypeDto(final byte value) {
-        this.value = value;
+  /**
+   * Constructor.
+   *
+   * @param value Enum value.
+   */
+  CosignatoryModificationTypeDto(final byte value) {
+    this.value = value;
+  }
+
+  /**
+   * Gets enum value.
+   *
+   * @param value Raw value of the enum.
+   * @return Enum value.
+   */
+  public static CosignatoryModificationTypeDto rawValueOf(final byte value) {
+    for (CosignatoryModificationTypeDto current : CosignatoryModificationTypeDto.values()) {
+      if (value == current.value) {
+        return current;
+      }
     }
+    throw new IllegalArgumentException(
+        value + " was not a backing value for CosignatoryModificationTypeDto.");
+  }
 
-    /**
-     * Gets enum value.
-     *
-     * @param value Raw value of the enum.
-     * @return Enum value.
-     */
-    public static CosignatoryModificationTypeDto rawValueOf(final byte value) {
-        for (CosignatoryModificationTypeDto current : CosignatoryModificationTypeDto.values()) {
-            if (value == current.value) {
-                return current;
-            }
-        }
-        throw new IllegalArgumentException(
-            value + " was not a backing value for CosignatoryModificationTypeDto.");
+  /**
+   * Creates an instance of CosignatoryModificationTypeDto from a stream.
+   *
+   * @param stream Byte stream to use to serialize the object.
+   * @return Instance of CosignatoryModificationTypeDto.
+   */
+  public static CosignatoryModificationTypeDto loadFromBinary(final DataInput stream) {
+    try {
+      final byte streamValue = stream.readByte();
+      return rawValueOf(streamValue);
+    } catch (Exception e) {
+      throw GeneratorUtils.getExceptionToPropagate(e);
     }
+  }
 
-    /**
-     * Creates an instance of CosignatoryModificationTypeDto from a stream.
-     *
-     * @param stream Byte stream to use to serialize the object.
-     * @return Instance of CosignatoryModificationTypeDto.
-     */
-    public static CosignatoryModificationTypeDto loadFromBinary(final DataInput stream) {
-        try {
-            final byte streamValue = stream.readByte();
-            return rawValueOf(streamValue);
-        } catch (Exception e) {
-            throw GeneratorUtils.getExceptionToPropagate(e);
-        }
-    }
+  /**
+   * Gets the size of the object.
+   *
+   * @return Size in bytes.
+   */
+  public int getSize() {
+    return 1;
+  }
 
-    /**
-     * Gets the size of the object.
-     *
-     * @return Size in bytes.
-     */
-    public int getSize() {
-        return 1;
-    }
-
-    /**
-     * Serializes an object to bytes.
-     *
-     * @return Serialized bytes.
-     */
-    public byte[] serialize() {
-        return GeneratorUtils.serialize(
-            dataOutputStream -> {
-                dataOutputStream.writeByte(this.value);
-            });
-    }
+  /**
+   * Serializes an object to bytes.
+   *
+   * @return Serialized bytes.
+   */
+  public byte[] serialize() {
+    return GeneratorUtils.serialize(
+        dataOutputStream -> {
+          dataOutputStream.writeByte(this.value);
+        });
+  }
 }

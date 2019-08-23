@@ -1,35 +1,34 @@
 /**
- * ** Copyright (c) 2016-present, ** Jaguar0625, gimre, BloodyRookie, Tech Bureau, Corp. All rights
- * reserved. ** ** This file is part of Catapult. ** ** Catapult is free software: you can
- * redistribute it and/or modify ** it under the terms of the GNU Lesser General Public License as
- * published by ** the Free Software Foundation, either version 3 of the License, or ** (at your
- * option) any later version. ** ** Catapult is distributed in the hope that it will be useful, **
- * but WITHOUT ANY WARRANTY; without even the implied warranty of ** MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE. See the ** GNU Lesser General Public License for more details. ** ** You
- * should have received a copy of the GNU Lesser General Public License ** along with Catapult. If
- * not, see <http://www.gnu.org/licenses/>.
- **/
+*** Copyright (c) 2016-present,
+*** Jaguar0625, gimre, BloodyRookie, Tech Bureau, Corp. All rights reserved.
+***
+*** This file is part of Catapult.
+***
+*** Catapult is free software: you can redistribute it and/or modify
+*** it under the terms of the GNU Lesser General Public License as published by
+*** the Free Software Foundation, either version 3 of the License, or
+*** (at your option) any later version.
+***
+*** Catapult is distributed in the hope that it will be useful,
+*** but WITHOUT ANY WARRANTY; without even the implied warranty of
+*** MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+*** GNU Lesser General Public License for more details.
+***
+*** You should have received a copy of the GNU Lesser General Public License
+*** along with Catapult. If not, see <http://www.gnu.org/licenses/>.
+**/
 
 package io.nem.catapult.builders;
 
 import java.io.DataInput;
 
-/**
- * Binary layout for an address alias transaction.
- */
+/** Binary layout for an address alias transaction. */
 final class AddressAliasTransactionBodyBuilder {
-
-    /**
-     * Alias action.
-     */
+    /** Alias action. */
     private final AliasActionDto aliasAction;
-    /**
-     * Identifier of the namespace that will become an alias.
-     */
+    /** Identifier of the namespace that will become an alias. */
     private final NamespaceIdDto namespaceId;
-    /**
-     * Aliased address.
-     */
+    /** Aliased address. */
     private final AddressDto address;
 
     /**
@@ -50,8 +49,7 @@ final class AddressAliasTransactionBodyBuilder {
      * @param namespaceId Identifier of the namespace that will become an alias.
      * @param address Aliased address.
      */
-    protected AddressAliasTransactionBodyBuilder(final AliasActionDto aliasAction,
-        final NamespaceIdDto namespaceId, final AddressDto address) {
+    protected AddressAliasTransactionBodyBuilder(final AliasActionDto aliasAction, final NamespaceIdDto namespaceId, final AddressDto address) {
         GeneratorUtils.notNull(aliasAction, "aliasAction is null");
         GeneratorUtils.notNull(namespaceId, "namespaceId is null");
         GeneratorUtils.notNull(address, "address is null");
@@ -68,19 +66,8 @@ final class AddressAliasTransactionBodyBuilder {
      * @param address Aliased address.
      * @return Instance of AddressAliasTransactionBodyBuilder.
      */
-    public static AddressAliasTransactionBodyBuilder create(final AliasActionDto aliasAction,
-        final NamespaceIdDto namespaceId, final AddressDto address) {
+    public static AddressAliasTransactionBodyBuilder create(final AliasActionDto aliasAction, final NamespaceIdDto namespaceId, final AddressDto address) {
         return new AddressAliasTransactionBodyBuilder(aliasAction, namespaceId, address);
-    }
-
-    /**
-     * Creates an instance of AddressAliasTransactionBodyBuilder from a stream.
-     *
-     * @param stream Byte stream to use to serialize the object.
-     * @return Instance of AddressAliasTransactionBodyBuilder.
-     */
-    public static AddressAliasTransactionBodyBuilder loadFromBinary(final DataInput stream) {
-        return new AddressAliasTransactionBodyBuilder(stream);
     }
 
     /**
@@ -121,6 +108,16 @@ final class AddressAliasTransactionBodyBuilder {
         size += this.namespaceId.getSize();
         size += this.address.getSize();
         return size;
+    }
+
+    /**
+     * Creates an instance of AddressAliasTransactionBodyBuilder from a stream.
+     *
+     * @param stream Byte stream to use to serialize the object.
+     * @return Instance of AddressAliasTransactionBodyBuilder.
+     */
+    public static AddressAliasTransactionBodyBuilder loadFromBinary(final DataInput stream) {
+        return new AddressAliasTransactionBodyBuilder(stream);
     }
 
     /**

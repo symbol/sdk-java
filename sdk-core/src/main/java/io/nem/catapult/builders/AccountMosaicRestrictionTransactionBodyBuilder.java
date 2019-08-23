@@ -1,32 +1,33 @@
 /**
- * ** Copyright (c) 2016-present, ** Jaguar0625, gimre, BloodyRookie, Tech Bureau, Corp. All rights
- * reserved. ** ** This file is part of Catapult. ** ** Catapult is free software: you can
- * redistribute it and/or modify ** it under the terms of the GNU Lesser General Public License as
- * published by ** the Free Software Foundation, either version 3 of the License, or ** (at your
- * option) any later version. ** ** Catapult is distributed in the hope that it will be useful, **
- * but WITHOUT ANY WARRANTY; without even the implied warranty of ** MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE. See the ** GNU Lesser General Public License for more details. ** ** You
- * should have received a copy of the GNU Lesser General Public License ** along with Catapult. If
- * not, see <http://www.gnu.org/licenses/>.
- **/
+*** Copyright (c) 2016-present,
+*** Jaguar0625, gimre, BloodyRookie, Tech Bureau, Corp. All rights reserved.
+***
+*** This file is part of Catapult.
+***
+*** Catapult is free software: you can redistribute it and/or modify
+*** it under the terms of the GNU Lesser General Public License as published by
+*** the Free Software Foundation, either version 3 of the License, or
+*** (at your option) any later version.
+***
+*** Catapult is distributed in the hope that it will be useful,
+*** but WITHOUT ANY WARRANTY; without even the implied warranty of
+*** MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+*** GNU Lesser General Public License for more details.
+***
+*** You should have received a copy of the GNU Lesser General Public License
+*** along with Catapult. If not, see <http://www.gnu.org/licenses/>.
+**/
 
 package io.nem.catapult.builders;
 
 import java.io.DataInput;
 import java.util.ArrayList;
 
-/**
- * Binary layout for an account mosaic restriction transaction.
- */
+/** Binary layout for an account mosaic restriction transaction. */
 final class AccountMosaicRestrictionTransactionBodyBuilder {
-
-    /**
-     * Account restriction type.
-     */
+    /** Account restriction type. */
     private final AccountRestrictionTypeDto restrictionType;
-    /**
-     * Account restriction modifications.
-     */
+    /** Account restriction modifications. */
     private final ArrayList<AccountMosaicRestrictionModificationBuilder> modifications;
 
     /**
@@ -40,10 +41,9 @@ final class AccountMosaicRestrictionTransactionBodyBuilder {
             final byte modificationsCount = stream.readByte();
             this.modifications = new java.util.ArrayList<>(modificationsCount);
             for (int i = 0; i < modificationsCount; i++) {
-                modifications
-                    .add(AccountMosaicRestrictionModificationBuilder.loadFromBinary(stream));
+                modifications.add(AccountMosaicRestrictionModificationBuilder.loadFromBinary(stream));
             }
-        } catch (Exception e) {
+        } catch(Exception e) {
             throw GeneratorUtils.getExceptionToPropagate(e);
         }
     }
@@ -54,9 +54,7 @@ final class AccountMosaicRestrictionTransactionBodyBuilder {
      * @param restrictionType Account restriction type.
      * @param modifications Account restriction modifications.
      */
-    protected AccountMosaicRestrictionTransactionBodyBuilder(
-        final AccountRestrictionTypeDto restrictionType,
-        final ArrayList<AccountMosaicRestrictionModificationBuilder> modifications) {
+    protected AccountMosaicRestrictionTransactionBodyBuilder(final AccountRestrictionTypeDto restrictionType, final ArrayList<AccountMosaicRestrictionModificationBuilder> modifications) {
         GeneratorUtils.notNull(restrictionType, "restrictionType is null");
         GeneratorUtils.notNull(modifications, "modifications is null");
         this.restrictionType = restrictionType;
@@ -70,21 +68,8 @@ final class AccountMosaicRestrictionTransactionBodyBuilder {
      * @param modifications Account restriction modifications.
      * @return Instance of AccountMosaicRestrictionTransactionBodyBuilder.
      */
-    public static AccountMosaicRestrictionTransactionBodyBuilder create(
-        final AccountRestrictionTypeDto restrictionType,
-        final ArrayList<AccountMosaicRestrictionModificationBuilder> modifications) {
+    public static AccountMosaicRestrictionTransactionBodyBuilder create(final AccountRestrictionTypeDto restrictionType, final ArrayList<AccountMosaicRestrictionModificationBuilder> modifications) {
         return new AccountMosaicRestrictionTransactionBodyBuilder(restrictionType, modifications);
-    }
-
-    /**
-     * Creates an instance of AccountMosaicRestrictionTransactionBodyBuilder from a stream.
-     *
-     * @param stream Byte stream to use to serialize the object.
-     * @return Instance of AccountMosaicRestrictionTransactionBodyBuilder.
-     */
-    public static AccountMosaicRestrictionTransactionBodyBuilder loadFromBinary(
-        final DataInput stream) {
-        return new AccountMosaicRestrictionTransactionBodyBuilder(stream);
     }
 
     /**
@@ -116,6 +101,16 @@ final class AccountMosaicRestrictionTransactionBodyBuilder {
         size += 1; // modificationsCount
         size += this.modifications.stream().mapToInt(o -> o.getSize()).sum();
         return size;
+    }
+
+    /**
+     * Creates an instance of AccountMosaicRestrictionTransactionBodyBuilder from a stream.
+     *
+     * @param stream Byte stream to use to serialize the object.
+     * @return Instance of AccountMosaicRestrictionTransactionBodyBuilder.
+     */
+    public static AccountMosaicRestrictionTransactionBodyBuilder loadFromBinary(final DataInput stream) {
+        return new AccountMosaicRestrictionTransactionBodyBuilder(stream);
     }
 
     /**

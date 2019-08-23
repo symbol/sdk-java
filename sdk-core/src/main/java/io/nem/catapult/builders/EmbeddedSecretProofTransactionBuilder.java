@@ -1,28 +1,31 @@
 /**
- * ** Copyright (c) 2016-present, ** Jaguar0625, gimre, BloodyRookie, Tech Bureau, Corp. All rights
- * reserved. ** ** This file is part of Catapult. ** ** Catapult is free software: you can
- * redistribute it and/or modify ** it under the terms of the GNU Lesser General Public License as
- * published by ** the Free Software Foundation, either version 3 of the License, or ** (at your
- * option) any later version. ** ** Catapult is distributed in the hope that it will be useful, **
- * but WITHOUT ANY WARRANTY; without even the implied warranty of ** MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE. See the ** GNU Lesser General Public License for more details. ** ** You
- * should have received a copy of the GNU Lesser General Public License ** along with Catapult. If
- * not, see <http://www.gnu.org/licenses/>.
- **/
+*** Copyright (c) 2016-present,
+*** Jaguar0625, gimre, BloodyRookie, Tech Bureau, Corp. All rights reserved.
+***
+*** This file is part of Catapult.
+***
+*** Catapult is free software: you can redistribute it and/or modify
+*** it under the terms of the GNU Lesser General Public License as published by
+*** the Free Software Foundation, either version 3 of the License, or
+*** (at your option) any later version.
+***
+*** Catapult is distributed in the hope that it will be useful,
+*** but WITHOUT ANY WARRANTY; without even the implied warranty of
+*** MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+*** GNU Lesser General Public License for more details.
+***
+*** You should have received a copy of the GNU Lesser General Public License
+*** along with Catapult. If not, see <http://www.gnu.org/licenses/>.
+**/
 
 package io.nem.catapult.builders;
 
 import java.io.DataInput;
 import java.nio.ByteBuffer;
 
-/**
- * Binary layout for an embedded secret proof transaction.
- */
+/** Binary layout for an embedded secret proof transaction. */
 public final class EmbeddedSecretProofTransactionBuilder extends EmbeddedTransactionBuilder {
-
-    /**
-     * Secret proof transaction body.
-     */
+    /** Secret proof transaction body. */
     private final SecretProofTransactionBodyBuilder secretProofTransactionBody;
 
     /**
@@ -46,12 +49,9 @@ public final class EmbeddedSecretProofTransactionBuilder extends EmbeddedTransac
      * @param recipient Recipient.
      * @param proof Proof data.
      */
-    protected EmbeddedSecretProofTransactionBuilder(final KeyDto signer, final short version,
-        final EntityTypeDto type, final LockHashAlgorithmDto hashAlgorithm, final Hash256Dto secret,
-        final UnresolvedAddressDto recipient, final ByteBuffer proof) {
+    protected EmbeddedSecretProofTransactionBuilder(final KeyDto signer, final short version, final EntityTypeDto type, final LockHashAlgorithmDto hashAlgorithm, final Hash256Dto secret, final UnresolvedAddressDto recipient, final ByteBuffer proof) {
         super(signer, version, type);
-        this.secretProofTransactionBody = SecretProofTransactionBodyBuilder
-            .create(hashAlgorithm, secret, recipient, proof);
+        this.secretProofTransactionBody = SecretProofTransactionBodyBuilder.create(hashAlgorithm, secret, recipient, proof);
     }
 
     /**
@@ -66,21 +66,8 @@ public final class EmbeddedSecretProofTransactionBuilder extends EmbeddedTransac
      * @param proof Proof data.
      * @return Instance of EmbeddedSecretProofTransactionBuilder.
      */
-    public static EmbeddedSecretProofTransactionBuilder create(final KeyDto signer,
-        final short version, final EntityTypeDto type, final LockHashAlgorithmDto hashAlgorithm,
-        final Hash256Dto secret, final UnresolvedAddressDto recipient, final ByteBuffer proof) {
-        return new EmbeddedSecretProofTransactionBuilder(signer, version, type, hashAlgorithm,
-            secret, recipient, proof);
-    }
-
-    /**
-     * Creates an instance of EmbeddedSecretProofTransactionBuilder from a stream.
-     *
-     * @param stream Byte stream to use to serialize the object.
-     * @return Instance of EmbeddedSecretProofTransactionBuilder.
-     */
-    public static EmbeddedSecretProofTransactionBuilder loadFromBinary(final DataInput stream) {
-        return new EmbeddedSecretProofTransactionBuilder(stream);
+    public static EmbeddedSecretProofTransactionBuilder create(final KeyDto signer, final short version, final EntityTypeDto type, final LockHashAlgorithmDto hashAlgorithm, final Hash256Dto secret, final UnresolvedAddressDto recipient, final ByteBuffer proof) {
+        return new EmbeddedSecretProofTransactionBuilder(signer, version, type, hashAlgorithm, secret, recipient, proof);
     }
 
     /**
@@ -132,6 +119,16 @@ public final class EmbeddedSecretProofTransactionBuilder extends EmbeddedTransac
     }
 
     /**
+     * Creates an instance of EmbeddedSecretProofTransactionBuilder from a stream.
+     *
+     * @param stream Byte stream to use to serialize the object.
+     * @return Instance of EmbeddedSecretProofTransactionBuilder.
+     */
+    public static EmbeddedSecretProofTransactionBuilder loadFromBinary(final DataInput stream) {
+        return new EmbeddedSecretProofTransactionBuilder(stream);
+    }
+
+    /**
      * Serializes an object to bytes.
      *
      * @return Serialized bytes.
@@ -140,10 +137,8 @@ public final class EmbeddedSecretProofTransactionBuilder extends EmbeddedTransac
         return GeneratorUtils.serialize(dataOutputStream -> {
             final byte[] superBytes = super.serialize();
             dataOutputStream.write(superBytes, 0, superBytes.length);
-            final byte[] secretProofTransactionBodyBytes = this.secretProofTransactionBody
-                .serialize();
-            dataOutputStream
-                .write(secretProofTransactionBodyBytes, 0, secretProofTransactionBodyBytes.length);
+            final byte[] secretProofTransactionBodyBytes = this.secretProofTransactionBody.serialize();
+            dataOutputStream.write(secretProofTransactionBodyBytes, 0, secretProofTransactionBodyBytes.length);
         });
     }
 }

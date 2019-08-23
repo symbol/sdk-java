@@ -1,27 +1,30 @@
 /**
- * ** Copyright (c) 2016-present, ** Jaguar0625, gimre, BloodyRookie, Tech Bureau, Corp. All rights
- * reserved. ** ** This file is part of Catapult. ** ** Catapult is free software: you can
- * redistribute it and/or modify ** it under the terms of the GNU Lesser General Public License as
- * published by ** the Free Software Foundation, either version 3 of the License, or ** (at your
- * option) any later version. ** ** Catapult is distributed in the hope that it will be useful, **
- * but WITHOUT ANY WARRANTY; without even the implied warranty of ** MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE. See the ** GNU Lesser General Public License for more details. ** ** You
- * should have received a copy of the GNU Lesser General Public License ** along with Catapult. If
- * not, see <http://www.gnu.org/licenses/>.
- **/
+*** Copyright (c) 2016-present,
+*** Jaguar0625, gimre, BloodyRookie, Tech Bureau, Corp. All rights reserved.
+***
+*** This file is part of Catapult.
+***
+*** Catapult is free software: you can redistribute it and/or modify
+*** it under the terms of the GNU Lesser General Public License as published by
+*** the Free Software Foundation, either version 3 of the License, or
+*** (at your option) any later version.
+***
+*** Catapult is distributed in the hope that it will be useful,
+*** but WITHOUT ANY WARRANTY; without even the implied warranty of
+*** MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+*** GNU Lesser General Public License for more details.
+***
+*** You should have received a copy of the GNU Lesser General Public License
+*** along with Catapult. If not, see <http://www.gnu.org/licenses/>.
+**/
 
 package io.nem.catapult.builders;
 
 import java.io.DataInput;
 
-/**
- * Binary layout for a non-embedded account link transaction.
- */
+/** Binary layout for a non-embedded account link transaction. */
 public final class AccountLinkTransactionBuilder extends TransactionBuilder {
-
-    /**
-     * Account link transaction body.
-     */
+    /** Account link transaction body. */
     private final AccountLinkTransactionBodyBuilder accountLinkTransactionBody;
 
     /**
@@ -46,13 +49,9 @@ public final class AccountLinkTransactionBuilder extends TransactionBuilder {
      * @param remoteAccountPublicKey Remote account public key.
      * @param linkAction Account link action.
      */
-    protected AccountLinkTransactionBuilder(final SignatureDto signature, final KeyDto signer,
-        final short version, final EntityTypeDto type, final AmountDto fee,
-        final TimestampDto deadline, final KeyDto remoteAccountPublicKey,
-        final AccountLinkActionDto linkAction) {
+    protected AccountLinkTransactionBuilder(final SignatureDto signature, final KeyDto signer, final short version, final EntityTypeDto type, final AmountDto fee, final TimestampDto deadline, final KeyDto remoteAccountPublicKey, final AccountLinkActionDto linkAction) {
         super(signature, signer, version, type, fee, deadline);
-        this.accountLinkTransactionBody = AccountLinkTransactionBodyBuilder
-            .create(remoteAccountPublicKey, linkAction);
+        this.accountLinkTransactionBody = AccountLinkTransactionBodyBuilder.create(remoteAccountPublicKey, linkAction);
     }
 
     /**
@@ -68,22 +67,8 @@ public final class AccountLinkTransactionBuilder extends TransactionBuilder {
      * @param linkAction Account link action.
      * @return Instance of AccountLinkTransactionBuilder.
      */
-    public static AccountLinkTransactionBuilder create(final SignatureDto signature,
-        final KeyDto signer, final short version, final EntityTypeDto type, final AmountDto fee,
-        final TimestampDto deadline, final KeyDto remoteAccountPublicKey,
-        final AccountLinkActionDto linkAction) {
-        return new AccountLinkTransactionBuilder(signature, signer, version, type, fee, deadline,
-            remoteAccountPublicKey, linkAction);
-    }
-
-    /**
-     * Creates an instance of AccountLinkTransactionBuilder from a stream.
-     *
-     * @param stream Byte stream to use to serialize the object.
-     * @return Instance of AccountLinkTransactionBuilder.
-     */
-    public static AccountLinkTransactionBuilder loadFromBinary(final DataInput stream) {
-        return new AccountLinkTransactionBuilder(stream);
+    public static AccountLinkTransactionBuilder create(final SignatureDto signature, final KeyDto signer, final short version, final EntityTypeDto type, final AmountDto fee, final TimestampDto deadline, final KeyDto remoteAccountPublicKey, final AccountLinkActionDto linkAction) {
+        return new AccountLinkTransactionBuilder(signature, signer, version, type, fee, deadline, remoteAccountPublicKey, linkAction);
     }
 
     /**
@@ -117,6 +102,16 @@ public final class AccountLinkTransactionBuilder extends TransactionBuilder {
     }
 
     /**
+     * Creates an instance of AccountLinkTransactionBuilder from a stream.
+     *
+     * @param stream Byte stream to use to serialize the object.
+     * @return Instance of AccountLinkTransactionBuilder.
+     */
+    public static AccountLinkTransactionBuilder loadFromBinary(final DataInput stream) {
+        return new AccountLinkTransactionBuilder(stream);
+    }
+
+    /**
      * Serializes an object to bytes.
      *
      * @return Serialized bytes.
@@ -125,10 +120,8 @@ public final class AccountLinkTransactionBuilder extends TransactionBuilder {
         return GeneratorUtils.serialize(dataOutputStream -> {
             final byte[] superBytes = super.serialize();
             dataOutputStream.write(superBytes, 0, superBytes.length);
-            final byte[] accountLinkTransactionBodyBytes = this.accountLinkTransactionBody
-                .serialize();
-            dataOutputStream
-                .write(accountLinkTransactionBodyBytes, 0, accountLinkTransactionBodyBytes.length);
+            final byte[] accountLinkTransactionBodyBytes = this.accountLinkTransactionBody.serialize();
+            dataOutputStream.write(accountLinkTransactionBodyBytes, 0, accountLinkTransactionBodyBytes.length);
         });
     }
 }

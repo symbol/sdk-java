@@ -1,27 +1,30 @@
 /**
- * ** Copyright (c) 2016-present, ** Jaguar0625, gimre, BloodyRookie, Tech Bureau, Corp. All rights
- * reserved. ** ** This file is part of Catapult. ** ** Catapult is free software: you can
- * redistribute it and/or modify ** it under the terms of the GNU Lesser General Public License as
- * published by ** the Free Software Foundation, either version 3 of the License, or ** (at your
- * option) any later version. ** ** Catapult is distributed in the hope that it will be useful, **
- * but WITHOUT ANY WARRANTY; without even the implied warranty of ** MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE. See the ** GNU Lesser General Public License for more details. ** ** You
- * should have received a copy of the GNU Lesser General Public License ** along with Catapult. If
- * not, see <http://www.gnu.org/licenses/>.
- **/
+*** Copyright (c) 2016-present,
+*** Jaguar0625, gimre, BloodyRookie, Tech Bureau, Corp. All rights reserved.
+***
+*** This file is part of Catapult.
+***
+*** Catapult is free software: you can redistribute it and/or modify
+*** it under the terms of the GNU Lesser General Public License as published by
+*** the Free Software Foundation, either version 3 of the License, or
+*** (at your option) any later version.
+***
+*** Catapult is distributed in the hope that it will be useful,
+*** but WITHOUT ANY WARRANTY; without even the implied warranty of
+*** MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+*** GNU Lesser General Public License for more details.
+***
+*** You should have received a copy of the GNU Lesser General Public License
+*** along with Catapult. If not, see <http://www.gnu.org/licenses/>.
+**/
 
 package io.nem.catapult.builders;
 
 import java.io.DataInput;
 
-/**
- * Binary layout for an embedded hash lock transaction.
- */
+/** Binary layout for an embedded hash lock transaction. */
 public final class EmbeddedHashLockTransactionBuilder extends EmbeddedTransactionBuilder {
-
-    /**
-     * Hash lock transaction body.
-     */
+    /** Hash lock transaction body. */
     private final HashLockTransactionBodyBuilder hashLockTransactionBody;
 
     /**
@@ -44,12 +47,9 @@ public final class EmbeddedHashLockTransactionBuilder extends EmbeddedTransactio
      * @param duration Number of blocks for which a lock should be valid.
      * @param hash Lock hash.
      */
-    protected EmbeddedHashLockTransactionBuilder(final KeyDto signer, final short version,
-        final EntityTypeDto type, final UnresolvedMosaicBuilder mosaic,
-        final BlockDurationDto duration, final Hash256Dto hash) {
+    protected EmbeddedHashLockTransactionBuilder(final KeyDto signer, final short version, final EntityTypeDto type, final UnresolvedMosaicBuilder mosaic, final BlockDurationDto duration, final Hash256Dto hash) {
         super(signer, version, type);
-        this.hashLockTransactionBody = HashLockTransactionBodyBuilder
-            .create(mosaic, duration, hash);
+        this.hashLockTransactionBody = HashLockTransactionBodyBuilder.create(mosaic, duration, hash);
     }
 
     /**
@@ -63,21 +63,8 @@ public final class EmbeddedHashLockTransactionBuilder extends EmbeddedTransactio
      * @param hash Lock hash.
      * @return Instance of EmbeddedHashLockTransactionBuilder.
      */
-    public static EmbeddedHashLockTransactionBuilder create(final KeyDto signer,
-        final short version, final EntityTypeDto type, final UnresolvedMosaicBuilder mosaic,
-        final BlockDurationDto duration, final Hash256Dto hash) {
-        return new EmbeddedHashLockTransactionBuilder(signer, version, type, mosaic, duration,
-            hash);
-    }
-
-    /**
-     * Creates an instance of EmbeddedHashLockTransactionBuilder from a stream.
-     *
-     * @param stream Byte stream to use to serialize the object.
-     * @return Instance of EmbeddedHashLockTransactionBuilder.
-     */
-    public static EmbeddedHashLockTransactionBuilder loadFromBinary(final DataInput stream) {
-        return new EmbeddedHashLockTransactionBuilder(stream);
+    public static EmbeddedHashLockTransactionBuilder create(final KeyDto signer, final short version, final EntityTypeDto type, final UnresolvedMosaicBuilder mosaic, final BlockDurationDto duration, final Hash256Dto hash) {
+        return new EmbeddedHashLockTransactionBuilder(signer, version, type, mosaic, duration, hash);
     }
 
     /**
@@ -120,6 +107,16 @@ public final class EmbeddedHashLockTransactionBuilder extends EmbeddedTransactio
     }
 
     /**
+     * Creates an instance of EmbeddedHashLockTransactionBuilder from a stream.
+     *
+     * @param stream Byte stream to use to serialize the object.
+     * @return Instance of EmbeddedHashLockTransactionBuilder.
+     */
+    public static EmbeddedHashLockTransactionBuilder loadFromBinary(final DataInput stream) {
+        return new EmbeddedHashLockTransactionBuilder(stream);
+    }
+
+    /**
      * Serializes an object to bytes.
      *
      * @return Serialized bytes.
@@ -129,8 +126,7 @@ public final class EmbeddedHashLockTransactionBuilder extends EmbeddedTransactio
             final byte[] superBytes = super.serialize();
             dataOutputStream.write(superBytes, 0, superBytes.length);
             final byte[] hashLockTransactionBodyBytes = this.hashLockTransactionBody.serialize();
-            dataOutputStream
-                .write(hashLockTransactionBodyBytes, 0, hashLockTransactionBodyBytes.length);
+            dataOutputStream.write(hashLockTransactionBodyBytes, 0, hashLockTransactionBodyBytes.length);
         });
     }
 }

@@ -1,44 +1,39 @@
 /**
- * ** Copyright (c) 2016-present, ** Jaguar0625, gimre, BloodyRookie, Tech Bureau, Corp. All rights
- * reserved. ** ** This file is part of Catapult. ** ** Catapult is free software: you can
- * redistribute it and/or modify ** it under the terms of the GNU Lesser General Public License as
- * published by ** the Free Software Foundation, either version 3 of the License, or ** (at your
- * option) any later version. ** ** Catapult is distributed in the hope that it will be useful, **
- * but WITHOUT ANY WARRANTY; without even the implied warranty of ** MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE. See the ** GNU Lesser General Public License for more details. ** ** You
- * should have received a copy of the GNU Lesser General Public License ** along with Catapult. If
- * not, see <http://www.gnu.org/licenses/>.
- **/
+*** Copyright (c) 2016-present,
+*** Jaguar0625, gimre, BloodyRookie, Tech Bureau, Corp. All rights reserved.
+***
+*** This file is part of Catapult.
+***
+*** Catapult is free software: you can redistribute it and/or modify
+*** it under the terms of the GNU Lesser General Public License as published by
+*** the Free Software Foundation, either version 3 of the License, or
+*** (at your option) any later version.
+***
+*** Catapult is distributed in the hope that it will be useful,
+*** but WITHOUT ANY WARRANTY; without even the implied warranty of
+*** MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+*** GNU Lesser General Public License for more details.
+***
+*** You should have received a copy of the GNU Lesser General Public License
+*** along with Catapult. If not, see <http://www.gnu.org/licenses/>.
+**/
 
 package io.nem.catapult.builders;
 
 import java.io.DataInput;
 import java.util.EnumSet;
 
-/**
- * Binary layout for a mosaic definition transaction.
- */
+/** Binary layout for a mosaic definition transaction. */
 final class MosaicDefinitionTransactionBodyBuilder {
-
-    /**
-     * Mosaic nonce.
-     */
+    /** Mosaic nonce. */
     private final MosaicNonceDto nonce;
-    /**
-     * Mosaic identifier.
-     */
+    /** Mosaic identifier. */
     private final MosaicIdDto id;
-    /**
-     * Mosaic flags.
-     */
+    /** Mosaic flags. */
     private final EnumSet<MosaicFlagsDto> flags;
-    /**
-     * Mosaic divisibility.
-     */
+    /** Mosaic divisibility. */
     private final byte divisibility;
-    /**
-     * Mosaic duration.
-     */
+    /** Mosaic duration. */
     private final BlockDurationDto duration;
 
     /**
@@ -53,7 +48,7 @@ final class MosaicDefinitionTransactionBodyBuilder {
             this.flags = GeneratorUtils.toSet(MosaicFlagsDto.class, stream.readByte());
             this.divisibility = stream.readByte();
             this.duration = BlockDurationDto.loadFromBinary(stream);
-        } catch (Exception e) {
+        } catch(Exception e) {
             throw GeneratorUtils.getExceptionToPropagate(e);
         }
     }
@@ -67,9 +62,7 @@ final class MosaicDefinitionTransactionBodyBuilder {
      * @param divisibility Mosaic divisibility.
      * @param duration Mosaic duration.
      */
-    protected MosaicDefinitionTransactionBodyBuilder(final MosaicNonceDto nonce,
-        final MosaicIdDto id, final EnumSet<MosaicFlagsDto> flags, final byte divisibility,
-        final BlockDurationDto duration) {
+    protected MosaicDefinitionTransactionBodyBuilder(final MosaicNonceDto nonce, final MosaicIdDto id, final EnumSet<MosaicFlagsDto> flags, final byte divisibility, final BlockDurationDto duration) {
         GeneratorUtils.notNull(nonce, "nonce is null");
         GeneratorUtils.notNull(id, "id is null");
         GeneratorUtils.notNull(flags, "flags is null");
@@ -91,20 +84,8 @@ final class MosaicDefinitionTransactionBodyBuilder {
      * @param duration Mosaic duration.
      * @return Instance of MosaicDefinitionTransactionBodyBuilder.
      */
-    public static MosaicDefinitionTransactionBodyBuilder create(final MosaicNonceDto nonce,
-        final MosaicIdDto id, final EnumSet<MosaicFlagsDto> flags, final byte divisibility,
-        final BlockDurationDto duration) {
+    public static MosaicDefinitionTransactionBodyBuilder create(final MosaicNonceDto nonce, final MosaicIdDto id, final EnumSet<MosaicFlagsDto> flags, final byte divisibility, final BlockDurationDto duration) {
         return new MosaicDefinitionTransactionBodyBuilder(nonce, id, flags, divisibility, duration);
-    }
-
-    /**
-     * Creates an instance of MosaicDefinitionTransactionBodyBuilder from a stream.
-     *
-     * @param stream Byte stream to use to serialize the object.
-     * @return Instance of MosaicDefinitionTransactionBodyBuilder.
-     */
-    public static MosaicDefinitionTransactionBodyBuilder loadFromBinary(final DataInput stream) {
-        return new MosaicDefinitionTransactionBodyBuilder(stream);
     }
 
     /**
@@ -165,6 +146,16 @@ final class MosaicDefinitionTransactionBodyBuilder {
         size += 1; // divisibility
         size += this.duration.getSize();
         return size;
+    }
+
+    /**
+     * Creates an instance of MosaicDefinitionTransactionBodyBuilder from a stream.
+     *
+     * @param stream Byte stream to use to serialize the object.
+     * @return Instance of MosaicDefinitionTransactionBodyBuilder.
+     */
+    public static MosaicDefinitionTransactionBodyBuilder loadFromBinary(final DataInput stream) {
+        return new MosaicDefinitionTransactionBodyBuilder(stream);
     }
 
     /**

@@ -1,27 +1,30 @@
 /**
- * ** Copyright (c) 2016-present, ** Jaguar0625, gimre, BloodyRookie, Tech Bureau, Corp. All rights
- * reserved. ** ** This file is part of Catapult. ** ** Catapult is free software: you can
- * redistribute it and/or modify ** it under the terms of the GNU Lesser General Public License as
- * published by ** the Free Software Foundation, either version 3 of the License, or ** (at your
- * option) any later version. ** ** Catapult is distributed in the hope that it will be useful, **
- * but WITHOUT ANY WARRANTY; without even the implied warranty of ** MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE. See the ** GNU Lesser General Public License for more details. ** ** You
- * should have received a copy of the GNU Lesser General Public License ** along with Catapult. If
- * not, see <http://www.gnu.org/licenses/>.
- **/
+*** Copyright (c) 2016-present,
+*** Jaguar0625, gimre, BloodyRookie, Tech Bureau, Corp. All rights reserved.
+***
+*** This file is part of Catapult.
+***
+*** Catapult is free software: you can redistribute it and/or modify
+*** it under the terms of the GNU Lesser General Public License as published by
+*** the Free Software Foundation, either version 3 of the License, or
+*** (at your option) any later version.
+***
+*** Catapult is distributed in the hope that it will be useful,
+*** but WITHOUT ANY WARRANTY; without even the implied warranty of
+*** MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+*** GNU Lesser General Public License for more details.
+***
+*** You should have received a copy of the GNU Lesser General Public License
+*** along with Catapult. If not, see <http://www.gnu.org/licenses/>.
+**/
 
 package io.nem.catapult.builders;
 
 import java.io.DataInput;
 
-/**
- * Binary layout for an embedded account link transaction.
- */
+/** Binary layout for an embedded account link transaction. */
 public final class EmbeddedAccountLinkTransactionBuilder extends EmbeddedTransactionBuilder {
-
-    /**
-     * Account link transaction body.
-     */
+    /** Account link transaction body. */
     private final AccountLinkTransactionBodyBuilder accountLinkTransactionBody;
 
     /**
@@ -43,12 +46,9 @@ public final class EmbeddedAccountLinkTransactionBuilder extends EmbeddedTransac
      * @param remoteAccountPublicKey Remote account public key.
      * @param linkAction Account link action.
      */
-    protected EmbeddedAccountLinkTransactionBuilder(final KeyDto signer, final short version,
-        final EntityTypeDto type, final KeyDto remoteAccountPublicKey,
-        final AccountLinkActionDto linkAction) {
+    protected EmbeddedAccountLinkTransactionBuilder(final KeyDto signer, final short version, final EntityTypeDto type, final KeyDto remoteAccountPublicKey, final AccountLinkActionDto linkAction) {
         super(signer, version, type);
-        this.accountLinkTransactionBody = AccountLinkTransactionBodyBuilder
-            .create(remoteAccountPublicKey, linkAction);
+        this.accountLinkTransactionBody = AccountLinkTransactionBodyBuilder.create(remoteAccountPublicKey, linkAction);
     }
 
     /**
@@ -61,21 +61,8 @@ public final class EmbeddedAccountLinkTransactionBuilder extends EmbeddedTransac
      * @param linkAction Account link action.
      * @return Instance of EmbeddedAccountLinkTransactionBuilder.
      */
-    public static EmbeddedAccountLinkTransactionBuilder create(final KeyDto signer,
-        final short version, final EntityTypeDto type, final KeyDto remoteAccountPublicKey,
-        final AccountLinkActionDto linkAction) {
-        return new EmbeddedAccountLinkTransactionBuilder(signer, version, type,
-            remoteAccountPublicKey, linkAction);
-    }
-
-    /**
-     * Creates an instance of EmbeddedAccountLinkTransactionBuilder from a stream.
-     *
-     * @param stream Byte stream to use to serialize the object.
-     * @return Instance of EmbeddedAccountLinkTransactionBuilder.
-     */
-    public static EmbeddedAccountLinkTransactionBuilder loadFromBinary(final DataInput stream) {
-        return new EmbeddedAccountLinkTransactionBuilder(stream);
+    public static EmbeddedAccountLinkTransactionBuilder create(final KeyDto signer, final short version, final EntityTypeDto type, final KeyDto remoteAccountPublicKey, final AccountLinkActionDto linkAction) {
+        return new EmbeddedAccountLinkTransactionBuilder(signer, version, type, remoteAccountPublicKey, linkAction);
     }
 
     /**
@@ -109,6 +96,16 @@ public final class EmbeddedAccountLinkTransactionBuilder extends EmbeddedTransac
     }
 
     /**
+     * Creates an instance of EmbeddedAccountLinkTransactionBuilder from a stream.
+     *
+     * @param stream Byte stream to use to serialize the object.
+     * @return Instance of EmbeddedAccountLinkTransactionBuilder.
+     */
+    public static EmbeddedAccountLinkTransactionBuilder loadFromBinary(final DataInput stream) {
+        return new EmbeddedAccountLinkTransactionBuilder(stream);
+    }
+
+    /**
      * Serializes an object to bytes.
      *
      * @return Serialized bytes.
@@ -117,10 +114,8 @@ public final class EmbeddedAccountLinkTransactionBuilder extends EmbeddedTransac
         return GeneratorUtils.serialize(dataOutputStream -> {
             final byte[] superBytes = super.serialize();
             dataOutputStream.write(superBytes, 0, superBytes.length);
-            final byte[] accountLinkTransactionBodyBytes = this.accountLinkTransactionBody
-                .serialize();
-            dataOutputStream
-                .write(accountLinkTransactionBodyBytes, 0, accountLinkTransactionBodyBytes.length);
+            final byte[] accountLinkTransactionBodyBytes = this.accountLinkTransactionBody.serialize();
+            dataOutputStream.write(accountLinkTransactionBodyBytes, 0, accountLinkTransactionBodyBytes.length);
         });
     }
 }

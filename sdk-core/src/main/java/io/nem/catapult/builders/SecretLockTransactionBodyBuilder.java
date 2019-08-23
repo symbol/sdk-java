@@ -1,43 +1,38 @@
 /**
- * ** Copyright (c) 2016-present, ** Jaguar0625, gimre, BloodyRookie, Tech Bureau, Corp. All rights
- * reserved. ** ** This file is part of Catapult. ** ** Catapult is free software: you can
- * redistribute it and/or modify ** it under the terms of the GNU Lesser General Public License as
- * published by ** the Free Software Foundation, either version 3 of the License, or ** (at your
- * option) any later version. ** ** Catapult is distributed in the hope that it will be useful, **
- * but WITHOUT ANY WARRANTY; without even the implied warranty of ** MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE. See the ** GNU Lesser General Public License for more details. ** ** You
- * should have received a copy of the GNU Lesser General Public License ** along with Catapult. If
- * not, see <http://www.gnu.org/licenses/>.
- **/
+*** Copyright (c) 2016-present,
+*** Jaguar0625, gimre, BloodyRookie, Tech Bureau, Corp. All rights reserved.
+***
+*** This file is part of Catapult.
+***
+*** Catapult is free software: you can redistribute it and/or modify
+*** it under the terms of the GNU Lesser General Public License as published by
+*** the Free Software Foundation, either version 3 of the License, or
+*** (at your option) any later version.
+***
+*** Catapult is distributed in the hope that it will be useful,
+*** but WITHOUT ANY WARRANTY; without even the implied warranty of
+*** MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+*** GNU Lesser General Public License for more details.
+***
+*** You should have received a copy of the GNU Lesser General Public License
+*** along with Catapult. If not, see <http://www.gnu.org/licenses/>.
+**/
 
 package io.nem.catapult.builders;
 
 import java.io.DataInput;
 
-/**
- * Binary layout for a secret lock transaction.
- */
+/** Binary layout for a secret lock transaction. */
 final class SecretLockTransactionBodyBuilder {
-
-    /**
-     * Locked mosaic.
-     */
+    /** Locked mosaic. */
     private final UnresolvedMosaicBuilder mosaic;
-    /**
-     * Number of blocks for which a lock should be valid.
-     */
+    /** Number of blocks for which a lock should be valid. */
     private final BlockDurationDto duration;
-    /**
-     * Hash algorithm.
-     */
+    /** Hash algorithm. */
     private final LockHashAlgorithmDto hashAlgorithm;
-    /**
-     * Secret.
-     */
+    /** Secret. */
     private final Hash256Dto secret;
-    /**
-     * Locked mosaic recipient.
-     */
+    /** Locked mosaic recipient. */
     private final UnresolvedAddressDto recipient;
 
     /**
@@ -62,9 +57,7 @@ final class SecretLockTransactionBodyBuilder {
      * @param secret Secret.
      * @param recipient Locked mosaic recipient.
      */
-    protected SecretLockTransactionBodyBuilder(final UnresolvedMosaicBuilder mosaic,
-        final BlockDurationDto duration, final LockHashAlgorithmDto hashAlgorithm,
-        final Hash256Dto secret, final UnresolvedAddressDto recipient) {
+    protected SecretLockTransactionBodyBuilder(final UnresolvedMosaicBuilder mosaic, final BlockDurationDto duration, final LockHashAlgorithmDto hashAlgorithm, final Hash256Dto secret, final UnresolvedAddressDto recipient) {
         GeneratorUtils.notNull(mosaic, "mosaic is null");
         GeneratorUtils.notNull(duration, "duration is null");
         GeneratorUtils.notNull(hashAlgorithm, "hashAlgorithm is null");
@@ -87,21 +80,8 @@ final class SecretLockTransactionBodyBuilder {
      * @param recipient Locked mosaic recipient.
      * @return Instance of SecretLockTransactionBodyBuilder.
      */
-    public static SecretLockTransactionBodyBuilder create(final UnresolvedMosaicBuilder mosaic,
-        final BlockDurationDto duration, final LockHashAlgorithmDto hashAlgorithm,
-        final Hash256Dto secret, final UnresolvedAddressDto recipient) {
-        return new SecretLockTransactionBodyBuilder(mosaic, duration, hashAlgorithm, secret,
-            recipient);
-    }
-
-    /**
-     * Creates an instance of SecretLockTransactionBodyBuilder from a stream.
-     *
-     * @param stream Byte stream to use to serialize the object.
-     * @return Instance of SecretLockTransactionBodyBuilder.
-     */
-    public static SecretLockTransactionBodyBuilder loadFromBinary(final DataInput stream) {
-        return new SecretLockTransactionBodyBuilder(stream);
+    public static SecretLockTransactionBodyBuilder create(final UnresolvedMosaicBuilder mosaic, final BlockDurationDto duration, final LockHashAlgorithmDto hashAlgorithm, final Hash256Dto secret, final UnresolvedAddressDto recipient) {
+        return new SecretLockTransactionBodyBuilder(mosaic, duration, hashAlgorithm, secret, recipient);
     }
 
     /**
@@ -162,6 +142,16 @@ final class SecretLockTransactionBodyBuilder {
         size += this.secret.getSize();
         size += this.recipient.getSize();
         return size;
+    }
+
+    /**
+     * Creates an instance of SecretLockTransactionBodyBuilder from a stream.
+     *
+     * @param stream Byte stream to use to serialize the object.
+     * @return Instance of SecretLockTransactionBodyBuilder.
+     */
+    public static SecretLockTransactionBodyBuilder loadFromBinary(final DataInput stream) {
+        return new SecretLockTransactionBodyBuilder(stream);
     }
 
     /**

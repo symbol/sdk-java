@@ -1,29 +1,32 @@
 /**
- * ** Copyright (c) 2016-present, ** Jaguar0625, gimre, BloodyRookie, Tech Bureau, Corp. All rights
- * reserved. ** ** This file is part of Catapult. ** ** Catapult is free software: you can
- * redistribute it and/or modify ** it under the terms of the GNU Lesser General Public License as
- * published by ** the Free Software Foundation, either version 3 of the License, or ** (at your
- * option) any later version. ** ** Catapult is distributed in the hope that it will be useful, **
- * but WITHOUT ANY WARRANTY; without even the implied warranty of ** MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE. See the ** GNU Lesser General Public License for more details. ** ** You
- * should have received a copy of the GNU Lesser General Public License ** along with Catapult. If
- * not, see <http://www.gnu.org/licenses/>.
- **/
+*** Copyright (c) 2016-present,
+*** Jaguar0625, gimre, BloodyRookie, Tech Bureau, Corp. All rights reserved.
+***
+*** This file is part of Catapult.
+***
+*** Catapult is free software: you can redistribute it and/or modify
+*** it under the terms of the GNU Lesser General Public License as published by
+*** the Free Software Foundation, either version 3 of the License, or
+*** (at your option) any later version.
+***
+*** Catapult is distributed in the hope that it will be useful,
+*** but WITHOUT ANY WARRANTY; without even the implied warranty of
+*** MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+*** GNU Lesser General Public License for more details.
+***
+*** You should have received a copy of the GNU Lesser General Public License
+*** along with Catapult. If not, see <http://www.gnu.org/licenses/>.
+**/
 
 package io.nem.catapult.builders;
 
 import java.io.DataInput;
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.nio.ByteBuffer;
 
-/**
- * Binary layout for a non-embedded transfer transaction.
- */
+/** Binary layout for a non-embedded transfer transaction. */
 public final class TransferTransactionBuilder extends TransactionBuilder {
-
-    /**
-     * Transfer transaction body.
-     */
+    /** Transfer transaction body. */
     private final TransferTransactionBodyBuilder transferTransactionBody;
 
     /**
@@ -49,13 +52,9 @@ public final class TransferTransactionBuilder extends TransactionBuilder {
      * @param message Transaction message.
      * @param mosaics Attached mosaics.
      */
-    protected TransferTransactionBuilder(final SignatureDto signature, final KeyDto signer,
-        final short version, final EntityTypeDto type, final AmountDto fee,
-        final TimestampDto deadline, final UnresolvedAddressDto recipient, final ByteBuffer message,
-        final ArrayList<UnresolvedMosaicBuilder> mosaics) {
+    protected TransferTransactionBuilder(final SignatureDto signature, final KeyDto signer, final short version, final EntityTypeDto type, final AmountDto fee, final TimestampDto deadline, final UnresolvedAddressDto recipient, final ByteBuffer message, final ArrayList<UnresolvedMosaicBuilder> mosaics) {
         super(signature, signer, version, type, fee, deadline);
-        this.transferTransactionBody = TransferTransactionBodyBuilder
-            .create(recipient, message, mosaics);
+        this.transferTransactionBody = TransferTransactionBodyBuilder.create(recipient, message, mosaics);
     }
 
     /**
@@ -72,22 +71,8 @@ public final class TransferTransactionBuilder extends TransactionBuilder {
      * @param mosaics Attached mosaics.
      * @return Instance of TransferTransactionBuilder.
      */
-    public static TransferTransactionBuilder create(final SignatureDto signature,
-        final KeyDto signer, final short version, final EntityTypeDto type, final AmountDto fee,
-        final TimestampDto deadline, final UnresolvedAddressDto recipient, final ByteBuffer message,
-        final ArrayList<UnresolvedMosaicBuilder> mosaics) {
-        return new TransferTransactionBuilder(signature, signer, version, type, fee, deadline,
-            recipient, message, mosaics);
-    }
-
-    /**
-     * Creates an instance of TransferTransactionBuilder from a stream.
-     *
-     * @param stream Byte stream to use to serialize the object.
-     * @return Instance of TransferTransactionBuilder.
-     */
-    public static TransferTransactionBuilder loadFromBinary(final DataInput stream) {
-        return new TransferTransactionBuilder(stream);
+    public static TransferTransactionBuilder create(final SignatureDto signature, final KeyDto signer, final short version, final EntityTypeDto type, final AmountDto fee, final TimestampDto deadline, final UnresolvedAddressDto recipient, final ByteBuffer message, final ArrayList<UnresolvedMosaicBuilder> mosaics) {
+        return new TransferTransactionBuilder(signature, signer, version, type, fee, deadline, recipient, message, mosaics);
     }
 
     /**
@@ -130,6 +115,16 @@ public final class TransferTransactionBuilder extends TransactionBuilder {
     }
 
     /**
+     * Creates an instance of TransferTransactionBuilder from a stream.
+     *
+     * @param stream Byte stream to use to serialize the object.
+     * @return Instance of TransferTransactionBuilder.
+     */
+    public static TransferTransactionBuilder loadFromBinary(final DataInput stream) {
+        return new TransferTransactionBuilder(stream);
+    }
+
+    /**
      * Serializes an object to bytes.
      *
      * @return Serialized bytes.
@@ -139,8 +134,7 @@ public final class TransferTransactionBuilder extends TransactionBuilder {
             final byte[] superBytes = super.serialize();
             dataOutputStream.write(superBytes, 0, superBytes.length);
             final byte[] transferTransactionBodyBytes = this.transferTransactionBody.serialize();
-            dataOutputStream
-                .write(transferTransactionBodyBytes, 0, transferTransactionBodyBytes.length);
+            dataOutputStream.write(transferTransactionBodyBytes, 0, transferTransactionBodyBytes.length);
         });
     }
 }

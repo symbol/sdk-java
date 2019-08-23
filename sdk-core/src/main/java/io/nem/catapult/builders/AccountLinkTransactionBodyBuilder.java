@@ -1,31 +1,32 @@
 /**
- * ** Copyright (c) 2016-present, ** Jaguar0625, gimre, BloodyRookie, Tech Bureau, Corp. All rights
- * reserved. ** ** This file is part of Catapult. ** ** Catapult is free software: you can
- * redistribute it and/or modify ** it under the terms of the GNU Lesser General Public License as
- * published by ** the Free Software Foundation, either version 3 of the License, or ** (at your
- * option) any later version. ** ** Catapult is distributed in the hope that it will be useful, **
- * but WITHOUT ANY WARRANTY; without even the implied warranty of ** MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE. See the ** GNU Lesser General Public License for more details. ** ** You
- * should have received a copy of the GNU Lesser General Public License ** along with Catapult. If
- * not, see <http://www.gnu.org/licenses/>.
- **/
+*** Copyright (c) 2016-present,
+*** Jaguar0625, gimre, BloodyRookie, Tech Bureau, Corp. All rights reserved.
+***
+*** This file is part of Catapult.
+***
+*** Catapult is free software: you can redistribute it and/or modify
+*** it under the terms of the GNU Lesser General Public License as published by
+*** the Free Software Foundation, either version 3 of the License, or
+*** (at your option) any later version.
+***
+*** Catapult is distributed in the hope that it will be useful,
+*** but WITHOUT ANY WARRANTY; without even the implied warranty of
+*** MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+*** GNU Lesser General Public License for more details.
+***
+*** You should have received a copy of the GNU Lesser General Public License
+*** along with Catapult. If not, see <http://www.gnu.org/licenses/>.
+**/
 
 package io.nem.catapult.builders;
 
 import java.io.DataInput;
 
-/**
- * Binary layout for an account link transaction.
- */
+/** Binary layout for an account link transaction. */
 final class AccountLinkTransactionBodyBuilder {
-
-    /**
-     * Remote account public key.
-     */
+    /** Remote account public key. */
     private final KeyDto remoteAccountPublicKey;
-    /**
-     * Account link action.
-     */
+    /** Account link action. */
     private final AccountLinkActionDto linkAction;
 
     /**
@@ -44,8 +45,7 @@ final class AccountLinkTransactionBodyBuilder {
      * @param remoteAccountPublicKey Remote account public key.
      * @param linkAction Account link action.
      */
-    protected AccountLinkTransactionBodyBuilder(final KeyDto remoteAccountPublicKey,
-        final AccountLinkActionDto linkAction) {
+    protected AccountLinkTransactionBodyBuilder(final KeyDto remoteAccountPublicKey, final AccountLinkActionDto linkAction) {
         GeneratorUtils.notNull(remoteAccountPublicKey, "remoteAccountPublicKey is null");
         GeneratorUtils.notNull(linkAction, "linkAction is null");
         this.remoteAccountPublicKey = remoteAccountPublicKey;
@@ -59,19 +59,8 @@ final class AccountLinkTransactionBodyBuilder {
      * @param linkAction Account link action.
      * @return Instance of AccountLinkTransactionBodyBuilder.
      */
-    public static AccountLinkTransactionBodyBuilder create(final KeyDto remoteAccountPublicKey,
-        final AccountLinkActionDto linkAction) {
+    public static AccountLinkTransactionBodyBuilder create(final KeyDto remoteAccountPublicKey, final AccountLinkActionDto linkAction) {
         return new AccountLinkTransactionBodyBuilder(remoteAccountPublicKey, linkAction);
-    }
-
-    /**
-     * Creates an instance of AccountLinkTransactionBodyBuilder from a stream.
-     *
-     * @param stream Byte stream to use to serialize the object.
-     * @return Instance of AccountLinkTransactionBodyBuilder.
-     */
-    public static AccountLinkTransactionBodyBuilder loadFromBinary(final DataInput stream) {
-        return new AccountLinkTransactionBodyBuilder(stream);
     }
 
     /**
@@ -105,6 +94,16 @@ final class AccountLinkTransactionBodyBuilder {
     }
 
     /**
+     * Creates an instance of AccountLinkTransactionBodyBuilder from a stream.
+     *
+     * @param stream Byte stream to use to serialize the object.
+     * @return Instance of AccountLinkTransactionBodyBuilder.
+     */
+    public static AccountLinkTransactionBodyBuilder loadFromBinary(final DataInput stream) {
+        return new AccountLinkTransactionBodyBuilder(stream);
+    }
+
+    /**
      * Serializes an object to bytes.
      *
      * @return Serialized bytes.
@@ -112,8 +111,7 @@ final class AccountLinkTransactionBodyBuilder {
     public byte[] serialize() {
         return GeneratorUtils.serialize(dataOutputStream -> {
             final byte[] remoteAccountPublicKeyBytes = this.remoteAccountPublicKey.serialize();
-            dataOutputStream
-                .write(remoteAccountPublicKeyBytes, 0, remoteAccountPublicKeyBytes.length);
+            dataOutputStream.write(remoteAccountPublicKeyBytes, 0, remoteAccountPublicKeyBytes.length);
             final byte[] linkActionBytes = this.linkAction.serialize();
             dataOutputStream.write(linkActionBytes, 0, linkActionBytes.length);
         });

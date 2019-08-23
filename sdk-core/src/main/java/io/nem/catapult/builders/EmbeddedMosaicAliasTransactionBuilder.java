@@ -1,27 +1,30 @@
 /**
- * ** Copyright (c) 2016-present, ** Jaguar0625, gimre, BloodyRookie, Tech Bureau, Corp. All rights
- * reserved. ** ** This file is part of Catapult. ** ** Catapult is free software: you can
- * redistribute it and/or modify ** it under the terms of the GNU Lesser General Public License as
- * published by ** the Free Software Foundation, either version 3 of the License, or ** (at your
- * option) any later version. ** ** Catapult is distributed in the hope that it will be useful, **
- * but WITHOUT ANY WARRANTY; without even the implied warranty of ** MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE. See the ** GNU Lesser General Public License for more details. ** ** You
- * should have received a copy of the GNU Lesser General Public License ** along with Catapult. If
- * not, see <http://www.gnu.org/licenses/>.
- **/
+*** Copyright (c) 2016-present,
+*** Jaguar0625, gimre, BloodyRookie, Tech Bureau, Corp. All rights reserved.
+***
+*** This file is part of Catapult.
+***
+*** Catapult is free software: you can redistribute it and/or modify
+*** it under the terms of the GNU Lesser General Public License as published by
+*** the Free Software Foundation, either version 3 of the License, or
+*** (at your option) any later version.
+***
+*** Catapult is distributed in the hope that it will be useful,
+*** but WITHOUT ANY WARRANTY; without even the implied warranty of
+*** MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+*** GNU Lesser General Public License for more details.
+***
+*** You should have received a copy of the GNU Lesser General Public License
+*** along with Catapult. If not, see <http://www.gnu.org/licenses/>.
+**/
 
 package io.nem.catapult.builders;
 
 import java.io.DataInput;
 
-/**
- * Binary layout for an embedded mosaic alias transaction.
- */
+/** Binary layout for an embedded mosaic alias transaction. */
 public final class EmbeddedMosaicAliasTransactionBuilder extends EmbeddedTransactionBuilder {
-
-    /**
-     * Mosaic alias transaction body.
-     */
+    /** Mosaic alias transaction body. */
     private final MosaicAliasTransactionBodyBuilder mosaicAliasTransactionBody;
 
     /**
@@ -44,12 +47,9 @@ public final class EmbeddedMosaicAliasTransactionBuilder extends EmbeddedTransac
      * @param namespaceId Identifier of the namespace that will become an alias.
      * @param mosaicId Aliased mosaic identifier.
      */
-    protected EmbeddedMosaicAliasTransactionBuilder(final KeyDto signer, final short version,
-        final EntityTypeDto type, final AliasActionDto aliasAction,
-        final NamespaceIdDto namespaceId, final MosaicIdDto mosaicId) {
+    protected EmbeddedMosaicAliasTransactionBuilder(final KeyDto signer, final short version, final EntityTypeDto type, final AliasActionDto aliasAction, final NamespaceIdDto namespaceId, final MosaicIdDto mosaicId) {
         super(signer, version, type);
-        this.mosaicAliasTransactionBody = MosaicAliasTransactionBodyBuilder
-            .create(aliasAction, namespaceId, mosaicId);
+        this.mosaicAliasTransactionBody = MosaicAliasTransactionBodyBuilder.create(aliasAction, namespaceId, mosaicId);
     }
 
     /**
@@ -63,21 +63,8 @@ public final class EmbeddedMosaicAliasTransactionBuilder extends EmbeddedTransac
      * @param mosaicId Aliased mosaic identifier.
      * @return Instance of EmbeddedMosaicAliasTransactionBuilder.
      */
-    public static EmbeddedMosaicAliasTransactionBuilder create(final KeyDto signer,
-        final short version, final EntityTypeDto type, final AliasActionDto aliasAction,
-        final NamespaceIdDto namespaceId, final MosaicIdDto mosaicId) {
-        return new EmbeddedMosaicAliasTransactionBuilder(signer, version, type, aliasAction,
-            namespaceId, mosaicId);
-    }
-
-    /**
-     * Creates an instance of EmbeddedMosaicAliasTransactionBuilder from a stream.
-     *
-     * @param stream Byte stream to use to serialize the object.
-     * @return Instance of EmbeddedMosaicAliasTransactionBuilder.
-     */
-    public static EmbeddedMosaicAliasTransactionBuilder loadFromBinary(final DataInput stream) {
-        return new EmbeddedMosaicAliasTransactionBuilder(stream);
+    public static EmbeddedMosaicAliasTransactionBuilder create(final KeyDto signer, final short version, final EntityTypeDto type, final AliasActionDto aliasAction, final NamespaceIdDto namespaceId, final MosaicIdDto mosaicId) {
+        return new EmbeddedMosaicAliasTransactionBuilder(signer, version, type, aliasAction, namespaceId, mosaicId);
     }
 
     /**
@@ -120,6 +107,16 @@ public final class EmbeddedMosaicAliasTransactionBuilder extends EmbeddedTransac
     }
 
     /**
+     * Creates an instance of EmbeddedMosaicAliasTransactionBuilder from a stream.
+     *
+     * @param stream Byte stream to use to serialize the object.
+     * @return Instance of EmbeddedMosaicAliasTransactionBuilder.
+     */
+    public static EmbeddedMosaicAliasTransactionBuilder loadFromBinary(final DataInput stream) {
+        return new EmbeddedMosaicAliasTransactionBuilder(stream);
+    }
+
+    /**
      * Serializes an object to bytes.
      *
      * @return Serialized bytes.
@@ -128,10 +125,8 @@ public final class EmbeddedMosaicAliasTransactionBuilder extends EmbeddedTransac
         return GeneratorUtils.serialize(dataOutputStream -> {
             final byte[] superBytes = super.serialize();
             dataOutputStream.write(superBytes, 0, superBytes.length);
-            final byte[] mosaicAliasTransactionBodyBytes = this.mosaicAliasTransactionBody
-                .serialize();
-            dataOutputStream
-                .write(mosaicAliasTransactionBodyBytes, 0, mosaicAliasTransactionBodyBytes.length);
+            final byte[] mosaicAliasTransactionBodyBytes = this.mosaicAliasTransactionBody.serialize();
+            dataOutputStream.write(mosaicAliasTransactionBodyBytes, 0, mosaicAliasTransactionBodyBytes.length);
         });
     }
 }

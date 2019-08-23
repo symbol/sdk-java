@@ -1,52 +1,43 @@
 /**
- * ** Copyright (c) 2016-present, ** Jaguar0625, gimre, BloodyRookie, Tech Bureau, Corp. All rights
- * reserved. ** ** This file is part of Catapult. ** ** Catapult is free software: you can
- * redistribute it and/or modify ** it under the terms of the GNU Lesser General Public License as
- * published by ** the Free Software Foundation, either version 3 of the License, or ** (at your
- * option) any later version. ** ** Catapult is distributed in the hope that it will be useful, **
- * but WITHOUT ANY WARRANTY; without even the implied warranty of ** MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE. See the ** GNU Lesser General Public License for more details. ** ** You
- * should have received a copy of the GNU Lesser General Public License ** along with Catapult. If
- * not, see <http://www.gnu.org/licenses/>.
- **/
+*** Copyright (c) 2016-present,
+*** Jaguar0625, gimre, BloodyRookie, Tech Bureau, Corp. All rights reserved.
+***
+*** This file is part of Catapult.
+***
+*** Catapult is free software: you can redistribute it and/or modify
+*** it under the terms of the GNU Lesser General Public License as published by
+*** the Free Software Foundation, either version 3 of the License, or
+*** (at your option) any later version.
+***
+*** Catapult is distributed in the hope that it will be useful,
+*** but WITHOUT ANY WARRANTY; without even the implied warranty of
+*** MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+*** GNU Lesser General Public License for more details.
+***
+*** You should have received a copy of the GNU Lesser General Public License
+*** along with Catapult. If not, see <http://www.gnu.org/licenses/>.
+**/
 
 package io.nem.catapult.builders;
 
 import java.io.DataInput;
 
-/**
- * Binary layout for a transaction.
- */
+/** Binary layout for a transaction. */
 public class TransactionBuilder {
-
-    /**
-     * Entity signature.
-     */
-    private final SignatureDto signature;
-    /**
-     * Entity signer's public key.
-     */
-    private final KeyDto signer;
-    /**
-     * Entity version.
-     */
-    private final short version;
-    /**
-     * Entity type.
-     */
-    private final EntityTypeDto type;
-    /**
-     * Transaction fee.
-     */
-    private final AmountDto fee;
-    /**
-     * Transaction deadline.
-     */
-    private final TimestampDto deadline;
-    /**
-     * Entity size.
-     */
+    /** Entity size. */
     private int size;
+    /** Entity signature. */
+    private final SignatureDto signature;
+    /** Entity signer's public key. */
+    private final KeyDto signer;
+    /** Entity version. */
+    private final short version;
+    /** Entity type. */
+    private final EntityTypeDto type;
+    /** Transaction fee. */
+    private final AmountDto fee;
+    /** Transaction deadline. */
+    private final TimestampDto deadline;
 
     /**
      * Constructor - Creates an object from stream.
@@ -62,7 +53,7 @@ public class TransactionBuilder {
             this.type = EntityTypeDto.loadFromBinary(stream);
             this.fee = AmountDto.loadFromBinary(stream);
             this.deadline = TimestampDto.loadFromBinary(stream);
-        } catch (Exception e) {
+        } catch(Exception e) {
             throw GeneratorUtils.getExceptionToPropagate(e);
         }
     }
@@ -77,9 +68,7 @@ public class TransactionBuilder {
      * @param fee Transaction fee.
      * @param deadline Transaction deadline.
      */
-    protected TransactionBuilder(final SignatureDto signature, final KeyDto signer,
-        final short version, final EntityTypeDto type, final AmountDto fee,
-        final TimestampDto deadline) {
+    protected TransactionBuilder(final SignatureDto signature, final KeyDto signer, final short version, final EntityTypeDto type, final AmountDto fee, final TimestampDto deadline) {
         GeneratorUtils.notNull(signature, "signature is null");
         GeneratorUtils.notNull(signer, "signer is null");
         GeneratorUtils.notNull(type, "type is null");
@@ -104,20 +93,8 @@ public class TransactionBuilder {
      * @param deadline Transaction deadline.
      * @return Instance of TransactionBuilder.
      */
-    public static TransactionBuilder create(final SignatureDto signature, final KeyDto signer,
-        final short version, final EntityTypeDto type, final AmountDto fee,
-        final TimestampDto deadline) {
+    public static TransactionBuilder create(final SignatureDto signature, final KeyDto signer, final short version, final EntityTypeDto type, final AmountDto fee, final TimestampDto deadline) {
         return new TransactionBuilder(signature, signer, version, type, fee, deadline);
-    }
-
-    /**
-     * Creates an instance of TransactionBuilder from a stream.
-     *
-     * @param stream Byte stream to use to serialize the object.
-     * @return Instance of TransactionBuilder.
-     */
-    public static TransactionBuilder loadFromBinary(final DataInput stream) {
-        return new TransactionBuilder(stream);
     }
 
     /**
@@ -198,6 +175,16 @@ public class TransactionBuilder {
         size += this.fee.getSize();
         size += this.deadline.getSize();
         return size;
+    }
+
+    /**
+     * Creates an instance of TransactionBuilder from a stream.
+     *
+     * @param stream Byte stream to use to serialize the object.
+     * @return Instance of TransactionBuilder.
+     */
+    public static TransactionBuilder loadFromBinary(final DataInput stream) {
+        return new TransactionBuilder(stream);
     }
 
     /**

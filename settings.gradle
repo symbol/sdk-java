@@ -16,4 +16,4 @@
 
 rootProject.name = 'nem2-sdk-java'
 
-include ":sdk-core", ":sdk-okhttp-client", ":sdk-vertx-client", ":sdk-vertx-legacy-client", ":integration-tests"
+include ":sdk-core", ":sdk-okhttp-client", ":sdk-vertx-client", ":integration-tests"

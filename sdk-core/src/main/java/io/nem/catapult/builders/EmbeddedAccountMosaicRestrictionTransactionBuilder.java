@@ -1,29 +1,31 @@
 /**
- * ** Copyright (c) 2016-present, ** Jaguar0625, gimre, BloodyRookie, Tech Bureau, Corp. All rights
- * reserved. ** ** This file is part of Catapult. ** ** Catapult is free software: you can
- * redistribute it and/or modify ** it under the terms of the GNU Lesser General Public License as
- * published by ** the Free Software Foundation, either version 3 of the License, or ** (at your
- * option) any later version. ** ** Catapult is distributed in the hope that it will be useful, **
- * but WITHOUT ANY WARRANTY; without even the implied warranty of ** MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE. See the ** GNU Lesser General Public License for more details. ** ** You
- * should have received a copy of the GNU Lesser General Public License ** along with Catapult. If
- * not, see <http://www.gnu.org/licenses/>.
- **/
+*** Copyright (c) 2016-present,
+*** Jaguar0625, gimre, BloodyRookie, Tech Bureau, Corp. All rights reserved.
+***
+*** This file is part of Catapult.
+***
+*** Catapult is free software: you can redistribute it and/or modify
+*** it under the terms of the GNU Lesser General Public License as published by
+*** the Free Software Foundation, either version 3 of the License, or
+*** (at your option) any later version.
+***
+*** Catapult is distributed in the hope that it will be useful,
+*** but WITHOUT ANY WARRANTY; without even the implied warranty of
+*** MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+*** GNU Lesser General Public License for more details.
+***
+*** You should have received a copy of the GNU Lesser General Public License
+*** along with Catapult. If not, see <http://www.gnu.org/licenses/>.
+**/
 
 package io.nem.catapult.builders;
 
 import java.io.DataInput;
 import java.util.ArrayList;
 
-/**
- * Binary layout for an embedded account mosaic restriction transaction.
- */
-public final class EmbeddedAccountMosaicRestrictionTransactionBuilder extends
-    EmbeddedTransactionBuilder {
-
-    /**
-     * Account mosaic restriction transaction body.
-     */
+/** Binary layout for an embedded account mosaic restriction transaction. */
+public final class EmbeddedAccountMosaicRestrictionTransactionBuilder extends EmbeddedTransactionBuilder {
+    /** Account mosaic restriction transaction body. */
     private final AccountMosaicRestrictionTransactionBodyBuilder accountMosaicRestrictionTransactionBody;
 
     /**
@@ -33,8 +35,7 @@ public final class EmbeddedAccountMosaicRestrictionTransactionBuilder extends
      */
     protected EmbeddedAccountMosaicRestrictionTransactionBuilder(final DataInput stream) {
         super(stream);
-        this.accountMosaicRestrictionTransactionBody = AccountMosaicRestrictionTransactionBodyBuilder
-            .loadFromBinary(stream);
+        this.accountMosaicRestrictionTransactionBody = AccountMosaicRestrictionTransactionBodyBuilder.loadFromBinary(stream);
     }
 
     /**
@@ -46,13 +47,9 @@ public final class EmbeddedAccountMosaicRestrictionTransactionBuilder extends
      * @param restrictionType Account restriction type.
      * @param modifications Account restriction modifications.
      */
-    protected EmbeddedAccountMosaicRestrictionTransactionBuilder(final KeyDto signer,
-        final short version, final EntityTypeDto type,
-        final AccountRestrictionTypeDto restrictionType,
-        final ArrayList<AccountMosaicRestrictionModificationBuilder> modifications) {
+    protected EmbeddedAccountMosaicRestrictionTransactionBuilder(final KeyDto signer, final short version, final EntityTypeDto type, final AccountRestrictionTypeDto restrictionType, final ArrayList<AccountMosaicRestrictionModificationBuilder> modifications) {
         super(signer, version, type);
-        this.accountMosaicRestrictionTransactionBody = AccountMosaicRestrictionTransactionBodyBuilder
-            .create(restrictionType, modifications);
+        this.accountMosaicRestrictionTransactionBody = AccountMosaicRestrictionTransactionBodyBuilder.create(restrictionType, modifications);
     }
 
     /**
@@ -65,23 +62,8 @@ public final class EmbeddedAccountMosaicRestrictionTransactionBuilder extends
      * @param modifications Account restriction modifications.
      * @return Instance of EmbeddedAccountMosaicRestrictionTransactionBuilder.
      */
-    public static EmbeddedAccountMosaicRestrictionTransactionBuilder create(final KeyDto signer,
-        final short version, final EntityTypeDto type,
-        final AccountRestrictionTypeDto restrictionType,
-        final ArrayList<AccountMosaicRestrictionModificationBuilder> modifications) {
-        return new EmbeddedAccountMosaicRestrictionTransactionBuilder(signer, version, type,
-            restrictionType, modifications);
-    }
-
-    /**
-     * Creates an instance of EmbeddedAccountMosaicRestrictionTransactionBuilder from a stream.
-     *
-     * @param stream Byte stream to use to serialize the object.
-     * @return Instance of EmbeddedAccountMosaicRestrictionTransactionBuilder.
-     */
-    public static EmbeddedAccountMosaicRestrictionTransactionBuilder loadFromBinary(
-        final DataInput stream) {
-        return new EmbeddedAccountMosaicRestrictionTransactionBuilder(stream);
+    public static EmbeddedAccountMosaicRestrictionTransactionBuilder create(final KeyDto signer, final short version, final EntityTypeDto type, final AccountRestrictionTypeDto restrictionType, final ArrayList<AccountMosaicRestrictionModificationBuilder> modifications) {
+        return new EmbeddedAccountMosaicRestrictionTransactionBuilder(signer, version, type, restrictionType, modifications);
     }
 
     /**
@@ -115,6 +97,16 @@ public final class EmbeddedAccountMosaicRestrictionTransactionBuilder extends
     }
 
     /**
+     * Creates an instance of EmbeddedAccountMosaicRestrictionTransactionBuilder from a stream.
+     *
+     * @param stream Byte stream to use to serialize the object.
+     * @return Instance of EmbeddedAccountMosaicRestrictionTransactionBuilder.
+     */
+    public static EmbeddedAccountMosaicRestrictionTransactionBuilder loadFromBinary(final DataInput stream) {
+        return new EmbeddedAccountMosaicRestrictionTransactionBuilder(stream);
+    }
+
+    /**
      * Serializes an object to bytes.
      *
      * @return Serialized bytes.
@@ -123,10 +115,8 @@ public final class EmbeddedAccountMosaicRestrictionTransactionBuilder extends
         return GeneratorUtils.serialize(dataOutputStream -> {
             final byte[] superBytes = super.serialize();
             dataOutputStream.write(superBytes, 0, superBytes.length);
-            final byte[] accountMosaicRestrictionTransactionBodyBytes = this.accountMosaicRestrictionTransactionBody
-                .serialize();
-            dataOutputStream.write(accountMosaicRestrictionTransactionBodyBytes, 0,
-                accountMosaicRestrictionTransactionBodyBytes.length);
+            final byte[] accountMosaicRestrictionTransactionBodyBytes = this.accountMosaicRestrictionTransactionBody.serialize();
+            dataOutputStream.write(accountMosaicRestrictionTransactionBodyBytes, 0, accountMosaicRestrictionTransactionBodyBytes.length);
         });
     }
 }

@@ -1,40 +1,37 @@
 /**
- * ** Copyright (c) 2016-present, ** Jaguar0625, gimre, BloodyRookie, Tech Bureau, Corp. All rights
- * reserved. ** ** This file is part of Catapult. ** ** Catapult is free software: you can
- * redistribute it and/or modify ** it under the terms of the GNU Lesser General Public License as
- * published by ** the Free Software Foundation, either version 3 of the License, or ** (at your
- * option) any later version. ** ** Catapult is distributed in the hope that it will be useful, **
- * but WITHOUT ANY WARRANTY; without even the implied warranty of ** MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE. See the ** GNU Lesser General Public License for more details. ** ** You
- * should have received a copy of the GNU Lesser General Public License ** along with Catapult. If
- * not, see <http://www.gnu.org/licenses/>.
- **/
+*** Copyright (c) 2016-present,
+*** Jaguar0625, gimre, BloodyRookie, Tech Bureau, Corp. All rights reserved.
+***
+*** This file is part of Catapult.
+***
+*** Catapult is free software: you can redistribute it and/or modify
+*** it under the terms of the GNU Lesser General Public License as published by
+*** the Free Software Foundation, either version 3 of the License, or
+*** (at your option) any later version.
+***
+*** Catapult is distributed in the hope that it will be useful,
+*** but WITHOUT ANY WARRANTY; without even the implied warranty of
+*** MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+*** GNU Lesser General Public License for more details.
+***
+*** You should have received a copy of the GNU Lesser General Public License
+*** along with Catapult. If not, see <http://www.gnu.org/licenses/>.
+**/
 
 package io.nem.catapult.builders;
 
 import java.io.DataInput;
 import java.nio.ByteBuffer;
 
-/**
- * Binary layout for a secret proof transaction.
- */
+/** Binary layout for a secret proof transaction. */
 final class SecretProofTransactionBodyBuilder {
-
-    /**
-     * Hash algorithm.
-     */
+    /** Hash algorithm. */
     private final LockHashAlgorithmDto hashAlgorithm;
-    /**
-     * Secret.
-     */
+    /** Secret. */
     private final Hash256Dto secret;
-    /**
-     * Recipient.
-     */
+    /** Recipient. */
     private final UnresolvedAddressDto recipient;
-    /**
-     * Proof data.
-     */
+    /** Proof data. */
     private final ByteBuffer proof;
 
     /**
@@ -50,7 +47,7 @@ final class SecretProofTransactionBodyBuilder {
             final short proofSize = Short.reverseBytes(stream.readShort());
             this.proof = ByteBuffer.allocate(proofSize);
             stream.readFully(this.proof.array());
-        } catch (Exception e) {
+        } catch(Exception e) {
             throw GeneratorUtils.getExceptionToPropagate(e);
         }
     }
@@ -63,8 +60,7 @@ final class SecretProofTransactionBodyBuilder {
      * @param recipient Recipient.
      * @param proof Proof data.
      */
-    protected SecretProofTransactionBodyBuilder(final LockHashAlgorithmDto hashAlgorithm,
-        final Hash256Dto secret, final UnresolvedAddressDto recipient, final ByteBuffer proof) {
+    protected SecretProofTransactionBodyBuilder(final LockHashAlgorithmDto hashAlgorithm, final Hash256Dto secret, final UnresolvedAddressDto recipient, final ByteBuffer proof) {
         GeneratorUtils.notNull(hashAlgorithm, "hashAlgorithm is null");
         GeneratorUtils.notNull(secret, "secret is null");
         GeneratorUtils.notNull(recipient, "recipient is null");
@@ -84,19 +80,8 @@ final class SecretProofTransactionBodyBuilder {
      * @param proof Proof data.
      * @return Instance of SecretProofTransactionBodyBuilder.
      */
-    public static SecretProofTransactionBodyBuilder create(final LockHashAlgorithmDto hashAlgorithm,
-        final Hash256Dto secret, final UnresolvedAddressDto recipient, final ByteBuffer proof) {
+    public static SecretProofTransactionBodyBuilder create(final LockHashAlgorithmDto hashAlgorithm, final Hash256Dto secret, final UnresolvedAddressDto recipient, final ByteBuffer proof) {
         return new SecretProofTransactionBodyBuilder(hashAlgorithm, secret, recipient, proof);
-    }
-
-    /**
-     * Creates an instance of SecretProofTransactionBodyBuilder from a stream.
-     *
-     * @param stream Byte stream to use to serialize the object.
-     * @return Instance of SecretProofTransactionBodyBuilder.
-     */
-    public static SecretProofTransactionBodyBuilder loadFromBinary(final DataInput stream) {
-        return new SecretProofTransactionBodyBuilder(stream);
     }
 
     /**
@@ -148,6 +133,16 @@ final class SecretProofTransactionBodyBuilder {
         size += 2; // proofSize
         size += this.proof.array().length;
         return size;
+    }
+
+    /**
+     * Creates an instance of SecretProofTransactionBodyBuilder from a stream.
+     *
+     * @param stream Byte stream to use to serialize the object.
+     * @return Instance of SecretProofTransactionBodyBuilder.
+     */
+    public static SecretProofTransactionBodyBuilder loadFromBinary(final DataInput stream) {
+        return new SecretProofTransactionBodyBuilder(stream);
     }
 
     /**

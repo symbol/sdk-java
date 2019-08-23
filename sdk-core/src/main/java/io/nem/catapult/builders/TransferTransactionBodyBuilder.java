@@ -1,37 +1,36 @@
 /**
- * ** Copyright (c) 2016-present, ** Jaguar0625, gimre, BloodyRookie, Tech Bureau, Corp. All rights
- * reserved. ** ** This file is part of Catapult. ** ** Catapult is free software: you can
- * redistribute it and/or modify ** it under the terms of the GNU Lesser General Public License as
- * published by ** the Free Software Foundation, either version 3 of the License, or ** (at your
- * option) any later version. ** ** Catapult is distributed in the hope that it will be useful, **
- * but WITHOUT ANY WARRANTY; without even the implied warranty of ** MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE. See the ** GNU Lesser General Public License for more details. ** ** You
- * should have received a copy of the GNU Lesser General Public License ** along with Catapult. If
- * not, see <http://www.gnu.org/licenses/>.
- **/
+*** Copyright (c) 2016-present,
+*** Jaguar0625, gimre, BloodyRookie, Tech Bureau, Corp. All rights reserved.
+***
+*** This file is part of Catapult.
+***
+*** Catapult is free software: you can redistribute it and/or modify
+*** it under the terms of the GNU Lesser General Public License as published by
+*** the Free Software Foundation, either version 3 of the License, or
+*** (at your option) any later version.
+***
+*** Catapult is distributed in the hope that it will be useful,
+*** but WITHOUT ANY WARRANTY; without even the implied warranty of
+*** MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+*** GNU Lesser General Public License for more details.
+***
+*** You should have received a copy of the GNU Lesser General Public License
+*** along with Catapult. If not, see <http://www.gnu.org/licenses/>.
+**/
 
 package io.nem.catapult.builders;
 
 import java.io.DataInput;
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.nio.ByteBuffer;
 
-/**
- * Binary layout for a transfer transaction.
- */
+/** Binary layout for a transfer transaction. */
 final class TransferTransactionBodyBuilder {
-
-    /**
-     * Transaction recipient.
-     */
+    /** Transaction recipient. */
     private final UnresolvedAddressDto recipient;
-    /**
-     * Transaction message.
-     */
+    /** Transaction message. */
     private final ByteBuffer message;
-    /**
-     * Attached mosaics.
-     */
+    /** Attached mosaics. */
     private final ArrayList<UnresolvedMosaicBuilder> mosaics;
 
     /**
@@ -50,7 +49,7 @@ final class TransferTransactionBodyBuilder {
             for (int i = 0; i < mosaicsCount; i++) {
                 mosaics.add(UnresolvedMosaicBuilder.loadFromBinary(stream));
             }
-        } catch (Exception e) {
+        } catch(Exception e) {
             throw GeneratorUtils.getExceptionToPropagate(e);
         }
     }
@@ -62,8 +61,7 @@ final class TransferTransactionBodyBuilder {
      * @param message Transaction message.
      * @param mosaics Attached mosaics.
      */
-    protected TransferTransactionBodyBuilder(final UnresolvedAddressDto recipient,
-        final ByteBuffer message, final ArrayList<UnresolvedMosaicBuilder> mosaics) {
+    protected TransferTransactionBodyBuilder(final UnresolvedAddressDto recipient, final ByteBuffer message, final ArrayList<UnresolvedMosaicBuilder> mosaics) {
         GeneratorUtils.notNull(recipient, "recipient is null");
         GeneratorUtils.notNull(message, "message is null");
         GeneratorUtils.notNull(mosaics, "mosaics is null");
@@ -80,19 +78,8 @@ final class TransferTransactionBodyBuilder {
      * @param mosaics Attached mosaics.
      * @return Instance of TransferTransactionBodyBuilder.
      */
-    public static TransferTransactionBodyBuilder create(final UnresolvedAddressDto recipient,
-        final ByteBuffer message, final ArrayList<UnresolvedMosaicBuilder> mosaics) {
+    public static TransferTransactionBodyBuilder create(final UnresolvedAddressDto recipient, final ByteBuffer message, final ArrayList<UnresolvedMosaicBuilder> mosaics) {
         return new TransferTransactionBodyBuilder(recipient, message, mosaics);
-    }
-
-    /**
-     * Creates an instance of TransferTransactionBodyBuilder from a stream.
-     *
-     * @param stream Byte stream to use to serialize the object.
-     * @return Instance of TransferTransactionBodyBuilder.
-     */
-    public static TransferTransactionBodyBuilder loadFromBinary(final DataInput stream) {
-        return new TransferTransactionBodyBuilder(stream);
     }
 
     /**
@@ -135,6 +122,16 @@ final class TransferTransactionBodyBuilder {
         size += this.message.array().length;
         size += this.mosaics.stream().mapToInt(o -> o.getSize()).sum();
         return size;
+    }
+
+    /**
+     * Creates an instance of TransferTransactionBodyBuilder from a stream.
+     *
+     * @param stream Byte stream to use to serialize the object.
+     * @return Instance of TransferTransactionBodyBuilder.
+     */
+    public static TransferTransactionBodyBuilder loadFromBinary(final DataInput stream) {
+        return new TransferTransactionBodyBuilder(stream);
     }
 
     /**

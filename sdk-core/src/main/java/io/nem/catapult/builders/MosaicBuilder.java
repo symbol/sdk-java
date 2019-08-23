@@ -1,31 +1,32 @@
 /**
- * ** Copyright (c) 2016-present, ** Jaguar0625, gimre, BloodyRookie, Tech Bureau, Corp. All rights
- * reserved. ** ** This file is part of Catapult. ** ** Catapult is free software: you can
- * redistribute it and/or modify ** it under the terms of the GNU Lesser General Public License as
- * published by ** the Free Software Foundation, either version 3 of the License, or ** (at your
- * option) any later version. ** ** Catapult is distributed in the hope that it will be useful, **
- * but WITHOUT ANY WARRANTY; without even the implied warranty of ** MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE. See the ** GNU Lesser General Public License for more details. ** ** You
- * should have received a copy of the GNU Lesser General Public License ** along with Catapult. If
- * not, see <http://www.gnu.org/licenses/>.
- **/
+*** Copyright (c) 2016-present,
+*** Jaguar0625, gimre, BloodyRookie, Tech Bureau, Corp. All rights reserved.
+***
+*** This file is part of Catapult.
+***
+*** Catapult is free software: you can redistribute it and/or modify
+*** it under the terms of the GNU Lesser General Public License as published by
+*** the Free Software Foundation, either version 3 of the License, or
+*** (at your option) any later version.
+***
+*** Catapult is distributed in the hope that it will be useful,
+*** but WITHOUT ANY WARRANTY; without even the implied warranty of
+*** MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+*** GNU Lesser General Public License for more details.
+***
+*** You should have received a copy of the GNU Lesser General Public License
+*** along with Catapult. If not, see <http://www.gnu.org/licenses/>.
+**/
 
 package io.nem.catapult.builders;
 
 import java.io.DataInput;
 
-/**
- * Binary layout for a mosaic.
- */
+/** Binary layout for a mosaic. */
 public class MosaicBuilder {
-
-    /**
-     * Mosaic identifier.
-     */
+    /** Mosaic identifier. */
     private final MosaicIdDto mosaicId;
-    /**
-     * Mosaic amount.
-     */
+    /** Mosaic amount. */
     private final AmountDto amount;
 
     /**
@@ -63,16 +64,6 @@ public class MosaicBuilder {
     }
 
     /**
-     * Creates an instance of MosaicBuilder from a stream.
-     *
-     * @param stream Byte stream to use to serialize the object.
-     * @return Instance of MosaicBuilder.
-     */
-    public static MosaicBuilder loadFromBinary(final DataInput stream) {
-        return new MosaicBuilder(stream);
-    }
-
-    /**
      * Gets mosaic identifier.
      *
      * @return Mosaic identifier.
@@ -100,6 +91,16 @@ public class MosaicBuilder {
         size += this.mosaicId.getSize();
         size += this.amount.getSize();
         return size;
+    }
+
+    /**
+     * Creates an instance of MosaicBuilder from a stream.
+     *
+     * @param stream Byte stream to use to serialize the object.
+     * @return Instance of MosaicBuilder.
+     */
+    public static MosaicBuilder loadFromBinary(final DataInput stream) {
+        return new MosaicBuilder(stream);
     }
 
     /**

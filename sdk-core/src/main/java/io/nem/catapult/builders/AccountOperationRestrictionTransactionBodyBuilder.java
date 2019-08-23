@@ -1,32 +1,33 @@
 /**
- * ** Copyright (c) 2016-present, ** Jaguar0625, gimre, BloodyRookie, Tech Bureau, Corp. All rights
- * reserved. ** ** This file is part of Catapult. ** ** Catapult is free software: you can
- * redistribute it and/or modify ** it under the terms of the GNU Lesser General Public License as
- * published by ** the Free Software Foundation, either version 3 of the License, or ** (at your
- * option) any later version. ** ** Catapult is distributed in the hope that it will be useful, **
- * but WITHOUT ANY WARRANTY; without even the implied warranty of ** MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE. See the ** GNU Lesser General Public License for more details. ** ** You
- * should have received a copy of the GNU Lesser General Public License ** along with Catapult. If
- * not, see <http://www.gnu.org/licenses/>.
- **/
+*** Copyright (c) 2016-present,
+*** Jaguar0625, gimre, BloodyRookie, Tech Bureau, Corp. All rights reserved.
+***
+*** This file is part of Catapult.
+***
+*** Catapult is free software: you can redistribute it and/or modify
+*** it under the terms of the GNU Lesser General Public License as published by
+*** the Free Software Foundation, either version 3 of the License, or
+*** (at your option) any later version.
+***
+*** Catapult is distributed in the hope that it will be useful,
+*** but WITHOUT ANY WARRANTY; without even the implied warranty of
+*** MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+*** GNU Lesser General Public License for more details.
+***
+*** You should have received a copy of the GNU Lesser General Public License
+*** along with Catapult. If not, see <http://www.gnu.org/licenses/>.
+**/
 
 package io.nem.catapult.builders;
 
 import java.io.DataInput;
 import java.util.ArrayList;
 
-/**
- * Binary layout for an account operation restriction transaction.
- */
+/** Binary layout for an account operation restriction transaction. */
 final class AccountOperationRestrictionTransactionBodyBuilder {
-
-    /**
-     * Account restriction type.
-     */
+    /** Account restriction type. */
     private final AccountRestrictionTypeDto restrictionType;
-    /**
-     * Account restriction modifications.
-     */
+    /** Account restriction modifications. */
     private final ArrayList<AccountOperationRestrictionModificationBuilder> modifications;
 
     /**
@@ -40,10 +41,9 @@ final class AccountOperationRestrictionTransactionBodyBuilder {
             final byte modificationsCount = stream.readByte();
             this.modifications = new java.util.ArrayList<>(modificationsCount);
             for (int i = 0; i < modificationsCount; i++) {
-                modifications
-                    .add(AccountOperationRestrictionModificationBuilder.loadFromBinary(stream));
+                modifications.add(AccountOperationRestrictionModificationBuilder.loadFromBinary(stream));
             }
-        } catch (Exception e) {
+        } catch(Exception e) {
             throw GeneratorUtils.getExceptionToPropagate(e);
         }
     }
@@ -54,9 +54,7 @@ final class AccountOperationRestrictionTransactionBodyBuilder {
      * @param restrictionType Account restriction type.
      * @param modifications Account restriction modifications.
      */
-    protected AccountOperationRestrictionTransactionBodyBuilder(
-        final AccountRestrictionTypeDto restrictionType,
-        final ArrayList<AccountOperationRestrictionModificationBuilder> modifications) {
+    protected AccountOperationRestrictionTransactionBodyBuilder(final AccountRestrictionTypeDto restrictionType, final ArrayList<AccountOperationRestrictionModificationBuilder> modifications) {
         GeneratorUtils.notNull(restrictionType, "restrictionType is null");
         GeneratorUtils.notNull(modifications, "modifications is null");
         this.restrictionType = restrictionType;
@@ -70,22 +68,8 @@ final class AccountOperationRestrictionTransactionBodyBuilder {
      * @param modifications Account restriction modifications.
      * @return Instance of AccountOperationRestrictionTransactionBodyBuilder.
      */
-    public static AccountOperationRestrictionTransactionBodyBuilder create(
-        final AccountRestrictionTypeDto restrictionType,
-        final ArrayList<AccountOperationRestrictionModificationBuilder> modifications) {
-        return new AccountOperationRestrictionTransactionBodyBuilder(restrictionType,
-            modifications);
-    }
-
-    /**
-     * Creates an instance of AccountOperationRestrictionTransactionBodyBuilder from a stream.
-     *
-     * @param stream Byte stream to use to serialize the object.
-     * @return Instance of AccountOperationRestrictionTransactionBodyBuilder.
-     */
-    public static AccountOperationRestrictionTransactionBodyBuilder loadFromBinary(
-        final DataInput stream) {
-        return new AccountOperationRestrictionTransactionBodyBuilder(stream);
+    public static AccountOperationRestrictionTransactionBodyBuilder create(final AccountRestrictionTypeDto restrictionType, final ArrayList<AccountOperationRestrictionModificationBuilder> modifications) {
+        return new AccountOperationRestrictionTransactionBodyBuilder(restrictionType, modifications);
     }
 
     /**
@@ -117,6 +101,16 @@ final class AccountOperationRestrictionTransactionBodyBuilder {
         size += 1; // modificationsCount
         size += this.modifications.stream().mapToInt(o -> o.getSize()).sum();
         return size;
+    }
+
+    /**
+     * Creates an instance of AccountOperationRestrictionTransactionBodyBuilder from a stream.
+     *
+     * @param stream Byte stream to use to serialize the object.
+     * @return Instance of AccountOperationRestrictionTransactionBodyBuilder.
+     */
+    public static AccountOperationRestrictionTransactionBodyBuilder loadFromBinary(final DataInput stream) {
+        return new AccountOperationRestrictionTransactionBodyBuilder(stream);
     }
 
     /**

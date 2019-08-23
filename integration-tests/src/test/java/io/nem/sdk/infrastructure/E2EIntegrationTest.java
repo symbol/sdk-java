@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import io.nem.core.crypto.Hashes;
 import io.nem.sdk.api.TransactionRepository;
-import io.nem.sdk.infrastructure.legacy.ListenerLegacy;
+import io.nem.sdk.infrastructure.vertx.ListenerVertx;
 import io.nem.sdk.model.account.Account;
 import io.nem.sdk.model.account.Address;
 import io.nem.sdk.model.blockchain.NetworkType;
@@ -85,7 +85,7 @@ class E2EIntegrationTest extends BaseIntegrationTest {
         cosignatoryAccount2 = this.getTestCosignatoryAccount2();
         generationHash = this.getGenerationHash();
         timeoutSeconds = this.getTimeoutSeconds();
-        listener = new ListenerLegacy(this.getApiUrl());
+        listener = new ListenerVertx(this.getApiUrl());
         listener.open().get();
     }
 

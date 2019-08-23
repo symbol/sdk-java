@@ -1,31 +1,32 @@
 /**
- * ** Copyright (c) 2016-present, ** Jaguar0625, gimre, BloodyRookie, Tech Bureau, Corp. All rights
- * reserved. ** ** This file is part of Catapult. ** ** Catapult is free software: you can
- * redistribute it and/or modify ** it under the terms of the GNU Lesser General Public License as
- * published by ** the Free Software Foundation, either version 3 of the License, or ** (at your
- * option) any later version. ** ** Catapult is distributed in the hope that it will be useful, **
- * but WITHOUT ANY WARRANTY; without even the implied warranty of ** MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE. See the ** GNU Lesser General Public License for more details. ** ** You
- * should have received a copy of the GNU Lesser General Public License ** along with Catapult. If
- * not, see <http://www.gnu.org/licenses/>.
- **/
+*** Copyright (c) 2016-present,
+*** Jaguar0625, gimre, BloodyRookie, Tech Bureau, Corp. All rights reserved.
+***
+*** This file is part of Catapult.
+***
+*** Catapult is free software: you can redistribute it and/or modify
+*** it under the terms of the GNU Lesser General Public License as published by
+*** the Free Software Foundation, either version 3 of the License, or
+*** (at your option) any later version.
+***
+*** Catapult is distributed in the hope that it will be useful,
+*** but WITHOUT ANY WARRANTY; without even the implied warranty of
+*** MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+*** GNU Lesser General Public License for more details.
+***
+*** You should have received a copy of the GNU Lesser General Public License
+*** along with Catapult. If not, see <http://www.gnu.org/licenses/>.
+**/
 
 package io.nem.catapult.builders;
 
 import java.io.DataInput;
 
-/**
- * Binary layout for a cosignatory modification.
- */
+/** Binary layout for a cosignatory modification. */
 public class CosignatoryModificationBuilder {
-
-    /**
-     * Modification action.
-     */
+    /** Modification action. */
     private final CosignatoryModificationActionDto modificationAction;
-    /**
-     * Cosignatory account public key.
-     */
+    /** Cosignatory account public key. */
     private final KeyDto cosignatoryPublicKey;
 
     /**
@@ -44,9 +45,7 @@ public class CosignatoryModificationBuilder {
      * @param modificationAction Modification action.
      * @param cosignatoryPublicKey Cosignatory account public key.
      */
-    protected CosignatoryModificationBuilder(
-        final CosignatoryModificationActionDto modificationAction,
-        final KeyDto cosignatoryPublicKey) {
+    protected CosignatoryModificationBuilder(final CosignatoryModificationActionDto modificationAction, final KeyDto cosignatoryPublicKey) {
         GeneratorUtils.notNull(modificationAction, "modificationAction is null");
         GeneratorUtils.notNull(cosignatoryPublicKey, "cosignatoryPublicKey is null");
         this.modificationAction = modificationAction;
@@ -60,20 +59,8 @@ public class CosignatoryModificationBuilder {
      * @param cosignatoryPublicKey Cosignatory account public key.
      * @return Instance of CosignatoryModificationBuilder.
      */
-    public static CosignatoryModificationBuilder create(
-        final CosignatoryModificationActionDto modificationAction,
-        final KeyDto cosignatoryPublicKey) {
+    public static CosignatoryModificationBuilder create(final CosignatoryModificationActionDto modificationAction, final KeyDto cosignatoryPublicKey) {
         return new CosignatoryModificationBuilder(modificationAction, cosignatoryPublicKey);
-    }
-
-    /**
-     * Creates an instance of CosignatoryModificationBuilder from a stream.
-     *
-     * @param stream Byte stream to use to serialize the object.
-     * @return Instance of CosignatoryModificationBuilder.
-     */
-    public static CosignatoryModificationBuilder loadFromBinary(final DataInput stream) {
-        return new CosignatoryModificationBuilder(stream);
     }
 
     /**
@@ -104,6 +91,16 @@ public class CosignatoryModificationBuilder {
         size += this.modificationAction.getSize();
         size += this.cosignatoryPublicKey.getSize();
         return size;
+    }
+
+    /**
+     * Creates an instance of CosignatoryModificationBuilder from a stream.
+     *
+     * @param stream Byte stream to use to serialize the object.
+     * @return Instance of CosignatoryModificationBuilder.
+     */
+    public static CosignatoryModificationBuilder loadFromBinary(final DataInput stream) {
+        return new CosignatoryModificationBuilder(stream);
     }
 
     /**

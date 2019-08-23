@@ -1,35 +1,34 @@
 /**
- * ** Copyright (c) 2016-present, ** Jaguar0625, gimre, BloodyRookie, Tech Bureau, Corp. All rights
- * reserved. ** ** This file is part of Catapult. ** ** Catapult is free software: you can
- * redistribute it and/or modify ** it under the terms of the GNU Lesser General Public License as
- * published by ** the Free Software Foundation, either version 3 of the License, or ** (at your
- * option) any later version. ** ** Catapult is distributed in the hope that it will be useful, **
- * but WITHOUT ANY WARRANTY; without even the implied warranty of ** MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE. See the ** GNU Lesser General Public License for more details. ** ** You
- * should have received a copy of the GNU Lesser General Public License ** along with Catapult. If
- * not, see <http://www.gnu.org/licenses/>.
- **/
+*** Copyright (c) 2016-present,
+*** Jaguar0625, gimre, BloodyRookie, Tech Bureau, Corp. All rights reserved.
+***
+*** This file is part of Catapult.
+***
+*** Catapult is free software: you can redistribute it and/or modify
+*** it under the terms of the GNU Lesser General Public License as published by
+*** the Free Software Foundation, either version 3 of the License, or
+*** (at your option) any later version.
+***
+*** Catapult is distributed in the hope that it will be useful,
+*** but WITHOUT ANY WARRANTY; without even the implied warranty of
+*** MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+*** GNU Lesser General Public License for more details.
+***
+*** You should have received a copy of the GNU Lesser General Public License
+*** along with Catapult. If not, see <http://www.gnu.org/licenses/>.
+**/
 
 package io.nem.catapult.builders;
 
 import java.io.DataInput;
 
-/**
- * Binary layout for a mosaic supply change transaction.
- */
+/** Binary layout for a mosaic supply change transaction. */
 final class MosaicSupplyChangeTransactionBodyBuilder {
-
-    /**
-     * Affected mosaic identifier.
-     */
+    /** Affected mosaic identifier. */
     private final UnresolvedMosaicIdDto mosaicId;
-    /**
-     * Supply change action.
-     */
+    /** Supply change action. */
     private final MosaicSupplyChangeActionDto action;
-    /**
-     * Change amount.
-     */
+    /** Change amount. */
     private final AmountDto delta;
 
     /**
@@ -50,8 +49,7 @@ final class MosaicSupplyChangeTransactionBodyBuilder {
      * @param action Supply change action.
      * @param delta Change amount.
      */
-    protected MosaicSupplyChangeTransactionBodyBuilder(final UnresolvedMosaicIdDto mosaicId,
-        final MosaicSupplyChangeActionDto action, final AmountDto delta) {
+    protected MosaicSupplyChangeTransactionBodyBuilder(final UnresolvedMosaicIdDto mosaicId, final MosaicSupplyChangeActionDto action, final AmountDto delta) {
         GeneratorUtils.notNull(mosaicId, "mosaicId is null");
         GeneratorUtils.notNull(action, "action is null");
         GeneratorUtils.notNull(delta, "delta is null");
@@ -68,20 +66,8 @@ final class MosaicSupplyChangeTransactionBodyBuilder {
      * @param delta Change amount.
      * @return Instance of MosaicSupplyChangeTransactionBodyBuilder.
      */
-    public static MosaicSupplyChangeTransactionBodyBuilder create(
-        final UnresolvedMosaicIdDto mosaicId, final MosaicSupplyChangeActionDto action,
-        final AmountDto delta) {
+    public static MosaicSupplyChangeTransactionBodyBuilder create(final UnresolvedMosaicIdDto mosaicId, final MosaicSupplyChangeActionDto action, final AmountDto delta) {
         return new MosaicSupplyChangeTransactionBodyBuilder(mosaicId, action, delta);
-    }
-
-    /**
-     * Creates an instance of MosaicSupplyChangeTransactionBodyBuilder from a stream.
-     *
-     * @param stream Byte stream to use to serialize the object.
-     * @return Instance of MosaicSupplyChangeTransactionBodyBuilder.
-     */
-    public static MosaicSupplyChangeTransactionBodyBuilder loadFromBinary(final DataInput stream) {
-        return new MosaicSupplyChangeTransactionBodyBuilder(stream);
     }
 
     /**
@@ -122,6 +108,16 @@ final class MosaicSupplyChangeTransactionBodyBuilder {
         size += this.action.getSize();
         size += this.delta.getSize();
         return size;
+    }
+
+    /**
+     * Creates an instance of MosaicSupplyChangeTransactionBodyBuilder from a stream.
+     *
+     * @param stream Byte stream to use to serialize the object.
+     * @return Instance of MosaicSupplyChangeTransactionBodyBuilder.
+     */
+    public static MosaicSupplyChangeTransactionBodyBuilder loadFromBinary(final DataInput stream) {
+        return new MosaicSupplyChangeTransactionBodyBuilder(stream);
     }
 
     /**
