@@ -251,9 +251,9 @@ public class ExceptionUtilsTest {
 
         private final Thread blockingThread;
 
-        private boolean isInterruptedPreRun;
-        private boolean isInterruptedPostRun;
-        private Throwable unhandledException;
+        private volatile boolean isInterruptedPreRun;
+        private volatile boolean isInterruptedPostRun;
+        private volatile Throwable unhandledException;
 
         public InterruptedExceptionTestRunner(final Supplier<Void> supplier) {
             this.blockingThread =
