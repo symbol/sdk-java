@@ -39,7 +39,7 @@
           "index": 0
         },
         "transaction": {
-          "mosaicNonce": 0,
+          "nonce": 0,
           "mosaicId": [
             3248159581,
             740240531
