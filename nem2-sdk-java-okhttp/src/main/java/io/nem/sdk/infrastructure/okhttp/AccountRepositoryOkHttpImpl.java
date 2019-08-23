@@ -19,6 +19,7 @@ package io.nem.sdk.infrastructure.okhttp;
 import io.nem.sdk.api.AccountRepository;
 import io.nem.sdk.api.QueryParams;
 import io.nem.sdk.model.account.AccountInfo;
+import io.nem.sdk.model.account.AccountType;
 import io.nem.sdk.model.account.Address;
 import io.nem.sdk.model.account.MultisigAccountGraphInfo;
 import io.nem.sdk.model.account.MultisigAccountInfo;
@@ -266,7 +267,8 @@ public class AccountRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl im
                         new Mosaic(
                             new MosaicId(UInt64.extractBigInteger(mosaicDTO.getId())),
                             UInt64.extractBigInteger(mosaicDTO.getAmount())))
-                .collect(Collectors.toList()));
+                .collect(Collectors.toList()),
+            AccountType.rawValueOf(accountDTO.getAccountType().getValue()));
     }
 
     private MultisigAccountInfo toMultisigAccountInfo(MultisigDTO dto) {

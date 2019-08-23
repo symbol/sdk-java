@@ -20,12 +20,8 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import io.nem.sdk.api.AccountRepository;
 import io.nem.sdk.api.QueryParams;
-import io.nem.sdk.openapi.vertx.model.AccountIds;
-import io.nem.sdk.openapi.vertx.model.AccountInfoDTO;
-import io.nem.sdk.openapi.vertx.model.MultisigAccountGraphInfoDTO;
-import io.nem.sdk.openapi.vertx.model.MultisigAccountInfoDTO;
-import io.nem.sdk.openapi.vertx.model.MultisigDTO;
 import io.nem.sdk.model.account.AccountInfo;
+import io.nem.sdk.model.account.AccountType;
 import io.nem.sdk.model.account.Address;
 import io.nem.sdk.model.account.MultisigAccountGraphInfo;
 import io.nem.sdk.model.account.MultisigAccountInfo;
@@ -35,6 +31,12 @@ import io.nem.sdk.model.mosaic.Mosaic;
 import io.nem.sdk.model.mosaic.MosaicId;
 import io.nem.sdk.model.transaction.AggregateTransaction;
 import io.nem.sdk.model.transaction.Transaction;
+import io.nem.sdk.openapi.vertx.model.AccountDTO;
+import io.nem.sdk.openapi.vertx.model.AccountIds;
+import io.nem.sdk.openapi.vertx.model.AccountInfoDTO;
+import io.nem.sdk.openapi.vertx.model.MultisigAccountGraphInfoDTO;
+import io.nem.sdk.openapi.vertx.model.MultisigAccountInfoDTO;
+import io.nem.sdk.openapi.vertx.model.MultisigDTO;
 import io.reactivex.Observable;
 import io.reactivex.functions.Function;
 import io.vertx.core.json.Json;
@@ -79,22 +81,7 @@ public class AccountHttp extends Http implements AccountRepository {
             .map(Http::mapJsonObjectOrError)
             .map(json -> objectMapper.readValue(json.toString(), AccountInfoDTO.class))
             .map(AccountInfoDTO::getAccount)
-            .map(
-                accountDTO ->
-                    new AccountInfo(
-                        Address.createFromRawAddress(getAddressEncoded(accountDTO.getAddress())),
-                        extractBigInteger(accountDTO.getAddressHeight()),
-                        accountDTO.getPublicKey(),
-                        extractBigInteger(accountDTO.getPublicKeyHeight()),
-                        extractBigInteger(accountDTO.getImportance()),
-                        extractBigInteger(accountDTO.getImportanceHeight()),
-                        accountDTO.getMosaics().stream()
-                            .map(
-                                mosaicDTO ->
-                                    new Mosaic(
-                                        new MosaicId(extractBigInteger(mosaicDTO.getId())),
-                                        extractBigInteger(mosaicDTO.getAmount())))
-                            .collect(Collectors.toList())));
+            .map(this::toAccountInfo);
     }
 
     @Override
@@ -131,25 +118,28 @@ public class AccountHttp extends Http implements AccountRepository {
                                 }))
                     .flatMapIterable(item -> item)
                     .map(AccountInfoDTO::getAccount)
-                    .map(
-                        accountDTO ->
-                            new AccountInfo(
-                                Address.createFromRawAddress(
-                                    getAddressEncoded(accountDTO.getAddress())),
-                                extractBigInteger(accountDTO.getAddressHeight()),
-                                accountDTO.getPublicKey(),
-                                extractBigInteger(accountDTO.getPublicKeyHeight()),
-                                extractBigInteger(accountDTO.getImportance()),
-                                extractBigInteger(accountDTO.getImportanceHeight()),
-                                accountDTO.getMosaics().stream()
-                                    .map(
-                                        mosaicDTO ->
-                                            new Mosaic(
-                                                new MosaicId(extractBigInteger(mosaicDTO.getId())),
-                                                extractBigInteger(mosaicDTO.getAmount())))
-                                    .collect(Collectors.toList())))
+                    .map(this::toAccountInfo)
                     .toList()
                     .toObservable());
+    }
+
+    private AccountInfo toAccountInfo(AccountDTO accountDTO) throws DecoderException {
+        return new AccountInfo(
+            Address.createFromRawAddress(
+                getAddressEncoded(accountDTO.getAddress())),
+            extractBigInteger(accountDTO.getAddressHeight()),
+            accountDTO.getPublicKey(),
+            extractBigInteger(accountDTO.getPublicKeyHeight()),
+            extractBigInteger(accountDTO.getImportance()),
+            extractBigInteger(accountDTO.getImportanceHeight()),
+            accountDTO.getMosaics().stream()
+                .map(
+                    mosaicDTO ->
+                        new Mosaic(
+                            new MosaicId(extractBigInteger(mosaicDTO.getId())),
+                            extractBigInteger(mosaicDTO.getAmount())))
+                .collect(Collectors.toList()),
+            AccountType.rawValueOf(accountDTO.getAccountType().getValue()));
     }
 
     @Override
