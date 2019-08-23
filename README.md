@@ -15,23 +15,75 @@ The official nem2-sdk for Java, Kotlin and Scala to work with the NEM2 (a.k.a Ca
 
 ## Installation
 
+### Open API Generated Libraries
+
+The SDK libs depend on Open API 3 generated clients. Before building the project, execute the following to generate and install the libraries.
+
+```
+./gradlew -b ./nem2-sdk-openapi-generator/build.gradle clean generate install
+```
+
+Currently you need to generate and install the clients manually. The generated clients will be released and deployed into maven central. You can then depend on the the generated library like any other open source third party lib.
+
+This step will be optional, only if you are working on the open api 3 spec or you want to change the configuration of generated libraries.
+
+## Usage
+
+Each SDK user can depend on the best library for its need (example, ``nem2-sdk-java-vertx`` for server developers or ``nem2-sdk-java-okhttp`` for android developers).
+
 ### Maven
 
 ```xml
 <dependency>
     <groupId>io.nem</groupId>
-    <artifactId>sdk</artifactId>
-    <version>0.9.0</version>
+    <artifactId>nem2-sdk-java-vertx</artifactId>
+    <version>0.13.0</version>
+</dependency>
+```
+
+OR
+
+```xml
+<dependency>
+    <groupId>io.nem</groupId>
+    <artifactId>nem2-sdk-java-okhttp</artifactId>
+    <version>0.13.0</version>
+</dependency>
+```
+
+OR
+
+```xml
+<dependency>
+    <groupId>io.nem</groupId>
+    <artifactId>nem2-sdk-java-vertex-legacy</artifactId>
+    <version>0.13.0</version>
 </dependency>
 ```
 
 ### Gradle
 
-```compile 'io.nem:sdk:0.9.0```
+```compile 'io.nem:nem2-sdk-java-vertx:0.13.0```
+
+OR
+
+```compile 'io.nem:nem2-sdk-java-okhttp:0.13.0```
+
+OR
+
+```compile 'io.nem:nem2-sdk-java-vertx-legacy:0.13.0```
 
 ### SBT
 
-```libraryDependencies += "io.nem" % "sdk" % "0.9.0"```
+```libraryDependencies += "io.nem" % "nem2-sdk-java-vertx" % "0.13.0"```
+
+OR
+
+```libraryDependencies += "io.nem" % "nem2-sdk-java-okhttp" % "0.13.0"```
+
+OR
+
+```libraryDependencies += "io.nem" % "nem2-sdk-java-vertx-legacy" % "0.13.0"```
 
 ## Documentation and Getting Started
 

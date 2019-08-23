@@ -1,0 +1,6 @@
+dependencies {
+    compile project(':nem2-sdk-java-api')
+    compile "io.nem:nem2-sdk-java-openapi-okhttp-gson:${restApiVersion}"
+    
+}
+

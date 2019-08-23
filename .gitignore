@@ -64,6 +64,7 @@ fabric.properties
 ### Gradle ###
 .gradle
 **/build/
+**/out/
 
 # Ignore Gradle GUI config
 gradle-app.setting
@@ -86,5 +87,7 @@ crypto/out
 gradle-local.properties
 
 bin/
+
+**/target/
 
 .project
