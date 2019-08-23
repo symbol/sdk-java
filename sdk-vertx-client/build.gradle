@@ -1,0 +1,6 @@
+dependencies {
+    compile project(':sdk-core')
+    compile "io.nem:api-vertx-client:${restApiVersion}"
+    compile "io.vertx:vertx-rx-java2:${vertxVersion}"
+}
+

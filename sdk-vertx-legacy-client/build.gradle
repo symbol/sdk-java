@@ -1,6 +1,6 @@
 dependencies {
-    compile project(':nem2-sdk-java-api')
-    compile "io.nem:nem2-sdk-java-openapi-vertx:${restApiVersion}"
+    compile project(':sdk-core')
+    compile "io.nem:api-vertx-client:${restApiVersion}"
 
     compile "io.vertx:vertx-core:${vertxVersion}"
     compile "io.vertx:vertx-web-client:${vertxVersion}"
