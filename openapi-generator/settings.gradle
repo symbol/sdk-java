@@ -16,8 +16,8 @@
 
 rootProject.name = 'nem2-sdk-openapi-generator'
 
-include ":nem2-sdk-java-openapi-jersey2", ":nem2-sdk-java-openapi-okhttp-gson", ":nem2-sdk-java-openapi-vertx"
+include ":api-jersey2-client", ":api-okhttp-gson-client", ":api-vertx-client"
 
-project(':nem2-sdk-java-openapi-jersey2').projectDir = new File('target/nem2-sdk-java-openapi-jersey2')
-project(':nem2-sdk-java-openapi-okhttp-gson').projectDir = new File('target/nem2-sdk-java-openapi-okhttp-gson')
-project(':nem2-sdk-java-openapi-vertx').projectDir = new File('target/nem2-sdk-java-openapi-vertx')
+project(':api-jersey2-client').projectDir = new File('targetapi-jersey2-client')
+project(':api-okhttp-gson-client').projectDir = new File('target/api-okhttp-gson-client')
+project(':api-vertx-client').projectDir = new File('target/api-vertx-client')

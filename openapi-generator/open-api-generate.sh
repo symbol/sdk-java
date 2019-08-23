@@ -9,13 +9,13 @@ function exe() { echo "\$ $@" ; "$@" ; }
 
 function generateLib() {
 	LIBRARY="$1"
-	ARTIFACT_ID="nem2-sdk-java-openapi-$LIBRARY"
+	ARTIFACT_ID="api-$LIBRARY-client"
 	echo "generating lib for $LIBRARY"
     	exe rm -rf "$CURRENT_FOLDER/target/$ARTIFACT_ID"
 
 	exe openapi-generator generate -g java \
 	--output "$CURRENT_FOLDER/target/$ARTIFACT_ID" \
-	--library "2$LIBRARY" \
+	--library "$LIBRARY" \
 	--artifact-version "$VERSION" \
 	--artifact-id "$ARTIFACT_ID" \
 	--group-id 'io.nem' -i "$CURRENT_FOLDER/openapi3-any-of-patch.yaml" \

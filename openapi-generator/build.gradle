@@ -16,7 +16,7 @@ ext {
 ["vertx", "okhttp-gson", "jersey2"].eachWithIndex { library, index ->
     task "generate_${library}"(type: org.openapitools.generator.gradle.plugin.tasks.GenerateTask) {
         version = "${generateVersion}".toString()
-        id = "nem2-sdk-java-openapi-${library}".toString()
+        id = "api-${library}-client".toString()
         configFile = "$rootDir/${library}.json".toString()
         library = "${library}".toString()
         groupId = 'io.nem'.toString()
@@ -25,7 +25,7 @@ ext {
         apiPackage = "io.nem.sdk.openapi.${library}.api".toString()
         invokerPackage = "io.nem.sdk.openapi.${library}.invoker".toString()
         modelPackage = "io.nem.sdk.openapi.${library}.model".toString()
-        outputDir = "$rootDir/target/nem2-sdk-java-openapi-${library}".toString()
+        outputDir = "$rootDir/target/api-${library}-client".toString()
     }
 }
 
@@ -57,6 +57,6 @@ subprojects {
     artifacts {
         archives javadocJar, sourcesJar
     }
-    
+
     build.dependsOn generate
 }

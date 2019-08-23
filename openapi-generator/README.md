@@ -37,5 +37,4 @@ The script will:
 * Extend the generation to publish related libraries to maven central. Revisit the necessary data like author, license, etc.
 * User real YAML from the web once the any of generation is fixed
 * At the moment the build uses mvn as the generated Gradle configuration doesn't include mavenLocal to install the snapshot locally. Maybe we should upgrade the Gradle generator
-* ~~Should this project also generate and release non-java libraries (like typescript)?~~ Rename repo to `nem2-sdk-java-openapi-generator`
 * Configure ci (travis?) to automatically detect the official openpai3.yml changes, update the generator version, run it and deploy the generated aritifacts to the maven central. Then, everytime there is new descriptor push (to the master branch for example), ci will do the deployment automatically (either as a snapshot version or a release once the processed is working well).
