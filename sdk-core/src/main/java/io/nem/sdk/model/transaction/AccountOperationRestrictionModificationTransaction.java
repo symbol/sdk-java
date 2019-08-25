@@ -17,7 +17,7 @@ package io.nem.sdk.model.transaction;
 
 import io.nem.catapult.builders.AccountOperationRestrictionModificationBuilder;
 import io.nem.catapult.builders.AccountOperationRestrictionTransactionBuilder;
-import io.nem.catapult.builders.AccountRestrictionModificationTypeDto;
+import io.nem.catapult.builders.AccountRestrictionModificationActionDto;
 import io.nem.catapult.builders.AccountRestrictionTypeDto;
 import io.nem.catapult.builders.AmountDto;
 import io.nem.catapult.builders.EmbeddedAccountOperationRestrictionTransactionBuilder;
@@ -202,7 +202,7 @@ public class AccountOperationRestrictionModificationTransaction extends Transact
             modifications) {
             final AccountOperationRestrictionModificationBuilder builder =
                 AccountOperationRestrictionModificationBuilder.create(
-                    AccountRestrictionModificationTypeDto.rawValueOf(
+                    AccountRestrictionModificationActionDto.rawValueOf(
                         accountRestrictionModification.getModificationType().getValue()),
                     EntityTypeDto.rawValueOf(
                         (short) accountRestrictionModification.getValue().getValue()));

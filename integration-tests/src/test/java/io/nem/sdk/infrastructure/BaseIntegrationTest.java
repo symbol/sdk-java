@@ -17,14 +17,12 @@
 package io.nem.sdk.infrastructure;
 
 import io.nem.sdk.api.RepositoryFactory;
-import io.nem.sdk.infrastructure.legacy.RepositoryFactoryLegacyImpl;
 import io.nem.sdk.infrastructure.okhttp.RepositoryFactoryOkHttpImpl;
 import io.nem.sdk.infrastructure.vertx.RepositoryFactoryVertxImpl;
 import io.nem.sdk.model.account.Account;
 import io.nem.sdk.model.account.Address;
 import io.nem.sdk.model.account.PublicAccount;
 import io.nem.sdk.model.blockchain.NetworkType;
-import org.junit.Assert;
 
 /**
  * Abstract class for all the repository integration tests.
@@ -39,7 +37,7 @@ public abstract class BaseIntegrationTest {
      * Known implementations of repositories that the integration tests use.
      */
     public enum RepositoryType {
-        LEGACY, VERTX, OKHTTP
+        VERTX, OKHTTP
     }
 
 
@@ -63,8 +61,6 @@ public abstract class BaseIntegrationTest {
         switch (type) {
             case VERTX:
                 return new RepositoryFactoryVertxImpl(getApiUrl());
-            case LEGACY:
-                return new RepositoryFactoryLegacyImpl(getApiUrl());
             case OKHTTP:
                 return new RepositoryFactoryOkHttpImpl(getApiUrl());
             default:

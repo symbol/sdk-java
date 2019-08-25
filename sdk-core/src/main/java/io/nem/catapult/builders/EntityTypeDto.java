@@ -27,8 +27,10 @@ public enum EntityTypeDto {
   ACCOUNT_LINK_TRANSACTION((short) 0x414C),
   /** Address alias transaction. */
   ADDRESS_ALIAS_TRANSACTION((short) 0x424E),
-  /** Aggregate transaction. */
-  AGGREGATE_TRANSACTION((short) 0x4141),
+  /** Aggregate bonded transaction. */
+  AGGREGATE_BONDED_TRANSACTION((short) 0x4241),
+  /** Aggregate complete transaction. */
+  AGGREGATE_COMPLETE_TRANSACTION((short) 0x4141),
   /** Hash lock transaction. */
   HASH_LOCK_TRANSACTION((short) 0x4148),
   /** Modify multisig account transaction. */

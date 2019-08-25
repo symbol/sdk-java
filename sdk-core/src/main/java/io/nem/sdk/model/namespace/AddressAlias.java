@@ -21,13 +21,13 @@ package io.nem.sdk.model.namespace;
 
 import io.nem.sdk.model.account.Address;
 
-/** Address alias. */
+/**
+ * Address alias.
+ */
 public class AddressAlias extends AliasBase<Address> {
 
     /**
      * Create AddressAlias from address
-     *
-     * @param address
      */
     public AddressAlias(Address address) {
         super(address);

@@ -69,7 +69,7 @@ public class PublicKeyTest {
         Assert.assertThat(new PublicKey(TEST_BYTES), IsEqual.equalTo(key));
         Assert.assertThat(new PublicKey(MODIFIED_TEST_BYTES), IsNot.not(IsEqual.equalTo(key)));
         Assert.assertThat(null, IsNot.not(IsEqual.equalTo(key)));
-        Assert.assertThat(TEST_BYTES, IsNot.not(IsEqual.equalTo((Object) key)));
+        Assert.assertThat(TEST_BYTES, IsNot.not(IsEqual.equalTo(key)));
     }
 
     @Test

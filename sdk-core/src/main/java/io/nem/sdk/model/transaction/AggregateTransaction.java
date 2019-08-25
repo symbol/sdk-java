@@ -54,7 +54,7 @@ public class AggregateTransaction extends Transaction {
         TransactionType transactionType,
         Integer version,
         Deadline deadline,
-        BigInteger fee,
+        BigInteger maxFee,
         List<Transaction> innerTransactions,
         List<AggregateTransactionCosignature> cosignatures,
         String signature,
@@ -65,7 +65,7 @@ public class AggregateTransaction extends Transaction {
             transactionType,
             version,
             deadline,
-            fee,
+            maxFee,
             innerTransactions,
             cosignatures,
             Optional.of(signature),
@@ -78,7 +78,7 @@ public class AggregateTransaction extends Transaction {
         TransactionType transactionType,
         Integer version,
         Deadline deadline,
-        BigInteger fee,
+        BigInteger maxFee,
         List<Transaction> innerTransactions,
         List<AggregateTransactionCosignature> cosignatures) {
         this(
@@ -86,7 +86,7 @@ public class AggregateTransaction extends Transaction {
             transactionType,
             version,
             deadline,
-            fee,
+            maxFee,
             innerTransactions,
             cosignatures,
             Optional.empty(),
@@ -99,13 +99,13 @@ public class AggregateTransaction extends Transaction {
         TransactionType transactionType,
         Integer version,
         Deadline deadline,
-        BigInteger fee,
+        BigInteger maxFee,
         List<Transaction> innerTransactions,
         List<AggregateTransactionCosignature> cosignatures,
         Optional<String> signature,
         Optional<PublicAccount> signer,
         Optional<TransactionInfo> transactionInfo) {
-        super(transactionType, networkType, version, deadline, fee, signature, signer,
+        super(transactionType, networkType, version, deadline, maxFee, signature, signer,
             transactionInfo);
         Validate.notNull(innerTransactions, "InnerTransactions must not be null");
         Validate.notNull(cosignatures, "Cosignatures must not be null");
@@ -122,13 +122,13 @@ public class AggregateTransaction extends Transaction {
      * @return {@link AggregateTransaction}
      */
     public static AggregateTransaction createComplete(
-        Deadline deadline, List<Transaction> innerTransactions, NetworkType networkType) {
+        Deadline deadline, BigInteger maxFee, List<Transaction> innerTransactions, NetworkType networkType) {
         return new AggregateTransaction(
             networkType,
             TransactionType.AGGREGATE_COMPLETE,
             TransactionVersion.AGGREGATE_COMPLETE.getValue(),
             deadline,
-            BigInteger.valueOf(0),
+            maxFee,
             innerTransactions,
             new ArrayList<>());
     }
@@ -142,13 +142,13 @@ public class AggregateTransaction extends Transaction {
      * @return {@link AggregateTransaction}
      */
     public static AggregateTransaction createBonded(
-        Deadline deadline, List<Transaction> innerTransactions, NetworkType networkType) {
+        Deadline deadline, BigInteger maxFee, List<Transaction> innerTransactions, NetworkType networkType) {
         return new AggregateTransaction(
             networkType,
             TransactionType.AGGREGATE_BONDED,
             TransactionVersion.AGGREGATE_BONDED.getValue(),
             deadline,
-            BigInteger.valueOf(0),
+            maxFee,
             innerTransactions,
             new ArrayList<>());
     }
@@ -202,11 +202,9 @@ public class AggregateTransaction extends Transaction {
                     final ByteBuffer signerBuffer = ByteBuffer.wrap(signerBytes);
                     final ByteBuffer signatureBuffer = ByteBuffer.wrap(signatureBytes);
 
-                    final CosignatureBuilder cosignatureBuilder =
-                        CosignatureBuilder.create(
-                            new KeyDto(signerBuffer), new SignatureDto(signatureBuffer));
-                    cosignaturesBytes =
-                        ArrayUtils.addAll(transactionsBytes, cosignatureBuilder.serialize());
+                    final CosignatureBuilder cosignatureBuilder = CosignatureBuilder.create(new KeyDto(signerBuffer),
+                        new SignatureDto(signatureBuffer));
+                    cosignaturesBytes = ArrayUtils.addAll(transactionsBytes, cosignatureBuilder.serialize());
                 }
                 final ByteBuffer cosignaturesBuffer = ByteBuffer.wrap(cosignaturesBytes);
 
@@ -218,8 +216,8 @@ public class AggregateTransaction extends Transaction {
                     AggregateTransactionBuilder.create(
                         new SignatureDto(signatureBuffer),
                         new KeyDto(signerBuffer),
-                        (short) version,
-                        EntityTypeDto.AGGREGATE_TRANSACTION,
+                        getNetworkVersion(),
+                        EntityTypeDto.rawValueOf((short)getType().getValue()),
                         new AmountDto(getFee().longValue()),
                         new TimestampDto(getDeadline().getInstant()),
                         transactionsBuffer,

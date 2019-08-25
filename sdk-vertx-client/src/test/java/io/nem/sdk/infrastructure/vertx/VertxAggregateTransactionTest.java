@@ -69,6 +69,7 @@ public class VertxAggregateTransactionTest {
         AggregateTransaction aggregateTx =
             AggregateTransaction.createComplete(
                 new Deadline(2, ChronoUnit.HOURS),
+                BigInteger.ZERO,
                 Arrays.asList(
                     transferTx.toAggregate(
                         new PublicAccount(
@@ -103,6 +104,7 @@ public class VertxAggregateTransactionTest {
         AggregateTransaction aggregateTx =
             AggregateTransaction.createComplete(
                 new VertxFakeDeadline(),
+                BigInteger.ZERO,
                 Collections.singletonList(
                     transferTx.toAggregate(
                         new PublicAccount(
@@ -129,6 +131,7 @@ public class VertxAggregateTransactionTest {
         AggregateTransaction aggregateTx =
             AggregateTransaction.createComplete(
                 new VertxFakeDeadline(),
+                BigInteger.ZERO,
                 Collections.singletonList(
                     transferTx.toAggregate(
                         new PublicAccount(

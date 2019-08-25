@@ -1,7 +1,6 @@
 dependencies {
     compile project(':sdk-core')
     compile project(':sdk-vertx-client')
-    compile project(':sdk-vertx-legacy-client')
     compile project(':sdk-okhttp-client')
 }
 

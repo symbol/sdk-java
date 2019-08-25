@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-rootProject.name = 'nem2-sdk-openapi-generator'
+rootProject.name = 'openapi-generator'
 
 include ":api-jersey2-client", ":api-okhttp-gson-client", ":api-vertx-client"
 
