@@ -294,6 +294,7 @@ class E2EIntegrationTest extends BaseIntegrationTest {
         AggregateTransaction aggregateTransaction =
             AggregateTransaction.createComplete(
                 new Deadline(2, HOURS),
+                BigInteger.ZERO,
                 Collections.singletonList(
                     registerNamespaceTransaction.toAggregate(this.account.getPublicAccount())),
                 NetworkType.MIJIN_TEST);
@@ -322,6 +323,7 @@ class E2EIntegrationTest extends BaseIntegrationTest {
         AggregateTransaction aggregateTransaction2 =
             AggregateTransaction.createComplete(
                 new Deadline(2, HOURS),
+                BigInteger.ZERO,
                 Collections.singletonList(
                     addressAliasTransaction.toAggregate(this.account.getPublicAccount())),
                 NetworkType.MIJIN_TEST);
@@ -472,6 +474,7 @@ class E2EIntegrationTest extends BaseIntegrationTest {
         AggregateTransaction aggregateTransaction =
             AggregateTransaction.createComplete(
                 new Deadline(2, HOURS),
+                BigInteger.ZERO,
                 Collections.singletonList(
                     registerNamespaceTransaction.toAggregate(this.account.getPublicAccount())),
                 NetworkType.MIJIN_TEST);
@@ -500,6 +503,7 @@ class E2EIntegrationTest extends BaseIntegrationTest {
         AggregateTransaction aggregateTransaction2 =
             AggregateTransaction.createComplete(
                 new Deadline(2, HOURS),
+                BigInteger.ZERO,
                 Collections.singletonList(
                     addressAliasTransaction.toAggregate(this.account.getPublicAccount())),
                 NetworkType.MIJIN_TEST);
