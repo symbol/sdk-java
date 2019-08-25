@@ -52,14 +52,15 @@ class MosaicDefinitionTransactionTest {
         assertEquals(true, mosaicCreationTx.getMosaicProperties().isTransferable());
         assertEquals(3, mosaicCreationTx.getMosaicProperties().getDivisibility());
         assertEquals(
-            BigInteger.valueOf(10), mosaicCreationTx.getMosaicProperties().getDuration().get());
+            BigInteger.valueOf(10).longValue(),
+            mosaicCreationTx.getMosaicProperties().getDuration().longValue());
     }
 
     @Test
     @DisplayName("Serialization")
     void serialization() {
         String expected =
-            "9000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001904d4100000000000000000100000000000000000000000000000000000000010304021027000000000000";
+            "8e00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001904d410000000000000000010000000000000000000000000000000000000003041027000000000000";
         MosaicDefinitionTransaction mosaicDefinitionTransaction =
             MosaicDefinitionTransaction.create(
                 new FakeDeadline(),

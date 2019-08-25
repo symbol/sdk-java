@@ -20,8 +20,8 @@ package io.nem.sdk.model.account;
  * Account property modification type
  */
 public enum PropertyModificationType {
-    Add(0x00),
-    Remove(0x01);
+    Add(0x01),
+    Remove(0x00);
 
     private Integer value;
 
@@ -31,9 +31,9 @@ public enum PropertyModificationType {
 
     public static PropertyModificationType rawValueOf(String value) {
         switch (value) {
-            case "0x00":
-                return PropertyModificationType.Add;
             case "0x01":
+                return PropertyModificationType.Add;
+            case "0x00":
                 return PropertyModificationType.Remove;
             default:
                 throw new IllegalArgumentException(value + " is not a valid value");

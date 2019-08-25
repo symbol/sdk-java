@@ -30,6 +30,7 @@ import io.nem.sdk.model.transaction.JsonHelper;
 import io.nem.sdk.openapi.vertx.model.TransactionInfoDTO;
 import io.vertx.core.json.Json;
 import java.io.InputStream;
+import java.math.BigInteger;
 import java.time.temporal.ChronoUnit;
 import java.util.Collections;
 import org.apache.commons.io.IOUtils;
@@ -99,7 +100,7 @@ public class VertxCosignatureTransactionTest {
 
         AggregateTransaction aggregateTransaction =
             AggregateTransaction.createComplete(
-                Deadline.create(2, ChronoUnit.HOURS), Collections.emptyList(),
+                Deadline.create(2, ChronoUnit.HOURS), BigInteger.ZERO, Collections.emptyList(),
                 NetworkType.MIJIN_TEST);
 
         assertThrows(

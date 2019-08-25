@@ -57,7 +57,7 @@ class MosaicInfoTest {
         assertTrue(mosaicInfo.isSupplyMutable());
         assertTrue(mosaicInfo.isTransferable());
         assertEquals(3, mosaicInfo.getDivisibility());
-        assertEquals(BigInteger.valueOf(10).intValue(), mosaicInfo.getDuration().get().intValue());
+        assertEquals(BigInteger.valueOf(10).intValue(), mosaicInfo.getDuration().longValue());
     }
 
     @Test

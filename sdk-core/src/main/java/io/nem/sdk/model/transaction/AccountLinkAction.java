@@ -23,11 +23,11 @@ public enum AccountLinkAction {
     /**
      * Link account.
      */
-    LINK((byte) 0),
+    LINK((byte) 1),
     /**
      * Unlink account.
      */
-    UNLINK((byte) 1);
+    UNLINK((byte) 0);
 
     private final byte value;
 
@@ -48,9 +48,9 @@ public enum AccountLinkAction {
      */
     public static AccountLinkAction rawValueOf(final int value) {
         switch (value) {
-            case 0:
-                return AccountLinkAction.LINK;
             case 1:
+                return AccountLinkAction.LINK;
+            case 0:
                 return AccountLinkAction.UNLINK;
             default:
                 throw new IllegalArgumentException(value + " is not a valid value");

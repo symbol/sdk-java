@@ -631,7 +631,7 @@ public class ColumnVectorTest {
         Assert.assertThat(new ColumnVector(2, 8, 1), IsNot.not(IsEqual.equalTo(vector)));
         Assert.assertThat(new ColumnVector(2, -4, 2), IsNot.not(IsEqual.equalTo(vector)));
         Assert.assertThat(null, IsNot.not(IsEqual.equalTo(vector)));
-        Assert.assertThat(new double[]{2, -4, 1}, IsNot.not(IsEqual.equalTo((Object) vector)));
+        Assert.assertThat(new double[]{2, -4, 1}, IsNot.not(IsEqual.equalTo(vector)));
     }
 
     @Test

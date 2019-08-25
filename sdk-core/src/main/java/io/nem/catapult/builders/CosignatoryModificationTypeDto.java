@@ -49,15 +49,6 @@ public enum CosignatoryModificationTypeDto {
   }
 
   /**
-   * Gets the size of the object.
-   *
-   * @return Size in bytes.
-   */
-  public int getSize() {
-    return 1;
-  }
-
-  /**
    * Creates an instance of CosignatoryModificationTypeDto from a stream.
    *
    * @param stream Byte stream to use to serialize the object.
@@ -70,6 +61,15 @@ public enum CosignatoryModificationTypeDto {
     } catch (Exception e) {
       throw GeneratorUtils.getExceptionToPropagate(e);
     }
+  }
+
+  /**
+   * Gets the size of the object.
+   *
+   * @return Size in bytes.
+   */
+  public int getSize() {
+    return 1;
   }
 
   /**

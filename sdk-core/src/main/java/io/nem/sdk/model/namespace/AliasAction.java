@@ -23,11 +23,11 @@ public enum AliasAction {
     /**
      * Link an alias.
      */
-    Link((byte) 0),
+    Link((byte) 1),
     /**
      * Unlink an alias.
      */
-    Unlink((byte) 1);
+    Unlink((byte) 0);
 
     private byte value;
 
@@ -48,9 +48,9 @@ public enum AliasAction {
      */
     public static AliasAction rawValueOf(final byte value) {
         switch (value) {
-            case 0:
-                return AliasAction.Link;
             case 1:
+                return AliasAction.Link;
+            case 0:
                 return AliasAction.Unlink;
             default:
                 throw new IllegalArgumentException(value + " is not a valid value");

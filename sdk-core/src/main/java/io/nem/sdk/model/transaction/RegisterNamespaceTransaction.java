@@ -18,11 +18,11 @@ package io.nem.sdk.model.transaction;
 
 import io.nem.catapult.builders.AmountDto;
 import io.nem.catapult.builders.BlockDurationDto;
-import io.nem.catapult.builders.EmbeddedRegisterNamespaceTransactionBuilder;
+import io.nem.catapult.builders.EmbeddedNamespaceRegistrationTransactionBuilder;
 import io.nem.catapult.builders.EntityTypeDto;
 import io.nem.catapult.builders.KeyDto;
 import io.nem.catapult.builders.NamespaceIdDto;
-import io.nem.catapult.builders.RegisterNamespaceTransactionBuilder;
+import io.nem.catapult.builders.NamespaceRegistrationTransactionBuilder;
 import io.nem.catapult.builders.SignatureDto;
 import io.nem.catapult.builders.TimestampDto;
 import io.nem.sdk.model.account.PublicAccount;
@@ -49,81 +49,36 @@ public class RegisterNamespaceTransaction extends Transaction {
     private final Optional<NamespaceId> parentId;
     private final NamespaceType namespaceType;
 
-    public RegisterNamespaceTransaction(
-        final NetworkType networkType,
-        final Integer version,
-        final Deadline deadline,
-        final BigInteger fee,
-        final String namespaceName,
-        final NamespaceId namespaceId,
+    public RegisterNamespaceTransaction(final NetworkType networkType, final Integer version,
+        final Deadline deadline, final BigInteger fee,
+        final String namespaceName, final NamespaceId namespaceId,
         final NamespaceType namespaceType,
-        final Optional<BigInteger> duration,
-        final Optional<NamespaceId> parentId,
+        final Optional<BigInteger> duration, final Optional<NamespaceId> parentId,
         final String signature,
-        final PublicAccount signer,
-        final TransactionInfo transactionInfo) {
-        this(
-            networkType,
-            version,
-            deadline,
-            fee,
-            namespaceName,
-            namespaceId,
-            namespaceType,
-            duration,
-            parentId,
-            Optional.of(signature),
-            Optional.of(signer),
-            Optional.of(transactionInfo));
+        final PublicAccount signer, final TransactionInfo transactionInfo) {
+        this(networkType, version, deadline, fee, namespaceName, namespaceId, namespaceType,
+            duration, parentId, Optional.of(signature),
+            Optional.of(signer), Optional.of(transactionInfo));
     }
 
-    private RegisterNamespaceTransaction(
-        final NetworkType networkType,
-        final Integer version,
+    private RegisterNamespaceTransaction(final NetworkType networkType, final Integer version,
         final Deadline deadline,
-        final BigInteger fee,
-        final String namespaceName,
-        final NamespaceId namespaceId,
-        final NamespaceType namespaceType,
-        final Optional<BigInteger> duration,
+        final BigInteger fee, final String namespaceName, final NamespaceId namespaceId,
+        final NamespaceType namespaceType, final Optional<BigInteger> duration,
         final Optional<NamespaceId> parentId) {
-        this(
-            networkType,
-            version,
-            deadline,
-            fee,
-            namespaceName,
-            namespaceId,
-            namespaceType,
-            duration,
-            parentId,
-            Optional.empty(),
-            Optional.empty(),
-            Optional.empty());
+        this(networkType, version, deadline, fee, namespaceName, namespaceId, namespaceType,
+            duration, parentId, Optional.empty(),
+            Optional.empty(), Optional.empty());
     }
 
-    private RegisterNamespaceTransaction(
-        final NetworkType networkType,
-        final Integer version,
+    private RegisterNamespaceTransaction(final NetworkType networkType, final Integer version,
         final Deadline deadline,
-        final BigInteger fee,
-        final String namespaceName,
-        final NamespaceId namespaceId,
-        final NamespaceType namespaceType,
-        final Optional<BigInteger> duration,
-        final Optional<NamespaceId> parentId,
-        final Optional<String> signature,
-        final Optional<PublicAccount> signer,
-        final Optional<TransactionInfo> transactionInfo) {
-        super(
-            TransactionType.REGISTER_NAMESPACE,
-            networkType,
-            version,
-            deadline,
-            fee,
-            signature,
-            signer,
-            transactionInfo);
+        final BigInteger fee, final String namespaceName, final NamespaceId namespaceId,
+        final NamespaceType namespaceType, final Optional<BigInteger> duration,
+        final Optional<NamespaceId> parentId, final Optional<String> signature,
+        final Optional<PublicAccount> signer, final Optional<TransactionInfo> transactionInfo) {
+        super(TransactionType.REGISTER_NAMESPACE, networkType, version, deadline, fee, signature,
+            signer, transactionInfo);
         Validate.notNull(namespaceName, "NamespaceName must not be null");
         Validate.notNull(namespaceType, "NamespaceType must not be null");
         Validate.notNull(namespaceId, "NamespaceId must not be null");
@@ -149,24 +104,15 @@ public class RegisterNamespaceTransaction extends Transaction {
      * @param networkType Network type.
      * @return Register namespace transaction.
      */
-    public static RegisterNamespaceTransaction createRootNamespace(
-        final Deadline deadline,
+    public static RegisterNamespaceTransaction createRootNamespace(final Deadline deadline,
         final BigInteger fee,
-        final String namespaceName,
-        final BigInteger duration,
+        final String namespaceName, final BigInteger duration,
         final NetworkType networkType) {
         Validate.notNull(namespaceName, "NamespaceName must not be null");
         NamespaceId namespaceId = new NamespaceId(IdGenerator.generateNamespaceId(namespaceName));
-        return new RegisterNamespaceTransaction(
-            networkType,
-            TransactionVersion.REGISTER_NAMESPACE.getValue(),
-            deadline,
-            fee,
-            namespaceName,
-            namespaceId,
-            NamespaceType.RootNamespace,
-            Optional.of(duration),
-            Optional.empty());
+        return new RegisterNamespaceTransaction(networkType,
+            TransactionVersion.REGISTER_NAMESPACE.getValue(), deadline, fee, namespaceName,
+            namespaceId, NamespaceType.RootNamespace, Optional.of(duration), Optional.empty());
     }
 
     /**
@@ -179,17 +125,15 @@ public class RegisterNamespaceTransaction extends Transaction {
      * @param networkType Network type.
      * @return instance of RegisterNamespaceTransaction
      */
-    public static RegisterNamespaceTransaction createSubNamespace(
-        final Deadline deadline,
-        final BigInteger fee,
-        final String namespaceName,
+    public static RegisterNamespaceTransaction createSubNamespace(final Deadline deadline,
+        final BigInteger fee, final String namespaceName,
         final String parentNamespaceName,
         final NetworkType networkType) {
         Validate.notNull(namespaceName, "NamespaceName must not be null");
         Validate.notNull(parentNamespaceName, "ParentNamespaceName must not be null");
         NamespaceId parentId = new NamespaceId(parentNamespaceName);
-        return RegisterNamespaceTransaction.createSubNamespace(
-            deadline, fee, namespaceName, parentId, networkType);
+        return RegisterNamespaceTransaction
+            .createSubNamespace(deadline, fee, namespaceName, parentId, networkType);
     }
 
     /**
@@ -202,27 +146,20 @@ public class RegisterNamespaceTransaction extends Transaction {
      * @param networkType Network type.
      * @return instance of RegisterNamespaceTransaction
      */
-    public static RegisterNamespaceTransaction createSubNamespace(
-        final Deadline deadline,
-        final BigInteger fee,
-        final String namespaceName,
+    public static RegisterNamespaceTransaction createSubNamespace(final Deadline deadline,
+        final BigInteger fee, final String namespaceName,
         final NamespaceId parentId,
         final NetworkType networkType) {
         Validate.notNull(namespaceName, "NamespaceName must not be null");
         Validate.notNull(parentId, "ParentId must not be null");
-        NamespaceId namespaceId =
-            new NamespaceId(IdGenerator.generateNamespaceId(namespaceName, parentId.getId()));
-        return new RegisterNamespaceTransaction(
-            networkType,
-            TransactionVersion.REGISTER_NAMESPACE.getValue(),
-            deadline,
-            fee,
-            namespaceName,
-            namespaceId,
-            NamespaceType.SubNamespace,
-            Optional.empty(),
+        NamespaceId namespaceId = new NamespaceId(
+            IdGenerator.generateNamespaceId(namespaceName, parentId.getId()));
+        return new RegisterNamespaceTransaction(networkType,
+            TransactionVersion.REGISTER_NAMESPACE.getValue(), deadline,
+            fee, namespaceName, namespaceId, NamespaceType.SubNamespace, Optional.empty(),
             Optional.of(parentId));
     }
+
 
     /**
      * Returns namespace name.
@@ -280,10 +217,10 @@ public class RegisterNamespaceTransaction extends Transaction {
         final ByteBuffer signerBuffer = ByteBuffer.allocate(32);
         final ByteBuffer signatureBuffer = ByteBuffer.allocate(64);
 
-        RegisterNamespaceTransactionBuilder txBuilder;
+        NamespaceRegistrationTransactionBuilder txBuilder;
         if (namespaceType == NamespaceType.RootNamespace) {
             txBuilder =
-                RegisterNamespaceTransactionBuilder.create(
+                NamespaceRegistrationTransactionBuilder.create(
                     new SignatureDto(signatureBuffer),
                     new KeyDto(signerBuffer),
                     getNetworkVersion(),
@@ -296,7 +233,7 @@ public class RegisterNamespaceTransaction extends Transaction {
 
         } else {
             txBuilder =
-                RegisterNamespaceTransactionBuilder.create(
+                NamespaceRegistrationTransactionBuilder.create(
                     new SignatureDto(signatureBuffer),
                     new KeyDto(signerBuffer),
                     getNetworkVersion(),
@@ -316,10 +253,10 @@ public class RegisterNamespaceTransaction extends Transaction {
      * @return Embedded tx bytes
      */
     byte[] generateEmbeddedBytes() {
-        EmbeddedRegisterNamespaceTransactionBuilder txBuilder;
+        EmbeddedNamespaceRegistrationTransactionBuilder txBuilder;
         if (namespaceType == NamespaceType.RootNamespace) {
             txBuilder =
-                EmbeddedRegisterNamespaceTransactionBuilder.create(
+                EmbeddedNamespaceRegistrationTransactionBuilder.create(
                     new KeyDto(getSignerBytes().get()),
                     getNetworkVersion(),
                     EntityTypeDto.REGISTER_NAMESPACE_TRANSACTION,
@@ -329,7 +266,7 @@ public class RegisterNamespaceTransaction extends Transaction {
 
         } else {
             txBuilder =
-                EmbeddedRegisterNamespaceTransactionBuilder.create(
+                EmbeddedNamespaceRegistrationTransactionBuilder.create(
                     new KeyDto(getSignerBytes().get()),
                     getNetworkVersion(),
                     EntityTypeDto.REGISTER_NAMESPACE_TRANSACTION,

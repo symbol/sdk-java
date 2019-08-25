@@ -225,7 +225,7 @@ public class SignatureTest {
         Assert.assertThat(createSignature(1234, 7789), IsNot.not(IsEqual.equalTo(signature)));
         Assert.assertThat(createSignature(1235, 7790), IsNot.not(IsEqual.equalTo(signature)));
         Assert.assertThat(null, IsNot.not(IsEqual.equalTo(signature)));
-        Assert.assertThat(new BigInteger("1235"), IsNot.not(IsEqual.equalTo((Object) signature)));
+        Assert.assertThat(new BigInteger("1235"), IsNot.not(IsEqual.equalTo(signature)));
     }
 
     // endregion

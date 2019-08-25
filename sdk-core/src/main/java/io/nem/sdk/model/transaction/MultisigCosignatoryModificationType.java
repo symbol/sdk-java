@@ -25,12 +25,12 @@ public enum MultisigCosignatoryModificationType {
     /**
      * Add cosignatory.
      */
-    ADD(0),
+    ADD(1),
 
     /**
      * Remove cosignatory
      */
-    REMOVE(1);
+    REMOVE(0);
 
     private int value;
 
@@ -46,9 +46,9 @@ public enum MultisigCosignatoryModificationType {
      */
     public static MultisigCosignatoryModificationType rawValueOf(int value) {
         switch (value) {
-            case 0:
-                return MultisigCosignatoryModificationType.ADD;
             case 1:
+                return MultisigCosignatoryModificationType.ADD;
+            case 0:
                 return MultisigCosignatoryModificationType.REMOVE;
             default:
                 throw new IllegalArgumentException(value + " is not a valid value");

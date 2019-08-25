@@ -59,7 +59,7 @@ public class MatrixElementTest {
         Assert.assertThat(DESC_TO_ELEMENT_MAP.get("diff-col"), IsNot.not(IsEqual.equalTo(element)));
         Assert.assertThat(DESC_TO_ELEMENT_MAP.get("diff-val"), IsNot.not(IsEqual.equalTo(element)));
         Assert.assertThat(null, IsNot.not(IsEqual.equalTo(element)));
-        Assert.assertThat(5, IsNot.not(IsEqual.equalTo((Object) element)));
+        Assert.assertThat(5, IsNot.not(IsEqual.equalTo(element)));
     }
 
     @Test
