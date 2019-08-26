@@ -19,263 +19,172 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.github.jengelman.gradle.plugins:shadow:2.0.2'
         classpath 'org.junit.platform:junit-platform-gradle-plugin:1.0.2'
+        classpath "org.kt3k.gradle.plugin:coveralls-gradle-plugin:2.8.2"
     }
 }
 
 plugins {
-    id 'jvm-component'
-    id 'java-lang'
-    id 'net.saliman.properties' version '1.4.6'
-    id 'jacoco'
-    id 'com.github.kt3k.coveralls' version '2.8.2'
     id "org.sonarqube" version "2.7"
 }
 
-apply plugin: 'java'
-apply plugin: 'maven'
-apply plugin: 'signing'
-apply plugin: 'org.junit.platform.gradle.plugin'
 
-group 'io.nem'
-archivesBaseName = "sdk"
-version '0.13.0'
+apply plugin: 'com.github.kt3k.coveralls'
+apply plugin: 'jacoco'
 
-sourceCompatibility = 1.8
-
-repositories {
-    mavenCentral()
-}
-
-configurations {
-    integrationTestCompile.extendsFrom testCompile
-    integrationTestRuntime.extendsFrom testRuntime
-    sharedCompile
-}
-
-// cobertura.coverageFormats = ['html', 'xml']
-
-sourceSets {
-    integrationTest {
-        java {
-            compileClasspath += main.output + test.output
-            runtimeClasspath += main.output + test.output
-            srcDir file('src/integration-test/java')
-        }
-        resources.srcDir file('src/integration-test/resources')
-    }
-}
-
-
-def integrationTest = task('integrationTest',
-        type: JavaExec,
-        group: 'Verification') {
-    description = 'Runs integration tests.'
-    dependsOn testClasses
-    shouldRunAfter test
-    classpath = sourceSets.integrationTest.runtimeClasspath
-
-    main = 'org.junit.platform.console.ConsoleLauncher'
-    args = ['--scan-class-path',
-            sourceSets.integrationTest.output.classesDir.absolutePath,
-            '--reports-dir', "${buildDir}/test-results/junit-integrationTest"]
-}
-
-check {
-    dependsOn integrationTest
-}
 
 ext {
     vertxVersion = "3.5.0"
     rxjavaVersion = "2.1.7"
     junitVersion = "5.0.2"
+    restApiVersion = "0.7.17"
 }
 
-dependencies {
-    // Reactive
-    compile "io.vertx:vertx-core:${vertxVersion}"
-    compile "io.vertx:vertx-web-client:${vertxVersion}"
-    compile "io.vertx:vertx-rx-java2:${vertxVersion}"
-    compile "io.reactivex.rxjava2:rxjava:${rxjavaVersion}"
-
-    // Log
-    compile 'org.apache.logging.log4j:log4j-core:2.5'
-    compile 'org.apache.logging.log4j:log4j-jul:2.5'
-
-    compile 'org.bouncycastle:bcprov-jdk15on:1.58'
-    compile 'commons-codec:commons-codec:1.11'
-    compile 'commons-lang:commons-lang:2.6'
-    compile 'commons-io:commons-io:2.4'
-    compile 'net.minidev:json-smart:1.2'
-    compile 'org.apache.commons:commons-math3:3.2'
-    compile 'org.apache.httpcomponents:httpasyncclient:4.1.1'
-    compile 'com.googlecode.javaewah:JavaEWAH:1.0.0'
-    compile "com.google.flatbuffers:flatbuffers-java:1.8.0"
-    compile 'com.google.code.gson:gson:2.8.2'
-    compile 'io.swagger:swagger-parser:1.0.34'
-    compile 'io.swagger:swagger-annotations:1.5.22'
-    compile 'com.squareup.okhttp3:okhttp:3.14.2'
-    compile 'com.squareup.okhttp3:logging-interceptor:3.14.2'
-    compile 'com.google.code.gson:gson:2.8.5'
-    compile 'io.gsonfire:gson-fire:1.8.3'
-    compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.9'
-    compile 'org.threeten:threetenbp:1.3.5'
-
-    testCompile 'org.hamcrest:hamcrest-core:1.3'
-    testCompile 'org.hamcrest:hamcrest-library:1.3'
-    testCompile 'junit:junit:4.11'
-    testCompile 'org.mockito:mockito-all:1.9.5'
-    testCompile 'com.googlecode.matrix-toolkits-java:mtj:1.0.1'
-
-    // Tests
-    testCompile 'org.slf4j:slf4j-simple:1.7.25'
-    testCompile "org.junit.jupiter:junit-jupiter-api:${junitVersion}"
-    testCompile "org.junit.jupiter:junit-jupiter-params:${junitVersion}"
-    testRuntime "org.junit.jupiter:junit-jupiter-engine:${junitVersion}"
-    testCompile 'org.apiguardian:apiguardian-api:1.0.0'
-    testCompile 'org.junit.platform:junit-platform-console-standalone:1.1.0-M1'
+repositories {
+    mavenLocal()
+    mavenCentral()
 }
 
-junitPlatform {
-    platformVersion '1.0.2' // optional, defaults to plugin version
-    logManager 'org.apache.logging.log4j.jul.LogManager'
-    reportsDir file('build/test-results/junit-platform') // this is the default
-    enableStandardTestTask true
-    // selectors (optional)
-    // filters (optional)
-}
+subprojects {
 
-task sourcesJar(type: Jar) {
-    classifier = 'sources'
-    from sourceSets.main.allSource
-}
+    apply plugin: 'org.junit.platform.gradle.plugin'
+    apply plugin: 'java'
+    apply plugin: 'maven'
+    apply plugin: 'jacoco'
+    apply plugin: 'org.sonarqube'
+    group 'io.nem'
+    sourceCompatibility = 1.8
+    version = '0.13.0'
 
-task javadocJar(type: Jar) {
-    classifier = 'javadoc'
-    from javadoc
-}
+    javadoc {
+        failOnError = false
+    }
 
-artifacts {
-    archives javadocJar, sourcesJar
-}
+    task sourcesJar(type: Jar) {
+        classifier = 'sources'
+        from sourceSets.main.allSource
+    }
 
-signing {
-    sign configurations.archives
-}
+    task javadocJar(type: Jar) {
+        classifier = 'javadoc'
+        from javadoc
+    }
 
-uploadArchives {
-    def username = project.hasProperty("ossrhUsername") ? project.ossrhUsername : ""
-    def password = project.hasProperty("ossrhPassword") ? project.ossrhPassword : ""
+    artifacts {
+        archives javadocJar, sourcesJar
+    }
+
+    junitPlatform {
+        details 'tree'
+        platformVersion '1.0.2' // optional, defaults to plugin version
+        logManager 'org.apache.logging.log4j.jul.LogManager'
+        reportsDir file('build/test-results/junit-platform') // this is the default
+        enableStandardTestTask true
+        // selectors (optional)
+        // filters (optional)
+        filters {
+            excludeClassNamePatterns '.*IntegrationTest*'
+        }
+    }
+
+    tasks.whenTaskAdded { task ->
+        if (task.name.equals('junitPlatformTest')) {
+            System.out.println("ADDING TASK " + task.getName() + " to the project!")
+
+            // configure jacoco to analyze the junitPlatformTest task
+            jacoco {
+                // this tool version is compatible with
+                toolVersion = "0.7.6.201602180812"
+                applyTo task
+            }
+
+            // create junit platform jacoco task
+            project.task(type: JacocoReport, "junitPlatformJacocoReport",
+                    {
+                        sourceDirectories = files("./src/main")
+                        classDirectories = files("$buildDir/classes/main")
+                        executionData task
+                    })
+        }
+    }
+
+    jacoco {
+        toolVersion = '0.7.9'
+        applyTo junitPlatformTest
+    }
+
+    jacocoTestReport {
+        afterEvaluate {
+            classDirectories = files(classDirectories.files.collect {
+                fileTree(dir: it, exclude: ['**/*DTO.*', '**/*Buffer.*'])
+            })
+        }
+        reports {
+            xml.enabled true
+            csv.enabled true
+            html.destination file("${buildDir}/jacocoHtml")
+        }
+    }
+
+    junitPlatformTest {
+        jacoco {
+            destinationFile = file("${buildDir}/jacoco/test.exec")
+        }
+    }
 
     repositories {
-        mavenDeployer {
-            beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+        mavenLocal()
+        mavenCentral()
+    }
 
-            repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
-                authentication(userName: username, password: password)
-            }
-
-            snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
-                authentication(userName: username, password: password)
-            }
-
-            pom.project {
-                name "nem2-sdk"
-                packaging 'jar'
-                // optionally artifactId can be defined here
-                description 'nem2 official sdk'
-                url 'https://github.com/nemtech/nem2-sdk-java'
-
-                scm {
-                    connection 'scm:git:https://github.com/nemtech/nem2-sdk-java.git'
-                    developerConnection 'scm:svn:https://github.com/nemtech/nem2-sdk-java'
-                    url 'https://github.com/nemtech/nem2-sdk-java'
-                }
-
-                licenses {
-                    license {
-                        name 'The Apache License, Version 2.0'
-                        url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-                    }
-                }
-
-                developers {
-                    developer {
-                        id 'aleix_nem'
-                        name 'Aleix'
-                        email 'aleix@nemeurope.eu'
-                    }
-                    developer {
-                        id 'guillem_nem'
-                        name 'Guillem'
-                        email 'guillem@nemeurope.eu'
-                    }
-                }
-            }
-        }
+    dependencies {
+        // Tests
+        testCompile 'org.hamcrest:hamcrest-core:1.3'
+        testCompile 'org.hamcrest:hamcrest-library:1.3'
+        testCompile 'org.mockito:mockito-all:1.9.5'
+        testCompile 'org.slf4j:slf4j-simple:1.7.25'
+        testCompile "org.junit.jupiter:junit-jupiter-api:${junitVersion}"
+        testCompile "org.junit.jupiter:junit-jupiter-params:${junitVersion}"
+        testRuntime "org.junit.jupiter:junit-jupiter-engine:${junitVersion}"
+        testCompile 'org.junit.platform:junit-platform-console-standalone:1.1.0-M1'
+        testCompile 'org.apiguardian:apiguardian-api:1.0.0'
     }
 }
 
-junitPlatform {
+def publishedProjects = subprojects
 
-    reportsDir = file("$buildDir/test-results")
-    platformVersion '1.0.2' // optional, defaults to plugin version
-    logManager 'org.apache.logging.log4j.jul.LogManager'
-    reportsDir file('build/test-results/junit-platform') // this is the default
-    // enableStandardTestTask true
-    // selectors (optional)
-    // filters (optional)
-    enableStandardTestTask false
-}
-
-tasks.whenTaskAdded { task ->
-    if (task.name.equals('junitPlatformTest')) {
-        System.out.println("ADDING TASK " + task.getName() + " to the project!")
-
-        // configure jacoco to analyze the junitPlatformTest task
-        jacoco {
-            // this tool version is compatible with
-            toolVersion = "0.7.6.201602180812"
-            applyTo task
-        }
-
-        // create junit platform jacoco task
-        project.task(type: JacocoReport, "junitPlatformJacocoReport",
-                {
-                    sourceDirectories = files("./src/main")
-                    classDirectories = files("$buildDir/classes/main")
-                    executionData task
-                })
+task jacocoMerge(type: JacocoMerge) {
+    publishedProjects.each { subproject ->
+        executionData subproject.tasks.withType(Test)
+    }
+    doFirst {
+        executionData = files(executionData.findAll { it.exists() })
     }
 }
 
-jacoco {
-    toolVersion = '0.7.9'
-    applyTo junitPlatformTest
-}
 
-jacocoTestReport {
-    afterEvaluate {
-        classDirectories = files(classDirectories.files.collect {
-            fileTree(dir: it, exclude: ['**/*DTO.*', '**/*Buffer.*'])
-        })
-    }
+task jacocoRootReport(type: JacocoReport, group: 'Coverage reports') {
+    description = 'Generates an aggregate report from all subprojects'
+    dependsOn publishedProjects.test, jacocoMerge
+
+    additionalSourceDirs = files(publishedProjects.sourceSets.main.allSource.srcDirs)
+    sourceDirectories = files(publishedProjects.sourceSets.main.allSource.srcDirs)
+    classDirectories = files(publishedProjects.sourceSets.main.output)
+    executionData jacocoMerge.destinationFile
+
     reports {
-        xml.enabled true
-        csv.enabled true
-        html.destination file("${buildDir}/jacocoHtml")
+        html.enabled = true // human readable
+        xml.enabled = true // required by coveralls
     }
 }
 
-junitPlatformTest {
-    jacoco {
-        destinationFile = file("${buildDir}/jacoco/test.exec")
-    }
+coveralls {
+    sourceDirs = publishedProjects.sourceSets.main.allSource.srcDirs.flatten()
+    jacocoReportPath = "${buildDir}/reports/jacoco/jacocoRootReport/jacocoRootReport.xml"
 }
 
-sonarqube {
-    properties {
-        sonar.projectKey "fboucquez_nem2-sdk-java"
-    }
+tasks.coveralls {
+    group = 'Coverage reports'
+    description = 'Uploads the aggregated coverage report to Coveralls'
+    dependsOn jacocoRootReport
 }
