@@ -27,6 +27,7 @@ import io.nem.sdk.model.account.PublicAccount;
 import io.nem.sdk.model.blockchain.NetworkType;
 import io.nem.sdk.model.mosaic.Mosaic;
 import io.nem.sdk.model.mosaic.MosaicId;
+import io.nem.sdk.model.namespace.NamespaceName;
 import io.nem.sdk.model.transaction.AggregateTransaction;
 import io.nem.sdk.model.transaction.Transaction;
 import io.nem.sdk.model.transaction.UInt64;
@@ -112,7 +113,7 @@ public class AccountRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl im
     private AccountNames toAccountNames(AccountNamesDTO dto) throws DecoderException {
         return new AccountNames(
             Address.createFromRawAddress(getAddressEncoded(dto.getAddress())),
-            dto.getNames());
+            dto.getNames().stream().map(NamespaceName::new).collect(Collectors.toList()));
     }
 
     @Override

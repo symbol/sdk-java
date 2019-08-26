@@ -18,7 +18,9 @@ package io.nem.sdk.model.account;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import io.nem.sdk.model.namespace.NamespaceName;
 import java.util.Arrays;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 
 class AccountNamesTest {
@@ -26,8 +28,12 @@ class AccountNamesTest {
     @Test
     void createAMosaicNames() {
         Address address = Address.createFromRawAddress("SDGLFWDSHILTIUHGIBH5UGX2VYF5VNJEKCCDBR26");
-        AccountNames names = new AccountNames(address, Arrays.asList("accountAlias", "anotherAlias"));
+
+        List<NamespaceName> namespaceNames = Arrays
+            .asList(new NamespaceName("accountalias"), new NamespaceName("anotheralias"));
+
+        AccountNames names = new AccountNames(address, namespaceNames);
         assertEquals(address, names.getAddress());
-        assertEquals(Arrays.asList("accountAlias", "anotherAlias"), names.getNames());
+        assertEquals(namespaceNames, names.getNames());
     }
 }

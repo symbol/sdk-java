@@ -27,6 +27,7 @@ import io.nem.sdk.model.account.PublicAccount;
 import io.nem.sdk.model.blockchain.NetworkType;
 import io.nem.sdk.model.mosaic.Mosaic;
 import io.nem.sdk.model.mosaic.MosaicId;
+import io.nem.sdk.model.namespace.NamespaceName;
 import io.nem.sdk.model.transaction.AggregateTransaction;
 import io.nem.sdk.model.transaction.Transaction;
 import io.nem.sdk.openapi.vertx.api.AccountRoutesApi;
@@ -92,9 +93,11 @@ public class AccountRepositoryVertxImpl extends AbstractRepositoryVertxImpl impl
         Consumer<Handler<AsyncResult<AccountsNamesDTO>>> callback = handler -> getClient()
             .getAccountsNames(accountIds, handler);
         return exceptionHandling(
-            call(callback).map(AccountsNamesDTO::getAccountNames).flatMapIterable(item -> item).map(this::toAccountNames).toList()
+            call(callback).map(AccountsNamesDTO::getAccountNames).flatMapIterable(item -> item)
+                .map(this::toAccountNames).toList()
                 .toObservable());
     }
+
     /**
      * Converts a {@link AccountNamesDTO} into a {@link AccountNames}
      *
@@ -104,7 +107,7 @@ public class AccountRepositoryVertxImpl extends AbstractRepositoryVertxImpl impl
     private AccountNames toAccountNames(AccountNamesDTO dto) throws DecoderException {
         return new AccountNames(
             Address.createFromRawAddress(getAddressEncoded(dto.getAddress())),
-            dto.getNames());
+            dto.getNames().stream().map(NamespaceName::new).collect(Collectors.toList()));
     }
 
     @Override

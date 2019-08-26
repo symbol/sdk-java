@@ -18,8 +18,10 @@ package io.nem.sdk.model.mosaic;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import io.nem.sdk.model.namespace.NamespaceName;
 import java.math.BigInteger;
 import java.util.Arrays;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 
 class MosaicNamesTest {
@@ -27,8 +29,11 @@ class MosaicNamesTest {
     @Test
     void createAMosaicNames() {
         MosaicId mosaicId = new MosaicId(new BigInteger("-3087871471161192663"));
-        MosaicNames names = new MosaicNames(mosaicId, Arrays.asList("xem", "anotherAlias"));
+        List<NamespaceName> namespaceNames = Arrays
+            .asList(new NamespaceName("xem"), new NamespaceName("anotheralias"));
+        MosaicNames names = new MosaicNames(mosaicId, namespaceNames);
         assertEquals(mosaicId, names.getMosaicId());
-        assertEquals(Arrays.asList("xem", "anotherAlias"), names.getNames());
+
+        assertEquals(namespaceNames, names.getNames());
     }
 }

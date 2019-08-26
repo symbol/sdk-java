@@ -16,6 +16,7 @@
 
 package io.nem.sdk.model.account;
 
+import io.nem.sdk.model.namespace.NamespaceName;
 import java.util.List;
 
 /**
@@ -33,13 +34,13 @@ public class AccountNames {
     /**
      * The names.
      */
-    private final List<String> names;
+    private final List<NamespaceName> names;
 
     /**
      * @param address the account address
      * @param names the names.
      */
-    public AccountNames(Address address, List<String> names) {
+    public AccountNames(Address address, List<NamespaceName> names) {
         this.address = address;
         this.names = names;
     }
@@ -48,7 +49,7 @@ public class AccountNames {
         return address;
     }
 
-    public List<String> getNames() {
+    public List<NamespaceName> getNames() {
         return names;
     }
 }

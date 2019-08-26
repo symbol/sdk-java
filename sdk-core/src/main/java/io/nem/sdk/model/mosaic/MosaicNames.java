@@ -16,6 +16,7 @@
 
 package io.nem.sdk.model.mosaic;
 
+import io.nem.sdk.model.namespace.NamespaceName;
 import java.util.List;
 
 /**
@@ -33,13 +34,13 @@ public class MosaicNames {
     /**
      * The names
      */
-    private final List<String> names;
+    private final List<NamespaceName> names;
 
     /**
      * @param mosaicId the id of the mosaic.
      * @param names the names.
      */
-    public MosaicNames(MosaicId mosaicId, List<String> names) {
+    public MosaicNames(MosaicId mosaicId, List<NamespaceName> names) {
         this.mosaicId = mosaicId;
         this.names = names;
     }
@@ -48,7 +49,7 @@ public class MosaicNames {
         return mosaicId;
     }
 
-    public List<String> getNames() {
+    public List<NamespaceName> getNames() {
         return names;
     }
 }
