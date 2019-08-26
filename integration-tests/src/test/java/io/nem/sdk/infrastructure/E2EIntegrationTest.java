@@ -34,6 +34,7 @@ import io.nem.sdk.model.mosaic.MosaicSupplyType;
 import io.nem.sdk.model.mosaic.NetworkCurrencyMosaic;
 import io.nem.sdk.model.namespace.AliasAction;
 import io.nem.sdk.model.namespace.NamespaceId;
+import io.nem.sdk.model.namespace.NamespaceName;
 import io.nem.sdk.model.transaction.AddressAliasTransaction;
 import io.nem.sdk.model.transaction.AggregateTransaction;
 import io.nem.sdk.model.transaction.CosignatureSignedTransaction;
@@ -63,6 +64,7 @@ import java.util.Random;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.stream.Collectors;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.junit.Assert;
@@ -74,6 +76,7 @@ import org.junit.jupiter.params.provider.EnumSource;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class E2EIntegrationTest extends BaseIntegrationTest {
+
     private Account account;
     private Address recipient;
     private Account multisigAccount;
@@ -343,7 +346,8 @@ class E2EIntegrationTest extends BaseIntegrationTest {
         assertEquals(1, accountNames.size());
         assertEquals(this.config().getTestAccountAddress(),
             accountNames.get(0).getAddress().plain());
-        assertTrue(accountNames.get(0).getNames().contains(namespaceName));
+        assertTrue(accountNames.get(0).getNames().stream().map(NamespaceName::getName).collect(
+            Collectors.toList()).contains(namespaceName));
     }
 
     @ParameterizedTest
