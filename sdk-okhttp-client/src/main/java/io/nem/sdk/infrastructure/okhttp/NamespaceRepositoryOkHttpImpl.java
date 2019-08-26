@@ -279,11 +279,10 @@ public class NamespaceRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl 
 
         Alias alias = new EmptyAlias();
         if (namespaceDTO.getAlias() != null) {
-            if (namespaceDTO.getAlias().getType().getValue() == AliasType.Mosaic.getValue()) {
+            if (namespaceDTO.getAlias().getType().getValue().equals(AliasType.Mosaic.getValue())) {
                 BigInteger mosaicId = extractIntArray(namespaceDTO.getAlias().getMosaicId());
                 return new MosaicAlias(new MosaicId(mosaicId));
-            } else if (namespaceDTO.getAlias().getType().getValue() == AliasType.Address
-                .getValue()) {
+            } else if (namespaceDTO.getAlias().getType().getValue().equals(AliasType.Address.getValue())) {
                 String rawAddress = namespaceDTO.getAlias().getAddress();
                 return new AddressAlias(Address.createFromRawAddress(rawAddress));
             }

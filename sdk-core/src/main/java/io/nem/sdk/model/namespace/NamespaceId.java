@@ -133,4 +133,9 @@ public class NamespaceId implements UInt64Id {
 
         return Objects.equals(id, namespaceId1.id);
     }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
 }
