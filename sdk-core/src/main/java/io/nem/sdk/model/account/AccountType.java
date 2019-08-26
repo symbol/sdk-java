@@ -17,6 +17,9 @@ package io.nem.sdk.model.account;
 
 import java.util.Arrays;
 
+/**
+ * Account type enum mapped from the rest account type.
+ */
 public enum AccountType {
 
     /**
