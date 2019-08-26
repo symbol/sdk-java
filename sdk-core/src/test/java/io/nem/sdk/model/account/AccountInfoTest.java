@@ -41,7 +41,7 @@ class AccountInfoTest {
                 new BigInteger("966"),
                 new BigInteger("777"),
                 new BigInteger("0"),
-                mosaics, AccountType.REMOTE_HARVESTER_UNLINKED_ACCOUNT);
+                mosaics, AccountType.REMOTE_UNLINKED);
 
         assertEquals(
             Address.createFromRawAddress("SDGLFWDSHILTIUHGIBH5UGX2VYF5VNJEKCCDBR26"),
@@ -60,7 +60,7 @@ class AccountInfoTest {
                 NetworkType.MIJIN_TEST),
             accountInfo.getPublicAccount());
 
-        Assert.assertEquals(AccountType.REMOTE_HARVESTER_UNLINKED_ACCOUNT,
+        Assert.assertEquals(AccountType.REMOTE_UNLINKED,
             accountInfo.getAccountType());
     }
 }

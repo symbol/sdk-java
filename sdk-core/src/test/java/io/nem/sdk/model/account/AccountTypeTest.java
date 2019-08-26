@@ -30,9 +30,9 @@ public class AccountTypeTest {
     @Test
     public void rawValueOf() {
         Assertions
-            .assertEquals(AccountType.BALANCE_HOLDING_ACCOUNT_LINKED_TO_REMOTE_HARVESTER_ACCOUNT,
+            .assertEquals(AccountType.MAIN,
                 AccountType.rawValueOf(
-                    AccountType.BALANCE_HOLDING_ACCOUNT_LINKED_TO_REMOTE_HARVESTER_ACCOUNT
+                    AccountType.MAIN
                         .getValue()));
 
         Arrays.stream(AccountType.values())

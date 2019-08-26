@@ -30,17 +30,17 @@ public enum AccountType {
     /**
      * Balance-holding account that is linked to a remote harvester account.
      */
-    BALANCE_HOLDING_ACCOUNT_LINKED_TO_REMOTE_HARVESTER_ACCOUNT(1),
+    MAIN(1),
 
     /**
      * Remote harvester account that is linked to a balance-holding account.
      */
-    REMOTE_HARVESTER_ACCOUNT_LINKED_TO_BALANCE_HOLDING_ACCOUNT(2),
+    REMOTE(2),
 
     /**
      * Remote harvester eligible account that is unlinked.
      */
-    REMOTE_HARVESTER_UNLINKED_ACCOUNT(3);
+    REMOTE_UNLINKED(3);
 
 
     /**
