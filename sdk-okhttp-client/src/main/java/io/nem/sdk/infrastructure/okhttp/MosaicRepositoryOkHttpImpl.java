@@ -23,6 +23,7 @@ import io.nem.sdk.model.mosaic.MosaicId;
 import io.nem.sdk.model.mosaic.MosaicInfo;
 import io.nem.sdk.model.mosaic.MosaicNames;
 import io.nem.sdk.model.mosaic.MosaicProperties;
+import io.nem.sdk.model.namespace.NamespaceName;
 import io.nem.sdk.model.transaction.UInt64;
 import io.nem.sdk.model.transaction.UInt64Id;
 import io.nem.sdk.openapi.okhttp_gson.api.MosaicRoutesApi;
@@ -93,11 +94,16 @@ public class MosaicRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl imp
                 .map(this::toMosaicNames).toList()
                 .toObservable());
     }
-
+    /**
+     * Converts a {@link MosaicNamesDTO} into a {@link MosaicNames}
+     *
+     * @param dto {@link MosaicNamesDTO}
+     * @return a {@link MosaicNames}
+     */
     private MosaicNames toMosaicNames(MosaicNamesDTO dto) {
         return new MosaicNames(
             new MosaicId(extractBigInteger(dto.getMosaicId())),
-            dto.getNames());
+            dto.getNames().stream().map(NamespaceName::new).collect(Collectors.toList()));
     }
 
 

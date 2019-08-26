@@ -16,40 +16,24 @@
 
 package io.nem.sdk.model.account;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import io.nem.sdk.model.namespace.NamespaceName;
+import java.util.Arrays;
 import java.util.List;
+import org.junit.jupiter.api.Test;
 
-/**
- * The friendly names of one account. The names are namespaces linked using address aliases.
- *
- * @author Fernando Boucquez
- */
-public class AccountNames {
+class AccountNamesTest {
 
-    /**
-     * The address of the account.
-     */
-    private final Address address;
+    @Test
+    void createAMosaicNames() {
+        Address address = Address.createFromRawAddress("SDGLFWDSHILTIUHGIBH5UGX2VYF5VNJEKCCDBR26");
 
-    /**
-     * The names.
-     */
-    private final List<NamespaceName> names;
+        List<NamespaceName> namespaceNames = Arrays
+            .asList(new NamespaceName("accountalias"), new NamespaceName("anotheralias"));
 
-    /**
-     * @param address the account address
-     * @param names the names.
-     */
-    public AccountNames(Address address, List<NamespaceName> names) {
-        this.address = address;
-        this.names = names;
-    }
-
-    public Address getAddress() {
-        return address;
-    }
-
-    public List<NamespaceName> getNames() {
-        return names;
+        AccountNames names = new AccountNames(address, namespaceNames);
+        assertEquals(address, names.getAddress());
+        assertEquals(namespaceNames, names.getNames());
     }
 }

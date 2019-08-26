@@ -21,7 +21,9 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import io.nem.sdk.model.account.Address;
+import io.nem.sdk.model.namespace.AliasAction;
 import io.nem.sdk.model.namespace.NamespaceType;
+import io.nem.sdk.model.transaction.AddressAliasTransaction;
 import io.nem.sdk.model.transaction.AggregateTransaction;
 import io.nem.sdk.model.transaction.JsonHelper;
 import io.nem.sdk.model.transaction.LockFundsTransaction;
@@ -54,6 +56,7 @@ import java.util.List;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.bouncycastle.util.encoders.Hex;
+import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 
 public class VertxTransactionMappingTest {
@@ -392,6 +395,25 @@ public class VertxTransactionMappingTest {
         } else if (transaction.getType() == TransactionType.SECRET_PROOF) {
             validateSecretProofTx((SecretProofTransaction) transaction, transactionDTO);
         }
+    }
+
+    @Test
+    void shouldCreateAggregateAddressAliasTransaction() {
+        TransactionInfoDTO aggregateTransferTransactionDTO = createJsonObject(
+            "shouldCreateAggregateAddressAliasTransaction.json"
+        );
+
+        Transaction aggregateTransferTransaction = map(aggregateTransferTransactionDTO);
+
+        validateAggregateTransaction(
+            (AggregateTransaction) aggregateTransferTransaction, aggregateTransferTransactionDTO);
+
+        AddressAliasTransaction transaction = (AddressAliasTransaction) ((AggregateTransaction) aggregateTransferTransaction)
+            .getInnerTransactions().get(0);
+
+        Assert.assertEquals("SDT4THYNVUQK2GM6XXYTWHZXSPE3AUA2GTDPM2XA",transaction.getAddress().plain());
+        Assert.assertEquals(AliasAction.Link,transaction.getAliasAction());
+        Assert.assertEquals(new BigInteger("-7199828632600199869"), transaction.getNamespaceId().getId());
     }
 
     void validateAggregateTransaction(

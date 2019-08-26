@@ -51,7 +51,8 @@ public interface AccountRepository {
     Observable<List<AccountInfo>> getAccountsInfo(List<Address> addresses);
 
     /**
-     * Gets AccountNames for different accounts.
+     * Gets AccountNames for different accounts. The names are namespaces linked using address
+     * aliases.
      *
      * @param addresses List of Address
      * @return Observable of List<{@link AccountNames}>
