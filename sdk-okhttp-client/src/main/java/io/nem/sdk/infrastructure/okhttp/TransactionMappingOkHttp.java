@@ -160,6 +160,22 @@ public class TransactionMappingOkHttp implements Function<TransactionInfoDTO, Tr
     public JsonHelper getJsonHelper() {
         return jsonHelper;
     }
+
+    protected void patchTransaction(TransactionInfoDTO transactionInfoDTO) {
+
+        Object transaction = transactionInfoDTO.getTransaction();
+        //Version 5 vs 6 workarounds
+        if (transaction instanceof Map) {
+            Map<String, Object> transactionMap = (Map<String, Object>) transaction;
+            if (transactionMap.containsKey("mosaicId")) {
+                transactionMap.put("mosaic",
+                    Collections.singletonMap("id", transactionMap.get("mosaicId")));
+            }
+            if (transactionMap.containsKey("action")) {
+                transactionMap.put("aliasAction", transactionMap.get("action"));
+            }
+        }
+    }
 }
 
 class TransferTransactionMapping extends TransactionMappingOkHttp {
@@ -463,12 +479,12 @@ class LockFundsTransactionMapping extends TransactionMappingOkHttp {
     @Override
     public LockFundsTransaction apply(TransactionInfoDTO input) {
         TransactionInfo transactionInfo = this.createTransactionInfo(input.getMeta());
+        patchTransaction(input);
         HashLockTransactionDTO transaction = getJsonHelper()
             .convert(input.getTransaction(), HashLockTransactionDTO.class);
 
         Deadline deadline = new Deadline(extractBigInteger(transaction.getDeadline()));
         NetworkType networkType = extractNetworkType(transaction.getVersion());
-        //TODO getter transaction mosaic attribute.
         Mosaic mosaic = getMosaic(transaction.getMosaic());
         return new LockFundsTransaction(
             networkType,
@@ -533,6 +549,7 @@ class AddressAliasTransactionMapping extends TransactionMappingOkHttp {
 
     @Override
     public AddressAliasTransaction apply(TransactionInfoDTO input) {
+        patchTransaction(input);
         TransactionInfo transactionInfo = this.createTransactionInfo(input.getMeta());
         AddressAliasTransactionDTO transaction = getJsonHelper()
             .convert(input.getTransaction(), AddressAliasTransactionDTO.class);
