@@ -93,7 +93,12 @@ public class MosaicRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl imp
                 .map(this::toMosaicNames).toList()
                 .toObservable());
     }
-
+    /**
+     * Converts a {@link MosaicNamesDTO} into a {@link MosaicNames}
+     *
+     * @param dto {@link MosaicNamesDTO}
+     * @return a {@link MosaicNames}
+     */
     private MosaicNames toMosaicNames(MosaicNamesDTO dto) {
         return new MosaicNames(
             new MosaicId(extractBigInteger(dto.getMosaicId())),

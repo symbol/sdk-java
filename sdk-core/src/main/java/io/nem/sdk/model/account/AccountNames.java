@@ -19,16 +19,26 @@ package io.nem.sdk.model.account;
 import java.util.List;
 
 /**
- * The friendly names of one account.
+ * The friendly names of one account. The names are namespaces linked using address aliases.
  *
  * @author Fernando Boucquez
  */
 public class AccountNames {
 
+    /**
+     * The address of the account.
+     */
     private final Address address;
 
+    /**
+     * The names.
+     */
     private final List<String> names;
 
+    /**
+     * @param address the account address
+     * @param names the names.
+     */
     public AccountNames(Address address, List<String> names) {
         this.address = address;
         this.names = names;

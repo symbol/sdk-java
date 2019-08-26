@@ -95,11 +95,16 @@ public class AccountRepositoryVertxImpl extends AbstractRepositoryVertxImpl impl
             call(callback).map(AccountsNamesDTO::getAccountNames).flatMapIterable(item -> item).map(this::toAccountNames).toList()
                 .toObservable());
     }
-
-    private AccountNames toAccountNames(AccountNamesDTO accountNamesDTO) throws DecoderException {
+    /**
+     * Converts a {@link AccountNamesDTO} into a {@link AccountNames}
+     *
+     * @param dto {@link AccountNamesDTO}
+     * @return a {@link AccountNames}
+     */
+    private AccountNames toAccountNames(AccountNamesDTO dto) throws DecoderException {
         return new AccountNames(
-            Address.createFromRawAddress(getAddressEncoded(accountNamesDTO.getAddress())),
-            accountNamesDTO.getNames());
+            Address.createFromRawAddress(getAddressEncoded(dto.getAddress())),
+            dto.getNames());
     }
 
     @Override

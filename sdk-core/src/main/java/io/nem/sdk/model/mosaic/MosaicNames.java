@@ -19,16 +19,26 @@ package io.nem.sdk.model.mosaic;
 import java.util.List;
 
 /**
- * The friendly names of one mosaic.
+ * The friendly names of one mosaic. The names are namespaces linked using mosaic aliases.
  *
  * @author Fernando Boucquez
  */
 public class MosaicNames {
 
+    /**
+     * The id of the mosaic.
+     */
     private final MosaicId mosaicId;
 
+    /**
+     * The names
+     */
     private final List<String> names;
 
+    /**
+     * @param mosaicId the id of the mosaic.
+     * @param names the names.
+     */
     public MosaicNames(MosaicId mosaicId, List<String> names) {
         this.mosaicId = mosaicId;
         this.names = names;
