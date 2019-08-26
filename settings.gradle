@@ -14,4 +14,6 @@
  * limitations under the License.
  */
 
-rootProject.name = 'nem2-sdk'
+rootProject.name = 'nem2-sdk-java'
+
+include ":sdk-core", ":sdk-okhttp-client", ":sdk-vertx-client", ":integration-tests"
