@@ -16,6 +16,7 @@
 
 package io.nem.sdk.infrastructure.okhttp;
 
+import io.nem.core.crypto.PublicKey;
 import io.nem.sdk.api.AccountRepository;
 import io.nem.sdk.api.QueryParams;
 import io.nem.sdk.model.account.AccountInfo;
@@ -83,9 +84,20 @@ public class AccountRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl im
     }
 
     @Override
-    public Observable<List<AccountInfo>> getAccountsInfo(List<Address> addresses) {
+    public Observable<List<AccountInfo>> getAccountsInfoFromAddresses(List<Address> addresses) {
         AccountIds accountIds = new AccountIds()
             .addresses(addresses.stream().map(Address::plain).collect(Collectors.toList()));
+        return getAccountsInfo(accountIds);
+    }
+
+    @Override
+    public Observable<List<AccountInfo>> getAccountsInfoFromPublicKeys(List<PublicKey> publicKeys) {
+        AccountIds accountIds = new AccountIds()
+            .addresses(publicKeys.stream().map(PublicKey::toString).collect(Collectors.toList()));
+        return getAccountsInfo(accountIds);
+    }
+
+    private Observable<List<AccountInfo>> getAccountsInfo(AccountIds accountIds) {
         Callable<List<AccountInfoDTO>> callback = () -> getClient()
             .getAccountsInfo(accountIds);
         return exceptionHandling(
@@ -95,20 +107,33 @@ public class AccountRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl im
     }
 
     @Override
-    public Observable<List<AccountNames>> getAccountsNames(List<Address> addresses) {
+    public Observable<List<AccountNames>> getAccountsNamesFromAddresses(List<Address> addresses) {
         AccountIds accountIds = new AccountIds()
             .addresses(addresses.stream().map(Address::plain).collect(Collectors.toList()));
+        return getAccountNames(accountIds);
+    }
+
+    @Override
+    public Observable<List<AccountNames>> getAccountsNamesFromPublicKeys(
+        List<PublicKey> publicKeys) {
+        AccountIds accountIds = new AccountIds()
+            .publicKeys(publicKeys.stream().map(PublicKey::toString).collect(Collectors.toList()));
+        return getAccountNames(accountIds);
+    }
+
+    private Observable<List<AccountNames>> getAccountNames(AccountIds accountIds) {
         Callable<AccountsNamesDTO> callback = () -> getClient()
             .getAccountsNames(accountIds);
         return exceptionHandling(
             call(callback).map(AccountsNamesDTO::getAccountNames).flatMapIterable(item -> item)
                 .map(this::toAccountNames).toList().toObservable());
     }
+
     /**
      * Converts a {@link AccountNamesDTO} into a {@link AccountNames}
      *
      * @param dto {@link AccountNamesDTO}
-     * @return a {@link AccountNames}
+     * @return {@link AccountNames}
      */
     private AccountNames toAccountNames(AccountNamesDTO dto) throws DecoderException {
         return new AccountNames(

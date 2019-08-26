@@ -26,7 +26,7 @@ import org.junit.jupiter.api.Test;
 class AccountNamesTest {
 
     @Test
-    void createAMosaicNames() {
+    void createAccountNames() {
         Address address = Address.createFromRawAddress("SDGLFWDSHILTIUHGIBH5UGX2VYF5VNJEKCCDBR26");
 
         List<NamespaceName> namespaceNames = Arrays

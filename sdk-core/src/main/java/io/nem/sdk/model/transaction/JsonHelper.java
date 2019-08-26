@@ -41,6 +41,14 @@ public interface JsonHelper {
     String print(Object object);
 
     /**
+     * It parse a json string into a an object of the underlying implementation (e.g. gson JsonObject or jackson ObjectNode)
+     *
+     * @param string the json string
+     * @return the object or null if the string is null.
+     */
+    Object parse(String string);
+
+    /**
      * It parse a json string into a an object of the given class.
      *
      * @param string the json string

@@ -20,6 +20,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.nem.sdk.model.transaction.JsonHelper;
 import java.util.ArrayList;
 import java.util.List;
@@ -44,6 +45,11 @@ public class JsonHelperJackson2 implements JsonHelper {
         objectMapper.configure(DeserializationFeature.USE_LONG_FOR_INTS, true);
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         return objectMapper;
+    }
+
+    @Override
+    public Object parse(String string) {
+        return parse(string, ObjectNode.class);
     }
 
     @Override

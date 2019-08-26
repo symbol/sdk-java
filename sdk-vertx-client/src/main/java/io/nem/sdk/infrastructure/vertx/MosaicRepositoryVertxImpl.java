@@ -114,7 +114,7 @@ public class MosaicRepositoryVertxImpl extends AbstractRepositoryVertxImpl imple
      * Converts a {@link MosaicNamesDTO} into a {@link MosaicNames}
      *
      * @param dto {@link MosaicNamesDTO}
-     * @return a {@link MosaicNames}
+     * @return {@link MosaicNames}
      */
     private MosaicNames toMosaicNames(MosaicNamesDTO dto) {
         return new MosaicNames(
