@@ -18,6 +18,7 @@ package io.nem.sdk.infrastructure;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import io.nem.sdk.api.AccountRepository;
 import io.nem.sdk.api.QueryParams;
@@ -38,6 +39,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
+import org.junit.Assert;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -188,6 +190,36 @@ class AccountRepositoryIntegrationTest extends BaseIntegrationTest {
         assertEquals(
             transactions.get(1).getTransactionInfo().get().getHash(),
             nextTransactions.get(0).getTransactionInfo().get().getHash());
+    }
+
+    @ParameterizedTest
+    @EnumSource(RepositoryType.class)
+    void transactionsWithPaginationManyTransactions(RepositoryType type)
+        throws ExecutionException, InterruptedException {
+        //Testing that many transaction can be at at least parsed.
+        List<Transaction> transactions =
+            this.getAccountRepository(type)
+                .transactions(this.getTestPublicAccount(), new QueryParams(100, null)).toFuture()
+                .get();
+        assertTrue(transactions.size() <= 100);
+
+        transactions.forEach(this::assertTransaction);
+    }
+
+    private void assertTransaction(Transaction transaction) {
+
+        Assert.assertNotNull(transaction.getType());
+        Assert.assertTrue(transaction.getTransactionInfo().isPresent());
+        Assert.assertEquals(getNetworkType(), transaction.getNetworkType());
+        Assert.assertEquals(getTestAccount().getAddress(),
+            transaction.getSigner().get().getAddress());
+
+        Assert.assertTrue(transaction.getSignature().isPresent());
+        Assert.assertTrue(transaction.getSignatureBytes().isPresent());
+        Assert.assertNotNull(transaction.getFee());
+        Assert.assertNotNull(transaction.getVersion());
+        Assert.assertNotNull(transaction.getDeadline());
+
     }
 
     @ParameterizedTest

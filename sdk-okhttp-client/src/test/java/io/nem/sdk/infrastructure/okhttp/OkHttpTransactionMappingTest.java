@@ -23,11 +23,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import io.nem.sdk.model.account.Address;
 import io.nem.sdk.model.namespace.AliasAction;
 import io.nem.sdk.model.namespace.NamespaceType;
-import io.nem.sdk.model.transaction.AddressAliasTransaction;
 import io.nem.sdk.model.transaction.AggregateTransaction;
 import io.nem.sdk.model.transaction.JsonHelper;
 import io.nem.sdk.model.transaction.LockFundsTransaction;
 import io.nem.sdk.model.transaction.ModifyMultisigAccountTransaction;
+import io.nem.sdk.model.transaction.MosaicAliasTransaction;
 import io.nem.sdk.model.transaction.MosaicDefinitionTransaction;
 import io.nem.sdk.model.transaction.MosaicSupplyChangeTransaction;
 import io.nem.sdk.model.transaction.RegisterNamespaceTransaction;
@@ -288,9 +288,9 @@ public class OkHttpTransactionMappingTest {
     }
 
     @Test
-    void shouldCreateAggregateAddressAliasTransaction() {
+    void shouldCreateAggregateMosaicAliasTransaction() {
         TransactionInfoDTO aggregateTransferTransactionDTO = createJsonObject(
-            "shouldCreateAggregateAddressAliasTransaction.json"
+            "shouldCreateAggregateMosaicAliasTransaction.json"
         );
 
         Transaction aggregateTransferTransaction = map(aggregateTransferTransactionDTO);
@@ -298,12 +298,11 @@ public class OkHttpTransactionMappingTest {
         validateAggregateTransaction(
             (AggregateTransaction) aggregateTransferTransaction, aggregateTransferTransactionDTO);
 
-        AddressAliasTransaction transaction = (AddressAliasTransaction) ((AggregateTransaction) aggregateTransferTransaction)
+        MosaicAliasTransaction transaction = (MosaicAliasTransaction) ((AggregateTransaction) aggregateTransferTransaction)
             .getInnerTransactions().get(0);
 
-        Assert.assertEquals("SDT4THYNVUQK2GM6XXYTWHZXSPE3AUA2GTDPM2XA",
-            transaction.getAddress().plain());
-        Assert.assertEquals(AliasAction.Link, transaction.getAliasAction());
+        Assert.assertEquals(new BigInteger("-3087871471161192663"),transaction.getMosaicId().getId());
+        Assert.assertEquals(AliasAction.Link,transaction.getAliasAction());
         Assert.assertEquals(new BigInteger("-7199828632600199869"), transaction.getNamespaceId().getId());
     }
 

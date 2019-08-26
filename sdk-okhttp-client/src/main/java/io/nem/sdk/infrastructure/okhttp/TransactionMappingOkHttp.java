@@ -176,6 +176,9 @@ public class TransactionMappingOkHttp implements Function<TransactionInfoDTO, Tr
             if (transactionMap.containsKey("action")) {
                 transactionMap.put("aliasAction", transactionMap.get("action"));
             }
+            if (transactionMap.containsKey("mosaicNonce")) {
+                transactionMap.put("nonce", transactionMap.get("mosaicNonce"));
+            }
         }
     }
 }
@@ -279,6 +282,7 @@ class MosaicCreationTransactionMapping extends TransactionMappingOkHttp {
 
     @Override
     public MosaicDefinitionTransaction apply(TransactionInfoDTO input) {
+        patchTransaction(input);
         TransactionInfo transactionInfo = this.createTransactionInfo(input.getMeta());
         MosaicDefinitionTransactionDTO transaction = getJsonHelper()
             .convert(input.getTransaction(), MosaicDefinitionTransactionDTO.class);
@@ -582,6 +586,7 @@ class MosaicAliasTransactionMapping extends TransactionMappingOkHttp {
 
     @Override
     public MosaicAliasTransaction apply(TransactionInfoDTO input) {
+        patchTransaction(input);
         TransactionInfo transactionInfo = this.createTransactionInfo(input.getMeta());
         MosaicAliasTransactionDTO transaction = getJsonHelper().convert(input.getTransaction(), MosaicAliasTransactionDTO.class);
         NamespaceId namespaceId = new NamespaceId(extractBigInteger(transaction.getNamespaceId()));

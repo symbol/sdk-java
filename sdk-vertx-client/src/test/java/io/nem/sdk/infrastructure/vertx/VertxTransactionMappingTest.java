@@ -28,6 +28,7 @@ import io.nem.sdk.model.transaction.AggregateTransaction;
 import io.nem.sdk.model.transaction.JsonHelper;
 import io.nem.sdk.model.transaction.LockFundsTransaction;
 import io.nem.sdk.model.transaction.ModifyMultisigAccountTransaction;
+import io.nem.sdk.model.transaction.MosaicAliasTransaction;
 import io.nem.sdk.model.transaction.MosaicDefinitionTransaction;
 import io.nem.sdk.model.transaction.MosaicSupplyChangeTransaction;
 import io.nem.sdk.model.transaction.RegisterNamespaceTransaction;
@@ -415,6 +416,28 @@ public class VertxTransactionMappingTest {
         Assert.assertEquals(AliasAction.Link,transaction.getAliasAction());
         Assert.assertEquals(new BigInteger("-7199828632600199869"), transaction.getNamespaceId().getId());
     }
+
+    @Test
+    void shouldCreateAggregateMosaicAliasTransaction() {
+        TransactionInfoDTO aggregateTransferTransactionDTO = createJsonObject(
+            "shouldCreateAggregateMosaicAliasTransaction.json"
+        );
+
+        Transaction aggregateTransferTransaction = map(aggregateTransferTransactionDTO);
+
+        validateAggregateTransaction(
+            (AggregateTransaction) aggregateTransferTransaction, aggregateTransferTransactionDTO);
+
+        MosaicAliasTransaction transaction = (MosaicAliasTransaction) ((AggregateTransaction) aggregateTransferTransaction)
+            .getInnerTransactions().get(0);
+
+        Assert.assertEquals(new BigInteger("3179308875066833757"),transaction.getMosaicId().getId());
+        Assert.assertEquals(AliasAction.Link,transaction.getAliasAction());
+        Assert.assertEquals(new BigInteger("-7199828632600199869"), transaction.getNamespaceId().getId());
+    }
+
+
+
 
     void validateAggregateTransaction(
         AggregateTransaction aggregateTransaction, TransactionInfoDTO transactionDto) {

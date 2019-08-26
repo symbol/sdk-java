@@ -172,6 +172,9 @@ public class TransactionMappingVertx implements Function<TransactionInfoDTO, Tra
             if (transactionMap.containsKey("action")) {
                 transactionMap.put("aliasAction", transactionMap.get("action"));
             }
+            if (transactionMap.containsKey("mosaicNonce")) {
+                transactionMap.put("nonce", transactionMap.get("mosaicNonce"));
+            }
         }
     }
 
@@ -279,6 +282,7 @@ class MosaicCreationTransactionMapping extends TransactionMappingVertx {
 
     @Override
     public MosaicDefinitionTransaction apply(TransactionInfoDTO input) {
+        patchTransaction(input);
         TransactionInfo transactionInfo = this.createTransactionInfo(input.getMeta());
         MosaicDefinitionTransactionDTO transaction = getJsonHelper()
             .convert(input.getTransaction(), MosaicDefinitionTransactionDTO.class);
@@ -584,8 +588,10 @@ class MosaicAliasTransactionMapping extends TransactionMappingVertx {
 
     @Override
     public MosaicAliasTransaction apply(TransactionInfoDTO input) {
+        patchTransaction(input);
         TransactionInfo transactionInfo = this.createTransactionInfo(input.getMeta());
-        MosaicAliasTransactionDTO transaction = getJsonHelper().convert(input.getTransaction(), MosaicAliasTransactionDTO.class);
+        MosaicAliasTransactionDTO transaction = getJsonHelper()
+            .convert(input.getTransaction(), MosaicAliasTransactionDTO.class);
         NamespaceId namespaceId = new NamespaceId(extractBigInteger(transaction.getNamespaceId()));
         Deadline deadline = new Deadline(extractBigInteger(transaction.getDeadline()));
         NetworkType networkType = extractNetworkType(transaction.getVersion());
