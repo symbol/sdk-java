@@ -64,6 +64,11 @@ public class PublicAccount {
         return Objects.equals(address, that.address) && Objects.equals(publicKey, that.publicKey);
     }
 
+    @Override
+    public int hashCode() {
+        return Objects.hash(address, publicKey);
+    }
+
     /**
      * Returns account address.
      *

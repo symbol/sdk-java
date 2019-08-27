@@ -24,8 +24,14 @@ buildscript {
     }
 }
 
+plugins {
+    id "org.sonarqube" version "2.7"
+}
+
+
 apply plugin: 'com.github.kt3k.coveralls'
 apply plugin: 'jacoco'
+
 
 ext {
     vertxVersion = "3.5.0"
@@ -48,6 +54,7 @@ subprojects {
     apply plugin: 'java'
     apply plugin: 'maven'
     apply plugin: 'jacoco'
+    apply plugin: 'org.sonarqube'
     group 'io.nem'
     sourceCompatibility = 1.8
     version = '0.13.0-SNAPSHOT'
