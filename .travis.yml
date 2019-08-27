@@ -12,8 +12,8 @@ cache:
     - $HOME/.gradle/caches/
     - $HOME/.gradle/wrapper/
 install:
-  - ./gradlew -b ./nem2-sdk-openapi-generator/build.gradle clean generate
-  - ./gradlew -b ./nem2-sdk-openapi-generator/build.gradle install
+  - ./gradlew -b ./openapi-generator/build.gradle clean generate
+  - ./gradlew -b ./openapi-generator/build.gradle install
   - ./gradlew assemble -x javadoc
 script:
   - ./gradlew test jacocoTestReport coveralls

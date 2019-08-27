@@ -6,17 +6,7 @@
 [![Coverage Status](https://coveralls.io/repos/github/nemtech/nem2-sdk-java/badge.svg?branch=master)](https://coveralls.io/github/nemtech/nem2-sdk-java?branch=master)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
-The FORKED ~~official~~ nem2-sdk for Java, Kotlin and Scala to work with the NEM2 (a.k.a Catapult).
-
-This fork has been created to tackle the following github [issue](https://github.com/nemtech/nem2-sdk-java/issues/85)
-
-Other issues addressed:
-* https://github.com/nemtech/nem2-sdk-java/issues/87
-* https://github.com/nemtech/nem2-sdk-java/issues/86
-* https://github.com/nemtech/nem2-sdk-java/issues/83
-* https://github.com/nemtech/nem2-sdk-java/issues/88
-* https://github.com/nemtech/nem2-sdk-java/issues/8 (okhttp and unnecessary lib clean-up)
-
+The official nem2-sdk for Java, Kotlin and Scala to work with the NEM2 (a.k.a Catapult).
 
 ## Requirements
 
@@ -27,92 +17,75 @@ Other issues addressed:
 
 ### Open API Generated Libraries
 
-This forked version has moved the generated code to their own subfolder. Before building the project, execute
+The SDK libs depend on Open API 3 generated clients. Before building the project, execute the following to generate and install the libraries.
 
 ```
-./gradlew -b ./nem2-sdk-openapi-generator/build.gradle clean generate
-./gradlew -b ./nem2-sdk-openapi-generator/build.gradle install
+./gradlew -b ./openapi-generator/build.gradle clean generate install
 ```
 
-Currently you need to generate and install the clients manually. Once the refactoring is completed, the generated clients will be released and deployed into maven central. You can then depend on the the generated library like any other open source third party lib.
+Currently you need to generate and install the clients manually. The generated clients will be released and deployed into maven central. You can then depend on the the generated library like any other open source third party lib.
 
-### Changes from the official trunk:
+This step will be optional, only if you are working on the open api 3 spec or you want to change the configuration of generated libraries.
 
-* OpenAPI generated code has been removed
-* Dependency to the generated lib has been added.
-* Moved Repository to the API interface level
-* Added RepositoryFactory.
-* Cleaned unsued and duplicated lib dependencies
-* Created Vertx repositories implementation that use the generated vertx client.
-* Moved legacy repositories to their own package
-* Created 3 repository factories (vertx, okhttp, legacy). Vertx and okhttp are being kept up to date with the new open api 3 yml definition.
-* Refactored integration tests so they test the Repository Interfaces (like AccountRepository) and not the implementation (like the legacy AccountHttp). The integration tests are now parametetrized test. They will run once per implementation.
-* The project is now multimodule. Modules are
-    - nem2-sdk-java-api: Just dtos, interfaces and common utilty classes. It should be vertx, ok-http, gson, etc agnostic
-    - nem2-sdk-java-vertx: Implementation nem2-sdk-java-api that uses vertx and generated nem2-sdk-java-openapi-vertx lib and dtos.
-    - nem2-sdk-java-vertx-legacy: Implementation nem2-sdk-java-api that uses vertx and the generated nem2-sdk-java-openapi-vertx lib dtos.
-    - nem2-sdk-java-okhttp: Implementation nem2-sdk-java-api that uses ok-http and the generated nem2-sdk-java-openapi-okhttp-gson lib dtos.
-    - nem2-sdk-java-integration-test: Integreation tests that test the different repositories against a running catapult localhost server.
+## Usage
 
-
-Each sdk user can depend on the best library for its need (example, nem2-sdk-java-okhttp for android users).
-
-The JAVA sdk modules and the generated clients will grow and be released independently. The generated client will be changed, released and deployed only when the openapi descriptor changes (current version 0.7.17 with ongoing progress). This project/multimodule java sdk will be changed everytime a new feature has been implemented or a bug has been fixed (0.13.0). If you change the api or any of the implementation, it's pretty likely you need to change another implementation. 2 github projects, 2 releases,  the generated clients and the this multimodule one.
-
-
-## TODOs
-* Move nem2-sdk-openapi-generator to its own github repo.
-* Fix central maven deployments so the generated libs can be published there and you don't need to build them manually.
-* Fix integration tests. Make them reproducible.
-* Remove legacy implementation. They manual mappers are not being kept up to date. It's still in the repo for reference.
+Each SDK user can depend on the best library for its need (example, ``sdk-vertx-client`` for server developers or ``sdk-okhttp-client`` for android developers).
 
 ### Maven
 
 ```xml
 <dependency>
     <groupId>io.nem</groupId>
-    <artifactId>nem2-sdk-java-vertx</artifactId>
+    <artifactId>sdk-vertx-client</artifactId>
     <version>0.13.0</version>
 </dependency>
 ```
 
-```xml
-<dependency>
-    <groupId>io.nem</groupId>
-    <artifactId>nem2-sdk-java-okhttp</artifactId>
-    <version>0.13.0</version>
-</dependency>
-```
+OR
 
 ```xml
 <dependency>
     <groupId>io.nem</groupId>
-    <artifactId>nem2-sdk-java-vertex-legacy</artifactId>
+    <artifactId>sdk-okhttp-client</artifactId>
     <version>0.13.0</version>
 </dependency>
 ```
+
 
 ### Gradle
 
-```compile 'io.nem:nem2-sdk-java-vertx:0.13.0```
+```compile 'io.nem:sdk-vertx-client:0.13.0```
 
-```compile 'io.nem:nem2-sdk-java-okhttp:0.13.0```
+OR
 
-```compile 'io.nem:nem2-sdk-java-vertx-legacy:0.13.0```
+```compile 'io.nem:sdk-okhttp-client:0.13.0```
+
 
 ### SBT
 
-```libraryDependencies += "io.nem" % "nem2-sdk-java-vertx" % "0.13.0"```
+```libraryDependencies += "io.nem" % "sdk-vertx-client" % "0.13.0"```
 
-```libraryDependencies += "io.nem" % "nem2-sdk-java-okhttp" % "0.13.0"```
+OR
 
-```libraryDependencies += "io.nem" % "nem2-sdk-java-vertx-legacy" % "0.13.0"```
+```libraryDependencies += "io.nem" % "sdk-okhttp-client" % "0.13.0"```
+
 
 ## Documentation and Getting Started
 
 Get started and learn more about nem2-sdk-java, check the [official documentation][docs].
 
 Check SDK reference [here][sdk-ref]
+
+## Modules
+
+The SDK is composed of multiple sub-modules/folders:
+
+- **openapi-generator:** Utility folder that knows how to generate, install and release to maven central the different API clients from the open api 3 specification. The generated clients are `api-vertx-client`, `api-okhttp-gson-client`, `api-jersey2-client`. We may add more if customers require them.
+- **sdk-core:** This module includes the model objects, interfaces and common utility classes. It is Vertx, ok-http, gson, etc agnostic. Clients won't depend on this jar directly, they will depend on one of the implementations below.
+- **sdk-vertx-client:** The nem2-sdk-java Implementation that uses Vertx and generated `api-vertx-client` lib and dtos. A client may depend on this SDK implementation if Vertx is the selected implementation (e.g. server users).
+- **sdk-okhttp-client:** The nem2-sdk-java Implementation that uses OkHttp and the generated `api-okhttp-gson-client`. A client may depend on this SDK implementation if OkHttp is the selected implementation (e.g. android users).
+- **integration-tests:** This module is in charge of running integration tests against all implementations. The integration tests exercise how the implementation work against a given catapult server.
+
 
 ## nem2-sdk Releases
 

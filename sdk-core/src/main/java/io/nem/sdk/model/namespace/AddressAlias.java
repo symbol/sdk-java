@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 NEM
+ * Copyright 2019 NEM
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,6 +14,31 @@
  * limitations under the License.
  */
 
-rootProject.name = 'nem2-sdk-java'
+/**
+ * The AddressAlias structure describes address aliases
+ */
+package io.nem.sdk.model.namespace;
 
-include ":sdk-core", ":sdk-okhttp-client", ":sdk-vertx-client", ":integration-tests"
+import io.nem.sdk.model.account.Address;
+
+/**
+ * Address alias.
+ */
+public class AddressAlias extends AliasBase<Address> {
+
+    /**
+     * Create AddressAlias from address
+     */
+    public AddressAlias(Address address) {
+        super(address);
+    }
+
+    /**
+     * Gets the alias type.
+     *
+     * @return Alias type.
+     */
+    public AliasType getType() {
+        return AliasType.Address;
+    }
+}
