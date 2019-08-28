@@ -205,7 +205,7 @@ public class ModifyMultisigAccountTransaction extends Transaction {
     byte[] generateEmbeddedBytes() {
         EmbeddedMultisigAccountModificationTransactionBuilder txBuilder =
             EmbeddedMultisigAccountModificationTransactionBuilder.create(
-                new KeyDto(getSignerBytes().get()),
+                new KeyDto(getRequiredSignerBytes()),
                 getNetworkVersion(),
                 EntityTypeDto.MODIFY_MULTISIG_ACCOUNT_TRANSACTION,
                 getMinRemovalDelta(),

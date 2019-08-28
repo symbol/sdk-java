@@ -11,6 +11,21 @@ import java.util.function.Supplier;
  */
 public class Suppliers {
 
+    /**
+     * Private constructor for this utility class.
+     */
+    private Suppliers() {
+
+    }
+
+    /**
+     * It generates a cached version of the supplier. The delegate supplier is only called once
+     * regardless of how may the client calls get().
+     *
+     * @param delegate the delegate
+     * @param <T> the type of the supplier response.
+     * @return a cached version of the supplier.
+     */
     public static <T> Supplier<T> memoize(Supplier<T> delegate) {
         AtomicReference<T> value = new AtomicReference<>();
         return () -> {

@@ -177,7 +177,7 @@ public class MosaicAliasTransaction extends Transaction {
     byte[] generateEmbeddedBytes() {
         final EmbeddedMosaicAliasTransactionBuilder txBuilder =
             EmbeddedMosaicAliasTransactionBuilder.create(
-                new KeyDto(getSignerBytes().get()),
+                new KeyDto(getRequiredSignerBytes()),
                 getNetworkVersion(),
                 EntityTypeDto.MOSAIC_ALIAS_TRANSACTION,
                 AliasActionDto.rawValueOf(getAliasAction().getValue()),

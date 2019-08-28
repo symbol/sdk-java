@@ -23,6 +23,12 @@ import java.util.Arrays;
 public class ByteUtils {
 
     /**
+     * Private constructor for this utility class.
+     */
+    private ByteUtils() {
+    }
+
+    /**
      * Converts a BigInteger value into an array of size bytes.
      *
      * @param x The BigInteger.

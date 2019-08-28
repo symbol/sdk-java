@@ -36,13 +36,6 @@ public interface Alias<T> {
     T getAliasValue();
 
     /**
-     * Compares this alias to specified alias.
-     *
-     * @return true if aliases are of the same type; false otherwise
-     */
-    boolean equals(Alias<T> alias);
-
-    /**
      * Returns true if this alias is anEmptyAlias; false otherwise.
      *
      * @return true if alias is empty; false otherwise

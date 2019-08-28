@@ -120,11 +120,17 @@ public class MosaicId implements UInt64Id {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof MosaicId)) {
+        if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        MosaicId mosaicId1 = (MosaicId) o;
+        MosaicId mosaicId = (MosaicId) o;
+        return Objects.equals(id, mosaicId.id);
+    }
 
-        return Objects.equals(id, mosaicId1.id);
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }
+
+

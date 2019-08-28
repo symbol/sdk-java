@@ -41,7 +41,8 @@ public class UInt64 {
     public static int[] fromBigInteger(BigInteger input) {
         byte[] bytes = input.toByteArray();
         ArrayUtils.reverse(bytes);
-        int lower = 0, higher = 0;
+        int lower = 0;
+        int higher = 0;
         byte[] lowerBound = new byte[4];
         int size = 4;
         if (bytes.length < 4) {
@@ -120,12 +121,6 @@ public class UInt64 {
         byte[] bytes = new byte[8];
         ByteBuffer.wrap(bytes).putLong(value);
         return Arrays.copyOfRange(bytes, 4, 8);
-    }
-
-    public static long toUnsignedInt(byte[] bytes) {
-        ByteBuffer buffer = ByteBuffer.allocate(8).put(new byte[]{0, 0, 0, 0}).put(bytes);
-        buffer.position(0);
-        return buffer.getLong();
     }
 
     /**

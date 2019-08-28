@@ -16,6 +16,8 @@
 
 package io.nem.sdk.model.blockchain;
 
+import java.util.Arrays;
+
 /**
  * Static class containing network type constants.
  *
@@ -51,18 +53,8 @@ public enum NetworkType {
      * @return {@link NetworkType}
      */
     public static NetworkType rawValueOf(int value) {
-        switch (value) {
-            case 104:
-                return NetworkType.MAIN_NET;
-            case 152:
-                return NetworkType.TEST_NET;
-            case 96:
-                return NetworkType.MIJIN;
-            case 144:
-                return NetworkType.MIJIN_TEST;
-            default:
-                throw new IllegalArgumentException(value + " is not a valid value");
-        }
+        return Arrays.stream(values()).filter(e -> e.value == value).findFirst()
+            .orElseThrow(() -> new IllegalArgumentException(value + " is not a valid value"));
     }
 
     /**

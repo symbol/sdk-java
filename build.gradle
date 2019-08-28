@@ -94,7 +94,7 @@ subprojects {
             // configure jacoco to analyze the junitPlatformTest task
             jacoco {
                 // this tool version is compatible with
-                toolVersion = "0.7.6.201602180812"
+//                toolVersion = "0.7.6.201602180812"
                 applyTo task
             }
 
@@ -109,7 +109,7 @@ subprojects {
     }
 
     jacoco {
-        toolVersion = '0.7.9'
+//        toolVersion = '0.7.9'
         applyTo junitPlatformTest
     }
 
@@ -187,4 +187,10 @@ tasks.coveralls {
     group = 'Coverage reports'
     description = 'Uploads the aggregated coverage report to Coveralls'
     dependsOn jacocoRootReport
+}
+
+sonarqube {
+    properties {
+        property "sonar.exclusions", "**/io/nem/catapult/builders/**"
+    }
 }

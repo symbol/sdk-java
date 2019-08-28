@@ -20,7 +20,6 @@ import io.nem.sdk.api.DiagnosticRepository;
 import io.nem.sdk.model.blockchain.BlockchainStorageInfo;
 import io.nem.sdk.model.blockchain.ServerInfo;
 import io.nem.sdk.openapi.okhttp_gson.api.DiagnosticRoutesApi;
-import io.nem.sdk.openapi.okhttp_gson.invoker.ApiCallback;
 import io.nem.sdk.openapi.okhttp_gson.invoker.ApiClient;
 import io.nem.sdk.openapi.okhttp_gson.model.ServerDTO;
 import io.nem.sdk.openapi.okhttp_gson.model.ServerInfoDTO;
@@ -41,17 +40,13 @@ public class DiagnosticRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl
         client = new DiagnosticRoutesApi(apiClient);
     }
 
-    public DiagnosticRoutesApi getClient() {
-        return client;
-    }
-
     /**
      * Get storage info
      *
      * @return Observable<BlockchainStorageInfo>
      */
     public Observable<BlockchainStorageInfo> getBlockchainStorage() {
-        Callable<StorageInfoDTO> callback = client::getDiagnosticStorage;
+        Callable<StorageInfoDTO> callback = getClient()::getDiagnosticStorage;
         return exceptionHandling(call(callback).map(this::toBlockchainStorageInfo));
     }
 
@@ -68,11 +63,16 @@ public class DiagnosticRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl
      * @return Observable<ServerInfo>
      */
     public Observable<ServerInfo> getServerInfo() {
-        Callable<ServerDTO> callback = client::getServerInfo;
-        return exceptionHandling(call(callback).map(ServerDTO::getServerInfo).map(this::toServerInfo));
+        Callable<ServerDTO> callback = getClient()::getServerInfo;
+        return exceptionHandling(
+            call(callback).map(ServerDTO::getServerInfo).map(this::toServerInfo));
     }
 
     private ServerInfo toServerInfo(ServerInfoDTO serverInfoDTO) {
         return new ServerInfo(serverInfoDTO.getRestVersion(), serverInfoDTO.getRestVersion());
+    }
+
+    public DiagnosticRoutesApi getClient() {
+        return client;
     }
 }

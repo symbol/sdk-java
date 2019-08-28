@@ -204,7 +204,7 @@ public class MosaicSupplyChangeTransaction extends Transaction {
     byte[] generateEmbeddedBytes() {
         EmbeddedMosaicSupplyChangeTransactionBuilder txBuilder =
             EmbeddedMosaicSupplyChangeTransactionBuilder.create(
-                new KeyDto(getSignerBytes().get()),
+                new KeyDto(getRequiredSignerBytes()),
                 getNetworkVersion(),
                 EntityTypeDto.MOSAIC_SUPPLY_CHANGE_TRANSACTION,
                 new UnresolvedMosaicIdDto(getMosaicId().getId().longValue()),

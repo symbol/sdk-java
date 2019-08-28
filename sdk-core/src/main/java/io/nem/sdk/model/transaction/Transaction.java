@@ -310,9 +310,9 @@ public abstract class Transaction {
     }
 
     /**
-     * Returns the transaction creator public account.
+     * Returns (optionally) the transaction creator public account.
      *
-     * @return signer public account
+     * @return an optional of the signer public account
      */
     protected Optional<ByteBuffer> getSignerBytes() {
         if (signer.isPresent()) {
@@ -320,5 +320,15 @@ public abstract class Transaction {
             return Optional.of(ByteBuffer.wrap(bytes));
         }
         return Optional.empty();
+    }
+
+    /**
+     * Returns the transaction creator public account.
+     *
+     * @return the signer public account
+     */
+    protected ByteBuffer getRequiredSignerBytes() {
+        return getSignerBytes()
+            .orElseThrow(() -> new IllegalStateException("SignerBytes is required"));
     }
 }

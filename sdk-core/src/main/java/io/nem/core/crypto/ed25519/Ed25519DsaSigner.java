@@ -138,8 +138,8 @@ public class Ed25519DsaSigner implements DsaSigner {
 
     @Override
     public boolean isCanonicalSignature(final Signature signature) {
-        return -1 == signature.getS().compareTo(Ed25519Group.GROUP_ORDER)
-            && 1 == signature.getS().compareTo(BigInteger.ZERO);
+        return 0 > signature.getS().compareTo(Ed25519Group.GROUP_ORDER)
+            && 0 < signature.getS().compareTo(BigInteger.ZERO);
     }
 
     @Override

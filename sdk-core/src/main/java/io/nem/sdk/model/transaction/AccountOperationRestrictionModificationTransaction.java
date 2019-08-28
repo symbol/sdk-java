@@ -182,7 +182,7 @@ public class AccountOperationRestrictionModificationTransaction extends Transact
     byte[] generateEmbeddedBytes() {
         EmbeddedAccountOperationRestrictionTransactionBuilder txBuilder =
             EmbeddedAccountOperationRestrictionTransactionBuilder.create(
-                new KeyDto(getSignerBytes().get()),
+                new KeyDto(getRequiredSignerBytes()),
                 getNetworkVersion(),
                 EntityTypeDto.ACCOUNT_OPERATION_RESTRICTION_TRANSACTION,
                 AccountRestrictionTypeDto.rawValueOf(this.restrictionType.getValue()),

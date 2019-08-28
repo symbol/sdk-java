@@ -33,6 +33,12 @@ import org.apache.commons.lang3.ArrayUtils;
  */
 public class IdGenerator {
 
+    /**
+     * Private constructor for this utility class.
+     */
+    private IdGenerator() {
+    }
+
     private static final long ID_GENERATOR_FLAG = 0x8000000000000000L;
 
     /**

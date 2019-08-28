@@ -263,7 +263,7 @@ public class SecretProofTransaction extends Transaction {
     byte[] generateEmbeddedBytes() {
         EmbeddedSecretProofTransactionBuilder txBuilder =
             EmbeddedSecretProofTransactionBuilder.create(
-                new KeyDto(getSignerBytes().get()),
+                new KeyDto(getRequiredSignerBytes()),
                 getNetworkVersion(),
                 EntityTypeDto.SECRET_PROOF_TRANSACTION,
                 LockHashAlgorithmDto.rawValueOf((byte) hashType.getValue()),

@@ -15,6 +15,8 @@
  */
 package io.nem.sdk.model.transaction;
 
+import java.util.Arrays;
+
 /**
  * Enum containing hash type.
  *
@@ -39,25 +41,15 @@ public enum HashType {
      */
     HASH_256(3);
 
-    private int value;
+    private final int value;
 
     HashType(int value) {
         this.value = value;
     }
 
     public static HashType rawValueOf(int value) {
-        switch (value) {
-            case 0:
-                return HashType.SHA3_256;
-            case 1:
-                return HashType.KECCAK_256;
-            case 2:
-                return HashType.HASH_160;
-            case 3:
-                return HashType.HASH_256;
-            default:
-                throw new IllegalArgumentException(value + " is not a valid value");
-        }
+        return Arrays.stream(values()).filter(e -> e.value == value).findFirst()
+            .orElseThrow(() -> new IllegalArgumentException(value + " is not a valid value"));
     }
 
     /**

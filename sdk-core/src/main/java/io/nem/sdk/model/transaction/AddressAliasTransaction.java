@@ -177,7 +177,7 @@ public class AddressAliasTransaction extends Transaction {
     byte[] generateEmbeddedBytes() {
         final EmbeddedAddressAliasTransactionBuilder txBuilder =
             EmbeddedAddressAliasTransactionBuilder.create(
-                new KeyDto(getSignerBytes().get()),
+                new KeyDto(getRequiredSignerBytes()),
                 getNetworkVersion(),
                 EntityTypeDto.ADDRESS_ALIAS_TRANSACTION,
                 AliasActionDto.rawValueOf(getAliasAction().getValue()),

@@ -23,6 +23,12 @@ import java.nio.charset.Charset;
  */
 public class StringEncoder {
 
+    /**
+     * Private constructor for this utility class.
+     */
+    private StringEncoder() {
+    }
+
     private static final Charset ENCODING_CHARSET = Charset.forName("UTF-8");
 
     /**

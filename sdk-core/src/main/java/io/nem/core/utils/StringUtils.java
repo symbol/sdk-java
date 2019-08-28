@@ -22,6 +22,12 @@ package io.nem.core.utils;
 public class StringUtils {
 
     /**
+     * Private constructor for this utility class.
+     */
+    private StringUtils() {
+    }
+
+    /**
      * Determines if the specified string is null or empty.
      *
      * @param str The string.

@@ -16,6 +16,8 @@
 
 package io.nem.sdk.model.transaction;
 
+import java.util.Arrays;
+
 /**
  * Account link action.
  */
@@ -47,14 +49,8 @@ public enum AccountLinkAction {
      * @return Enum value.
      */
     public static AccountLinkAction rawValueOf(final int value) {
-        switch (value) {
-            case 1:
-                return AccountLinkAction.LINK;
-            case 0:
-                return AccountLinkAction.UNLINK;
-            default:
-                throw new IllegalArgumentException(value + " is not a valid value");
-        }
+        return Arrays.stream(values()).filter(e -> e.value == value).findFirst()
+            .orElseThrow(() -> new IllegalArgumentException(value + " is not a valid value"));
     }
 
     /**

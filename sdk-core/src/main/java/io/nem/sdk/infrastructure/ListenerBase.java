@@ -26,7 +26,6 @@ import io.nem.sdk.model.transaction.TransferTransaction;
 import io.reactivex.Observable;
 import io.reactivex.subjects.PublishSubject;
 import io.reactivex.subjects.Subject;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Created by fernando on 19/08/19.
@@ -169,40 +168,34 @@ public abstract class ListenerBase implements Listener {
 
 
     private boolean transactionFromAddress(final Transaction transaction, final Address address) {
-        AtomicBoolean transactionFromAddress =
-            new AtomicBoolean(this.transactionHasSignerOrReceptor(transaction, address));
+        return transactionHasSignerOrReceptor(transaction, address)
+            || isAggregateTransactionSignerOrInnerTransaction(transaction, address);
+    }
 
+    private boolean transactionHasSignerOrReceptor(final Transaction transaction,
+        final Address address) {
+        return transaction.getSigner().filter(s -> s.getAddress().equals(address)).isPresent()
+            || isTransferTransactionRecipient(transaction, address);
+    }
+
+    private boolean isTransferTransactionRecipient(final Transaction transaction,
+        final Address address) {
+        return transaction instanceof TransferTransaction && ((TransferTransaction) transaction)
+            .getRecipient().filter(r -> r.equals(address)).isPresent();
+    }
+
+    private boolean isAggregateTransactionSignerOrInnerTransaction(final Transaction transaction,
+        final Address address) {
         if (transaction instanceof AggregateTransaction) {
             final AggregateTransaction aggregateTransaction = (AggregateTransaction) transaction;
-            aggregateTransaction
-                .getCosignatures()
-                .forEach(
-                    cosignature -> {
-                        if (cosignature.getSigner().getAddress().equals(address)) {
-                            transactionFromAddress.set(true);
-                        }
-                    });
-            aggregateTransaction
-                .getInnerTransactions()
-                .forEach(
-                    innerTransaction -> {
-                        if (this.transactionHasSignerOrReceptor(innerTransaction, address)) {
-                            transactionFromAddress.set(true);
-                        }
-                    });
+            return aggregateTransaction.getCosignatures()
+                .stream().anyMatch(c -> c.getSigner().getAddress().equals(address)) ||
+                aggregateTransaction.getInnerTransactions()
+                    .stream().anyMatch(t -> this.transactionHasSignerOrReceptor(t, address));
+        } else {
+            return false;
         }
-        return transactionFromAddress.get();
     }
-
-    private boolean transactionHasSignerOrReceptor(
-        final Transaction transaction, final Address address) {
-        boolean isReceptor = false;
-        if (transaction instanceof TransferTransaction) {
-            isReceptor = ((TransferTransaction) transaction).getRecipient().get().equals(address);
-        }
-        return transaction.getSigner().get().getAddress().equals(address) || isReceptor;
-    }
-
 
     protected void onNext(ListenerChannel channel, Object messageObject) {
         this.getMessageSubject().onNext(new ListenerMessage(channel, messageObject));

@@ -16,7 +16,9 @@
 
 package io.nem.sdk.model.receipt;
 
+import java.util.Arrays;
 import java.util.EnumSet;
+import java.util.Set;
 
 /**
  * Enum containing receipt type constants.
@@ -107,9 +109,10 @@ public enum ReceiptType {
      */
     Inflation(0x5143);
 
-    public static EnumSet<ReceiptType> ArtifactExpiry = EnumSet
+    public static final Set<ReceiptType> ArtifactExpiry = EnumSet
         .of(Mosaic_Expired, Namespace_Expired);
-    public static EnumSet<ReceiptType> BalanceChange =
+
+    public static final Set<ReceiptType> BalanceChange =
         EnumSet.of(
             Harvest_Fee,
             LockHash_Completed,
@@ -119,12 +122,13 @@ public enum ReceiptType {
             LockSecret_Completed,
             LockSecret_Created,
             LockSecret_Expired);
-    public static EnumSet<ReceiptType> BalanceTransfer =
+    public static final Set<ReceiptType> BalanceTransfer =
         EnumSet.of(Mosaic_Rental_Fee, Namespace_Rental_Fee);
-    public static EnumSet<ReceiptType> ResolutionStatement =
+
+    public static final Set<ReceiptType> ResolutionStatement =
         EnumSet.of(Address_Alias_Resolution, Mosaic_Alias_Resolution);
 
-    private int value;
+    private final int value;
 
     ReceiptType(int value) {
         this.value = value;
@@ -136,42 +140,8 @@ public enum ReceiptType {
      * @return {@link ReceiptType}
      */
     public static ReceiptType rawValueOf(int value) {
-        switch (value) {
-            case 8515:
-                return ReceiptType.Harvest_Fee;
-            case 61763:
-                return ReceiptType.Address_Alias_Resolution;
-            case 62019:
-                return ReceiptType.Mosaic_Alias_Resolution;
-            case 57667:
-                return ReceiptType.Transaction_Group;
-            case 16717:
-                return ReceiptType.Mosaic_Expired;
-            case 4685:
-                return ReceiptType.Mosaic_Levy;
-            case 4941:
-                return ReceiptType.Mosaic_Rental_Fee;
-            case 16718:
-                return ReceiptType.Namespace_Expired;
-            case 4686:
-                return ReceiptType.Namespace_Rental_Fee;
-            case 12616:
-                return ReceiptType.LockHash_Created;
-            case 8776:
-                return ReceiptType.LockHash_Completed;
-            case 9032:
-                return ReceiptType.LockHash_Expired;
-            case 12626:
-                return ReceiptType.LockSecret_Created;
-            case 8786:
-                return ReceiptType.LockSecret_Completed;
-            case 9042:
-                return ReceiptType.LockSecret_Expired;
-            case 20803:
-                return ReceiptType.Inflation;
-            default:
-                throw new IllegalArgumentException(value + " is not a valid value");
-        }
+        return Arrays.stream(values()).filter(e -> e.value == value).findFirst()
+            .orElseThrow(() -> new IllegalArgumentException(value + " is not a valid value"));
     }
 
     /**

@@ -52,7 +52,7 @@ public class NetworkHarvestMosaic extends Mosaic {
     public static NetworkHarvestMosaic createRelative(BigInteger amount) {
 
         BigInteger relativeAmount =
-            new BigDecimal(Math.pow(10, NetworkHarvestMosaic.DIVISIBILITY))
+            BigDecimal.valueOf(Math.pow(10, NetworkHarvestMosaic.DIVISIBILITY))
                 .toBigInteger()
                 .multiply(amount);
         return new NetworkHarvestMosaic(relativeAmount);

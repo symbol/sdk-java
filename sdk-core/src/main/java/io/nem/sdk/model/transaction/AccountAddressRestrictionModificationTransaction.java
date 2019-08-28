@@ -184,7 +184,7 @@ public class AccountAddressRestrictionModificationTransaction extends Transactio
     byte[] generateEmbeddedBytes() {
         EmbeddedAccountAddressRestrictionTransactionBuilder txBuilder =
             EmbeddedAccountAddressRestrictionTransactionBuilder.create(
-                new KeyDto(getSignerBytes().get()),
+                new KeyDto(getRequiredSignerBytes()),
                 getNetworkVersion(),
                 EntityTypeDto.ACCOUNT_ADDRESS_RESTRICTION_TRANSACTION,
                 AccountRestrictionTypeDto.rawValueOf(this.restrictionType.getValue()),

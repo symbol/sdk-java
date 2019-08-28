@@ -175,7 +175,7 @@ public class MosaicDefinitionTransaction extends Transaction {
     byte[] generateEmbeddedBytes() {
         EmbeddedMosaicDefinitionTransactionBuilder txBuilder =
             EmbeddedMosaicDefinitionTransactionBuilder.create(
-                new KeyDto(getSignerBytes().get()),
+                new KeyDto(getRequiredSignerBytes()),
                 getNetworkVersion(),
                 EntityTypeDto.MOSAIC_DEFINITION_TRANSACTION,
                 new MosaicNonceDto(getMosaicNonce().getNonceAsInt()),

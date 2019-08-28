@@ -25,6 +25,9 @@ import java.util.function.Function;
  */
 public class ExceptionUtils {
 
+    /**
+     * Private constructor for this utility class.
+     */
     private ExceptionUtils() {
     }
 

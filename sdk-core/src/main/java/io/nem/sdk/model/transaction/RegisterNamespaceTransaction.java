@@ -227,7 +227,9 @@ public class RegisterNamespaceTransaction extends Transaction {
                     EntityTypeDto.REGISTER_NAMESPACE_TRANSACTION,
                     new AmountDto(getFee().longValue()),
                     new TimestampDto(getDeadline().getInstant()),
-                    new BlockDurationDto(getDuration().get().longValue()),
+                    new BlockDurationDto(getDuration()
+                        .orElseThrow(() -> new IllegalStateException("Duration is required"))
+                        .longValue()),
                     new NamespaceIdDto(getNamespaceId().getId().longValue()),
                     getNameBuffer());
 
@@ -240,7 +242,9 @@ public class RegisterNamespaceTransaction extends Transaction {
                     EntityTypeDto.REGISTER_NAMESPACE_TRANSACTION,
                     new AmountDto(getFee().longValue()),
                     new TimestampDto(getDeadline().getInstant()),
-                    new NamespaceIdDto(getParentId().get().getId().longValue()),
+                    new NamespaceIdDto(getParentId()
+                        .orElseThrow(() -> new IllegalStateException("ParentId is required"))
+                        .getId().longValue()),
                     new NamespaceIdDto(getNamespaceId().getId().longValue()),
                     getNameBuffer());
         }
@@ -257,20 +261,24 @@ public class RegisterNamespaceTransaction extends Transaction {
         if (namespaceType == NamespaceType.RootNamespace) {
             txBuilder =
                 EmbeddedNamespaceRegistrationTransactionBuilder.create(
-                    new KeyDto(getSignerBytes().get()),
+                    new KeyDto(getRequiredSignerBytes()),
                     getNetworkVersion(),
                     EntityTypeDto.REGISTER_NAMESPACE_TRANSACTION,
-                    new BlockDurationDto(getDuration().get().longValue()),
+                    new BlockDurationDto(getDuration()
+                        .orElseThrow(() -> new IllegalStateException("Duration is required"))
+                        .longValue()),
                     new NamespaceIdDto(getNamespaceId().getId().longValue()),
                     getNameBuffer());
 
         } else {
             txBuilder =
                 EmbeddedNamespaceRegistrationTransactionBuilder.create(
-                    new KeyDto(getSignerBytes().get()),
+                    new KeyDto(getRequiredSignerBytes()),
                     getNetworkVersion(),
                     EntityTypeDto.REGISTER_NAMESPACE_TRANSACTION,
-                    new NamespaceIdDto(getParentId().get().getId().longValue()),
+                    new NamespaceIdDto(getParentId()
+                        .orElseThrow(() -> new IllegalStateException("ParentId is required"))
+                        .getId().longValue()),
                     new NamespaceIdDto(getNamespaceId().getId().longValue()),
                     getNameBuffer());
         }

@@ -214,7 +214,7 @@ public class LockFundsTransaction extends Transaction {
     byte[] generateEmbeddedBytes() {
         EmbeddedHashLockTransactionBuilder txBuilder =
             EmbeddedHashLockTransactionBuilder.create(
-                new KeyDto(getSignerBytes().get()),
+                new KeyDto(getRequiredSignerBytes()),
                 getNetworkVersion(),
                 EntityTypeDto.HASH_LOCK_TRANSACTION,
                 UnresolvedMosaicBuilder.create(

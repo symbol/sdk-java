@@ -15,6 +15,8 @@
  */
 package io.nem.sdk.model.transaction;
 
+import java.util.Arrays;
+
 /**
  * Enum containing account restriction modification type constants.
  */
@@ -42,14 +44,8 @@ public enum AccountRestrictionModificationType {
      * @return Enum value.
      */
     public static AccountRestrictionModificationType rawValueOf(final byte value) {
-        for (AccountRestrictionModificationType current : AccountRestrictionModificationType
-            .values()) {
-            if (value == current.value) {
-                return current;
-            }
-        }
-        throw new IllegalArgumentException(
-            value + " was not a backing value for AccountRestrictionModificationType.");
+        return Arrays.stream(values()).filter(e -> e.value == value).findFirst()
+            .orElseThrow(() -> new IllegalArgumentException(value + " is not a valid value"));
     }
 
     /**

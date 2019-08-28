@@ -69,18 +69,20 @@ public class PublicKey {
     }
 
     @Override
-    public int hashCode() {
-        return Arrays.hashCode(this.value);
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        PublicKey publicKey = (PublicKey) o;
+        return Arrays.equals(value, publicKey.value);
     }
 
     @Override
-    public boolean equals(final Object obj) {
-        if (obj == null || !(obj instanceof PublicKey)) {
-            return false;
-        }
-
-        final PublicKey rhs = (PublicKey) obj;
-        return Arrays.equals(this.value, rhs.value);
+    public int hashCode() {
+        return Arrays.hashCode(value);
     }
 
     @Override

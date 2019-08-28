@@ -178,7 +178,7 @@ public class AccountLinkTransaction extends Transaction {
     byte[] generateEmbeddedBytes() {
         final EmbeddedAccountLinkTransactionBuilder txBuilder =
             EmbeddedAccountLinkTransactionBuilder.create(
-                new KeyDto(getSignerBytes().get()),
+                new KeyDto(getRequiredSignerBytes()),
                 getNetworkVersion(),
                 EntityTypeDto.ADDRESS_ALIAS_TRANSACTION,
                 new KeyDto(getRemoteAccount().getPublicKey().getByteBuffer()),

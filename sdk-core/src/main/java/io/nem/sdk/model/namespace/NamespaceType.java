@@ -16,6 +16,8 @@
 
 package io.nem.sdk.model.namespace;
 
+import java.util.Arrays;
+
 /**
  * Enum containing namespace supply type.
  *
@@ -31,21 +33,15 @@ public enum NamespaceType {
      */
     SubNamespace(1);
 
-    private int value;
+    private final int value;
 
     NamespaceType(int value) {
         this.value = value;
     }
 
     public static NamespaceType rawValueOf(int value) {
-        switch (value) {
-            case 0:
-                return NamespaceType.RootNamespace;
-            case 1:
-                return NamespaceType.SubNamespace;
-            default:
-                throw new IllegalArgumentException(value + " is not a valid value");
-        }
+        return Arrays.stream(values()).filter(e -> e.value == value).findFirst()
+            .orElseThrow(() -> new IllegalArgumentException(value + " is not a valid value"));
     }
 
     public int getValue() {

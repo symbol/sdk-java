@@ -26,6 +26,12 @@ import java.math.BigInteger;
 public class Ed25519Field {
 
     /**
+     * Private constructor for this utility class.
+     */
+    private Ed25519Field() {
+    }
+
+    /**
      * P: 2^255 - 19
      */
     public static final BigInteger P =
@@ -58,8 +64,8 @@ public class Ed25519Field {
 
     private static Ed25519FieldElement getD() {
         final BigInteger d =
-            new BigInteger("-121665")
-                .multiply(new BigInteger("121666").modInverse(Ed25519Field.P))
+            BigInteger.valueOf(-121665)
+                .multiply(BigInteger.valueOf(121666).modInverse(Ed25519Field.P))
                 .mod(Ed25519Field.P);
         return new Ed25519EncodedFieldElement(ArrayUtils.toByteArray(d, 32)).decode();
     }

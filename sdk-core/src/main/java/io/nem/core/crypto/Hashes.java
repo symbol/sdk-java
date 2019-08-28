@@ -28,6 +28,12 @@ import org.bouncycastle.util.encoders.Hex;
  */
 public class Hashes {
 
+    /**
+     * Private constructor for this utility class.
+     */
+    private Hashes() {
+    }
+
     static {
         Security.addProvider(new BouncyCastleProvider());
     }

@@ -21,6 +21,7 @@
 package io.nem.catapult.builders;
 
 import java.io.DataInput;
+import java.util.Arrays;
 
 /** Enumeration of cosignatory modification actions. */
 public enum CosignatoryModificationActionDto {
@@ -48,12 +49,8 @@ public enum CosignatoryModificationActionDto {
      * @return Enum value.
      */
     public static CosignatoryModificationActionDto rawValueOf(final byte value) {
-        for (CosignatoryModificationActionDto current : CosignatoryModificationActionDto.values()) {
-            if (value == current.value) {
-                return current;
-            }
-        }
-        throw new IllegalArgumentException(value + " was not a backing value for CosignatoryModificationActionDto.");
+        return Arrays.stream(values()).filter(e -> e.value == value).findFirst()
+            .orElseThrow(() -> new IllegalArgumentException(value + " is not a valid value"));
     }
 
     /**

@@ -27,6 +27,12 @@ import java.util.Arrays;
 public class Ed25519Utils {
 
     /**
+     * Private constructor for this utility class.
+     */
+    private Ed25519Utils() {
+    }
+
+    /**
      * Prepares a private key's raw value for scalar multiplication. The hashing is for achieving
      * better randomness and the clamping prevents small subgroup attacks.
      *

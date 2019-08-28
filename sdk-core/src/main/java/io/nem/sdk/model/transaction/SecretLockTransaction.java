@@ -252,7 +252,7 @@ public class SecretLockTransaction extends Transaction {
     byte[] generateEmbeddedBytes() {
         EmbeddedSecretLockTransactionBuilder txBuilder =
             EmbeddedSecretLockTransactionBuilder.create(
-                new KeyDto(getSignerBytes().get()),
+                new KeyDto(getRequiredSignerBytes()),
                 getNetworkVersion(),
                 EntityTypeDto.SECRET_LOCK_TRANSACTION,
                 UnresolvedMosaicBuilder.create(

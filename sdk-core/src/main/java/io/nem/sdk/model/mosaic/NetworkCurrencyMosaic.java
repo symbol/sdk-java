@@ -52,7 +52,7 @@ public class NetworkCurrencyMosaic extends Mosaic {
     public static NetworkCurrencyMosaic createRelative(BigInteger amount) {
 
         BigInteger relativeAmount =
-            new BigDecimal(Math.pow(10, NetworkCurrencyMosaic.DIVISIBILITY))
+            BigDecimal.valueOf(Math.pow(10, NetworkCurrencyMosaic.DIVISIBILITY))
                 .toBigInteger()
                 .multiply(amount);
         return new NetworkCurrencyMosaic(relativeAmount);

@@ -184,7 +184,7 @@ public class AccountMosaicRestrictionModificationTransaction extends Transaction
     byte[] generateEmbeddedBytes() {
         EmbeddedAccountMosaicRestrictionTransactionBuilder txBuilder =
             EmbeddedAccountMosaicRestrictionTransactionBuilder.create(
-                new KeyDto(getSignerBytes().get()),
+                new KeyDto(getRequiredSignerBytes()),
                 getNetworkVersion(),
                 EntityTypeDto.ACCOUNT_MOSAIC_RESTRICTION_TRANSACTION,
                 AccountRestrictionTypeDto.rawValueOf(this.restrictionType.getValue()),

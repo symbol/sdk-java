@@ -29,6 +29,12 @@ import java.nio.channels.OverlappingFileLockException;
 public class LockFile {
 
     /**
+     * Private constructor for this utility class.
+     */
+    private LockFile() {
+    }
+
+    /**
      * Tries to acquire a file lock for the specified file.
      *
      * @param lockFile The lock file.

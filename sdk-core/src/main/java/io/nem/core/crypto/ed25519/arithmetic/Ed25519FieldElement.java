@@ -732,7 +732,9 @@ public class Ed25519FieldElement {
      * @return This field element to the power of (2^252 - 4).
      */
     private Ed25519FieldElement pow2to252sub4() {
-        Ed25519FieldElement f0, f1, f2;
+        Ed25519FieldElement f0;
+        Ed25519FieldElement f1;
+        Ed25519FieldElement f2;
 
         // 2 == 2 * 1
         f0 = this.square();

@@ -32,6 +32,12 @@ public class CryptoEngines {
     }
 
     /**
+     * Private constructor for this utility class.
+     */
+    private CryptoEngines() {
+    }
+
+    /**
      * Gets the default crypto engine.
      *
      * @return The default crypto engine.
