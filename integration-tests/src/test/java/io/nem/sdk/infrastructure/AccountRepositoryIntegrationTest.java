@@ -18,10 +18,12 @@ package io.nem.sdk.infrastructure;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import io.nem.core.crypto.PublicKey;
 import io.nem.sdk.api.AccountRepository;
 import io.nem.sdk.api.QueryParams;
 import io.nem.sdk.api.RepositoryCallException;
 import io.nem.sdk.model.account.AccountInfo;
+import io.nem.sdk.model.account.AccountNames;
 import io.nem.sdk.model.account.Address;
 import io.nem.sdk.model.account.MultisigAccountGraphInfo;
 import io.nem.sdk.model.account.MultisigAccountInfo;
@@ -62,10 +64,12 @@ class AccountRepositoryIntegrationTest extends BaseIntegrationTest {
 
     @ParameterizedTest
     @EnumSource(RepositoryType.class)
-    void getAccountsInfo(RepositoryType type) throws ExecutionException, InterruptedException {
+    void getAccountsInfoFromAddresses(RepositoryType type)
+        throws ExecutionException, InterruptedException {
         List<AccountInfo> accountInfos =
             this.getAccountRepository(type)
-                .getAccountsInfo(Collections.singletonList(this.getTestAccountAddress()))
+                .getAccountsInfoFromAddresses(
+                    Collections.singletonList(this.getTestAccountAddress()))
                 .toFuture()
                 .get();
 
@@ -75,15 +79,51 @@ class AccountRepositoryIntegrationTest extends BaseIntegrationTest {
 
     @ParameterizedTest
     @EnumSource(RepositoryType.class)
-    void getMultipleAccountsInfo(RepositoryType type) throws ExecutionException, InterruptedException {
+    void getAccountsNamesFromAddresses(RepositoryType type)
+        throws ExecutionException, InterruptedException {
+        List<AccountNames> accountNames =
+            this.getAccountRepository(type)
+                .getAccountsNamesFromAddresses(
+                    Collections.singletonList(this.getTestAccountAddress()))
+                .toFuture()
+                .get();
+
+        assertEquals(1, accountNames.size());
+        assertEquals(this.config().getTestAccountAddress(),
+            accountNames.get(0).getAddress().plain());
+        assertEquals(0, accountNames.get(0).getNames().size());
+    }
+
+    @ParameterizedTest
+    @EnumSource(RepositoryType.class)
+    void getAccountsInfoFromPublicKeys(RepositoryType type)
+        throws ExecutionException, InterruptedException {
         List<AccountInfo> accountInfos =
             this.getAccountRepository(type)
-                .getAccountsInfo(Collections.singletonList(this.getTestAccountAddress()))
+                .getAccountsInfoFromPublicKeys(Collections.singletonList(
+                    PublicKey.fromHexString(this.config().getTestAccountPublicKey())))
                 .toFuture()
                 .get();
 
         assertEquals(1, accountInfos.size());
         assertEquals(this.config().getTestAccountPublicKey(), accountInfos.get(0).getPublicKey());
+    }
+
+    @ParameterizedTest
+    @EnumSource(RepositoryType.class)
+    void getAccountsNamesFromPublicKeys(RepositoryType type)
+        throws ExecutionException, InterruptedException {
+        List<AccountNames> accountNames =
+            this.getAccountRepository(type)
+                .getAccountsNamesFromPublicKeys(Collections.singletonList(
+                    PublicKey.fromHexString(this.config().getTestAccountPublicKey())))
+                .toFuture()
+                .get();
+
+        assertEquals(1, accountNames.size());
+        assertEquals(this.config().getTestAccountAddress(),
+            accountNames.get(0).getAddress().plain());
+        assertEquals(0, accountNames.get(0).getNames().size());
     }
 
     @ParameterizedTest
@@ -106,7 +146,8 @@ class AccountRepositoryIntegrationTest extends BaseIntegrationTest {
 
     @ParameterizedTest
     @EnumSource(RepositoryType.class)
-    void getMultisigAccountInfo(RepositoryType type) throws ExecutionException, InterruptedException {
+    void getMultisigAccountInfo(RepositoryType type)
+        throws ExecutionException, InterruptedException {
         MultisigAccountInfo multisigAccountInfo =
             this.getAccountRepository(type)
                 .getMultisigAccountInfo(
@@ -140,16 +181,19 @@ class AccountRepositoryIntegrationTest extends BaseIntegrationTest {
     @EnumSource(RepositoryType.class)
     void transactions(RepositoryType type) throws ExecutionException, InterruptedException {
         List<Transaction> transactions =
-            this.getAccountRepository(type).transactions(this.getTestPublicAccount()).toFuture().get();
+            this.getAccountRepository(type).transactions(this.getTestPublicAccount()).toFuture()
+                .get();
 
         assertEquals(10, transactions.size());
     }
 
     @ParameterizedTest
     @EnumSource(RepositoryType.class)
-    void transactionsWithPagination(RepositoryType type) throws ExecutionException, InterruptedException {
+    void transactionsWithPagination(RepositoryType type)
+        throws ExecutionException, InterruptedException {
         List<Transaction> transactions =
-            this.getAccountRepository(type).transactions(this.getTestPublicAccount()).toFuture().get();
+            this.getAccountRepository(type).transactions(this.getTestPublicAccount()).toFuture()
+                .get();
 
         assertEquals(10, transactions.size());
 
@@ -172,9 +216,9 @@ class AccountRepositoryIntegrationTest extends BaseIntegrationTest {
     @EnumSource(RepositoryType.class)
     void incomingTransactions(RepositoryType type) throws ExecutionException, InterruptedException {
         List<Transaction> transactions =
-            this.getAccountRepository(type).incomingTransactions(this.getTestPublicAccount()).toFuture()
+            this.getAccountRepository(type).incomingTransactions(this.getTestPublicAccount())
+                .toFuture()
                 .get();
-
 
         // TODO generate incoming transactions in order to test non-zero incoming transactions size
         assertEquals(0, transactions.size());
@@ -184,7 +228,8 @@ class AccountRepositoryIntegrationTest extends BaseIntegrationTest {
     @EnumSource(RepositoryType.class)
     void outgoingTransactions(RepositoryType type) throws ExecutionException, InterruptedException {
         List<Transaction> transactions =
-            this.getAccountRepository(type).outgoingTransactions(this.getTestPublicAccount()).toFuture()
+            this.getAccountRepository(type).outgoingTransactions(this.getTestPublicAccount())
+                .toFuture()
                 .get();
 
         assertEquals(10, transactions.size());
@@ -205,7 +250,8 @@ class AccountRepositoryIntegrationTest extends BaseIntegrationTest {
 
     @ParameterizedTest
     @EnumSource(RepositoryType.class)
-    void unconfirmedTransactions(RepositoryType type) throws ExecutionException, InterruptedException {
+    void unconfirmedTransactions(RepositoryType type)
+        throws ExecutionException, InterruptedException {
         List<Transaction> transactions =
             this.getAccountRepository(type).unconfirmedTransactions(this.getTestPublicAccount())
                 .toFuture()

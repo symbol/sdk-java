@@ -51,6 +51,11 @@ public class JsonHelperGson implements JsonHelper {
     }
 
     @Override
+    public Object parse(String string) {
+        return parse(string, JsonObject.class);
+    }
+
+    @Override
     public String print(final Object object) {
         try {
             if (object == null) {

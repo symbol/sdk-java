@@ -21,10 +21,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import io.nem.sdk.api.MosaicRepository;
 import io.nem.sdk.model.mosaic.MosaicId;
 import io.nem.sdk.model.mosaic.MosaicInfo;
+import io.nem.sdk.model.mosaic.MosaicNames;
 import io.nem.sdk.model.transaction.UInt64Id;
 import io.reactivex.schedulers.Schedulers;
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -54,6 +56,17 @@ class MosaicRepositoryIntegrationTest extends BaseIntegrationTest {
 
         assertEquals(new BigInteger("1"), mosaicInfo.getHeight());
         assertEquals(mosaicId, mosaicInfo.getMosaicId());
+    }
+
+
+    @ParameterizedTest
+    @EnumSource(RepositoryType.class)
+    void getMosaicsNames(RepositoryType type) throws ExecutionException, InterruptedException {
+        List<MosaicNames> mosaicNames = getMosaicRepository(type)
+            .getMosaicsNames(Collections.singletonList(mosaicId)).toFuture().get();
+        assertEquals(1, mosaicNames.size());
+        assertEquals(mosaicId, mosaicNames.get(0).getMosaicId());
+        assertEquals(0, mosaicNames.get(0).getNames().size());
     }
 
     private MosaicRepository getMosaicRepository(
@@ -108,9 +121,9 @@ class MosaicRepositoryIntegrationTest extends BaseIntegrationTest {
 
   @ParameterizedTest
     @EnumSource(RepositoryType.class)
-  void getMosaicNames() throws ExecutionException, InterruptedException {
+  void getMosaicsNames() throws ExecutionException, InterruptedException {
       List<MosaicName> mosaicNames = mosaicRepository
-              .getMosaicNames(Collections.singletonList(NetworkCurrencyMosaic.NAMESPACEID))
+              .getMosaicsNames(Collections.singletonList(NetworkCurrencyMosaic.NAMESPACEID))
               .toFuture()
               .get();
 

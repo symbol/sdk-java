@@ -63,10 +63,10 @@ public class UInt64 {
     }
 
     /**
-     * Static method to convert from integer list [lower,higher] to BigInteger
+     * Static method to convert from long list [lower,higher] to BigInteger
      *
-     * @param input integer list
-     * @return BigInteger
+     * @param input long list
+     * @return the uint64 as {@link BigInteger}
      */
     public static BigInteger extractBigInteger(List<Long> input) {
         return UInt64.fromLongArray(input.stream().mapToLong(Long::longValue).toArray());
