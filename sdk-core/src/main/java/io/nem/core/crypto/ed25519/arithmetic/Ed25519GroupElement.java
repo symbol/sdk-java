@@ -18,6 +18,7 @@ package io.nem.core.crypto.ed25519.arithmetic;
 
 import io.nem.core.utils.ByteUtils;
 import java.io.Serializable;
+import java.util.Objects;
 
 /**
  * A point on the ED25519 curve which represents a group element. This implementation is based on
@@ -786,6 +787,24 @@ public class Ed25519GroupElement implements Serializable {
     }
 
     /**
+     * Constant-time conditional move. Replaces this with u if b == 1. Replaces this with this if b
+     * == 0.
+     *
+     * @param u The group element to return if b == 1.
+     * @param b in {0, 1}
+     * @return u if b == 1; this if b == 0; @{@link IllegalStateException} otherwise.
+     */
+    private Ed25519GroupElement nullSafeCmov(final Ed25519GroupElement u, final int b) {
+        Ed25519GroupElement ret = cmov(u, b);
+        if (ret == null) {
+            throw new IllegalStateException(
+                "Ed25519GroupElement " + Objects.toString(u, "NULL") + " and argument " + b
+                    + " resolved a null cmov");
+        }
+        return ret;
+    }
+
+    /**
      * Look up 16^i r_i B in the precomputed table. No secret array indices, no secret branching.
      * Constant time. <br> Must have previously precomputed.
      *
@@ -802,19 +821,27 @@ public class Ed25519GroupElement implements Serializable {
         // 16^i |r_i| B
         final Ed25519GroupElement t =
             Ed25519Group.ZERO_PRECOMPUTED
-                .cmov(this.precomputedForSingle[pos][0], ByteUtils.isEqualConstantTime(bAbs, 1))
-                .cmov(this.precomputedForSingle[pos][1], ByteUtils.isEqualConstantTime(bAbs, 2))
-                .cmov(this.precomputedForSingle[pos][2], ByteUtils.isEqualConstantTime(bAbs, 3))
-                .cmov(this.precomputedForSingle[pos][3], ByteUtils.isEqualConstantTime(bAbs, 4))
-                .cmov(this.precomputedForSingle[pos][4], ByteUtils.isEqualConstantTime(bAbs, 5))
-                .cmov(this.precomputedForSingle[pos][5], ByteUtils.isEqualConstantTime(bAbs, 6))
-                .cmov(this.precomputedForSingle[pos][6], ByteUtils.isEqualConstantTime(bAbs, 7))
-                .cmov(this.precomputedForSingle[pos][7], ByteUtils.isEqualConstantTime(bAbs, 8));
+                .nullSafeCmov(this.precomputedForSingle[pos][0],
+                    ByteUtils.isEqualConstantTime(bAbs, 1))
+                .nullSafeCmov(this.precomputedForSingle[pos][1],
+                    ByteUtils.isEqualConstantTime(bAbs, 2))
+                .nullSafeCmov(this.precomputedForSingle[pos][2],
+                    ByteUtils.isEqualConstantTime(bAbs, 3))
+                .nullSafeCmov(this.precomputedForSingle[pos][3],
+                    ByteUtils.isEqualConstantTime(bAbs, 4))
+                .nullSafeCmov(this.precomputedForSingle[pos][4],
+                    ByteUtils.isEqualConstantTime(bAbs, 5))
+                .nullSafeCmov(this.precomputedForSingle[pos][5],
+                    ByteUtils.isEqualConstantTime(bAbs, 6))
+                .nullSafeCmov(this.precomputedForSingle[pos][6],
+                    ByteUtils.isEqualConstantTime(bAbs, 7))
+                .nullSafeCmov(this.precomputedForSingle[pos][7],
+                    ByteUtils.isEqualConstantTime(bAbs, 8));
         // -16^i |r_i| B
         //noinspection SuspiciousNameCombination
         final Ed25519GroupElement tMinus = precomputed(t.Y, t.X, t.Z.negate());
         // 16^i r_i B
-        return t.cmov(tMinus, bNegative);
+        return t.nullSafeCmov(tMinus, bNegative);
     }
 
     /**

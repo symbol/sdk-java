@@ -47,8 +47,8 @@ public class ResolutionEntryTest {
     void shouldCreateAddressResolutionEntry() {
 
         ResolutionEntry<AddressAlias> resolutionEntry =
-            new ResolutionEntry(addressAlias, receiptSource, ReceiptType.Address_Alias_Resolution);
-        assertEquals(resolutionEntry.getType(), ReceiptType.Address_Alias_Resolution);
+            new ResolutionEntry(addressAlias, receiptSource, ReceiptType.ADDRESS_ALIAS_RESOLUTION);
+        assertEquals(resolutionEntry.getType(), ReceiptType.ADDRESS_ALIAS_RESOLUTION);
         assertEquals(resolutionEntry.getReceiptSource(), receiptSource);
         assertEquals(resolutionEntry.getResolved(), addressAlias);
     }
@@ -57,8 +57,8 @@ public class ResolutionEntryTest {
     void shouldCreateMosaicResolutionEntry() {
 
         ResolutionEntry<MosaicAlias> resolutionEntry =
-            new ResolutionEntry(mosaicAlias, receiptSource, ReceiptType.Mosaic_Alias_Resolution);
-        assertEquals(resolutionEntry.getType(), ReceiptType.Mosaic_Alias_Resolution);
+            new ResolutionEntry(mosaicAlias, receiptSource, ReceiptType.MOSAIC_ALIAS_RESOLUTION);
+        assertEquals(resolutionEntry.getType(), ReceiptType.MOSAIC_ALIAS_RESOLUTION);
         assertEquals(resolutionEntry.getReceiptSource(), receiptSource);
         assertEquals(resolutionEntry.getResolved(), mosaicAlias);
     }
@@ -68,7 +68,7 @@ public class ResolutionEntryTest {
         assertThrows(
             IllegalArgumentException.class,
             () -> {
-                new ResolutionEntry(addressAlias, receiptSource, ReceiptType.Namespace_Rental_Fee);
+                new ResolutionEntry(addressAlias, receiptSource, ReceiptType.NAMESPACE_RENTAL_FEE);
             });
     }
 
@@ -77,7 +77,7 @@ public class ResolutionEntryTest {
         assertThrows(
             IllegalArgumentException.class,
             () -> {
-                new ResolutionEntry("", receiptSource, ReceiptType.Address_Alias_Resolution);
+                new ResolutionEntry("", receiptSource, ReceiptType.ADDRESS_ALIAS_RESOLUTION);
             });
     }
 }

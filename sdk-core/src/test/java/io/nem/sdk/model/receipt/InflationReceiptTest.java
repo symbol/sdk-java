@@ -41,9 +41,9 @@ public class InflationReceiptTest {
             new InflationReceipt(
                 mosaicId,
                 BigInteger.valueOf(10),
-                ReceiptType.Inflation,
+                ReceiptType.INFLATION,
                 ReceiptVersion.INFLATION_RECEIPT);
-        assertEquals(inflationReceipt.getType(), ReceiptType.Inflation);
+        assertEquals(inflationReceipt.getType(), ReceiptType.INFLATION);
         assertEquals(inflationReceipt.getSize(), null);
         assertEquals(inflationReceipt.getVersion(), ReceiptVersion.INFLATION_RECEIPT);
         assertEquals(inflationReceipt.getMosaicId().getIdAsHex().toUpperCase(), "85BBEA6CC462B244");
@@ -57,10 +57,10 @@ public class InflationReceiptTest {
             new InflationReceipt(
                 mosaicId,
                 BigInteger.valueOf(10),
-                ReceiptType.Inflation,
+                ReceiptType.INFLATION,
                 ReceiptVersion.INFLATION_RECEIPT,
                 Optional.of(100));
-        assertEquals(inflationReceipt.getType(), ReceiptType.Inflation);
+        assertEquals(inflationReceipt.getType(), ReceiptType.INFLATION);
         assertEquals(inflationReceipt.getSize(), Optional.of(100));
         assertEquals(inflationReceipt.getVersion(), ReceiptVersion.INFLATION_RECEIPT);
         assertEquals(inflationReceipt.getMosaicId().getIdAsHex().toUpperCase(), "85BBEA6CC462B244");
@@ -76,7 +76,7 @@ public class InflationReceiptTest {
                 new InflationReceipt(
                     mosaicId,
                     BigInteger.valueOf(10),
-                    ReceiptType.Namespace_Rental_Fee,
+                    ReceiptType.NAMESPACE_RENTAL_FEE,
                     ReceiptVersion.INFLATION_RECEIPT);
             });
     }

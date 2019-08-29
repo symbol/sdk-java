@@ -86,9 +86,9 @@ public class ResolutionStatement<T> {
         this.resolutionEntries.forEach(
             entry -> {
                 if ((Address.class.isAssignableFrom(unresolvedClass)
-                    && entry.getType() != ReceiptType.Address_Alias_Resolution)
+                    && entry.getType() != ReceiptType.ADDRESS_ALIAS_RESOLUTION)
                     || (MosaicId.class.isAssignableFrom(unresolvedClass)
-                    && entry.getType() != ReceiptType.Mosaic_Alias_Resolution)) {
+                    && entry.getType() != ReceiptType.MOSAIC_ALIAS_RESOLUTION)) {
                     throw new IllegalArgumentException(
                         "Unresolved type: ["
                             + unresolvedClass.getName()

@@ -29,9 +29,9 @@ public class StatementTest {
         MosaicAlias mosaicAlias = new MosaicAlias(mosaicId);
         receiptSource = new ReceiptSource(1, 1);
         ResolutionEntry addressAliasResolutionEntry =
-            new ResolutionEntry(addressAlias, receiptSource, ReceiptType.Address_Alias_Resolution);
+            new ResolutionEntry(addressAlias, receiptSource, ReceiptType.ADDRESS_ALIAS_RESOLUTION);
         ResolutionEntry mosaicAliasResolutionEntry =
-            new ResolutionEntry(mosaicAlias, receiptSource, ReceiptType.Mosaic_Alias_Resolution);
+            new ResolutionEntry(mosaicAlias, receiptSource, ReceiptType.MOSAIC_ALIAS_RESOLUTION);
 
         List<ResolutionEntry<AddressAlias>> addressEntries = new ArrayList<>();
         addressEntries.add(addressAliasResolutionEntry);
@@ -40,7 +40,7 @@ public class StatementTest {
         mosaicEntries.add(mosaicAliasResolutionEntry);
         ArtifactExpiryReceipt<MosaicId> mosaicExpiryReceipt =
             new ArtifactExpiryReceipt(
-                mosaicId, ReceiptType.Mosaic_Expired, ReceiptVersion.ARTIFACT_EXPIRY);
+                mosaicId, ReceiptType.MOSAIC_EXPIRED, ReceiptVersion.ARTIFACT_EXPIRY);
         List<Receipt> receipts = new ArrayList<>();
         receipts.add(mosaicExpiryReceipt);
 

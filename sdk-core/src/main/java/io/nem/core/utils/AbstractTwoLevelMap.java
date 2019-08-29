@@ -24,9 +24,9 @@ import java.util.concurrent.ConcurrentHashMap;
  * A two-level map of items. <br> Items are automatically created on access. Item associations are
  * order-dependent.
  */
-public abstract class AbstractTwoLevelMap<TKey, TValue> {
+public abstract class AbstractTwoLevelMap<K, V> {
 
-    private final Map<TKey, Map<TKey, TValue>> impl = new ConcurrentHashMap<>();
+    private final Map<K, Map<K, V>> impl = new ConcurrentHashMap<>();
 
     /**
      * Gets the TValue associated with key1 and key2.
@@ -35,10 +35,10 @@ public abstract class AbstractTwoLevelMap<TKey, TValue> {
      * @param key2 The second key.
      * @return The value associated with key and key2.
      */
-    public TValue getItem(final TKey key1, final TKey key2) {
-        final Map<TKey, TValue> keyOneValues = this.getItems(key1);
+    public V getItem(final K key1, final K key2) {
+        final Map<K, V> keyOneValues = this.getItems(key1);
 
-        TValue value = keyOneValues.get(key2);
+        V value = keyOneValues.get(key2);
         if (null == value) {
             value = this.createValue();
             keyOneValues.put(key2, value);
@@ -53,8 +53,8 @@ public abstract class AbstractTwoLevelMap<TKey, TValue> {
      * @param key The first key.
      * @return The map associated with key.
      */
-    public Map<TKey, TValue> getItems(final TKey key) {
-        Map<TKey, TValue> keyValues = this.impl.get(key);
+    public Map<K, V> getItems(final K key) {
+        Map<K, V> keyValues = this.impl.get(key);
         if (null == keyValues) {
             keyValues = new ConcurrentHashMap<>();
             this.impl.put(key, keyValues);
@@ -68,7 +68,7 @@ public abstract class AbstractTwoLevelMap<TKey, TValue> {
      *
      * @param key The key to remove.
      */
-    public void remove(final TKey key) {
+    public void remove(final K key) {
         this.impl.remove(key);
     }
 
@@ -77,7 +77,7 @@ public abstract class AbstractTwoLevelMap<TKey, TValue> {
      *
      * @return The key set.
      */
-    public Set<TKey> keySet() {
+    public Set<K> keySet() {
         return this.impl.keySet();
     }
 
@@ -86,5 +86,5 @@ public abstract class AbstractTwoLevelMap<TKey, TValue> {
      *
      * @return A new value.
      */
-    protected abstract TValue createValue();
+    protected abstract V createValue();
 }

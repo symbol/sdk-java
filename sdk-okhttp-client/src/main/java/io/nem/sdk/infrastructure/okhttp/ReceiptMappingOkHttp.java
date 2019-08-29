@@ -88,7 +88,7 @@ public class ReceiptMappingOkHttp {
                             new ReceiptSource(
                                 entry.getSource().getPrimaryId(),
                                 entry.getSource().getSecondaryId()),
-                            ReceiptType.Address_Alias_Resolution))
+                            ReceiptType.ADDRESS_ALIAS_RESOLUTION))
                 .collect(Collectors.toList()));
     }
 
@@ -110,7 +110,7 @@ public class ReceiptMappingOkHttp {
                             new ReceiptSource(
                                 entry.getSource().getPrimaryId(),
                                 entry.getSource().getSecondaryId()),
-                            ReceiptType.Mosaic_Alias_Resolution))
+                            ReceiptType.MOSAIC_ALIAS_RESOLUTION))
                 .collect(Collectors.toList()));
     }
 
@@ -130,25 +130,25 @@ public class ReceiptMappingOkHttp {
     public Receipt createReceiptFromDto(Object receiptDto, NetworkType networkType) {
         ReceiptType type = ReceiptType.rawValueOf(jsonHelper.getInteger(receiptDto, "type"));
         switch (type) {
-            case Harvest_Fee:
-            case LockHash_Created:
-            case LockHash_Completed:
-            case LockHash_Expired:
-            case LockSecret_Created:
-            case LockSecret_Completed:
-            case LockSecret_Expired:
+            case HARVEST_FEE:
+            case LOCK_HASH_CREATED:
+            case LOCK_HASH_COMPLETED:
+            case LOCK_HASH_EXPIRED:
+            case LOCK_SECRET_CREATED:
+            case LOCK_SECRET_COMPLETED:
+            case LOCK_SECRET_EXPIRED:
                 return createBalanceChangeReceipt(
                     jsonHelper.convert(receiptDto, BalanceChangeReceiptDTO.class), networkType);
-            case Mosaic_Levy:
-            case Mosaic_Rental_Fee:
-            case Namespace_Rental_Fee:
+            case MOSAIC_LEVY:
+            case MOSAIC_RENTAL_FEE:
+            case NAMESPACE_RENTAL_FEE:
                 return createBalanceTransferRecipient(
                     jsonHelper.convert(receiptDto, BalanceTransferReceiptDTO.class), networkType);
-            case Mosaic_Expired:
-            case Namespace_Expired:
+            case MOSAIC_EXPIRED:
+            case NAMESPACE_EXPIRED:
                 return createArtifactExpiryReceipt(
                     jsonHelper.convert(receiptDto, ArtifactExpiryReceiptDTO.class), type);
-            case Inflation:
+            case INFLATION:
                 return createInflationReceipt(
                     jsonHelper.convert(receiptDto, InflationReceiptDTO.class));
             default:

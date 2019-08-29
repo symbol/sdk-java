@@ -126,7 +126,7 @@ public class BalanceTransferReceipt<T> extends Receipt {
      * @return void
      */
     private void validateReceiptType(ReceiptType type) {
-        if (!ReceiptType.BalanceTransfer.contains(type)) {
+        if (!ReceiptType.BALANCE_TRANSFER.contains(type)) {
             throw new IllegalArgumentException("Receipt type: [" + type.name() + "] is not valid.");
         }
     }

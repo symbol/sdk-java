@@ -45,6 +45,7 @@ public class Hashes {
      * @return The hash of the concatenated inputs.
      * @throws CryptoException if the hash operation failed.
      */
+    @SuppressWarnings("squid:S00100")
     public static byte[] sha3_256(final byte[]... inputs) {
 
         return hash("SHA3-256", inputs);
@@ -57,6 +58,7 @@ public class Hashes {
      * @return The hash of the concatenated inputs.
      * @throws CryptoException if the hash operation failed.
      */
+    @SuppressWarnings("squid:S00100")
     public static byte[] sha3_512(final byte[]... inputs) {
         return hash("SHA3-512", inputs);
     }
@@ -98,22 +100,21 @@ public class Hashes {
 
         Keccak.Digest256 keccak = new Keccak.Digest256();
 
-        byte[] concat_inputs = new byte[0];
-        byte[] concat_inputsCopy;
+        byte[] concatInputs = new byte[0];
+        byte[] concatInputsCopy;
 
         for (int i = 0; i < inputs.length; i++) {
 
-            concat_inputsCopy = new byte[concat_inputs.length];
+            concatInputsCopy = new byte[concatInputs.length];
 
-            System.arraycopy(concat_inputs, 0, concat_inputsCopy, 0, concat_inputs.length);
+            System.arraycopy(concatInputs, 0, concatInputsCopy, 0, concatInputs.length);
 
-            concat_inputs = new byte[concat_inputsCopy.length + inputs[i].length];
+            concatInputs = new byte[concatInputsCopy.length + inputs[i].length];
 
-            System.arraycopy(concat_inputsCopy, 0, concat_inputs, 0, concat_inputsCopy.length);
-            System
-                .arraycopy(inputs[i], 0, concat_inputs, concat_inputsCopy.length, inputs[i].length);
+            System.arraycopy(concatInputsCopy, 0, concatInputs, 0, concatInputsCopy.length);
+            System.arraycopy(inputs[i], 0, concatInputs, concatInputsCopy.length, inputs[i].length);
         }
-        keccak.update(concat_inputs);
+        keccak.update(concatInputs);
 
         return keccak.digest();
     }

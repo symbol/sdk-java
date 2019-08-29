@@ -48,9 +48,9 @@ public class BalanceChangeReceiptTest {
                 account.getPublicAccount(),
                 mosaicId,
                 BigInteger.valueOf(10),
-                ReceiptType.Harvest_Fee,
+                ReceiptType.HARVEST_FEE,
                 ReceiptVersion.BALANCE_CHANGE);
-        assertEquals(balanceChangeReceipt.getType(), ReceiptType.Harvest_Fee);
+        assertEquals(balanceChangeReceipt.getType(), ReceiptType.HARVEST_FEE);
         assertEquals(balanceChangeReceipt.getSize(), null);
         assertEquals(balanceChangeReceipt.getVersion(), ReceiptVersion.BALANCE_CHANGE);
         assertEquals(
@@ -69,9 +69,9 @@ public class BalanceChangeReceiptTest {
                 account.getPublicAccount(),
                 mosaicId,
                 BigInteger.valueOf(10),
-                ReceiptType.LockHash_Created,
+                ReceiptType.LOCK_HASH_CREATED,
                 ReceiptVersion.BALANCE_CHANGE);
-        assertEquals(balanceChangeReceipt.getType(), ReceiptType.LockHash_Created);
+        assertEquals(balanceChangeReceipt.getType(), ReceiptType.LOCK_HASH_CREATED);
         assertEquals(balanceChangeReceipt.getSize(), null);
         assertEquals(balanceChangeReceipt.getVersion(), ReceiptVersion.BALANCE_CHANGE);
         assertEquals(
@@ -90,9 +90,9 @@ public class BalanceChangeReceiptTest {
                 account.getPublicAccount(),
                 mosaicId,
                 BigInteger.valueOf(10),
-                ReceiptType.LockHash_Expired,
+                ReceiptType.LOCK_HASH_EXPIRED,
                 ReceiptVersion.BALANCE_CHANGE);
-        assertEquals(balanceChangeReceipt.getType(), ReceiptType.LockHash_Expired);
+        assertEquals(balanceChangeReceipt.getType(), ReceiptType.LOCK_HASH_EXPIRED);
         assertEquals(balanceChangeReceipt.getSize(), null);
         assertEquals(balanceChangeReceipt.getVersion(), ReceiptVersion.BALANCE_CHANGE);
         assertEquals(
@@ -111,9 +111,9 @@ public class BalanceChangeReceiptTest {
                 account.getPublicAccount(),
                 mosaicId,
                 BigInteger.valueOf(10),
-                ReceiptType.LockHash_Completed,
+                ReceiptType.LOCK_HASH_COMPLETED,
                 ReceiptVersion.BALANCE_CHANGE);
-        assertEquals(balanceChangeReceipt.getType(), ReceiptType.LockHash_Completed);
+        assertEquals(balanceChangeReceipt.getType(), ReceiptType.LOCK_HASH_COMPLETED);
         assertEquals(balanceChangeReceipt.getSize(), null);
         assertEquals(balanceChangeReceipt.getVersion(), ReceiptVersion.BALANCE_CHANGE);
         assertEquals(
@@ -132,9 +132,9 @@ public class BalanceChangeReceiptTest {
                 account.getPublicAccount(),
                 mosaicId,
                 BigInteger.valueOf(10),
-                ReceiptType.LockSecret_Created,
+                ReceiptType.LOCK_SECRET_CREATED,
                 ReceiptVersion.BALANCE_CHANGE);
-        assertEquals(balanceChangeReceipt.getType(), ReceiptType.LockSecret_Created);
+        assertEquals(balanceChangeReceipt.getType(), ReceiptType.LOCK_SECRET_CREATED);
         assertEquals(balanceChangeReceipt.getSize(), null);
         assertEquals(balanceChangeReceipt.getVersion(), ReceiptVersion.BALANCE_CHANGE);
         assertEquals(
@@ -153,9 +153,9 @@ public class BalanceChangeReceiptTest {
                 account.getPublicAccount(),
                 mosaicId,
                 BigInteger.valueOf(10),
-                ReceiptType.LockSecret_Expired,
+                ReceiptType.LOCK_SECRET_EXPIRED,
                 ReceiptVersion.BALANCE_CHANGE);
-        assertEquals(balanceChangeReceipt.getType(), ReceiptType.LockSecret_Expired);
+        assertEquals(balanceChangeReceipt.getType(), ReceiptType.LOCK_SECRET_EXPIRED);
         assertEquals(balanceChangeReceipt.getSize(), null);
         assertEquals(balanceChangeReceipt.getVersion(), ReceiptVersion.BALANCE_CHANGE);
         assertEquals(
@@ -174,9 +174,9 @@ public class BalanceChangeReceiptTest {
                 account.getPublicAccount(),
                 mosaicId,
                 BigInteger.valueOf(10),
-                ReceiptType.LockSecret_Completed,
+                ReceiptType.LOCK_SECRET_COMPLETED,
                 ReceiptVersion.BALANCE_CHANGE);
-        assertEquals(balanceChangeReceipt.getType(), ReceiptType.LockSecret_Completed);
+        assertEquals(balanceChangeReceipt.getType(), ReceiptType.LOCK_SECRET_COMPLETED);
         assertEquals(balanceChangeReceipt.getSize(), null);
         assertEquals(balanceChangeReceipt.getVersion(), ReceiptVersion.BALANCE_CHANGE);
         assertEquals(
@@ -196,7 +196,7 @@ public class BalanceChangeReceiptTest {
                     account.getPublicAccount(),
                     mosaicId,
                     BigInteger.valueOf(10),
-                    ReceiptType.Namespace_Expired,
+                    ReceiptType.NAMESPACE_EXPIRED,
                     ReceiptVersion.BALANCE_CHANGE);
             });
     }

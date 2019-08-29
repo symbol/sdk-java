@@ -49,9 +49,9 @@ public class ResolutionStatementTest {
         mosaicAlias = new MosaicAlias(mosaicId);
         receiptSource = new ReceiptSource(1, 1);
         addressAliasResolutionEntry =
-            new ResolutionEntry(addressAlias, receiptSource, ReceiptType.Address_Alias_Resolution);
+            new ResolutionEntry(addressAlias, receiptSource, ReceiptType.ADDRESS_ALIAS_RESOLUTION);
         mosaicAliasResolutionEntry =
-            new ResolutionEntry(mosaicAlias, receiptSource, ReceiptType.Mosaic_Alias_Resolution);
+            new ResolutionEntry(mosaicAlias, receiptSource, ReceiptType.MOSAIC_ALIAS_RESOLUTION);
     }
 
     @Test

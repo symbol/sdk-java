@@ -278,7 +278,7 @@ public class AggregateTransaction extends Transaction {
      * @return boolean
      */
     public boolean signedByAccount(PublicAccount publicAccount) {
-        return this.getSigner().get().equals(publicAccount)
+        return this.getSigner().filter(a -> a.equals(publicAccount)).isPresent()
             || this.getCosignatures().stream().anyMatch(o -> o.getSigner().equals(publicAccount));
     }
 }

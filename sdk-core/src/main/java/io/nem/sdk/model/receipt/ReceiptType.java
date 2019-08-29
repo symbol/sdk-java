@@ -17,6 +17,7 @@
 package io.nem.sdk.model.receipt;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.EnumSet;
 import java.util.Set;
 
@@ -33,100 +34,100 @@ public enum ReceiptType {
      * The recipient, account and amount of fees received for harvesting a block. It is recorded
      * when a block is harvested.
      */
-    Harvest_Fee(0x2143),
+    HARVEST_FEE(0x2143),
     /**
      * The unresolved and resolved alias. It is recorded when a transaction indicates a valid
      * address alias instead of an address.
      */
-    Address_Alias_Resolution(0xF143),
+    ADDRESS_ALIAS_RESOLUTION(0xF143),
     /**
      * The unresolved and resolved alias. It is recorded when a transaction indicates a valid mosaic
      * alias instead of a mosaicId.
      */
-    Mosaic_Alias_Resolution(0xF243),
+    MOSAIC_ALIAS_RESOLUTION(0xF243),
     /**
      * A collection of state changes for a given source. It is recorded when a state change receipt
      * is issued.
      */
-    Transaction_Group(0xE143),
+    TRANSACTION_GROUP(0xE143),
     /**
      * The mosaicId expiring in this block. It is recorded when a mosaic expires.
      */
-    Mosaic_Expired(0x414D),
+    MOSAIC_EXPIRED(0x414D),
     /**
      * The sender and recipient of the levied mosaic, the mosaicId and amount. It is recorded when a
      * transaction has a levied mosaic.
      */
-    Mosaic_Levy(0x124D),
+    MOSAIC_LEVY(0x124D),
     /**
      * The sender and recipient of the mosaicId and amount representing the cost of registering the
      * mosaic. It is recorded when a mosaic is registered.
      */
-    Mosaic_Rental_Fee(0x134D),
+    MOSAIC_RENTAL_FEE(0x134D),
     /**
      * The namespaceId expiring in this block. It is recorded when a namespace expires.
      */
-    Namespace_Expired(0x414E),
+    NAMESPACE_EXPIRED(0x414E),
     /**
      * The sender and recipient of the mosaicId and amount representing the cost of extending the
      * namespace. It is recorded when a namespace is registered or its duration is extended.
      */
-    Namespace_Rental_Fee(0x124E),
+    NAMESPACE_RENTAL_FEE(0x124E),
     /**
      * The lockhash sender, mosaicId and amount locked. It is recorded when a valid
      * HashLockTransaction is announced.
      */
-    LockHash_Created(0x3148),
+    LOCK_HASH_CREATED(0x3148),
     /**
      * The haslock sender, mosaicId and amount locked that is returned. It is recorded when an
      * aggregate bonded transaction linked to the hash completes.
      */
-    LockHash_Completed(0x2248),
+    LOCK_HASH_COMPLETED(0x2248),
     /**
      * The account receiving the locked mosaic, the mosaicId and the amount. It is recorded when a
      * lock hash expires.
      */
-    LockHash_Expired(0x2348),
+    LOCK_HASH_EXPIRED(0x2348),
     /**
      * The secretlock sender, mosaicId and amount locked. It is recorded when a valid
      * SecretLockTransaction is announced.
      */
-    LockSecret_Created(0x3152),
+    LOCK_SECRET_CREATED(0x3152),
     /**
      * The secretlock sender, mosaicId and amount locked. It is recorded when a secretlock is
      * proved.
      */
-    LockSecret_Completed(0x2252),
+    LOCK_SECRET_COMPLETED(0x2252),
     /**
      * The account receiving the locked mosaic, the mosaicId and the amount. It is recorded when a
      * secretlock expires
      */
-    LockSecret_Expired(0x2352),
+    LOCK_SECRET_EXPIRED(0x2352),
 
     /**
      * The amount of native currency mosaics created. The receipt is recorded when the network has
      * inflation configured, and a new block triggers the creation of currency mosaics.
      */
-    Inflation(0x5143);
+    INFLATION(0x5143);
 
-    public static final Set<ReceiptType> ArtifactExpiry = EnumSet
-        .of(Mosaic_Expired, Namespace_Expired);
+    public static final Set<ReceiptType> ARTIFACT_EXPIRY = Collections.unmodifiableSet(EnumSet
+        .of(MOSAIC_EXPIRED, NAMESPACE_EXPIRED));
 
-    public static final Set<ReceiptType> BalanceChange =
-        EnumSet.of(
-            Harvest_Fee,
-            LockHash_Completed,
-            LockHash_Created,
-            LockHash_Created,
-            LockHash_Expired,
-            LockSecret_Completed,
-            LockSecret_Created,
-            LockSecret_Expired);
-    public static final Set<ReceiptType> BalanceTransfer =
-        EnumSet.of(Mosaic_Rental_Fee, Namespace_Rental_Fee);
+    public static final Set<ReceiptType> BALANCE_CHANGE = Collections.unmodifiableSet(EnumSet.of(
+        HARVEST_FEE,
+        LOCK_HASH_COMPLETED,
+        LOCK_HASH_CREATED,
+        LOCK_HASH_CREATED,
+        LOCK_HASH_EXPIRED,
+        LOCK_SECRET_COMPLETED,
+        LOCK_SECRET_CREATED,
+        LOCK_SECRET_EXPIRED));
 
-    public static final Set<ReceiptType> ResolutionStatement =
-        EnumSet.of(Address_Alias_Resolution, Mosaic_Alias_Resolution);
+    public static final Set<ReceiptType> BALANCE_TRANSFER =
+        Collections.unmodifiableSet(EnumSet.of(MOSAIC_RENTAL_FEE, NAMESPACE_RENTAL_FEE));
+
+    public static final Set<ReceiptType> RESOLUTION_STATEMENT =
+        Collections.unmodifiableSet(EnumSet.of(ADDRESS_ALIAS_RESOLUTION, MOSAIC_ALIAS_RESOLUTION));
 
     private final int value;
 

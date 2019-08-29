@@ -45,13 +45,13 @@ public class TransactionStatementTest {
             new Address("SDGLFW-DSHILT-IUHGIB-H5UGX2-VYF5VN-JEKCCD-BR26", NetworkType.MIJIN_TEST);
         ArtifactExpiryReceipt<MosaicId> mosaicExpiryReceipt =
             new ArtifactExpiryReceipt(
-                mosaicId, ReceiptType.Mosaic_Expired, ReceiptVersion.ARTIFACT_EXPIRY);
+                mosaicId, ReceiptType.MOSAIC_EXPIRED, ReceiptVersion.ARTIFACT_EXPIRY);
         BalanceChangeReceipt balanceChangeReceipt =
             new BalanceChangeReceipt(
                 account.getPublicAccount(),
                 mosaicId,
                 BigInteger.valueOf(10),
-                ReceiptType.LockSecret_Expired,
+                ReceiptType.LOCK_SECRET_EXPIRED,
                 ReceiptVersion.BALANCE_CHANGE);
         BalanceTransferReceipt<Address> balanceTransferReceipt =
             new BalanceTransferReceipt(
@@ -59,7 +59,7 @@ public class TransactionStatementTest {
                 recipientAddress,
                 mosaicId,
                 BigInteger.valueOf(10),
-                ReceiptType.Mosaic_Rental_Fee,
+                ReceiptType.MOSAIC_RENTAL_FEE,
                 ReceiptVersion.BALANCE_TRANSFER);
         List<Receipt> list = new ArrayList<>();
         list.add(mosaicExpiryReceipt);

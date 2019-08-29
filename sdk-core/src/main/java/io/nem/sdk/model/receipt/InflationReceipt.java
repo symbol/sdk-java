@@ -86,7 +86,7 @@ public class InflationReceipt extends Receipt {
      * @return void
      */
     private void validateReceiptType(ReceiptType type) {
-        if (type != ReceiptType.Inflation) {
+        if (type != ReceiptType.INFLATION) {
             throw new IllegalArgumentException("Receipt type: [" + type.name() + "] is not valid.");
         }
     }

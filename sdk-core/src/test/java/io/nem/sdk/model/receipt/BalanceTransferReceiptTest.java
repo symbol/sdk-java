@@ -56,9 +56,9 @@ public class BalanceTransferReceiptTest {
                 recipientAddress,
                 mosaicId,
                 BigInteger.valueOf(10),
-                ReceiptType.Mosaic_Rental_Fee,
+                ReceiptType.MOSAIC_RENTAL_FEE,
                 ReceiptVersion.BALANCE_TRANSFER);
-        assertEquals(balanceTransferReceipt.getType(), ReceiptType.Mosaic_Rental_Fee);
+        assertEquals(balanceTransferReceipt.getType(), ReceiptType.MOSAIC_RENTAL_FEE);
         assertEquals(balanceTransferReceipt.getSize(), null);
         assertEquals(balanceTransferReceipt.getVersion(), ReceiptVersion.BALANCE_TRANSFER);
         assertEquals(
@@ -81,9 +81,9 @@ public class BalanceTransferReceiptTest {
                 recipientAddressAlias,
                 mosaicId,
                 BigInteger.valueOf(10),
-                ReceiptType.Mosaic_Rental_Fee,
+                ReceiptType.MOSAIC_RENTAL_FEE,
                 ReceiptVersion.BALANCE_TRANSFER);
-        assertEquals(balanceTransferReceipt.getType(), ReceiptType.Mosaic_Rental_Fee);
+        assertEquals(balanceTransferReceipt.getType(), ReceiptType.MOSAIC_RENTAL_FEE);
         assertEquals(balanceTransferReceipt.getSize(), null);
         assertEquals(balanceTransferReceipt.getVersion(), ReceiptVersion.BALANCE_TRANSFER);
         assertEquals(
@@ -104,9 +104,9 @@ public class BalanceTransferReceiptTest {
                 recipientAddress,
                 mosaicId,
                 BigInteger.valueOf(10),
-                ReceiptType.Namespace_Rental_Fee,
+                ReceiptType.NAMESPACE_RENTAL_FEE,
                 ReceiptVersion.BALANCE_TRANSFER);
-        assertEquals(balanceTransferReceipt.getType(), ReceiptType.Namespace_Rental_Fee);
+        assertEquals(balanceTransferReceipt.getType(), ReceiptType.NAMESPACE_RENTAL_FEE);
         assertEquals(balanceTransferReceipt.getSize(), null);
         assertEquals(balanceTransferReceipt.getVersion(), ReceiptVersion.BALANCE_TRANSFER);
         assertEquals(
@@ -129,9 +129,9 @@ public class BalanceTransferReceiptTest {
                 recipientAddressAlias,
                 mosaicId,
                 BigInteger.valueOf(10),
-                ReceiptType.Namespace_Rental_Fee,
+                ReceiptType.NAMESPACE_RENTAL_FEE,
                 ReceiptVersion.BALANCE_TRANSFER);
-        assertEquals(balanceTransferReceipt.getType(), ReceiptType.Namespace_Rental_Fee);
+        assertEquals(balanceTransferReceipt.getType(), ReceiptType.NAMESPACE_RENTAL_FEE);
         assertEquals(balanceTransferReceipt.getSize(), null);
         assertEquals(balanceTransferReceipt.getVersion(), ReceiptVersion.BALANCE_TRANSFER);
         assertEquals(
@@ -152,7 +152,7 @@ public class BalanceTransferReceiptTest {
                     account.getPublicAccount(),
                     mosaicId,
                     BigInteger.valueOf(10),
-                    ReceiptType.Namespace_Expired,
+                    ReceiptType.NAMESPACE_EXPIRED,
                     ReceiptVersion.BALANCE_TRANSFER);
             });
     }

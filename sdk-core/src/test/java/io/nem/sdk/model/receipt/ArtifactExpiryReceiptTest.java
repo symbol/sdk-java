@@ -32,8 +32,8 @@ public class ArtifactExpiryReceiptTest {
         MosaicId mosaicId = new MosaicId("85BBEA6CC462B244");
         ArtifactExpiryReceipt<MosaicId> mosaicExpiryReceipt =
             new ArtifactExpiryReceipt(
-                mosaicId, ReceiptType.Mosaic_Expired, ReceiptVersion.ARTIFACT_EXPIRY);
-        assertEquals(mosaicExpiryReceipt.getType(), ReceiptType.Mosaic_Expired);
+                mosaicId, ReceiptType.MOSAIC_EXPIRED, ReceiptVersion.ARTIFACT_EXPIRY);
+        assertEquals(mosaicExpiryReceipt.getType(), ReceiptType.MOSAIC_EXPIRED);
         assertEquals(mosaicExpiryReceipt.getSize(), null);
         assertEquals(mosaicExpiryReceipt.getVersion(), ReceiptVersion.ARTIFACT_EXPIRY);
         assertEquals(
@@ -45,8 +45,8 @@ public class ArtifactExpiryReceiptTest {
         NamespaceId namespaceId = new NamespaceId(new BigInteger("-8884663987180930485"));
         ArtifactExpiryReceipt<NamespaceId> namespaceExpiryReceipt =
             new ArtifactExpiryReceipt(
-                namespaceId, ReceiptType.Namespace_Expired, ReceiptVersion.ARTIFACT_EXPIRY);
-        assertEquals(namespaceExpiryReceipt.getType(), ReceiptType.Namespace_Expired);
+                namespaceId, ReceiptType.NAMESPACE_EXPIRED, ReceiptVersion.ARTIFACT_EXPIRY);
+        assertEquals(namespaceExpiryReceipt.getType(), ReceiptType.NAMESPACE_EXPIRED);
         assertEquals(namespaceExpiryReceipt.getSize(), null);
         assertEquals(namespaceExpiryReceipt.getVersion(), ReceiptVersion.ARTIFACT_EXPIRY);
         assertEquals(
@@ -58,9 +58,9 @@ public class ArtifactExpiryReceiptTest {
         MosaicId mosaicId = new MosaicId("85BBEA6CC462B244");
         ArtifactExpiryReceipt<MosaicId> mosaicExpiryReceipt =
             new ArtifactExpiryReceipt(
-                mosaicId, ReceiptType.Mosaic_Expired, ReceiptVersion.ARTIFACT_EXPIRY,
+                mosaicId, ReceiptType.MOSAIC_EXPIRED, ReceiptVersion.ARTIFACT_EXPIRY,
                 Optional.of(100));
-        assertEquals(mosaicExpiryReceipt.getType(), ReceiptType.Mosaic_Expired);
+        assertEquals(mosaicExpiryReceipt.getType(), ReceiptType.MOSAIC_EXPIRED);
         assertEquals(mosaicExpiryReceipt.getVersion(), ReceiptVersion.ARTIFACT_EXPIRY);
         assertEquals(
             mosaicExpiryReceipt.getArtifactId().getIdAsHex().toUpperCase(), "85BBEA6CC462B244");
@@ -73,7 +73,7 @@ public class ArtifactExpiryReceiptTest {
             IllegalArgumentException.class,
             () -> {
                 new ArtifactExpiryReceipt(
-                    "", ReceiptType.Mosaic_Expired, ReceiptVersion.ARTIFACT_EXPIRY, null);
+                    "", ReceiptType.MOSAIC_EXPIRED, ReceiptVersion.ARTIFACT_EXPIRY, null);
             });
     }
 
@@ -84,7 +84,7 @@ public class ArtifactExpiryReceiptTest {
             () -> {
                 MosaicId mosaicId = new MosaicId("85BBEA6CC462B244");
                 new ArtifactExpiryReceipt(
-                    mosaicId, ReceiptType.LockHash_Completed, ReceiptVersion.ARTIFACT_EXPIRY, null);
+                    mosaicId, ReceiptType.LOCK_HASH_COMPLETED, ReceiptVersion.ARTIFACT_EXPIRY, null);
             });
     }
 }
