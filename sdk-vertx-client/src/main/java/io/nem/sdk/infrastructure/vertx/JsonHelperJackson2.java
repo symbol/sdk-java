@@ -31,7 +31,8 @@ import org.apache.commons.lang3.StringUtils;
  *
  * @author Fernando Boucquez
  */
-public class JsonHelperJackson2 implements JsonHelper {
+public class
+JsonHelperJackson2 implements JsonHelper {
 
     private final ObjectMapper objectMapper;
 
@@ -98,6 +99,9 @@ public class JsonHelperJackson2 implements JsonHelper {
         if (child == null || child.isNull()) {
             return null;
         }
+        if (child.isObject()) {
+            throw new IllegalArgumentException("Cannot extract an Integer from an json object");
+        }
         return child.asInt();
     }
 
@@ -106,6 +110,9 @@ public class JsonHelperJackson2 implements JsonHelper {
         JsonNode child = getNode(convert(object, JsonNode.class), path);
         if (child == null || child.isNull()) {
             return null;
+        }
+        if (child.isObject()) {
+            throw new IllegalArgumentException("Cannot extract a String from an json object");
         }
         return child.textValue();
     }
@@ -116,6 +123,9 @@ public class JsonHelperJackson2 implements JsonHelper {
         if (child == null || child.isNull()) {
             return null;
         }
+        if (child.isObject()) {
+            throw new IllegalArgumentException("Cannot extract a Long from an json object");
+        }
         return child.asLong();
     }
 
@@ -125,6 +135,9 @@ public class JsonHelperJackson2 implements JsonHelper {
         if (child == null || child.isNull()) {
             return null;
         }
+        if (child.isObject()) {
+            throw new IllegalArgumentException("Cannot extract a Boolean from an json object");
+        }
         return child.asBoolean();
     }
 
@@ -133,6 +146,9 @@ public class JsonHelperJackson2 implements JsonHelper {
         JsonNode child = getNode(convert(object, JsonNode.class), path);
         if (child == null || child.isNull()) {
             return null;
+        }
+        if (child.isObject()) {
+            throw new IllegalArgumentException("Cannot extract a long list from an json object");
         }
         List<Long> array = new ArrayList<>();
         child.iterator().forEachRemaining(n -> array.add(n.longValue()));
@@ -150,9 +166,20 @@ public class JsonHelperJackson2 implements JsonHelper {
         if (child == null) {
             return null;
         }
+        if (path.length == 0) {
+            return child;
+        }
+        if (!child.isObject()) {
+            return null;
+        }
+        int index = 0;
         for (String attribute : path) {
             child = child.get(attribute);
             if (child == null) {
+                return null;
+            }
+            index++;
+            if (index < path.length && !child.isObject()) {
                 return null;
             }
         }

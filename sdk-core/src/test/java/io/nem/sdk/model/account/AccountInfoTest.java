@@ -24,6 +24,7 @@ import io.nem.sdk.model.mosaic.NetworkCurrencyMosaic;
 import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.List;
+import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 
 class AccountInfoTest {
@@ -40,7 +41,7 @@ class AccountInfoTest {
                 new BigInteger("966"),
                 new BigInteger("777"),
                 new BigInteger("0"),
-                mosaics);
+                mosaics, AccountType.REMOTE_UNLINKED);
 
         assertEquals(
             Address.createFromRawAddress("SDGLFWDSHILTIUHGIBH5UGX2VYF5VNJEKCCDBR26"),
@@ -58,5 +59,8 @@ class AccountInfoTest {
                 "cf893ffcc47c33e7f68ab1db56365c156b0736824a0c1e273f9e00b8df8f01eb",
                 NetworkType.MIJIN_TEST),
             accountInfo.getPublicAccount());
+
+        Assert.assertEquals(AccountType.REMOTE_UNLINKED,
+            accountInfo.getAccountType());
     }
 }

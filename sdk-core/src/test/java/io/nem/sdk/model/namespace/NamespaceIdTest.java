@@ -24,6 +24,7 @@ import io.nem.sdk.model.transaction.UInt64;
 import java.math.BigInteger;
 import java.util.List;
 import java.util.stream.Stream;
+import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -67,6 +68,7 @@ class NamespaceIdTest {
         assertEquals(namespaceId.getId(), new BigInteger("-8884663987180930485"));
         assertEquals(namespaceId.getFullName().get(), "nem");
     }
+
 
     @Test
     void createANamespaceIdFromSubNamespacePathViaConstructor() {
@@ -120,5 +122,28 @@ class NamespaceIdTest {
         NamespaceId namespaceId = new NamespaceId(new BigInteger("-8884663987180930485"));
         NamespaceId namespaceId2 = new NamespaceId(new BigInteger("-8884663987180930485"));
         assertTrue(namespaceId.equals(namespaceId2));
+    }
+
+    @Test
+    public void shouldCompareNamespaceIdsForEqualityUsingNames() {
+
+        NamespaceId test = new NamespaceId("subnem");
+        NamespaceId test2 = new NamespaceId("subnem");
+        NamespaceId test3 = new NamespaceId("another");
+        Assert.assertEquals(test, test2);
+        Assert.assertNotEquals(test, test3);
+        Assert.assertNotEquals("NotANamespaceId", test3);
+
+    }
+
+    @Test
+    public void shouldCompareNamespaceIdsHashCode() {
+
+        NamespaceId test = new NamespaceId("subnem");
+        NamespaceId test2 = new NamespaceId("subnem");
+        NamespaceId test3 = new NamespaceId("another");
+        Assert.assertEquals(test.hashCode(), test2.hashCode());
+        Assert.assertNotEquals(test.hashCode(), test3.hashCode());
+
     }
 }
