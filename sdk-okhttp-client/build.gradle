@@ -1,0 +1,6 @@
+dependencies {
+    compile project(':sdk-core')
+    compile "io.nem:api-okhttp-gson-client:${restApiVersion}"
+    
+}
+
