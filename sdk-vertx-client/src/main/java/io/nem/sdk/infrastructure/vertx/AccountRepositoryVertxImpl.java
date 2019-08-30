@@ -28,7 +28,6 @@ import io.nem.sdk.model.account.MultisigAccountInfo;
 import io.nem.sdk.model.account.PublicAccount;
 import io.nem.sdk.model.blockchain.NetworkType;
 import io.nem.sdk.model.mosaic.Mosaic;
-import io.nem.sdk.model.mosaic.MosaicId;
 import io.nem.sdk.model.namespace.NamespaceName;
 import io.nem.sdk.model.transaction.AggregateTransaction;
 import io.nem.sdk.model.transaction.Transaction;
@@ -333,7 +332,7 @@ public class AccountRepositoryVertxImpl extends AbstractRepositoryVertxImpl impl
                 .map(
                     mosaicDTO ->
                         new Mosaic(
-                            new MosaicId(extractBigInteger(mosaicDTO.getId())),
+                            toMosaicId((mosaicDTO.getId())),
                             extractBigInteger(mosaicDTO.getAmount())))
                 .collect(Collectors.toList()), AccountType.rawValueOf(accountDTO.getAccountType().getValue()));
     }

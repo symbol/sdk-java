@@ -23,10 +23,9 @@ import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests for {@link JsonHelperJackson2}
@@ -38,10 +37,25 @@ public class JsonHelperJackson2Test {
 
     private JsonHelper jsonHelper;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         ObjectMapper mapper = new ObjectMapper();
         jsonHelper = new JsonHelperJackson2(mapper);
+    }
+    @Test
+    public void shouldFailtWhenParsingInvalid() {
+        Assertions.assertEquals("Unexpected end-of-input: expected close marker for Object (start marker at [Source: (String)\"{\"; line: 1, column: 1])\n"
+                + " at [Source: (String)\"{\"; line: 1, column: 3]",
+            Assertions.assertThrows(IllegalArgumentException.class,
+                () -> jsonHelper.parse("{", Car.class)).getMessage());
+
+    }
+
+    @Test
+    public void shouldParseNull() {
+        Assertions.assertNull(jsonHelper.parse(null));
+        Assertions.assertNull(jsonHelper.parse(null, Car.class));
+
     }
 
     @Test
@@ -87,7 +101,7 @@ public class JsonHelperJackson2Test {
         Object parsedCar = jsonHelper.parse(json);
         Assertions.assertEquals(ObjectNode.class, parsedCar.getClass());
 
-        Assert.assertEquals(json, jsonHelper.print(parsedCar));
+        Assertions.assertEquals(json, jsonHelper.print(parsedCar));
 
     }
 
@@ -98,14 +112,20 @@ public class JsonHelperJackson2Test {
         Assertions.assertEquals(car.getModel(), jsonHelper.getString(car, "model"));
         Assertions
             .assertEquals(car.getYear().intValue(), jsonHelper.getInteger(car, "year").intValue());
+
         Assertions.assertEquals(car.getYear().longValue(),
-            jsonHelper.getInteger(car, "year").longValue());
+            jsonHelper.getLong(car, "year").longValue());
+
+        Assertions.assertFalse(jsonHelper.getBoolean(car, "year").booleanValue());
 
         Assertions.assertNull(jsonHelper.getBoolean(car, "invalidProp"));
         Assertions.assertNull(jsonHelper.getString(car, "invalidProp"));
         Assertions.assertNull(jsonHelper.getInteger(car, "invalidProp"));
         Assertions.assertNull(jsonHelper.getLongList(car, "invalidProp"));
         Assertions.assertNull(jsonHelper.getLong(car, "invalidProp"));
+
+        Assertions.assertTrue(jsonHelper.contains(car, "model"));
+        Assertions.assertFalse(jsonHelper.contains(car, "invalidProp"));
 
         Assertions.assertNull(jsonHelper.getInteger(car, "model", "notInnerProperty"));
         Assertions.assertEquals(car.getValues(), jsonHelper.getLongList(car, "values"));

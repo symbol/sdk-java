@@ -194,7 +194,7 @@ public class AccountRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl im
         PublicAccount publicAccount, Optional<QueryParams> queryParams) {
 
         Callable<List<TransactionInfoDTO>> callback = () ->
-            client.transactions(publicAccount.getPublicKey().toString(),
+            getClient().transactions(publicAccount.getPublicKey().toString(),
                 getPageSize(queryParams),
                 getId(queryParams),
                 null);
@@ -219,7 +219,7 @@ public class AccountRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl im
         PublicAccount publicAccount, Optional<QueryParams> queryParams) {
 
         Callable<List<TransactionInfoDTO>> callback = () ->
-            client.incomingTransactions(publicAccount.getPublicKey().toString(),
+            getClient().incomingTransactions(publicAccount.getPublicKey().toString(),
                 getPageSize(queryParams), getId(queryParams), null);
 
         return exceptionHandling(
@@ -242,7 +242,7 @@ public class AccountRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl im
         PublicAccount publicAccount, Optional<QueryParams> queryParams) {
 
         Callable<List<TransactionInfoDTO>> callback = () ->
-            client.outgoingTransactions(publicAccount.getPublicKey().toString(),
+            getClient().outgoingTransactions(publicAccount.getPublicKey().toString(),
                 getPageSize(queryParams),
                 getId(queryParams), null);
 
@@ -272,7 +272,7 @@ public class AccountRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl im
         PublicAccount publicAccount, Optional<QueryParams> queryParams) {
 
         Callable<List<TransactionInfoDTO>> callback = () ->
-            client.partialTransactions(publicAccount.getPublicKey().toString(),
+            getClient().partialTransactions(publicAccount.getPublicKey().toString(),
                 getPageSize(queryParams), getId(queryParams), null);
 
         return exceptionHandling(
@@ -295,7 +295,7 @@ public class AccountRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl im
     private Observable<List<Transaction>> unconfirmedTransactions(
         PublicAccount publicAccount, Optional<QueryParams> queryParams) {
         Callable<List<TransactionInfoDTO>> callback = () ->
-            client.unconfirmedTransactions(publicAccount.getPublicKey().toString(),
+            getClient().unconfirmedTransactions(publicAccount.getPublicKey().toString(),
                 getPageSize(queryParams),
                 getId(queryParams), null);
         return exceptionHandling(

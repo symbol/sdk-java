@@ -41,7 +41,8 @@ public class NetworkRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl im
     @Override
     public Observable<NetworkType> getNetworkType() {
         return exceptionHandling(
-            call(client::getNetworkType).map(NetworkTypeDTO::getName).map(this::getNetworkType));
+            call(getClient()::getNetworkType).map(NetworkTypeDTO::getName)
+                .map(this::getNetworkType));
     }
 
     private NetworkType getNetworkType(String name) {
@@ -51,5 +52,9 @@ public class NetworkRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl im
             throw new IllegalArgumentException(
                 "network " + name + " is not supported yet by the sdk");
         }
+    }
+
+    public NetworkRoutesApi getClient() {
+        return client;
     }
 }

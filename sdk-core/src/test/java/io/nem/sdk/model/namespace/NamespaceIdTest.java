@@ -133,6 +133,7 @@ class NamespaceIdTest {
         Assert.assertEquals(test, test2);
         Assert.assertNotEquals(test, test3);
         Assert.assertNotEquals("NotANamespaceId", test3);
+        Assert.assertNotEquals(test3, "NotANamespaceId");
 
     }
 

@@ -138,7 +138,7 @@ JsonHelperJackson2 implements JsonHelper {
         if (child.isObject()) {
             throw new IllegalArgumentException("Cannot extract a Boolean from an json object");
         }
-        return child.asBoolean();
+        return child.booleanValue();
     }
 
     @Override
