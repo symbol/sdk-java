@@ -19,6 +19,7 @@ package io.nem.sdk.infrastructure.vertx;
 import io.nem.sdk.api.AccountRepository;
 import io.nem.sdk.api.QueryParams;
 import io.nem.sdk.model.account.AccountInfo;
+import io.nem.sdk.model.account.AccountType;
 import io.nem.sdk.model.account.Address;
 import io.nem.sdk.model.account.MultisigAccountGraphInfo;
 import io.nem.sdk.model.account.MultisigAccountInfo;
@@ -282,7 +283,7 @@ public class AccountRepositoryVertxImpl extends AbstractRepositoryVertxImpl impl
                         new Mosaic(
                             new MosaicId(extractBigInteger(mosaicDTO.getId())),
                             extractBigInteger(mosaicDTO.getAmount())))
-                .collect(Collectors.toList()));
+                .collect(Collectors.toList()), AccountType.rawValueOf(accountDTO.getAccountType().getValue()));
     }
 
     private MultisigAccountInfo toMultisigAccountInfo(MultisigDTO dto) {

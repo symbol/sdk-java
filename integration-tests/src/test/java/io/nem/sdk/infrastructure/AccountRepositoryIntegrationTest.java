@@ -22,6 +22,7 @@ import io.nem.sdk.api.AccountRepository;
 import io.nem.sdk.api.QueryParams;
 import io.nem.sdk.api.RepositoryCallException;
 import io.nem.sdk.model.account.AccountInfo;
+import io.nem.sdk.model.account.AccountType;
 import io.nem.sdk.model.account.Address;
 import io.nem.sdk.model.account.MultisigAccountGraphInfo;
 import io.nem.sdk.model.account.MultisigAccountInfo;
@@ -58,6 +59,7 @@ class AccountRepositoryIntegrationTest extends BaseIntegrationTest {
                 .get();
 
         assertEquals(this.config().getTestAccountPublicKey(), accountInfo.getPublicKey());
+        assertEquals(AccountType.UNLINKED, accountInfo.getAccountType());
     }
 
     @ParameterizedTest
@@ -71,6 +73,7 @@ class AccountRepositoryIntegrationTest extends BaseIntegrationTest {
 
         assertEquals(1, accountInfos.size());
         assertEquals(this.config().getTestAccountPublicKey(), accountInfos.get(0).getPublicKey());
+        assertEquals(AccountType.UNLINKED, accountInfos.get(0).getAccountType());
     }
 
     @ParameterizedTest
