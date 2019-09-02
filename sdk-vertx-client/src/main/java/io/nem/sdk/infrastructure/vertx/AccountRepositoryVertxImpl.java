@@ -16,17 +16,18 @@
 
 package io.nem.sdk.infrastructure.vertx;
 
+import io.nem.core.crypto.PublicKey;
 import io.nem.sdk.api.AccountRepository;
 import io.nem.sdk.api.QueryParams;
 import io.nem.sdk.model.account.AccountInfo;
 import io.nem.sdk.model.account.AccountNames;
+import io.nem.sdk.model.account.AccountType;
 import io.nem.sdk.model.account.Address;
 import io.nem.sdk.model.account.MultisigAccountGraphInfo;
 import io.nem.sdk.model.account.MultisigAccountInfo;
 import io.nem.sdk.model.account.PublicAccount;
 import io.nem.sdk.model.blockchain.NetworkType;
 import io.nem.sdk.model.mosaic.Mosaic;
-import io.nem.sdk.model.mosaic.MosaicId;
 import io.nem.sdk.model.namespace.NamespaceName;
 import io.nem.sdk.model.transaction.AggregateTransaction;
 import io.nem.sdk.model.transaction.Transaction;
@@ -87,9 +88,21 @@ public class AccountRepositoryVertxImpl extends AbstractRepositoryVertxImpl impl
     }
 
     @Override
-    public Observable<List<AccountNames>> getAccountsNames(List<Address> addresses) {
+    public Observable<List<AccountNames>> getAccountsNamesFromAddresses(List<Address> addresses) {
         AccountIds accountIds = new AccountIds()
             .addresses(addresses.stream().map(Address::plain).collect(Collectors.toList()));
+        return getAccountsNames(accountIds);
+    }
+
+    @Override
+    public Observable<List<AccountNames>> getAccountsNamesFromPublicKeys(
+        List<PublicKey> publicKeys) {
+        AccountIds accountIds = new AccountIds()
+            .publicKeys(publicKeys.stream().map(PublicKey::toString).collect(Collectors.toList()));
+        return getAccountsNames(accountIds);
+    }
+
+    private Observable<List<AccountNames>> getAccountsNames(AccountIds accountIds) {
         Consumer<Handler<AsyncResult<AccountsNamesDTO>>> callback = handler -> getClient()
             .getAccountsNames(accountIds, handler);
         return exceptionHandling(
@@ -102,7 +115,7 @@ public class AccountRepositoryVertxImpl extends AbstractRepositoryVertxImpl impl
      * Converts a {@link AccountNamesDTO} into a {@link AccountNames}
      *
      * @param dto {@link AccountNamesDTO}
-     * @return a {@link AccountNames}
+     * @return {@link AccountNames}
      */
     private AccountNames toAccountNames(AccountNamesDTO dto) throws DecoderException {
         return new AccountNames(
@@ -111,9 +124,20 @@ public class AccountRepositoryVertxImpl extends AbstractRepositoryVertxImpl impl
     }
 
     @Override
-    public Observable<List<AccountInfo>> getAccountsInfo(List<Address> addresses) {
+    public Observable<List<AccountInfo>> getAccountsInfoFromAddresses(List<Address> addresses) {
         AccountIds accountIds = new AccountIds()
             .addresses(addresses.stream().map(Address::plain).collect(Collectors.toList()));
+        return getAccountsinfo(accountIds);
+    }
+
+    @Override
+    public Observable<List<AccountInfo>> getAccountsInfoFromPublicKeys(List<PublicKey> publicKeys) {
+        AccountIds accountIds = new AccountIds()
+            .addresses(publicKeys.stream().map(PublicKey::toString).collect(Collectors.toList()));
+        return getAccountsinfo(accountIds);
+    }
+
+    private Observable<List<AccountInfo>> getAccountsinfo(AccountIds accountIds) {
         Consumer<Handler<AsyncResult<List<AccountInfoDTO>>>> callback = handler -> getClient()
             .getAccountsInfo(accountIds, handler);
         return exceptionHandling(
@@ -308,9 +332,9 @@ public class AccountRepositoryVertxImpl extends AbstractRepositoryVertxImpl impl
                 .map(
                     mosaicDTO ->
                         new Mosaic(
-                            new MosaicId(extractBigInteger(mosaicDTO.getId())),
+                            toMosaicId((mosaicDTO.getId())),
                             extractBigInteger(mosaicDTO.getAmount())))
-                .collect(Collectors.toList()));
+                .collect(Collectors.toList()), AccountType.rawValueOf(accountDTO.getAccountType().getValue()));
     }
 
     private MultisigAccountInfo toMultisigAccountInfo(MultisigDTO dto) {

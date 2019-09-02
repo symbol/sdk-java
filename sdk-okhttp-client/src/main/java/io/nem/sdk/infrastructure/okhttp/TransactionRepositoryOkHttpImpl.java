@@ -70,7 +70,7 @@ public class TransactionRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImp
     @Override
     public Observable<List<Transaction>> getTransactions(List<String> transactionHashes) {
         Callable<List<TransactionInfoDTO>> callback = () ->
-            client.getTransactions(new TransactionIds().transactionIds(transactionHashes));
+            getClient().getTransactions(new TransactionIds().transactionIds(transactionHashes));
         return exceptionHandling(
             call(callback).flatMapIterable(item -> item).map(this::toTransaction).toList()
                 .toObservable());
@@ -98,7 +98,7 @@ public class TransactionRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImp
     public Observable<List<TransactionStatus>> getTransactionStatuses(
         List<String> transactionHashes) {
         Callable<List<TransactionStatusDTO>> callback = () ->
-            client.getTransactionsStatuses(new TransactionHashes().hashes(transactionHashes));
+            getClient().getTransactionsStatuses(new TransactionHashes().hashes(transactionHashes));
         return exceptionHandling(
             call(callback).flatMapIterable(item -> item).map(this::toTransactionStatus).toList()
                 .toObservable());

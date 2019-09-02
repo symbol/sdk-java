@@ -51,6 +51,11 @@ public class JsonHelperGson implements JsonHelper {
     }
 
     @Override
+    public Object parse(String string) {
+        return parse(string, JsonObject.class);
+    }
+
+    @Override
     public String print(final Object object) {
         try {
             if (object == null) {
@@ -84,6 +89,9 @@ public class JsonHelperGson implements JsonHelper {
         if (child == null || child.isJsonNull()) {
             return null;
         }
+        if (child.isJsonObject()) {
+            throw new IllegalArgumentException("Cannot extract a Integer from an json object");
+        }
         return child.getAsInt();
     }
 
@@ -92,6 +100,9 @@ public class JsonHelperGson implements JsonHelper {
         JsonElement child = getNode(convert(object, JsonObject.class), path);
         if (child == null || child.isJsonNull()) {
             return null;
+        }
+        if (child.isJsonObject()) {
+            throw new IllegalArgumentException("Cannot extract a String from an json object");
         }
         return child.getAsString();
     }
@@ -102,6 +113,9 @@ public class JsonHelperGson implements JsonHelper {
         if (child == null || child.isJsonNull()) {
             return null;
         }
+        if (child.isJsonObject()) {
+            throw new IllegalArgumentException("Cannot extract a Long from an json object");
+        }
         return child.getAsLong();
     }
 
@@ -111,6 +125,9 @@ public class JsonHelperGson implements JsonHelper {
         if (child == null || child.isJsonNull()) {
             return null;
         }
+        if (child.isJsonObject()) {
+            throw new IllegalArgumentException("Cannot extract a Boolean from an json object");
+        }
         return child.getAsBoolean();
     }
 
@@ -119,6 +136,9 @@ public class JsonHelperGson implements JsonHelper {
         JsonElement child = getNode(convert(object, JsonObject.class), path);
         if (child == null || child.isJsonNull()) {
             return null;
+        }
+        if (child.isJsonObject()) {
+            throw new IllegalArgumentException("Cannot extract a Long List from an json object");
         }
         List<Long> array = new ArrayList<>();
         child.getAsJsonArray().iterator().forEachRemaining(n -> array.add(n.getAsLong()));
@@ -137,9 +157,20 @@ public class JsonHelperGson implements JsonHelper {
         if (child == null) {
             return null;
         }
+        if (path.length == 0) {
+            return child;
+        }
+        if (!child.isJsonObject()) {
+            return null;
+        }
+        int index = 0;
         for (String attribute : path) {
             child = ((JsonObject) child).get(attribute);
             if (child == null) {
+                return null;
+            }
+            index++;
+            if (index < path.length && !child.isJsonObject()) {
                 return null;
             }
         }

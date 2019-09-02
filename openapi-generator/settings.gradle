@@ -18,6 +18,6 @@ rootProject.name = 'openapi-generator'
 
 include ":api-jersey2-client", ":api-okhttp-gson-client", ":api-vertx-client"
 
-project(':api-jersey2-client').projectDir = new File('targetapi-jersey2-client')
+project(':api-jersey2-client').projectDir = new File('target/api-jersey2-client')
 project(':api-okhttp-gson-client').projectDir = new File('target/api-okhttp-gson-client')
 project(':api-vertx-client').projectDir = new File('target/api-vertx-client')

@@ -34,6 +34,7 @@ public class AccountInfo {
     private final BigInteger publicKeyHeight;
     private final List<Importances> importances;
     private final List<Mosaic> mosaics;
+    private final AccountType accountType;
 
     public AccountInfo(
         Address address,
@@ -42,11 +43,13 @@ public class AccountInfo {
         BigInteger publicKeyHeight,
         BigInteger importance,
         BigInteger importanceHeight,
-        List<Mosaic> mosaics) {
+        List<Mosaic> mosaics,
+        AccountType accountType) {
         this.address = address;
         this.addressHeight = addressHeight;
         this.publicKey = publicKey;
         this.publicKeyHeight = publicKeyHeight;
+        this.accountType = accountType;
         this.importances = new ArrayList<>();
         this.importances.add(new Importances(importance, importanceHeight));
         this.mosaics = mosaics;
@@ -58,13 +61,15 @@ public class AccountInfo {
         String publicKey,
         BigInteger publicKeyHeight,
         List<Importances> importances,
-        List<Mosaic> mosaics) {
+        List<Mosaic> mosaics,
+        AccountType accountType) {
         this.address = address;
         this.addressHeight = addressHeight;
         this.publicKey = publicKey;
         this.publicKeyHeight = publicKeyHeight;
         this.importances = importances;
         this.mosaics = mosaics;
+        this.accountType = accountType;
     }
 
     /**
@@ -128,5 +133,12 @@ public class AccountInfo {
      */
     public PublicAccount getPublicAccount() {
         return PublicAccount.createFromPublicKey(this.publicKey, this.address.getNetworkType());
+    }
+
+    /**
+     * @return the account type.
+     */
+    public AccountType getAccountType() {
+        return accountType;
     }
 }

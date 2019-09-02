@@ -16,24 +16,34 @@
 
 package io.nem.sdk.model.account;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
-import io.nem.sdk.model.namespace.NamespaceName;
 import java.util.Arrays;
-import java.util.List;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-class AccountNamesTest {
+/**
+ * Test of {@link AccountType}
+ *
+ * @author Fernando Boucquez
+ */
+public class AccountTypeTest {
 
     @Test
-    void createAccountNames() {
-        Address address = Address.createFromRawAddress("SDGLFWDSHILTIUHGIBH5UGX2VYF5VNJEKCCDBR26");
+    public void rawValueOf() {
+        Assertions
+            .assertEquals(AccountType.MAIN,
+                AccountType.rawValueOf(
+                    AccountType.MAIN
+                        .getValue()));
 
-        List<NamespaceName> namespaceNames = Arrays
-            .asList(new NamespaceName("accountalias"), new NamespaceName("anotheralias"));
-
-        AccountNames names = new AccountNames(address, namespaceNames);
-        assertEquals(address, names.getAddress());
-        assertEquals(namespaceNames, names.getNames());
+        Arrays.stream(AccountType.values())
+            .forEach(t -> Assertions.assertEquals(t, AccountType.rawValueOf(t.getValue())));
     }
+
+
+    @Test
+    public void rawValueOfNotExist() {
+        Assertions
+            .assertThrows(IllegalArgumentException.class, () -> AccountType.rawValueOf(-1));
+    }
+
 }

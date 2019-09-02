@@ -27,7 +27,7 @@ import org.junit.jupiter.api.Test;
 class MosaicNamesTest {
 
     @Test
-    void createAMosaicNames() {
+    void createMosaicNames() {
         MosaicId mosaicId = new MosaicId(new BigInteger("-3087871471161192663"));
         List<NamespaceName> namespaceNames = Arrays
             .asList(new NamespaceName("xem"), new NamespaceName("anotheralias"));
