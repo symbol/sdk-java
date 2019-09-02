@@ -27,6 +27,10 @@ public class NamespaceName {
     private final String name;
     private final Optional<NamespaceId> parentId;
 
+    public NamespaceName(String name) {
+        this(new NamespaceId(name), name, Optional.empty());
+    }
+
     public NamespaceName(NamespaceId namespaceId, String name) {
         this(namespaceId, name, Optional.empty());
     }
@@ -35,7 +39,7 @@ public class NamespaceName {
         this(namespaceId, name, Optional.of(parentId));
     }
 
-    private NamespaceName(NamespaceId namespaceId, String name, Optional<NamespaceId> parentId) {
+    public NamespaceName(NamespaceId namespaceId, String name, Optional<NamespaceId> parentId) {
         this.namespaceId = namespaceId;
         this.name = name;
         this.parentId = parentId;
@@ -67,4 +71,6 @@ public class NamespaceName {
     public Optional<NamespaceId> getParentId() {
         return parentId;
     }
+
+
 }

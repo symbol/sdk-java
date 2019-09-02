@@ -78,7 +78,8 @@ public class BlockRepositoryVertxImpl extends AbstractRepositoryVertxImpl implem
             client.getBlocksByHeightWithLimit(height.longValue(), limit, handler);
 
         return exceptionHandling(
-            call(callback).flatMapIterable(item -> item).map(BlockRepositoryVertxImpl::toBlockInfo).toList()
+            call(callback).flatMapIterable(item -> item).map(BlockRepositoryVertxImpl::toBlockInfo)
+                .toList()
                 .toObservable());
     }
 

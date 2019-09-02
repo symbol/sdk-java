@@ -43,7 +43,6 @@ import io.nem.sdk.openapi.vertx.model.NamespaceNameDTO;
 import io.reactivex.Observable;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Handler;
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -121,7 +120,8 @@ public class NamespaceRepositoryVertxImpl extends AbstractRepositoryVertxImpl im
             .addresses(addresses.stream().map(Address::plain).collect(
                 Collectors.toList()));
 
-        Consumer<Handler<AsyncResult<List<NamespaceInfoDTO>>>> callback = (handler) -> client.getNamespacesFromAccounts(accounts, handler);
+        Consumer<Handler<AsyncResult<List<NamespaceInfoDTO>>>> callback = (handler) -> client
+            .getNamespacesFromAccounts(accounts, handler);
 
         return exceptionHandling(
             call(callback).flatMapIterable(item -> item).map(this::toNamespaceInfo).toList()
@@ -146,18 +146,6 @@ public class NamespaceRepositoryVertxImpl extends AbstractRepositoryVertxImpl im
                 .toObservable());
     }
 
-    private NamespaceName toNamespaceName(NamespaceNameDTO namespaceNameDTO) {
-        if (namespaceNameDTO.getParentId() != null) {
-            return new NamespaceName(
-                new NamespaceId(extractBigInteger(namespaceNameDTO.getNamespaceId())),
-                namespaceNameDTO.getName(),
-                new NamespaceId(extractBigInteger(namespaceNameDTO.getParentId())));
-        } else {
-            return new NamespaceName(
-                new NamespaceId(extractBigInteger(namespaceNameDTO.getNamespaceId())),
-                namespaceNameDTO.getName());
-        }
-    }
 
     /**
      * Gets the MosaicId from a MosaicAlias
@@ -187,6 +175,14 @@ public class NamespaceRepositoryVertxImpl extends AbstractRepositoryVertxImpl im
             .toAddress(namespaceInfoDTO.getNamespace())));
     }
 
+    private NamespaceName toNamespaceName(NamespaceNameDTO dto) {
+        return new NamespaceName(
+            toNamespaceId(dto.getNamespaceId()),
+            dto.getName(), Optional.ofNullable(toNamespaceId(dto.getParentId())));
+
+    }
+
+
     /**
      * Create a NamespaceInfo from a NamespaceInfoDTO and a NetworkType
      *
@@ -203,46 +199,13 @@ public class NamespaceRepositoryVertxImpl extends AbstractRepositoryVertxImpl im
             NamespaceType.rawValueOf(namespaceInfoDTO.getNamespace().getType().getValue()),
             namespaceInfoDTO.getNamespace().getDepth(),
             this.extractLevels(namespaceInfoDTO),
-            new NamespaceId(extractBigInteger(namespaceInfoDTO.getNamespace().getParentId())),
-            new PublicAccount(namespaceInfoDTO.getNamespace().getOwner(),
-                getNetworkTypeBlocking()),
+            toNamespaceId(namespaceInfoDTO.getNamespace().getParentId()),
+            new PublicAccount(namespaceInfoDTO.getNamespace().getOwner(), getNetworkTypeBlocking()),
             extractBigInteger(namespaceInfoDTO.getNamespace().getStartHeight()),
             extractBigInteger(namespaceInfoDTO.getNamespace().getEndHeight()),
             this.extractAlias(namespaceInfoDTO.getNamespace()));
     }
 
-    /**
-     * Create a MosaicId from a NamespaceDTO
-     *
-     * @internal
-     * @access private
-     */
-    private MosaicId toMosaicId(NamespaceDTO namespaceDTO) {
-        MosaicId mosaicId = null;
-        if (namespaceDTO.getAlias() != null) {
-            if (AliasType.Mosaic.getValue().equals(namespaceDTO.getAlias().getType().getValue())) {
-                mosaicId = new MosaicId(extractBigInteger(namespaceDTO.getAlias().getMosaicId()));
-            }
-        }
-        return mosaicId;
-    }
-
-    /**
-     * Create a Address from a NamespaceDTO
-     *
-     * @internal
-     * @access private
-     */
-    private Address toAddress(NamespaceDTO namespaceDTO) {
-        Address address = null;
-        if (namespaceDTO.getAlias() != null) {
-            if (AliasType.Address.getValue().equals(namespaceDTO.getAlias().getType().getValue())) {
-                String rawAddress = namespaceDTO.getAlias().getAddress();
-                address = Address.createFromRawAddress(rawAddress);
-            }
-        }
-        return address;
-    }
 
     /**
      * Extract a list of NamespaceId levels from a NamespaceInfoDTO
@@ -251,23 +214,17 @@ public class NamespaceRepositoryVertxImpl extends AbstractRepositoryVertxImpl im
      * @access private
      */
     private List<NamespaceId> extractLevels(NamespaceInfoDTO namespaceInfoDTO) {
-        List<NamespaceId> levels = new ArrayList<NamespaceId>();
-        if (namespaceInfoDTO.getNamespace().getLevel0() != null) {
-            levels
-                .add(new NamespaceId(
-                    extractBigInteger(namespaceInfoDTO.getNamespace().getLevel0())));
+        List<NamespaceId> levels = new ArrayList<>();
+        if (isUInt64(namespaceInfoDTO.getNamespace().getLevel0())) {
+            levels.add(toNamespaceId(namespaceInfoDTO.getNamespace().getLevel0()));
         }
 
-        if (namespaceInfoDTO.getNamespace().getLevel1() != null) {
-            levels
-                .add(new NamespaceId(
-                    extractBigInteger(namespaceInfoDTO.getNamespace().getLevel1())));
+        if (isUInt64(namespaceInfoDTO.getNamespace().getLevel1())) {
+            levels.add(toNamespaceId(namespaceInfoDTO.getNamespace().getLevel1()));
         }
 
-        if (namespaceInfoDTO.getNamespace().getLevel2() != null) {
-            levels
-                .add(new NamespaceId(
-                    extractBigInteger(namespaceInfoDTO.getNamespace().getLevel2())));
+        if (isUInt64(namespaceInfoDTO.getNamespace().getLevel2())) {
+            levels.add(toNamespaceId(namespaceInfoDTO.getNamespace().getLevel2()));
         }
 
         return levels;
@@ -283,16 +240,44 @@ public class NamespaceRepositoryVertxImpl extends AbstractRepositoryVertxImpl im
 
         Alias alias = new EmptyAlias();
         if (namespaceDTO.getAlias() != null) {
-            if (namespaceDTO.getAlias().getType().getValue() == AliasType.Mosaic.getValue()) {
-                BigInteger mosaicId = extractBigInteger(namespaceDTO.getAlias().getMosaicId());
-                return new MosaicAlias(new MosaicId(mosaicId));
-            } else if (namespaceDTO.getAlias().getType().getValue() == AliasType.Address
-                .getValue()) {
-                String rawAddress = namespaceDTO.getAlias().getAddress();
-                return new AddressAlias(Address.createFromRawAddress(rawAddress));
+            if (namespaceDTO.getAlias().getType().getValue().equals(AliasType.Mosaic.getValue())) {
+                return new MosaicAlias(toMosaicId(namespaceDTO));
+            } else if (namespaceDTO.getAlias().getType().getValue().equals(AliasType.Address
+                .getValue())) {
+                return new AddressAlias(toAddress(namespaceDTO));
             }
         }
-
         return alias;
+    }
+
+    /**
+     * Create a MosaicId from a NamespaceDTO
+     *
+     * @internal
+     * @access private
+     */
+    private MosaicId toMosaicId(NamespaceDTO namespaceDTO) {
+        if (namespaceDTO.getAlias() != null && AliasType.Mosaic.getValue()
+            .equals(namespaceDTO.getAlias().getType().getValue())) {
+            return toMosaicId(namespaceDTO.getAlias().getMosaicId());
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Create a Address from a NamespaceDTO
+     *
+     * @internal
+     * @access private
+     */
+    private Address toAddress(NamespaceDTO namespaceDTO) {
+        if (namespaceDTO.getAlias() != null && AliasType.Address.getValue()
+            .equals(namespaceDTO.getAlias().getType().getValue())) {
+            return toAddress(namespaceDTO.getAlias().getAddress());
+
+        } else {
+            return null;
+        }
     }
 }

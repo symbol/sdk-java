@@ -1,11 +1,11 @@
 /*
- * Copyright 2018 NEM
+ *  Copyright 2019 NEM
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *  http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -18,20 +18,22 @@ package io.nem.sdk.model.mosaic;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import io.nem.sdk.model.namespace.NamespaceId;
+import io.nem.sdk.model.namespace.NamespaceName;
 import java.math.BigInteger;
+import java.util.Arrays;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 
-class MosaicNameTest {
+class MosaicNamesTest {
 
     @Test
-    void createAMosaicName() {
-        NamespaceId namespaceId = new NamespaceId(new BigInteger("-8884663987180930485"));
+    void createMosaicNames() {
         MosaicId mosaicId = new MosaicId(new BigInteger("-3087871471161192663"));
-        MosaicName mosaicName = new MosaicName(mosaicId, "xem", namespaceId);
+        List<NamespaceName> namespaceNames = Arrays
+            .asList(new NamespaceName("xem"), new NamespaceName("anotheralias"));
+        MosaicNames names = new MosaicNames(mosaicId, namespaceNames);
+        assertEquals(mosaicId, names.getMosaicId());
 
-        assertEquals(mosaicId, mosaicName.getMosaicId());
-        assertEquals("xem", mosaicName.getName());
-        assertEquals(namespaceId, mosaicName.getParentId());
+        assertEquals(namespaceNames, names.getNames());
     }
 }

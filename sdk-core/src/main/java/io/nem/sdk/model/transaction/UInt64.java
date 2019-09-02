@@ -62,10 +62,10 @@ public class UInt64 {
     }
 
     /**
-     * Static method to convert from integer list [lower,higher] to BigInteger
+     * Static method to convert from long list [lower,higher] to BigInteger
      *
-     * @param input integer list
-     * @return BigInteger
+     * @param input long list
+     * @return the uint64 as {@link BigInteger}
      */
     public static BigInteger extractBigInteger(List<Long> input) {
         return UInt64.fromLongArray(input.stream().mapToLong(Long::longValue).toArray());
@@ -114,6 +114,16 @@ public class UInt64 {
         bbuf.put(fromUnsignedInt(input[0]));
         bbuf.put(fromUnsignedInt(input[1]));
         return new BigInteger(array);
+    }
+
+    /**
+     * if a long list is a valid UInt64 style number by having a high and a low component.
+     *
+     * @param number the list of long representation of a Uint64 number.
+     * @return if a long list is a valid UInt64 style number by having a high and a low component.
+     */
+    public static boolean isUInt64(List<Long> number) {
+        return number != null && number.size() == 2;
     }
 
     public static byte[] fromUnsignedInt(long value) {

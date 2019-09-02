@@ -16,9 +16,11 @@
 
 package io.nem.sdk.infrastructure.vertx;
 
+import io.nem.core.crypto.PublicKey;
 import io.nem.sdk.api.AccountRepository;
 import io.nem.sdk.api.QueryParams;
 import io.nem.sdk.model.account.AccountInfo;
+import io.nem.sdk.model.account.AccountNames;
 import io.nem.sdk.model.account.AccountType;
 import io.nem.sdk.model.account.Address;
 import io.nem.sdk.model.account.MultisigAccountGraphInfo;
@@ -26,7 +28,7 @@ import io.nem.sdk.model.account.MultisigAccountInfo;
 import io.nem.sdk.model.account.PublicAccount;
 import io.nem.sdk.model.blockchain.NetworkType;
 import io.nem.sdk.model.mosaic.Mosaic;
-import io.nem.sdk.model.mosaic.MosaicId;
+import io.nem.sdk.model.namespace.NamespaceName;
 import io.nem.sdk.model.transaction.AggregateTransaction;
 import io.nem.sdk.model.transaction.Transaction;
 import io.nem.sdk.openapi.vertx.api.AccountRoutesApi;
@@ -35,6 +37,8 @@ import io.nem.sdk.openapi.vertx.invoker.ApiClient;
 import io.nem.sdk.openapi.vertx.model.AccountDTO;
 import io.nem.sdk.openapi.vertx.model.AccountIds;
 import io.nem.sdk.openapi.vertx.model.AccountInfoDTO;
+import io.nem.sdk.openapi.vertx.model.AccountNamesDTO;
+import io.nem.sdk.openapi.vertx.model.AccountsNamesDTO;
 import io.nem.sdk.openapi.vertx.model.MultisigAccountGraphInfoDTO;
 import io.nem.sdk.openapi.vertx.model.MultisigAccountInfoDTO;
 import io.nem.sdk.openapi.vertx.model.MultisigDTO;
@@ -84,9 +88,56 @@ public class AccountRepositoryVertxImpl extends AbstractRepositoryVertxImpl impl
     }
 
     @Override
-    public Observable<List<AccountInfo>> getAccountsInfo(List<Address> addresses) {
+    public Observable<List<AccountNames>> getAccountsNamesFromAddresses(List<Address> addresses) {
         AccountIds accountIds = new AccountIds()
             .addresses(addresses.stream().map(Address::plain).collect(Collectors.toList()));
+        return getAccountsNames(accountIds);
+    }
+
+    @Override
+    public Observable<List<AccountNames>> getAccountsNamesFromPublicKeys(
+        List<PublicKey> publicKeys) {
+        AccountIds accountIds = new AccountIds()
+            .publicKeys(publicKeys.stream().map(PublicKey::toString).collect(Collectors.toList()));
+        return getAccountsNames(accountIds);
+    }
+
+    private Observable<List<AccountNames>> getAccountsNames(AccountIds accountIds) {
+        Consumer<Handler<AsyncResult<AccountsNamesDTO>>> callback = handler -> getClient()
+            .getAccountsNames(accountIds, handler);
+        return exceptionHandling(
+            call(callback).map(AccountsNamesDTO::getAccountNames).flatMapIterable(item -> item)
+                .map(this::toAccountNames).toList()
+                .toObservable());
+    }
+
+    /**
+     * Converts a {@link AccountNamesDTO} into a {@link AccountNames}
+     *
+     * @param dto {@link AccountNamesDTO}
+     * @return {@link AccountNames}
+     */
+    private AccountNames toAccountNames(AccountNamesDTO dto) throws DecoderException {
+        return new AccountNames(
+            Address.createFromRawAddress(getAddressEncoded(dto.getAddress())),
+            dto.getNames().stream().map(NamespaceName::new).collect(Collectors.toList()));
+    }
+
+    @Override
+    public Observable<List<AccountInfo>> getAccountsInfoFromAddresses(List<Address> addresses) {
+        AccountIds accountIds = new AccountIds()
+            .addresses(addresses.stream().map(Address::plain).collect(Collectors.toList()));
+        return getAccountsinfo(accountIds);
+    }
+
+    @Override
+    public Observable<List<AccountInfo>> getAccountsInfoFromPublicKeys(List<PublicKey> publicKeys) {
+        AccountIds accountIds = new AccountIds()
+            .addresses(publicKeys.stream().map(PublicKey::toString).collect(Collectors.toList()));
+        return getAccountsinfo(accountIds);
+    }
+
+    private Observable<List<AccountInfo>> getAccountsinfo(AccountIds accountIds) {
         Consumer<Handler<AsyncResult<List<AccountInfoDTO>>>> callback = handler -> getClient()
             .getAccountsInfo(accountIds, handler);
         return exceptionHandling(
@@ -281,7 +332,7 @@ public class AccountRepositoryVertxImpl extends AbstractRepositoryVertxImpl impl
                 .map(
                     mosaicDTO ->
                         new Mosaic(
-                            new MosaicId(extractBigInteger(mosaicDTO.getId())),
+                            toMosaicId((mosaicDTO.getId())),
                             extractBigInteger(mosaicDTO.getAmount())))
                 .collect(Collectors.toList()), AccountType.rawValueOf(accountDTO.getAccountType().getValue()));
     }
