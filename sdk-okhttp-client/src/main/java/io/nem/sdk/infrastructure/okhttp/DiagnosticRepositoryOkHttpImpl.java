@@ -54,7 +54,7 @@ public class DiagnosticRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl
         return new BlockchainStorageInfo(
             blockchainStorageInfoDTO.getNumAccounts(),
             blockchainStorageInfoDTO.getNumBlocks(),
-            blockchainStorageInfoDTO.getNumBlocks());
+            blockchainStorageInfoDTO.getNumTransactions());
     }
 
     /**
@@ -64,12 +64,11 @@ public class DiagnosticRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl
      */
     public Observable<ServerInfo> getServerInfo() {
         Callable<ServerDTO> callback = getClient()::getServerInfo;
-        return exceptionHandling(
-            call(callback).map(ServerDTO::getServerInfo).map(this::toServerInfo));
+        return exceptionHandling(call(callback).map(ServerDTO::getServerInfo).map(this::toServerInfo));
     }
 
     private ServerInfo toServerInfo(ServerInfoDTO serverInfoDTO) {
-        return new ServerInfo(serverInfoDTO.getRestVersion(), serverInfoDTO.getRestVersion());
+        return new ServerInfo(serverInfoDTO.getRestVersion(), serverInfoDTO.getSdkVersion());
     }
 
     public DiagnosticRoutesApi getClient() {

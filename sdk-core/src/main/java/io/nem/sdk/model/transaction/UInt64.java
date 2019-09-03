@@ -117,6 +117,16 @@ public class UInt64 {
         return new BigInteger(array);
     }
 
+    /**
+     * if a long list is a valid UInt64 style number by having a high and a low component.
+     *
+     * @param number the list of long representation of a Uint64 number.
+     * @return if a long list is a valid UInt64 style number by having a high and a low component.
+     */
+    public static boolean isUInt64(List<Long> number) {
+        return number != null && number.size() == 2;
+    }
+
     public static byte[] fromUnsignedInt(long value) {
         byte[] bytes = new byte[8];
         ByteBuffer.wrap(bytes).putLong(value);

@@ -21,6 +21,7 @@ import io.nem.sdk.api.AccountRepository;
 import io.nem.sdk.api.QueryParams;
 import io.nem.sdk.model.account.AccountInfo;
 import io.nem.sdk.model.account.AccountNames;
+import io.nem.sdk.model.account.AccountType;
 import io.nem.sdk.model.account.Address;
 import io.nem.sdk.model.account.MultisigAccountGraphInfo;
 import io.nem.sdk.model.account.MultisigAccountInfo;
@@ -193,7 +194,7 @@ public class AccountRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl im
         PublicAccount publicAccount, Optional<QueryParams> queryParams) {
 
         Callable<List<TransactionInfoDTO>> callback = () ->
-            client.transactions(publicAccount.getPublicKey().toString(),
+            getClient().transactions(publicAccount.getPublicKey().toString(),
                 getPageSize(queryParams),
                 getId(queryParams),
                 null);
@@ -218,7 +219,7 @@ public class AccountRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl im
         PublicAccount publicAccount, Optional<QueryParams> queryParams) {
 
         Callable<List<TransactionInfoDTO>> callback = () ->
-            client.incomingTransactions(publicAccount.getPublicKey().toString(),
+            getClient().incomingTransactions(publicAccount.getPublicKey().toString(),
                 getPageSize(queryParams), getId(queryParams), null);
 
         return exceptionHandling(
@@ -241,7 +242,7 @@ public class AccountRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl im
         PublicAccount publicAccount, Optional<QueryParams> queryParams) {
 
         Callable<List<TransactionInfoDTO>> callback = () ->
-            client.outgoingTransactions(publicAccount.getPublicKey().toString(),
+            getClient().outgoingTransactions(publicAccount.getPublicKey().toString(),
                 getPageSize(queryParams),
                 getId(queryParams), null);
 
@@ -271,7 +272,7 @@ public class AccountRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl im
         PublicAccount publicAccount, Optional<QueryParams> queryParams) {
 
         Callable<List<TransactionInfoDTO>> callback = () ->
-            client.partialTransactions(publicAccount.getPublicKey().toString(),
+            getClient().partialTransactions(publicAccount.getPublicKey().toString(),
                 getPageSize(queryParams), getId(queryParams), null);
 
         return exceptionHandling(
@@ -294,7 +295,7 @@ public class AccountRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl im
     private Observable<List<Transaction>> unconfirmedTransactions(
         PublicAccount publicAccount, Optional<QueryParams> queryParams) {
         Callable<List<TransactionInfoDTO>> callback = () ->
-            client.unconfirmedTransactions(publicAccount.getPublicKey().toString(),
+            getClient().unconfirmedTransactions(publicAccount.getPublicKey().toString(),
                 getPageSize(queryParams),
                 getId(queryParams), null);
         return exceptionHandling(
@@ -317,7 +318,8 @@ public class AccountRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl im
                         new Mosaic(
                             new MosaicId(UInt64.extractBigInteger(mosaicDTO.getId())),
                             UInt64.extractBigInteger(mosaicDTO.getAmount())))
-                .collect(Collectors.toList()));
+                .collect(Collectors.toList()),
+            AccountType.rawValueOf(accountDTO.getAccountType().getValue()));
     }
 
     private MultisigAccountInfo toMultisigAccountInfo(MultisigDTO dto) {
