@@ -408,7 +408,7 @@ public class VertxTransactionMappingTest {
 
     @Test
     void shouldCreateAggregateMosaicAliasTransaction() {
-        TransactionInfoDTO aggregateTransferTransactionDTO = createJsonObject(
+        TransactionInfoDTO aggregateTransferTransactionDTO = loadTransactionInfoDTO(
             "shouldCreateAggregateMosaicAliasTransaction.json"
         );
 

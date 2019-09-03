@@ -291,7 +291,7 @@ public class OkHttpTransactionMappingTest {
     @Test
     void shouldCreateAggregateAddressAliasTransaction() {
         TransactionInfoDTO aggregateTransferTransactionDTO = loadTransactionInfoDTO(
-            "shouldCreateAggregateAddressAliasTransaction.json"
+            "shouldCreateAggregateMosaicAliasTransaction.json"
         );
 
         Transaction aggregateTransferTransaction = map(aggregateTransferTransactionDTO);
