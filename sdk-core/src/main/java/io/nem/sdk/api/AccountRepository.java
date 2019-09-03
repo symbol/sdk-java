@@ -16,7 +16,9 @@
 
 package io.nem.sdk.api;
 
+import io.nem.core.crypto.PublicKey;
 import io.nem.sdk.model.account.AccountInfo;
+import io.nem.sdk.model.account.AccountNames;
 import io.nem.sdk.model.account.Address;
 import io.nem.sdk.model.account.MultisigAccountGraphInfo;
 import io.nem.sdk.model.account.MultisigAccountInfo;
@@ -37,23 +39,49 @@ public interface AccountRepository {
      * Gets an AccountInfo for an account.
      *
      * @param address Address
-     * @return Observable of {@link AccountInfo}
+     * @return Observable {@link AccountInfo}
      */
     Observable<AccountInfo> getAccountInfo(Address address);
 
     /**
-     * Gets AccountsInfo for different accounts.
+     * Gets AccountsInfo for different accounts based on their addresses.
      *
-     * @param addresses List of Address
-     * @return Observable of List<{@link AccountInfo}>
+     * @param addresses {@link List} of {@link Address}
+     * @return Observable {@link List} of {@link AccountInfo}
      */
-    Observable<List<AccountInfo>> getAccountsInfo(List<Address> addresses);
+    Observable<List<AccountInfo>> getAccountsInfoFromAddresses(List<Address> addresses);
+
+    /**
+     * Gets AccountsInfo for different accounts based on their public keys.
+     *
+     * @param publicKeys {@link List} of {@link PublicKey}
+     * @return Observable {@link List} of {@link AccountInfo}
+     */
+    Observable<List<AccountInfo>> getAccountsInfoFromPublicKeys(List<PublicKey> publicKeys);
+
+    /**
+     * Gets AccountNames for different accounts based on their addresses. The names are namespaces
+     * linked using address aliases.
+     *
+     * @param addresses {@link List} of {@link Address}
+     * @return Observable {@link List} of {@link AccountNames}
+     */
+    Observable<List<AccountNames>> getAccountsNamesFromAddresses(List<Address> addresses);
+
+    /**
+     * Gets AccountNames for different accounts based on their public keys. The names are namespaces
+     * linked using address aliases.
+     *
+     * @param publicKeys {@link List} of {@link PublicKey}
+     * @return Observable {@link List} of {@link AccountNames}
+     */
+    Observable<List<AccountNames>> getAccountsNamesFromPublicKeys(List<PublicKey> publicKeys);
 
     /**
      * Gets a MultisigAccountInfo for an account.
      *
      * @param address Address
-     * @return Observable of {@link MultisigAccountInfo}
+     * @return Observable {@link MultisigAccountInfo}
      */
     Observable<MultisigAccountInfo> getMultisigAccountInfo(Address address);
 
@@ -61,7 +89,7 @@ public interface AccountRepository {
      * Gets a MultisigAccountGraphInfo for an account.
      *
      * @param address Address
-     * @return Observable of {@link MultisigAccountGraphInfo}
+     * @return Observable {@link MultisigAccountGraphInfo}
      */
     Observable<MultisigAccountGraphInfo> getMultisigAccountGraphInfo(Address address);
 
@@ -69,7 +97,7 @@ public interface AccountRepository {
      * Gets an list of confirmed transactions for which an account is signer or receiver.
      *
      * @param publicAccount PublicAccount
-     * @return Observable of List<{@link Transaction}>
+     * @return Observable {@link List} of {@link Transaction}
      */
     Observable<List<Transaction>> transactions(PublicAccount publicAccount);
 
@@ -79,7 +107,7 @@ public interface AccountRepository {
      *
      * @param publicAccount PublicAccount
      * @param queryParams QueryParams
-     * @return Observable of List<{@link Transaction}>
+     * @return Observable {@link List} of {@link Transaction}
      */
     Observable<List<Transaction>> transactions(PublicAccount publicAccount,
         QueryParams queryParams);
@@ -89,8 +117,8 @@ public interface AccountRepository {
      * transaction is said to be incoming with respect to an account if the account is the recipient
      * of a transaction.
      *
-     * @param publicAccount PublicAccount
-     * @return Observable of List<{@link Transaction}>
+     * @param publicAccount {@link PublicAccount}
+     * @return Observable {@link List} of {@link Transaction}
      */
     Observable<List<Transaction>> incomingTransactions(PublicAccount publicAccount);
 
@@ -101,7 +129,7 @@ public interface AccountRepository {
      *
      * @param publicAccount PublicAccount
      * @param queryParams QueryParams
-     * @return Observable of List<{@link Transaction}>
+     * @return Observable {@link List} of {@link Transaction}
      */
     Observable<List<Transaction>> incomingTransactions(
         PublicAccount publicAccount, QueryParams queryParams);
@@ -112,7 +140,7 @@ public interface AccountRepository {
      * transaction.
      *
      * @param publicAccount PublicAccount
-     * @return Observable of List<{@link Transaction}>
+     * @return Observable {@link List} of {@link Transaction}
      */
     Observable<List<Transaction>> outgoingTransactions(PublicAccount publicAccount);
 
@@ -123,7 +151,7 @@ public interface AccountRepository {
      *
      * @param publicAccount PublicAccount
      * @param queryParams QueryParams
-     * @return Observable of List<{@link Transaction}>
+     * @return Observable {@link List} of {@link Transaction}
      */
     Observable<List<Transaction>> outgoingTransactions(
         PublicAccount publicAccount, QueryParams queryParams);
@@ -134,7 +162,7 @@ public interface AccountRepository {
      * signatures.
      *
      * @param publicAccount PublicAccount
-     * @return Observable of List<{@link Transaction}>
+     * @return Observable {@link List} of {@link Transaction}
      */
     Observable<List<AggregateTransaction>> aggregateBondedTransactions(PublicAccount publicAccount);
 
@@ -145,7 +173,7 @@ public interface AccountRepository {
      *
      * @param publicAccount PublicAccount
      * @param queryParams QueryParams
-     * @return Observable of List<{@link Transaction}>
+     * @return Observable {@link List} of {@link Transaction}
      */
     Observable<List<AggregateTransaction>> aggregateBondedTransactions(
         PublicAccount publicAccount, QueryParams queryParams);
@@ -157,7 +185,7 @@ public interface AccountRepository {
      * in any block.
      *
      * @param publicAccount PublicAccount
-     * @return Observable of List<{@link Transaction}>
+     * @return Observable {@link List} of {@link Transaction}
      */
     Observable<List<Transaction>> unconfirmedTransactions(PublicAccount publicAccount);
 
@@ -169,7 +197,7 @@ public interface AccountRepository {
      *
      * @param publicAccount PublicAccount
      * @param queryParams QueryParams
-     * @return Observable of List<{@link Transaction}>
+     * @return Observable {@link List} of {@link Transaction}
      */
     Observable<List<Transaction>> unconfirmedTransactions(
         PublicAccount publicAccount, QueryParams queryParams);

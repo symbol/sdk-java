@@ -20,6 +20,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.nem.sdk.model.transaction.JsonHelper;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,7 +31,8 @@ import org.apache.commons.lang3.StringUtils;
  *
  * @author Fernando Boucquez
  */
-public class JsonHelperJackson2 implements JsonHelper {
+public class
+JsonHelperJackson2 implements JsonHelper {
 
     private final ObjectMapper objectMapper;
 
@@ -44,6 +46,11 @@ public class JsonHelperJackson2 implements JsonHelper {
         objectMapper.configure(DeserializationFeature.USE_LONG_FOR_INTS, true);
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         return objectMapper;
+    }
+
+    @Override
+    public Object parse(String string) {
+        return parse(string, ObjectNode.class);
     }
 
     @Override
@@ -92,6 +99,9 @@ public class JsonHelperJackson2 implements JsonHelper {
         if (child == null || child.isNull()) {
             return null;
         }
+        if (child.isObject()) {
+            throw new IllegalArgumentException("Cannot extract an Integer from an json object");
+        }
         return child.asInt();
     }
 
@@ -100,6 +110,9 @@ public class JsonHelperJackson2 implements JsonHelper {
         JsonNode child = getNode(convert(object, JsonNode.class), path);
         if (child == null || child.isNull()) {
             return null;
+        }
+        if (child.isObject()) {
+            throw new IllegalArgumentException("Cannot extract a String from an json object");
         }
         return child.textValue();
     }
@@ -110,6 +123,9 @@ public class JsonHelperJackson2 implements JsonHelper {
         if (child == null || child.isNull()) {
             return null;
         }
+        if (child.isObject()) {
+            throw new IllegalArgumentException("Cannot extract a Long from an json object");
+        }
         return child.asLong();
     }
 
@@ -119,7 +135,10 @@ public class JsonHelperJackson2 implements JsonHelper {
         if (child == null || child.isNull()) {
             return null;
         }
-        return child.asBoolean();
+        if (child.isObject()) {
+            throw new IllegalArgumentException("Cannot extract a Boolean from an json object");
+        }
+        return child.booleanValue();
     }
 
     @Override
@@ -127,6 +146,9 @@ public class JsonHelperJackson2 implements JsonHelper {
         JsonNode child = getNode(convert(object, JsonNode.class), path);
         if (child == null || child.isNull()) {
             return null;
+        }
+        if (child.isObject()) {
+            throw new IllegalArgumentException("Cannot extract a long list from an json object");
         }
         List<Long> array = new ArrayList<>();
         child.iterator().forEachRemaining(n -> array.add(n.longValue()));
@@ -144,9 +166,20 @@ public class JsonHelperJackson2 implements JsonHelper {
         if (child == null) {
             return null;
         }
+        if (path.length == 0) {
+            return child;
+        }
+        if (!child.isObject()) {
+            return null;
+        }
+        int index = 0;
         for (String attribute : path) {
             child = child.get(attribute);
             if (child == null) {
+                return null;
+            }
+            index++;
+            if (index < path.length && !child.isObject()) {
                 return null;
             }
         }

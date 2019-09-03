@@ -69,7 +69,7 @@ public class BlockRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl impl
         BigInteger height, int limit, Optional<QueryParams> queryParams) {
         //TODO queryParams not defined in the descriptor nor generated.
         Callable<List<BlockInfoDTO>> callback = () ->
-            client.getBlocksByHeightWithLimit(height.longValue(), limit);
+            getClient().getBlocksByHeightWithLimit(height.longValue(), limit);
 
         return exceptionHandling(
             call(callback).flatMapIterable(item -> item).map(BlockRepositoryOkHttpImpl::toBlockInfo)
@@ -80,7 +80,7 @@ public class BlockRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl impl
     public Observable<MerkelProofInfo> getMerkleReceipts(BigInteger height, String hash) {
 
         Callable<MerkleProofInfoDTO> callback = () ->
-            client.getMerkleReceipts(height.longValue(), hash);
+            getClient().getMerkleReceipts(height.longValue(), hash);
         return exceptionHandling(call(callback).map(this::toMerkelProofInfo));
 
 
@@ -98,14 +98,14 @@ public class BlockRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl impl
 
     public Observable<MerkelProofInfo> getMerkleTransaction(BigInteger height, String hash) {
         Callable<MerkleProofInfoDTO> callback = () ->
-            client.getMerkleTransaction(height.longValue(), hash);
+            getClient().getMerkleTransaction(height.longValue(), hash);
         return exceptionHandling(call(callback).map(this::toMerkelProofInfo));
 
     }
 
     public Observable<Statement> getBlockReceipts(BigInteger height) {
         Callable<StatementsDTO> callback = () ->
-            client.getBlockReceipts(height.longValue());
+            getClient().getBlockReceipts(height.longValue());
         return exceptionHandling(call(callback).map(statementsDTO ->
             new ReceiptMappingOkHttp(getJsonHelper())
                 .createStatementFromDto(statementsDTO, getNetworkTypeBlocking())));
@@ -114,7 +114,7 @@ public class BlockRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl impl
     private Observable<List<Transaction>> getBlockTransactions(
         BigInteger height, Optional<QueryParams> queryParams) {
         Callable<List<TransactionInfoDTO>> callback = () ->
-            client.getBlockTransactions(height.longValue(),
+            getClient().getBlockTransactions(height.longValue(),
                 getPageSize(queryParams),
                 getId(queryParams),
                 null

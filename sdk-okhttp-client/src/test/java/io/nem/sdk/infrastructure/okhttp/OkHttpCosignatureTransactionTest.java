@@ -100,7 +100,7 @@ public class OkHttpCosignatureTransactionTest {
 
         AggregateTransaction aggregateTransaction =
             AggregateTransaction.createComplete(
-                Deadline.create(2, ChronoUnit.HOURS), BigInteger.ZERO,Collections.emptyList(),
+                Deadline.create(2, ChronoUnit.HOURS), BigInteger.ZERO, Collections.emptyList(),
                 NetworkType.MIJIN_TEST);
 
         assertThrows(

@@ -17,7 +17,7 @@
 package io.nem.sdk.api;
 
 import io.nem.sdk.model.mosaic.MosaicInfo;
-import io.nem.sdk.model.mosaic.MosaicName;
+import io.nem.sdk.model.mosaic.MosaicNames;
 import io.nem.sdk.model.transaction.UInt64Id;
 import io.reactivex.Observable;
 import java.util.List;
@@ -32,7 +32,7 @@ public interface MosaicRepository {
     /**
      * Gets a MosaicInfo for a given mosaicId
      *
-     * @param mosaicId BigInteger
+     * @param mosaicId {@link java.math.BigInteger}
      * @return Observable of {@link MosaicInfo}
      */
     Observable<MosaicInfo> getMosaic(UInt64Id mosaicId);
@@ -40,10 +40,20 @@ public interface MosaicRepository {
     /**
      * Gets MosaicInfo for different mosaicIds.
      *
-     * @param mosaicIds List of BigInteger
+     * @param mosaicIds {@link List} of {@link java.math.BigInteger}
      * @return Observable of List<{@link MosaicInfo}>
      */
     Observable<List<MosaicInfo>> getMosaics(List<UInt64Id> mosaicIds);
+
+    /**
+     * Gets MosaicNames for different accounts. The names are namespaces linked using mosaic
+     * aliases.
+     *
+     * @param mosaicIds {@link List} of {@link java.math.BigInteger}
+     * @return Observable of List<{@link MosaicNames}>
+     */
+
+    Observable<List<MosaicNames>> getMosaicsNames(List<UInt64Id> mosaicIds);
 
     /**
      * Gets list of MosaicInfo from mosaics created with provided namespace.
@@ -63,11 +73,4 @@ public interface MosaicRepository {
      */
     // Observable<List<MosaicInfo>> getMosaicsFromNamespace(NamespaceId namespaceId);
 
-    /**
-     * Gets list of MosaicName for different mosaicIds.
-     *
-     * @param mosaicIds List of BigInteger
-     * @return Observable of List<{@link MosaicName}>
-     */
-    // Observable<List<MosaicName>> getMosaicNames(List<MosaicId> mosaicIds);
 }

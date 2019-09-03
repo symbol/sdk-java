@@ -116,21 +116,20 @@ public class NamespaceId implements UInt64Id {
         return fullName;
     }
 
-    /**
-     * Compares namespaceIds for equality.
-     *
-     * @return boolean
-     */
     @Override
     public boolean equals(Object o) {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof NamespaceId)) {
+        if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        NamespaceId namespaceId1 = (NamespaceId) o;
+        NamespaceId that = (NamespaceId) o;
+        return Objects.equals(id, that.id);
+    }
 
-        return Objects.equals(id, namespaceId1.id);
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }

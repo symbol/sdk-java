@@ -51,9 +51,9 @@ public class ChainRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl impl
      */
     public Observable<BigInteger> getBlockchainHeight() {
 
-        Callable<HeightInfoDTO> callback = client::getBlockchainHeight;
+        Callable<HeightInfoDTO> callback = getClient()::getBlockchainHeight;
         return exceptionHandling(
-            call(callback).map(blockchainHeight -> extractIntArray(blockchainHeight.getHeight())));
+            call(callback).map(blockchainHeight -> extractBigInteger(blockchainHeight.getHeight())));
 
     }
 
@@ -63,7 +63,7 @@ public class ChainRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl impl
      * @return io.reactivex.Observable of {@link BigInteger}
      */
     public Observable<BlockchainScore> getBlockchainScore() {
-        Callable<ChainScoreDTO> callback = client::getChainScore;
+        Callable<ChainScoreDTO> callback = getClient()::getChainScore;
         return exceptionHandling(call(callback).map(
             blockchainScoreDTO ->
                 new BlockchainScore(

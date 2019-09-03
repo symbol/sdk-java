@@ -21,14 +21,18 @@ import io.nem.sdk.model.account.PublicAccount;
 import io.nem.sdk.model.blockchain.NetworkType;
 import io.nem.sdk.model.mosaic.MosaicId;
 import io.nem.sdk.model.mosaic.MosaicInfo;
+import io.nem.sdk.model.mosaic.MosaicNames;
 import io.nem.sdk.model.mosaic.MosaicProperties;
+import io.nem.sdk.model.namespace.NamespaceName;
 import io.nem.sdk.model.transaction.UInt64;
 import io.nem.sdk.model.transaction.UInt64Id;
 import io.nem.sdk.openapi.okhttp_gson.api.MosaicRoutesApi;
 import io.nem.sdk.openapi.okhttp_gson.invoker.ApiClient;
 import io.nem.sdk.openapi.okhttp_gson.model.MosaicIds;
 import io.nem.sdk.openapi.okhttp_gson.model.MosaicInfoDTO;
+import io.nem.sdk.openapi.okhttp_gson.model.MosaicNamesDTO;
 import io.nem.sdk.openapi.okhttp_gson.model.MosaicPropertyDTO;
+import io.nem.sdk.openapi.okhttp_gson.model.MosaicsNamesDTO;
 import io.reactivex.Observable;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -62,6 +66,7 @@ public class MosaicRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl imp
         return exceptionHandling(call(callback).map(this::createMosaicInfo));
     }
 
+
     @Override
     public Observable<List<MosaicInfo>> getMosaics(List<UInt64Id> ids) {
 
@@ -76,13 +81,39 @@ public class MosaicRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl imp
                 .toObservable());
     }
 
+    @Override
+    public Observable<List<MosaicNames>> getMosaicsNames(List<UInt64Id> ids) {
+        MosaicIds mosaicIds = new MosaicIds();
+        mosaicIds.mosaicIds(ids.stream()
+            .map(id -> UInt64.bigIntegerToHex(id.getId()))
+            .collect(Collectors.toList()));
+        Callable<MosaicsNamesDTO> callback = () -> getClient()
+            .getMosaicsNames(mosaicIds);
+        return exceptionHandling(
+            call(callback).map(MosaicsNamesDTO::getAccountNames).flatMapIterable(item -> item)
+                .map(this::toMosaicNames).toList()
+                .toObservable());
+    }
+    /**
+     * Converts a {@link MosaicNamesDTO} into a {@link MosaicNames}
+     *
+     * @param dto {@link MosaicNamesDTO}
+     * @return {@link MosaicNames}
+     */
+    private MosaicNames toMosaicNames(MosaicNamesDTO dto) {
+        return new MosaicNames(
+            new MosaicId(extractBigInteger(dto.getMosaicId())),
+            dto.getNames().stream().map(NamespaceName::new).collect(Collectors.toList()));
+    }
+
+
     private MosaicInfo createMosaicInfo(MosaicInfoDTO mosaicInfoDTO) {
         NetworkType networkType = getNetworkTypeBlocking();
         return MosaicInfo.create(
             mosaicInfoDTO.getMeta().getId(),
-            new MosaicId(extractIntArray(mosaicInfoDTO.getMosaic().getMosaicId())),
-            extractIntArray(mosaicInfoDTO.getMosaic().getSupply()),
-            extractIntArray(mosaicInfoDTO.getMosaic().getHeight()),
+            new MosaicId(extractBigInteger(mosaicInfoDTO.getMosaic().getMosaicId())),
+            extractBigInteger(mosaicInfoDTO.getMosaic().getSupply()),
+            extractBigInteger(mosaicInfoDTO.getMosaic().getHeight()),
             new PublicAccount(mosaicInfoDTO.getMosaic().getOwner(), networkType),
             mosaicInfoDTO.getMosaic().getRevision(),
             extractMosaicProperties(mosaicInfoDTO.getMosaic().getProperties()));
@@ -91,12 +122,12 @@ public class MosaicRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl imp
     private MosaicProperties extractMosaicProperties(List<MosaicPropertyDTO> mosaicPropertiesDTO) {
         String flags =
             "00" + Integer.toBinaryString(
-                extractIntArray(mosaicPropertiesDTO.get(0).getValue()).intValue());
+                extractBigInteger(mosaicPropertiesDTO.get(0).getValue()).intValue());
         String bitMapFlags = flags.substring(flags.length() - 2);
         return MosaicProperties.create(
             bitMapFlags.charAt(1) == '1',
             bitMapFlags.charAt(0) == '1',
-            extractIntArray(mosaicPropertiesDTO.get(1).getValue()).intValue(),
-            extractIntArray(mosaicPropertiesDTO.get(2).getValue()));
+            extractBigInteger(mosaicPropertiesDTO.get(1).getValue()).intValue(),
+            extractBigInteger(mosaicPropertiesDTO.get(2).getValue()));
     }
 }
