@@ -34,6 +34,7 @@ import io.vertx.core.Vertx;
 import io.vertx.core.json.Json;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.client.WebClient;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
@@ -68,18 +69,21 @@ public class RepositoryFactoryVertxImpl implements RepositoryFactory {
         JsonHelperJackson2.configureMapper(apiClient.getObjectMapper());
         JsonHelperJackson2.configureMapper(Json.mapper);
 
-        NetworkRepositoryVertxImpl networkRepositoryVertx = new NetworkRepositoryVertxImpl(
-            apiClient);
-
         this.networkType = Suppliers.memoize(() -> {
-            try {
-                return networkRepositoryVertx.getNetworkType().toFuture().get();
-            } catch (Exception e) {
-                throw new IllegalStateException(
-                    "Unable to load NetworkType. Error: " + ExceptionUtils.getMessage(e), e);
-            }
+            return loadNetworkType();
         });
         networkType.get();
+    }
+
+    protected NetworkType loadNetworkType() {
+        try {
+            NetworkRepositoryVertxImpl networkRepository = new NetworkRepositoryVertxImpl(
+                apiClient);
+            return networkRepository.getNetworkType().toFuture().get(10, TimeUnit.SECONDS);
+        } catch (Exception e) {
+            throw new IllegalStateException(
+                "Unable to load NetworkType. Error: " + ExceptionUtils.getMessage(e), e);
+        }
     }
 
 

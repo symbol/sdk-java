@@ -36,10 +36,12 @@ import io.vertx.core.http.RequestOptions;
 import io.vertx.core.http.WebSocket;
 import io.vertx.core.json.Json;
 import io.vertx.core.json.JsonArray;
+
 import java.math.BigInteger;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.concurrent.CompletableFuture;
+
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
 /**
@@ -53,21 +55,36 @@ public class ListenerVertx extends ListenerBase implements Listener {
 
     private final JsonHelper jsonHelper;
 
+    private final HttpClient httpClient;
+
     private WebSocket webSocket;
 
     private String UID;
 
     /**
-     * @param url nis host
+     * @param httpClient the http client instance.
+     * @param url of the host
      */
-    public ListenerVertx(String url) {
+    public ListenerVertx(HttpClient httpClient, String url) {
         try {
             this.url = new URL(url);
         } catch (MalformedURLException e) {
             throw new IllegalArgumentException("Parameter '" + url +
                 "' is not a valid URL. " + ExceptionUtils.getMessage(e));
         }
+        this.httpClient = httpClient;
         this.jsonHelper = new JsonHelperJackson2(JsonHelperJackson2.configureMapper(Json.mapper));
+    }
+
+    /**
+     * @param @param url of the host
+     */
+    public ListenerVertx(String url) {
+        this(createHttpClient(), url);
+    }
+
+    private static HttpClient createHttpClient() {
+        return Vertx.vertx().createHttpClient();
     }
 
     /**
@@ -85,7 +102,6 @@ public class ListenerVertx extends ListenerBase implements Listener {
         requestOptions.setPort(this.url.getPort());
         requestOptions.setURI("/ws");
 
-        HttpClient httpClient = Vertx.vertx().createHttpClient();
         httpClient.websocket(
             requestOptions,
             webSocket -> {
@@ -100,7 +116,7 @@ public class ListenerVertx extends ListenerBase implements Listener {
         return future;
     }
 
-    private void handle(Object message, CompletableFuture<Void> future) {
+    protected void handle(Object message, CompletableFuture<Void> future) {
         if (jsonHelper.contains(message, "uid")) {
             UID = jsonHelper.getString(message, "uid");
             future.complete(null);
@@ -177,5 +193,9 @@ public class ListenerVertx extends ListenerBase implements Listener {
         return UInt64.fromLongArray(
             input.stream().map(Object::toString).map(Long::parseLong).mapToLong(Long::longValue)
                 .toArray());
+    }
+
+    public JsonHelper getJsonHelper() {
+        return jsonHelper;
     }
 }

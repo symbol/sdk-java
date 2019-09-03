@@ -117,18 +117,6 @@ public abstract class AbstractOkHttpRespositoryTest {
         return networkType;
     }
 
-    protected TransactionInfoDTO createJsonObject(String name) {
-        String resourceName = "TransactionMapping-" + name;
-        try (InputStream resourceAsStream = getClass().getClassLoader()
-            .getResourceAsStream("json/" + resourceName)) {
-            return jsonHelper.parse(IOUtils.toString(resourceAsStream), TransactionInfoDTO.class);
-        } catch (Exception e) {
-            throw new IllegalStateException(
-                "Cannot open resource " + resourceName + ". Error: " + ExceptionUtils.getMessage(e),
-                e);
-        }
-    }
-
     protected abstract AbstractRepositoryOkHttpImpl getRepository();
 
 
