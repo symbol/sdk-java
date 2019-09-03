@@ -16,6 +16,7 @@
 
 package io.nem.sdk.infrastructure.vertx;
 
+import io.nem.sdk.api.RepositoryCallException;
 import io.nem.sdk.api.RepositoryFactory;
 import io.nem.sdk.model.blockchain.NetworkType;
 import org.junit.jupiter.api.Assertions;
@@ -49,6 +50,20 @@ public class RepositoryFactoryVertxImplTest {
         Assertions.assertNotNull(factory.createNetworkRepository());
         Assertions.assertNotNull(factory.createNodeRepository());
         Assertions.assertNotNull(factory.createTransactionRepository());
+    }
+
+    @Test
+    public void shouldFailInvalidServer() {
+
+        String baseUrl = "https://localhost:1934/path";
+
+        RepositoryCallException e = Assertions.assertThrows(RepositoryCallException.class, () -> {
+            new RepositoryFactoryVertxImpl(baseUrl);
+        });
+
+        Assertions.assertEquals(
+            "Unable to load NetworkType. Error: RepositoryCallException: ApiException: Connection refused: no further information: localhost/127.0.0.1:1934 - 500",
+            e.getMessage());
     }
 
 }
