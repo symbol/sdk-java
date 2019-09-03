@@ -283,34 +283,4 @@ public class NamespaceRepositoryVertxImpl extends AbstractRepositoryVertxImpl im
         return alias;
     }
 
-    /**
-     * Create a MosaicId from a NamespaceDTO
-     *
-     * @internal
-     * @access private
-     */
-    private MosaicId toMosaicId(NamespaceDTO namespaceDTO) {
-        if (namespaceDTO.getAlias() != null && AliasType.Mosaic.getValue()
-            .equals(namespaceDTO.getAlias().getType().getValue())) {
-            return toMosaicId(namespaceDTO.getAlias().getMosaicId());
-        } else {
-            return null;
-        }
-    }
-
-    /**
-     * Create a Address from a NamespaceDTO
-     *
-     * @internal
-     * @access private
-     */
-    private Address toAddress(NamespaceDTO namespaceDTO) {
-        if (namespaceDTO.getAlias() != null && AliasType.Address.getValue()
-            .equals(namespaceDTO.getAlias().getType().getValue())) {
-            return toAddress(namespaceDTO.getAlias().getAddress());
-
-        } else {
-            return null;
-        }
-    }
 }
