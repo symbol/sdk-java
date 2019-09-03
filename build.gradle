@@ -37,7 +37,7 @@ ext {
     vertxVersion = "3.5.0"
     rxjavaVersion = "2.1.7"
     junitVersion = "5.0.2"
-    restApiVersion = "0.7.17"
+    restApiVersion = "0.7.17-SNAPSHOT"
 }
 
 repositories {
@@ -81,7 +81,7 @@ subprojects {
     apply plugin: 'org.sonarqube'
     group 'io.nem'
     sourceCompatibility = 1.8
-    version = '0.13.0'
+    version = '0.13.0-SNAPSHOT'
 
 
     repositories {
