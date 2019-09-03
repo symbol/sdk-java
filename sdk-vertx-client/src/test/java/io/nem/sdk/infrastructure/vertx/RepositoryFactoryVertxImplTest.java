@@ -61,9 +61,9 @@ public class RepositoryFactoryVertxImplTest {
             new RepositoryFactoryVertxImpl(baseUrl);
         });
 
-        Assertions.assertEquals(
-            "Unable to load NetworkType. Error: RepositoryCallException: ApiException: Connection refused: no further information: localhost/127.0.0.1:1934 - 500",
-            e.getMessage());
+        Assertions.assertTrue(
+            e.getMessage().contains(
+                "Unable to load NetworkType. Error: RepositoryCallException: ApiException: Connection refused"));
     }
 
 }
