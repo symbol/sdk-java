@@ -19,7 +19,6 @@ package io.nem.sdk.infrastructure.vertx;
 import io.nem.sdk.api.MosaicRepository;
 import io.nem.sdk.model.account.PublicAccount;
 import io.nem.sdk.model.blockchain.NetworkType;
-import io.nem.sdk.model.mosaic.MosaicId;
 import io.nem.sdk.model.mosaic.MosaicInfo;
 import io.nem.sdk.model.mosaic.MosaicNames;
 import io.nem.sdk.model.mosaic.MosaicProperties;
@@ -88,7 +87,7 @@ public class MosaicRepositoryVertxImpl extends AbstractRepositoryVertxImpl imple
         NetworkType networkType = getNetworkTypeBlocking();
         return MosaicInfo.create(
             mosaicInfoDTO.getMeta().getId(),
-            new MosaicId(extractBigInteger(mosaicInfoDTO.getMosaic().getMosaicId())),
+            toMosaicId(mosaicInfoDTO.getMosaic().getMosaicId()),
             extractBigInteger(mosaicInfoDTO.getMosaic().getSupply()),
             extractBigInteger(mosaicInfoDTO.getMosaic().getHeight()),
             new PublicAccount(mosaicInfoDTO.getMosaic().getOwner(), networkType),
@@ -114,11 +113,11 @@ public class MosaicRepositoryVertxImpl extends AbstractRepositoryVertxImpl imple
      * Converts a {@link MosaicNamesDTO} into a {@link MosaicNames}
      *
      * @param dto {@link MosaicNamesDTO}
-     * @return a {@link MosaicNames}
+     * @return {@link MosaicNames}
      */
     private MosaicNames toMosaicNames(MosaicNamesDTO dto) {
         return new MosaicNames(
-            new MosaicId(extractBigInteger(dto.getMosaicId())),
+            toMosaicId(dto.getMosaicId()),
             dto.getNames().stream().map(NamespaceName::new).collect(Collectors.toList()));
     }
 

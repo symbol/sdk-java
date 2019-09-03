@@ -39,7 +39,6 @@ import io.nem.sdk.openapi.okhttp_gson.model.NamespaceIds;
 import io.nem.sdk.openapi.okhttp_gson.model.NamespaceInfoDTO;
 import io.nem.sdk.openapi.okhttp_gson.model.NamespaceNameDTO;
 import io.reactivex.Observable;
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -87,7 +86,7 @@ public class NamespaceRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl 
         Address address, Optional<QueryParams> queryParams) {
 
         Callable<List<NamespaceInfoDTO>> callback = () ->
-            client.getNamespacesFromAccount(address.plain(),
+            getClient().getNamespacesFromAccount(address.plain(),
                 getPageSize(queryParams),
                 getId(queryParams)
             );
@@ -117,7 +116,7 @@ public class NamespaceRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl 
                 Collectors.toList()));
 
         Callable<List<NamespaceInfoDTO>> callback = () ->
-            client.getNamespacesFromAccounts(accounts);
+            getClient().getNamespacesFromAccounts(accounts);
 
         return exceptionHandling(
             call(callback).flatMapIterable(item -> item).map(this::toNamespaceInfo).toList()
@@ -134,23 +133,23 @@ public class NamespaceRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl 
                 .collect(Collectors.toList()));
 
         Callable<List<NamespaceNameDTO>> callback = () ->
-            client.getNamespacesNames(ids);
+            getClient().getNamespacesNames(ids);
 
         return exceptionHandling(
             call(callback).flatMapIterable(item -> item).map(this::toNamespaceName).toList()
                 .toObservable());
     }
 
-    private NamespaceName toNamespaceName(NamespaceNameDTO namespaceNameDTO) {
-        if (namespaceNameDTO.getParentId() != null) {
+    private NamespaceName toNamespaceName(NamespaceNameDTO dto) {
+        if (dto.getParentId() != null && !dto.getParentId().isEmpty()) {
             return new NamespaceName(
-                new NamespaceId(extractBigInteger(namespaceNameDTO.getNamespaceId())),
-                namespaceNameDTO.getName(),
-                new NamespaceId(extractBigInteger(namespaceNameDTO.getParentId())));
+                new NamespaceId(extractBigInteger(dto.getNamespaceId())),
+                dto.getName(),
+                new NamespaceId(extractBigInteger(dto.getParentId())));
         } else {
             return new NamespaceName(
-                new NamespaceId(extractBigInteger(namespaceNameDTO.getNamespaceId())),
-                namespaceNameDTO.getName());
+                new NamespaceId(extractBigInteger(dto.getNamespaceId())),
+                dto.getName());
         }
     }
 
@@ -199,46 +198,13 @@ public class NamespaceRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl 
             NamespaceType.rawValueOf(namespaceInfoDTO.getNamespace().getType().getValue()),
             namespaceInfoDTO.getNamespace().getDepth(),
             this.extractLevels(namespaceInfoDTO),
-            new NamespaceId(extractBigInteger(namespaceInfoDTO.getNamespace().getParentId())),
-            new PublicAccount(namespaceInfoDTO.getNamespace().getOwner(),
-                getNetworkTypeBlocking()),
+            toNamespaceId(namespaceInfoDTO.getNamespace().getParentId()),
+            new PublicAccount(namespaceInfoDTO.getNamespace().getOwner(), getNetworkTypeBlocking()),
             extractBigInteger(namespaceInfoDTO.getNamespace().getStartHeight()),
             extractBigInteger(namespaceInfoDTO.getNamespace().getEndHeight()),
             this.extractAlias(namespaceInfoDTO.getNamespace()));
     }
 
-    /**
-     * Create a MosaicId from a NamespaceDTO
-     *
-     * @internal
-     * @access private
-     */
-    private MosaicId toMosaicId(NamespaceDTO namespaceDTO) {
-        MosaicId mosaicId = null;
-        if (namespaceDTO.getAlias() != null) {
-            if (AliasType.Mosaic.getValue().equals(namespaceDTO.getAlias().getType().getValue())) {
-                mosaicId = new MosaicId(extractBigInteger(namespaceDTO.getAlias().getMosaicId()));
-            }
-        }
-        return mosaicId;
-    }
-
-    /**
-     * Create a Address from a NamespaceDTO
-     *
-     * @internal
-     * @access private
-     */
-    private Address toAddress(NamespaceDTO namespaceDTO) {
-        Address address = null;
-        if (namespaceDTO.getAlias() != null) {
-            if (AliasType.Address.getValue().equals(namespaceDTO.getAlias().getType().getValue())) {
-                String rawAddress = namespaceDTO.getAlias().getAddress();
-                address = Address.createFromRawAddress(rawAddress);
-            }
-        }
-        return address;
-    }
 
     /**
      * Extract a list of NamespaceId levels from a NamespaceInfoDTO
@@ -247,23 +213,17 @@ public class NamespaceRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl 
      * @access private
      */
     private List<NamespaceId> extractLevels(NamespaceInfoDTO namespaceInfoDTO) {
-        List<NamespaceId> levels = new ArrayList<NamespaceId>();
-        if (namespaceInfoDTO.getNamespace().getLevel0() != null) {
-            levels
-                .add(new NamespaceId(
-                    extractBigInteger(namespaceInfoDTO.getNamespace().getLevel0())));
+        List<NamespaceId> levels = new ArrayList<>();
+        if (isUInt64(namespaceInfoDTO.getNamespace().getLevel0())) {
+            levels.add(toNamespaceId(namespaceInfoDTO.getNamespace().getLevel0()));
         }
 
-        if (namespaceInfoDTO.getNamespace().getLevel1() != null) {
-            levels
-                .add(new NamespaceId(
-                    extractBigInteger(namespaceInfoDTO.getNamespace().getLevel1())));
+        if (isUInt64(namespaceInfoDTO.getNamespace().getLevel1())) {
+            levels.add(toNamespaceId(namespaceInfoDTO.getNamespace().getLevel1()));
         }
 
-        if (namespaceInfoDTO.getNamespace().getLevel2() != null) {
-            levels
-                .add(new NamespaceId(
-                    extractBigInteger(namespaceInfoDTO.getNamespace().getLevel2())));
+        if (isUInt64(namespaceInfoDTO.getNamespace().getLevel2())) {
+            levels.add(toNamespaceId(namespaceInfoDTO.getNamespace().getLevel2()));
         }
 
         return levels;
@@ -279,16 +239,44 @@ public class NamespaceRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl 
 
         Alias alias = new EmptyAlias();
         if (namespaceDTO.getAlias() != null) {
-            if (namespaceDTO.getAlias().getType().getValue() == AliasType.Mosaic.getValue()) {
-                BigInteger mosaicId = extractBigInteger(namespaceDTO.getAlias().getMosaicId());
-                return new MosaicAlias(new MosaicId(mosaicId));
-            } else if (namespaceDTO.getAlias().getType().getValue() == AliasType.Address
-                .getValue()) {
-                String rawAddress = namespaceDTO.getAlias().getAddress();
-                return new AddressAlias(Address.createFromRawAddress(rawAddress));
+            if (namespaceDTO.getAlias().getType().getValue().equals(AliasType.Mosaic.getValue())) {
+                return new MosaicAlias(toMosaicId(namespaceDTO));
+            } else if (namespaceDTO.getAlias().getType().getValue().equals(AliasType.Address
+                .getValue())) {
+                return new AddressAlias(toAddress(namespaceDTO));
             }
         }
-
         return alias;
+    }
+
+    /**
+     * Create a MosaicId from a NamespaceDTO
+     *
+     * @internal
+     * @access private
+     */
+    private MosaicId toMosaicId(NamespaceDTO namespaceDTO) {
+        if (namespaceDTO.getAlias() != null && AliasType.Mosaic.getValue()
+            .equals(namespaceDTO.getAlias().getType().getValue())) {
+            return toMosaicId(namespaceDTO.getAlias().getMosaicId());
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Create a Address from a NamespaceDTO
+     *
+     * @internal
+     * @access private
+     */
+    private Address toAddress(NamespaceDTO namespaceDTO) {
+        if (namespaceDTO.getAlias() != null && AliasType.Address.getValue()
+            .equals(namespaceDTO.getAlias().getType().getValue())) {
+            return toAddress(namespaceDTO.getAlias().getAddress());
+
+        } else {
+            return null;
+        }
     }
 }

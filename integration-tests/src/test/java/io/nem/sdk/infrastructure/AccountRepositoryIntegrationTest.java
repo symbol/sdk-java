@@ -20,11 +20,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import io.nem.core.crypto.PublicKey;
 import io.nem.sdk.api.AccountRepository;
 import io.nem.sdk.api.QueryParams;
 import io.nem.sdk.api.RepositoryCallException;
 import io.nem.sdk.model.account.AccountInfo;
 import io.nem.sdk.model.account.AccountNames;
+import io.nem.sdk.model.account.AccountType;
 import io.nem.sdk.model.account.Address;
 import io.nem.sdk.model.account.MultisigAccountGraphInfo;
 import io.nem.sdk.model.account.MultisigAccountInfo;
@@ -62,27 +64,33 @@ class AccountRepositoryIntegrationTest extends BaseIntegrationTest {
                 .get();
 
         assertEquals(this.config().getTestAccountPublicKey(), accountInfo.getPublicKey());
+        assertEquals(AccountType.UNLINKED, accountInfo.getAccountType());
     }
 
     @ParameterizedTest
     @EnumSource(RepositoryType.class)
-    void getAccountsInfo(RepositoryType type) throws ExecutionException, InterruptedException {
+    void getAccountsInfoFromAddresses(RepositoryType type)
+        throws ExecutionException, InterruptedException {
         List<AccountInfo> accountInfos =
             this.getAccountRepository(type)
-                .getAccountsInfo(Collections.singletonList(this.getTestAccountAddress()))
+                .getAccountsInfoFromAddresses(
+                    Collections.singletonList(this.getTestAccountAddress()))
                 .toFuture()
                 .get();
 
         assertEquals(1, accountInfos.size());
         assertEquals(this.config().getTestAccountPublicKey(), accountInfos.get(0).getPublicKey());
+        assertEquals(AccountType.UNLINKED, accountInfos.get(0).getAccountType());
     }
 
     @ParameterizedTest
     @EnumSource(RepositoryType.class)
-    void getAccountNames(RepositoryType type) throws ExecutionException, InterruptedException {
+    void getAccountsNamesFromAddresses(RepositoryType type)
+        throws ExecutionException, InterruptedException {
         List<AccountNames> accountNames =
             this.getAccountRepository(type)
-                .getAccountsNames(Collections.singletonList(this.getTestAccountAddress()))
+                .getAccountsNamesFromAddresses(
+                    Collections.singletonList(this.getTestAccountAddress()))
                 .toFuture()
                 .get();
 
@@ -94,16 +102,34 @@ class AccountRepositoryIntegrationTest extends BaseIntegrationTest {
 
     @ParameterizedTest
     @EnumSource(RepositoryType.class)
-    void getMultipleAccountsInfo(RepositoryType type)
+    void getAccountsInfoFromPublicKeys(RepositoryType type)
         throws ExecutionException, InterruptedException {
         List<AccountInfo> accountInfos =
             this.getAccountRepository(type)
-                .getAccountsInfo(Collections.singletonList(this.getTestAccountAddress()))
+                .getAccountsInfoFromPublicKeys(Collections.singletonList(
+                    PublicKey.fromHexString(this.config().getTestAccountPublicKey())))
                 .toFuture()
                 .get();
 
         assertEquals(1, accountInfos.size());
         assertEquals(this.config().getTestAccountPublicKey(), accountInfos.get(0).getPublicKey());
+    }
+
+    @ParameterizedTest
+    @EnumSource(RepositoryType.class)
+    void getAccountsNamesFromPublicKeys(RepositoryType type)
+        throws ExecutionException, InterruptedException {
+        List<AccountNames> accountNames =
+            this.getAccountRepository(type)
+                .getAccountsNamesFromPublicKeys(Collections.singletonList(
+                    PublicKey.fromHexString(this.config().getTestAccountPublicKey())))
+                .toFuture()
+                .get();
+
+        assertEquals(1, accountNames.size());
+        assertEquals(this.config().getTestAccountAddress(),
+            accountNames.get(0).getAddress().plain());
+        assertEquals(0, accountNames.get(0).getNames().size());
     }
 
     @ParameterizedTest

@@ -55,7 +55,7 @@ public class OkHttpCosignatureTransactionTest {
 
     @Test
     void createACosignatureTransactionViaConstructor() {
-        TransactionInfoDTO transactionInfoDTO = createJsonObject(
+        TransactionInfoDTO transactionInfoDTO = TestHelperOkHttp.loadCosignatureTransactionInfoDTO(
             "createACosignatureTransactionViaConstructor.json");
         AggregateTransaction aggregateTransaction =
             (AggregateTransaction) new TransactionMappingOkHttp(jsonHelper)
@@ -81,26 +81,12 @@ public class OkHttpCosignatureTransactionTest {
     }
 
 
-    private TransactionInfoDTO createJsonObject(String name) {
-
-        String resourceName = "CosignatureTransaction-" + name;
-
-        try (InputStream resourceAsStream = getClass().getClassLoader()
-            .getResourceAsStream("json/" + resourceName)) {
-            return jsonHelper.parse(IOUtils.toString(resourceAsStream), TransactionInfoDTO.class);
-        } catch (Exception e) {
-            throw new IllegalStateException(
-                "Cannot open resource " + resourceName + ". Error: " + ExceptionUtils.getMessage(e),
-                e);
-        }
-    }
-
     @Test
     void shouldThrowExceptionWhenTransactionToCosignHasNotBeenAnnunced() throws Exception {
 
         AggregateTransaction aggregateTransaction =
             AggregateTransaction.createComplete(
-                Deadline.create(2, ChronoUnit.HOURS), BigInteger.ZERO,Collections.emptyList(),
+                Deadline.create(2, ChronoUnit.HOURS), BigInteger.ZERO, Collections.emptyList(),
                 NetworkType.MIJIN_TEST);
 
         assertThrows(

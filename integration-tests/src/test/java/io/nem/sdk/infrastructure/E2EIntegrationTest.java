@@ -341,7 +341,7 @@ class E2EIntegrationTest extends BaseIntegrationTest {
             this.account.getAddress(), signedTransaction2.getHash(), type);
 
         List<AccountNames> accountNames = getRepositoryFactory(type).createAccountRepository()
-            .getAccountsNames(Collections.singletonList(this.account.getAddress())).toFuture()
+            .getAccountsNamesFromAddresses(Collections.singletonList(this.account.getAddress())).toFuture()
             .get();
 
         Assert.assertEquals(1, accountNames.size());

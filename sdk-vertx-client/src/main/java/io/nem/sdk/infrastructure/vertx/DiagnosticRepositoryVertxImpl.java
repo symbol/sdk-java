@@ -56,7 +56,7 @@ public class DiagnosticRepositoryVertxImpl extends AbstractRepositoryVertxImpl i
      * @return io.reactivex.Observable of {@link BlockchainStorageInfo}
      */
     public Observable<BlockchainStorageInfo> getBlockchainStorage() {
-        Consumer<Handler<AsyncResult<StorageInfoDTO>>> callback = client::getDiagnosticStorage;
+        Consumer<Handler<AsyncResult<StorageInfoDTO>>> callback = getClient()::getDiagnosticStorage;
         return exceptionHandling(call(callback).map(this::toBlockchainStorageInfo));
     }
 
@@ -64,7 +64,7 @@ public class DiagnosticRepositoryVertxImpl extends AbstractRepositoryVertxImpl i
         return new BlockchainStorageInfo(
             blockchainStorageInfoDTO.getNumAccounts(),
             blockchainStorageInfoDTO.getNumBlocks(),
-            blockchainStorageInfoDTO.getNumBlocks());
+            blockchainStorageInfoDTO.getNumTransactions());
     }
 
     /**
@@ -73,12 +73,12 @@ public class DiagnosticRepositoryVertxImpl extends AbstractRepositoryVertxImpl i
      * @return Observable of {@link ServerInfo}
      */
     public Observable<ServerInfo> getServerInfo() {
-        Consumer<Handler<AsyncResult<ServerDTO>>> callback = client::getServerInfo;
+        Consumer<Handler<AsyncResult<ServerDTO>>> callback = getClient()::getServerInfo;
         return exceptionHandling(
             call(callback).map(ServerDTO::getServerInfo).map(this::toServerInfo));
     }
 
     private ServerInfo toServerInfo(ServerInfoDTO serverInfoDTO) {
-        return new ServerInfo(serverInfoDTO.getRestVersion(), serverInfoDTO.getRestVersion());
+        return new ServerInfo(serverInfoDTO.getRestVersion(), serverInfoDTO.getSdkVersion());
     }
 }

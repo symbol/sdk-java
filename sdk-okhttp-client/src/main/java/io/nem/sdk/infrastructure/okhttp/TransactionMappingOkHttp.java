@@ -130,6 +130,10 @@ public class TransactionMappingOkHttp implements Function<TransactionInfoDTO, Tr
         return BigInteger.valueOf(input.intValue());
     }
 
+    protected MosaicId toMosaicId(List<Long> id) {
+        return UInt64.isUInt64(id) ? new MosaicId(extractBigInteger(id)) : null;
+    }
+
     protected Integer extractTransactionVersion(int version) {
         return (int) Long.parseLong(Integer.toHexString(version).substring(2, 4), 16);
     }
@@ -204,7 +208,7 @@ class TransferTransactionMapping extends TransactionMappingOkHttp {
                     .map(
                         mosaic ->
                             new Mosaic(
-                                new MosaicId(extractBigInteger(mosaic.getId())),
+                                toMosaicId(mosaic.getId()),
                                 extractBigInteger(mosaic.getAmount())))
                     .collect(Collectors.toList());
         }
@@ -314,7 +318,7 @@ class MosaicCreationTransactionMapping extends TransactionMappingOkHttp {
             extractBigInteger(transaction.getMaxFee()),
             MosaicNonce
                 .createFromBigInteger(extractBigInteger(transaction.getNonce())),
-            new MosaicId(extractBigInteger(transaction.getMosaicId())),
+            toMosaicId(transaction.getMosaicId()),
             properties,
             transaction.getSignature(),
             new PublicAccount(
@@ -343,7 +347,7 @@ class MosaicSupplyChangeTransactionMapping extends TransactionMappingOkHttp {
             extractTransactionVersion(transaction.getVersion()),
             deadline,
             extractBigInteger(transaction.getMaxFee()),
-            new MosaicId(extractBigInteger(transaction.getMosaicId())),
+            toMosaicId(transaction.getMosaicId()),
             MosaicSupplyType.rawValueOf(transaction.getDirection().getValue()),
             extractBigInteger(transaction.getDelta()),
             transaction.getSignature(),
@@ -491,7 +495,9 @@ class LockFundsTransactionMapping extends TransactionMappingOkHttp {
 
         Deadline deadline = new Deadline(extractBigInteger(transaction.getDeadline()));
         NetworkType networkType = extractNetworkType(transaction.getVersion());
-        Mosaic mosaic = getMosaic(transaction.getMosaic());
+        //TODO getter transaction mosaic attribute.
+        Mosaic mosaic = new Mosaic(toMosaicId(transaction.getMosaic().getId()),
+            extractBigInteger(transaction.getMosaic().getAmount()));
         return new LockFundsTransaction(
             networkType,
             extractTransactionVersion(transaction.getVersion()),
@@ -528,7 +534,7 @@ class SecretLockTransactionMapping extends TransactionMappingOkHttp {
         NetworkType networkType = extractNetworkType(transaction.getVersion());
         Mosaic mosaic =
             new Mosaic(
-                new MosaicId(extractBigInteger(transaction.getMosaicId())),
+                toMosaicId(transaction.getMosaicId()),
                 extractBigInteger(transaction.getAmount()));
         return new SecretLockTransaction(
             networkType,
