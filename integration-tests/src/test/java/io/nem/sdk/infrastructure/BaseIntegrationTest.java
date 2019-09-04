@@ -23,6 +23,8 @@ import io.nem.sdk.model.account.Account;
 import io.nem.sdk.model.account.Address;
 import io.nem.sdk.model.account.PublicAccount;
 import io.nem.sdk.model.blockchain.NetworkType;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Abstract class for all the repository integration tests.
@@ -52,12 +54,23 @@ public abstract class BaseIntegrationTest {
     private Address testRecipient; // Test Account2 Address
     private String generationHash;
     private Long timeoutSeconds;
+    private Map<RepositoryType, RepositoryFactory> repositoryFactoryMap = new HashMap<>();
 
+
+    /**
+     * Method that create a {@link RepositoryFactory} based on the {@link RepositoryType} if
+     * necessary. The created repository factories are being cached for performance and multithread
+     * testing.
+     */
+    public RepositoryFactory getRepositoryFactory(RepositoryType type) {
+        return repositoryFactoryMap.computeIfAbsent(type, this::createRepositoryFactory);
+    }
 
     /**
      * Method that creates a {@link RepositoryFactory} based on the {@link RepositoryType}.
      */
-    public RepositoryFactory getRepositoryFactory(RepositoryType type) {
+    private RepositoryFactory createRepositoryFactory(RepositoryType type) {
+
         switch (type) {
             case VERTX:
                 return new RepositoryFactoryVertxImpl(getApiUrl());
@@ -66,7 +79,6 @@ public abstract class BaseIntegrationTest {
             default:
                 throw new IllegalStateException("Invalid Repository type " + type);
         }
-
     }
 
     public Config config() {

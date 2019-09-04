@@ -19,6 +19,7 @@ package io.nem.sdk.infrastructure.vertx;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static io.nem.sdk.infrastructure.vertx.TestHelperVertx.loadAggregateTransactionInfoDTO;
 
 import io.nem.sdk.model.account.Account;
 import io.nem.sdk.model.account.Address;
@@ -160,7 +161,7 @@ public class VertxAggregateTransactionTest {
 
     @Test
     void shouldFindAccountInAsASignerOfTheTransaction() {
-        TransactionInfoDTO aggregateTransferTransactionDTO = createJsonObject(
+        TransactionInfoDTO aggregateTransferTransactionDTO = loadAggregateTransactionInfoDTO(
             "shouldFindAccountInAsASignerOfTheTransaction.json");
         System.out.println(aggregateTransferTransactionDTO);
 
@@ -185,17 +186,5 @@ public class VertxAggregateTransactionTest {
                     NetworkType.MIJIN_TEST)));
     }
 
-    private TransactionInfoDTO createJsonObject(String name) {
 
-        String resourceName = "AggregateTransaction-" + name;
-
-        try (InputStream resourceAsStream = getClass().getClassLoader()
-            .getResourceAsStream("json/" + resourceName)) {
-            return jsonHelper.parse(IOUtils.toString(resourceAsStream), TransactionInfoDTO.class);
-        } catch (Exception e) {
-            throw new IllegalStateException(
-                "Cannot open resource " + resourceName + ". Error: " + ExceptionUtils.getMessage(e),
-                e);
-        }
-    }
 }

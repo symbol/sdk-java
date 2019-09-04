@@ -160,7 +160,7 @@ public class OkHttpAggregateTransactionTest {
 
     @Test
     void shouldFindAccountInAsASignerOfTheTransaction() {
-        TransactionInfoDTO aggregateTransferTransactionDTO = createJsonObject(
+        TransactionInfoDTO aggregateTransferTransactionDTO = TestHelperOkHttp.loadAggregateTransactionInfoDTO(
             "shouldFindAccountInAsASignerOfTheTransaction.json");
 
         AggregateTransaction aggregateTransferTransaction =
@@ -184,17 +184,5 @@ public class OkHttpAggregateTransactionTest {
                     NetworkType.MIJIN_TEST)));
     }
 
-    private TransactionInfoDTO createJsonObject(String name) {
 
-        String resourceName = "AggregateTransaction-" + name;
-
-        try (InputStream resourceAsStream = getClass().getClassLoader()
-            .getResourceAsStream("json/" + resourceName)) {
-            return jsonHelper.parse(IOUtils.toString(resourceAsStream), TransactionInfoDTO.class);
-        } catch (Exception e) {
-            throw new IllegalStateException(
-                "Cannot open resource " + resourceName + ". Error: " + ExceptionUtils.getMessage(e),
-                e);
-        }
-    }
 }

@@ -19,13 +19,17 @@ package io.nem.sdk.infrastructure.vertx;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static io.nem.sdk.infrastructure.vertx.TestHelperVertx.loadTransactionInfoDTO;
 
 import io.nem.sdk.model.account.Address;
+import io.nem.sdk.model.namespace.AliasAction;
 import io.nem.sdk.model.namespace.NamespaceType;
+import io.nem.sdk.model.transaction.AddressAliasTransaction;
 import io.nem.sdk.model.transaction.AggregateTransaction;
 import io.nem.sdk.model.transaction.JsonHelper;
 import io.nem.sdk.model.transaction.LockFundsTransaction;
 import io.nem.sdk.model.transaction.ModifyMultisigAccountTransaction;
+import io.nem.sdk.model.transaction.MosaicAliasTransaction;
 import io.nem.sdk.model.transaction.MosaicDefinitionTransaction;
 import io.nem.sdk.model.transaction.MosaicSupplyChangeTransaction;
 import io.nem.sdk.model.transaction.RegisterNamespaceTransaction;
@@ -54,6 +58,7 @@ import java.util.List;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.bouncycastle.util.encoders.Hex;
+import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 
 public class VertxTransactionMappingTest {
@@ -65,7 +70,7 @@ public class VertxTransactionMappingTest {
 
     @Test
     void shouldCreateStandaloneTransferTransaction() {
-        TransactionInfoDTO transferTransactionDTO = createJsonObject(
+        TransactionInfoDTO transferTransactionDTO = loadTransactionInfoDTO(
             "shouldCreateStandaloneTransferTransaction.json");
 
         Transaction transferTransaction = map(transferTransactionDTO);
@@ -75,7 +80,7 @@ public class VertxTransactionMappingTest {
 
     @Test
     void shouldCreateAggregateTransferTransaction() {
-        TransactionInfoDTO aggregateTransferTransactionDTO = createJsonObject(
+        TransactionInfoDTO aggregateTransferTransactionDTO = loadTransactionInfoDTO(
             "shouldCreateAggregateTransferTransaction.json"
         );
 
@@ -89,7 +94,7 @@ public class VertxTransactionMappingTest {
     @Test
     void shouldCreateStandaloneRootNamespaceCreationTransaction() {
         TransactionInfoDTO namespaceCreationTransactionDTO =
-            createJsonObject("shouldCreateStandaloneRootNamespaceCreationTransaction.json"
+            loadTransactionInfoDTO("shouldCreateStandaloneRootNamespaceCreationTransaction.json"
             );
 
         Transaction namespaceCreationTransaction =
@@ -102,7 +107,7 @@ public class VertxTransactionMappingTest {
     @Test
     void shouldCreateAggregateRootNamespaceCreationTransaction() {
         TransactionInfoDTO aggregateNamespaceCreationTransactionDTO =
-            createJsonObject("shouldCreateAggregateRootNamespaceCreationTransaction.json"
+            loadTransactionInfoDTO("shouldCreateAggregateRootNamespaceCreationTransaction.json"
             );
 
         Transaction aggregateNamespaceCreationTransaction =
@@ -116,7 +121,7 @@ public class VertxTransactionMappingTest {
     @Test
     void shouldCreateStandaloneSubNamespaceCreationTransaction() {
         TransactionInfoDTO namespaceCreationTransactionDTO =
-            createJsonObject("shouldCreateStandaloneSubNamespaceCreationTransaction.json"
+            loadTransactionInfoDTO("shouldCreateStandaloneSubNamespaceCreationTransaction.json"
             );
 
         Transaction namespaceCreationTransaction =
@@ -129,7 +134,7 @@ public class VertxTransactionMappingTest {
     @Test
     void shouldCreateAggregateSubNamespaceCreationTransaction() {
         TransactionInfoDTO aggregateNamespaceCreationTransactionDTO =
-            createJsonObject("shouldCreateAggregateSubNamespaceCreationTransaction.json"
+            loadTransactionInfoDTO("shouldCreateAggregateSubNamespaceCreationTransaction.json"
             );
 
         Transaction aggregateNamespaceCreationTransaction =
@@ -142,7 +147,7 @@ public class VertxTransactionMappingTest {
 
     @Test
     void shouldCreateStandaloneMosaicCreationTransaction() {
-        TransactionInfoDTO mosaicCreationTransactionDTO = createJsonObject(
+        TransactionInfoDTO mosaicCreationTransactionDTO = loadTransactionInfoDTO(
             "shouldCreateStandaloneMosaicCreationTransaction.json");
 
         Transaction mosaicCreationTransaction = map(mosaicCreationTransactionDTO);
@@ -153,7 +158,7 @@ public class VertxTransactionMappingTest {
     @Test
     void shouldCreateAggregateMosaicCreationTransaction() {
         TransactionInfoDTO aggregateMosaicCreationTransactionDTO =
-            createJsonObject("shouldCreateAggregateMosaicCreationTransaction.json"
+            loadTransactionInfoDTO("shouldCreateAggregateMosaicCreationTransaction.json"
             );
 
         Transaction aggregateMosaicCreationTransaction =
@@ -167,7 +172,7 @@ public class VertxTransactionMappingTest {
     @Test
     void shouldCreateStandaloneMosaicSupplyChangeTransaction() {
         TransactionInfoDTO mosaicSupplyChangeTransactionDTO =
-            createJsonObject("shouldCreateStandaloneMosaicSupplyChangeTransaction.json"
+            loadTransactionInfoDTO("shouldCreateStandaloneMosaicSupplyChangeTransaction.json"
             );
 
         Transaction mosaicSupplyChangeTransaction =
@@ -180,7 +185,7 @@ public class VertxTransactionMappingTest {
     @Test
     void shouldCreateAggregateMosaicSupplyChangeTransaction() {
         TransactionInfoDTO aggregateMosaicSupplyChangeTransactionDTO =
-            createJsonObject("shouldCreateAggregateMosaicSupplyChangeTransaction.json"
+            loadTransactionInfoDTO("shouldCreateAggregateMosaicSupplyChangeTransaction.json"
             );
 
         Transaction aggregateMosaicSupplyChangeTransaction =
@@ -194,7 +199,7 @@ public class VertxTransactionMappingTest {
     @Test
     void shouldCreateStandaloneMultisigModificationTransaction() {
         TransactionInfoDTO multisigModificationTransactionDTO =
-            createJsonObject("shouldCreateStandaloneMultisigModificationTransaction.json"
+            loadTransactionInfoDTO("shouldCreateStandaloneMultisigModificationTransaction.json"
             );
 
         Transaction multisigModificationTransaction =
@@ -207,7 +212,7 @@ public class VertxTransactionMappingTest {
     @Test
     void shouldCreateAggregateMultisigModificationTransaction() {
         TransactionInfoDTO aggregateMultisigModificationTransactionDTO =
-            createJsonObject("shouldCreateAggregateMultisigModificationTransaction.json"
+            loadTransactionInfoDTO("shouldCreateAggregateMultisigModificationTransaction.json"
             );
 
         Transaction aggregateMultisigModificationTransaction =
@@ -221,7 +226,7 @@ public class VertxTransactionMappingTest {
     @Test
     void shouldCreateStandaloneLockFundsTransaction() {
         TransactionInfoDTO lockFundsTransactionDTO =
-            createJsonObject("shouldCreateStandaloneLockFundsTransaction.json");
+            loadTransactionInfoDTO("shouldCreateStandaloneLockFundsTransaction.json");
 
         Transaction lockFundsTransaction = map(lockFundsTransactionDTO);
 
@@ -231,7 +236,7 @@ public class VertxTransactionMappingTest {
     @Test
     void shouldCreateAggregateLockFundsTransaction() {
         TransactionInfoDTO aggregateLockFundsTransactionDTO =
-            createJsonObject("shouldCreateAggregateLockFundsTransaction.json"
+            loadTransactionInfoDTO("shouldCreateAggregateLockFundsTransaction.json"
             );
 
         Transaction lockFundsTransaction =
@@ -244,7 +249,7 @@ public class VertxTransactionMappingTest {
     @Test
     void shouldCreateStandaloneSecretLockTransaction() {
         TransactionInfoDTO secretLockTransactionDTO =
-            createJsonObject("shouldCreateStandaloneSecretLockTransaction.json"
+            loadTransactionInfoDTO("shouldCreateStandaloneSecretLockTransaction.json"
             );
 
         Transaction secretLockTransaction = map(secretLockTransactionDTO);
@@ -255,7 +260,7 @@ public class VertxTransactionMappingTest {
     @Test
     void shouldCreateAggregateSecretLockTransaction() {
         TransactionInfoDTO aggregateSecretLockTransactionDTO =
-            createJsonObject("shouldCreateAggregateSecretLockTransaction.json");
+            loadTransactionInfoDTO("shouldCreateAggregateSecretLockTransaction.json");
 
         Transaction aggregateSecretLockTransaction = map(aggregateSecretLockTransactionDTO);
 
@@ -266,7 +271,7 @@ public class VertxTransactionMappingTest {
     @Test
     void shouldCreateStandaloneSecretProofTransaction() {
         TransactionInfoDTO secretProofTransactionDTO =
-            createJsonObject("shouldCreateStandaloneSecretProofTransaction.json");
+            loadTransactionInfoDTO("shouldCreateStandaloneSecretProofTransaction.json");
 
         Transaction secretProofTransaction = map(secretProofTransactionDTO);
         validateStandaloneTransaction(secretProofTransaction, secretProofTransactionDTO);
@@ -275,7 +280,7 @@ public class VertxTransactionMappingTest {
     @Test
     void shouldCreateAggregateSecretProofTransaction() {
         TransactionInfoDTO aggregateSecretProofTransactionDTO =
-            createJsonObject("shouldCreateAggregateSecretProofTransaction.json");
+            loadTransactionInfoDTO("shouldCreateAggregateSecretProofTransaction.json");
 
         Transaction aggregateSecretProofTransaction =
             map(aggregateSecretProofTransactionDTO);
@@ -283,20 +288,6 @@ public class VertxTransactionMappingTest {
         validateAggregateTransaction(
             (AggregateTransaction) aggregateSecretProofTransaction,
             aggregateSecretProofTransactionDTO);
-    }
-
-    private TransactionInfoDTO createJsonObject(String name) {
-
-        String resourceName = "TransactionMapping-" + name;
-
-        try (InputStream resourceAsStream = getClass().getClassLoader()
-            .getResourceAsStream("json/" + resourceName)) {
-            return jsonHelper.parse(IOUtils.toString(resourceAsStream), TransactionInfoDTO.class);
-        } catch (Exception e) {
-            throw new IllegalStateException(
-                "Cannot open resource " + resourceName + ". Error: " + ExceptionUtils.getMessage(e),
-                e);
-        }
     }
 
     private Transaction map(TransactionInfoDTO jsonObject) {
@@ -393,6 +384,49 @@ public class VertxTransactionMappingTest {
             validateSecretProofTx((SecretProofTransaction) transaction, transactionDTO);
         }
     }
+
+    @Test
+    void shouldCreateAggregateAddressAliasTransaction() {
+        TransactionInfoDTO aggregateTransferTransactionDTO = loadTransactionInfoDTO(
+            "shouldCreateAggregateAddressAliasTransaction.json"
+        );
+
+        Transaction aggregateTransferTransaction = map(aggregateTransferTransactionDTO);
+
+        validateAggregateTransaction(
+            (AggregateTransaction) aggregateTransferTransaction, aggregateTransferTransactionDTO);
+
+        AddressAliasTransaction transaction = (AddressAliasTransaction) ((AggregateTransaction) aggregateTransferTransaction)
+            .getInnerTransactions().get(0);
+
+        Assert.assertEquals("SDT4THYNVUQK2GM6XXYTWHZXSPE3AUA2GTDPM2XA",
+            transaction.getAddress().plain());
+        Assert.assertEquals(AliasAction.Link, transaction.getAliasAction());
+        Assert.assertEquals(new BigInteger("-7199828632600199869"),
+            transaction.getNamespaceId().getId());
+    }
+
+    @Test
+    void shouldCreateAggregateMosaicAliasTransaction() {
+        TransactionInfoDTO aggregateTransferTransactionDTO = loadTransactionInfoDTO(
+            "shouldCreateAggregateMosaicAliasTransaction.json"
+        );
+
+        Transaction aggregateTransferTransaction = map(aggregateTransferTransactionDTO);
+
+        validateAggregateTransaction(
+            (AggregateTransaction) aggregateTransferTransaction, aggregateTransferTransactionDTO);
+
+        MosaicAliasTransaction transaction = (MosaicAliasTransaction) ((AggregateTransaction) aggregateTransferTransaction)
+            .getInnerTransactions().get(0);
+
+        Assert.assertEquals(new BigInteger("3179308875066833757"),transaction.getMosaicId().getId());
+        Assert.assertEquals(AliasAction.Link,transaction.getAliasAction());
+        Assert.assertEquals(new BigInteger("-7199828632600199869"), transaction.getNamespaceId().getId());
+    }
+
+
+
 
     void validateAggregateTransaction(
         AggregateTransaction aggregateTransaction, TransactionInfoDTO transactionDto) {

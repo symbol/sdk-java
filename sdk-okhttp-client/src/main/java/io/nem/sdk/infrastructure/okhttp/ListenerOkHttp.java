@@ -51,6 +51,8 @@ public class ListenerOkHttp extends ListenerBase implements Listener {
 
     private final JsonHelper jsonHelper;
 
+    private final OkHttpClient httpClient;
+
     private WebSocket webSocket;
 
     private String UID;
@@ -58,13 +60,14 @@ public class ListenerOkHttp extends ListenerBase implements Listener {
     /**
      * @param url nis host
      */
-    public ListenerOkHttp(String url, JSON json) {
+    public ListenerOkHttp(OkHttpClient httpClient, String url, JSON json) {
         try {
             this.url = new URL(url);
         } catch (MalformedURLException e) {
             throw new IllegalArgumentException(
                 "Parameter '" + url + "' is not a valid URL. " + ExceptionUtils.getMessage(e));
         }
+        this.httpClient = httpClient;
         this.jsonHelper = new JsonHelperGson(json.getGson());
     }
 
@@ -78,19 +81,22 @@ public class ListenerOkHttp extends ListenerBase implements Listener {
         if (this.webSocket != null) {
             return CompletableFuture.completedFuture(null);
         }
-        OkHttpClient httpClient = new OkHttpClient();
-        Request requestCoinPrice = new Request.Builder().url(url + "ws").build();
-        WebSocketListener webSocketListenerCoinPrice = new WebSocketListener() {
+        Request webSocketRequest = new Request.Builder().url(checkTrailingSlash(url.toString()) + "ws").build();
+        WebSocketListener webSocketListener = new WebSocketListener() {
             @Override
             public void onMessage(WebSocket webSocket, String text) {
                 handle(jsonHelper.parse(text, JsonObject.class), future);
             }
         };
-        this.webSocket = httpClient.newWebSocket(requestCoinPrice, webSocketListenerCoinPrice);
+        this.webSocket = httpClient.newWebSocket(webSocketRequest, webSocketListener);
         return future;
     }
 
-    private void handle(Object message, CompletableFuture<Void> future) {
+    private String checkTrailingSlash(String url) {
+        return url.endsWith("/") ? url : url + "/";
+    }
+
+    protected void handle(Object message, CompletableFuture<Void> future) {
         if (jsonHelper.contains(message, "uid")) {
             UID = jsonHelper.getString(message, "uid");
             future.complete(null);
@@ -162,4 +168,7 @@ public class ListenerOkHttp extends ListenerBase implements Listener {
         return UID;
     }
 
+    public JsonHelper getJsonHelper() {
+        return jsonHelper;
+    }
 }

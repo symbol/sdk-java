@@ -18,6 +18,7 @@ package io.nem.core.utils;
 
 import java.io.IOException;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Supplier;
 import org.hamcrest.core.IsEqual;
 import org.hamcrest.core.IsInstanceOf;
@@ -251,20 +252,19 @@ public class ExceptionUtilsTest {
 
         private final Thread blockingThread;
 
-        private volatile boolean isInterruptedPreRun;
-        private volatile boolean isInterruptedPostRun;
+        private AtomicBoolean isInterruptedPreRun = new AtomicBoolean();
+        private AtomicBoolean isInterruptedPostRun = new AtomicBoolean();
         private volatile Throwable unhandledException;
 
         public InterruptedExceptionTestRunner(final Supplier<Void> supplier) {
             this.blockingThread =
                 new Thread(
                     () -> {
-                        this.isInterruptedPreRun = Thread.currentThread().isInterrupted();
-
+                        this.isInterruptedPreRun.set(Thread.currentThread().isInterrupted());
                         try {
                             supplier.get();
                         } finally {
-                            this.isInterruptedPostRun = Thread.currentThread().isInterrupted();
+                            this.isInterruptedPostRun.set(Thread.currentThread().isInterrupted());
                         }
                     });
 
@@ -272,11 +272,11 @@ public class ExceptionUtilsTest {
         }
 
         public boolean isInterruptedPreRun() {
-            return this.isInterruptedPreRun;
+            return this.isInterruptedPreRun.get();
         }
 
         public boolean isInterruptedPostRun() {
-            return this.isInterruptedPostRun;
+            return this.isInterruptedPostRun.get();
         }
 
         public Throwable getUnhandledException() {
