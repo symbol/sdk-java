@@ -19,6 +19,7 @@ package io.nem.sdk.infrastructure.vertx;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static io.nem.sdk.infrastructure.vertx.TestHelperVertx.loadCosignatureTransactionInfoDTO;
 
 import io.nem.sdk.model.account.Account;
 import io.nem.sdk.model.blockchain.NetworkType;
@@ -55,7 +56,7 @@ public class VertxCosignatureTransactionTest {
 
     @Test
     void createACosignatureTransactionViaConstructor() {
-        TransactionInfoDTO transactionInfoDTO = createJsonObject(
+        TransactionInfoDTO transactionInfoDTO = loadCosignatureTransactionInfoDTO(
             "createACosignatureTransactionViaConstructor.json");
         AggregateTransaction aggregateTransaction =
             (AggregateTransaction) new TransactionMappingVertx(jsonHelper)
@@ -81,19 +82,7 @@ public class VertxCosignatureTransactionTest {
     }
 
 
-    private TransactionInfoDTO createJsonObject(String name) {
 
-        String resourceName = "CosignatureTransaction-" + name;
-
-        try (InputStream resourceAsStream = getClass().getClassLoader()
-            .getResourceAsStream("json/" + resourceName)) {
-            return jsonHelper.parse(IOUtils.toString(resourceAsStream), TransactionInfoDTO.class);
-        } catch (Exception e) {
-            throw new IllegalStateException(
-                "Cannot open resource " + resourceName + ". Error: " + ExceptionUtils.getMessage(e),
-                e);
-        }
-    }
 
     @Test
     void shouldThrowExceptionWhenTransactionToCosignHasNotBeenAnnunced() throws Exception {

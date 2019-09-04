@@ -23,10 +23,12 @@ import io.nem.sdk.model.mosaic.MosaicId;
 import io.nem.sdk.model.mosaic.MosaicNonce;
 import io.nem.sdk.model.mosaic.MosaicProperties;
 import io.nem.sdk.model.mosaic.MosaicSupplyType;
+import io.nem.sdk.model.namespace.AliasAction;
 import io.nem.sdk.model.namespace.NamespaceId;
 import io.nem.sdk.model.namespace.NamespaceType;
 import io.nem.sdk.model.transaction.AccountLinkAction;
 import io.nem.sdk.model.transaction.AccountLinkTransaction;
+import io.nem.sdk.model.transaction.AddressAliasTransaction;
 import io.nem.sdk.model.transaction.AggregateTransaction;
 import io.nem.sdk.model.transaction.AggregateTransactionCosignature;
 import io.nem.sdk.model.transaction.Deadline;
@@ -35,6 +37,7 @@ import io.nem.sdk.model.transaction.JsonHelper;
 import io.nem.sdk.model.transaction.LockFundsTransaction;
 import io.nem.sdk.model.transaction.Message;
 import io.nem.sdk.model.transaction.ModifyMultisigAccountTransaction;
+import io.nem.sdk.model.transaction.MosaicAliasTransaction;
 import io.nem.sdk.model.transaction.MosaicDefinitionTransaction;
 import io.nem.sdk.model.transaction.MosaicSupplyChangeTransaction;
 import io.nem.sdk.model.transaction.MultisigCosignatoryModification;
@@ -50,9 +53,11 @@ import io.nem.sdk.model.transaction.TransactionType;
 import io.nem.sdk.model.transaction.TransferTransaction;
 import io.nem.sdk.model.transaction.UInt64;
 import io.nem.sdk.openapi.okhttp_gson.model.AccountLinkTransactionDTO;
+import io.nem.sdk.openapi.okhttp_gson.model.AddressAliasTransactionDTO;
 import io.nem.sdk.openapi.okhttp_gson.model.AggregateBondedTransactionDTO;
 import io.nem.sdk.openapi.okhttp_gson.model.HashLockTransactionDTO;
 import io.nem.sdk.openapi.okhttp_gson.model.ModifyMultisigAccountTransactionDTO;
+import io.nem.sdk.openapi.okhttp_gson.model.MosaicAliasTransactionDTO;
 import io.nem.sdk.openapi.okhttp_gson.model.MosaicDefinitionTransactionDTO;
 import io.nem.sdk.openapi.okhttp_gson.model.MosaicPropertyDTO;
 import io.nem.sdk.openapi.okhttp_gson.model.MosaicSupplyChangeTransactionDTO;
@@ -95,8 +100,10 @@ public class TransactionMappingOkHttp implements Function<TransactionInfoDTO, Tr
             return new MosaicCreationTransactionMapping(jsonHelper).apply(input);
         } else if (type == TransactionType.MOSAIC_SUPPLY_CHANGE.getValue()) {
             return new MosaicSupplyChangeTransactionMapping(jsonHelper).apply(input);
-            // } else if (type == TransactionType.MOSAIC_ALIAS.getValue()) {
-            //    return new MosaicAliasTransactionMapping().apply(input);
+        } else if (type == TransactionType.ADDRESS_ALIAS.getValue()) {
+            return new AddressAliasTransactionMapping(jsonHelper).apply(input);
+        } else if (type == TransactionType.MOSAIC_ALIAS.getValue()) {
+            return new MosaicAliasTransactionMapping(jsonHelper).apply(input);
         } else if (type == TransactionType.MODIFY_MULTISIG_ACCOUNT.getValue()) {
             return new MultisigModificationTransactionMapping(jsonHelper).apply(input);
         } else if (type == TransactionType.AGGREGATE_COMPLETE.getValue()
@@ -158,6 +165,25 @@ public class TransactionMappingOkHttp implements Function<TransactionInfoDTO, Tr
 
     public JsonHelper getJsonHelper() {
         return jsonHelper;
+    }
+
+    protected void patchTransaction(TransactionInfoDTO transactionInfoDTO) {
+
+        Object transaction = transactionInfoDTO.getTransaction();
+        //Version 5 vs 6 workarounds
+        if (transaction instanceof Map) {
+            Map<String, Object> transactionMap = (Map<String, Object>) transaction;
+            if (transactionMap.containsKey("mosaicId")) {
+                transactionMap.put("mosaic",
+                    Collections.singletonMap("id", transactionMap.get("mosaicId")));
+            }
+            if (transactionMap.containsKey("action")) {
+                transactionMap.put("aliasAction", transactionMap.get("action"));
+            }
+            if (transactionMap.containsKey("mosaicNonce")) {
+                transactionMap.put("nonce", transactionMap.get("mosaicNonce"));
+            }
+        }
     }
 }
 
@@ -260,6 +286,7 @@ class MosaicCreationTransactionMapping extends TransactionMappingOkHttp {
 
     @Override
     public MosaicDefinitionTransaction apply(TransactionInfoDTO input) {
+        patchTransaction(input);
         TransactionInfo transactionInfo = this.createTransactionInfo(input.getMeta());
         MosaicDefinitionTransactionDTO transaction = getJsonHelper()
             .convert(input.getTransaction(), MosaicDefinitionTransactionDTO.class);
@@ -353,7 +380,6 @@ class MultisigModificationTransactionMapping extends TransactionMappingOkHttp {
                         multisigModification ->
                             new MultisigCosignatoryModification(
                                 MultisigCosignatoryModificationType.rawValueOf(
-                                    //TODO it was get "type"!!
                                     multisigModification.getModificationType().getValue()),
                                 PublicAccount.createFromPublicKey(
                                     multisigModification.getCosignatoryPublicKey(),
@@ -463,6 +489,7 @@ class LockFundsTransactionMapping extends TransactionMappingOkHttp {
     @Override
     public LockFundsTransaction apply(TransactionInfoDTO input) {
         TransactionInfo transactionInfo = this.createTransactionInfo(input.getMeta());
+        patchTransaction(input);
         HashLockTransactionDTO transaction = getJsonHelper()
             .convert(input.getTransaction(), HashLockTransactionDTO.class);
 
@@ -483,6 +510,11 @@ class LockFundsTransactionMapping extends TransactionMappingOkHttp {
             transaction.getSignature(),
             new PublicAccount(transaction.getSigner(), networkType),
             transactionInfo);
+    }
+
+    private Mosaic getMosaic(io.nem.sdk.openapi.okhttp_gson.model.Mosaic mosaic) {
+        return new Mosaic(new MosaicId(extractBigInteger(mosaic.getId())),
+            extractBigInteger(mosaic.getAmount()));
     }
 }
 
@@ -517,6 +549,68 @@ class SecretLockTransactionMapping extends TransactionMappingOkHttp {
             transaction.getSignature(),
             new PublicAccount(transaction.getSigner(), networkType),
             transactionInfo);
+    }
+}
+
+
+class AddressAliasTransactionMapping extends TransactionMappingOkHttp {
+
+    public AddressAliasTransactionMapping(JsonHelper jsonHelper) {
+        super(jsonHelper);
+    }
+
+    @Override
+    public AddressAliasTransaction apply(TransactionInfoDTO input) {
+        patchTransaction(input);
+        TransactionInfo transactionInfo = this.createTransactionInfo(input.getMeta());
+        AddressAliasTransactionDTO transaction = getJsonHelper()
+            .convert(input.getTransaction(), AddressAliasTransactionDTO.class);
+        NamespaceId namespaceId = new NamespaceId(extractBigInteger(transaction.getNamespaceId()));
+        Deadline deadline = new Deadline(extractBigInteger(transaction.getDeadline()));
+        NetworkType networkType = extractNetworkType(transaction.getVersion());
+        AliasAction aliasAction = AliasAction
+            .rawValueOf(transaction.getAliasAction().getValue().byteValue());
+        return new AddressAliasTransaction(
+            networkType,
+            extractTransactionVersion(transaction.getVersion()),
+            deadline,
+            extractBigInteger(transaction.getMaxFee()),
+            aliasAction,
+            namespaceId,
+            Address.createFromEncoded(transaction.getAddress()),
+            Optional.ofNullable(transaction.getSignature()),
+            Optional.of(new PublicAccount(transaction.getSigner(), networkType)),
+            Optional.of(transactionInfo));
+    }
+}
+
+class MosaicAliasTransactionMapping extends TransactionMappingOkHttp {
+
+    public MosaicAliasTransactionMapping(JsonHelper jsonHelper) {
+        super(jsonHelper);
+    }
+
+    @Override
+    public MosaicAliasTransaction apply(TransactionInfoDTO input) {
+        patchTransaction(input);
+        TransactionInfo transactionInfo = this.createTransactionInfo(input.getMeta());
+        MosaicAliasTransactionDTO transaction = getJsonHelper().convert(input.getTransaction(), MosaicAliasTransactionDTO.class);
+        NamespaceId namespaceId = new NamespaceId(extractBigInteger(transaction.getNamespaceId()));
+        Deadline deadline = new Deadline(extractBigInteger(transaction.getDeadline()));
+        NetworkType networkType = extractNetworkType(transaction.getVersion());
+        AliasAction aliasAction = AliasAction
+            .rawValueOf(transaction.getAliasAction().getValue().byteValue());
+        return new MosaicAliasTransaction(
+            networkType,
+            extractTransactionVersion(transaction.getVersion()),
+            deadline,
+            extractBigInteger(transaction.getMaxFee()),
+            aliasAction,
+            namespaceId,
+            new MosaicId(extractBigInteger(transaction.getMosaicId())),
+            Optional.ofNullable(transaction.getSignature()),
+            Optional.of(new PublicAccount(transaction.getSigner(), networkType)),
+            Optional.of(transactionInfo));
     }
 }
 

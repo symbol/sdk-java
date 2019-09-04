@@ -18,6 +18,7 @@ package io.nem.sdk.infrastructure.okhttp;
 
 import static java.time.temporal.ChronoUnit.HOURS;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static io.nem.sdk.infrastructure.okhttp.TestHelperOkHttp.loadTransactionInfoDTO;
 
 import io.nem.sdk.model.account.Account;
 import io.nem.sdk.model.account.Address;
@@ -60,7 +61,7 @@ public class TransactionRepositoryOkHttpImplTest extends AbstractOkHttpResposito
     @Test
     public void shouldGetTransaction() throws Exception {
 
-        TransactionInfoDTO transactionInfoDTO = createJsonObject(
+        TransactionInfoDTO transactionInfoDTO = loadTransactionInfoDTO(
             "shouldCreateAggregateMosaicCreationTransaction.json");
 
         mockRemoteCall(transactionInfoDTO);
@@ -77,7 +78,7 @@ public class TransactionRepositoryOkHttpImplTest extends AbstractOkHttpResposito
     @Test
     public void shouldGetTransactions() throws Exception {
 
-        TransactionInfoDTO transactionInfoDTO = createJsonObject(
+        TransactionInfoDTO transactionInfoDTO = loadTransactionInfoDTO(
             "shouldCreateAggregateMosaicCreationTransaction.json");
 
         mockRemoteCall(Collections.singletonList(transactionInfoDTO));

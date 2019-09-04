@@ -1,11 +1,12 @@
 package io.nem.sdk.infrastructure;
 
 import io.vertx.core.json.JsonObject;
-import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.stream.Collectors;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 
 public class Config {
 
@@ -14,18 +15,30 @@ public class Config {
     private JsonObject config;
 
     private Config() {
-        try (InputStream inputStream =
-            BaseIntegrationTest.class.getClassLoader().getResourceAsStream(CONFIG_JSON)) {
+
+        try (InputStream inputStream = getConfigInputStream()) {
             if (inputStream == null) {
                 throw new IOException(CONFIG_JSON + " not found");
             }
-            String result =
-                new BufferedReader(new InputStreamReader(inputStream))
-                    .lines()
-                    .collect(Collectors.joining("\n"));
-            this.config = new JsonObject(result);
+            this.config = new JsonObject(IOUtils.toString(inputStream));
 
-        } catch (IOException ignored) {
+        } catch (IOException e) {
+            throw new IllegalStateException(
+                "Config file could not be loaded. " + ExceptionUtils.getMessage(e), e);
+        }
+    }
+
+    private static InputStream getConfigInputStream() throws IOException {
+        String cwd = System.getProperty("user.home");
+        File localConfiguration = new File(new File(cwd),
+            "nem-sdk-java-integration-test-config.json");
+        if (localConfiguration.exists()) {
+            System.out.println("Using local configuration " + localConfiguration);
+            return new FileInputStream(localConfiguration);
+        } else {
+            System.out.println("Local configuration " + localConfiguration.getPath()
+                + " not found. Using shared config.json");
+            return BaseIntegrationTest.class.getClassLoader().getResourceAsStream(CONFIG_JSON);
         }
     }
 

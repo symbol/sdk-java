@@ -122,6 +122,6 @@ public class RepositoryFactoryOkHttpImpl implements RepositoryFactory {
 
     @Override
     public Listener createListener() {
-        return new ListenerOkHttp(baseUrl, apiClient.getJSON());
+        return new ListenerOkHttp(apiClient.getHttpClient(), baseUrl, apiClient.getJSON());
     }
 }

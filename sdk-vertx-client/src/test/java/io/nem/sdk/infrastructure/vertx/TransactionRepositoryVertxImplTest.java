@@ -18,6 +18,7 @@ package io.nem.sdk.infrastructure.vertx;
 
 import static java.time.temporal.ChronoUnit.HOURS;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static io.nem.sdk.infrastructure.vertx.TestHelperVertx.*;
 
 import io.nem.sdk.model.account.Account;
 import io.nem.sdk.model.account.Address;
@@ -59,7 +60,7 @@ public class TransactionRepositoryVertxImplTest extends AbstractVertxRespository
     @Test
     public void shouldGetTransaction() throws Exception {
 
-        TransactionInfoDTO transactionInfoDTO = createJsonObject(
+        TransactionInfoDTO transactionInfoDTO = loadTransactionInfoDTO(
             "shouldCreateAggregateMosaicCreationTransaction.json");
 
         mockRemoteCall(transactionInfoDTO);
@@ -76,7 +77,7 @@ public class TransactionRepositoryVertxImplTest extends AbstractVertxRespository
     @Test
     public void shouldGetTransactions() throws Exception {
 
-        TransactionInfoDTO transactionInfoDTO = createJsonObject(
+        TransactionInfoDTO transactionInfoDTO = loadTransactionInfoDTO(
             "shouldCreateAggregateMosaicCreationTransaction.json");
 
         mockRemoteCall(Collections.singletonList(transactionInfoDTO));

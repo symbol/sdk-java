@@ -20,20 +20,15 @@ import io.nem.sdk.model.mosaic.MosaicId;
 import io.nem.sdk.model.mosaic.MosaicInfo;
 import io.nem.sdk.model.mosaic.MosaicNames;
 import io.nem.sdk.model.transaction.UInt64;
-import io.nem.sdk.openapi.vertx.model.MosaicDefinitionDTO;
-import io.nem.sdk.openapi.vertx.model.MosaicInfoDTO;
-import io.nem.sdk.openapi.vertx.model.MosaicMetaDTO;
-import io.nem.sdk.openapi.vertx.model.MosaicNamesDTO;
-import io.nem.sdk.openapi.vertx.model.MosaicPropertyDTO;
-import io.nem.sdk.openapi.vertx.model.MosaicPropertyIdEnum;
-import io.nem.sdk.openapi.vertx.model.MosaicsNamesDTO;
+import io.nem.sdk.openapi.vertx.model.*;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
 import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 
 /**
  * Unit Tests for {@link MosaicRepositoryVertxImpl}
@@ -43,7 +38,6 @@ import org.junit.jupiter.api.Test;
 public class MosaicRepositoryVertxImplTest extends AbstractVertxRespositoryTest {
 
     private MosaicRepositoryVertxImpl repository;
-
 
     @BeforeEach
     public void setUp() {
@@ -67,8 +61,8 @@ public class MosaicRepositoryVertxImplTest extends AbstractVertxRespositoryTest 
         mockRemoteCall(accountsNamesDTO);
 
         List<MosaicNames> resolvedList = repository
-            .getMosaicsNames(Collections.singletonList(mosaicId))
-            .toFuture().get();
+                .getMosaicsNames(Collections.singletonList(mosaicId))
+                .toFuture().get();
 
         Assertions.assertEquals(1, resolvedList.size());
 
@@ -105,7 +99,7 @@ public class MosaicRepositoryVertxImplTest extends AbstractVertxRespositoryTest 
         mosaicPropertyDTO3.setValue(Arrays.asList(7L, 0L));
 
         mosaicDto.setProperties(
-            Arrays.asList(mosaicPropertyDTO1, mosaicPropertyDTO2, mosaicPropertyDTO3));
+                Arrays.asList(mosaicPropertyDTO1, mosaicPropertyDTO2, mosaicPropertyDTO3));
 
         mosaicInfoDto.setMeta(mosiacMetaDto);
 
@@ -113,8 +107,8 @@ public class MosaicRepositoryVertxImplTest extends AbstractVertxRespositoryTest 
         mockRemoteCall(Collections.singletonList(mosaicInfoDto));
 
         List<MosaicInfo> resolvedList = repository
-            .getMosaics(Collections.singletonList(mosaicId))
-            .toFuture().get();
+                .getMosaics(Collections.singletonList(mosaicId))
+                .toFuture().get();
 
         Assertions.assertEquals(1, resolvedList.size());
 
@@ -122,7 +116,7 @@ public class MosaicRepositoryVertxImplTest extends AbstractVertxRespositoryTest 
         Assertions.assertEquals(mosaicId, mosaicInfo.getMosaicId());
         Assertions.assertEquals(mosaicDto.getRevision(), mosaicInfo.getRevision());
         Assertions
-            .assertEquals(mosaicDto.getOwner(), mosaicInfo.getOwner().getPublicKey().toString());
+                .assertEquals(mosaicDto.getOwner(), mosaicInfo.getOwner().getPublicKey().toString());
 
         Assertions.assertFalse(mosaicInfo.isTransferable());
         Assertions.assertEquals(6, mosaicInfo.getDivisibility());
@@ -155,7 +149,7 @@ public class MosaicRepositoryVertxImplTest extends AbstractVertxRespositoryTest 
         mosaicPropertyDTO3.setValue(Arrays.asList(7L, 0L));
 
         mosaicDto.setProperties(
-            Arrays.asList(mosaicPropertyDTO1, mosaicPropertyDTO2, mosaicPropertyDTO3));
+                Arrays.asList(mosaicPropertyDTO1, mosaicPropertyDTO2, mosaicPropertyDTO3));
 
         mosaicInfoDto.setMeta(mosiacMetaDto);
 
@@ -163,13 +157,13 @@ public class MosaicRepositoryVertxImplTest extends AbstractVertxRespositoryTest 
         mockRemoteCall(mosaicInfoDto);
 
         MosaicInfo mosaicInfo = repository
-            .getMosaic(mosaicId)
-            .toFuture().get();
+                .getMosaic(mosaicId)
+                .toFuture().get();
 
         Assertions.assertEquals(mosaicId, mosaicInfo.getMosaicId());
         Assertions.assertEquals(mosaicDto.getRevision(), mosaicInfo.getRevision());
         Assertions
-            .assertEquals(mosaicDto.getOwner(), mosaicInfo.getOwner().getPublicKey().toString());
+                .assertEquals(mosaicDto.getOwner(), mosaicInfo.getOwner().getPublicKey().toString());
 
         Assertions.assertFalse(mosaicInfo.isTransferable());
         Assertions.assertEquals(6, mosaicInfo.getDivisibility());

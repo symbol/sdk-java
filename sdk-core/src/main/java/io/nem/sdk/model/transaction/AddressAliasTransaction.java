@@ -69,7 +69,7 @@ public class AddressAliasTransaction extends Transaction {
         final Optional<PublicAccount> signer,
         final Optional<TransactionInfo> transactionInfo) {
         super(
-            TransactionType.MOSAIC_ALIAS,
+            TransactionType.ADDRESS_ALIAS,
             networkType,
             version,
             deadline,
@@ -144,7 +144,7 @@ public class AddressAliasTransaction extends Transaction {
     }
 
     /**
-     * Serialized the transaction.
+     * Serialized thgrace transaction.
      *
      * @return bytes of the transaction.
      */
