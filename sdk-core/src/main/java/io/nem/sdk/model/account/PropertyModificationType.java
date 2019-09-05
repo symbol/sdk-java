@@ -22,8 +22,8 @@ import java.util.Arrays;
  * Account property modification type
  */
 public enum PropertyModificationType {
-    Add(0x01),
-    Remove(0x00);
+    ADD(0x01),
+    REMOVE(0x00);
 
     private Integer value;
 

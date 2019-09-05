@@ -48,7 +48,7 @@ public class ResolutionEntryTest {
 
         ResolutionEntry<AddressAlias> resolutionEntry =
             new ResolutionEntry(addressAlias, receiptSource, ReceiptType.ADDRESS_ALIAS_RESOLUTION);
-        assertEquals(resolutionEntry.getType(), ReceiptType.ADDRESS_ALIAS_RESOLUTION);
+        assertEquals(ReceiptType.ADDRESS_ALIAS_RESOLUTION, resolutionEntry.getType());
         assertEquals(resolutionEntry.getReceiptSource(), receiptSource);
         assertEquals(resolutionEntry.getResolved(), addressAlias);
     }
@@ -58,7 +58,7 @@ public class ResolutionEntryTest {
 
         ResolutionEntry<MosaicAlias> resolutionEntry =
             new ResolutionEntry(mosaicAlias, receiptSource, ReceiptType.MOSAIC_ALIAS_RESOLUTION);
-        assertEquals(resolutionEntry.getType(), ReceiptType.MOSAIC_ALIAS_RESOLUTION);
+        assertEquals(ReceiptType.MOSAIC_ALIAS_RESOLUTION, resolutionEntry.getType());
         assertEquals(resolutionEntry.getReceiptSource(), receiptSource);
         assertEquals(resolutionEntry.getResolved(), mosaicAlias);
     }

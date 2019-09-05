@@ -22,6 +22,7 @@ import org.hamcrest.core.IsEqual;
 import org.hamcrest.core.IsNot;
 import org.junit.Assert;
 import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
 
 /**
  * Tests rely on the BigInteger class.
@@ -51,7 +52,9 @@ public class Ed25519FieldElementTest {
     @Test
     public void canCreateFieldElementFromArrayWithCorrectLength() {
         // Assert:
-        new Ed25519FieldElement(new int[10]);
+        Ed25519FieldElement element = new Ed25519FieldElement(new int[10]);
+
+        Assertions.assertEquals(10, element.getRaw().length);
     }
 
     @Test(expected = IllegalArgumentException.class)

@@ -55,22 +55,4 @@ public interface MosaicRepository {
 
     Observable<List<MosaicNames>> getMosaicsNames(List<UInt64Id> mosaicIds);
 
-    /**
-     * Gets list of MosaicInfo from mosaics created with provided namespace.
-     *
-     * @param namespaceId BigInteger
-     * @param queryParams QueryParams
-     * @return Observable of List<{@link MosaicInfo}>
-     */
-    // Observable<List<MosaicInfo>> getMosaicsFromNamespace(NamespaceId namespaceId, QueryParams
-    // queryParams);
-
-    /**
-     * Gets list of MosaicInfo from mosaics created with provided namespace. With pagination.
-     *
-     * @param namespaceId BigInteger
-     * @return Observable of List<{@link MosaicInfo}>
-     */
-    // Observable<List<MosaicInfo>> getMosaicsFromNamespace(NamespaceId namespaceId);
-
 }

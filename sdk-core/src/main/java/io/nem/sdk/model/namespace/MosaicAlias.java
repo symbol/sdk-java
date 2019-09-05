@@ -29,7 +29,7 @@ public class MosaicAlias extends AliasBase<MosaicId> {
      * @param mosaicId Mosaic id.
      */
     public MosaicAlias(MosaicId mosaicId) {
-        super(AliasType.Mosaic, mosaicId);
+        super(AliasType.MOSAIC, mosaicId);
     }
 
 }

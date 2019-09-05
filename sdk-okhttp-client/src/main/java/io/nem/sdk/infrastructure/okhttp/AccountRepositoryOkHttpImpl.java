@@ -138,7 +138,7 @@ public class AccountRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl im
      */
     private AccountNames toAccountNames(AccountNamesDTO dto) throws DecoderException {
         return new AccountNames(
-            Address.createFromRawAddress(getAddressEncoded(dto.getAddress())),
+            toAddress(getAddressEncoded(dto.getAddress())),
             dto.getNames().stream().map(NamespaceName::new).collect(Collectors.toList()));
     }
 
@@ -306,7 +306,7 @@ public class AccountRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl im
 
     private AccountInfo toAccountInfo(AccountDTO accountDTO) throws DecoderException {
         return new AccountInfo(
-            Address.createFromRawAddress(getAddressEncoded(accountDTO.getAddress())),
+            toAddress(getAddressEncoded(accountDTO.getAddress())),
             UInt64.extractBigInteger(accountDTO.getAddressHeight()),
             accountDTO.getPublicKey(),
             UInt64.extractBigInteger(accountDTO.getPublicKeyHeight()),

@@ -73,8 +73,7 @@ public class BlockRepositoryVertxImpl extends AbstractRepositoryVertxImpl implem
 
     public Observable<List<BlockInfo>> getBlocksByHeightWithLimit(
         BigInteger height, int limit, Optional<QueryParams> queryParams) {
-        //TODO queryParams not defined in the descriptor nor generated.
-        Consumer<Handler<AsyncResult<List<BlockInfoDTO>>>> callback = (handler) ->
+        Consumer<Handler<AsyncResult<List<BlockInfoDTO>>>> callback = handler ->
             client.getBlocksByHeightWithLimit(height.longValue(), limit, handler);
 
         return exceptionHandling(
@@ -85,7 +84,7 @@ public class BlockRepositoryVertxImpl extends AbstractRepositoryVertxImpl implem
 
     public Observable<MerkelProofInfo> getMerkleReceipts(BigInteger height, String hash) {
 
-        Consumer<Handler<AsyncResult<MerkleProofInfoDTO>>> callback = (handler) ->
+        Consumer<Handler<AsyncResult<MerkleProofInfoDTO>>> callback = handler ->
             client.getMerkleReceipts(height.longValue(), hash, handler);
         return exceptionHandling(call(callback).map(this::toMerkelProofInfo));
 
@@ -103,14 +102,14 @@ public class BlockRepositoryVertxImpl extends AbstractRepositoryVertxImpl implem
     }
 
     public Observable<MerkelProofInfo> getMerkleTransaction(BigInteger height, String hash) {
-        Consumer<Handler<AsyncResult<MerkleProofInfoDTO>>> callback = (handler) ->
+        Consumer<Handler<AsyncResult<MerkleProofInfoDTO>>> callback = handler ->
             client.getMerkleTransaction(height.longValue(), hash, handler);
         return exceptionHandling(call(callback).map(this::toMerkelProofInfo));
 
     }
 
     public Observable<Statement> getBlockReceipts(BigInteger height) {
-        Consumer<Handler<AsyncResult<StatementsDTO>>> callback = (handler) ->
+        Consumer<Handler<AsyncResult<StatementsDTO>>> callback = handler ->
             client.getBlockReceipts(height.longValue(), handler);
         return exceptionHandling(call(callback).map(statementsDTO ->
             new ReceiptMappingVertx(getJsonHelper())
@@ -119,7 +118,7 @@ public class BlockRepositoryVertxImpl extends AbstractRepositoryVertxImpl implem
 
     private Observable<List<Transaction>> getBlockTransactions(
         BigInteger height, Optional<QueryParams> queryParams) {
-        Consumer<Handler<AsyncResult<List<TransactionInfoDTO>>>> callback = (handler) ->
+        Consumer<Handler<AsyncResult<List<TransactionInfoDTO>>>> callback = handler ->
             client.getBlockTransactions(height.longValue(),
                 getPageSize(queryParams),
                 getId(queryParams),

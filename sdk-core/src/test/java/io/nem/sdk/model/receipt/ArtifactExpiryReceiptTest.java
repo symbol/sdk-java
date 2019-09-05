@@ -17,6 +17,7 @@
 package io.nem.sdk.model.receipt;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import io.nem.sdk.model.mosaic.MosaicId;
@@ -31,24 +32,24 @@ public class ArtifactExpiryReceiptTest {
     void shouldCreateMosaicExpiryReceipt() {
         MosaicId mosaicId = new MosaicId("85BBEA6CC462B244");
         ArtifactExpiryReceipt<MosaicId> mosaicExpiryReceipt =
-            new ArtifactExpiryReceipt(
+            new ArtifactExpiryReceipt<>(
                 mosaicId, ReceiptType.MOSAIC_EXPIRED, ReceiptVersion.ARTIFACT_EXPIRY);
-        assertEquals(mosaicExpiryReceipt.getType(), ReceiptType.MOSAIC_EXPIRED);
-        assertEquals(mosaicExpiryReceipt.getSize(), null);
-        assertEquals(mosaicExpiryReceipt.getVersion(), ReceiptVersion.ARTIFACT_EXPIRY);
-        assertEquals(
-            mosaicExpiryReceipt.getArtifactId().getIdAsHex().toUpperCase(), "85BBEA6CC462B244");
+        assertEquals(ReceiptType.MOSAIC_EXPIRED, mosaicExpiryReceipt.getType());
+        assertNull(mosaicExpiryReceipt.getSize());
+        assertEquals(ReceiptVersion.ARTIFACT_EXPIRY, mosaicExpiryReceipt.getVersion());
+        assertEquals("85BBEA6CC462B244",
+            mosaicExpiryReceipt.getArtifactId().getIdAsHex().toUpperCase());
     }
 
     @Test
     void shouldCreateNamespaceExpiryReceipt() {
         NamespaceId namespaceId = new NamespaceId(new BigInteger("-8884663987180930485"));
         ArtifactExpiryReceipt<NamespaceId> namespaceExpiryReceipt =
-            new ArtifactExpiryReceipt(
+            new ArtifactExpiryReceipt<>(
                 namespaceId, ReceiptType.NAMESPACE_EXPIRED, ReceiptVersion.ARTIFACT_EXPIRY);
-        assertEquals(namespaceExpiryReceipt.getType(), ReceiptType.NAMESPACE_EXPIRED);
-        assertEquals(namespaceExpiryReceipt.getSize(), null);
-        assertEquals(namespaceExpiryReceipt.getVersion(), ReceiptVersion.ARTIFACT_EXPIRY);
+        assertEquals(ReceiptType.NAMESPACE_EXPIRED, namespaceExpiryReceipt.getType());
+        assertNull(namespaceExpiryReceipt.getSize());
+        assertEquals(ReceiptVersion.ARTIFACT_EXPIRY, namespaceExpiryReceipt.getVersion());
         assertEquals(
             namespaceExpiryReceipt.getArtifactId().getId(), new BigInteger("-8884663987180930485"));
     }
@@ -57,14 +58,14 @@ public class ArtifactExpiryReceiptTest {
     void shouldCreateMosaicExpiryReceiptWithSize() {
         MosaicId mosaicId = new MosaicId("85BBEA6CC462B244");
         ArtifactExpiryReceipt<MosaicId> mosaicExpiryReceipt =
-            new ArtifactExpiryReceipt(
+            new ArtifactExpiryReceipt<>(
                 mosaicId, ReceiptType.MOSAIC_EXPIRED, ReceiptVersion.ARTIFACT_EXPIRY,
                 Optional.of(100));
-        assertEquals(mosaicExpiryReceipt.getType(), ReceiptType.MOSAIC_EXPIRED);
-        assertEquals(mosaicExpiryReceipt.getVersion(), ReceiptVersion.ARTIFACT_EXPIRY);
-        assertEquals(
-            mosaicExpiryReceipt.getArtifactId().getIdAsHex().toUpperCase(), "85BBEA6CC462B244");
-        assertEquals(mosaicExpiryReceipt.getSize().get().intValue(), 100);
+        assertEquals(ReceiptType.MOSAIC_EXPIRED, mosaicExpiryReceipt.getType());
+        assertEquals(ReceiptVersion.ARTIFACT_EXPIRY, mosaicExpiryReceipt.getVersion());
+        assertEquals("85BBEA6CC462B244",
+            mosaicExpiryReceipt.getArtifactId().getIdAsHex().toUpperCase());
+        assertEquals(100, mosaicExpiryReceipt.getSize().get().intValue());
     }
 
     @Test
@@ -72,7 +73,7 @@ public class ArtifactExpiryReceiptTest {
         assertThrows(
             IllegalArgumentException.class,
             () -> {
-                new ArtifactExpiryReceipt(
+                new ArtifactExpiryReceipt<>(
                     "", ReceiptType.MOSAIC_EXPIRED, ReceiptVersion.ARTIFACT_EXPIRY, null);
             });
     }
@@ -84,7 +85,8 @@ public class ArtifactExpiryReceiptTest {
             () -> {
                 MosaicId mosaicId = new MosaicId("85BBEA6CC462B244");
                 new ArtifactExpiryReceipt(
-                    mosaicId, ReceiptType.LOCK_HASH_COMPLETED, ReceiptVersion.ARTIFACT_EXPIRY, null);
+                    mosaicId, ReceiptType.LOCK_HASH_COMPLETED, ReceiptVersion.ARTIFACT_EXPIRY,
+                    null);
             });
     }
 }

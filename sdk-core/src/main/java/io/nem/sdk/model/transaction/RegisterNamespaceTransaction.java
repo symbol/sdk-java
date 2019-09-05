@@ -49,6 +49,7 @@ public class RegisterNamespaceTransaction extends Transaction {
     private final Optional<NamespaceId> parentId;
     private final NamespaceType namespaceType;
 
+    @SuppressWarnings("squid:S00107")
     public RegisterNamespaceTransaction(final NetworkType networkType, final Integer version,
         final Deadline deadline, final BigInteger fee,
         final String namespaceName, final NamespaceId namespaceId,
@@ -61,6 +62,7 @@ public class RegisterNamespaceTransaction extends Transaction {
             Optional.of(signer), Optional.of(transactionInfo));
     }
 
+    @SuppressWarnings("squid:S00107")
     private RegisterNamespaceTransaction(final NetworkType networkType, final Integer version,
         final Deadline deadline,
         final BigInteger fee, final String namespaceName, final NamespaceId namespaceId,
@@ -71,6 +73,7 @@ public class RegisterNamespaceTransaction extends Transaction {
             Optional.empty(), Optional.empty());
     }
 
+    @SuppressWarnings("squid:S00107")
     private RegisterNamespaceTransaction(final NetworkType networkType, final Integer version,
         final Deadline deadline,
         final BigInteger fee, final String namespaceName, final NamespaceId namespaceId,
@@ -82,7 +85,7 @@ public class RegisterNamespaceTransaction extends Transaction {
         Validate.notNull(namespaceName, "NamespaceName must not be null");
         Validate.notNull(namespaceType, "NamespaceType must not be null");
         Validate.notNull(namespaceId, "NamespaceId must not be null");
-        if (namespaceType == NamespaceType.RootNamespace) {
+        if (namespaceType == NamespaceType.ROOT_NAMESPACE) {
             Validate.notNull(duration, "Duration must not be null");
         } else {
             Validate.notNull(parentId, "ParentId must not be null");
@@ -112,7 +115,7 @@ public class RegisterNamespaceTransaction extends Transaction {
         NamespaceId namespaceId = new NamespaceId(IdGenerator.generateNamespaceId(namespaceName));
         return new RegisterNamespaceTransaction(networkType,
             TransactionVersion.REGISTER_NAMESPACE.getValue(), deadline, fee, namespaceName,
-            namespaceId, NamespaceType.RootNamespace, Optional.of(duration), Optional.empty());
+            namespaceId, NamespaceType.ROOT_NAMESPACE, Optional.of(duration), Optional.empty());
     }
 
     /**
@@ -156,7 +159,7 @@ public class RegisterNamespaceTransaction extends Transaction {
             IdGenerator.generateNamespaceId(namespaceName, parentId.getId()));
         return new RegisterNamespaceTransaction(networkType,
             TransactionVersion.REGISTER_NAMESPACE.getValue(), deadline,
-            fee, namespaceName, namespaceId, NamespaceType.SubNamespace, Optional.empty(),
+            fee, namespaceName, namespaceId, NamespaceType.SUB_NAMESPACE, Optional.empty(),
             Optional.of(parentId));
     }
 
@@ -218,7 +221,7 @@ public class RegisterNamespaceTransaction extends Transaction {
         final ByteBuffer signatureBuffer = ByteBuffer.allocate(64);
 
         NamespaceRegistrationTransactionBuilder txBuilder;
-        if (namespaceType == NamespaceType.RootNamespace) {
+        if (namespaceType == NamespaceType.ROOT_NAMESPACE) {
             txBuilder =
                 NamespaceRegistrationTransactionBuilder.create(
                     new SignatureDto(signatureBuffer),
@@ -258,7 +261,7 @@ public class RegisterNamespaceTransaction extends Transaction {
      */
     byte[] generateEmbeddedBytes() {
         EmbeddedNamespaceRegistrationTransactionBuilder txBuilder;
-        if (namespaceType == NamespaceType.RootNamespace) {
+        if (namespaceType == NamespaceType.ROOT_NAMESPACE) {
             txBuilder =
                 EmbeddedNamespaceRegistrationTransactionBuilder.create(
                     new KeyDto(getRequiredSignerBytes()),
@@ -292,7 +295,6 @@ public class RegisterNamespaceTransaction extends Transaction {
      */
     private ByteBuffer getNameBuffer() {
         final byte[] nameBytes = namespaceName.getBytes(StandardCharsets.UTF_8);
-        final ByteBuffer nameBuffer = ByteBuffer.wrap(nameBytes);
-        return nameBuffer;
+        return ByteBuffer.wrap(nameBytes);
     }
 }

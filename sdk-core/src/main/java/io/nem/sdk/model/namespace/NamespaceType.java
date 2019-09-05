@@ -27,11 +27,11 @@ public enum NamespaceType {
     /**
      * Root namespace
      */
-    RootNamespace(0),
+    ROOT_NAMESPACE(0),
     /**
      * Sub namespace
      */
-    SubNamespace(1);
+    SUB_NAMESPACE(1);
 
     private final int value;
 

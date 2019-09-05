@@ -30,7 +30,10 @@ import io.vertx.core.Future;
 import io.vertx.core.Handler;
 import io.vertx.core.http.impl.headers.VertxHttpHeaders;
 import java.io.InputStream;
+import java.lang.reflect.Type;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 import org.apache.commons.codec.binary.Base32;
@@ -94,7 +97,7 @@ public abstract class AbstractVertxRespositoryTest {
 
     /**
      * Mocks the api client telling that the next time there is remote call, an error should be
-     * returned.
+     * returned. The mocked response body is the expected json from the catapult rest error handler.
      *
      * @param statusCode the status code of the response (404 for example)
      * @param message the error message that will be returned in the body.
@@ -105,10 +108,22 @@ public abstract class AbstractVertxRespositoryTest {
         String reasonPhrase = HttpStatus.valueOf(statusCode).getReasonPhrase();
         errorBody.put("code", "Code " + reasonPhrase);
         errorBody.put("message", message);
+        String errorResponse = jsonHelper.print(errorBody);
+        mockErrorCodeRawResponse(statusCode, errorResponse);
+    }
 
+    /**
+     * Mocks the api client telling that the next time there is remote call, an error should be
+     * returned.
+     *
+     * @param statusCode the status code of the response (404 for example)
+     * @param errorResponse the raw response, it may or may not be a json string.
+     */
+    protected void mockErrorCodeRawResponse(int statusCode, String errorResponse) {
+        String reasonPhrase = HttpStatus.valueOf(statusCode).getReasonPhrase();
         VertxHttpHeaders headers = new VertxHttpHeaders();
         ApiException exception = new ApiException(reasonPhrase, statusCode, headers,
-            jsonHelper.print(errorBody));
+            errorResponse);
 
         Mockito.doAnswer((Answer<Void>) invocationOnMock -> {
 
@@ -121,8 +136,6 @@ public abstract class AbstractVertxRespositoryTest {
             .invokeAPI(Mockito.anyString(), Mockito.anyString(), Mockito.anyList(), Mockito.any(),
                 Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(),
                 Mockito.any(), Mockito.any());
-
-
     }
 
 

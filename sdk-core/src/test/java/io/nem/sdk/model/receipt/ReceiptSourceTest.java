@@ -26,7 +26,7 @@ public class ReceiptSourceTest {
     void shouldCreateReceiptSource() {
 
         ReceiptSource source = new ReceiptSource(1, 1);
-        assertEquals(source.getPrimaryId(), 1);
-        assertEquals(source.getSecondaryId(), 1);
+        assertEquals(1, source.getPrimaryId());
+        assertEquals(1, source.getSecondaryId());
     }
 }

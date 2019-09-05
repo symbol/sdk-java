@@ -86,7 +86,7 @@ public class NamespaceRepositoryOkHttpImplTest extends AbstractOkHttpRespository
 
         Assertions.assertNotNull(info);
 
-        Assertions.assertEquals(NamespaceType.SubNamespace, info.getType());
+        Assertions.assertEquals(NamespaceType.SUB_NAMESPACE, info.getType());
 
         Assertions.assertEquals(meta.getId(), info.getMetaId());
         Assertions.assertEquals(meta.getIndex(), info.getIndex());
@@ -132,7 +132,7 @@ public class NamespaceRepositoryOkHttpImplTest extends AbstractOkHttpRespository
 
         Assertions.assertNotNull(info);
 
-        Assertions.assertEquals(NamespaceType.SubNamespace, info.getType());
+        Assertions.assertEquals(NamespaceType.SUB_NAMESPACE, info.getType());
 
         Assertions.assertEquals(meta.getId(), info.getMetaId());
         Assertions.assertEquals(meta.getIndex(), info.getIndex());
@@ -179,7 +179,7 @@ public class NamespaceRepositoryOkHttpImplTest extends AbstractOkHttpRespository
 
         Assertions.assertNotNull(info);
 
-        Assertions.assertEquals(NamespaceType.SubNamespace, info.getType());
+        Assertions.assertEquals(NamespaceType.SUB_NAMESPACE, info.getType());
 
         Assertions.assertEquals(meta.getId(), info.getMetaId());
         Assertions.assertEquals(meta.getIndex(), info.getIndex());

@@ -37,23 +37,23 @@ import org.apache.commons.codec.binary.Hex;
 public class Address {
 
     private static final int NUM_CHECKSUM_BYTES = 4;
-    private final String address;
+    private final String plain;
     private final NetworkType networkType;
 
     /**
      * Constructor
      *
-     * @param address Address in plain format
+     * @param plain Address in plain format
      * @param networkType Network type
      */
-    public Address(String address, NetworkType networkType) {
-        this.address =
-            Objects.requireNonNull(address, "address must not be null")
+    public Address(String plain, NetworkType networkType) {
+        this.plain =
+            Objects.requireNonNull(plain, "address must not be null")
                 .replace("-", "")
                 .trim()
                 .toUpperCase();
         this.networkType = Objects.requireNonNull(networkType, "networkType must not be null");
-        char addressNetwork = this.address.charAt(0);
+        char addressNetwork = this.plain.charAt(0);
         if (networkType.equals(NetworkType.MAIN_NET) && addressNetwork != 'N') {
             throw new IllegalArgumentException("MAIN_NET Address must start with N");
         } else if (networkType.equals(NetworkType.TEST_NET) && addressNetwork != 'T') {
@@ -115,7 +115,7 @@ public class Address {
         try {
             publicKeyBytes = Hex.decodeHex(publicKey);
         } catch (DecoderException e) {
-            throw new RuntimeException("public key is not valid");
+            throw new IllegalArgumentException("public key is not valid");
         }
         final byte[] sha3PublicKeyHash = Hashes.sha3_256(publicKeyBytes);
 
@@ -151,7 +151,7 @@ public class Address {
      * @return String
      */
     public String plain() {
-        return this.address;
+        return this.plain;
     }
 
     /**
@@ -178,19 +178,19 @@ public class Address {
      * @return String
      */
     public String pretty() {
-        return this.address.substring(0, 6)
+        return this.plain.substring(0, 6)
             + "-"
-            + this.address.substring(6, 6 + 6)
+            + this.plain.substring(6, 6 + 6)
             + "-"
-            + this.address.substring(6 * 2, 6 * 2 + 6)
+            + this.plain.substring(6 * 2, 6 * 2 + 6)
             + "-"
-            + this.address.substring(6 * 3, 6 * 3 + 6)
+            + this.plain.substring(6 * 3, 6 * 3 + 6)
             + "-"
-            + this.address.substring(6 * 4, 6 * 4 + 6)
+            + this.plain.substring(6 * 4, 6 * 4 + 6)
             + "-"
-            + this.address.substring(6 * 5, 6 * 5 + 6)
+            + this.plain.substring(6 * 5, 6 * 5 + 6)
             + "-"
-            + this.address.substring(6 * 6, 6 * 6 + 4);
+            + this.plain.substring(6 * 6, 6 * 6 + 4);
     }
 
     /**
@@ -207,11 +207,11 @@ public class Address {
             return false;
         }
         Address address1 = (Address) o;
-        return Objects.equals(address, address1.address) && networkType == address1.networkType;
+        return Objects.equals(plain, address1.plain) && networkType == address1.networkType;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(address, networkType);
+        return Objects.hash(plain, networkType);
     }
 }

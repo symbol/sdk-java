@@ -38,13 +38,7 @@ public abstract class AbstractTwoLevelMap<K, V> {
     public V getItem(final K key1, final K key2) {
         final Map<K, V> keyOneValues = this.getItems(key1);
 
-        V value = keyOneValues.get(key2);
-        if (null == value) {
-            value = this.createValue();
-            keyOneValues.put(key2, value);
-        }
-
-        return value;
+        return keyOneValues.computeIfAbsent(key2, k -> createValue());
     }
 
     /**
@@ -54,13 +48,7 @@ public abstract class AbstractTwoLevelMap<K, V> {
      * @return The map associated with key.
      */
     public Map<K, V> getItems(final K key) {
-        Map<K, V> keyValues = this.impl.get(key);
-        if (null == keyValues) {
-            keyValues = new ConcurrentHashMap<>();
-            this.impl.put(key, keyValues);
-        }
-
-        return keyValues;
+        return this.impl.computeIfAbsent(key, k -> new ConcurrentHashMap<>());
     }
 
     /**

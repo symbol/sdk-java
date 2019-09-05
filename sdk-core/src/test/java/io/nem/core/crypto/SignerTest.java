@@ -19,6 +19,7 @@ package io.nem.core.crypto;
 import io.nem.core.test.Utils;
 import java.math.BigInteger;
 import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
 import org.mockito.Mockito;
 
 public class SignerTest {
@@ -26,9 +27,10 @@ public class SignerTest {
     @Test
     public void canCreateSignerFromKeyPair() {
         // Act:
-        new Signer(new KeyPair());
+        Signer signer = new Signer(new KeyPair());
 
-        // Assert: no exceptions
+        // Assert
+        Assertions.assertNotNull(signer);
     }
 
     @Test
@@ -37,9 +39,10 @@ public class SignerTest {
         final SignerContext context = new SignerContext();
 
         // Act:
-        new Signer(context.dsaSigner);
+        Signer signer = new Signer(context.dsaSigner);
 
-        // Assert: no exceptions
+        // Assert
+        Assertions.assertNotNull(signer);
     }
 
     @Test

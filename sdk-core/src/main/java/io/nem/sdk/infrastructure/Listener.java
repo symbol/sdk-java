@@ -49,7 +49,7 @@ public interface Listener extends Closeable {
      *
      * @return the UID connected to
      */
-    String getUID();
+    String getUid();
 
     /**
      * Returns an observable stream of BlockInfo. Each time a new Block is added into the

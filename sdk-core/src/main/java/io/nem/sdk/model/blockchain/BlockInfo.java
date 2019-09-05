@@ -46,6 +46,7 @@ public class BlockInfo {
     private final String stateHash;
     private final PublicAccount beneficiaryPublicAccount;
 
+    @SuppressWarnings("squid:S00107")
     private BlockInfo(
         String hash,
         String generationHash,
@@ -87,6 +88,7 @@ public class BlockInfo {
         this.beneficiaryPublicAccount = beneficiaryPublicAccount;
     }
 
+    @SuppressWarnings("squid:S00107")
     public static BlockInfo create(
         String hash,
         String generationHash,

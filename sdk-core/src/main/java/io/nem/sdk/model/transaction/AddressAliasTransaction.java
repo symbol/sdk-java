@@ -57,6 +57,7 @@ public class AddressAliasTransaction extends Transaction {
      * @param signer Signer for the transaction.
      * @param transactionInfo Transaction info.
      */
+    @SuppressWarnings("squid:S00107")
     public AddressAliasTransaction(
         final NetworkType networkType,
         final int version,
@@ -144,7 +145,7 @@ public class AddressAliasTransaction extends Transaction {
     }
 
     /**
-     * Serialized thgrace transaction.
+     * Serializes the transaction using catbuffer.
      *
      * @return bytes of the transaction.
      */

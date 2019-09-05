@@ -17,6 +17,7 @@
 package io.nem.sdk.model.receipt;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import io.nem.sdk.model.mosaic.MosaicId;
@@ -43,11 +44,11 @@ public class InflationReceiptTest {
                 BigInteger.valueOf(10),
                 ReceiptType.INFLATION,
                 ReceiptVersion.INFLATION_RECEIPT);
-        assertEquals(inflationReceipt.getType(), ReceiptType.INFLATION);
-        assertEquals(inflationReceipt.getSize(), null);
-        assertEquals(inflationReceipt.getVersion(), ReceiptVersion.INFLATION_RECEIPT);
-        assertEquals(inflationReceipt.getMosaicId().getIdAsHex().toUpperCase(), "85BBEA6CC462B244");
-        assertEquals(inflationReceipt.getAmount(), BigInteger.TEN);
+        assertEquals(ReceiptType.INFLATION, inflationReceipt.getType());
+        assertNull(inflationReceipt.getSize());
+        assertEquals(ReceiptVersion.INFLATION_RECEIPT, inflationReceipt.getVersion());
+        assertEquals("85BBEA6CC462B244", inflationReceipt.getMosaicId().getIdAsHex().toUpperCase());
+        assertEquals(BigInteger.TEN, inflationReceipt.getAmount());
     }
 
     @Test
@@ -60,12 +61,12 @@ public class InflationReceiptTest {
                 ReceiptType.INFLATION,
                 ReceiptVersion.INFLATION_RECEIPT,
                 Optional.of(100));
-        assertEquals(inflationReceipt.getType(), ReceiptType.INFLATION);
+        assertEquals(ReceiptType.INFLATION, inflationReceipt.getType());
         assertEquals(inflationReceipt.getSize(), Optional.of(100));
-        assertEquals(inflationReceipt.getVersion(), ReceiptVersion.INFLATION_RECEIPT);
-        assertEquals(inflationReceipt.getMosaicId().getIdAsHex().toUpperCase(), "85BBEA6CC462B244");
-        assertEquals(inflationReceipt.getAmount(), BigInteger.TEN);
-        assertEquals(inflationReceipt.getSize().get().intValue(), 100);
+        assertEquals(ReceiptVersion.INFLATION_RECEIPT, inflationReceipt.getVersion());
+        assertEquals("85BBEA6CC462B244", inflationReceipt.getMosaicId().getIdAsHex().toUpperCase());
+        assertEquals(BigInteger.TEN, inflationReceipt.getAmount());
+        assertEquals(100, inflationReceipt.getSize().get().intValue());
     }
 
     @Test

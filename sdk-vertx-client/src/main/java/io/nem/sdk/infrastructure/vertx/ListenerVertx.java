@@ -59,7 +59,7 @@ public class ListenerVertx extends ListenerBase implements Listener {
 
     private WebSocket webSocket;
 
-    private String UID;
+    private String uid;
 
     /**
      * @param httpClient the http client instance.
@@ -104,9 +104,9 @@ public class ListenerVertx extends ListenerBase implements Listener {
 
         httpClient.websocket(
             requestOptions,
-            webSocket -> {
-                this.webSocket = webSocket;
-                webSocket.handler(
+            ws -> {
+                this.webSocket = ws;
+                ws.handler(
                     handler -> {
                         ObjectNode message = jsonHelper
                             .convert(handler.toJsonObject(), ObjectNode.class);
@@ -118,7 +118,7 @@ public class ListenerVertx extends ListenerBase implements Listener {
 
     protected void handle(Object message, CompletableFuture<Void> future) {
         if (jsonHelper.contains(message, "uid")) {
-            UID = jsonHelper.getString(message, "uid");
+            uid = jsonHelper.getString(message, "uid");
             future.complete(null);
         } else if (jsonHelper.contains(message, "transaction")) {
             TransactionInfoDTO transactionInfo = jsonHelper
@@ -173,19 +173,17 @@ public class ListenerVertx extends ListenerBase implements Listener {
     }
 
     protected void subscribeTo(String channel) {
-        final ListenerSubscribeMessage subscribeMessage = new ListenerSubscribeMessage(this.UID,
+        final ListenerSubscribeMessage subscribeMessage = new ListenerSubscribeMessage(this.uid,
             channel);
         this.webSocket.writeTextMessage(jsonHelper.print(subscribeMessage));
     }
 
     /**
-     * // TODO: should we remove it?
-     *
      * @return the UID connected to
      */
     @Override
-    public String getUID() {
-        return UID;
+    public String getUid() {
+        return uid;
     }
 
 

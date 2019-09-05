@@ -41,8 +41,10 @@ JsonHelperJackson2 implements JsonHelper {
     }
 
 
+    @SuppressWarnings("squid:CallToDeprecatedMethod")
     public static ObjectMapper configureMapper(ObjectMapper objectMapper) {
-        objectMapper.configure(SerializationFeature.WRITE_EMPTY_JSON_ARRAYS, false);
+        objectMapper.configure(SerializationFeature.WRITE_EMPTY_JSON_ARRAYS,
+            false); //I cannot annotate the generated classes like alternative recommended by jackson
         objectMapper.configure(DeserializationFeature.USE_LONG_FOR_INTS, true);
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         return objectMapper;
@@ -130,6 +132,7 @@ JsonHelperJackson2 implements JsonHelper {
     }
 
     @Override
+    @SuppressWarnings("squid:S2447")
     public Boolean getBoolean(Object object, String... path) {
         JsonNode child = getNode(convert(object, JsonNode.class), path);
         if (child == null || child.isNull()) {
@@ -142,6 +145,7 @@ JsonHelperJackson2 implements JsonHelper {
     }
 
     @Override
+    @SuppressWarnings("squid:S1168")
     public List<Long> getLongList(Object object, String... path) {
         JsonNode child = getNode(convert(object, JsonNode.class), path);
         if (child == null || child.isNull()) {

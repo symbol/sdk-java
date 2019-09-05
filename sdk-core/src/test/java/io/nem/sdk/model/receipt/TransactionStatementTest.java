@@ -72,7 +72,7 @@ public class TransactionStatementTest {
     void shouldCreateAddressResolutionTransactionStatement() {
         TransactionStatement transactionStatement =
             new TransactionStatement(BigInteger.TEN, receiptSource, receipts);
-        assertEquals(transactionStatement.getHeight(), BigInteger.TEN);
+        assertEquals(BigInteger.TEN, transactionStatement.getHeight());
         assertEquals(transactionStatement.getReceiptSource(), receiptSource);
         assertEquals(transactionStatement.getReceipts(), receipts);
     }

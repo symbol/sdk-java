@@ -30,7 +30,7 @@ class MosaicPropertiesTest {
             MosaicProperties.create(true, true, 1, BigInteger.valueOf(1000));
         assertTrue(mosaicProperties.isSupplyMutable());
         assertTrue(mosaicProperties.isTransferable());
-        assertTrue(1 == mosaicProperties.getDivisibility());
+        assertEquals(1, mosaicProperties.getDivisibility());
         assertEquals(
             BigInteger.valueOf(1000).intValue(), mosaicProperties.getDuration().longValue());
     }

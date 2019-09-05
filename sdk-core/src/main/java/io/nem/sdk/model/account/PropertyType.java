@@ -24,13 +24,13 @@ import java.util.Arrays;
  * property is interpreted as a blocking operation.
  */
 public enum PropertyType {
-    AllowAddress(0x01),
-    AllowMosaic(0x02),
-    AllowTransaction(0x04),
-    Sentinel(0x05),
-    BlockAddress(0x80 + 0x01),
-    BlockMosaic(0x80 + 0x02),
-    BlockTransaction(0x80 + 0x04);
+    ALLOW_ADDRESS(0x01),
+    ALLOW_MOSAIC(0x02),
+    ALLOW_TRANSACTION(0x04),
+    SENTINEL(0x05),
+    BLOCK_ADDRESS(0x80 + 0x01),
+    BLOCK_MOSAIC(0x80 + 0x02),
+    BLOCK_TRANSACTION(0x80 + 0x04);
 
     private Integer value;
 

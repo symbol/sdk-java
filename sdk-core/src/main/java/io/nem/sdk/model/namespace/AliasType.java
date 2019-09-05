@@ -24,9 +24,9 @@ import java.util.Arrays;
  * @since
  */
 public enum AliasType {
-    None(0),
-    Mosaic(1),
-    Address(2);
+    NONE(0),
+    MOSAIC(1),
+    ADDRESS(2);
 
     private final Integer value;
 

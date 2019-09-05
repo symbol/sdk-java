@@ -101,9 +101,9 @@ class AccountTest {
     @Test
     void generateNewAccountTest() {
         Account account = Account.generateNewAccount(NetworkType.MIJIN_TEST);
-        assertNotEquals(account.getPrivateKey(), null);
-        assertNotEquals(account.getPublicKey(), null);
-        assertEquals(account.getPrivateKey().length(), 64);
+        assertNotEquals(null, account.getPrivateKey());
+        assertNotEquals(null, account.getPublicKey());
+        assertEquals(64, account.getPrivateKey().length());
     }
 
     @Test
@@ -126,8 +126,8 @@ class AccountTest {
         SignedTransaction signedTransaction = account.sign(transferTransaction, generationHash);
         String payload = signedTransaction.getPayload();
         assertEquals(
-            payload.substring(240),
-            "90E8FEBD671DD41BEE94EC3BA5831CB608A312C2F203BA84AC01000100672B0000CE5600006400000000000000");
+            "90E8FEBD671DD41BEE94EC3BA5831CB608A312C2F203BA84AC01000100672B0000CE5600006400000000000000",
+            payload.substring(240));
         assertEquals(
             "B54321C382FA3CC53EB6559FDDE03832898E7E89C8F90C10DF8567AD41A926A2",
             signedTransaction.getHash());
@@ -138,6 +138,6 @@ class AccountTest {
         KeyPair random = KeyPair.random(new Ed25519CryptoEngine());
         Account account = new Account(random, NetworkType.MIJIN_TEST);
         assertEquals(random.getPrivateKey().toString().toUpperCase(), account.getPrivateKey());
-        assertEquals(account.getAddress().getNetworkType(), NetworkType.MIJIN_TEST);
+        assertEquals(NetworkType.MIJIN_TEST, account.getAddress().getNetworkType());
     }
 }

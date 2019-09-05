@@ -18,6 +18,7 @@ package io.nem.core.crypto.ed25519.arithmetic;
 
 import io.nem.core.utils.ArrayUtils;
 import io.nem.core.utils.HexEncoder;
+import java.io.Serializable;
 import java.util.Arrays;
 
 /**
@@ -25,7 +26,7 @@ import java.util.Arrays;
  * element is held in 2^8 bit representation, i.e. in a byte array. The length of the array must be
  * 32 or 64.
  */
-public class Ed25519EncodedFieldElement {
+public class Ed25519EncodedFieldElement implements Serializable {
 
     private static final byte[] ZERO_SHORT = new byte[32];
     private static final byte[] ZERO_LONG = new byte[64];

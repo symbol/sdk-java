@@ -68,7 +68,7 @@ public class NodeRepositoryOkHttpImplTest extends AbstractOkHttpRespositoryTest 
         Assertions.assertEquals(dto.getPublicKey(), info.getPublicKey());
         Assertions.assertEquals(dto.getFriendlyName(), info.getFriendlyName());
         Assertions.assertEquals(NetworkType.MAIN_NET, info.getNetworkIdentifier());
-        Assertions.assertEquals(RoleType.ApiNode, info.getRoles());
+        Assertions.assertEquals(RoleType.API_NODE, info.getRoles());
         Assertions.assertEquals(dto.getVersion().intValue(), info.getVersion());
 
     }

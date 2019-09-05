@@ -81,7 +81,6 @@ public class NamespaceRepositoryVertxImplTest extends AbstractVertxRespositoryTe
         alias.setMosaicId(Arrays.asList(123L, 123L));
         namespace.setAlias(alias);
 
-
         dto.setNamespace(namespace);
 
         mockRemoteCall(dto);
@@ -90,7 +89,7 @@ public class NamespaceRepositoryVertxImplTest extends AbstractVertxRespositoryTe
 
         Assertions.assertNotNull(info);
 
-        Assertions.assertEquals(NamespaceType.SubNamespace, info.getType());
+        Assertions.assertEquals(NamespaceType.SUB_NAMESPACE, info.getType());
 
         Assertions.assertEquals(meta.getId(), info.getMetaId());
         Assertions.assertEquals(meta.getIndex(), info.getIndex());
@@ -106,8 +105,7 @@ public class NamespaceRepositoryVertxImplTest extends AbstractVertxRespositoryTe
         resolveNetworkType();
 
         Address address =
-            Address.createFromRawAddress(
-                "SBCPGZ3S2SCC3YHBBTYDCUZV4ZZEPHM2KGCP4QXX");
+            repository.toAddress("SBCPGZ3S2SCC3YHBBTYDCUZV4ZZEPHM2KGCP4QXX");
 
         NamespaceInfoDTO dto = new NamespaceInfoDTO();
         NamespaceMetaDTO meta = new NamespaceMetaDTO();
@@ -128,7 +126,6 @@ public class NamespaceRepositoryVertxImplTest extends AbstractVertxRespositoryTe
         alias.setAddress(address.plain());
         namespace.setAlias(alias);
 
-
         dto.setNamespace(namespace);
 
         mockRemoteCall(Collections.singletonList(dto));
@@ -137,7 +134,7 @@ public class NamespaceRepositoryVertxImplTest extends AbstractVertxRespositoryTe
 
         Assertions.assertNotNull(info);
 
-        Assertions.assertEquals(NamespaceType.SubNamespace, info.getType());
+        Assertions.assertEquals(NamespaceType.SUB_NAMESPACE, info.getType());
 
         Assertions.assertEquals(meta.getId(), info.getMetaId());
         Assertions.assertEquals(meta.getIndex(), info.getIndex());
@@ -146,6 +143,7 @@ public class NamespaceRepositoryVertxImplTest extends AbstractVertxRespositoryTe
         Assertions.assertEquals(BigInteger.valueOf(4), info.getStartHeight());
         Assertions.assertEquals(BigInteger.valueOf(5), info.getEndHeight());
     }
+
     @Test
     public void shouldGetNamespacesFromAccounts() throws Exception {
 
@@ -174,16 +172,16 @@ public class NamespaceRepositoryVertxImplTest extends AbstractVertxRespositoryTe
         alias.setAddress(address.plain());
         namespace.setAlias(alias);
 
-
         dto.setNamespace(namespace);
 
         mockRemoteCall(Collections.singletonList(dto));
 
-        NamespaceInfo info = repository.getNamespacesFromAccounts(Collections.singletonList(address)).toFuture().get().get(0);
+        NamespaceInfo info = repository
+            .getNamespacesFromAccounts(Collections.singletonList(address)).toFuture().get().get(0);
 
         Assertions.assertNotNull(info);
 
-        Assertions.assertEquals(NamespaceType.SubNamespace, info.getType());
+        Assertions.assertEquals(NamespaceType.SUB_NAMESPACE, info.getType());
 
         Assertions.assertEquals(meta.getId(), info.getMetaId());
         Assertions.assertEquals(meta.getIndex(), info.getIndex());
@@ -227,8 +225,6 @@ public class NamespaceRepositoryVertxImplTest extends AbstractVertxRespositoryTe
         Assertions.assertFalse(names.get(1).getParentId().isPresent());
 
     }
-
-
 
 
     @Test

@@ -50,16 +50,16 @@ public class MosaicDefinitionTransaction extends Transaction {
     private final MosaicId mosaicId;
     private final MosaicProperties mosaicProperties;
 
-
+    @SuppressWarnings("squid:S00107")
     public MosaicDefinitionTransaction(NetworkType networkType, Integer version, Deadline deadline,
         BigInteger fee,
         MosaicNonce mosaicNonce, MosaicId mosaicId, MosaicProperties mosaicProperties,
         String signature, PublicAccount signer, TransactionInfo transactionInfo) {
         this(networkType, version, deadline, fee, mosaicNonce, mosaicId, mosaicProperties,
-            Optional.of(signature),
-            Optional.of(signer), Optional.of(transactionInfo));
+            Optional.of(signature), Optional.of(signer), Optional.of(transactionInfo));
     }
 
+    @SuppressWarnings("squid:S00107")
     public MosaicDefinitionTransaction(NetworkType networkType, Integer version, Deadline deadline,
         BigInteger fee,
         MosaicNonce mosaicNonce, MosaicId mosaicId, MosaicProperties mosaicProperties) {
@@ -68,6 +68,7 @@ public class MosaicDefinitionTransaction extends Transaction {
             Optional.empty(), Optional.empty());
     }
 
+    @SuppressWarnings("squid:S00107")
     private MosaicDefinitionTransaction(NetworkType networkType, Integer version, Deadline deadline,
         BigInteger fee,
         MosaicNonce mosaicNonce, MosaicId mosaicId, MosaicProperties mosaicProperties,

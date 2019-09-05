@@ -41,6 +41,11 @@ public enum HashType {
      */
     HASH_256(3);
 
+    /**
+     * The regex used to validate a hashed value.
+     */
+    public static final String VALIDATOR_REGEX = "-?[0-9a-fA-F]+";
+
     private final int value;
 
     HashType(int value) {
@@ -59,14 +64,14 @@ public enum HashType {
      * @param input Input hashed
      * @return boolean when format is correct
      */
-    public static boolean Validator(HashType hashType, String input) {
-        if (hashType == HashType.SHA3_256 && input.matches("-?[0-9a-fA-F]+")) {
+    public static boolean validator(HashType hashType, String input) {
+        if (hashType == HashType.SHA3_256 && input.matches(VALIDATOR_REGEX)) {
             return input.length() == 64;
-        } else if (hashType == HashType.KECCAK_256 && input.matches("-?[0-9a-fA-F]+")) {
+        } else if (hashType == HashType.KECCAK_256 && input.matches(VALIDATOR_REGEX)) {
             return input.length() == 64;
-        } else if (hashType == HashType.HASH_160 && input.matches("-?[0-9a-fA-F]+")) {
+        } else if (hashType == HashType.HASH_160 && input.matches(VALIDATOR_REGEX)) {
             return input.length() == 40;
-        } else if (hashType == HashType.HASH_256 && input.matches("-?[0-9a-fA-F]+")) {
+        } else if (hashType == HashType.HASH_256 && input.matches(VALIDATOR_REGEX)) {
             return input.length() == 64;
         }
         return false;

@@ -106,7 +106,7 @@ public class IdGenerator {
      */
     public static List<BigInteger> generateNamespacePath(String namespacePath) {
         String[] parts = namespacePath.split(Pattern.quote("."));
-        List<BigInteger> path = new ArrayList<BigInteger>();
+        List<BigInteger> path = new ArrayList<>();
 
         if (parts.length == 0) {
             throw new IllegalIdentifierException("invalid namespace path");

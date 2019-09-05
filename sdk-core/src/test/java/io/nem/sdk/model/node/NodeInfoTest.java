@@ -43,15 +43,15 @@ public class NodeInfoTest {
                 3000,
                 NetworkType.MIJIN_TEST,
                 0,
-                RoleType.ApiNode,
+                RoleType.API_NODE,
                 "localhost",
                 "test");
-        assertEquals(nodeInfo.getHost(), "localhost");
-        assertEquals(nodeInfo.getVersion(), 0);
-        assertEquals(nodeInfo.getPort(), 3000);
-        assertEquals(nodeInfo.getFriendlyName(), "test");
-        assertEquals(nodeInfo.getNetworkIdentifier(), NetworkType.MIJIN_TEST);
-        assertEquals(nodeInfo.getRoles().getValue(), 2);
+        assertEquals("localhost", nodeInfo.getHost());
+        assertEquals(0, nodeInfo.getVersion());
+        assertEquals(3000, nodeInfo.getPort());
+        assertEquals("test", nodeInfo.getFriendlyName());
+        assertEquals(NetworkType.MIJIN_TEST, nodeInfo.getNetworkIdentifier());
+        assertEquals(2, nodeInfo.getRoles().getValue());
         assertEquals(nodeInfo.getPublicKey(), account.getPublicKey());
     }
 }

@@ -31,20 +31,20 @@ public class PropertyTypeTest {
     @Test
     public void rawValueOf() {
         Assertions
-            .assertEquals(PropertyType.BlockMosaic, PropertyType.rawValueOf("0x82"));
+            .assertEquals(PropertyType.BLOCK_MOSAIC, PropertyType.rawValueOf("0x82"));
         Assertions
-            .assertEquals(PropertyType.BlockMosaic, PropertyType.rawValueOf("130"));
+            .assertEquals(PropertyType.BLOCK_MOSAIC, PropertyType.rawValueOf("130"));
 
         Assertions
-            .assertEquals(PropertyType.BlockTransaction, PropertyType.rawValueOf("0x84"));
+            .assertEquals(PropertyType.BLOCK_TRANSACTION, PropertyType.rawValueOf("0x84"));
 
         Assertions
-            .assertEquals(PropertyType.BlockTransaction, PropertyType.rawValueOf("132"));
+            .assertEquals(PropertyType.BLOCK_TRANSACTION, PropertyType.rawValueOf("132"));
 
-        Assertions.assertEquals(PropertyType.AllowMosaic,
+        Assertions.assertEquals(PropertyType.ALLOW_MOSAIC,
             PropertyType.rawValueOf("0x02"));
         Assertions
-            .assertEquals(PropertyType.AllowMosaic, PropertyType.rawValueOf("2"));
+            .assertEquals(PropertyType.ALLOW_MOSAIC, PropertyType.rawValueOf("2"));
 
     }
 

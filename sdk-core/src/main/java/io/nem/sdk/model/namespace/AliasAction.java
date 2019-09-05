@@ -25,11 +25,11 @@ public enum AliasAction {
     /**
      * Link an alias.
      */
-    Link((byte) 1),
+    LINK((byte) 1),
     /**
      * Unlink an alias.
      */
-    Unlink((byte) 0);
+    UNLINK((byte) 0);
 
     private byte value;
 

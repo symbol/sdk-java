@@ -1,6 +1,7 @@
 package io.nem.sdk.model.mosaic;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import io.nem.sdk.model.namespace.NamespaceId;
 import io.nem.sdk.model.transaction.UInt64;
@@ -44,10 +45,11 @@ class NetworkHarvestMosaicTest {
     }
 
     @Test
+    @SuppressWarnings("squid:S3415")
     void shouldHaveValidStatics() {
-        assertEquals(NetworkHarvestMosaic.DIVISIBILITY, 3);
-        assertEquals(NetworkHarvestMosaic.INITIALSUPPLY, new BigInteger("15000000"));
-        assertEquals(NetworkHarvestMosaic.TRANSFERABLE, true);
-        assertEquals(NetworkHarvestMosaic.SUPPLYMUTABLE, true);
+        assertEquals(3, NetworkHarvestMosaic.DIVISIBILITY);
+        assertEquals(BigInteger.valueOf(15000000L), NetworkHarvestMosaic.INITIALSUPPLY);
+        assertTrue(NetworkHarvestMosaic.TRANSFERABLE);
+        assertTrue(NetworkHarvestMosaic.SUPPLYMUTABLE);
     }
 }

@@ -139,6 +139,7 @@ public class SparseMatrix extends Matrix {
     }
 
     @Override
+    @SuppressWarnings("squid:ForLoopCounterChangedCheck")
     protected final void forEach(final ElementVisitorFunction func) {
         final boolean[] copied = new boolean[1];
         for (int i = 0; i < this.numRows; ++i) {

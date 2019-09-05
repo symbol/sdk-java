@@ -78,9 +78,6 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import org.bouncycastle.util.encoders.Hex;
 
-/*
- *  TODO map generated open api objects like MosaicSupplyChangeTransactionDTO instead of a JsonObject.
- */
 public class TransactionMappingVertx implements Function<TransactionInfoDTO, Transaction> {
 
     private final JsonHelper jsonHelper;
@@ -263,10 +260,10 @@ class NamespaceCreationTransactionMapping extends TransactionMappingVertx {
             transaction.getName(),
             new NamespaceId(extractBigInteger(transaction.getNamespaceId())),
             namespaceType,
-            namespaceType == NamespaceType.RootNamespace
+            namespaceType == NamespaceType.ROOT_NAMESPACE
                 ? Optional.of(extractBigInteger(transaction.getDuration()))
                 : Optional.empty(),
-            namespaceType == NamespaceType.SubNamespace
+            namespaceType == NamespaceType.SUB_NAMESPACE
                 ? Optional
                 .of(new NamespaceId(extractBigInteger(transaction.getParentId())))
                 : Optional.empty(),
@@ -419,16 +416,6 @@ class AggregateTransactionMapping extends TransactionMappingVertx {
         List<Transaction> transactions = transaction.getTransactions().stream()
             .map(embeddedTransactionInfoDTO -> {
 
-//                innerTransaction
-//                    .getJsonObject("transaction")
-//                    .put("deadline", transaction.getJsonArray("deadline"));
-//                innerTransaction
-//                    .getJsonObject("transaction")
-//                    .put("maxFee", transaction.getJsonArray("maxFee"));
-//                innerTransaction
-//                    .getJsonObject("transaction")
-//                    .put("signature", transaction.getString("signature"));
-//
                 TransactionInfoDTO transactionInfoDTO = new TransactionInfoDTO();
                 transactionInfoDTO.setMeta(getJsonHelper()
                     .convert(embeddedTransactionInfoDTO.getMeta(), TransactionMetaDTO.class));

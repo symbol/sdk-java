@@ -234,8 +234,8 @@ public class ColumnVector {
     }
 
     private ColumnVector transform(final Supplier<Matrix> supplier) {
-        final Matrix matrix = supplier.get();
-        return new ColumnVector(matrix);
+        final Matrix delegate = supplier.get();
+        return new ColumnVector(delegate);
     }
 
     // endregion

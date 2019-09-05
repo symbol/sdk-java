@@ -39,18 +39,18 @@ import java.util.Objects;
 public class NamespaceIds {
 
 
-    private List<String> namespaceIds = null;
+    private List<String> ids = null;
 
     public NamespaceIds namespaceIds(List<String> namespaceIds) {
-        this.namespaceIds = namespaceIds;
+        this.ids = namespaceIds;
         return this;
     }
 
     public NamespaceIds addNamespaceIdsItem(String namespaceIdsItem) {
-        if (this.namespaceIds == null) {
-            this.namespaceIds = new ArrayList<String>();
+        if (this.ids == null) {
+            this.ids = new ArrayList<>();
         }
-        this.namespaceIds.add(namespaceIdsItem);
+        this.ids.add(namespaceIdsItem);
         return this;
     }
 
@@ -59,12 +59,12 @@ public class NamespaceIds {
      *
      * @return namespaceIds
      */
-    public List<String> getNamespaceIds() {
-        return namespaceIds;
+    public List<String> getIds() {
+        return ids;
     }
 
-    public void setNamespaceIds(List<String> namespaceIds) {
-        this.namespaceIds = namespaceIds;
+    public void setIds(List<String> ids) {
+        this.ids = ids;
     }
 
     @Override
@@ -76,20 +76,19 @@ public class NamespaceIds {
             return false;
         }
         NamespaceIds namespaceIds = (NamespaceIds) o;
-        return Objects.equals(this.namespaceIds, namespaceIds.namespaceIds);
+        return Objects.equals(this.ids, namespaceIds.ids);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(namespaceIds);
+        return Objects.hash(ids);
     }
 
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("class NamespaceIds {\n");
-
-        sb.append("    namespaceIds: ").append(toIndentedString(namespaceIds)).append("\n");
+        sb.append("    namespaceIds: ").append(toIndentedString(ids)).append("\n");
         sb.append("}");
         return sb.toString();
     }

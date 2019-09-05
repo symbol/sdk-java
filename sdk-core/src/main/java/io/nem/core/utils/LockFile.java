@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.channels.FileLock;
 import java.nio.channels.OverlappingFileLockException;
+import org.apache.commons.io.IOUtils;
 
 /**
  * Static class that exposes functions for interacting with lock files.
@@ -40,6 +41,7 @@ public class LockFile {
      * @param lockFile The lock file.
      * @return A handle to the file lock if acquired, or null otherwise.
      */
+    @SuppressWarnings({"squid:S2095", "squid:S2093"})
     public static Closeable tryAcquireLock(final File lockFile) {
         FileLockHandle handle = null;
         try {
@@ -59,10 +61,7 @@ public class LockFile {
             return null;
         } finally {
             if (null != handle && null == handle.lock) {
-                try {
-                    handle.close();
-                } catch (final IOException ignored) {
-                }
+                IOUtils.closeQuietly(handle);
             }
         }
     }

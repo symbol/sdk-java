@@ -25,7 +25,7 @@ public class EmptyAlias extends AliasBase<Object> {
      * Create AddressAlias from address
      */
     public EmptyAlias() {
-        super(AliasType.None, null);
+        super(AliasType.NONE, null);
     }
 
 }

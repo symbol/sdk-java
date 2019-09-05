@@ -29,6 +29,21 @@ import org.bouncycastle.util.encoders.Hex;
 public class Hashes {
 
     /**
+     * The SHA256 algorithm.
+     */
+    public static final String SHA_256 = "SHA256";
+
+    /**
+     * The RIPEMD_160 algorithm.
+     */
+    public static final String RIPEMD_160 = "RIPEMD160";
+
+    /**
+     * The provider.
+     */
+    public static final String BC = "BC";
+
+    /**
      * Private constructor for this utility class.
      */
     private Hashes() {
@@ -71,7 +86,7 @@ public class Hashes {
      * @throws CryptoException if the hash operation failed.
      */
     public static byte[] ripemd160(final byte[]... inputs) {
-        return hash("RIPEMD160", inputs);
+        return hash(RIPEMD_160, inputs);
     }
 
     /**
@@ -128,9 +143,9 @@ public class Hashes {
      */
     public static byte[] hash160(final byte[]... inputs) {
 
-        byte[] hashed_sha256 = hash("SHA256", inputs);
+        byte[] hashedSha256 = hash(SHA_256, inputs);
 
-        return hash("RIPEMD160", Hex.toHexString(hashed_sha256).getBytes());
+        return hash(RIPEMD_160, Hex.toHexString(hashedSha256).getBytes());
     }
 
     /**
@@ -142,15 +157,15 @@ public class Hashes {
      */
     public static byte[] hash256(final byte[]... inputs) {
 
-        byte[] hashed_sha256 = hash("SHA256", inputs);
+        byte[] hashedSha256 = hash(SHA_256, inputs);
 
-        return hash("SHA256", Hex.toHexString(hashed_sha256).getBytes());
+        return hash(SHA_256, Hex.toHexString(hashedSha256).getBytes());
     }
 
     private static byte[] hash(final String algorithm, final byte[]... inputs) {
         return ExceptionUtils.propagate(
             () -> {
-                final MessageDigest digest = MessageDigest.getInstance(algorithm, "BC");
+                final MessageDigest digest = MessageDigest.getInstance(algorithm, BC);
 
                 for (final byte[] input : inputs) {
                     digest.update(input);

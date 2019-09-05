@@ -25,7 +25,7 @@ public class NetworkHarvestMosaic extends Mosaic {
     /**
      * Initial supply
      */
-    public static final BigInteger INITIALSUPPLY = new BigInteger("15000000");
+    public static final BigInteger INITIALSUPPLY = BigInteger.valueOf(15000000);
     /**
      * Is transferable
      */

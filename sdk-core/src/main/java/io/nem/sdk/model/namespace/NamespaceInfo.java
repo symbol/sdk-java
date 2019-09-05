@@ -39,6 +39,7 @@ public class NamespaceInfo {
     private final BigInteger endHeight;
     private final Alias alias;
 
+    @SuppressWarnings("squid:S00107")
     public NamespaceInfo(
         boolean active,
         Integer index,
@@ -159,7 +160,7 @@ public class NamespaceInfo {
      * @return true if namespace is Root
      */
     public boolean isRoot() {
-        return this.type == NamespaceType.RootNamespace;
+        return this.type == NamespaceType.ROOT_NAMESPACE;
     }
 
     /**
@@ -186,7 +187,7 @@ public class NamespaceInfo {
      * @return true if namespace is Subnamespace
      */
     public boolean isSubnamespace() {
-        return this.type == NamespaceType.SubNamespace;
+        return this.type == NamespaceType.SUB_NAMESPACE;
     }
 
     /**
@@ -196,7 +197,7 @@ public class NamespaceInfo {
      */
     public NamespaceId parentNamespaceId() {
         if (this.isRoot()) {
-            throw new Error("Is A Root Namespace");
+            throw new IllegalStateException("Is A Root Namespace");
         }
         return this.parentId;
     }

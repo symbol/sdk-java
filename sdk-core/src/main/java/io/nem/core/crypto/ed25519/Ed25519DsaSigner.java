@@ -55,6 +55,7 @@ public class Ed25519DsaSigner implements DsaSigner {
     }
 
     @Override
+    @SuppressWarnings("squid:S00117")
     public Signature sign(final byte[] data) {
         if (!this.getKeyPair().hasPrivateKey()) {
             throw new CryptoException("cannot sign without private key");
@@ -122,13 +123,13 @@ public class Ed25519DsaSigner implements DsaSigner {
         final Ed25519EncodedFieldElement hModQ = h.modQ();
 
         // Must compute A.
-        final Ed25519GroupElement A = new Ed25519EncodedGroupElement(rawEncodedA).decode();
-        A.precomputeForDoubleScalarMultiplication();
+        final Ed25519GroupElement a = new Ed25519EncodedGroupElement(rawEncodedA).decode();
+        a.precomputeForDoubleScalarMultiplication();
 
         // R = encodedS * B - H(encodedR, encodedA, data) * A
         final Ed25519GroupElement calculatedR =
             Ed25519Group.BASE_POINT.doubleScalarMultiplyVariableTime(
-                A, hModQ, new Ed25519EncodedFieldElement(signature.getBinaryS()));
+                a, hModQ, new Ed25519EncodedFieldElement(signature.getBinaryS()));
 
         // Compare calculated R to given R.
         final byte[] encodedCalculatedR = calculatedR.encode().getRaw();

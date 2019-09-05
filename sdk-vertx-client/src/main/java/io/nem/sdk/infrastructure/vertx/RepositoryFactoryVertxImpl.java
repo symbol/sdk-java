@@ -47,7 +47,6 @@ import org.apache.commons.lang3.exception.ExceptionUtils;
 
 public class RepositoryFactoryVertxImpl implements RepositoryFactory {
 
-
     private final ApiClient apiClient;
 
     private final Supplier<NetworkType> networkType;
@@ -70,9 +69,7 @@ public class RepositoryFactoryVertxImpl implements RepositoryFactory {
         JsonHelperJackson2.configureMapper(apiClient.getObjectMapper());
         JsonHelperJackson2.configureMapper(Json.mapper);
 
-        this.networkType = Suppliers.memoize(() -> {
-            return loadNetworkType();
-        });
+        this.networkType = Suppliers.memoize(this::loadNetworkType);
         networkType.get();
     }
 

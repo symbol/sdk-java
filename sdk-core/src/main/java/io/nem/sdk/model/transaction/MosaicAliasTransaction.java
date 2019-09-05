@@ -57,6 +57,7 @@ public class MosaicAliasTransaction extends Transaction {
      * @param signer Signer for the transaction.
      * @param transactionInfo Transaction info.
      */
+    @SuppressWarnings("squid:S00107")
     public MosaicAliasTransaction(
         final NetworkType networkType,
         final int version,

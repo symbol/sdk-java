@@ -47,6 +47,7 @@ public class SecretLockTransaction extends Transaction {
     private final String secret;
     private final Address recipient;
 
+    @SuppressWarnings("squid:S00107")
     public SecretLockTransaction(
         NetworkType networkType,
         Integer version,
@@ -75,6 +76,7 @@ public class SecretLockTransaction extends Transaction {
             Optional.of(transactionInfo));
     }
 
+    @SuppressWarnings("squid:S00107")
     public SecretLockTransaction(
         NetworkType networkType,
         Integer version,
@@ -100,6 +102,7 @@ public class SecretLockTransaction extends Transaction {
             Optional.empty());
     }
 
+    @SuppressWarnings("squid:S00107")
     public SecretLockTransaction(
         NetworkType networkType,
         Integer version,
@@ -126,7 +129,7 @@ public class SecretLockTransaction extends Transaction {
         Validate.notNull(duration, "Duration must not be null");
         Validate.notNull(secret, "Secret must not be null");
         Validate.notNull(recipient, "Recipient must not be null");
-        if (!HashType.Validator(hashType, secret)) {
+        if (!HashType.validator(hashType, secret)) {
             throw new IllegalArgumentException(
                 "HashType and Secret have incompatible length or not hexadecimal string");
         }

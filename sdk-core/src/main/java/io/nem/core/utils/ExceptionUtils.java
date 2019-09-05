@@ -101,6 +101,7 @@ public class ExceptionUtils {
          *
          * @throws Exception Any exception.
          */
+        @SuppressWarnings("squid:S00112")
         void call() throws Exception;
     }
 

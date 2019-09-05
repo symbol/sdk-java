@@ -24,10 +24,12 @@ import io.nem.core.crypto.KeyPair;
 import io.nem.core.crypto.PrivateKey;
 import io.nem.core.crypto.PublicKey;
 import io.nem.core.crypto.ed25519.arithmetic.Ed25519EncodedGroupElement;
+import io.nem.core.crypto.ed25519.arithmetic.Ed25519GroupElement;
 import io.nem.core.crypto.ed25519.arithmetic.MathUtils;
 import org.hamcrest.core.IsEqual;
 import org.junit.Assert;
 import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
 
 public class Ed25519KeyGeneratorTest extends KeyGeneratorTest {
 
@@ -42,7 +44,10 @@ public class Ed25519KeyGeneratorTest extends KeyGeneratorTest {
             final PublicKey publicKey = generator.derivePublicKey(kp.getPrivateKey());
 
             // Assert (throws if not on the curve):
-            new Ed25519EncodedGroupElement(publicKey.getBytes()).decode();
+            Ed25519GroupElement decode = new Ed25519EncodedGroupElement(publicKey.getBytes())
+                .decode();
+
+            Assertions.assertNotNull(decode);
         }
     }
 

@@ -33,6 +33,12 @@ import org.apache.commons.lang3.ArrayUtils;
 public class UInt64 {
 
     /**
+     * private constructor of this utility class.
+     */
+    private UInt64() {
+    }
+
+    /**
      * Static method to convert from BigInteger to UInt64 integer array [lower,higher]
      *
      * @param input BigInteger

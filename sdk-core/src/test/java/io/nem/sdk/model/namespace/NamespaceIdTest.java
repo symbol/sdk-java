@@ -66,7 +66,7 @@ class NamespaceIdTest {
     void createANamespaceIdFromRootNamespaceNameViaConstructor() {
         NamespaceId namespaceId = new NamespaceId("nem");
         assertEquals(namespaceId.getId(), new BigInteger("-8884663987180930485"));
-        assertEquals(namespaceId.getFullName().get(), "nem");
+        assertEquals("nem", namespaceId.getFullName().get());
     }
 
 
@@ -75,14 +75,14 @@ class NamespaceIdTest {
         NamespaceId test = new NamespaceId("subnem");
         NamespaceId namespaceId = new NamespaceId("nem.subnem");
         assertEquals(namespaceId.getId(), new BigInteger("-2006071407024327758"));
-        assertEquals(namespaceId.getFullName().get(), "nem.subnem");
+        assertEquals("nem.subnem", namespaceId.getFullName().get());
     }
 
     @Test
     void createANamespaceIdFromSubNamespaceNameAndParentNamespaceNameViaConstructor() {
         NamespaceId namespaceId = new NamespaceId("subnem", "nem");
         assertEquals(namespaceId.getId(), new BigInteger("-2006071407024327758"));
-        assertEquals(namespaceId.getFullName().get(), "nem.subnem");
+        assertEquals("nem.subnem", namespaceId.getFullName().get());
     }
 
     @Test
@@ -100,7 +100,7 @@ class NamespaceIdTest {
     void createASubNamespaceIdFromSubNamespaceNameAndParentIdViaConstructor() {
         NamespaceId namespaceId = new NamespaceId("subnem", new BigInteger("-8884663987180930485"));
         assertEquals(namespaceId.getId(), new BigInteger("-2006071407024327758"));
-        assertEquals(namespaceId.getFullName().get(), "subnem");
+        assertEquals("subnem", namespaceId.getFullName().get());
     }
 
     @Test

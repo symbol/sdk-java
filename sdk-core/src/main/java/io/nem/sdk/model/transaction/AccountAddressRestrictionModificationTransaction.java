@@ -44,6 +44,7 @@ public class AccountAddressRestrictionModificationTransaction extends Transactio
     /**
      * public constructor
      */
+    @SuppressWarnings("squid:S00107")
     public AccountAddressRestrictionModificationTransaction(
         final NetworkType networkType,
         final Integer version,
@@ -91,6 +92,7 @@ public class AccountAddressRestrictionModificationTransaction extends Transactio
     /**
      * private constructor
      */
+    @SuppressWarnings("squid:S00107")
     private AccountAddressRestrictionModificationTransaction(
         final NetworkType networkType,
         final Integer version,

@@ -50,12 +50,9 @@ import io.nem.sdk.openapi.okhttp_gson.model.SecretLockTransactionDTO;
 import io.nem.sdk.openapi.okhttp_gson.model.SecretProofTransactionDTO;
 import io.nem.sdk.openapi.okhttp_gson.model.TransactionInfoDTO;
 import io.nem.sdk.openapi.okhttp_gson.model.TransferTransactionDTO;
-import java.io.InputStream;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.bouncycastle.util.encoders.Hex;
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
@@ -303,7 +300,7 @@ public class OkHttpTransactionMappingTest {
             .getInnerTransactions().get(0);
 
         Assert.assertEquals(new BigInteger("-3087871471161192663"),transaction.getMosaicId().getId());
-        Assert.assertEquals(AliasAction.Link,transaction.getAliasAction());
+        Assert.assertEquals(AliasAction.LINK,transaction.getAliasAction());
         Assert.assertEquals(new BigInteger("-7199828632600199869"), transaction.getNamespaceId().getId());
     }
 
@@ -521,7 +518,7 @@ public class OkHttpTransactionMappingTest {
             extractBigInteger(registerNamespaceTransaction.getNamespaceId()),
             transaction.getNamespaceId().getId());
 
-        if (transaction.getNamespaceType() == NamespaceType.RootNamespace) {
+        if (transaction.getNamespaceType() == NamespaceType.ROOT_NAMESPACE) {
             assertEquals(
                 extractBigInteger(
                     registerNamespaceTransaction.getDuration()),

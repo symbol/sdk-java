@@ -33,7 +33,7 @@ class HashTypeTest {
         byte[] result = Hashes.sha3_256(secretBytes);
         String secret = Hex.encodeHexString(result);
 
-        assertTrue(HashType.Validator(HashType.SHA3_256, secret));
+        assertTrue(HashType.validator(HashType.SHA3_256, secret));
     }
 
     @Test
@@ -43,13 +43,13 @@ class HashTypeTest {
         byte[] result = Hashes.sha3_512(secretBytes);
         String secret = Hex.encodeHexString(result);
 
-        assertFalse(HashType.Validator(HashType.SHA3_256, secret));
+        assertFalse(HashType.validator(HashType.SHA3_256, secret));
     }
 
     @Test
     void SHA3_256ShouldReturnFalseIfItIsNotAValidHash() {
         String secret = "zyz6053bb910a6027f138ac5ebe92d43a9a18b7239b3c4d5ea69f1632e50aeef";
-        assertFalse(HashType.Validator(HashType.SHA3_256, secret));
+        assertFalse(HashType.validator(HashType.SHA3_256, secret));
     }
 
     @Test
@@ -59,7 +59,7 @@ class HashTypeTest {
         byte[] result = Hashes.keccak256(secretBytes);
         String secret = Hex.encodeHexString(result);
 
-        assertTrue(HashType.Validator(HashType.KECCAK_256, secret));
+        assertTrue(HashType.validator(HashType.KECCAK_256, secret));
     }
 
     @Test
@@ -69,13 +69,13 @@ class HashTypeTest {
         byte[] result = Hashes.ripemd160(secretBytes);
         String secret = Hex.encodeHexString(result);
 
-        assertFalse(HashType.Validator(HashType.KECCAK_256, secret));
+        assertFalse(HashType.validator(HashType.KECCAK_256, secret));
     }
 
     @Test
     void KECCAK_256ShouldReturnFalseIfItIsNotAValidHash() {
         String secret = "zyz6053bb910a6027f138ac5ebe92d43a9a18b7239b3c4d5ea69f1632e50aeef";
-        assertFalse(HashType.Validator(HashType.KECCAK_256, secret));
+        assertFalse(HashType.validator(HashType.KECCAK_256, secret));
     }
 
     @Test
@@ -85,7 +85,7 @@ class HashTypeTest {
         byte[] result = Hashes.hash160(secretBytes);
         String secret = Hex.encodeHexString(result);
 
-        assertTrue(HashType.Validator(HashType.HASH_160, secret));
+        assertTrue(HashType.validator(HashType.HASH_160, secret));
     }
 
     @Test
@@ -95,13 +95,13 @@ class HashTypeTest {
         byte[] result = Hashes.sha3_256(secretBytes);
         String secret = Hex.encodeHexString(result);
 
-        assertFalse(HashType.Validator(HashType.HASH_160, secret));
+        assertFalse(HashType.validator(HashType.HASH_160, secret));
     }
 
     @Test
     void HASH_160ShouldReturnFalseIfItIsNotAValidHash() {
         String secret = "zyz6053bb910a6027f138ac5ebe92d43a9a18b7239b3c4d5ea69f1632e50aeef";
-        assertFalse(HashType.Validator(HashType.HASH_160, secret));
+        assertFalse(HashType.validator(HashType.HASH_160, secret));
     }
 
     @Test
@@ -111,7 +111,7 @@ class HashTypeTest {
         byte[] result = Hashes.hash256(secretBytes);
         String secret = Hex.encodeHexString(result);
 
-        assertTrue(HashType.Validator(HashType.HASH_256, secret));
+        assertTrue(HashType.validator(HashType.HASH_256, secret));
     }
 
     @Test
@@ -121,12 +121,12 @@ class HashTypeTest {
         byte[] result = Hashes.ripemd160(secretBytes);
         String secret = Hex.encodeHexString(result);
 
-        assertFalse(HashType.Validator(HashType.HASH_256, secret));
+        assertFalse(HashType.validator(HashType.HASH_256, secret));
     }
 
     @Test
     void HASH_256ShouldReturnFalseIfItIsNotAValidHash() {
         String secret = "zyz6053bb910a6027f138ac5ebe92d43a9a18b7239b3c4d5ea69f1632e50aeef";
-        assertFalse(HashType.Validator(HashType.HASH_256, secret));
+        assertFalse(HashType.validator(HashType.HASH_256, secret));
     }
 }

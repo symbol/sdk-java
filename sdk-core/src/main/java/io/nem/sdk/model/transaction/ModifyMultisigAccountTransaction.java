@@ -47,6 +47,7 @@ public class ModifyMultisigAccountTransaction extends Transaction {
     private final byte minRemovalDelta;
     private final List<MultisigCosignatoryModification> modifications;
 
+    @SuppressWarnings("squid:S00107")
     public ModifyMultisigAccountTransaction(
         NetworkType networkType,
         Integer version,
@@ -92,6 +93,7 @@ public class ModifyMultisigAccountTransaction extends Transaction {
             Optional.empty());
     }
 
+    @SuppressWarnings("squid:S00107")
     private ModifyMultisigAccountTransaction(
         NetworkType networkType,
         Integer version,

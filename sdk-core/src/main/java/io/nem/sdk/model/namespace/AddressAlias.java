@@ -30,7 +30,7 @@ public class AddressAlias extends AliasBase<Address> {
      * Create AddressAlias from address
      */
     public AddressAlias(Address address) {
-        super(AliasType.Address, address);
+        super(AliasType.ADDRESS, address);
     }
 
 }

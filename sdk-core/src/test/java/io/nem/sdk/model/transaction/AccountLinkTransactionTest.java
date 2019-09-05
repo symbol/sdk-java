@@ -45,9 +45,9 @@ public class AccountLinkTransactionTest {
                 account.getPublicAccount(),
                 AccountLinkAction.LINK,
                 NetworkType.MIJIN_TEST);
-        assertEquals(accountLinkTransaction.getLinkAction(), AccountLinkAction.LINK);
+        assertEquals(AccountLinkAction.LINK, accountLinkTransaction.getLinkAction());
         assertEquals(
-            accountLinkTransaction.getRemoteAccount().getPublicKey().toString(),
-            "9A49366406ACA952B88BADF5F1E9BE6CE4968141035A60BE503273EA65456B24");
+            "9A49366406ACA952B88BADF5F1E9BE6CE4968141035A60BE503273EA65456B24",
+            accountLinkTransaction.getRemoteAccount().getPublicKey().toString());
     }
 }

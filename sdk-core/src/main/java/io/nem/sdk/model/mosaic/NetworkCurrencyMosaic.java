@@ -25,7 +25,7 @@ public class NetworkCurrencyMosaic extends Mosaic {
     /**
      * Initial supply
      */
-    public static final BigInteger INITIALSUPPLY = new BigInteger("8999999999");
+    public static final BigInteger INITIALSUPPLY = BigInteger.valueOf(8999999999L);
     /**
      * Is transferable
      */

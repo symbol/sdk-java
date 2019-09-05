@@ -90,7 +90,7 @@ public class NamespaceRepositoryVertxImpl extends AbstractRepositoryVertxImpl im
     private Observable<List<NamespaceInfo>> getNamespacesFromAccount(
         Address address, Optional<QueryParams> queryParams) {
 
-        Consumer<Handler<AsyncResult<List<NamespaceInfoDTO>>>> callback = (handler) ->
+        Consumer<Handler<AsyncResult<List<NamespaceInfoDTO>>>> callback = handler ->
             client.getNamespacesFromAccount(address.plain(),
                 getPageSize(queryParams),
                 getId(queryParams),
@@ -120,7 +120,7 @@ public class NamespaceRepositoryVertxImpl extends AbstractRepositoryVertxImpl im
             .addresses(addresses.stream().map(Address::plain).collect(
                 Collectors.toList()));
 
-        Consumer<Handler<AsyncResult<List<NamespaceInfoDTO>>>> callback = (handler) -> client
+        Consumer<Handler<AsyncResult<List<NamespaceInfoDTO>>>> callback = handler -> client
             .getNamespacesFromAccounts(accounts, handler);
 
         return exceptionHandling(
@@ -137,7 +137,7 @@ public class NamespaceRepositoryVertxImpl extends AbstractRepositoryVertxImpl im
                 .map(id -> UInt64.bigIntegerToHex(id.getId()))
                 .collect(Collectors.toList()));
 
-        Consumer<Handler<AsyncResult<List<NamespaceNameDTO>>>> callback = (handler) ->
+        Consumer<Handler<AsyncResult<List<NamespaceNameDTO>>>> callback = handler ->
             client.getNamespacesNames(ids,
                 handler);
 
@@ -214,7 +214,7 @@ public class NamespaceRepositoryVertxImpl extends AbstractRepositoryVertxImpl im
      */
     private MosaicId toMosaicId(NamespaceDTO namespaceDTO) {
         MosaicId mosaicId = null;
-        if (namespaceDTO.getAlias() != null && AliasType.Mosaic.getValue()
+        if (namespaceDTO.getAlias() != null && AliasType.MOSAIC.getValue()
             .equals(namespaceDTO.getAlias().getType().getValue())) {
             mosaicId = new MosaicId(extractBigInteger(namespaceDTO.getAlias().getMosaicId()));
 
@@ -230,11 +230,11 @@ public class NamespaceRepositoryVertxImpl extends AbstractRepositoryVertxImpl im
      */
     private Address toAddress(NamespaceDTO namespaceDTO) {
         Address address = null;
-        if (namespaceDTO.getAlias() != null && AliasType.Address.getValue()
+        if (namespaceDTO.getAlias() != null && AliasType.ADDRESS.getValue()
             .equals(namespaceDTO.getAlias().getType().getValue())) {
             String rawAddress = namespaceDTO.getAlias().getAddress();
             if (rawAddress != null) {
-                address = Address.createFromRawAddress(rawAddress);
+                address = toAddress(rawAddress);
             }
         }
         return address;
@@ -273,9 +273,9 @@ public class NamespaceRepositoryVertxImpl extends AbstractRepositoryVertxImpl im
 
         Alias alias = new EmptyAlias();
         if (namespaceDTO.getAlias() != null) {
-            if (namespaceDTO.getAlias().getType().getValue().equals(AliasType.Mosaic.getValue())) {
+            if (namespaceDTO.getAlias().getType().getValue().equals(AliasType.MOSAIC.getValue())) {
                 return new MosaicAlias(toMosaicId(namespaceDTO));
-            } else if (namespaceDTO.getAlias().getType().getValue().equals(AliasType.Address
+            } else if (namespaceDTO.getAlias().getType().getValue().equals(AliasType.ADDRESS
                 .getValue())) {
                 return new AddressAlias(toAddress(namespaceDTO));
             }

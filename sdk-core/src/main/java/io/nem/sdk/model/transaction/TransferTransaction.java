@@ -51,6 +51,7 @@ public class TransferTransaction extends Transaction {
     private final Message message;
     private final Optional<NamespaceId> namespaceId;
 
+    @SuppressWarnings("squid:S00107")
     public TransferTransaction(
         final NetworkType networkType,
         final Integer version,
@@ -77,6 +78,7 @@ public class TransferTransaction extends Transaction {
             Optional.of(transactionInfo));
     }
 
+    @SuppressWarnings("squid:S00107")
     private TransferTransaction(
         final NetworkType networkType,
         final Integer version,
@@ -100,6 +102,7 @@ public class TransferTransaction extends Transaction {
             Optional.empty());
     }
 
+    @SuppressWarnings("squid:S00107")
     private TransferTransaction(
         final NetworkType networkType,
         final Integer version,

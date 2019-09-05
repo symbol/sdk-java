@@ -104,9 +104,9 @@ public class SecretLockTransactionTest {
                 NetworkType.MIJIN_TEST);
         SignedTransaction signedTransaction = secretLocktx.signWith(account, generationHash);
         String payload = signedTransaction.getPayload();
-        assertEquals(
-            payload.substring(240),
-            "44B262C46CEABB8580969800000000006400000000000000003FC8BA10229AB5778D05D9C4B7F56676A88BF9295C185ACFC0F961DB5408CAFE90E8FEBD671DD41BEE94EC3BA5831CB608A312C2F203BA84AC");
+        assertEquals("44B262C46CEABB8580969800000000006400000000000000003FC8BA10229AB5778D05D9C4B7F56676A88B"
+                + "F9295C185ACFC0F961DB5408CAFE90E8FEBD671DD41BEE94EC3BA5831CB608A312C2F203BA84AC",
+            payload.substring(240));
         assertEquals(
             "DAF5D06A8C47C636E4C97B5AD3FCB82F2B9D2140A37FE5572A3065CF6D65642A",
             signedTransaction.getHash());

@@ -54,9 +54,9 @@ class RegisterNamespaceTransactionTest {
         SignedTransaction signedTransaction =
             registerNamespaceTransaction.signWith(testAccount, generationHash);
 
-        assertEquals(
-            signedTransaction.getPayload().substring(240),
-            "00E803000000000000CFCBE72D994BE69B13726F6F742D746573742D6E616D657370616365");
+        assertEquals("00E803000000000000CFCBE72D994BE69B13726F6F742D746573742D6E616D657370616365",
+            signedTransaction.getPayload().substring(240)
+        );
         assertEquals(NetworkType.MIJIN_TEST, registerNamespaceTransaction.getNetworkType());
         assertTrue(1 == registerNamespaceTransaction.getVersion());
         assertTrue(
@@ -64,7 +64,7 @@ class RegisterNamespaceTransactionTest {
                 .isBefore(registerNamespaceTransaction.getDeadline().getLocalDateTime()));
         assertEquals(BigInteger.valueOf(0), registerNamespaceTransaction.getFee());
         assertEquals("root-test-namespace", registerNamespaceTransaction.getNamespaceName());
-        assertEquals(NamespaceType.RootNamespace, registerNamespaceTransaction.getNamespaceType());
+        assertEquals(NamespaceType.ROOT_NAMESPACE, registerNamespaceTransaction.getNamespaceType());
         assertEquals(BigInteger.valueOf(1000), registerNamespaceTransaction.getDuration().get());
         assertEquals(
             namespaceId.getIdAsHex(), registerNamespaceTransaction.getNamespaceId().getIdAsHex());
@@ -84,8 +84,8 @@ class RegisterNamespaceTransactionTest {
             registerNamespaceTransaction.signWith(testAccount, generationHash);
 
         assertEquals(
-            signedTransaction.getPayload().substring(240),
-            "014DF55E7F6D8FB7FF924207DF2CA1BBF313726F6F742D746573742D6E616D657370616365");
+            "014DF55E7F6D8FB7FF924207DF2CA1BBF313726F6F742D746573742D6E616D657370616365",
+            signedTransaction.getPayload().substring(240));
         assertEquals(NetworkType.MIJIN_TEST, registerNamespaceTransaction.getNetworkType());
         assertTrue(1 == registerNamespaceTransaction.getVersion());
         assertTrue(
@@ -93,7 +93,7 @@ class RegisterNamespaceTransactionTest {
                 .isBefore(registerNamespaceTransaction.getDeadline().getLocalDateTime()));
         assertEquals(BigInteger.valueOf(0), registerNamespaceTransaction.getFee());
         assertEquals("root-test-namespace", registerNamespaceTransaction.getNamespaceName());
-        assertEquals(NamespaceType.SubNamespace, registerNamespaceTransaction.getNamespaceType());
+        assertEquals(NamespaceType.SUB_NAMESPACE, registerNamespaceTransaction.getNamespaceType());
         assertEquals(Optional.empty(), registerNamespaceTransaction.getDuration());
         assertEquals(
             new BigInteger("-883935687755742574"),
@@ -113,9 +113,8 @@ class RegisterNamespaceTransactionTest {
         SignedTransaction signedTransaction =
             registerNamespaceTransaction.signWith(testAccount, generationHash);
 
-        assertEquals(
-            signedTransaction.getPayload().substring(240),
-            "014DF55E7F6D8FB7FF924207DF2CA1BBF313726F6F742D746573742D6E616D657370616365");
+        assertEquals("014DF55E7F6D8FB7FF924207DF2CA1BBF313726F6F742D746573742D6E616D657370616365",
+            signedTransaction.getPayload().substring(240));
         assertEquals(NetworkType.MIJIN_TEST, registerNamespaceTransaction.getNetworkType());
         assertTrue(1 == registerNamespaceTransaction.getVersion());
         assertTrue(
@@ -123,7 +122,7 @@ class RegisterNamespaceTransactionTest {
                 .isBefore(registerNamespaceTransaction.getDeadline().getLocalDateTime()));
         assertEquals(BigInteger.valueOf(0), registerNamespaceTransaction.getFee());
         assertEquals("root-test-namespace", registerNamespaceTransaction.getNamespaceName());
-        assertEquals(NamespaceType.SubNamespace, registerNamespaceTransaction.getNamespaceType());
+        assertEquals(NamespaceType.SUB_NAMESPACE, registerNamespaceTransaction.getNamespaceType());
         assertEquals(Optional.empty(), registerNamespaceTransaction.getDuration());
         assertEquals(
             new BigInteger("-883935687755742574"),

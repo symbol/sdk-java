@@ -78,9 +78,6 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import org.bouncycastle.util.encoders.Hex;
 
-/*
- *  TODO map generated open api objects like MosaicSupplyChangeTransactionDTO instead of a JsonObject.
- */
 public class TransactionMappingOkHttp implements Function<TransactionInfoDTO, Transaction> {
 
     private final JsonHelper jsonHelper;
@@ -132,6 +129,10 @@ public class TransactionMappingOkHttp implements Function<TransactionInfoDTO, Tr
 
     protected MosaicId toMosaicId(List<Long> id) {
         return UInt64.isUInt64(id) ? new MosaicId(extractBigInteger(id)) : null;
+    }
+
+    protected Mosaic toMosaic(io.nem.sdk.openapi.okhttp_gson.model.Mosaic mosaic) {
+        return new Mosaic(toMosaicId(mosaic.getId()), extractBigInteger(mosaic.getAmount()));
     }
 
     protected Integer extractTransactionVersion(int version) {
@@ -205,11 +206,7 @@ class TransferTransactionMapping extends TransactionMappingOkHttp {
         if (transaction.getMosaics() != null) {
             mosaics =
                 transaction.getMosaics().stream()
-                    .map(
-                        mosaic ->
-                            new Mosaic(
-                                toMosaicId(mosaic.getId()),
-                                extractBigInteger(mosaic.getAmount())))
+                    .map(this::toMosaic)
                     .collect(Collectors.toList());
         }
 
@@ -263,10 +260,10 @@ class NamespaceCreationTransactionMapping extends TransactionMappingOkHttp {
             transaction.getName(),
             new NamespaceId(extractBigInteger(transaction.getNamespaceId())),
             namespaceType,
-            namespaceType == NamespaceType.RootNamespace
+            namespaceType == NamespaceType.ROOT_NAMESPACE
                 ? Optional.of(extractBigInteger(transaction.getDuration()))
                 : Optional.empty(),
-            namespaceType == NamespaceType.SubNamespace
+            namespaceType == NamespaceType.SUB_NAMESPACE
                 ? Optional
                 .of(new NamespaceId(extractBigInteger(transaction.getParentId())))
                 : Optional.empty(),
@@ -419,16 +416,6 @@ class AggregateTransactionMapping extends TransactionMappingOkHttp {
         List<Transaction> transactions = transaction.getTransactions().stream()
             .map(embeddedTransactionInfoDTO -> {
 
-//                innerTransaction
-//                    .getJsonObject("transaction")
-//                    .put("deadline", transaction.getJsonArray("deadline"));
-//                innerTransaction
-//                    .getJsonObject("transaction")
-//                    .put("maxFee", transaction.getJsonArray("maxFee"));
-//                innerTransaction
-//                    .getJsonObject("transaction")
-//                    .put("signature", transaction.getString("signature"));
-//
                 TransactionInfoDTO transactionInfoDTO = new TransactionInfoDTO();
                 transactionInfoDTO.setMeta(getJsonHelper()
                     .convert(embeddedTransactionInfoDTO.getMeta(), TransactionMetaDTO.class));
@@ -495,9 +482,7 @@ class LockFundsTransactionMapping extends TransactionMappingOkHttp {
 
         Deadline deadline = new Deadline(extractBigInteger(transaction.getDeadline()));
         NetworkType networkType = extractNetworkType(transaction.getVersion());
-        //TODO getter transaction mosaic attribute.
-        Mosaic mosaic = new Mosaic(toMosaicId(transaction.getMosaic().getId()),
-            extractBigInteger(transaction.getMosaic().getAmount()));
+        Mosaic mosaic = toMosaic(transaction.getMosaic());
         return new LockFundsTransaction(
             networkType,
             extractTransactionVersion(transaction.getVersion()),
@@ -512,10 +497,7 @@ class LockFundsTransactionMapping extends TransactionMappingOkHttp {
             transactionInfo);
     }
 
-    private Mosaic getMosaic(io.nem.sdk.openapi.okhttp_gson.model.Mosaic mosaic) {
-        return new Mosaic(new MosaicId(extractBigInteger(mosaic.getId())),
-            extractBigInteger(mosaic.getAmount()));
-    }
+
 }
 
 class SecretLockTransactionMapping extends TransactionMappingOkHttp {
@@ -594,7 +576,8 @@ class MosaicAliasTransactionMapping extends TransactionMappingOkHttp {
     public MosaicAliasTransaction apply(TransactionInfoDTO input) {
         patchTransaction(input);
         TransactionInfo transactionInfo = this.createTransactionInfo(input.getMeta());
-        MosaicAliasTransactionDTO transaction = getJsonHelper().convert(input.getTransaction(), MosaicAliasTransactionDTO.class);
+        MosaicAliasTransactionDTO transaction = getJsonHelper()
+            .convert(input.getTransaction(), MosaicAliasTransactionDTO.class);
         NamespaceId namespaceId = new NamespaceId(extractBigInteger(transaction.getNamespaceId()));
         Deadline deadline = new Deadline(extractBigInteger(transaction.getDeadline()));
         NetworkType networkType = extractNetworkType(transaction.getVersion());

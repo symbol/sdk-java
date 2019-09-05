@@ -49,6 +49,7 @@ public class AggregateTransaction extends Transaction {
     private final List<Transaction> innerTransactions;
     private final List<AggregateTransactionCosignature> cosignatures;
 
+    @SuppressWarnings("squid:S00107")
     public AggregateTransaction(
         NetworkType networkType,
         TransactionType transactionType,
@@ -94,6 +95,7 @@ public class AggregateTransaction extends Transaction {
             Optional.empty());
     }
 
+    @SuppressWarnings("squid:S00107")
     private AggregateTransaction(
         NetworkType networkType,
         TransactionType transactionType,
@@ -182,14 +184,6 @@ public class AggregateTransaction extends Transaction {
     public byte[] generateBytes() {
         return ExceptionUtils.propagate(
             () -> {
-                final int version =
-                    (int)
-                        Long.parseLong(
-                            Integer.toHexString(getNetworkType().getValue())
-                                + "0"
-                                + Integer.toHexString(getVersion()),
-                            16);
-
                 byte[] transactionsBytes = new byte[0];
                 for (Transaction innerTransaction : innerTransactions) {
                     final byte[] transactionBytes = innerTransaction.toAggregateTransactionBytes();

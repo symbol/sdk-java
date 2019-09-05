@@ -60,7 +60,7 @@ public class ResolutionStatementTest {
         resolutionEntries.add(addressAliasResolutionEntry);
         ResolutionStatement<Address> resolutionStatement =
             new ResolutionStatement(BigInteger.TEN, address, resolutionEntries);
-        assertEquals(resolutionStatement.getHeight(), BigInteger.TEN);
+        assertEquals(BigInteger.TEN, resolutionStatement.getHeight());
         assertEquals(resolutionStatement.getUnresolved(), address);
         assertEquals(resolutionStatement.getResolutionEntries(), resolutionEntries);
     }
@@ -71,7 +71,7 @@ public class ResolutionStatementTest {
         resolutionEntries.add(mosaicAliasResolutionEntry);
         ResolutionStatement<Address> resolutionStatement =
             new ResolutionStatement(BigInteger.TEN, mosaicId, resolutionEntries);
-        assertEquals(resolutionStatement.getHeight(), BigInteger.TEN);
+        assertEquals(BigInteger.TEN, resolutionStatement.getHeight());
         assertEquals(resolutionStatement.getUnresolved(), mosaicId);
         assertEquals(resolutionStatement.getResolutionEntries(), resolutionEntries);
     }

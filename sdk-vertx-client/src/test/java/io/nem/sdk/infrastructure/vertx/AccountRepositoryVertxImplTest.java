@@ -146,6 +146,28 @@ public class AccountRepositoryVertxImplTest extends AbstractVertxRespositoryTest
 
     }
 
+    @Test
+    public void shouldProcessExceptionWhenNotFoundInvalidResponse() throws Exception {
+        Address address =
+            Address.createFromRawAddress(
+                "SBCPGZ3S2SCC3YHBBTYDCUZV4ZZEPHM2KGCP4QXX");
+
+        AccountDTO accountDTO = new AccountDTO();
+        accountDTO.setAccountType(AccountTypeEnum.NUMBER_1);
+        accountDTO.setAddress(encodeAddress(address));
+
+        AccountInfoDTO accountInfoDTO = new AccountInfoDTO();
+        accountInfoDTO.setAccount(accountDTO);
+
+        mockErrorCodeRawResponse(400, "I'm a raw error, not json");
+
+        Assertions
+            .assertEquals("ApiException: Bad Request - 400 - I'm a raw error, not json",
+                Assertions.assertThrows(RepositoryCallException.class, () -> {
+                    ExceptionUtils
+                        .propagate(() -> repository.getAccountInfo(address).toFuture().get());
+                }).getMessage());
+    }
 
     @Test
     public void shouldGetAccountsNamesFromAddresses() throws Exception {

@@ -18,8 +18,8 @@ package io.nem.sdk.model.node;
 import java.util.Arrays;
 
 public enum RoleType {
-    PeerNode(1),
-    ApiNode(2);
+    PEER_NODE(1),
+    API_NODE(2);
 
     private final int value;
 

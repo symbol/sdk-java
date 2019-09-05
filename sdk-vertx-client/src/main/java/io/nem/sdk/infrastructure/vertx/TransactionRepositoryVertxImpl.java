@@ -75,7 +75,7 @@ public class TransactionRepositoryVertxImpl extends AbstractRepositoryVertxImpl 
 
     @Override
     public Observable<List<Transaction>> getTransactions(List<String> transactionHashes) {
-        Consumer<Handler<AsyncResult<List<TransactionInfoDTO>>>> callback = (handler) ->
+        Consumer<Handler<AsyncResult<List<TransactionInfoDTO>>>> callback = handler ->
             client.getTransactions(new TransactionIds().transactionIds(transactionHashes), handler);
         return exceptionHandling(
             call(callback).flatMapIterable(item -> item).map(this::toTransaction).toList()
@@ -103,7 +103,7 @@ public class TransactionRepositoryVertxImpl extends AbstractRepositoryVertxImpl 
     @Override
     public Observable<List<TransactionStatus>> getTransactionStatuses(
         List<String> transactionHashes) {
-        Consumer<Handler<AsyncResult<List<TransactionStatusDTO>>>> callback = (handler) ->
+        Consumer<Handler<AsyncResult<List<TransactionStatusDTO>>>> callback = handler ->
             client.getTransactionsStatuses(new TransactionHashes().hashes(transactionHashes),
                 handler);
         return exceptionHandling(

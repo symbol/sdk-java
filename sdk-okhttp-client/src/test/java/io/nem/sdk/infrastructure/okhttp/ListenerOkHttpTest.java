@@ -74,11 +74,11 @@ public class ListenerOkHttpTest {
     @Test
     public void shouldOpen() throws ExecutionException, InterruptedException, TimeoutException {
 
-        Assertions.assertNull(listener.getUID());
+        Assertions.assertNull(listener.getUid());
 
         simulateWebSocketStartup();
 
-        Assertions.assertEquals(wsId, listener.getUID());
+        Assertions.assertEquals(wsId, listener.getUid());
 
         listener.close();
         listener.close();

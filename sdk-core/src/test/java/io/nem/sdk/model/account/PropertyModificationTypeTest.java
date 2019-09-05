@@ -31,13 +31,13 @@ public class PropertyModificationTypeTest {
     @Test
     public void rawValueOf() {
         Assertions
-            .assertEquals(PropertyModificationType.Add, PropertyModificationType.rawValueOf("0x01"));
+            .assertEquals(PropertyModificationType.ADD, PropertyModificationType.rawValueOf("0x01"));
         Assertions
-            .assertEquals(PropertyModificationType.Add, PropertyModificationType.rawValueOf("1"));
-        Assertions.assertEquals(PropertyModificationType.Remove,
+            .assertEquals(PropertyModificationType.ADD, PropertyModificationType.rawValueOf("1"));
+        Assertions.assertEquals(PropertyModificationType.REMOVE,
             PropertyModificationType.rawValueOf("0x00"));
         Assertions
-            .assertEquals(PropertyModificationType.Remove, PropertyModificationType.rawValueOf("0"));
+            .assertEquals(PropertyModificationType.REMOVE, PropertyModificationType.rawValueOf("0"));
 
         Arrays.stream(PropertyModificationType.values())
             .forEach(t -> Assertions

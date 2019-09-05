@@ -62,7 +62,7 @@ public abstract class AliasBase<T> implements Alias<T> {
      */
     @Override
     public boolean isEmpty() {
-        return AliasType.None == getAliasValue();
+        return AliasType.NONE == getAliasValue();
     }
 
     @Override

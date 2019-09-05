@@ -51,6 +51,7 @@ import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 
+@SuppressWarnings("squid:S1607")
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class ListenerIntegrationTest extends BaseIntegrationTest {
 
@@ -90,7 +91,7 @@ class ListenerIntegrationTest extends BaseIntegrationTest {
         CompletableFuture<Void> connected = listener.open();
         connected.get();
         assertTrue(connected.isDone());
-        assertNotNull(listener.getUID());
+        assertNotNull(listener.getUid());
     }
 
     @ParameterizedTest
