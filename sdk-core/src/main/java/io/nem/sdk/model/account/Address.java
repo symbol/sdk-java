@@ -115,7 +115,7 @@ public class Address {
         try {
             publicKeyBytes = Hex.decodeHex(publicKey);
         } catch (DecoderException e) {
-            throw new IllegalArgumentException("public key is not valid");
+            throw new IllegalArgumentException("Public key is not valid");
         }
         final byte[] sha3PublicKeyHash = Hashes.sha3_256(publicKeyBytes);
 

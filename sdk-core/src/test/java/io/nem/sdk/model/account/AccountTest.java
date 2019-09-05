@@ -30,6 +30,8 @@ import io.nem.sdk.model.transaction.SignedTransaction;
 import io.nem.sdk.model.transaction.TransferTransaction;
 import java.math.BigInteger;
 import java.util.Collections;
+import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 class AccountTest {
@@ -140,4 +142,30 @@ class AccountTest {
         assertEquals(random.getPrivateKey().toString().toUpperCase(), account.getPrivateKey());
         assertEquals(NetworkType.MIJIN_TEST, account.getAddress().getNetworkType());
     }
+
+    @Test
+    public void testAddresses2() {
+        Address address = Address
+            .createFromPublicKey("B630EFDDFADCC4A2077AB8F1EC846B08FEE2D2972EACF95BBAC6BFAC3D31834C",
+                NetworkType.MIJIN_TEST);
+        Assert.assertEquals("SCUNEE-EE4FON-6N3DKD-FZUM6U-V7AU26-ZFTWT5-6NUX", address.pretty());
+        Assert.assertEquals("SCUNEEEE4FON6N3DKDFZUM6UV7AU26ZFTWT56NUX", address.plain());
+    }
+
+    @Test
+    void shouldConstruct() {
+        PublicAccount account1 = PublicAccount.createFromPublicKey(
+            "A5F82EC8EBB341427B6785C8111906CD0DF18838FB11B51CE0E18B5E79DFF630",
+            NetworkType.MIJIN_TEST);
+
+        Assertions.assertEquals("SDWGJE7XOYRX5RQMMLWF4TE7U5Y2HUYBRDVX2OJE",
+            account1.getAddress().plain());
+        Assertions.assertEquals("SDWGJE-7XOYRX-5RQMML-WF4TE7-U5Y2HU-YBRDVX-2OJE",
+            account1.getAddress().pretty());
+        Assertions.assertEquals(
+            "A5F82EC8EBB341427B6785C8111906CD0DF18838FB11B51CE0E18B5E79DFF630",
+            account1.getPublicKey().toString());
+    }
+
+
 }
