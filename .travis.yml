@@ -14,6 +14,12 @@ cache:
 install:
   - ./gradlew -b ./openapi-generator/build.gradle clean generate
   - ./gradlew -b ./openapi-generator/build.gradle install
-  - ./gradlew assemble -x javadoc
 script:
-  - ./gradlew test jacocoTestReport coveralls
+  - ./gradlew install jacocoTestReport coveralls -x javadoc
+deploy:
+  provider: script
+  script:
+    - ./gradlew -b ./openapi-generator/build.gradle uploadArchives
+    - ./gradlew uploadArchives
+  on:
+    branch: master

@@ -55,8 +55,12 @@ public enum AccountRestrictionTypeDto {
      * @return Enum value.
      */
     public static AccountRestrictionTypeDto rawValueOf(final byte value) {
-        return Arrays.stream(values()).filter(e -> e.value == value).findFirst()
-            .orElseThrow(() -> new IllegalArgumentException(value + " is not a valid value"));
+        for (AccountRestrictionTypeDto current : AccountRestrictionTypeDto.values()) {
+            if (value == current.value) {
+                return current;
+            }
+        }
+        throw new IllegalArgumentException(value + " was not a backing value for AccountRestrictionTypeDto.");
     }
 
     /**
