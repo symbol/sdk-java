@@ -47,13 +47,11 @@ def signingSecretKeyRingFile = getPropertyValue('signingSecretKeyRingFile')
 def signingKeyId = getPropertyValue('signingKeyId')
 def signingPassword = getPropertyValue('signingPassword')
 
-
 allprojects {
     ext."signing.keyId" = signingKeyId
     ext."signing.secretKeyRingFile" = signingSecretKeyRingFile
     ext."signing.password" = signingPassword
 }
-
 
 subprojects {
     apply plugin: 'java'
@@ -90,18 +88,9 @@ subprojects {
         repositories {
             mavenDeployer {
 
-                if (ossrhUsername == null) {
-                    throw new IllegalStateException("ossrhUsername env or project property is required.")
-                }
-                if (ossrhPassword == null) {
-                    throw new IllegalStateException("ossrhPassword env or project property is required.")
-                }
-
                 if (signingKeyId != null) {
                     beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
                 }
-
-                logger.info('Uploading artifacts for project ' + project.name)
 
                 repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
                     authentication(userName: ossrhUsername, password: ossrhPassword)
