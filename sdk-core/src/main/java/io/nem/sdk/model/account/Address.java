@@ -37,23 +37,23 @@ import org.apache.commons.codec.binary.Hex;
 public class Address {
 
     private static final int NUM_CHECKSUM_BYTES = 4;
-    private final String plain;
+    private final String plainAddress;
     private final NetworkType networkType;
 
     /**
      * Constructor
      *
-     * @param plain Address in plain format
+     * @param plainAddress Address in plain format
      * @param networkType Network type
      */
-    public Address(String plain, NetworkType networkType) {
-        this.plain =
-            Objects.requireNonNull(plain, "address must not be null")
+    public Address(String plainAddress, NetworkType networkType) {
+        this.plainAddress =
+            Objects.requireNonNull(plainAddress, "address must not be null")
                 .replace("-", "")
                 .trim()
                 .toUpperCase();
         this.networkType = Objects.requireNonNull(networkType, "networkType must not be null");
-        char addressNetwork = this.plain.charAt(0);
+        char addressNetwork = this.plainAddress.charAt(0);
         if (networkType.equals(NetworkType.MAIN_NET) && addressNetwork != 'N') {
             throw new IllegalArgumentException("MAIN_NET Address must start with N");
         } else if (networkType.equals(NetworkType.TEST_NET) && addressNetwork != 'T') {
@@ -151,7 +151,7 @@ public class Address {
      * @return String
      */
     public String plain() {
-        return this.plain;
+        return this.plainAddress;
     }
 
     /**
@@ -178,19 +178,19 @@ public class Address {
      * @return String
      */
     public String pretty() {
-        return this.plain.substring(0, 6)
+        return this.plainAddress.substring(0, 6)
             + "-"
-            + this.plain.substring(6, 6 + 6)
+            + this.plainAddress.substring(6, 6 + 6)
             + "-"
-            + this.plain.substring(6 * 2, 6 * 2 + 6)
+            + this.plainAddress.substring(6 * 2, 6 * 2 + 6)
             + "-"
-            + this.plain.substring(6 * 3, 6 * 3 + 6)
+            + this.plainAddress.substring(6 * 3, 6 * 3 + 6)
             + "-"
-            + this.plain.substring(6 * 4, 6 * 4 + 6)
+            + this.plainAddress.substring(6 * 4, 6 * 4 + 6)
             + "-"
-            + this.plain.substring(6 * 5, 6 * 5 + 6)
+            + this.plainAddress.substring(6 * 5, 6 * 5 + 6)
             + "-"
-            + this.plain.substring(6 * 6, 6 * 6 + 4);
+            + this.plainAddress.substring(6 * 6, 6 * 6 + 4);
     }
 
     /**
@@ -207,11 +207,11 @@ public class Address {
             return false;
         }
         Address address1 = (Address) o;
-        return Objects.equals(plain, address1.plain) && networkType == address1.networkType;
+        return Objects.equals(plainAddress, address1.plainAddress) && networkType == address1.networkType;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(plain, networkType);
+        return Objects.hash(plainAddress, networkType);
     }
 }
