@@ -57,6 +57,7 @@ public abstract class Transaction {
      * @param signer Transaction signer.
      * @param transactionInfo Transaction meta data info.
      */
+    @SuppressWarnings("squid:S00107")
     public Transaction(
         TransactionType type,
         NetworkType networkType,
@@ -194,18 +195,18 @@ public abstract class Transaction {
      */
     public SignedTransaction signWith(final Account account, final String generationHash) {
 
-        final Signer signer = new Signer(account.getKeyPair());
+        final Signer theSigner = new Signer(account.getKeyPair());
         final byte[] bytes = this.generateBytes();
         final byte[] generationHashBytes = HexEncoder.getBytes(generationHash);
         final byte[] signingBytes = new byte[bytes.length + generationHashBytes.length - 100];
         System.arraycopy(generationHashBytes, 0, signingBytes, 0, generationHashBytes.length);
         System.arraycopy(bytes, 100, signingBytes, generationHashBytes.length, bytes.length - 100);
-        final Signature signature = signer.sign(signingBytes);
+        final Signature theSignature = theSigner.sign(signingBytes);
 
         final byte[] payload = new byte[bytes.length];
         System.arraycopy(bytes, 0, payload, 0, 4); // Size
-        System.arraycopy(signature.getBytes(), 0, payload, 4,
-            signature.getBytes().length); // Signature
+        System.arraycopy(theSignature.getBytes(), 0, payload, 4,
+            theSignature.getBytes().length); // Signature
         System.arraycopy(
             account.getKeyPair().getPublicKey().getBytes(),
             0,
@@ -306,13 +307,13 @@ public abstract class Transaction {
      * @return transaction signature
      */
     public Optional<String> getSignatureBytes() {
-        return signature;
+        return getSignature();
     }
 
     /**
-     * Returns the transaction creator public account.
+     * Returns (optionally) the transaction creator public account.
      *
-     * @return signer public account
+     * @return an optional of the signer public account
      */
     protected Optional<ByteBuffer> getSignerBytes() {
         if (signer.isPresent()) {
@@ -320,5 +321,15 @@ public abstract class Transaction {
             return Optional.of(ByteBuffer.wrap(bytes));
         }
         return Optional.empty();
+    }
+
+    /**
+     * Returns the transaction creator public account.
+     *
+     * @return the signer public account
+     */
+    protected ByteBuffer getRequiredSignerBytes() {
+        return getSignerBytes()
+            .orElseThrow(() -> new IllegalStateException("SignerBytes is required"));
     }
 }

@@ -46,6 +46,7 @@ public class MosaicSupplyChangeTransaction extends Transaction {
     private final MosaicSupplyType mosaicSupplyType;
     private final BigInteger delta;
 
+    @SuppressWarnings("squid:S00107")
     public MosaicSupplyChangeTransaction(
         NetworkType networkType,
         Integer version,
@@ -91,6 +92,7 @@ public class MosaicSupplyChangeTransaction extends Transaction {
             Optional.empty());
     }
 
+    @SuppressWarnings("squid:S00107")
     private MosaicSupplyChangeTransaction(
         NetworkType networkType,
         Integer version,
@@ -204,7 +206,7 @@ public class MosaicSupplyChangeTransaction extends Transaction {
     byte[] generateEmbeddedBytes() {
         EmbeddedMosaicSupplyChangeTransactionBuilder txBuilder =
             EmbeddedMosaicSupplyChangeTransactionBuilder.create(
-                new KeyDto(getSignerBytes().get()),
+                new KeyDto(getRequiredSignerBytes()),
                 getNetworkVersion(),
                 EntityTypeDto.MOSAIC_SUPPLY_CHANGE_TRANSACTION,
                 new UnresolvedMosaicIdDto(getMosaicId().getId().longValue()),

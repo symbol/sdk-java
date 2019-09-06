@@ -36,6 +36,7 @@ public class AccountLinkTransaction extends Transaction {
     private final PublicAccount remoteAccount;
     private final AccountLinkAction linkAction;
 
+    @SuppressWarnings("squid:S00107")
     public AccountLinkTransaction(
         final NetworkType networkType,
         final Integer version,
@@ -77,6 +78,7 @@ public class AccountLinkTransaction extends Transaction {
             Optional.empty());
     }
 
+    @SuppressWarnings("squid:S00107")
     private AccountLinkTransaction(
         final NetworkType networkType,
         final Integer version,
@@ -178,7 +180,7 @@ public class AccountLinkTransaction extends Transaction {
     byte[] generateEmbeddedBytes() {
         final EmbeddedAccountLinkTransactionBuilder txBuilder =
             EmbeddedAccountLinkTransactionBuilder.create(
-                new KeyDto(getSignerBytes().get()),
+                new KeyDto(getRequiredSignerBytes()),
                 getNetworkVersion(),
                 EntityTypeDto.ADDRESS_ALIAS_TRANSACTION,
                 new KeyDto(getRemoteAccount().getPublicKey().getByteBuffer()),

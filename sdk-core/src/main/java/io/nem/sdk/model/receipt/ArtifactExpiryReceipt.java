@@ -85,7 +85,7 @@ public class ArtifactExpiryReceipt<T> extends Receipt {
      * @return void
      */
     private void validateReceiptType(ReceiptType type) {
-        if (!ReceiptType.ArtifactExpiry.contains(type)) {
+        if (!ReceiptType.ARTIFACT_EXPIRY.contains(type)) {
             throw new IllegalArgumentException("Receipt type: [" + type.name() + "] is not valid.");
         }
     }

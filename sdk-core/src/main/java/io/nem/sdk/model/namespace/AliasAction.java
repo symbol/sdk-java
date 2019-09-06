@@ -16,6 +16,8 @@
 
 package io.nem.sdk.model.namespace;
 
+import java.util.Arrays;
+
 /**
  * The alias action.
  */
@@ -23,11 +25,11 @@ public enum AliasAction {
     /**
      * Link an alias.
      */
-    Link((byte) 1),
+    LINK((byte) 1),
     /**
      * Unlink an alias.
      */
-    Unlink((byte) 0);
+    UNLINK((byte) 0);
 
     private byte value;
 
@@ -47,14 +49,8 @@ public enum AliasAction {
      * @return Alias action.
      */
     public static AliasAction rawValueOf(final byte value) {
-        switch (value) {
-            case 1:
-                return AliasAction.Link;
-            case 0:
-                return AliasAction.Unlink;
-            default:
-                throw new IllegalArgumentException(value + " is not a valid value");
-        }
+        return Arrays.stream(values()).filter(e -> e.value == value).findFirst()
+            .orElseThrow(() -> new IllegalArgumentException(value + " is not a valid value"));
     }
 
     /**

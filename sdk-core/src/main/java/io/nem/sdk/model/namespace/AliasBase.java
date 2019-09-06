@@ -11,20 +11,28 @@
  */
 package io.nem.sdk.model.namespace;
 
+import java.util.Objects;
+
 /**
  * Alias base.
  */
 public abstract class AliasBase<T> implements Alias<T> {
 
+    /* the alias type */
+    private final AliasType aliasType;
+
     /* alias value. */
     private final T aliasValue;
+
 
     /**
      * Creates an alias of type T.
      *
+     * @param aliasType the alias type.
      * @param value Value of type T.
      */
-    public AliasBase(T value) {
+    public AliasBase(AliasType aliasType, T value) {
+        this.aliasType = aliasType;
         this.aliasValue = value;
     }
 
@@ -33,7 +41,9 @@ public abstract class AliasBase<T> implements Alias<T> {
      *
      * @return Alias type.
      */
-    public abstract AliasType getType();
+    public AliasType getType() {
+        return aliasType;
+    }
 
     /**
      * Gets the alias value of type T.
@@ -46,23 +56,30 @@ public abstract class AliasBase<T> implements Alias<T> {
     }
 
     /**
-     * Checks if the values are equal.
-     *
-     * @param alias Alias object to compare to.
-     * @return True if the have the same values.
-     */
-    @Override
-    public boolean equals(Alias<T> alias) {
-        return ((alias.getType() == getType()) && (alias.getAliasValue() == getAliasValue()));
-    }
-
-    /**
      * Checks if the Alias is empty.
      *
      * @return True if alias type is none.
      */
     @Override
     public boolean isEmpty() {
-        return AliasType.None == getAliasValue();
+        return AliasType.NONE == getAliasValue();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        AliasBase<?> aliasBase = (AliasBase<?>) o;
+        return aliasType == aliasBase.aliasType &&
+            Objects.equals(getAliasValue(), aliasBase.getAliasValue());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(aliasType, getAliasValue());
     }
 }

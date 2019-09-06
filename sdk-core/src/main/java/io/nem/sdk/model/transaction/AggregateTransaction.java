@@ -49,6 +49,7 @@ public class AggregateTransaction extends Transaction {
     private final List<Transaction> innerTransactions;
     private final List<AggregateTransactionCosignature> cosignatures;
 
+    @SuppressWarnings("squid:S00107")
     public AggregateTransaction(
         NetworkType networkType,
         TransactionType transactionType,
@@ -94,6 +95,7 @@ public class AggregateTransaction extends Transaction {
             Optional.empty());
     }
 
+    @SuppressWarnings("squid:S00107")
     private AggregateTransaction(
         NetworkType networkType,
         TransactionType transactionType,
@@ -122,7 +124,8 @@ public class AggregateTransaction extends Transaction {
      * @return {@link AggregateTransaction}
      */
     public static AggregateTransaction createComplete(
-        Deadline deadline, BigInteger maxFee, List<Transaction> innerTransactions, NetworkType networkType) {
+        Deadline deadline, BigInteger maxFee, List<Transaction> innerTransactions,
+        NetworkType networkType) {
         return new AggregateTransaction(
             networkType,
             TransactionType.AGGREGATE_COMPLETE,
@@ -142,7 +145,8 @@ public class AggregateTransaction extends Transaction {
      * @return {@link AggregateTransaction}
      */
     public static AggregateTransaction createBonded(
-        Deadline deadline, BigInteger maxFee, List<Transaction> innerTransactions, NetworkType networkType) {
+        Deadline deadline, BigInteger maxFee, List<Transaction> innerTransactions,
+        NetworkType networkType) {
         return new AggregateTransaction(
             networkType,
             TransactionType.AGGREGATE_BONDED,
@@ -180,14 +184,6 @@ public class AggregateTransaction extends Transaction {
     public byte[] generateBytes() {
         return ExceptionUtils.propagate(
             () -> {
-                final int version =
-                    (int)
-                        Long.parseLong(
-                            Integer.toHexString(getNetworkType().getValue())
-                                + "0"
-                                + Integer.toHexString(getVersion()),
-                            16);
-
                 byte[] transactionsBytes = new byte[0];
                 for (Transaction innerTransaction : innerTransactions) {
                     final byte[] transactionBytes = innerTransaction.toAggregateTransactionBytes();
@@ -202,9 +198,11 @@ public class AggregateTransaction extends Transaction {
                     final ByteBuffer signerBuffer = ByteBuffer.wrap(signerBytes);
                     final ByteBuffer signatureBuffer = ByteBuffer.wrap(signatureBytes);
 
-                    final CosignatureBuilder cosignatureBuilder = CosignatureBuilder.create(new KeyDto(signerBuffer),
-                        new SignatureDto(signatureBuffer));
-                    cosignaturesBytes = ArrayUtils.addAll(transactionsBytes, cosignatureBuilder.serialize());
+                    final CosignatureBuilder cosignatureBuilder = CosignatureBuilder
+                        .create(new KeyDto(signerBuffer),
+                            new SignatureDto(signatureBuffer));
+                    cosignaturesBytes = ArrayUtils
+                        .addAll(transactionsBytes, cosignatureBuilder.serialize());
                 }
                 final ByteBuffer cosignaturesBuffer = ByteBuffer.wrap(cosignaturesBytes);
 
@@ -217,7 +215,7 @@ public class AggregateTransaction extends Transaction {
                         new SignatureDto(signatureBuffer),
                         new KeyDto(signerBuffer),
                         getNetworkVersion(),
-                        EntityTypeDto.rawValueOf((short)getType().getValue()),
+                        EntityTypeDto.rawValueOf((short) getType().getValue()),
                         new AmountDto(getFee().longValue()),
                         new TimestampDto(getDeadline().getInstant()),
                         transactionsBuffer,
@@ -247,16 +245,16 @@ public class AggregateTransaction extends Transaction {
         final List<Account> cosignatories,
         final String generationHash) {
         SignedTransaction signedTransaction = this.signWith(initiatorAccount, generationHash);
-        String payload = signedTransaction.getPayload();
+        StringBuilder payload = new StringBuilder(signedTransaction.getPayload());
 
         for (Account cosignatory : cosignatories) {
             Signer signer = new Signer(cosignatory.getKeyPair());
             byte[] bytes = Hex.decode(signedTransaction.getHash());
             byte[] signatureBytes = signer.sign(bytes).getBytes();
-            payload += cosignatory.getPublicKey() + Hex.toHexString(signatureBytes);
+            payload.append(cosignatory.getPublicKey()).append(Hex.toHexString(signatureBytes));
         }
 
-        byte[] payloadBytes = Hex.decode(payload);
+        byte[] payloadBytes = Hex.decode(payload.toString());
 
         byte[] size = BigInteger.valueOf(payloadBytes.length).toByteArray();
         ArrayUtils.reverse(size);
@@ -274,7 +272,7 @@ public class AggregateTransaction extends Transaction {
      * @return boolean
      */
     public boolean signedByAccount(PublicAccount publicAccount) {
-        return this.getSigner().get().equals(publicAccount)
+        return this.getSigner().filter(a -> a.equals(publicAccount)).isPresent()
             || this.getCosignatures().stream().anyMatch(o -> o.getSigner().equals(publicAccount));
     }
 }

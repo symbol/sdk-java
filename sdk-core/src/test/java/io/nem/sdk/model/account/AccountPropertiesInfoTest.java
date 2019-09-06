@@ -14,7 +14,7 @@ public class AccountPropertiesInfoTest {
             Address.createFromEncoded("9050B9837EFAB4BBE8A4B9BB32D812F9885C00D8FC1650E142");
         AccountProperty accountProperty =
             new AccountProperty(
-                PropertyType.AllowAddress,
+                PropertyType.ALLOW_ADDRESS,
                 Arrays.asList("SDUP5PLHDXKBX3UU5Q52LAY4WYEKGEWC6IB3VBFM"));
         AccountProperties accountProperties =
             new AccountProperties(address, Arrays.asList(accountProperty));
@@ -25,7 +25,7 @@ public class AccountPropertiesInfoTest {
         assertEquals(address, accountPropertiesInfo.getAccountProperties().getAddress());
         assertEquals(1, accountPropertiesInfo.getAccountProperties().getProperties().size());
         assertEquals(
-            PropertyType.AllowAddress,
+            PropertyType.ALLOW_ADDRESS,
             accountPropertiesInfo.getAccountProperties().getProperties().get(0).getPropertyType());
     }
 }

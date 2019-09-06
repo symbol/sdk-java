@@ -113,8 +113,8 @@ public class SecretProofTransactionTest {
         SignedTransaction signedTransaction = secretProoftx.signWith(account, generationHash);
         String payload = signedTransaction.getPayload();
         assertEquals(
-            payload.substring(240),
-            "003FC8BA10229AB5778D05D9C4B7F56676A88BF9295C185ACFC0F961DB5408CAFE9022D04812D05000F96C283657B0C17990932BC84926CDE64F04009A493664");
+            "003FC8BA10229AB5778D05D9C4B7F56676A88BF9295C185ACFC0F961DB5408CAFE9022D04812D05000F96C283657B0C17990932BC84926CDE64F04009A493664",
+            payload.substring(240));
         assertEquals(
             "E0FB9BF47C70A411EB77AD4683FA33E823A403BC04ECD0D50F85143BBE2C3229",
             signedTransaction.getHash());

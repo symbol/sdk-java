@@ -55,7 +55,7 @@ public class ListenerOkHttp extends ListenerBase implements Listener {
 
     private WebSocket webSocket;
 
-    private String UID;
+    private String uid;
 
     /**
      * @param url nis host
@@ -81,7 +81,8 @@ public class ListenerOkHttp extends ListenerBase implements Listener {
         if (this.webSocket != null) {
             return CompletableFuture.completedFuture(null);
         }
-        Request webSocketRequest = new Request.Builder().url(checkTrailingSlash(url.toString()) + "ws").build();
+        Request webSocketRequest = new Request.Builder()
+            .url(checkTrailingSlash(url.toString()) + "ws").build();
         WebSocketListener webSocketListener = new WebSocketListener() {
             @Override
             public void onMessage(WebSocket webSocket, String text) {
@@ -98,7 +99,7 @@ public class ListenerOkHttp extends ListenerBase implements Listener {
 
     protected void handle(Object message, CompletableFuture<Void> future) {
         if (jsonHelper.contains(message, "uid")) {
-            UID = jsonHelper.getString(message, "uid");
+            uid = jsonHelper.getString(message, "uid");
             future.complete(null);
         } else if (jsonHelper.contains(message, "transaction")) {
             TransactionInfoDTO transactionInfo = jsonHelper
@@ -153,19 +154,17 @@ public class ListenerOkHttp extends ListenerBase implements Listener {
     }
 
     protected void subscribeTo(String channel) {
-        final ListenerSubscribeMessage subscribeMessage = new ListenerSubscribeMessage(this.UID,
+        final ListenerSubscribeMessage subscribeMessage = new ListenerSubscribeMessage(this.uid,
             channel);
         this.webSocket.send(jsonHelper.print(subscribeMessage));
     }
 
     /**
-     * // TODO: should we remove it?
-     *
      * @return the UID connected to
      */
     @Override
-    public String getUID() {
-        return UID;
+    public String getUid() {
+        return uid;
     }
 
     public JsonHelper getJsonHelper() {

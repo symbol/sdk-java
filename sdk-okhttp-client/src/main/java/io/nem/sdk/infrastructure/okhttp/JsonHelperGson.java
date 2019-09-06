@@ -120,6 +120,7 @@ public class JsonHelperGson implements JsonHelper {
     }
 
     @Override
+    @SuppressWarnings("squid:S2447")
     public Boolean getBoolean(Object object, String... path) {
         JsonElement child = getNode(convert(object, JsonObject.class), path);
         if (child == null || child.isJsonNull()) {
@@ -132,6 +133,7 @@ public class JsonHelperGson implements JsonHelper {
     }
 
     @Override
+    @SuppressWarnings("squid:S1168")
     public List<Long> getLongList(Object object, String... path) {
         JsonElement child = getNode(convert(object, JsonObject.class), path);
         if (child == null || child.isJsonNull()) {

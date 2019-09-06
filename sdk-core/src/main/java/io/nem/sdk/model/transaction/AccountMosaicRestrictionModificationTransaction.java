@@ -44,6 +44,7 @@ public class AccountMosaicRestrictionModificationTransaction extends Transaction
     /**
      * public constructor
      */
+    @SuppressWarnings("squid:S00107")
     public AccountMosaicRestrictionModificationTransaction(
         final NetworkType networkType,
         final Integer version,
@@ -91,6 +92,7 @@ public class AccountMosaicRestrictionModificationTransaction extends Transaction
     /**
      * private constructor
      */
+    @SuppressWarnings("squid:S00107")
     private AccountMosaicRestrictionModificationTransaction(
         final NetworkType networkType,
         final Integer version,
@@ -184,7 +186,7 @@ public class AccountMosaicRestrictionModificationTransaction extends Transaction
     byte[] generateEmbeddedBytes() {
         EmbeddedAccountMosaicRestrictionTransactionBuilder txBuilder =
             EmbeddedAccountMosaicRestrictionTransactionBuilder.create(
-                new KeyDto(getSignerBytes().get()),
+                new KeyDto(getRequiredSignerBytes()),
                 getNetworkVersion(),
                 EntityTypeDto.ACCOUNT_MOSAIC_RESTRICTION_TRANSACTION,
                 AccountRestrictionTypeDto.rawValueOf(this.restrictionType.getValue()),

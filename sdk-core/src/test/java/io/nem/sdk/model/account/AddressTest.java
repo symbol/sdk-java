@@ -22,6 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import io.nem.sdk.model.blockchain.NetworkType;
 import java.util.stream.Stream;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -42,7 +43,7 @@ class AddressTest {
         return Stream.of(
             Arguments.of("SDGLFW-DSHILT-IUHGIB-H5UGX2-VYF5VN-JEKCCD-BR26", NetworkType.MIJIN),
             Arguments.of("MDGLFW-DSHILT-IUHGIB-H5UGX2-VYF5VN-JEKCCD-BR26", NetworkType.MAIN_NET),
-            Arguments.of("TDGLFW-DSHILT-IUHGIB-H5UGX2-VYF5VN-JEKCCD-BR26", NetworkType.MAIN_NET),
+            Arguments.of("TDGLFW-DSHILT-IUHGIB-H5UGX2-VYF5VN-JEKCCD-BR26", NetworkType.MIJIN_TEST),
             Arguments.of("NDGLFW-DSHILT-IUHGIB-H5UGX2-VYF5VN-JEKCCD-BR26", NetworkType.TEST_NET));
     }
 
@@ -122,6 +123,33 @@ class AddressTest {
             () -> {
                 new Address(rawAddress, networkType);
             });
+    }
+
+    @ParameterizedTest
+    @MethodSource("assertExceptionProvider")
+    @DisplayName("NetworkType")
+    void shouldReturnDifferentNetworkType(
+        String address, NetworkType networkType) {
+        Assertions
+            .assertNotEquals(networkType, Address.createFromRawAddress(address).getNetworkType());
+    }
+
+    @Test
+    void createFromRawAddressShouldFailWhenInvalidSuffix() {
+        Assertions.assertEquals("Address is invalid", assertThrows(
+            IllegalArgumentException.class,
+            () -> {
+                Address.createFromRawAddress("X");
+            }).getMessage());
+    }
+
+    @Test
+    void createShouldFailWhenInvalidPublicKey() {
+        Assertions.assertEquals("Public key is not valid", assertThrows(
+            IllegalArgumentException.class,
+            () -> {
+                Address.createFromPublicKey("InvalidPublicKey", NetworkType.MIJIN);
+            }).getMessage());
     }
 
     @ParameterizedTest

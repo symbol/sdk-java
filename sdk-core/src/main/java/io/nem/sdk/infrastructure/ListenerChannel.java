@@ -35,8 +35,7 @@ public enum ListenerChannel {
     }
 
     public static ListenerChannel rawValueOf(String value) {
-        return Arrays.stream(ListenerChannel.values()).filter(e -> e.value.equals(value))
-            .findFirst()
+        return Arrays.stream(values()).filter(e -> e.value.equals(value)).findFirst()
             .orElseThrow(() -> new IllegalArgumentException(value + " is not a valid value"));
 
     }

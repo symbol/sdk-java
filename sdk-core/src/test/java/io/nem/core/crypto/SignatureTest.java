@@ -242,6 +242,7 @@ public class SignatureTest {
             IsNot.not(IsEqual.equalTo(hashCode)));
         Assert.assertThat(createSignature(1235, 7790).hashCode(),
             IsNot.not(IsEqual.equalTo(hashCode)));
+        Assert.assertThat(signature, IsNot.not(IsEqual.equalTo("ImNotASignature")));
     }
 
     @Test

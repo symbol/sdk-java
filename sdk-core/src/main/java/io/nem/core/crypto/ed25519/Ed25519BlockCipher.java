@@ -54,6 +54,7 @@ public class Ed25519BlockCipher implements BlockCipher {
     }
 
     @Override
+    @SuppressWarnings("squid:S1168")
     public byte[] encrypt(final byte[] input) {
         // Setup salt.
         final byte[] salt = new byte[this.keyLength];
@@ -85,6 +86,7 @@ public class Ed25519BlockCipher implements BlockCipher {
     }
 
     @Override
+    @SuppressWarnings("squid:S1168")
     public byte[] decrypt(final byte[] input) {
         if (input.length < 64) {
             return null;
@@ -106,6 +108,7 @@ public class Ed25519BlockCipher implements BlockCipher {
         return this.transform(cipher, encData);
     }
 
+    @SuppressWarnings("squid:S1168")
     private byte[] transform(final BufferedBlockCipher cipher, final byte[] data) {
         final byte[] buf = new byte[cipher.getOutputSize(data.length)];
         int length = cipher.processBytes(data, 0, data.length, buf, 0);

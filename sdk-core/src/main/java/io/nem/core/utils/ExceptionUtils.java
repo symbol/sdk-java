@@ -25,6 +25,9 @@ import java.util.function.Function;
  */
 public class ExceptionUtils {
 
+    /**
+     * Private constructor for this utility class.
+     */
     private ExceptionUtils() {
     }
 
@@ -98,6 +101,7 @@ public class ExceptionUtils {
          *
          * @throws Exception Any exception.
          */
+        @SuppressWarnings("squid:S00112")
         void call() throws Exception;
     }
 

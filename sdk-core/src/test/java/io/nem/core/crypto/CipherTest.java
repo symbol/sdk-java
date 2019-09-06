@@ -18,6 +18,7 @@ package io.nem.core.crypto;
 
 import io.nem.core.test.Utils;
 import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
 import org.mockito.Mockito;
 
 public class CipherTest {
@@ -25,9 +26,10 @@ public class CipherTest {
     @Test
     public void canCreateCipherFromKeyPairs() {
         // Act:
-        new Cipher(new KeyPair(), new KeyPair());
+        Cipher cipher = new Cipher(new KeyPair(), new KeyPair());
 
-        // Assert: no exceptions
+        // Assert
+        Assertions.assertNotNull(cipher);
     }
 
     @Test
@@ -36,9 +38,10 @@ public class CipherTest {
         final BlockCipher blockCipher = Mockito.mock(BlockCipher.class);
 
         // Act:
-        new Cipher(blockCipher);
+        Cipher cipher = new Cipher(blockCipher);
 
-        // Assert: no exceptions
+        // Assert
+        Assertions.assertNotNull(cipher);
     }
 
     @Test

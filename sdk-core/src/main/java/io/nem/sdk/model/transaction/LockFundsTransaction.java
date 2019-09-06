@@ -48,6 +48,7 @@ public class LockFundsTransaction extends Transaction {
     private final BigInteger duration;
     private final SignedTransaction signedTransaction;
 
+    @SuppressWarnings("squid:S00107")
     public LockFundsTransaction(
         NetworkType networkType,
         Integer version,
@@ -93,6 +94,7 @@ public class LockFundsTransaction extends Transaction {
             Optional.empty());
     }
 
+    @SuppressWarnings("squid:S00107")
     private LockFundsTransaction(
         NetworkType networkType,
         Integer version,
@@ -214,7 +216,7 @@ public class LockFundsTransaction extends Transaction {
     byte[] generateEmbeddedBytes() {
         EmbeddedHashLockTransactionBuilder txBuilder =
             EmbeddedHashLockTransactionBuilder.create(
-                new KeyDto(getSignerBytes().get()),
+                new KeyDto(getRequiredSignerBytes()),
                 getNetworkVersion(),
                 EntityTypeDto.HASH_LOCK_TRANSACTION,
                 UnresolvedMosaicBuilder.create(
@@ -232,7 +234,6 @@ public class LockFundsTransaction extends Transaction {
      */
     private ByteBuffer getHashBuffer() {
         final byte[] hashBytes = Hex.decode(signedTransaction.getHash());
-        final ByteBuffer hashBuffer = ByteBuffer.wrap(hashBytes);
-        return hashBuffer;
+        return ByteBuffer.wrap(hashBytes);
     }
 }

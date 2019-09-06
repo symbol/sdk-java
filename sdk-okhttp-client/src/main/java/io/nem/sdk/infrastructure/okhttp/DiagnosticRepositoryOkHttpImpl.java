@@ -40,10 +40,6 @@ public class DiagnosticRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl
         client = new DiagnosticRoutesApi(apiClient);
     }
 
-    public DiagnosticRoutesApi getClient() {
-        return client;
-    }
-
     /**
      * Get storage info
      *
@@ -73,5 +69,9 @@ public class DiagnosticRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl
 
     private ServerInfo toServerInfo(ServerInfoDTO serverInfoDTO) {
         return new ServerInfo(serverInfoDTO.getRestVersion(), serverInfoDTO.getSdkVersion());
+    }
+
+    public DiagnosticRoutesApi getClient() {
+        return client;
     }
 }

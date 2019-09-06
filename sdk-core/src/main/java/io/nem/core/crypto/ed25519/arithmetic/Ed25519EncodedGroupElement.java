@@ -133,6 +133,6 @@ public class Ed25519EncodedGroupElement {
     @Override
     public String toString() {
         return String.format(
-            "x=%s\ny=%s\n", this.getAffineX().toString(), this.getAffineY().toString());
+            "x=%s\ny=%s%n", this.getAffineX().toString(), this.getAffineY().toString());
     }
 }

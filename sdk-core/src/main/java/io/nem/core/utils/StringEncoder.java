@@ -17,13 +17,20 @@
 package io.nem.core.utils;
 
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 /**
  * Static class that contains utility functions for converting strings to and from UTF-8 bytes.
  */
 public class StringEncoder {
 
-    private static final Charset ENCODING_CHARSET = Charset.forName("UTF-8");
+    /**
+     * Private constructor for this utility class.
+     */
+    private StringEncoder() {
+    }
+
+    private static final Charset ENCODING_CHARSET = StandardCharsets.UTF_8;
 
     /**
      * Converts a string to a UTF-8 byte array.

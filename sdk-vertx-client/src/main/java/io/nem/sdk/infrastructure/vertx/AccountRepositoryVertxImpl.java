@@ -119,7 +119,7 @@ public class AccountRepositoryVertxImpl extends AbstractRepositoryVertxImpl impl
      */
     private AccountNames toAccountNames(AccountNamesDTO dto) throws DecoderException {
         return new AccountNames(
-            Address.createFromRawAddress(getAddressEncoded(dto.getAddress())),
+            toAddress(getAddressEncoded(dto.getAddress())),
             dto.getNames().stream().map(NamespaceName::new).collect(Collectors.toList()));
     }
 
@@ -198,7 +198,7 @@ public class AccountRepositoryVertxImpl extends AbstractRepositoryVertxImpl impl
     private Observable<List<Transaction>> transactions(
         PublicAccount publicAccount, Optional<QueryParams> queryParams) {
 
-        Consumer<Handler<AsyncResult<List<TransactionInfoDTO>>>> callback = (handler) ->
+        Consumer<Handler<AsyncResult<List<TransactionInfoDTO>>>> callback = handler ->
             client.transactions(publicAccount.getPublicKey().toString(),
                 getPageSize(queryParams),
                 getId(queryParams),
@@ -224,7 +224,7 @@ public class AccountRepositoryVertxImpl extends AbstractRepositoryVertxImpl impl
     private Observable<List<Transaction>> incomingTransactions(
         PublicAccount publicAccount, Optional<QueryParams> queryParams) {
 
-        Consumer<Handler<AsyncResult<List<TransactionInfoDTO>>>> callback = (handler) ->
+        Consumer<Handler<AsyncResult<List<TransactionInfoDTO>>>> callback = handler ->
             client.incomingTransactions(publicAccount.getPublicKey().toString(),
                 getPageSize(queryParams),
                 getId(queryParams),
@@ -250,7 +250,7 @@ public class AccountRepositoryVertxImpl extends AbstractRepositoryVertxImpl impl
     private Observable<List<Transaction>> outgoingTransactions(
         PublicAccount publicAccount, Optional<QueryParams> queryParams) {
 
-        Consumer<Handler<AsyncResult<List<TransactionInfoDTO>>>> callback = (handler) ->
+        Consumer<Handler<AsyncResult<List<TransactionInfoDTO>>>> callback = handler ->
             client.outgoingTransactions(publicAccount.getPublicKey().toString(),
                 getPageSize(queryParams),
                 getId(queryParams),
@@ -282,7 +282,7 @@ public class AccountRepositoryVertxImpl extends AbstractRepositoryVertxImpl impl
     private Observable<List<AggregateTransaction>> aggregateBondedTransactions(
         PublicAccount publicAccount, Optional<QueryParams> queryParams) {
 
-        Consumer<Handler<AsyncResult<List<TransactionInfoDTO>>>> callback = (handler) ->
+        Consumer<Handler<AsyncResult<List<TransactionInfoDTO>>>> callback = handler ->
             client.partialTransactions(publicAccount.getPublicKey().toString(),
                 getPageSize(queryParams),
                 getId(queryParams),
@@ -308,7 +308,7 @@ public class AccountRepositoryVertxImpl extends AbstractRepositoryVertxImpl impl
 
     private Observable<List<Transaction>> unconfirmedTransactions(
         PublicAccount publicAccount, Optional<QueryParams> queryParams) {
-        Consumer<Handler<AsyncResult<List<TransactionInfoDTO>>>> callback = (handler) ->
+        Consumer<Handler<AsyncResult<List<TransactionInfoDTO>>>> callback = handler ->
             client.unconfirmedTransactions(publicAccount.getPublicKey().toString(),
                 getPageSize(queryParams),
                 getId(queryParams),
@@ -322,7 +322,7 @@ public class AccountRepositoryVertxImpl extends AbstractRepositoryVertxImpl impl
 
     private AccountInfo toAccountInfo(AccountDTO accountDTO) throws DecoderException {
         return new AccountInfo(
-            Address.createFromRawAddress(getAddressEncoded(accountDTO.getAddress())),
+            toAddress(getAddressEncoded(accountDTO.getAddress())),
             extractBigInteger(accountDTO.getAddressHeight()),
             accountDTO.getPublicKey(),
             extractBigInteger(accountDTO.getPublicKeyHeight()),

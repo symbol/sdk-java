@@ -25,6 +25,12 @@ import org.apache.commons.codec.binary.Hex;
 public class HexEncoder {
 
     /**
+     * Private constructor of this utility class.
+     */
+    private HexEncoder() {
+    }
+
+    /**
      * Converts a hex string to a byte array.
      *
      * @param hexString The input hex string.
@@ -44,6 +50,7 @@ public class HexEncoder {
      * @param hexString The input hex string.
      * @return The output byte array or null if the input string is malformed.
      */
+    @SuppressWarnings("squid:S1168")
     public static byte[] tryGetBytes(final String hexString) {
         try {
             return getBytesInternal(hexString);

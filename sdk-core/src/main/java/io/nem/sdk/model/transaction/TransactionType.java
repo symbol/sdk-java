@@ -16,6 +16,8 @@
 
 package io.nem.sdk.model.transaction;
 
+import java.util.Arrays;
+
 /**
  * Enum containing transaction type constants.
  */
@@ -112,7 +114,7 @@ public enum TransactionType {
      */
     ACCOUNT_LINK(0x414C);
 
-    private int value;
+    private final int value;
 
     TransactionType(int value) {
         this.value = value;
@@ -124,42 +126,8 @@ public enum TransactionType {
      * @return {@link TransactionType}
      */
     public static TransactionType rawValueOf(int value) {
-        switch (value) {
-            case 16717:
-                return TransactionType.MOSAIC_DEFINITION;
-            case 16973:
-                return TransactionType.MOSAIC_SUPPLY_CHANGE;
-            case 16718:
-                return TransactionType.REGISTER_NAMESPACE;
-            case 16974:
-                return TransactionType.ADDRESS_ALIAS;
-            case 17230:
-                return TransactionType.MOSAIC_ALIAS;
-            case 16724:
-                return TransactionType.TRANSFER;
-            case 16725:
-                return TransactionType.MODIFY_MULTISIG_ACCOUNT;
-            case 16705:
-                return TransactionType.AGGREGATE_COMPLETE;
-            case 16961:
-                return TransactionType.AGGREGATE_BONDED;
-            case 16712:
-                return TransactionType.LOCK;
-            case 16720:
-                return TransactionType.ACCOUNT_PROPERTIES_ADDRESS;
-            case 16976:
-                return TransactionType.ACCOUNT_PROPERTIES_MOSAIC;
-            case 17232:
-                return TransactionType.ACCOUNT_PROPERTIES_ENTITY_TYPE;
-            case 16722:
-                return TransactionType.SECRET_LOCK;
-            case 16978:
-                return TransactionType.SECRET_PROOF;
-            case 16716:
-                return TransactionType.ACCOUNT_LINK;
-            default:
-                throw new IllegalArgumentException(value + " is not a valid value");
-        }
+        return Arrays.stream(values()).filter(e -> e.value == value).findFirst()
+            .orElseThrow(() -> new IllegalArgumentException(value + " is not a valid value"));
     }
 
     /**

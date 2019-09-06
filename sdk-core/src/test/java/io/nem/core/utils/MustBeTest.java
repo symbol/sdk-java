@@ -22,6 +22,7 @@ import java.util.Collections;
 import java.util.regex.Pattern;
 import org.junit.Test;
 
+@SuppressWarnings("squid:S2699")
 public class MustBeTest {
 
     // region notNull

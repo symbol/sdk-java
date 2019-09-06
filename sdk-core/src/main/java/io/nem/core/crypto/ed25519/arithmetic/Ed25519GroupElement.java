@@ -18,6 +18,7 @@ package io.nem.core.crypto.ed25519.arithmetic;
 
 import io.nem.core.utils.ByteUtils;
 import java.io.Serializable;
+import java.util.Objects;
 
 /**
  * A point on the ED25519 curve which represents a group element. This implementation is based on
@@ -35,16 +36,16 @@ public class Ed25519GroupElement implements Serializable {
     private final CoordinateSystem coordinateSystem;
 
     @SuppressWarnings("NonConstantFieldWithUpperCaseName")
-    private final Ed25519FieldElement X;
+    private final Ed25519FieldElement x;
 
     @SuppressWarnings("NonConstantFieldWithUpperCaseName")
-    private final Ed25519FieldElement Y;
+    private final Ed25519FieldElement y;
 
     @SuppressWarnings("NonConstantFieldWithUpperCaseName")
-    private final Ed25519FieldElement Z;
+    private final Ed25519FieldElement z;
 
     @SuppressWarnings("NonConstantFieldWithUpperCaseName")
-    private final Ed25519FieldElement T;
+    private final Ed25519FieldElement t;
 
     /**
      * Precomputed table for a single scalar multiplication.
@@ -62,22 +63,22 @@ public class Ed25519GroupElement implements Serializable {
      * Creates a group element for a curve.
      *
      * @param coordinateSystem The coordinate system used for the group element.
-     * @param X The X coordinate.
-     * @param Y The Y coordinate.
-     * @param Z The Z coordinate.
-     * @param T The T coordinate.
+     * @param x The X coordinate.
+     * @param y The Y coordinate.
+     * @param z The Z coordinate.
+     * @param t The t coordinate.
      */
     public Ed25519GroupElement(
         final CoordinateSystem coordinateSystem,
-        final Ed25519FieldElement X,
-        final Ed25519FieldElement Y,
-        final Ed25519FieldElement Z,
-        final Ed25519FieldElement T) {
+        final Ed25519FieldElement x,
+        final Ed25519FieldElement y,
+        final Ed25519FieldElement z,
+        final Ed25519FieldElement t) {
         this.coordinateSystem = coordinateSystem;
-        this.X = X;
-        this.Y = Y;
-        this.Z = Z;
-        this.T = T;
+        this.x = x;
+        this.y = y;
+        this.z = z;
+        this.t = t;
     }
 
     /**
@@ -85,59 +86,59 @@ public class Ed25519GroupElement implements Serializable {
      *
      * @param x The x coordinate.
      * @param y The y coordinate.
-     * @param Z The Z coordinate.
+     * @param z The Z coordinate.
      * @return The group element using the P2 coordinate system.
      */
     public static Ed25519GroupElement affine(
-        final Ed25519FieldElement x, final Ed25519FieldElement y, final Ed25519FieldElement Z) {
-        return new Ed25519GroupElement(CoordinateSystem.AFFINE, x, y, Z, null);
+        final Ed25519FieldElement x, final Ed25519FieldElement y, final Ed25519FieldElement z) {
+        return new Ed25519GroupElement(CoordinateSystem.AFFINE, x, y, z, null);
     }
 
     /**
      * Creates a new group element using the P2 coordinate system.
      *
-     * @param X The X coordinate.
-     * @param Y The Y coordinate.
-     * @param Z The Z coordinate.
+     * @param x The X coordinate.
+     * @param y The Y coordinate.
+     * @param z The Z coordinate.
      * @return The group element using the P2 coordinate system.
      */
     public static Ed25519GroupElement p2(
-        final Ed25519FieldElement X, final Ed25519FieldElement Y, final Ed25519FieldElement Z) {
-        return new Ed25519GroupElement(CoordinateSystem.P2, X, Y, Z, null);
+        final Ed25519FieldElement x, final Ed25519FieldElement y, final Ed25519FieldElement z) {
+        return new Ed25519GroupElement(CoordinateSystem.P2, x, y, z, null);
     }
 
     /**
      * Creates a new group element using the P3 coordinate system.
      *
      * @param X The X coordinate.
-     * @param Y The Y coordinate.
-     * @param Z The Z coordinate.
-     * @param T The T coordinate.
+     * @param y The Y coordinate.
+     * @param z The Z coordinate.
+     * @param t The T coordinate.
      * @return The group element using the P3 coordinate system.
      */
     public static Ed25519GroupElement p3(
-        final Ed25519FieldElement X,
-        final Ed25519FieldElement Y,
-        final Ed25519FieldElement Z,
-        final Ed25519FieldElement T) {
-        return new Ed25519GroupElement(CoordinateSystem.P3, X, Y, Z, T);
+        final Ed25519FieldElement x,
+        final Ed25519FieldElement y,
+        final Ed25519FieldElement z,
+        final Ed25519FieldElement t) {
+        return new Ed25519GroupElement(CoordinateSystem.P3, x, y, z, t);
     }
 
     /**
      * Creates a new group element using the P1xP1 coordinate system.
      *
-     * @param X The X coordinate.
-     * @param Y The Y coordinate.
-     * @param Z The Z coordinate.
-     * @param T The T coordinate.
+     * @param x The X coordinate.
+     * @param y The Y coordinate.
+     * @param z The Z coordinate.
+     * @param t The T coordinate.
      * @return The group element using the P1xP1 coordinate system.
      */
     public static Ed25519GroupElement p1xp1(
-        final Ed25519FieldElement X,
-        final Ed25519FieldElement Y,
-        final Ed25519FieldElement Z,
-        final Ed25519FieldElement T) {
-        return new Ed25519GroupElement(CoordinateSystem.P1xP1, X, Y, Z, T);
+        final Ed25519FieldElement x,
+        final Ed25519FieldElement y,
+        final Ed25519FieldElement z,
+        final Ed25519FieldElement t) {
+        return new Ed25519GroupElement(CoordinateSystem.P1xP1, x, y, z, t);
     }
 
     /**
@@ -159,18 +160,18 @@ public class Ed25519GroupElement implements Serializable {
     /**
      * Creates a new group element using the CACHED coordinate system.
      *
-     * @param YPlusX The Y + X value.
-     * @param YMinusX The Y - X value.
-     * @param Z The Z coordinate.
-     * @param T2d The 2 * d * T value.
+     * @param yPlusX The Y + X value.
+     * @param yMinusX The Y - X value.
+     * @param z The Z coordinate.
+     * @param t2D The 2 * d * T value.
      * @return The group element using the CACHED coordinate system.
      */
     public static Ed25519GroupElement cached(
-        final Ed25519FieldElement YPlusX,
-        final Ed25519FieldElement YMinusX,
-        final Ed25519FieldElement Z,
-        final Ed25519FieldElement T2d) {
-        return new Ed25519GroupElement(CoordinateSystem.CACHED, YPlusX, YMinusX, Z, T2d);
+        final Ed25519FieldElement yPlusX,
+        final Ed25519FieldElement yMinusX,
+        final Ed25519FieldElement z,
+        final Ed25519FieldElement t2D) {
+        return new Ed25519GroupElement(CoordinateSystem.CACHED, yPlusX, yMinusX, z, t2D);
     }
 
     // endregion
@@ -214,6 +215,7 @@ public class Ed25519GroupElement implements Serializable {
      * @param encoded The encoded field element.
      * @return The byte array r in the above described form.
      */
+    @SuppressWarnings({"squid:S3034","squid:S3776"})
     private static byte[] slide(final Ed25519EncodedFieldElement encoded) {
         final byte[] a = encoded.getRaw();
         final byte[] r = new byte[256];
@@ -268,7 +270,7 @@ public class Ed25519GroupElement implements Serializable {
      * @return The X value.
      */
     public Ed25519FieldElement getX() {
-        return this.X;
+        return this.x;
     }
 
     /**
@@ -278,7 +280,7 @@ public class Ed25519GroupElement implements Serializable {
      * @return The Y value.
      */
     public Ed25519FieldElement getY() {
-        return this.Y;
+        return this.y;
     }
 
     /**
@@ -288,7 +290,7 @@ public class Ed25519GroupElement implements Serializable {
      * @return The Z value.
      */
     public Ed25519FieldElement getZ() {
-        return this.Z;
+        return this.z;
     }
 
     /**
@@ -298,7 +300,7 @@ public class Ed25519GroupElement implements Serializable {
      * @return The T value.
      */
     public Ed25519FieldElement getT() {
-        return this.T;
+        return this.t;
     }
 
     /**
@@ -340,11 +342,11 @@ public class Ed25519GroupElement implements Serializable {
         switch (this.coordinateSystem) {
             case P2:
             case P3:
-                final Ed25519FieldElement inverse = this.Z.invert();
-                final Ed25519FieldElement x = this.X.multiply(inverse);
-                final Ed25519FieldElement y = this.Y.multiply(inverse);
-                final byte[] s = y.encode().getRaw();
-                s[s.length - 1] |= (x.isNegative() ? (byte) 0x80 : 0);
+                final Ed25519FieldElement inverse = this.z.invert();
+                final Ed25519FieldElement xElement = this.x.multiply(inverse);
+                final Ed25519FieldElement yElement = this.y.multiply(inverse);
+                final byte[] s = yElement.encode().getRaw();
+                s[s.length - 1] |= (xElement.isNegative() ? (byte) 0x80 : 0);
 
                 return new Ed25519EncodedGroupElement(s);
             default:
@@ -390,58 +392,52 @@ public class Ed25519GroupElement implements Serializable {
     private Ed25519GroupElement toCoordinateSystem(final CoordinateSystem newCoordinateSystem) {
         switch (this.coordinateSystem) {
             case P2:
-                switch (newCoordinateSystem) {
-                    case P2:
-                        return p2(this.X, this.Y, this.Z);
-                    default:
-                        throw new IllegalArgumentException();
+                if (newCoordinateSystem == CoordinateSystem.P2) {
+                    return p2(this.x, this.y, this.z);
                 }
+                throw new IllegalArgumentException();
             case P3:
                 switch (newCoordinateSystem) {
                     case P2:
-                        return p2(this.X, this.Y, this.Z);
+                        return p2(this.x, this.y, this.z);
                     case P3:
-                        return p3(this.X, this.Y, this.Z, this.T);
+                        return p3(this.x, this.y, this.z, this.t);
                     case CACHED:
                         return cached(
-                            this.Y.add(this.X),
-                            this.Y.subtract(this.X),
-                            this.Z,
-                            this.T.multiply(Ed25519Field.D_Times_TWO));
+                            this.y.add(this.x),
+                            this.y.subtract(this.x),
+                            this.z,
+                            this.t.multiply(Ed25519Field.D_Times_TWO));
                     default:
                         throw new IllegalArgumentException();
                 }
             case P1xP1:
                 switch (newCoordinateSystem) {
                     case P2:
-                        return p2(this.X.multiply(this.T), this.Y.multiply(this.Z),
-                            this.Z.multiply(this.T));
+                        return p2(this.x.multiply(this.t), this.y.multiply(this.z),
+                            this.z.multiply(this.t));
                     case P3:
                         return p3(
-                            this.X.multiply(this.T),
-                            this.Y.multiply(this.Z),
-                            this.Z.multiply(this.T),
-                            this.X.multiply(this.Y));
+                            this.x.multiply(this.t),
+                            this.y.multiply(this.z),
+                            this.z.multiply(this.t),
+                            this.x.multiply(this.y));
                     case P1xP1:
-                        return p1xp1(this.X, this.Y, this.Z, this.T);
+                        return p1xp1(this.x, this.y, this.z, this.t);
                     default:
                         throw new IllegalArgumentException();
                 }
             case PRECOMPUTED:
-                switch (newCoordinateSystem) {
-                    case PRECOMPUTED:
-                        //noinspection SuspiciousNameCombination
-                        return precomputed(this.X, this.Y, this.Z);
-                    default:
-                        throw new IllegalArgumentException();
+                if (newCoordinateSystem
+                    == CoordinateSystem.PRECOMPUTED) {//noinspection SuspiciousNameCombination
+                    return precomputed(this.x, this.y, this.z);
                 }
+                throw new IllegalArgumentException();
             case CACHED:
-                switch (newCoordinateSystem) {
-                    case CACHED:
-                        return cached(this.X, this.Y, this.Z, this.T);
-                    default:
-                        throw new IllegalArgumentException();
+                if (newCoordinateSystem == CoordinateSystem.CACHED) {
+                    return cached(this.x, this.y, this.z, this.t);
                 }
+                throw new IllegalArgumentException();
             default:
                 throw new UnsupportedOperationException();
         }
@@ -455,23 +451,23 @@ public class Ed25519GroupElement implements Serializable {
             return;
         }
 
-        Ed25519GroupElement Bi = this;
+        Ed25519GroupElement bi = this;
         this.precomputedForSingle = new Ed25519GroupElement[32][8];
 
         for (int i = 0; i < 32; i++) {
-            Ed25519GroupElement Bij = Bi;
+            Ed25519GroupElement bij = bi;
             for (int j = 0; j < 8; j++) {
-                final Ed25519FieldElement inverse = Bij.Z.invert();
-                final Ed25519FieldElement x = Bij.X.multiply(inverse);
-                final Ed25519FieldElement y = Bij.Y.multiply(inverse);
+                final Ed25519FieldElement inverse = bij.z.invert();
+                final Ed25519FieldElement xElement = bij.x.multiply(inverse);
+                final Ed25519FieldElement yElement = bij.y.multiply(inverse);
                 this.precomputedForSingle[i][j] =
-                    precomputed(y.add(x), y.subtract(x),
-                        x.multiply(y).multiply(Ed25519Field.D_Times_TWO));
-                Bij = Bij.add(Bi.toCached()).toP3();
+                    precomputed(yElement.add(xElement), yElement.subtract(xElement),
+                        xElement.multiply(yElement).multiply(Ed25519Field.D_Times_TWO));
+                bij = bij.add(bi.toCached()).toP3();
             }
             // Only every second summand is precomputed (16^2 = 256).
             for (int k = 0; k < 8; k++) {
-                Bi = Bi.add(Bi.toCached()).toP3();
+                bi = bi.add(bi.toCached()).toP3();
             }
         }
     }
@@ -483,16 +479,16 @@ public class Ed25519GroupElement implements Serializable {
         if (null != this.precomputedForDouble) {
             return;
         }
-        Ed25519GroupElement Bi = this;
+        Ed25519GroupElement bi = this;
         this.precomputedForDouble = new Ed25519GroupElement[8];
         for (int i = 0; i < 8; i++) {
-            final Ed25519FieldElement inverse = Bi.Z.invert();
-            final Ed25519FieldElement x = Bi.X.multiply(inverse);
-            final Ed25519FieldElement y = Bi.Y.multiply(inverse);
+            final Ed25519FieldElement inverse = bi.z.invert();
+            final Ed25519FieldElement xElement = bi.x.multiply(inverse);
+            final Ed25519FieldElement yElement = bi.y.multiply(inverse);
             this.precomputedForDouble[i] =
-                precomputed(y.add(x), y.subtract(x),
-                    x.multiply(y).multiply(Ed25519Field.D_Times_TWO));
-            Bi = this.add(this.add(Bi.toCached()).toP3().toCached()).toP3();
+                precomputed(yElement.add(xElement), yElement.subtract(xElement),
+                    xElement.multiply(yElement).multiply(Ed25519Field.D_Times_TWO));
+            bi = this.add(this.add(bi.toCached()).toP3().toCached()).toP3();
         }
     }
 
@@ -516,25 +512,25 @@ public class Ed25519GroupElement implements Serializable {
         switch (this.coordinateSystem) {
             case P2:
             case P3:
-                final Ed25519FieldElement XSquare;
-                final Ed25519FieldElement YSquare;
-                final Ed25519FieldElement B;
-                final Ed25519FieldElement A;
-                final Ed25519FieldElement ASquare;
-                final Ed25519FieldElement YSquarePlusXSquare;
-                final Ed25519FieldElement YSquareMinusXSquare;
-                XSquare = this.X.square();
-                YSquare = this.Y.square();
-                B = this.Z.squareAndDouble();
-                A = this.X.add(this.Y);
-                ASquare = A.square();
-                YSquarePlusXSquare = YSquare.add(XSquare);
-                YSquareMinusXSquare = YSquare.subtract(XSquare);
+                final Ed25519FieldElement xSquare;
+                final Ed25519FieldElement ySquare;
+                final Ed25519FieldElement b;
+                final Ed25519FieldElement a;
+                final Ed25519FieldElement aSquare;
+                final Ed25519FieldElement ySquarePlusXSquare;
+                final Ed25519FieldElement ySquareMinusXSquare;
+                xSquare = this.x.square();
+                ySquare = this.y.square();
+                b = this.z.squareAndDouble();
+                a = this.x.add(this.y);
+                aSquare = a.square();
+                ySquarePlusXSquare = ySquare.add(xSquare);
+                ySquareMinusXSquare = ySquare.subtract(xSquare);
                 return p1xp1(
-                    ASquare.subtract(YSquarePlusXSquare),
-                    YSquarePlusXSquare,
-                    YSquareMinusXSquare,
-                    B.subtract(YSquareMinusXSquare));
+                    aSquare.subtract(ySquarePlusXSquare),
+                    ySquarePlusXSquare,
+                    ySquareMinusXSquare,
+                    b.subtract(ySquareMinusXSquare));
             default:
                 throw new UnsupportedOperationException();
         }
@@ -572,20 +568,20 @@ public class Ed25519GroupElement implements Serializable {
             throw new IllegalArgumentException();
         }
 
-        final Ed25519FieldElement YPlusX;
-        final Ed25519FieldElement YMinusX;
-        final Ed25519FieldElement A;
-        final Ed25519FieldElement B;
-        final Ed25519FieldElement C;
-        final Ed25519FieldElement D;
-        YPlusX = this.Y.add(this.X);
-        YMinusX = this.Y.subtract(this.X);
-        A = YPlusX.multiply(g.X);
-        B = YMinusX.multiply(g.Y);
-        C = g.Z.multiply(this.T);
-        D = this.Z.add(this.Z);
+        final Ed25519FieldElement yPlusX;
+        final Ed25519FieldElement yMinusX;
+        final Ed25519FieldElement a;
+        final Ed25519FieldElement b;
+        final Ed25519FieldElement c;
+        final Ed25519FieldElement d;
+        yPlusX = this.y.add(this.x);
+        yMinusX = this.y.subtract(this.x);
+        a = yPlusX.multiply(g.x);
+        b = yMinusX.multiply(g.y);
+        c = g.z.multiply(this.t);
+        d = this.z.add(this.z);
 
-        return p1xp1(A.subtract(B), A.add(B), D.add(C), D.subtract(C));
+        return p1xp1(a.subtract(b), a.add(b), d.add(c), d.subtract(c));
     }
 
     /**
@@ -606,20 +602,14 @@ public class Ed25519GroupElement implements Serializable {
             throw new IllegalArgumentException();
         }
 
-        final Ed25519FieldElement YPlusX;
-        final Ed25519FieldElement YMinusX;
-        final Ed25519FieldElement A;
-        final Ed25519FieldElement B;
-        final Ed25519FieldElement C;
-        final Ed25519FieldElement D;
-        YPlusX = this.Y.add(this.X);
-        YMinusX = this.Y.subtract(this.X);
-        A = YPlusX.multiply(g.Y);
-        B = YMinusX.multiply(g.X);
-        C = g.Z.multiply(this.T);
-        D = this.Z.add(this.Z);
+        final Ed25519FieldElement yPlusX = this.y.add(this.x);
+        final Ed25519FieldElement yMinusX = this.y.subtract(this.x);
+        final Ed25519FieldElement a = yPlusX.multiply(g.y);
+        final Ed25519FieldElement b = yMinusX.multiply(g.x);
+        final Ed25519FieldElement c = g.z.multiply(this.t);
+        final Ed25519FieldElement d = this.z.add(this.z);
 
-        return p1xp1(A.subtract(B), A.add(B), D.subtract(C), D.add(C));
+        return p1xp1(a.subtract(b), a.add(b), d.subtract(c), d.add(c));
     }
 
     /**
@@ -645,22 +635,15 @@ public class Ed25519GroupElement implements Serializable {
             throw new IllegalArgumentException();
         }
 
-        final Ed25519FieldElement YPlusX;
-        final Ed25519FieldElement YMinusX;
-        final Ed25519FieldElement ZSquare;
-        final Ed25519FieldElement A;
-        final Ed25519FieldElement B;
-        final Ed25519FieldElement C;
-        final Ed25519FieldElement D;
-        YPlusX = this.Y.add(this.X);
-        YMinusX = this.Y.subtract(this.X);
-        A = YPlusX.multiply(g.X);
-        B = YMinusX.multiply(g.Y);
-        C = g.T.multiply(this.T);
-        ZSquare = this.Z.multiply(g.Z);
-        D = ZSquare.add(ZSquare);
+        final Ed25519FieldElement yPlusX = this.y.add(this.x);
+        final Ed25519FieldElement yMinusX = this.y.subtract(this.x);
+        final Ed25519FieldElement a = yPlusX.multiply(g.x);
+        final Ed25519FieldElement b = yMinusX.multiply(g.y);
+        final Ed25519FieldElement c = g.t.multiply(this.t);
+        final Ed25519FieldElement zSquare = this.z.multiply(g.z);
+        final Ed25519FieldElement d = zSquare.add(zSquare);
 
-        return p1xp1(A.subtract(B), A.add(B), D.add(C), D.subtract(C));
+        return p1xp1(a.subtract(b), a.add(b), d.add(c), d.subtract(c));
     }
 
     /**
@@ -679,22 +662,22 @@ public class Ed25519GroupElement implements Serializable {
             throw new IllegalArgumentException();
         }
 
-        final Ed25519FieldElement YPlusX;
-        final Ed25519FieldElement YMinusX;
-        final Ed25519FieldElement ZSquare;
-        final Ed25519FieldElement A;
-        final Ed25519FieldElement B;
-        final Ed25519FieldElement C;
-        final Ed25519FieldElement D;
-        YPlusX = this.Y.add(this.X);
-        YMinusX = this.Y.subtract(this.X);
-        A = YPlusX.multiply(g.Y);
-        B = YMinusX.multiply(g.X);
-        C = g.T.multiply(this.T);
-        ZSquare = this.Z.multiply(g.Z);
-        D = ZSquare.add(ZSquare);
+        final Ed25519FieldElement yPlusX;
+        final Ed25519FieldElement yMinusX;
+        final Ed25519FieldElement zSquare;
+        final Ed25519FieldElement a;
+        final Ed25519FieldElement b;
+        final Ed25519FieldElement c;
+        final Ed25519FieldElement d;
+        yPlusX = this.y.add(this.x);
+        yMinusX = this.y.subtract(this.x);
+        a = yPlusX.multiply(g.y);
+        b = yMinusX.multiply(g.x);
+        c = g.t.multiply(this.t);
+        zSquare = this.z.multiply(g.z);
+        d = zSquare.add(zSquare);
 
-        return p1xp1(A.subtract(B), A.add(B), D.subtract(C), D.add(C));
+        return p1xp1(a.subtract(b), a.add(b), d.subtract(c), d.add(c));
     }
 
     /**
@@ -732,31 +715,31 @@ public class Ed25519GroupElement implements Serializable {
         switch (this.coordinateSystem) {
             case P2:
             case P3:
-                if (this.Z.equals(ge.Z)) {
-                    return this.X.equals(ge.X) && this.Y.equals(ge.Y);
+                if (this.z.equals(ge.z)) {
+                    return this.x.equals(ge.x) && this.y.equals(ge.y);
                 }
 
-                final Ed25519FieldElement x1 = this.X.multiply(ge.Z);
-                final Ed25519FieldElement y1 = this.Y.multiply(ge.Z);
-                final Ed25519FieldElement x2 = ge.X.multiply(this.Z);
-                final Ed25519FieldElement y2 = ge.Y.multiply(this.Z);
+                final Ed25519FieldElement x1 = this.x.multiply(ge.z);
+                final Ed25519FieldElement y1 = this.y.multiply(ge.z);
+                final Ed25519FieldElement x2 = ge.x.multiply(this.z);
+                final Ed25519FieldElement y2 = ge.y.multiply(this.z);
 
                 return x1.equals(x2) && y1.equals(y2);
             case P1xP1:
                 return this.toP2().equals(ge);
             case PRECOMPUTED:
-                return this.X.equals(ge.X) && this.Y.equals(ge.Y) && this.Z.equals(ge.Z);
+                return this.x.equals(ge.x) && this.y.equals(ge.y) && this.z.equals(ge.z);
             case CACHED:
-                if (this.Z.equals(ge.Z)) {
-                    return this.X.equals(ge.X) && this.Y.equals(ge.Y) && this.T.equals(ge.T);
+                if (this.z.equals(ge.z)) {
+                    return this.x.equals(ge.x) && this.y.equals(ge.y) && this.t.equals(ge.t);
                 }
 
-                final Ed25519FieldElement x3 = this.X.multiply(ge.Z);
-                final Ed25519FieldElement y3 = this.Y.multiply(ge.Z);
-                final Ed25519FieldElement t3 = this.T.multiply(ge.Z);
-                final Ed25519FieldElement x4 = ge.X.multiply(this.Z);
-                final Ed25519FieldElement y4 = ge.Y.multiply(this.Z);
-                final Ed25519FieldElement t4 = ge.T.multiply(this.Z);
+                final Ed25519FieldElement x3 = this.x.multiply(ge.z);
+                final Ed25519FieldElement y3 = this.y.multiply(ge.z);
+                final Ed25519FieldElement t3 = this.t.multiply(ge.z);
+                final Ed25519FieldElement x4 = ge.x.multiply(this.z);
+                final Ed25519FieldElement y4 = ge.y.multiply(this.z);
+                final Ed25519FieldElement t4 = ge.t.multiply(this.z);
 
                 return x3.equals(x4) && y3.equals(y4) && t3.equals(t4);
             default:
@@ -786,6 +769,24 @@ public class Ed25519GroupElement implements Serializable {
     }
 
     /**
+     * Constant-time conditional move. Replaces this with u if b == 1. Replaces this with this if b
+     * == 0.
+     *
+     * @param u The group element to return if b == 1.
+     * @param b in {0, 1}
+     * @return u if b == 1; this if b == 0; @{@link IllegalStateException} otherwise.
+     */
+    private Ed25519GroupElement nullSafeCmov(final Ed25519GroupElement u, final int b) {
+        Ed25519GroupElement ret = cmov(u, b);
+        if (ret == null) {
+            throw new IllegalStateException(
+                "Ed25519GroupElement " + Objects.toString(u, "NULL") + " and argument " + b
+                    + " resolved a null cmov");
+        }
+        return ret;
+    }
+
+    /**
      * Look up 16^i r_i B in the precomputed table. No secret array indices, no secret branching.
      * Constant time. <br> Must have previously precomputed.
      *
@@ -800,21 +801,29 @@ public class Ed25519GroupElement implements Serializable {
         final int bAbs = b - (((-bNegative) & b) << 1);
 
         // 16^i |r_i| B
-        final Ed25519GroupElement t =
+        final Ed25519GroupElement tElement =
             Ed25519Group.ZERO_PRECOMPUTED
-                .cmov(this.precomputedForSingle[pos][0], ByteUtils.isEqualConstantTime(bAbs, 1))
-                .cmov(this.precomputedForSingle[pos][1], ByteUtils.isEqualConstantTime(bAbs, 2))
-                .cmov(this.precomputedForSingle[pos][2], ByteUtils.isEqualConstantTime(bAbs, 3))
-                .cmov(this.precomputedForSingle[pos][3], ByteUtils.isEqualConstantTime(bAbs, 4))
-                .cmov(this.precomputedForSingle[pos][4], ByteUtils.isEqualConstantTime(bAbs, 5))
-                .cmov(this.precomputedForSingle[pos][5], ByteUtils.isEqualConstantTime(bAbs, 6))
-                .cmov(this.precomputedForSingle[pos][6], ByteUtils.isEqualConstantTime(bAbs, 7))
-                .cmov(this.precomputedForSingle[pos][7], ByteUtils.isEqualConstantTime(bAbs, 8));
+                .nullSafeCmov(this.precomputedForSingle[pos][0],
+                    ByteUtils.isEqualConstantTime(bAbs, 1))
+                .nullSafeCmov(this.precomputedForSingle[pos][1],
+                    ByteUtils.isEqualConstantTime(bAbs, 2))
+                .nullSafeCmov(this.precomputedForSingle[pos][2],
+                    ByteUtils.isEqualConstantTime(bAbs, 3))
+                .nullSafeCmov(this.precomputedForSingle[pos][3],
+                    ByteUtils.isEqualConstantTime(bAbs, 4))
+                .nullSafeCmov(this.precomputedForSingle[pos][4],
+                    ByteUtils.isEqualConstantTime(bAbs, 5))
+                .nullSafeCmov(this.precomputedForSingle[pos][5],
+                    ByteUtils.isEqualConstantTime(bAbs, 6))
+                .nullSafeCmov(this.precomputedForSingle[pos][6],
+                    ByteUtils.isEqualConstantTime(bAbs, 7))
+                .nullSafeCmov(this.precomputedForSingle[pos][7],
+                    ByteUtils.isEqualConstantTime(bAbs, 8));
         // -16^i |r_i| B
         //noinspection SuspiciousNameCombination
-        final Ed25519GroupElement tMinus = precomputed(t.Y, t.X, t.Z.negate());
+        final Ed25519GroupElement tMinus = precomputed(tElement.y, tElement.x, tElement.z.negate());
         // 16^i r_i B
-        return t.cmov(tMinus, bNegative);
+        return tElement.nullSafeCmov(tMinus, bNegative);
     }
 
     /**
@@ -849,13 +858,13 @@ public class Ed25519GroupElement implements Serializable {
      * r = b * B - a * A where a and b are encoded field elements and B is this point. A must have
      * been previously precomputed for double scalar multiplication.
      *
-     * @param A in P3 coordinate system.
+     * @param aGroupElement in P3 coordinate system.
      * @param a = The first encoded field element.
      * @param b = The second encoded field element.
      * @return The resulting group element.
      */
     public Ed25519GroupElement doubleScalarMultiplyVariableTime(
-        final Ed25519GroupElement A,
+        final Ed25519GroupElement aGroupElement,
         final Ed25519EncodedFieldElement a,
         final Ed25519EncodedFieldElement b) {
         final byte[] aSlide = slide(a);
@@ -870,21 +879,23 @@ public class Ed25519GroupElement implements Serializable {
         }
 
         for (; i >= 0; --i) {
-            Ed25519GroupElement t = r.dbl();
+            Ed25519GroupElement tElement = r.dbl();
 
             if (aSlide[i] > 0) {
-                t = t.toP3().precomputedSubtract(A.precomputedForDouble[aSlide[i] / 2]);
+                tElement = tElement.toP3()
+                    .precomputedSubtract(aGroupElement.precomputedForDouble[aSlide[i] / 2]);
             } else if (aSlide[i] < 0) {
-                t = t.toP3().precomputedAdd(A.precomputedForDouble[(-aSlide[i]) / 2]);
+                tElement = tElement.toP3().precomputedAdd(aGroupElement.precomputedForDouble[(-aSlide[i]) / 2]);
             }
 
             if (bSlide[i] > 0) {
-                t = t.toP3().precomputedAdd(this.precomputedForDouble[bSlide[i] / 2]);
+                tElement = tElement.toP3().precomputedAdd(this.precomputedForDouble[bSlide[i] / 2]);
             } else if (bSlide[i] < 0) {
-                t = t.toP3().precomputedSubtract(this.precomputedForDouble[(-bSlide[i]) / 2]);
+                tElement = tElement.toP3()
+                    .precomputedSubtract(this.precomputedForDouble[(-bSlide[i]) / 2]);
             }
 
-            r = t.toP2();
+            r = tElement.toP2();
         }
 
         return r;
@@ -899,11 +910,11 @@ public class Ed25519GroupElement implements Serializable {
         switch (this.coordinateSystem) {
             case P2:
             case P3:
-                final Ed25519FieldElement inverse = this.Z.invert();
-                final Ed25519FieldElement x = this.X.multiply(inverse);
-                final Ed25519FieldElement y = this.Y.multiply(inverse);
-                final Ed25519FieldElement xSquare = x.square();
-                final Ed25519FieldElement ySquare = y.square();
+                final Ed25519FieldElement inverse = this.z.invert();
+                final Ed25519FieldElement xElement = this.x.multiply(inverse);
+                final Ed25519FieldElement yElement = this.y.multiply(inverse);
+                final Ed25519FieldElement xSquare = xElement.square();
+                final Ed25519FieldElement ySquare = yElement.square();
                 final Ed25519FieldElement dXSquareYSquare =
                     Ed25519Field.D.multiply(xSquare).multiply(ySquare);
                 return Ed25519Field.ONE.add(dXSquareYSquare).add(xSquare).equals(ySquare);
@@ -914,9 +925,10 @@ public class Ed25519GroupElement implements Serializable {
     }
 
     @Override
+    @SuppressWarnings("squid:S3457")
     public String toString() {
         return String.format(
             "X=%s\nY=%s\nZ=%s\nT=%s\n",
-            this.X.toString(), this.Y.toString(), this.Z.toString(), this.T.toString());
+            this.x.toString(), this.y.toString(), this.z.toString(), this.t.toString());
     }
 }

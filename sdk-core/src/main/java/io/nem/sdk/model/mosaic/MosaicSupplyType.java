@@ -16,6 +16,8 @@
 
 package io.nem.sdk.model.mosaic;
 
+import java.util.Arrays;
+
 /**
  * Enum containing mosaic supply type.
  *
@@ -31,21 +33,15 @@ public enum MosaicSupplyType {
      */
     INCREASE(1);
 
-    private int value;
+    private final int value;
 
     MosaicSupplyType(int value) {
         this.value = value;
     }
 
     public static MosaicSupplyType rawValueOf(int value) {
-        switch (value) {
-            case 0:
-                return MosaicSupplyType.DECREASE;
-            case 1:
-                return MosaicSupplyType.INCREASE;
-            default:
-                throw new IllegalArgumentException(value + " is not a valid value");
-        }
+        return Arrays.stream(values()).filter(e -> e.value == value).findFirst()
+            .orElseThrow(() -> new IllegalArgumentException(value + " is not a valid value"));
     }
 
     public int getValue() {

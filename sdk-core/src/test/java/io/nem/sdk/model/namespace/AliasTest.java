@@ -18,20 +18,20 @@ public class AliasTest {
     @Test
     void shouldCreateAEmptyAlias() {
         Alias alias = new EmptyAlias();
-        assertEquals(AliasType.None, alias.getType());
+        assertEquals(AliasType.NONE, alias.getType());
     }
 
     @Test
     void shouldCreateAAddressAlias() {
         AddressAlias addressAlias = new AddressAlias(address);
-        assertEquals(AliasType.Address, addressAlias.getType());
+        assertEquals(AliasType.ADDRESS, addressAlias.getType());
         assertEquals(address, addressAlias.getAliasValue());
     }
 
     @Test
     void shouldCreateAMosaicAlias() {
         MosaicAlias mosaicAlias = new MosaicAlias(mosaicId);
-        assertEquals(AliasType.Mosaic, mosaicAlias.getType());
+        assertEquals(AliasType.MOSAIC, mosaicAlias.getType());
         assertEquals(mosaicId, mosaicAlias.getAliasValue());
     }
 

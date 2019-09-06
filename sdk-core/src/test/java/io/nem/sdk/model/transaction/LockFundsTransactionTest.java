@@ -111,8 +111,9 @@ class LockFundsTransactionTest {
 
         String payload = lockFundsTransactionSigned.getPayload();
         assertEquals(
-            payload.substring(240),
-            "44B262C46CEABB85809698000000000064000000000000008498B38D89C1DC8A448EA5824938FF828926CD9F7747B1844B59B4B6807E878B");
+            "44B262C46CEABB85809698000000000064000000000000008498B38D89C1DC8A448EA5824938FF828926CD9F7747B1844B59B4B6807E878B",
+            payload.substring(240)
+        );
         assertEquals(
             "11533C71C8A6F9A86E041AD6EE3B1CBA81FA9E7DDF93AEFB9EB7ACA153BB3E2C",
             lockFundsTransactionSigned.getHash());

@@ -19,6 +19,7 @@ package io.nem.core.crypto.ed25519.arithmetic;
 /**
  * Available coordinate systems for a group element.
  */
+@SuppressWarnings("squid:S00115")
 public enum CoordinateSystem {
 
     /**

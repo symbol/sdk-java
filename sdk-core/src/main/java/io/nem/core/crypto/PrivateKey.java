@@ -73,8 +73,7 @@ public class PrivateKey {
     }
 
     public byte[] getBytes() {
-        byte[] bytes = this.value.toByteArray();
-        return bytes;
+        return this.value.toByteArray();
     }
 
     @Override

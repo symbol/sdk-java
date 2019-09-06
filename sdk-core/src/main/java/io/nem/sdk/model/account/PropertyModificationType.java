@@ -16,12 +16,14 @@
 
 package io.nem.sdk.model.account;
 
+import java.util.Arrays;
+
 /**
  * Account property modification type
  */
 public enum PropertyModificationType {
-    Add(0x01),
-    Remove(0x00);
+    ADD(0x01),
+    REMOVE(0x00);
 
     private Integer value;
 
@@ -29,14 +31,14 @@ public enum PropertyModificationType {
         this.value = value;
     }
 
-    public static PropertyModificationType rawValueOf(String value) {
-        switch (value) {
-            case "0x01":
-                return PropertyModificationType.Add;
-            case "0x00":
-                return PropertyModificationType.Remove;
-            default:
-                throw new IllegalArgumentException(value + " is not a valid value");
+    public static PropertyModificationType rawValueOf(String stringValue) {
+        try {
+            int value = Integer.decode(stringValue);
+            return Arrays.stream(values()).filter(e -> e.value == value).findFirst()
+                .orElseThrow(
+                    () -> new IllegalArgumentException(stringValue + " is not a valid value"));
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException(stringValue + " is not a valid value");
         }
     }
 

@@ -24,6 +24,12 @@ import org.apache.commons.codec.binary.Base32;
 public class Base32Encoder {
 
     /**
+     * Private constructor for this utility class.
+     */
+    private Base32Encoder() {
+    }
+
+    /**
      * Converts a string to a byte array.
      *
      * @param base32String The input Base32 string.

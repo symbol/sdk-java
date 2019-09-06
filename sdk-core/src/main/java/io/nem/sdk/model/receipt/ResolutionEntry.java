@@ -56,7 +56,7 @@ public class ResolutionEntry<T> {
      * @return void
      */
     private void validateReceiptType(ReceiptType type) {
-        if (!ReceiptType.ResolutionStatement.contains(type)) {
+        if (!ReceiptType.RESOLUTION_STATEMENT.contains(type)) {
             throw new IllegalArgumentException("Receipt type: [" + type.name() + "] is not valid.");
         }
     }

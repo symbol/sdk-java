@@ -28,6 +28,7 @@ import org.bouncycastle.util.encoders.Hex;
 public class CosignatureTransaction {
 
     private final AggregateTransaction transactionToCosign;
+    private final String transactionHash;
 
     /**
      * Constructor
@@ -35,12 +36,11 @@ public class CosignatureTransaction {
      * @param transactionToCosign Aggregate transaction that will be cosigned.
      */
     public CosignatureTransaction(AggregateTransaction transactionToCosign) {
-        if (!transactionToCosign.getTransactionInfo().isPresent()
-            || !transactionToCosign.getTransactionInfo().get().getHash().isPresent()) {
-            throw new IllegalArgumentException(
-                "Transaction to cosign should be announced before being able to cosign it");
-        }
         this.transactionToCosign = transactionToCosign;
+        this.transactionHash = transactionToCosign.getTransactionInfo().flatMap(
+            TransactionInfo::getHash)
+            .orElseThrow(() -> new IllegalArgumentException(
+                "Transaction to cosign should be announced before being able to cosign it"));
     }
 
     /**
@@ -70,12 +70,9 @@ public class CosignatureTransaction {
      */
     public CosignatureSignedTransaction signWith(Account account) {
         Signer signer = new Signer(account.getKeyPair());
-        byte[] bytes = Hex
-            .decode(this.transactionToCosign.getTransactionInfo().get().getHash().get());
+        byte[] bytes = Hex.decode(transactionHash);
         byte[] signatureBytes = signer.sign(bytes).getBytes();
-        return new CosignatureSignedTransaction(
-            this.transactionToCosign.getTransactionInfo().get().getHash().get(),
-            Hex.toHexString(signatureBytes),
+        return new CosignatureSignedTransaction(transactionHash, Hex.toHexString(signatureBytes),
             account.getPublicKey());
     }
 }

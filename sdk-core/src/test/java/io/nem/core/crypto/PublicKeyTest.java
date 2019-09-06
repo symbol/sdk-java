@@ -20,6 +20,7 @@ import org.hamcrest.core.IsEqual;
 import org.hamcrest.core.IsNot;
 import org.junit.Assert;
 import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
 
 public class PublicKeyTest {
 
@@ -70,18 +71,14 @@ public class PublicKeyTest {
         Assert.assertThat(new PublicKey(MODIFIED_TEST_BYTES), IsNot.not(IsEqual.equalTo(key)));
         Assert.assertThat(null, IsNot.not(IsEqual.equalTo(key)));
         Assert.assertThat(TEST_BYTES, IsNot.not(IsEqual.equalTo(key)));
+        Assert.assertThat(key, IsNot.not(IsEqual.equalTo("ImNotAPublicKey")));
     }
 
     @Test
-    public void hashCodesAreEqualForEquivalentObjects() {
+    public void canGetByteBuffers() {
         // Arrange:
         final PublicKey key = new PublicKey(TEST_BYTES);
-        final int hashCode = key.hashCode();
-
-        // Assert:
-        Assert.assertThat(new PublicKey(TEST_BYTES).hashCode(), IsEqual.equalTo(hashCode));
-        Assert.assertThat(
-            new PublicKey(MODIFIED_TEST_BYTES).hashCode(), IsNot.not(IsEqual.equalTo(hashCode)));
+        Assertions.assertEquals(TEST_BYTES, key.getByteBuffer().array());
     }
 
     // endregion

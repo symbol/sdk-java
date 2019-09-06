@@ -36,6 +36,7 @@ public class AccountInfo {
     private final List<Mosaic> mosaics;
     private final AccountType accountType;
 
+    @SuppressWarnings("squid:S00107")
     public AccountInfo(
         Address address,
         BigInteger addressHeight,

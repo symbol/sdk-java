@@ -15,11 +15,13 @@
  */
 package io.nem.sdk.model.node;
 
-public enum RoleType {
-    PeerNode(1),
-    ApiNode(2);
+import java.util.Arrays;
 
-    private int value;
+public enum RoleType {
+    PEER_NODE(1),
+    API_NODE(2);
+
+    private final int value;
 
     RoleType(int value) {
         this.value = value;
@@ -31,14 +33,8 @@ public enum RoleType {
      * @return {@link RoleType}
      */
     public static RoleType rawValueOf(int value) {
-        switch (value) {
-            case 1:
-                return RoleType.PeerNode;
-            case 2:
-                return RoleType.ApiNode;
-            default:
-                throw new IllegalArgumentException(value + " is not a valid role type");
-        }
+        return Arrays.stream(values()).filter(e -> e.value == value).findFirst()
+            .orElseThrow(() -> new IllegalArgumentException(value + " is not a valid value"));
     }
 
     /**

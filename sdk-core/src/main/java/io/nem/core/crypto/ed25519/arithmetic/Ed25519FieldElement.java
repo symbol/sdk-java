@@ -16,6 +16,7 @@
 
 package io.nem.core.crypto.ed25519.arithmetic;
 
+import java.io.Serializable;
 import java.util.Arrays;
 
 /**
@@ -26,7 +27,7 @@ import java.util.Arrays;
  * 2^230 * values[9]. <br> Bounds on each values[i] vary depending on context. This implementation
  * is based on the ref10 implementation of SUPERCOP.
  */
-public class Ed25519FieldElement {
+public class Ed25519FieldElement implements Serializable {
 
     private final int[] values;
 
@@ -679,7 +680,8 @@ public class Ed25519FieldElement {
      * @return The inverse of this field element.
      */
     public Ed25519FieldElement invert() {
-        Ed25519FieldElement f0, f1;
+        Ed25519FieldElement f0;
+        Ed25519FieldElement f1;
 
         // comments describe how exponent is created
 
@@ -732,7 +734,9 @@ public class Ed25519FieldElement {
      * @return This field element to the power of (2^252 - 4).
      */
     private Ed25519FieldElement pow2to252sub4() {
-        Ed25519FieldElement f0, f1, f2;
+        Ed25519FieldElement f0;
+        Ed25519FieldElement f1;
+        Ed25519FieldElement f2;
 
         // 2 == 2 * 1
         f0 = this.square();

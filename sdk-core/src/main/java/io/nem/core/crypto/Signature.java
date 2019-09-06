@@ -124,19 +124,23 @@ public class Signature {
     }
 
     @Override
-    public int hashCode() {
-        return Arrays.hashCode(this.r) ^ Arrays.hashCode(this.s);
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Signature signature = (Signature) o;
+        return Arrays.equals(r, signature.r) &&
+            Arrays.equals(s, signature.s);
     }
 
     @Override
-    public boolean equals(final Object obj) {
-        if (obj == null || !(obj instanceof Signature)) {
-            return false;
-        }
-
-        final Signature rhs = (Signature) obj;
-        return 1 == ArrayUtils.isEqualConstantTime(this.r, rhs.r)
-            && 1 == ArrayUtils.isEqualConstantTime(this.s, rhs.s);
+    public int hashCode() {
+        int result = Arrays.hashCode(r);
+        result = 31 * result + Arrays.hashCode(s);
+        return result;
     }
 
     @Override

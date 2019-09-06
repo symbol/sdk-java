@@ -15,6 +15,8 @@
  */
 package io.nem.sdk.model.transaction;
 
+import java.util.Arrays;
+
 /**
  * Enum containing hash type.
  *
@@ -39,25 +41,20 @@ public enum HashType {
      */
     HASH_256(3);
 
-    private int value;
+    /**
+     * The regex used to validate a hashed value.
+     */
+    public static final String VALIDATOR_REGEX = "-?[0-9a-fA-F]+";
+
+    private final int value;
 
     HashType(int value) {
         this.value = value;
     }
 
     public static HashType rawValueOf(int value) {
-        switch (value) {
-            case 0:
-                return HashType.SHA3_256;
-            case 1:
-                return HashType.KECCAK_256;
-            case 2:
-                return HashType.HASH_160;
-            case 3:
-                return HashType.HASH_256;
-            default:
-                throw new IllegalArgumentException(value + " is not a valid value");
-        }
+        return Arrays.stream(values()).filter(e -> e.value == value).findFirst()
+            .orElseThrow(() -> new IllegalArgumentException(value + " is not a valid value"));
     }
 
     /**
@@ -67,14 +64,14 @@ public enum HashType {
      * @param input Input hashed
      * @return boolean when format is correct
      */
-    public static boolean Validator(HashType hashType, String input) {
-        if (hashType == HashType.SHA3_256 && input.matches("-?[0-9a-fA-F]+")) {
+    public static boolean validator(HashType hashType, String input) {
+        if (hashType == HashType.SHA3_256 && input.matches(VALIDATOR_REGEX)) {
             return input.length() == 64;
-        } else if (hashType == HashType.KECCAK_256 && input.matches("-?[0-9a-fA-F]+")) {
+        } else if (hashType == HashType.KECCAK_256 && input.matches(VALIDATOR_REGEX)) {
             return input.length() == 64;
-        } else if (hashType == HashType.HASH_160 && input.matches("-?[0-9a-fA-F]+")) {
+        } else if (hashType == HashType.HASH_160 && input.matches(VALIDATOR_REGEX)) {
             return input.length() == 40;
-        } else if (hashType == HashType.HASH_256 && input.matches("-?[0-9a-fA-F]+")) {
+        } else if (hashType == HashType.HASH_256 && input.matches(VALIDATOR_REGEX)) {
             return input.length() == 64;
         }
         return false;

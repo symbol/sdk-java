@@ -51,6 +51,7 @@ public class TransferTransaction extends Transaction {
     private final Message message;
     private final Optional<NamespaceId> namespaceId;
 
+    @SuppressWarnings("squid:S00107")
     public TransferTransaction(
         final NetworkType networkType,
         final Integer version,
@@ -77,6 +78,7 @@ public class TransferTransaction extends Transaction {
             Optional.of(transactionInfo));
     }
 
+    @SuppressWarnings("squid:S00107")
     private TransferTransaction(
         final NetworkType networkType,
         final Integer version,
@@ -100,6 +102,7 @@ public class TransferTransaction extends Transaction {
             Optional.empty());
     }
 
+    @SuppressWarnings("squid:S00107")
     private TransferTransaction(
         final NetworkType networkType,
         final Integer version,
@@ -209,7 +212,8 @@ public class TransferTransaction extends Transaction {
     /**
      * Returns list of mosaic objects.
      *
-     * @return Link<{ @ link Mosaic }>.
+     * @return Link<{
+                       *       @       link                               Mosaic       }>.
      */
     public List<Mosaic> getMosaics() {
         return mosaics;
@@ -258,7 +262,7 @@ public class TransferTransaction extends Transaction {
     byte[] generateEmbeddedBytes() {
         EmbeddedTransferTransactionBuilder txBuilder =
             EmbeddedTransferTransactionBuilder.create(
-                new KeyDto(getSignerBytes().get()),
+                new KeyDto(getRequiredSignerBytes()),
                 getNetworkVersion(),
                 EntityTypeDto.TRANSFER_TRANSACTION,
                 new UnresolvedAddressDto(getUnresolveAddressBuffer()),
@@ -308,25 +312,26 @@ public class TransferTransaction extends Transaction {
      * @return Unresolve address buffer
      */
     private ByteBuffer getUnresolveAddressBuffer() {
-        if (getRecipient().isPresent()) {
-            return getRecipient().get().getByteBuffer();
-        } else if (getNamespaceId().isPresent()) {
-            return getNamespaceIdAsUnresolveAddressBuffer();
-        }
-        throw new IllegalStateException("Address or namespace alias must be set.");
+
+        return getRecipient().map(Address::getByteBuffer).orElseGet(
+            () -> getNamespaceId()
+                .map(this::getNamespaceIdAsUnresolveAddressBuffer).orElseThrow(
+                    () -> new IllegalStateException("Address or namespace alias must be set."))
+        );
     }
 
     /**
      * Gets the namespace id as unresolve address.
      *
+     * @param namespaceId the namespace id.
      * @return Unresolve address buffer.
      */
-    private ByteBuffer getNamespaceIdAsUnresolveAddressBuffer() {
+    private ByteBuffer getNamespaceIdAsUnresolveAddressBuffer(NamespaceId namespaceId) {
         final ByteBuffer namespaceIdAlias = ByteBuffer.allocate(25);
         final byte firstByte = 0x01;
         namespaceIdAlias.order(ByteOrder.LITTLE_ENDIAN);
         namespaceIdAlias.put(firstByte);
-        namespaceIdAlias.putLong(namespaceId.get().getIdAsLong());
+        namespaceIdAlias.putLong(namespaceId.getIdAsLong());
         return namespaceIdAlias;
     }
 }

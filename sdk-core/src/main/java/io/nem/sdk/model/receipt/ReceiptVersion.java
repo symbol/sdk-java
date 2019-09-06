@@ -50,7 +50,7 @@ public enum ReceiptVersion {
      */
     INFLATION_RECEIPT(1);
 
-    private int value;
+    private final int value;
 
     ReceiptVersion(int value) {
         this.value = value;

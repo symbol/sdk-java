@@ -317,7 +317,7 @@ class E2EIntegrationTest extends BaseIntegrationTest {
             AddressAliasTransaction.create(
                 new Deadline(2, HOURS),
                 BigInteger.ZERO,
-                AliasAction.Link,
+                AliasAction.LINK,
                 this.rootNamespaceId,
                 this.account.getAddress(),
                 NetworkType.MIJIN_TEST);
@@ -498,7 +498,7 @@ class E2EIntegrationTest extends BaseIntegrationTest {
             MosaicAliasTransaction.create(
                 new Deadline(2, HOURS),
                 BigInteger.ZERO,
-                AliasAction.Link,
+                AliasAction.LINK,
                 this.rootNamespaceId,
                 mosaicId,
                 NetworkType.MIJIN_TEST);

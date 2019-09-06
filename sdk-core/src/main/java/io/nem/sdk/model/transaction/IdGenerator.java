@@ -33,6 +33,12 @@ import org.apache.commons.lang3.ArrayUtils;
  */
 public class IdGenerator {
 
+    /**
+     * Private constructor for this utility class.
+     */
+    private IdGenerator() {
+    }
+
     private static final long ID_GENERATOR_FLAG = 0x8000000000000000L;
 
     /**
@@ -100,7 +106,7 @@ public class IdGenerator {
      */
     public static List<BigInteger> generateNamespacePath(String namespacePath) {
         String[] parts = namespacePath.split(Pattern.quote("."));
-        List<BigInteger> path = new ArrayList<BigInteger>();
+        List<BigInteger> path = new ArrayList<>();
 
         if (parts.length == 0) {
             throw new IllegalIdentifierException("invalid namespace path");

@@ -27,7 +27,7 @@ public class PlainMessage extends Message {
     /**
      * Plain message containing an empty string.
      */
-    public static PlainMessage Empty = new PlainMessage("");
+    public static final PlainMessage Empty = new PlainMessage("");
 
     /**
      * Constructor

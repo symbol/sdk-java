@@ -44,6 +44,7 @@ public class AccountAddressRestrictionModificationTransaction extends Transactio
     /**
      * public constructor
      */
+    @SuppressWarnings("squid:S00107")
     public AccountAddressRestrictionModificationTransaction(
         final NetworkType networkType,
         final Integer version,
@@ -91,6 +92,7 @@ public class AccountAddressRestrictionModificationTransaction extends Transactio
     /**
      * private constructor
      */
+    @SuppressWarnings("squid:S00107")
     private AccountAddressRestrictionModificationTransaction(
         final NetworkType networkType,
         final Integer version,
@@ -184,7 +186,7 @@ public class AccountAddressRestrictionModificationTransaction extends Transactio
     byte[] generateEmbeddedBytes() {
         EmbeddedAccountAddressRestrictionTransactionBuilder txBuilder =
             EmbeddedAccountAddressRestrictionTransactionBuilder.create(
-                new KeyDto(getSignerBytes().get()),
+                new KeyDto(getRequiredSignerBytes()),
                 getNetworkVersion(),
                 EntityTypeDto.ACCOUNT_ADDRESS_RESTRICTION_TRANSACTION,
                 AccountRestrictionTypeDto.rawValueOf(this.restrictionType.getValue()),

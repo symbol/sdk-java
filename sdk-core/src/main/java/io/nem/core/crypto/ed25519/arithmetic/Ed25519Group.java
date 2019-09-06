@@ -25,6 +25,12 @@ import java.math.BigInteger;
 public class Ed25519Group {
 
     /**
+     * Private constructor for this utility class.
+     */
+    private Ed25519Group() {
+    }
+
+    /**
      * 2^252 - 27742317777372353535851937790883648493
      */
     public static final BigInteger GROUP_ORDER =

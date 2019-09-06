@@ -22,6 +22,7 @@ import org.hamcrest.core.IsEqual;
 import org.hamcrest.core.IsNot;
 import org.junit.Assert;
 import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
 
 public class Ed25519EncodedFieldElementTest {
 
@@ -29,14 +30,18 @@ public class Ed25519EncodedFieldElementTest {
 
     @Test
     public void canBeCreatedFromByteArrayWithLengthThirtyTwo() {
+        Ed25519EncodedFieldElement element = new Ed25519EncodedFieldElement(
+            new byte[32]);
         // Assert:
-        new Ed25519EncodedFieldElement(new byte[32]);
+        Assertions.assertEquals(32, element.getRaw().length);
     }
 
     @Test
     public void canBeCreatedFromByteArrayWithLengthSixtyFour() {
+        Ed25519EncodedFieldElement element = new Ed25519EncodedFieldElement(new byte[64]);
+
         // Assert:
-        new Ed25519EncodedFieldElement(new byte[64]);
+        Assertions.assertEquals(64, element.getRaw().length);
     }
 
     @Test(expected = IllegalArgumentException.class)

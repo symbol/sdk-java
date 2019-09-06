@@ -50,7 +50,7 @@ public class MosaicNonceTest {
         MosaicNonce nonce2 = MosaicNonce.createFromBigInteger(new BigInteger("4294967295"));
         assertNotNull(nonce1.getNonce());
         assertNotNull(nonce2.getNonce());
-        assertEquals(nonce1.getNonceAsInt(), 0);
+        assertEquals(0, nonce1.getNonceAsInt());
         assertEquals(nonce2.getNonceAsInt(), new BigInteger("4294967295").intValue());
         assertTrue(
             Arrays.equals(nonce1.getNonce(), MosaicNonce.createFromHex("00000000").getNonce()));

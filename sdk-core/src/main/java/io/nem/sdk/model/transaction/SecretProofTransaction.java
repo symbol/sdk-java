@@ -60,6 +60,7 @@ public class SecretProofTransaction extends Transaction {
      * @param signer Signer of the transaction.
      * @param transactionInfo Transaction info.
      */
+    @SuppressWarnings("squid:S00107")
     public SecretProofTransaction(
         final NetworkType networkType,
         final Integer version,
@@ -98,6 +99,7 @@ public class SecretProofTransaction extends Transaction {
      * @param secret Seed proof hashed.
      * @param proof Seed proof.
      */
+    @SuppressWarnings("squid:S00107")
     public SecretProofTransaction(
         final NetworkType networkType,
         final Integer version,
@@ -136,6 +138,7 @@ public class SecretProofTransaction extends Transaction {
      * @param signer Signer of the transaction.
      * @param transactionInfo Transaction info.
      */
+    @SuppressWarnings("squid:S00107")
     public SecretProofTransaction(
         final NetworkType networkType,
         final Integer version,
@@ -160,7 +163,7 @@ public class SecretProofTransaction extends Transaction {
         Validate.notNull(secret, "Secret must not be null.");
         Validate.notNull(proof, "Proof must not be null.");
         Validate.notNull(recipient, "Recipient must not be null.");
-        if (!HashType.Validator(hashType, secret)) {
+        if (!HashType.validator(hashType, secret)) {
             throw new IllegalArgumentException(
                 "HashType and Secret have incompatible length or not hexadecimal string");
         }
@@ -263,7 +266,7 @@ public class SecretProofTransaction extends Transaction {
     byte[] generateEmbeddedBytes() {
         EmbeddedSecretProofTransactionBuilder txBuilder =
             EmbeddedSecretProofTransactionBuilder.create(
-                new KeyDto(getSignerBytes().get()),
+                new KeyDto(getRequiredSignerBytes()),
                 getNetworkVersion(),
                 EntityTypeDto.SECRET_PROOF_TRANSACTION,
                 LockHashAlgorithmDto.rawValueOf((byte) hashType.getValue()),
@@ -286,7 +289,6 @@ public class SecretProofTransaction extends Transaction {
      */
     private ByteBuffer getProofBuffer() {
         final byte[] proofBytes = Hex.decode(proof);
-        final ByteBuffer proofBuffer = ByteBuffer.wrap(proofBytes);
-        return proofBuffer;
+        return ByteBuffer.wrap(proofBytes);
     }
 }

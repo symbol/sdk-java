@@ -16,6 +16,8 @@
 
 package io.nem.sdk.model.transaction;
 
+import java.util.Arrays;
+
 /**
  * Enum containing multisig cosignatory modification type constants.
  *
@@ -32,7 +34,7 @@ public enum MultisigCosignatoryModificationType {
      */
     REMOVE(0);
 
-    private int value;
+    private final int value;
 
     MultisigCosignatoryModificationType(int value) {
         this.value = value;
@@ -45,14 +47,8 @@ public enum MultisigCosignatoryModificationType {
      * @return {@link MultisigCosignatoryModificationType}
      */
     public static MultisigCosignatoryModificationType rawValueOf(int value) {
-        switch (value) {
-            case 1:
-                return MultisigCosignatoryModificationType.ADD;
-            case 0:
-                return MultisigCosignatoryModificationType.REMOVE;
-            default:
-                throw new IllegalArgumentException(value + " is not a valid value");
-        }
+        return Arrays.stream(values()).filter(e -> e.value == value).findFirst()
+            .orElseThrow(() -> new IllegalArgumentException(value + " is not a valid value"));
     }
 
     /**

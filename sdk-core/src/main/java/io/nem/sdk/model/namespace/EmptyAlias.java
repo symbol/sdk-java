@@ -25,15 +25,7 @@ public class EmptyAlias extends AliasBase<Object> {
      * Create AddressAlias from address
      */
     public EmptyAlias() {
-        super(null);
+        super(AliasType.NONE, null);
     }
 
-    /**
-     * Gets the alias type.
-     *
-     * @return Alias type.
-     */
-    public AliasType getType() {
-        return AliasType.None;
-    }
 }

@@ -106,7 +106,7 @@ public class BalanceChangeReceipt extends Receipt {
      * @return void
      */
     private void validateReceiptType(ReceiptType type) {
-        if (!ReceiptType.BalanceChange.contains(type)) {
+        if (!ReceiptType.BALANCE_CHANGE.contains(type)) {
             throw new IllegalArgumentException("Receipt type: [" + type.name() + "] is not valid.");
         }
     }

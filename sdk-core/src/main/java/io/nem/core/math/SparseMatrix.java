@@ -139,6 +139,7 @@ public class SparseMatrix extends Matrix {
     }
 
     @Override
+    @SuppressWarnings("squid:ForLoopCounterChangedCheck")
     protected final void forEach(final ElementVisitorFunction func) {
         final boolean[] copied = new boolean[1];
         for (int i = 0; i < this.numRows; ++i) {
@@ -186,8 +187,8 @@ public class SparseMatrix extends Matrix {
 
     @Override
     public MatrixNonZeroElementRowIterator getNonZeroElementRowIterator(final int row) {
-        final int[] cols = this.cols[row];
-        final double[] values = this.values[row];
+        final int[] rowCols = this.cols[row];
+        final double[] rowValues = this.values[row];
         final int maxIndex = this.maxIndices[row];
         return new MatrixNonZeroElementRowIterator() {
             private int index;
@@ -203,7 +204,7 @@ public class SparseMatrix extends Matrix {
                     throw new IndexOutOfBoundsException("index out of range");
                 }
 
-                return new MatrixElement(row, cols[this.index], values[this.index++]);
+                return new MatrixElement(row, rowCols[this.index], rowValues[this.index++]);
             }
         };
     }

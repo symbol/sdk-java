@@ -39,7 +39,7 @@ class NamespaceInfoTest {
                 true,
                 0,
                 "5A3CD9B09CD1E8000159249B",
-                NamespaceType.RootNamespace,
+                NamespaceType.ROOT_NAMESPACE,
                 1,
                 Arrays.asList(namespaceId),
                 new NamespaceId(new BigInteger("0")),
@@ -53,7 +53,7 @@ class NamespaceInfoTest {
         assertEquals(true, namespaceInfo.isActive());
         assertTrue(namespaceInfo.getIndex() == 0);
         assertEquals("5A3CD9B09CD1E8000159249B", namespaceInfo.getMetaId());
-        assertTrue(namespaceInfo.getType() == NamespaceType.RootNamespace);
+        assertTrue(namespaceInfo.getType() == NamespaceType.ROOT_NAMESPACE);
         assertTrue(namespaceInfo.getDepth() == 1);
         assertEquals(namespaceId, namespaceInfo.getLevels().get(0));
         Assertions.assertEquals(
@@ -63,7 +63,7 @@ class NamespaceInfoTest {
             namespaceInfo.getOwner());
         assertEquals(new BigInteger("1"), namespaceInfo.getStartHeight());
         assertEquals(new BigInteger("-1"), namespaceInfo.getEndHeight());
-        assertEquals(AliasType.Mosaic, namespaceInfo.getAlias().getType());
+        assertEquals(AliasType.MOSAIC, namespaceInfo.getAlias().getType());
         assertEquals(
             new BigInteger("100"), ((MosaicId) namespaceInfo.getAlias().getAliasValue()).getId());
     }
@@ -115,7 +115,7 @@ class NamespaceInfoTest {
     void shouldParentNamespaceIdThrowErrorWhenNamespaceInfoIsFromRootNamespace() {
         NamespaceInfo namespaceInfo = createRootNamespaceInfo();
         assertThrows(
-            Error.class,
+            IllegalStateException.class,
             () -> {
                 namespaceInfo.parentNamespaceId();
             },
@@ -127,7 +127,7 @@ class NamespaceInfoTest {
             true,
             0,
             "5A3CD9B09CD1E8000159249B",
-            NamespaceType.RootNamespace,
+            NamespaceType.ROOT_NAMESPACE,
             1,
             Arrays.asList(new NamespaceId(new BigInteger("-8884663987180930485"))),
             new NamespaceId(new BigInteger("0")),
@@ -144,7 +144,7 @@ class NamespaceInfoTest {
             true,
             0,
             "5A3CD9B09CD1E8000159249B",
-            NamespaceType.SubNamespace,
+            NamespaceType.SUB_NAMESPACE,
             1,
             Arrays.asList(
                 new NamespaceId(new BigInteger("-3087871471161192663")),

@@ -25,6 +25,12 @@ import java.util.regex.Pattern;
 public class MustBe {
 
     /**
+     * Private constructor for this utility class.
+     */
+    private MustBe() {
+    }
+
+    /**
      * Throws an exception if the specified object is null.
      *
      * @param obj The object.

@@ -57,6 +57,7 @@ public class MosaicAliasTransaction extends Transaction {
      * @param signer Signer for the transaction.
      * @param transactionInfo Transaction info.
      */
+    @SuppressWarnings("squid:S00107")
     public MosaicAliasTransaction(
         final NetworkType networkType,
         final int version,
@@ -177,7 +178,7 @@ public class MosaicAliasTransaction extends Transaction {
     byte[] generateEmbeddedBytes() {
         final EmbeddedMosaicAliasTransactionBuilder txBuilder =
             EmbeddedMosaicAliasTransactionBuilder.create(
-                new KeyDto(getSignerBytes().get()),
+                new KeyDto(getRequiredSignerBytes()),
                 getNetworkVersion(),
                 EntityTypeDto.MOSAIC_ALIAS_TRANSACTION,
                 AliasActionDto.rawValueOf(getAliasAction().getValue()),

@@ -20,19 +20,25 @@ import org.hamcrest.core.IsEqual;
 import org.hamcrest.core.IsNot;
 import org.junit.Assert;
 import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
 
 public class Ed25519EncodedGroupElementTest {
 
     @Test
     public void canBeCreatedFromByteArray() {
+        Ed25519EncodedGroupElement element = new Ed25519EncodedGroupElement(
+            new byte[32]);
+
         // Assert:
-        new Ed25519EncodedGroupElement(new byte[32]);
+        Assertions.assertEquals(32, element.getRaw().length);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void cannotBeCreatedFromArrayWithIncorrectLength() {
+        Ed25519EncodedGroupElement element = new Ed25519EncodedGroupElement(
+            new byte[30]);
         // Assert:
-        new Ed25519EncodedGroupElement(new byte[30]);
+        Assertions.assertEquals(64, element.getRaw().length);
     }
 
     // region getRaw
@@ -158,7 +164,7 @@ public class Ed25519EncodedGroupElementTest {
         final String encodedAsString = encoded.toString();
         final String expectedString =
             String.format(
-                "x=%s\ny=%s\n",
+                "x=%s\ny=%s%n",
                 "0000000000000000000000000000000000000000000000000000000000000000",
                 "0100000000000000000000000000000000000000000000000000000000000000");
 

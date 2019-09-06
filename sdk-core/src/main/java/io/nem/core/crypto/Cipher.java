@@ -21,7 +21,7 @@ package io.nem.core.crypto;
  */
 public class Cipher implements BlockCipher {
 
-    private final BlockCipher cipher;
+    private final BlockCipher delegate;
 
     /**
      * Creates a cipher around a sender KeyPair and recipient KeyPair.
@@ -52,19 +52,19 @@ public class Cipher implements BlockCipher {
     /**
      * Creates a cipher around a cipher.
      *
-     * @param cipher The cipher.
+     * @param delegate The cipher.
      */
-    public Cipher(final BlockCipher cipher) {
-        this.cipher = cipher;
+    public Cipher(final BlockCipher delegate) {
+        this.delegate = delegate;
     }
 
     @Override
     public byte[] encrypt(final byte[] input) {
-        return this.cipher.encrypt(input);
+        return this.delegate.encrypt(input);
     }
 
     @Override
     public byte[] decrypt(final byte[] input) {
-        return this.cipher.decrypt(input);
+        return this.delegate.decrypt(input);
     }
 }

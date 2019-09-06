@@ -21,7 +21,7 @@ package io.nem.core.crypto;
  */
 public class Signer implements DsaSigner {
 
-    private final DsaSigner signer;
+    private final DsaSigner delegate;
 
     /**
      * Creates a signer around a KeyPair.
@@ -45,29 +45,29 @@ public class Signer implements DsaSigner {
     /**
      * Creates a signer around a DsaSigner.
      *
-     * @param signer The signer.
+     * @param delegate The signer.
      */
-    public Signer(final DsaSigner signer) {
-        this.signer = signer;
+    public Signer(final DsaSigner delegate) {
+        this.delegate = delegate;
     }
 
     @Override
     public Signature sign(final byte[] data) {
-        return this.signer.sign(data);
+        return this.delegate.sign(data);
     }
 
     @Override
     public boolean verify(final byte[] data, final Signature signature) {
-        return this.signer.verify(data, signature);
+        return this.delegate.verify(data, signature);
     }
 
     @Override
     public boolean isCanonicalSignature(final Signature signature) {
-        return this.signer.isCanonicalSignature(signature);
+        return this.delegate.isCanonicalSignature(signature);
     }
 
     @Override
     public Signature makeSignatureCanonical(final Signature signature) {
-        return this.signer.makeSignatureCanonical(signature);
+        return this.delegate.makeSignatureCanonical(signature);
     }
 }

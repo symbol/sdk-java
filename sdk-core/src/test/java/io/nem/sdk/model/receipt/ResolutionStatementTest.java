@@ -49,9 +49,9 @@ public class ResolutionStatementTest {
         mosaicAlias = new MosaicAlias(mosaicId);
         receiptSource = new ReceiptSource(1, 1);
         addressAliasResolutionEntry =
-            new ResolutionEntry(addressAlias, receiptSource, ReceiptType.Address_Alias_Resolution);
+            new ResolutionEntry(addressAlias, receiptSource, ReceiptType.ADDRESS_ALIAS_RESOLUTION);
         mosaicAliasResolutionEntry =
-            new ResolutionEntry(mosaicAlias, receiptSource, ReceiptType.Mosaic_Alias_Resolution);
+            new ResolutionEntry(mosaicAlias, receiptSource, ReceiptType.MOSAIC_ALIAS_RESOLUTION);
     }
 
     @Test
@@ -60,7 +60,7 @@ public class ResolutionStatementTest {
         resolutionEntries.add(addressAliasResolutionEntry);
         ResolutionStatement<Address> resolutionStatement =
             new ResolutionStatement(BigInteger.TEN, address, resolutionEntries);
-        assertEquals(resolutionStatement.getHeight(), BigInteger.TEN);
+        assertEquals(BigInteger.TEN, resolutionStatement.getHeight());
         assertEquals(resolutionStatement.getUnresolved(), address);
         assertEquals(resolutionStatement.getResolutionEntries(), resolutionEntries);
     }
@@ -71,7 +71,7 @@ public class ResolutionStatementTest {
         resolutionEntries.add(mosaicAliasResolutionEntry);
         ResolutionStatement<Address> resolutionStatement =
             new ResolutionStatement(BigInteger.TEN, mosaicId, resolutionEntries);
-        assertEquals(resolutionStatement.getHeight(), BigInteger.TEN);
+        assertEquals(BigInteger.TEN, resolutionStatement.getHeight());
         assertEquals(resolutionStatement.getUnresolved(), mosaicId);
         assertEquals(resolutionStatement.getResolutionEntries(), resolutionEntries);
     }

@@ -26,6 +26,7 @@ import org.hamcrest.core.IsNull;
 import org.junit.Assert;
 import org.junit.Test;
 
+@SuppressWarnings("squid:S2925")
 public class ExceptionUtilsTest {
 
     // region propagate
@@ -149,6 +150,8 @@ public class ExceptionUtilsTest {
         });
 
         // Assert: (no exception)
+
+        Assert.assertTrue("No Problems", true);
     }
 
     @Test(expected = IllegalArgumentException.class)

@@ -25,7 +25,7 @@ public class NetworkCurrencyMosaic extends Mosaic {
     /**
      * Initial supply
      */
-    public static final BigInteger INITIALSUPPLY = new BigInteger("8999999999");
+    public static final BigInteger INITIALSUPPLY = BigInteger.valueOf(8999999999L);
     /**
      * Is transferable
      */
@@ -52,7 +52,7 @@ public class NetworkCurrencyMosaic extends Mosaic {
     public static NetworkCurrencyMosaic createRelative(BigInteger amount) {
 
         BigInteger relativeAmount =
-            new BigDecimal(Math.pow(10, NetworkCurrencyMosaic.DIVISIBILITY))
+            BigDecimal.valueOf(Math.pow(10, NetworkCurrencyMosaic.DIVISIBILITY))
                 .toBigInteger()
                 .multiply(amount);
         return new NetworkCurrencyMosaic(relativeAmount);

@@ -28,6 +28,27 @@ import org.bouncycastle.util.encoders.Hex;
  */
 public class Hashes {
 
+    /**
+     * The SHA256 algorithm.
+     */
+    public static final String SHA_256 = "SHA256";
+
+    /**
+     * The RIPEMD_160 algorithm.
+     */
+    public static final String RIPEMD_160 = "RIPEMD160";
+
+    /**
+     * The provider.
+     */
+    public static final String BC = "BC";
+
+    /**
+     * Private constructor for this utility class.
+     */
+    private Hashes() {
+    }
+
     static {
         Security.addProvider(new BouncyCastleProvider());
     }
@@ -39,6 +60,7 @@ public class Hashes {
      * @return The hash of the concatenated inputs.
      * @throws CryptoException if the hash operation failed.
      */
+    @SuppressWarnings("squid:S00100")
     public static byte[] sha3_256(final byte[]... inputs) {
 
         return hash("SHA3-256", inputs);
@@ -51,6 +73,7 @@ public class Hashes {
      * @return The hash of the concatenated inputs.
      * @throws CryptoException if the hash operation failed.
      */
+    @SuppressWarnings("squid:S00100")
     public static byte[] sha3_512(final byte[]... inputs) {
         return hash("SHA3-512", inputs);
     }
@@ -63,7 +86,7 @@ public class Hashes {
      * @throws CryptoException if the hash operation failed.
      */
     public static byte[] ripemd160(final byte[]... inputs) {
-        return hash("RIPEMD160", inputs);
+        return hash(RIPEMD_160, inputs);
     }
 
     /**
@@ -92,22 +115,21 @@ public class Hashes {
 
         Keccak.Digest256 keccak = new Keccak.Digest256();
 
-        byte[] concat_inputs = new byte[0];
-        byte[] concat_inputsCopy;
+        byte[] concatInputs = new byte[0];
+        byte[] concatInputsCopy;
 
         for (int i = 0; i < inputs.length; i++) {
 
-            concat_inputsCopy = new byte[concat_inputs.length];
+            concatInputsCopy = new byte[concatInputs.length];
 
-            System.arraycopy(concat_inputs, 0, concat_inputsCopy, 0, concat_inputs.length);
+            System.arraycopy(concatInputs, 0, concatInputsCopy, 0, concatInputs.length);
 
-            concat_inputs = new byte[concat_inputsCopy.length + inputs[i].length];
+            concatInputs = new byte[concatInputsCopy.length + inputs[i].length];
 
-            System.arraycopy(concat_inputsCopy, 0, concat_inputs, 0, concat_inputsCopy.length);
-            System
-                .arraycopy(inputs[i], 0, concat_inputs, concat_inputsCopy.length, inputs[i].length);
+            System.arraycopy(concatInputsCopy, 0, concatInputs, 0, concatInputsCopy.length);
+            System.arraycopy(inputs[i], 0, concatInputs, concatInputsCopy.length, inputs[i].length);
         }
-        keccak.update(concat_inputs);
+        keccak.update(concatInputs);
 
         return keccak.digest();
     }
@@ -121,9 +143,9 @@ public class Hashes {
      */
     public static byte[] hash160(final byte[]... inputs) {
 
-        byte[] hashed_sha256 = hash("SHA256", inputs);
+        byte[] hashedSha256 = hash(SHA_256, inputs);
 
-        return hash("RIPEMD160", Hex.toHexString(hashed_sha256).getBytes());
+        return hash(RIPEMD_160, Hex.toHexString(hashedSha256).getBytes());
     }
 
     /**
@@ -135,15 +157,15 @@ public class Hashes {
      */
     public static byte[] hash256(final byte[]... inputs) {
 
-        byte[] hashed_sha256 = hash("SHA256", inputs);
+        byte[] hashedSha256 = hash(SHA_256, inputs);
 
-        return hash("SHA256", Hex.toHexString(hashed_sha256).getBytes());
+        return hash(SHA_256, Hex.toHexString(hashedSha256).getBytes());
     }
 
     private static byte[] hash(final String algorithm, final byte[]... inputs) {
         return ExceptionUtils.propagate(
             () -> {
-                final MessageDigest digest = MessageDigest.getInstance(algorithm, "BC");
+                final MessageDigest digest = MessageDigest.getInstance(algorithm, BC);
 
                 for (final byte[] input : inputs) {
                     digest.update(input);

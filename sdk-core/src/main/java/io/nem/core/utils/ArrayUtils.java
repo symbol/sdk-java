@@ -24,6 +24,12 @@ import java.math.BigInteger;
 public class ArrayUtils {
 
     /**
+     * Private constructor for this utility class.
+     */
+    private ArrayUtils() {
+    }
+
+    /**
      * Creates duplicate of given array
      *
      * @param src The array to duplicate.

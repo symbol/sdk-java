@@ -24,6 +24,12 @@ import org.apache.commons.codec.binary.Base64;
 public class Base64Encoder {
 
     /**
+     * Private constructor for this utility class.
+     */
+    private Base64Encoder() {
+    }
+
+    /**
      * Converts a string to a byte array.
      *
      * @param base64String The input Base64 string.

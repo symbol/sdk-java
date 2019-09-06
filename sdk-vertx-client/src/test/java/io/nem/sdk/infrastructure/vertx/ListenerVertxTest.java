@@ -23,7 +23,6 @@ import io.nem.sdk.model.blockchain.NetworkType;
 import io.nem.sdk.model.transaction.JsonHelper;
 import io.nem.sdk.model.transaction.Transaction;
 import io.nem.sdk.openapi.vertx.model.TransactionInfoDTO;
-import io.reactivex.Observable;
 import io.vertx.core.Handler;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.buffer.impl.BufferFactoryImpl;
@@ -43,7 +42,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
-import rx.subjects.PublishSubject;
 
 import static org.mockito.Mockito.*;
 
@@ -74,11 +72,11 @@ public class ListenerVertxTest {
     @Test
     public void shouldOpen() throws ExecutionException, InterruptedException, TimeoutException {
 
-        Assertions.assertNull(listener.getUID());
+        Assertions.assertNull(listener.getUid());
 
         simulateWebSocketStartup();
 
-        Assertions.assertEquals(wsId, listener.getUID());
+        Assertions.assertEquals(wsId, listener.getUid());
 
         listener.close();
         listener.close();

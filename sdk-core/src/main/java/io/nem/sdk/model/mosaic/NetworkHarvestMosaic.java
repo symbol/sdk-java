@@ -25,7 +25,7 @@ public class NetworkHarvestMosaic extends Mosaic {
     /**
      * Initial supply
      */
-    public static final BigInteger INITIALSUPPLY = new BigInteger("15000000");
+    public static final BigInteger INITIALSUPPLY = BigInteger.valueOf(15000000);
     /**
      * Is transferable
      */
@@ -52,7 +52,7 @@ public class NetworkHarvestMosaic extends Mosaic {
     public static NetworkHarvestMosaic createRelative(BigInteger amount) {
 
         BigInteger relativeAmount =
-            new BigDecimal(Math.pow(10, NetworkHarvestMosaic.DIVISIBILITY))
+            BigDecimal.valueOf(Math.pow(10, NetworkHarvestMosaic.DIVISIBILITY))
                 .toBigInteger()
                 .multiply(amount);
         return new NetworkHarvestMosaic(relativeAmount);

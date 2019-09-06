@@ -87,21 +87,34 @@ public abstract class AbstractOkHttpRespositoryTest {
 
     /**
      * Mocks the api client telling that the next time there is remote call, an error should be
-     * returned.
+     * returned. The mocked response body is the expected json from the catapult rest error handler.
      *
      * @param statusCode the status code of the response (404 for example)
      * @param message the error message that will be returned in the body.
      */
     protected void mockErrorCode(final int statusCode, final String message) throws ApiException {
-        Map<String, List<String>> headers = Collections.emptyMap();
-        Map<String, String> errorBody = new HashMap<>();
+
 
         String reasonPhrase = HttpStatus.valueOf(statusCode).getReasonPhrase();
+        Map<String, String> errorBody = new HashMap<>();
         errorBody.put("code", "Code " + reasonPhrase);
         errorBody.put("message", message);
+        String errorResponse = jsonHelper.print(errorBody);
 
+        mockErrorCodeRawResponse(statusCode, errorResponse);
+    }
+    /**
+     * Mocks the api client telling that the next time there is remote call, an error should be
+     * returned.
+     *
+     * @param statusCode the status code of the response (404 for example)
+     * @param errorResponse the raw response, it may or may not be a json string.
+     */
+    protected void mockErrorCodeRawResponse(int statusCode, String errorResponse) throws ApiException {
+        String reasonPhrase = HttpStatus.valueOf(statusCode).getReasonPhrase();
+        Map<String, List<String>> headers = Collections.emptyMap();
         ApiException exception = new ApiException(reasonPhrase,
-            statusCode, headers, jsonHelper.print(errorBody));
+            statusCode, headers, errorResponse);
 
         Mockito.when(apiClientMock.execute(Mockito.any(Call.class),
             Mockito.any(Type.class))).thenThrow(exception);

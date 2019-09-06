@@ -26,6 +26,12 @@ import java.util.Arrays;
 public class FormatUtils {
 
     /**
+     * Private constructor for this utility class.
+     */
+    private FormatUtils() {
+    }
+
+    /**
      * Gets a default decimal format that should be used for formatting decimal values.
      *
      * @return A default decimal format.

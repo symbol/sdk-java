@@ -24,19 +24,52 @@ buildscript {
     }
 }
 
+plugins {
+    id "org.sonarqube" version "2.7"
+}
+
+
 apply plugin: 'com.github.kt3k.coveralls'
 apply plugin: 'jacoco'
+
 
 ext {
     vertxVersion = "3.5.0"
     rxjavaVersion = "2.1.7"
     junitVersion = "5.0.2"
-    restApiVersion = "0.7.17"
+    restApiVersion = "0.7.17-SNAPSHOT"
 }
 
 repositories {
     mavenLocal()
     mavenCentral()
+    maven {
+        url "https://oss.sonatype.org/content/repositories/snapshots"
+    }
+}
+
+def getPropertyValue(key) {
+    def value = project.hasProperty(key) ? project[key] : System.getenv(key)
+    return value?.trim() == '' ? null : value
+}
+
+def ossrhUsername = getPropertyValue('ossrhUsername');
+def ossrhPassword = getPropertyValue('ossrhPassword');
+
+def sonarProjectKey = getPropertyValue('sonarProjectKey');
+def sonarLogin = getPropertyValue('sonarLogin');
+def sonarOrganization = getPropertyValue('sonarOrganization');
+def sonarHostUrl = getPropertyValue('sonarHostUrl');
+
+def signingSecretKeyRingFile = getPropertyValue('signingSecretKeyRingFile')
+def signingKeyId = getPropertyValue('signingKeyId')
+def signingPassword = getPropertyValue('signingPassword')
+
+
+allprojects {
+    ext."signing.keyId" = signingKeyId
+    ext."signing.secretKeyRingFile" = signingSecretKeyRingFile
+    ext."signing.password" = signingPassword
 }
 
 subprojects {
@@ -45,9 +78,19 @@ subprojects {
     apply plugin: 'java'
     apply plugin: 'maven'
     apply plugin: 'jacoco'
+    apply plugin: 'org.sonarqube'
     group 'io.nem'
     sourceCompatibility = 1.8
-    version = '0.13.0'
+    version = '0.13.0-SNAPSHOT'
+
+
+    repositories {
+        mavenLocal()
+        mavenCentral()
+        maven {
+            url "https://oss.sonatype.org/content/repositories/snapshots"
+        }
+    }
 
     javadoc {
         failOnError = false
@@ -87,7 +130,7 @@ subprojects {
             // configure jacoco to analyze the junitPlatformTest task
             jacoco {
                 // this tool version is compatible with
-                toolVersion = "0.7.6.201602180812"
+//                toolVersion = "0.7.6.201602180812"
                 applyTo task
             }
 
@@ -102,7 +145,7 @@ subprojects {
     }
 
     jacoco {
-        toolVersion = '0.7.9'
+//        toolVersion = '0.7.9'
         applyTo junitPlatformTest
     }
 
@@ -125,11 +168,6 @@ subprojects {
         }
     }
 
-    repositories {
-        mavenLocal()
-        mavenCentral()
-    }
-
     dependencies {
         // Tests
         testCompile 'org.hamcrest:hamcrest-core:1.3'
@@ -141,6 +179,48 @@ subprojects {
         testRuntime "org.junit.jupiter:junit-jupiter-engine:${junitVersion}"
         testCompile 'org.junit.platform:junit-platform-console-standalone:1.1.0-M1'
         testCompile 'org.apiguardian:apiguardian-api:1.0.0'
+    }
+    if (signingKeyId != null) {
+        apply plugin: 'signing'
+        signing {
+            sign configurations.archives
+        }
+    }
+    uploadArchives {
+
+        repositories {
+            mavenDeployer {
+                if (signingKeyId != null) {
+                    beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+                }
+
+                repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
+                    authentication(userName: ossrhUsername, password: ossrhPassword)
+                }
+
+                snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
+                    authentication(userName: ossrhUsername, password: ossrhPassword)
+                }
+
+                pom.project {
+                    packaging 'jar'
+                    url 'https://github.com/nemtech/nem2-sdk-java'
+
+                    scm {
+                        connection 'scm:git:https://github.com/nemtech/nem2-sdk-java.git'
+                        developerConnection 'scm:svn:https://github.com/nemtech/nem2-sdk-java'
+                        url 'https://github.com/nemtech/nem2-sdk-java'
+                    }
+
+                    licenses {
+                        license {
+                            name 'The Apache License, Version 2.0'
+                            url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                        }
+                    }
+                }
+            }
+        }
     }
 }
 
@@ -180,4 +260,24 @@ tasks.coveralls {
     group = 'Coverage reports'
     description = 'Uploads the aggregated coverage report to Coveralls'
     dependsOn jacocoRootReport
+}
+
+def gitBranch() {
+    def branch = ""
+    def proc = "git rev-parse --abbrev-ref HEAD".execute()
+    proc.in.eachLine { line -> branch = line }
+    proc.err.eachLine { line -> println line }
+    proc.waitFor()
+    branch
+}
+
+sonarqube {
+    properties {
+        property "sonar.branch.name", gitBranch()
+        property "sonar.projectKey", sonarProjectKey
+        property "sonar.organization", sonarOrganization
+        property "sonar.login", sonarLogin
+        property "sonar.host.url", sonarHostUrl
+        property "sonar.exclusions", "**/io/nem/catapult/builders/**"
+    }
 }
