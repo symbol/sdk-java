@@ -91,10 +91,10 @@ subprojects {
             mavenDeployer {
 
                 if (ossrhUsername == null) {
-                    throw new IllegalStateException("ossrhUsername env or project property is requried.")
+                    throw new IllegalStateException("ossrhUsername env or project property is required.")
                 }
                 if (ossrhPassword == null) {
-                    throw new IllegalStateException("ossrhPassword env or project property is requried.")
+                    throw new IllegalStateException("ossrhPassword env or project property is required.")
                 }
 
                 if (signingKeyId != null) {
