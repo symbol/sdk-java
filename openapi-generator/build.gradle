@@ -35,6 +35,26 @@ generate.dependsOn "generate_okhttp-gson"
 generate.dependsOn "generate_jersey2"
 
 
+def getPropertyValue(key) {
+    def value = project.hasProperty(key) ? project[key] : System.getenv(key)
+    return value?.trim() == '' ? null : value
+}
+
+def ossrhUsername = getPropertyValue('ossrhUsername');
+def ossrhPassword = getPropertyValue('ossrhPassword');
+
+def signingSecretKeyRingFile = getPropertyValue('signingSecretKeyRingFile')
+def signingKeyId = getPropertyValue('signingKeyId')
+def signingPassword = getPropertyValue('signingPassword')
+
+
+allprojects {
+    ext."signing.keyId" = signingKeyId
+    ext."signing.secretKeyRingFile" = signingSecretKeyRingFile
+    ext."signing.password" = signingPassword
+}
+
+
 subprojects {
     apply plugin: 'java'
     apply plugin: 'maven'
@@ -59,7 +79,7 @@ subprojects {
 
     build.dependsOn generate
 
-    if (project.hasProperty("signing.keyId")) {
+    if (signingKeyId != null) {
         apply plugin: 'signing'
         signing {
             sign configurations.archives
@@ -67,32 +87,40 @@ subprojects {
     }
     uploadArchives {
 
-        def username = project.hasProperty("ossrhUsername") ? project.ossrhUsername : ""
-
-        def password = project.hasProperty("ossrhPassword") ? project.ossrhPassword : ""
-
         repositories {
             mavenDeployer {
-                if (project.hasProperty("signing.keyId")) {
+
+                if (ossrhUsername == null) {
+                    throw new IllegalStateException("ossrhUsername env or project property is requried.")
+                }
+                if (ossrhPassword == null) {
+                    throw new IllegalStateException("ossrhPassword env or project property is requried.")
+                }
+
+                if (signingKeyId != null) {
                     beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
                 }
 
+                logger.info('Uploading artifacts for project ' + project.name)
+
                 repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
-                    authentication(userName: username, password: password)
+                    authentication(userName: ossrhUsername, password: ossrhPassword)
                 }
 
                 snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
-                    authentication(userName: username, password: password)
+                    authentication(userName: ossrhUsername, password: ossrhPassword)
                 }
 
                 pom.project {
                     packaging 'jar'
                     url 'https://github.com/nemtech/nem2-sdk-java'
+
                     scm {
                         connection 'scm:git:https://github.com/nemtech/nem2-sdk-java.git'
                         developerConnection 'scm:svn:https://github.com/nemtech/nem2-sdk-java'
                         url 'https://github.com/nemtech/nem2-sdk-java'
                     }
+
                     licenses {
                         license {
                             name 'The Apache License, Version 2.0'
