@@ -21,7 +21,6 @@
 package io.nem.catapult.builders;
 
 import java.io.DataInput;
-import java.util.Arrays;
 
 /** Enumeration of account restriction types. */
 public enum AccountRestrictionTypeDto {
