@@ -18,8 +18,8 @@ script:
   - ./gradlew install jacocoTestReport coveralls -x javadoc
 deploy:
   provider: script
-  script:
-    - ./gradlew -b ./openapi-generator/build.gradle uploadArchives
-    - ./gradlew uploadArchives
+  skip_cleanup: true
+  script: /bin/sh release.sh
   on:
     branch: master
+    jdk: oraclejdk8
