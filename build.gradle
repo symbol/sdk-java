@@ -37,7 +37,7 @@ ext {
     vertxVersion = "3.5.0"
     rxjavaVersion = "2.1.7"
     junitVersion = "5.0.2"
-    restApiVersion = "0.7.17-SNAPSHOT"
+    restApiVersion = "0.7.18-SNAPSHOT"
 }
 
 repositories {
@@ -60,6 +60,7 @@ def sonarProjectKey = getPropertyValue('sonarProjectKey');
 def sonarLogin = getPropertyValue('sonarLogin');
 def sonarOrganization = getPropertyValue('sonarOrganization');
 def sonarHostUrl = getPropertyValue('sonarHostUrl');
+def sonarBranchName = getPropertyValue('sonarBranchName');
 
 def signingSecretKeyRingFile = getPropertyValue('signingSecretKeyRingFile')
 def signingKeyId = getPropertyValue('signingKeyId')
@@ -273,7 +274,7 @@ def gitBranch() {
 
 sonarqube {
     properties {
-        property "sonar.branch.name", gitBranch()
+        property "sonar.branch.name", sonarBranchName == null ? gitBranch() : sonarBranchName
         property "sonar.projectKey", sonarProjectKey
         property "sonar.organization", sonarOrganization
         property "sonar.login", sonarLogin

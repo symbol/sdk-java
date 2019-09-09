@@ -42,7 +42,7 @@ class RegisterNamespaceTransactionTest {
 
     @Test
     void createANamespaceCreationRootNamespaceTransactionViaStaticConstructor() {
-        NamespaceId namespaceId = new NamespaceId("root-test-namespace");
+        NamespaceId namespaceId = NamespaceId.createFromName("root-test-namespace");
         RegisterNamespaceTransaction registerNamespaceTransaction =
             RegisterNamespaceTransaction.createRootNamespace(
                 new Deadline(2, ChronoUnit.HOURS),
@@ -107,7 +107,7 @@ class RegisterNamespaceTransactionTest {
                 new Deadline(2, ChronoUnit.HOURS),
                 BigInteger.ZERO,
                 "root-test-namespace",
-                new NamespaceId(new BigInteger("18426354100860810573")),
+                NamespaceId.createFromId(new BigInteger("18426354100860810573")),
                 NetworkType.MIJIN_TEST);
 
         SignedTransaction signedTransaction =
@@ -161,7 +161,7 @@ class RegisterNamespaceTransactionTest {
                 new FakeDeadline(),
                 BigInteger.ZERO,
                 "subnamespace",
-                new NamespaceId(new BigInteger("4635294387305441662")),
+                NamespaceId.createFromId(new BigInteger("4635294387305441662")),
                 NetworkType.MIJIN_TEST);
 
         byte[] actual = registerNamespaceTransaction.generateBytes();

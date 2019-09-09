@@ -16,6 +16,8 @@
 
 package io.nem.sdk.infrastructure.vertx;
 
+import static io.nem.core.utils.MapperUtils.toMosaicId;
+
 import io.nem.sdk.api.MosaicRepository;
 import io.nem.sdk.model.account.PublicAccount;
 import io.nem.sdk.model.blockchain.NetworkType;
@@ -23,7 +25,6 @@ import io.nem.sdk.model.mosaic.MosaicInfo;
 import io.nem.sdk.model.mosaic.MosaicNames;
 import io.nem.sdk.model.mosaic.MosaicProperties;
 import io.nem.sdk.model.namespace.NamespaceName;
-import io.nem.sdk.model.transaction.UInt64;
 import io.nem.sdk.model.transaction.UInt64Id;
 import io.nem.sdk.openapi.vertx.api.MosaicRoutesApi;
 import io.nem.sdk.openapi.vertx.api.MosaicRoutesApiImpl;
@@ -31,7 +32,7 @@ import io.nem.sdk.openapi.vertx.invoker.ApiClient;
 import io.nem.sdk.openapi.vertx.model.MosaicIds;
 import io.nem.sdk.openapi.vertx.model.MosaicInfoDTO;
 import io.nem.sdk.openapi.vertx.model.MosaicNamesDTO;
-import io.nem.sdk.openapi.vertx.model.MosaicPropertyDTO;
+import io.nem.sdk.openapi.vertx.model.MosaicPropertiesDTO;
 import io.nem.sdk.openapi.vertx.model.MosaicsNamesDTO;
 import io.reactivex.Observable;
 import io.vertx.core.AsyncResult;
@@ -60,12 +61,11 @@ public class MosaicRepositoryVertxImpl extends AbstractRepositoryVertxImpl imple
         return client;
     }
 
-
     @Override
     public Observable<MosaicInfo> getMosaic(UInt64Id mosaicId) {
 
         Consumer<Handler<AsyncResult<MosaicInfoDTO>>> callback = handler -> getClient()
-            .getMosaic(UInt64.bigIntegerToHex(mosaicId.getId()), handler);
+            .getMosaic((mosaicId.getIdAsHex()), handler);
         return exceptionHandling(call(callback).map(this::createMosaicInfo));
     }
 
@@ -74,7 +74,7 @@ public class MosaicRepositoryVertxImpl extends AbstractRepositoryVertxImpl imple
 
         MosaicIds mosaicIds = new MosaicIds();
         mosaicIds.mosaicIds(ids.stream()
-            .map(id -> UInt64.bigIntegerToHex(id.getId()))
+            .map(UInt64Id::getIdAsHex)
             .collect(Collectors.toList()));
         Consumer<Handler<AsyncResult<List<MosaicInfoDTO>>>> callback = handler -> getClient()
             .getMosaics(mosaicIds, handler);
@@ -86,11 +86,10 @@ public class MosaicRepositoryVertxImpl extends AbstractRepositoryVertxImpl imple
     private MosaicInfo createMosaicInfo(MosaicInfoDTO mosaicInfoDTO) {
         NetworkType networkType = getNetworkTypeBlocking();
         return MosaicInfo.create(
-            mosaicInfoDTO.getMeta().getId(),
-            toMosaicId(mosaicInfoDTO.getMosaic().getMosaicId()),
-            extractBigInteger(mosaicInfoDTO.getMosaic().getSupply()),
-            extractBigInteger(mosaicInfoDTO.getMosaic().getHeight()),
-            new PublicAccount(mosaicInfoDTO.getMosaic().getOwner(), networkType),
+            toMosaicId(mosaicInfoDTO.getMosaic().getId()),
+            mosaicInfoDTO.getMosaic().getSupply(),
+            mosaicInfoDTO.getMosaic().getStartHeight(),
+            new PublicAccount(mosaicInfoDTO.getMosaic().getOwnerPublicKey(), networkType),
             mosaicInfoDTO.getMosaic().getRevision(),
             extractMosaicProperties(mosaicInfoDTO.getMosaic().getProperties()));
     }
@@ -99,7 +98,7 @@ public class MosaicRepositoryVertxImpl extends AbstractRepositoryVertxImpl imple
     public Observable<List<MosaicNames>> getMosaicsNames(List<UInt64Id> ids) {
         MosaicIds mosaicIds = new MosaicIds();
         mosaicIds.mosaicIds(ids.stream()
-            .map(id -> UInt64.bigIntegerToHex(id.getId()))
+            .map(UInt64Id::getIdAsHex)
             .collect(Collectors.toList()));
         Consumer<Handler<AsyncResult<MosaicsNamesDTO>>> callback = handler -> getClient()
             .getMosaicsNames(mosaicIds, handler);
@@ -121,15 +120,15 @@ public class MosaicRepositoryVertxImpl extends AbstractRepositoryVertxImpl imple
             dto.getNames().stream().map(NamespaceName::new).collect(Collectors.toList()));
     }
 
-    private MosaicProperties extractMosaicProperties(List<MosaicPropertyDTO> mosaicPropertiesDTO) {
+    public static MosaicProperties extractMosaicProperties(
+        MosaicPropertiesDTO mosaicPropertiesDTO) {
         String flags =
-            "00" + Integer.toBinaryString(
-                extractBigInteger(mosaicPropertiesDTO.get(0).getValue()).intValue());
+            "00" + Integer.toBinaryString(mosaicPropertiesDTO.getFlags().intValue());
         String bitMapFlags = flags.substring(flags.length() - 2);
         return MosaicProperties.create(
             bitMapFlags.charAt(1) == '1',
             bitMapFlags.charAt(0) == '1',
-            extractBigInteger(mosaicPropertiesDTO.get(1).getValue()).intValue(),
-            extractBigInteger(mosaicPropertiesDTO.get(2).getValue()));
+            mosaicPropertiesDTO.getDivisibility(),
+            mosaicPropertiesDTO.getDuration());
     }
 }

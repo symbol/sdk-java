@@ -19,9 +19,9 @@ package io.nem.sdk.model.receipt;
 /**
  * Enum containing receipt version constants.
  *
- * @see <a https://github.com/nemtech/catapult-server/blob/master/src/catapult/model/ReceiptType.h
+ * @see <a href="https://github.com/nemtech/catapult-server/blob/master/src/catapult/model/ReceiptType.h"
  * />
- * @see <a https://github.com/nemtech/catapult-server/blob/master/src/catapult/model/ReceiptType.cpp
+ * @see <a href="https://github.com/nemtech/catapult-server/blob/master/src/catapult/model/ReceiptType.cpp"
  * />
  */
 public enum ReceiptVersion {

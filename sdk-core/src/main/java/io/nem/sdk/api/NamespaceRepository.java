@@ -35,7 +35,7 @@ public interface NamespaceRepository {
      * Gets the NamespaceInfo for a given namespaceId.
      *
      * @param namespaceId NamespaceId
-     * @return Observable of {@link NamespaceInfo}
+     * @return {@link Observable} of {@link NamespaceInfo}
      */
     Observable<NamespaceInfo> getNamespace(NamespaceId namespaceId);
 
@@ -44,7 +44,7 @@ public interface NamespaceRepository {
      *
      * @param address Address
      * @param queryParams QueryParans
-     * @return Observable of List<{@link NamespaceInfo}>
+     * @return {@link Observable} of {@link NamespaceInfo} List
      */
     Observable<List<NamespaceInfo>> getNamespacesFromAccount(
         Address address, QueryParams queryParams);
@@ -53,7 +53,7 @@ public interface NamespaceRepository {
      * Gets list of NamespaceInfo for an account.
      *
      * @param address Address
-     * @return Observable of List<{@link NamespaceInfo}>
+     * @return {@link Observable} of {@link NamespaceInfo} List
      */
     Observable<List<NamespaceInfo>> getNamespacesFromAccount(Address address);
 
@@ -62,7 +62,7 @@ public interface NamespaceRepository {
      *
      * @param addresses List of Address
      * @param queryParams QueryParams
-     * @return Observable of List<{@link NamespaceInfo}>
+     * @return {@link Observable} of {@link NamespaceInfo} List
      */
     Observable<List<NamespaceInfo>> getNamespacesFromAccounts(
         List<Address> addresses, QueryParams queryParams);
@@ -71,7 +71,7 @@ public interface NamespaceRepository {
      * Gets list of NamespaceInfo for different account.
      *
      * @param addresses List of Address
-     * @return Observable of List<{@link NamespaceInfo}>
+     * @return {@link Observable} of {@link NamespaceInfo} List
      */
     Observable<List<NamespaceInfo>> getNamespacesFromAccounts(List<Address> addresses);
 
@@ -79,7 +79,7 @@ public interface NamespaceRepository {
      * Gets list of NamespaceName for different namespaceIds.
      *
      * @param namespaceIds List of NamespaceId
-     * @return Observable of List<{@link NamespaceName}>
+     * @return {@link Observable} of {@link NamespaceName} List
      */
     Observable<List<NamespaceName>> getNamespaceNames(List<NamespaceId> namespaceIds);
 
@@ -87,7 +87,7 @@ public interface NamespaceRepository {
      * Gets the MosaicId from a MosaicAlias
      *
      * @param namespaceId - the namespaceId of the namespace
-     * @return Observable of <{@link MosaicId}>
+     * @return {@link Observable} of {@link MosaicId}
      */
     Observable<MosaicId> getLinkedMosaicId(NamespaceId namespaceId);
 
@@ -95,7 +95,7 @@ public interface NamespaceRepository {
      * Gets the Address from a AddressAlias
      *
      * @param namespaceId - the namespaceId of the namespace
-     * @return Observable of <{@link Address}>
+     * @return Observable of {@link Address}
      */
     Observable<Address> getLinkedAddress(NamespaceId namespaceId);
 }

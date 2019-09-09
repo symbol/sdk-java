@@ -121,7 +121,7 @@ public class AccountInfo {
     /**
      * Returns mosaics hold by the account.
      *
-     * @return {List<Mosaic>}
+     * @return List of {@link Mosaic}
      */
     public List<Mosaic> getMosaics() {
         return mosaics;

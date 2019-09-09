@@ -16,6 +16,7 @@
 
 package io.nem.sdk.infrastructure.vertx;
 
+import io.nem.core.utils.MapperUtils;
 import io.nem.sdk.model.account.Address;
 import io.nem.sdk.model.blockchain.NetworkType;
 import io.nem.sdk.model.mosaic.MosaicId;
@@ -30,7 +31,7 @@ import io.nem.sdk.openapi.vertx.model.NamespaceDTO;
 import io.nem.sdk.openapi.vertx.model.NamespaceInfoDTO;
 import io.nem.sdk.openapi.vertx.model.NamespaceMetaDTO;
 import io.nem.sdk.openapi.vertx.model.NamespaceNameDTO;
-import io.nem.sdk.openapi.vertx.model.NamespaceTypeEnum;
+import io.nem.sdk.openapi.vertx.model.NamespaceRegistrationTypeEnum;
 import io.nem.sdk.openapi.vertx.model.NetworkTypeDTO;
 import java.math.BigInteger;
 import java.util.Arrays;
@@ -60,7 +61,7 @@ public class NamespaceRepositoryVertxImplTest extends AbstractVertxRespositoryTe
 
         resolveNetworkType();
 
-        NamespaceId namespaceId = new NamespaceId("accountalias");
+        NamespaceId namespaceId = NamespaceId.createFromName("accountalias");
 
         NamespaceInfoDTO dto = new NamespaceInfoDTO();
         NamespaceMetaDTO meta = new NamespaceMetaDTO();
@@ -71,14 +72,15 @@ public class NamespaceRepositoryVertxImplTest extends AbstractVertxRespositoryTe
 
         NamespaceDTO namespace = new NamespaceDTO();
         namespace.setDepth(111);
-        namespace.setStartHeight(Arrays.asList(4L, 0L));
-        namespace.setEndHeight(Arrays.asList(5L, 0L));
-        namespace.setType(NamespaceTypeEnum.NUMBER_1);
-        namespace.setOwner("AC1A6E1D8DE5B17D2C6B1293F1CAD3829EEACF38D09311BB3C8E5A880092DE26");
+        namespace.setStartHeight(BigInteger.valueOf(4));
+        namespace.setEndHeight(BigInteger.valueOf(5));
+        namespace.setRegistrationType(NamespaceRegistrationTypeEnum.NUMBER_1);
+        namespace
+            .setOwnerPublicKey("AC1A6E1D8DE5B17D2C6B1293F1CAD3829EEACF38D09311BB3C8E5A880092DE26");
 
         AliasDTO alias = new AliasDTO();
         alias.setType(AliasTypeEnum.NUMBER_1);
-        alias.setMosaicId(Arrays.asList(123L, 123L));
+        alias.setMosaicId("123");
         namespace.setAlias(alias);
 
         dto.setNamespace(namespace);
@@ -104,8 +106,7 @@ public class NamespaceRepositoryVertxImplTest extends AbstractVertxRespositoryTe
 
         resolveNetworkType();
 
-        Address address =
-            repository.toAddress("SBCPGZ3S2SCC3YHBBTYDCUZV4ZZEPHM2KGCP4QXX");
+        Address address = MapperUtils.toAddress("SBCPGZ3S2SCC3YHBBTYDCUZV4ZZEPHM2KGCP4QXX");
 
         NamespaceInfoDTO dto = new NamespaceInfoDTO();
         NamespaceMetaDTO meta = new NamespaceMetaDTO();
@@ -116,10 +117,11 @@ public class NamespaceRepositoryVertxImplTest extends AbstractVertxRespositoryTe
 
         NamespaceDTO namespace = new NamespaceDTO();
         namespace.setDepth(111);
-        namespace.setStartHeight(Arrays.asList(4L, 0L));
-        namespace.setEndHeight(Arrays.asList(5L, 0L));
-        namespace.setType(NamespaceTypeEnum.NUMBER_1);
-        namespace.setOwner("AC1A6E1D8DE5B17D2C6B1293F1CAD3829EEACF38D09311BB3C8E5A880092DE26");
+        namespace.setStartHeight(BigInteger.valueOf(4));
+        namespace.setEndHeight(BigInteger.valueOf(5));
+        namespace.setRegistrationType(NamespaceRegistrationTypeEnum.NUMBER_1);
+        namespace
+            .setOwnerPublicKey("AC1A6E1D8DE5B17D2C6B1293F1CAD3829EEACF38D09311BB3C8E5A880092DE26");
 
         AliasDTO alias = new AliasDTO();
         alias.setType(AliasTypeEnum.NUMBER_2);
@@ -162,10 +164,11 @@ public class NamespaceRepositoryVertxImplTest extends AbstractVertxRespositoryTe
 
         NamespaceDTO namespace = new NamespaceDTO();
         namespace.setDepth(111);
-        namespace.setStartHeight(Arrays.asList(4L, 0L));
-        namespace.setEndHeight(Arrays.asList(5L, 0L));
-        namespace.setType(NamespaceTypeEnum.NUMBER_1);
-        namespace.setOwner("AC1A6E1D8DE5B17D2C6B1293F1CAD3829EEACF38D09311BB3C8E5A880092DE26");
+        namespace.setStartHeight(BigInteger.valueOf(4));
+        namespace.setEndHeight(BigInteger.valueOf(5));
+        namespace.setRegistrationType(NamespaceRegistrationTypeEnum.NUMBER_1);
+        namespace
+            .setOwnerPublicKey("AC1A6E1D8DE5B17D2C6B1293F1CAD3829EEACF38D09311BB3C8E5A880092DE26");
 
         AliasDTO alias = new AliasDTO();
         alias.setType(AliasTypeEnum.NUMBER_2);
@@ -193,19 +196,16 @@ public class NamespaceRepositoryVertxImplTest extends AbstractVertxRespositoryTe
 
     @Test
     public void shouldGetNamespaceNames() throws Exception {
-
         resolveNetworkType();
-
-        NamespaceId namespaceId = new NamespaceId("accountalias");
-
+        NamespaceId namespaceId = NamespaceId.createFromName("accountalias");
         NamespaceNameDTO dto1 = new NamespaceNameDTO();
         dto1.setName("someName1");
-        dto1.setNamespaceId(Arrays.asList(1L, 0L));
-        dto1.setParentId(Arrays.asList(2L, 0L));
+        dto1.setNamespaceId("1");
+        dto1.setParentId("2");
 
         NamespaceNameDTO dto2 = new NamespaceNameDTO();
         dto2.setName("someName2");
-        dto2.setNamespaceId(Arrays.asList(3L, 0L));
+        dto2.setNamespaceId("3");
 
         mockRemoteCall(Arrays.asList(dto1, dto2));
 
@@ -223,9 +223,7 @@ public class NamespaceRepositoryVertxImplTest extends AbstractVertxRespositoryTe
         Assertions.assertEquals("someName2", names.get(1).getName());
         Assertions.assertEquals(BigInteger.valueOf(3L), names.get(1).getNamespaceId().getId());
         Assertions.assertFalse(names.get(1).getParentId().isPresent());
-
     }
-
 
     @Test
     public void shouldGetLinkedAddress() throws Exception {
@@ -236,7 +234,7 @@ public class NamespaceRepositoryVertxImplTest extends AbstractVertxRespositoryTe
 
         resolveNetworkType();
 
-        NamespaceId namespaceId = new NamespaceId("accountalias");
+        NamespaceId namespaceId = NamespaceId.createFromName("accountalias");
 
         NamespaceInfoDTO dto = new NamespaceInfoDTO();
         NamespaceMetaDTO meta = new NamespaceMetaDTO();
@@ -247,8 +245,9 @@ public class NamespaceRepositoryVertxImplTest extends AbstractVertxRespositoryTe
 
         NamespaceDTO namespace = new NamespaceDTO();
         namespace.setDepth(111);
-        namespace.setType(NamespaceTypeEnum.NUMBER_1);
-        namespace.setOwner("AC1A6E1D8DE5B17D2C6B1293F1CAD3829EEACF38D09311BB3C8E5A880092DE26");
+        namespace.setRegistrationType(NamespaceRegistrationTypeEnum.NUMBER_0);
+        namespace
+            .setOwnerPublicKey("AC1A6E1D8DE5B17D2C6B1293F1CAD3829EEACF38D09311BB3C8E5A880092DE26");
 
         AliasDTO alias = new AliasDTO();
         alias.setType(AliasTypeEnum.NUMBER_2);
@@ -271,7 +270,7 @@ public class NamespaceRepositoryVertxImplTest extends AbstractVertxRespositoryTe
 
         resolveNetworkType();
 
-        NamespaceId namespaceId = new NamespaceId("accountalias");
+        NamespaceId namespaceId = NamespaceId.createFromName("accountalias");
 
         NamespaceInfoDTO dto = new NamespaceInfoDTO();
         NamespaceMetaDTO meta = new NamespaceMetaDTO();
@@ -282,12 +281,13 @@ public class NamespaceRepositoryVertxImplTest extends AbstractVertxRespositoryTe
 
         NamespaceDTO namespace = new NamespaceDTO();
         namespace.setDepth(111);
-        namespace.setType(NamespaceTypeEnum.NUMBER_1);
-        namespace.setOwner("AC1A6E1D8DE5B17D2C6B1293F1CAD3829EEACF38D09311BB3C8E5A880092DE26");
+        namespace.setRegistrationType(NamespaceRegistrationTypeEnum.NUMBER_0);
+        namespace
+            .setOwnerPublicKey("AC1A6E1D8DE5B17D2C6B1293F1CAD3829EEACF38D09311BB3C8E5A880092DE26");
 
         AliasDTO alias = new AliasDTO();
         alias.setType(AliasTypeEnum.NUMBER_1);
-        alias.setMosaicId(Arrays.asList(123L, 123L));
+        alias.setMosaicId("528280977531");
         namespace.setAlias(alias);
 
         dto.setNamespace(namespace);
@@ -298,7 +298,7 @@ public class NamespaceRepositoryVertxImplTest extends AbstractVertxRespositoryTe
 
         Assertions.assertNotNull(linkedMosaicId);
 
-        Assertions.assertEquals(BigInteger.valueOf(528280977531L), linkedMosaicId.getId());
+        Assertions.assertEquals("0000528280977531", linkedMosaicId.getIdAsHex());
     }
 
     protected void resolveNetworkType() throws ApiException {

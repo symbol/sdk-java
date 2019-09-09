@@ -26,8 +26,6 @@ import io.nem.sdk.openapi.okhttp_gson.invoker.ApiException;
 import io.nem.sdk.openapi.okhttp_gson.invoker.ApiResponse;
 import io.nem.sdk.openapi.okhttp_gson.invoker.JSON;
 import io.nem.sdk.openapi.okhttp_gson.model.NetworkTypeDTO;
-import io.nem.sdk.openapi.okhttp_gson.model.TransactionInfoDTO;
-import java.io.InputStream;
 import java.lang.reflect.Type;
 import java.util.Collections;
 import java.util.HashMap;
@@ -36,8 +34,6 @@ import java.util.Map;
 import okhttp3.Call;
 import org.apache.commons.codec.binary.Base32;
 import org.apache.commons.codec.binary.Hex;
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.mockito.Mockito;
@@ -87,13 +83,13 @@ public abstract class AbstractOkHttpRespositoryTest {
 
     /**
      * Mocks the api client telling that the next time there is remote call, an error should be
-     * returned. The mocked response body is the expected json from the catapult rest error handler.
+     * returned. The mocked response body is the expected json from the catapult rest error
+     * handler.
      *
      * @param statusCode the status code of the response (404 for example)
      * @param message the error message that will be returned in the body.
      */
     protected void mockErrorCode(final int statusCode, final String message) throws ApiException {
-
 
         String reasonPhrase = HttpStatus.valueOf(statusCode).getReasonPhrase();
         Map<String, String> errorBody = new HashMap<>();
@@ -103,6 +99,7 @@ public abstract class AbstractOkHttpRespositoryTest {
 
         mockErrorCodeRawResponse(statusCode, errorResponse);
     }
+
     /**
      * Mocks the api client telling that the next time there is remote call, an error should be
      * returned.
@@ -110,7 +107,8 @@ public abstract class AbstractOkHttpRespositoryTest {
      * @param statusCode the status code of the response (404 for example)
      * @param errorResponse the raw response, it may or may not be a json string.
      */
-    protected void mockErrorCodeRawResponse(int statusCode, String errorResponse) throws ApiException {
+    protected void mockErrorCodeRawResponse(int statusCode, String errorResponse)
+        throws ApiException {
         String reasonPhrase = HttpStatus.valueOf(statusCode).getReasonPhrase();
         Map<String, List<String>> headers = Collections.emptyMap();
         ApiException exception = new ApiException(reasonPhrase,

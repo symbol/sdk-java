@@ -16,6 +16,9 @@
 
 package io.nem.sdk.infrastructure.vertx;
 
+import static io.nem.core.utils.MapperUtils.toNamespaceId;
+
+import io.nem.core.utils.MapperUtils;
 import io.nem.sdk.api.NamespaceRepository;
 import io.nem.sdk.api.QueryParams;
 import io.nem.sdk.model.account.Address;
@@ -31,7 +34,7 @@ import io.nem.sdk.model.namespace.NamespaceId;
 import io.nem.sdk.model.namespace.NamespaceInfo;
 import io.nem.sdk.model.namespace.NamespaceName;
 import io.nem.sdk.model.namespace.NamespaceType;
-import io.nem.sdk.model.transaction.UInt64;
+import io.nem.sdk.model.transaction.UInt64Id;
 import io.nem.sdk.openapi.vertx.api.NamespaceRoutesApi;
 import io.nem.sdk.openapi.vertx.api.NamespaceRoutesApiImpl;
 import io.nem.sdk.openapi.vertx.invoker.ApiClient;
@@ -72,7 +75,7 @@ public class NamespaceRepositoryVertxImpl extends AbstractRepositoryVertxImpl im
     @Override
     public Observable<NamespaceInfo> getNamespace(NamespaceId namespaceId) {
         Consumer<Handler<AsyncResult<NamespaceInfoDTO>>> callback = handler -> getClient()
-            .getNamespace(UInt64.bigIntegerToHex(namespaceId.getId()), handler);
+            .getNamespace(namespaceId.getIdAsHex(), handler);
         return exceptionHandling(call(callback).map(this::toNamespaceInfo));
     }
 
@@ -134,7 +137,7 @@ public class NamespaceRepositoryVertxImpl extends AbstractRepositoryVertxImpl im
 
         NamespaceIds ids = new NamespaceIds()
             .namespaceIds(namespaceIds.stream()
-                .map(id -> UInt64.bigIntegerToHex(id.getId()))
+                .map(UInt64Id::getIdAsHex)
                 .collect(Collectors.toList()));
 
         Consumer<Handler<AsyncResult<List<NamespaceNameDTO>>>> callback = handler ->
@@ -156,7 +159,7 @@ public class NamespaceRepositoryVertxImpl extends AbstractRepositoryVertxImpl im
     @Override
     public Observable<MosaicId> getLinkedMosaicId(NamespaceId namespaceId) {
         Consumer<Handler<AsyncResult<NamespaceInfoDTO>>> callback = handler -> getClient()
-            .getNamespace(UInt64.bigIntegerToHex(namespaceId.getId()), handler);
+            .getNamespace(namespaceId.getIdAsHex(), handler);
         return exceptionHandling(call(callback).map(namespaceInfoDTO -> this
             .toMosaicId(namespaceInfoDTO.getNamespace())));
     }
@@ -170,7 +173,7 @@ public class NamespaceRepositoryVertxImpl extends AbstractRepositoryVertxImpl im
     @Override
     public Observable<Address> getLinkedAddress(NamespaceId namespaceId) {
         Consumer<Handler<AsyncResult<NamespaceInfoDTO>>> callback = handler -> getClient()
-            .getNamespace(UInt64.bigIntegerToHex(namespaceId.getId()), handler);
+            .getNamespace(namespaceId.getIdAsHex(), handler);
         return exceptionHandling(call(callback).map(namespaceInfoDTO -> this
             .toAddress(namespaceInfoDTO.getNamespace())));
     }
@@ -179,7 +182,6 @@ public class NamespaceRepositoryVertxImpl extends AbstractRepositoryVertxImpl im
         return new NamespaceName(
             toNamespaceId(dto.getNamespaceId()),
             dto.getName(), Optional.ofNullable(toNamespaceId(dto.getParentId())));
-
     }
 
 
@@ -196,13 +198,15 @@ public class NamespaceRepositoryVertxImpl extends AbstractRepositoryVertxImpl im
             namespaceInfoDTO.getMeta().getActive(),
             namespaceInfoDTO.getMeta().getIndex(),
             namespaceInfoDTO.getMeta().getId(),
-            NamespaceType.rawValueOf(namespaceInfoDTO.getNamespace().getType().getValue()),
+            NamespaceType
+                .rawValueOf(namespaceInfoDTO.getNamespace().getRegistrationType().getValue()),
             namespaceInfoDTO.getNamespace().getDepth(),
             this.extractLevels(namespaceInfoDTO),
             toNamespaceId(namespaceInfoDTO.getNamespace().getParentId()),
-            new PublicAccount(namespaceInfoDTO.getNamespace().getOwner(), getNetworkTypeBlocking()),
-            extractBigInteger(namespaceInfoDTO.getNamespace().getStartHeight()),
-            extractBigInteger(namespaceInfoDTO.getNamespace().getEndHeight()),
+            new PublicAccount(namespaceInfoDTO.getNamespace().getOwnerPublicKey(),
+                getNetworkTypeBlocking()),
+            namespaceInfoDTO.getNamespace().getStartHeight(),
+            namespaceInfoDTO.getNamespace().getEndHeight(),
             this.extractAlias(namespaceInfoDTO.getNamespace()));
     }
 
@@ -216,8 +220,7 @@ public class NamespaceRepositoryVertxImpl extends AbstractRepositoryVertxImpl im
         MosaicId mosaicId = null;
         if (namespaceDTO.getAlias() != null && AliasType.MOSAIC.getValue()
             .equals(namespaceDTO.getAlias().getType().getValue())) {
-            mosaicId = new MosaicId(extractBigInteger(namespaceDTO.getAlias().getMosaicId()));
-
+            mosaicId = MapperUtils.toMosaicId(namespaceDTO.getAlias().getMosaicId());
         }
         return mosaicId;
     }
@@ -234,7 +237,7 @@ public class NamespaceRepositoryVertxImpl extends AbstractRepositoryVertxImpl im
             .equals(namespaceDTO.getAlias().getType().getValue())) {
             String rawAddress = namespaceDTO.getAlias().getAddress();
             if (rawAddress != null) {
-                address = toAddress(rawAddress);
+                address = MapperUtils.toAddress(rawAddress);
             }
         }
         return address;
@@ -248,15 +251,15 @@ public class NamespaceRepositoryVertxImpl extends AbstractRepositoryVertxImpl im
      */
     private List<NamespaceId> extractLevels(NamespaceInfoDTO namespaceInfoDTO) {
         List<NamespaceId> levels = new ArrayList<>();
-        if (isUInt64(namespaceInfoDTO.getNamespace().getLevel0())) {
+        if (namespaceInfoDTO.getNamespace().getLevel0() != null) {
             levels.add(toNamespaceId(namespaceInfoDTO.getNamespace().getLevel0()));
         }
 
-        if (isUInt64(namespaceInfoDTO.getNamespace().getLevel1())) {
+        if (namespaceInfoDTO.getNamespace().getLevel1() != null) {
             levels.add(toNamespaceId(namespaceInfoDTO.getNamespace().getLevel1()));
         }
 
-        if (isUInt64(namespaceInfoDTO.getNamespace().getLevel2())) {
+        if (namespaceInfoDTO.getNamespace().getLevel2() != null) {
             levels.add(toNamespaceId(namespaceInfoDTO.getNamespace().getLevel2()));
         }
 

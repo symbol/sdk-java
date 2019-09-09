@@ -15,8 +15,6 @@
  */
 package io.nem.sdk.infrastructure.okhttp;
 
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.when;
 
 import com.google.gson.JsonObject;
@@ -97,7 +95,7 @@ public class ListenerOkHttpTest {
             .convert(transactionInfo, JsonObject.class);
 
         Address address = Address.createFromPublicKey(
-            jsonHelper.getString(transactionInfoDtoJsonObject, "transaction", "signer"),
+            jsonHelper.getString(transactionInfoDtoJsonObject, "transaction", "signerPublicKey"),
             NetworkType.MIJIN_TEST);
 
         String channelName = ListenerChannel.CONFIRMED_ADDED.toString();

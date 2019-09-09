@@ -169,7 +169,7 @@ public class ModifyMultisigAccountTransaction extends Transaction {
     /**
      * The List of cosigner accounts added or removed from the multi-signature account.
      *
-     * @return List<{ @ link MultisigCosignatoryModification }>
+     * @return {@link List} of { @ link MultisigCosignatoryModification }
      */
     public List<MultisigCosignatoryModification> getModifications() {
         return modifications;

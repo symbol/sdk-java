@@ -16,14 +16,12 @@
 
 package io.nem.sdk.model.mosaic;
 
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import io.nem.sdk.model.account.PublicAccount;
 import io.nem.sdk.model.blockchain.NetworkType;
-import io.nem.sdk.model.transaction.UInt64;
 import java.math.BigInteger;
 import org.junit.jupiter.api.Test;
 
@@ -62,15 +60,6 @@ class MosaicIdTest {
         MosaicId mosaicId = new MosaicId("85BBEA6CC462B244");
         BigInteger bigInt1 = new BigInteger("9636553580561478212");
         MosaicId mosaicId1 = new MosaicId(bigInt1);
-        BigInteger bigInt2 = new BigInteger("-8810190493148073404");
-        // MosaicId mosaicId2 = new MosaicId(bigInt2);
-        int[] array1 = UInt64.fromBigInteger(bigInt1);
-        int[] array2 = UInt64.fromBigInteger(bigInt2);
-        BigInteger bigInt3 = UInt64.fromLowerAndHigher(3294802500L, 2243684972L);
-        BigInteger bigInt4 = UInt64.fromLowerAndHigher(-1000164796, -2051282324);
-        assertEquals(bigInt2, bigInt3);
-        assertEquals(bigInt3, bigInt4);
-        assertArrayEquals(array1, array2);
         assertEquals(mosaicId.getId(), mosaicId1.getId());
     }
 
@@ -80,9 +69,6 @@ class MosaicIdTest {
         MosaicId mosaicId1 = new MosaicId(bigInt1);
         BigInteger bigInt2 = new BigInteger("-8810190493148073404");
         MosaicId mosaicId2 = new MosaicId(bigInt2);
-        int[] array1 = UInt64.fromBigInteger(bigInt1);
-        int[] array2 = UInt64.fromBigInteger(bigInt2);
-        assertArrayEquals(array1, array2);
         assertNotEquals(bigInt1, bigInt2);
         assertNotEquals(mosaicId1.getId(), mosaicId2.getId());
     }

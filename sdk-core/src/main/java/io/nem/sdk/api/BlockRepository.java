@@ -44,7 +44,7 @@ public interface BlockRepository {
      * Gets list of transactions included in a block for a block height
      *
      * @param height BigInteger
-     * @return Observable of List<{@link Transaction}>
+     * @return {@link Observable} of {@link Transaction} List
      */
     Observable<List<Transaction>> getBlockTransactions(BigInteger height);
 
@@ -53,7 +53,7 @@ public interface BlockRepository {
      *
      * @param height BigInteger
      * @param queryParams QueryParams
-     * @return Observable of List<{@link Transaction}>
+     * @return {@link Observable} of {@link Transaction} List
      */
     Observable<List<Transaction>> getBlockTransactions(BigInteger height, QueryParams queryParams);
 
@@ -65,13 +65,13 @@ public interface BlockRepository {
      * verifying that the receipt was linked with the block.
      *
      * @param queryParams QueryParams
-     * @return Observable<BlockInfo>
+     * @return {@link Observable} of BlockInfo
      */
     Observable<List<BlockInfo>> getBlocksByHeightWithLimit(
         BigInteger height, int limit, Optional<QueryParams> queryParams);
 
     /**
-     * @return Observable<MerkleProofInfo>
+     * @return {@link Observable} of MerkleProofInfo
      */
     Observable<MerkelProofInfo> getMerkleReceipts(BigInteger height, String hash);
 
@@ -82,14 +82,14 @@ public interface BlockRepository {
      * the calculated root equals the one recorded in the block header, verifying that the
      * transaction was included in the block.
      *
-     * @return Observable<MerkleProofInfo>
+     * @return {@link Observable} of MerkleProofInfo
      */
     Observable<MerkelProofInfo> getMerkleTransaction(BigInteger height, String hash);
 
     /**
      * Get receipts from a block
      *
-     * @return Observable<Statement>
+     * @return {@link Observable} of Statement
      */
     Observable<Statement> getBlockReceipts(BigInteger height);
 }

@@ -21,13 +21,14 @@ import io.nem.sdk.infrastructure.Listener;
 import io.nem.sdk.infrastructure.ListenerBase;
 import io.nem.sdk.infrastructure.ListenerChannel;
 import io.nem.sdk.infrastructure.ListenerSubscribeMessage;
+import io.nem.sdk.infrastructure.vertx.mappers.GeneralTransactionMapper;
+import io.nem.sdk.infrastructure.vertx.mappers.TransactionMapper;
 import io.nem.sdk.model.blockchain.BlockInfo;
 import io.nem.sdk.model.transaction.CosignatureSignedTransaction;
 import io.nem.sdk.model.transaction.Deadline;
 import io.nem.sdk.model.transaction.JsonHelper;
 import io.nem.sdk.model.transaction.Transaction;
 import io.nem.sdk.model.transaction.TransactionStatusError;
-import io.nem.sdk.model.transaction.UInt64;
 import io.nem.sdk.openapi.vertx.model.BlockInfoDTO;
 import io.nem.sdk.openapi.vertx.model.TransactionInfoDTO;
 import io.vertx.core.Vertx;
@@ -35,13 +36,10 @@ import io.vertx.core.http.HttpClient;
 import io.vertx.core.http.RequestOptions;
 import io.vertx.core.http.WebSocket;
 import io.vertx.core.json.Json;
-import io.vertx.core.json.JsonArray;
-
 import java.math.BigInteger;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.concurrent.CompletableFuture;
-
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
 /**
@@ -56,6 +54,8 @@ public class ListenerVertx extends ListenerBase implements Listener {
     private final JsonHelper jsonHelper;
 
     private final HttpClient httpClient;
+
+    private final TransactionMapper transactionMapper;
 
     private WebSocket webSocket;
 
@@ -74,6 +74,7 @@ public class ListenerVertx extends ListenerBase implements Listener {
         }
         this.httpClient = httpClient;
         this.jsonHelper = new JsonHelperJackson2(JsonHelperJackson2.configureMapper(Json.mapper));
+        this.transactionMapper = new GeneralTransactionMapper(jsonHelper);
     }
 
     /**
@@ -136,8 +137,7 @@ public class ListenerVertx extends ListenerBase implements Listener {
             TransactionStatusError messageObject = new TransactionStatusError(
                 jsonHelper.getString(message, "hash"),
                 jsonHelper.getString(message, "status"),
-                new Deadline(
-                    UInt64.extractBigInteger(jsonHelper.getLongList(message, "deadline"))));
+                new Deadline(new BigInteger(jsonHelper.getString(message, "deadline"))));
             onNext(ListenerChannel.STATUS, messageObject);
         } else if (jsonHelper.contains(message, "meta")) {
             onNext(ListenerChannel.rawValueOf(
@@ -157,7 +157,7 @@ public class ListenerVertx extends ListenerBase implements Listener {
     }
 
     private Transaction toTransaction(TransactionInfoDTO transactionInfo) {
-        return new TransactionMappingVertx(jsonHelper).apply(transactionInfo);
+        return transactionMapper.map(transactionInfo);
     }
 
 
@@ -186,12 +186,6 @@ public class ListenerVertx extends ListenerBase implements Listener {
         return uid;
     }
 
-
-    public static BigInteger extractBigInteger(JsonArray input) {
-        return UInt64.fromLongArray(
-            input.stream().map(Object::toString).map(Long::parseLong).mapToLong(Long::longValue)
-                .toArray());
-    }
 
     public JsonHelper getJsonHelper() {
         return jsonHelper;

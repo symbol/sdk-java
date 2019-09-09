@@ -109,10 +109,11 @@ public class RegisterNamespaceTransaction extends Transaction {
      */
     public static RegisterNamespaceTransaction createRootNamespace(final Deadline deadline,
         final BigInteger fee,
-        final String namespaceName, final BigInteger duration,
+        final String namespaceName,
+        final BigInteger duration,
         final NetworkType networkType) {
         Validate.notNull(namespaceName, "NamespaceName must not be null");
-        NamespaceId namespaceId = new NamespaceId(IdGenerator.generateNamespaceId(namespaceName));
+        NamespaceId namespaceId = NamespaceId.createFromName(namespaceName);
         return new RegisterNamespaceTransaction(networkType,
             TransactionVersion.REGISTER_NAMESPACE.getValue(), deadline, fee, namespaceName,
             namespaceId, NamespaceType.ROOT_NAMESPACE, Optional.of(duration), Optional.empty());
@@ -134,7 +135,7 @@ public class RegisterNamespaceTransaction extends Transaction {
         final NetworkType networkType) {
         Validate.notNull(namespaceName, "NamespaceName must not be null");
         Validate.notNull(parentNamespaceName, "ParentNamespaceName must not be null");
-        NamespaceId parentId = new NamespaceId(parentNamespaceName);
+        NamespaceId parentId = NamespaceId.createFromName(parentNamespaceName);
         return RegisterNamespaceTransaction
             .createSubNamespace(deadline, fee, namespaceName, parentId, networkType);
     }
@@ -155,8 +156,8 @@ public class RegisterNamespaceTransaction extends Transaction {
         final NetworkType networkType) {
         Validate.notNull(namespaceName, "NamespaceName must not be null");
         Validate.notNull(parentId, "ParentId must not be null");
-        NamespaceId namespaceId = new NamespaceId(
-            IdGenerator.generateNamespaceId(namespaceName, parentId.getId()));
+        NamespaceId namespaceId = NamespaceId
+            .createFromNameAndParentId(namespaceName, parentId.getId());
         return new RegisterNamespaceTransaction(networkType,
             TransactionVersion.REGISTER_NAMESPACE.getValue(), deadline,
             fee, namespaceName, namespaceId, NamespaceType.SUB_NAMESPACE, Optional.empty(),

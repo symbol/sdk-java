@@ -19,18 +19,13 @@ package io.nem.sdk.infrastructure.okhttp;
 import io.nem.core.utils.Suppliers;
 import io.nem.sdk.api.QueryParams;
 import io.nem.sdk.api.RepositoryCallException;
-import io.nem.sdk.model.account.Address;
 import io.nem.sdk.model.blockchain.NetworkType;
-import io.nem.sdk.model.mosaic.MosaicId;
-import io.nem.sdk.model.namespace.NamespaceId;
 import io.nem.sdk.model.transaction.JsonHelper;
-import io.nem.sdk.model.transaction.UInt64;
 import io.nem.sdk.openapi.okhttp_gson.invoker.ApiClient;
 import io.nem.sdk.openapi.okhttp_gson.invoker.ApiException;
 import io.reactivex.Observable;
 import io.reactivex.ObservableSource;
 import io.reactivex.functions.Function;
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -98,32 +93,6 @@ public abstract class AbstractRepositoryOkHttpImpl {
 
     public <T> Observable<T> onError(Throwable e) {
         return Observable.error(exceptionHandling(e));
-    }
-
-    /**
-     * Static method to convert from integer list [lower,higher] to BigInteger
-     *
-     * @param input integer list
-     * @return BigInteger
-     */
-    public static BigInteger extractBigInteger(List<Long> input) {
-        return UInt64.extractBigInteger(input);
-    }
-
-    protected boolean isUInt64(List<Long> id) {
-        return UInt64.isUInt64(id);
-    }
-
-    protected NamespaceId toNamespaceId(List<Long> id) {
-        return isUInt64(id) ? new NamespaceId(extractBigInteger(id)) : null;
-    }
-
-    protected MosaicId toMosaicId(List<Long> id) {
-        return isUInt64(id) ? new MosaicId(extractBigInteger(id)) : null;
-    }
-
-    protected Address toAddress(String rawAddress) {
-        return rawAddress != null ? Address.createFromRawAddress(rawAddress) : null;
     }
 
 

@@ -32,7 +32,7 @@ public interface DiagnosticRepository {
     /**
      * Gets blockchain server info.
      *
-     * @return Observable<ServerInfo>
+     * @return {@link Observable} of ServerInfo
      */
     Observable<ServerInfo> getServerInfo();
 }

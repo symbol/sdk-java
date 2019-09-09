@@ -26,7 +26,7 @@ class NamespaceNameTest {
 
     @Test
     void createANamespaceName() {
-        NamespaceId namespaceId = new NamespaceId(new BigInteger("-8884663987180930485"));
+        NamespaceId namespaceId = NamespaceId.createFromId(new BigInteger("-8884663987180930485"));
         NamespaceName namespaceName = new NamespaceName(namespaceId, "nem");
 
         assertEquals(namespaceId, namespaceName.getNamespaceId());
@@ -36,8 +36,8 @@ class NamespaceNameTest {
 
     @Test
     void createANamespaceNameWithParentId() {
-        NamespaceId namespaceId = new NamespaceId(new BigInteger("-8884663987180930485"));
-        NamespaceId parentId = new NamespaceId(new BigInteger("-3087871471161192663"));
+        NamespaceId namespaceId = NamespaceId.createFromId(new BigInteger("-8884663987180930485"));
+        NamespaceId parentId = NamespaceId.createFromId(new BigInteger("-3087871471161192663"));
         NamespaceName namespaceName = new NamespaceName(namespaceId, "nem", parentId);
 
         assertEquals(namespaceId, namespaceName.getNamespaceId());

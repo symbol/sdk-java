@@ -95,7 +95,7 @@ public class AddressAliasTransaction extends Transaction {
      * @param namespaceId Namespace id.
      * @param address Address of the account.
      * @param networkType Network type.
-     * @returns Address alias transaction.
+     * @return Address alias transaction.
      */
     public static AddressAliasTransaction create(
         final Deadline deadline,

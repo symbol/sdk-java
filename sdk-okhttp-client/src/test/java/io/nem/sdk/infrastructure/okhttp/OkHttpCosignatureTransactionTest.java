@@ -20,6 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import io.nem.sdk.infrastructure.okhttp.mappers.GeneralTransactionMapper;
 import io.nem.sdk.model.account.Account;
 import io.nem.sdk.model.blockchain.NetworkType;
 import io.nem.sdk.model.transaction.AggregateTransaction;
@@ -29,12 +30,9 @@ import io.nem.sdk.model.transaction.Deadline;
 import io.nem.sdk.model.transaction.JsonHelper;
 import io.nem.sdk.openapi.okhttp_gson.invoker.JSON;
 import io.nem.sdk.openapi.okhttp_gson.model.TransactionInfoDTO;
-import java.io.InputStream;
 import java.math.BigInteger;
 import java.time.temporal.ChronoUnit;
 import java.util.Collections;
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -58,8 +56,8 @@ public class OkHttpCosignatureTransactionTest {
         TransactionInfoDTO transactionInfoDTO = TestHelperOkHttp.loadCosignatureTransactionInfoDTO(
             "createACosignatureTransactionViaConstructor.json");
         AggregateTransaction aggregateTransaction =
-            (AggregateTransaction) new TransactionMappingOkHttp(jsonHelper)
-                .apply(transactionInfoDTO);
+            (AggregateTransaction) new GeneralTransactionMapper(jsonHelper)
+                .map(transactionInfoDTO);
 
         CosignatureTransaction cosignatureTransaction =
             CosignatureTransaction.create(aggregateTransaction);

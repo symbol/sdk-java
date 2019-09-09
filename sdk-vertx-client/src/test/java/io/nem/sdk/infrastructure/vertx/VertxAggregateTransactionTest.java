@@ -16,11 +16,12 @@
 
 package io.nem.sdk.infrastructure.vertx;
 
+import static io.nem.sdk.infrastructure.vertx.TestHelperVertx.loadAggregateTransactionInfoDTO;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static io.nem.sdk.infrastructure.vertx.TestHelperVertx.loadAggregateTransactionInfoDTO;
 
+import io.nem.sdk.infrastructure.vertx.mappers.GeneralTransactionMapper;
 import io.nem.sdk.model.account.Account;
 import io.nem.sdk.model.account.Address;
 import io.nem.sdk.model.account.PublicAccount;
@@ -35,14 +36,11 @@ import io.nem.sdk.model.transaction.SignedTransaction;
 import io.nem.sdk.model.transaction.TransferTransaction;
 import io.nem.sdk.openapi.vertx.model.TransactionInfoDTO;
 import io.vertx.core.json.Json;
-import java.io.InputStream;
 import java.math.BigInteger;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.Collections;
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.bouncycastle.util.encoders.Hex;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -163,11 +161,10 @@ public class VertxAggregateTransactionTest {
     void shouldFindAccountInAsASignerOfTheTransaction() {
         TransactionInfoDTO aggregateTransferTransactionDTO = loadAggregateTransactionInfoDTO(
             "shouldFindAccountInAsASignerOfTheTransaction.json");
-        System.out.println(aggregateTransferTransactionDTO);
 
         AggregateTransaction aggregateTransferTransaction =
-            (AggregateTransaction) new TransactionMappingVertx(jsonHelper)
-                .apply(aggregateTransferTransactionDTO);
+            (AggregateTransaction) new GeneralTransactionMapper(jsonHelper)
+                .map(aggregateTransferTransactionDTO);
 
         assertTrue(
             aggregateTransferTransaction.signedByAccount(

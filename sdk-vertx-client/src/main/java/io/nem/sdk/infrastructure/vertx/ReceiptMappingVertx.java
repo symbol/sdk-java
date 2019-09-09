@@ -16,6 +16,7 @@
 
 package io.nem.sdk.infrastructure.vertx;
 
+import io.nem.core.utils.MapperUtils;
 import io.nem.sdk.model.account.Address;
 import io.nem.sdk.model.account.PublicAccount;
 import io.nem.sdk.model.blockchain.NetworkType;
@@ -35,7 +36,6 @@ import io.nem.sdk.model.receipt.ResolutionStatement;
 import io.nem.sdk.model.receipt.Statement;
 import io.nem.sdk.model.receipt.TransactionStatement;
 import io.nem.sdk.model.transaction.JsonHelper;
-import io.nem.sdk.model.transaction.UInt64;
 import io.nem.sdk.openapi.vertx.model.ArtifactExpiryReceiptDTO;
 import io.nem.sdk.openapi.vertx.model.BalanceChangeReceiptDTO;
 import io.nem.sdk.openapi.vertx.model.BalanceTransferReceiptDTO;
@@ -43,7 +43,6 @@ import io.nem.sdk.openapi.vertx.model.InflationReceiptDTO;
 import io.nem.sdk.openapi.vertx.model.ResolutionStatementDTO;
 import io.nem.sdk.openapi.vertx.model.StatementsDTO;
 import io.nem.sdk.openapi.vertx.model.TransactionStatementDTO;
-import java.math.BigInteger;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -77,7 +76,7 @@ public class ReceiptMappingVertx {
     public ResolutionStatement<Address> createAddressResolutionStatementFromDto(
         ResolutionStatementDTO receiptDto) {
         return new ResolutionStatement<>(
-            extractBigInteger(receiptDto.getHeight()),
+            receiptDto.getHeight(),
             createAddressFromNumber(receiptDto.getUnresolved()),
             receiptDto.getResolutionEntries().stream()
                 .map(
@@ -99,18 +98,15 @@ public class ReceiptMappingVertx {
     public ResolutionStatement<MosaicId> createMosaicResolutionStatementFromDto(
         ResolutionStatementDTO receiptDto) {
         return new ResolutionStatement<>(
-            extractBigInteger(receiptDto.getHeight()),
-            new MosaicId(extractBigInteger((List<Long>) receiptDto.getUnresolved())),
+            receiptDto.getHeight(),
+            MapperUtils.toMosaicId(receiptDto.getUnresolved().toString()),
             receiptDto.getResolutionEntries().stream()
-                .map(
-                    entry ->
-                        new ResolutionEntry<>(
-                            new MosaicAlias(new MosaicId(extractBigInteger(
-                                (List<Long>) entry.getResolved()))),
-                            new ReceiptSource(
-                                entry.getSource().getPrimaryId(),
-                                entry.getSource().getSecondaryId()),
-                            ReceiptType.MOSAIC_ALIAS_RESOLUTION))
+                .map(entry -> new ResolutionEntry<>(
+                    new MosaicAlias(MapperUtils.toMosaicId(entry.getResolved().toString())),
+                    new ReceiptSource(
+                        entry.getSource().getPrimaryId(),
+                        entry.getSource().getSecondaryId()),
+                    ReceiptType.MOSAIC_ALIAS_RESOLUTION))
                 .collect(Collectors.toList()));
     }
 
@@ -118,7 +114,7 @@ public class ReceiptMappingVertx {
     public TransactionStatement createTransactionStatement(
         TransactionStatementDTO input, NetworkType networkType) {
         return new TransactionStatement(
-            extractBigInteger(input.getHeight()),
+            input.getHeight(),
             new ReceiptSource(
                 input.getSource().getPrimaryId(),
                 input.getSource().getSecondaryId()),
@@ -156,23 +152,19 @@ public class ReceiptMappingVertx {
         }
     }
 
-
     public ArtifactExpiryReceipt<MosaicId> createArtifactExpiryReceipt(
-        ArtifactExpiryReceiptDTO receipt,
-        ReceiptType type) {
+        ArtifactExpiryReceiptDTO receipt, ReceiptType type) {
         return new ArtifactExpiryReceipt<>(
-            new MosaicId(extractBigInteger((List<Long>) receipt.getArtifactId())),
-            type,
+            MapperUtils.toMosaicId(receipt.getArtifactId().toString()), type,
             ReceiptVersion.ARTIFACT_EXPIRY);
     }
-
 
     public BalanceChangeReceipt createBalanceChangeReceipt(
         BalanceChangeReceiptDTO receipt, NetworkType networkType) {
         return new BalanceChangeReceipt(
-            PublicAccount.createFromPublicKey(receipt.getAccount(), networkType),
-            new MosaicId(extractBigInteger(receipt.getMosaicId())),
-            extractBigInteger(receipt.getAmount()),
+            PublicAccount.createFromPublicKey(receipt.getTargetPublicKey(), networkType),
+            new MosaicId(receipt.getMosaicId()),
+            receipt.getAmount(),
             ReceiptType.rawValueOf(receipt.getType().getValue()),
             ReceiptVersion.BALANCE_CHANGE);
     }
@@ -180,25 +172,21 @@ public class ReceiptMappingVertx {
     public BalanceTransferReceipt<Address> createBalanceTransferRecipient(
         BalanceTransferReceiptDTO receipt, NetworkType networkType) {
         return new BalanceTransferReceipt<>(
-            PublicAccount.createFromPublicKey(receipt.getSender(), networkType),
-            Address.createFromEncoded(receipt.getRecipient()),
-            new MosaicId(extractBigInteger(receipt.getMosaicId())),
-            extractBigInteger(receipt.getAmount()),
+            PublicAccount.createFromPublicKey(receipt.getSenderPublicKey(), networkType),
+            Address.createFromEncoded(receipt.getRecipientAddress()),
+            new MosaicId(receipt.getMosaicId()),
+            receipt.getAmount(),
             ReceiptType.rawValueOf(receipt.getType().getValue()),
             ReceiptVersion.BALANCE_TRANSFER);
     }
 
     public InflationReceipt createInflationReceipt(InflationReceiptDTO receipt) {
         return new InflationReceipt(
-            new MosaicId(extractBigInteger(receipt.getMosaicId())),
-            extractBigInteger(receipt.getAmount()),
+            new MosaicId(receipt.getMosaicId()),
+            receipt.getAmount(),
             ReceiptType.rawValueOf(receipt.getType().getValue()),
             ReceiptVersion.INFLATION_RECEIPT);
     }
 
-
-    private static BigInteger extractBigInteger(List<Long> input) {
-        return UInt64.extractBigInteger(input);
-    }
 
 }

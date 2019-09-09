@@ -15,17 +15,17 @@ The official nem2-sdk for Java, Kotlin and Scala to work with the NEM2 (a.k.a Ca
 
 ## Installation
 
-### Open API Generated Libraries
+### Open API Generated Libraries (Optional)
 
-The SDK libs depend on Open API 3 generated clients. Before building the project, execute the following to generate and install the libraries.
+The SDK libs depend on Open API 3 generated clients. The clients jars are automatically generated and deployed into Maven central. 
+The following steps are required if you are working on the Open API specification, you want to change or tune the generator. 
+
+If you want to build the clients,  execute the following to generate and install the libraries.
 
 ```
-./gradlew -b ./openapi-generator/build.gradle clean generate install
+./gradlew -b ./openapi-generator/build.gradle clean generate
+./gradlew -b ./openapi-generator/build.gradle install
 ```
-
-Currently you need to generate and install the clients manually. The generated clients will be released and deployed into maven central. You can then depend on the the generated library like any other open source third party lib.
-
-This step will be optional, only if you are working on the open api 3 spec or you want to change the configuration of generated libraries.
 
 ## Usage
 

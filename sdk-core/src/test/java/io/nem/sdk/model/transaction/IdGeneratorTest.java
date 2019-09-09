@@ -132,7 +132,7 @@ class IdGeneratorTest {
         BigInteger id =
             IdGenerator.generateMosaicId(
                 ByteUtils.intArrayToByteArray(nonce), ByteUtils.intArrayToByteArray(publicKey));
-        assertEquals(UInt64.fromLongArray(expected), id);
+        assertEquals(new BigInteger("4240212341724005656"), id);
     }
 
     @ParameterizedTest

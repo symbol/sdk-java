@@ -17,6 +17,7 @@
 package io.nem.sdk.infrastructure.okhttp;
 
 import io.nem.sdk.api.TransactionRepository;
+import io.nem.sdk.infrastructure.okhttp.mappers.GeneralTransactionMapper;
 import io.nem.sdk.model.transaction.CosignatureSignedTransaction;
 import io.nem.sdk.model.transaction.Deadline;
 import io.nem.sdk.model.transaction.SignedTransaction;
@@ -45,10 +46,12 @@ public class TransactionRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImp
     TransactionRepository {
 
     private final TransactionRoutesApi client;
+    private final GeneralTransactionMapper transactionMapper;
 
     public TransactionRepositoryOkHttpImpl(ApiClient apiClient) {
         super(apiClient);
-        client = new TransactionRoutesApi(apiClient);
+        this.client = new TransactionRoutesApi(apiClient);
+        this.transactionMapper = new GeneralTransactionMapper(getJsonHelper());
     }
 
 
@@ -64,7 +67,7 @@ public class TransactionRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImp
     }
 
     private Transaction toTransaction(TransactionInfoDTO input) {
-        return new TransactionMappingOkHttp(getJsonHelper()).apply(input);
+        return transactionMapper.map(input);
     }
 
     @Override
@@ -90,8 +93,8 @@ public class TransactionRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImp
             transactionStatusDTO.getGroup(),
             transactionStatusDTO.getStatus(),
             transactionStatusDTO.getHash(),
-            new Deadline(extractBigInteger(transactionStatusDTO.getDeadline())),
-            extractBigInteger(transactionStatusDTO.getHeight()));
+            new Deadline((transactionStatusDTO.getDeadline())),
+            (transactionStatusDTO.getHeight()));
     }
 
     @Override

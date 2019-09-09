@@ -26,6 +26,7 @@ import io.nem.sdk.model.blockchain.NetworkType;
 import io.nem.sdk.model.mosaic.MosaicId;
 import java.math.BigInteger;
 import java.util.Arrays;
+import java.util.Collections;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -33,7 +34,7 @@ class NamespaceInfoTest {
 
     @Test
     void createANamespaceInfoViaConstructor() {
-        NamespaceId namespaceId = new NamespaceId(new BigInteger("-8884663987180930485"));
+        NamespaceId namespaceId = NamespaceId.createFromId(new BigInteger("-8884663987180930485"));
         NamespaceInfo namespaceInfo =
             new NamespaceInfo(
                 true,
@@ -42,7 +43,7 @@ class NamespaceInfoTest {
                 NamespaceType.ROOT_NAMESPACE,
                 1,
                 Arrays.asList(namespaceId),
-                new NamespaceId(new BigInteger("0")),
+                NamespaceId.createFromId(new BigInteger("0")),
                 new PublicAccount(
                     "B4F12E7C9F6946091E2CB8B6D3A12B50D17CCBBF646386EA27CE2946A7423DCF",
                     NetworkType.MIJIN_TEST),
@@ -129,8 +130,9 @@ class NamespaceInfoTest {
             "5A3CD9B09CD1E8000159249B",
             NamespaceType.ROOT_NAMESPACE,
             1,
-            Arrays.asList(new NamespaceId(new BigInteger("-8884663987180930485"))),
-            new NamespaceId(new BigInteger("0")),
+            Collections
+                .singletonList(NamespaceId.createFromId(new BigInteger("-8884663987180930485"))),
+            NamespaceId.createFromId(new BigInteger("0")),
             new PublicAccount(
                 "B4F12E7C9F6946091E2CB8B6D3A12B50D17CCBBF646386EA27CE2946A7423DCF",
                 NetworkType.MIJIN_TEST),
@@ -147,9 +149,9 @@ class NamespaceInfoTest {
             NamespaceType.SUB_NAMESPACE,
             1,
             Arrays.asList(
-                new NamespaceId(new BigInteger("-3087871471161192663")),
-                new NamespaceId(new BigInteger("-1087871471161192663"))),
-            new NamespaceId(new BigInteger("-3087871471161192663")),
+                NamespaceId.createFromId(new BigInteger("-3087871471161192663")),
+                NamespaceId.createFromId(new BigInteger("-1087871471161192663"))),
+            NamespaceId.createFromId(new BigInteger("-3087871471161192663")),
             new PublicAccount(
                 "B4F12E7C9F6946091E2CB8B6D3A12B50D17CCBBF646386EA27CE2946A7423DCF",
                 NetworkType.MIJIN_TEST),

@@ -22,11 +22,9 @@ import io.nem.sdk.model.blockchain.MerkelProofInfo;
 import io.nem.sdk.model.blockchain.NetworkType;
 import io.nem.sdk.model.receipt.Statement;
 import io.nem.sdk.model.transaction.Transaction;
-import io.nem.sdk.model.transaction.UInt64;
 import io.nem.sdk.openapi.okhttp_gson.model.BlockDTO;
 import io.nem.sdk.openapi.okhttp_gson.model.BlockInfoDTO;
 import io.nem.sdk.openapi.okhttp_gson.model.BlockMetaDTO;
-import io.nem.sdk.openapi.okhttp_gson.model.EntityTypeEnum;
 import io.nem.sdk.openapi.okhttp_gson.model.MerklePathItem;
 import io.nem.sdk.openapi.okhttp_gson.model.MerkleProofInfoDTO;
 import io.nem.sdk.openapi.okhttp_gson.model.ResolutionStatementDTO;
@@ -65,17 +63,19 @@ public class BlockRepositoryOkHttpImplTest extends AbstractOkHttpRespositoryTest
         metaDTO.setNumTransactions(10);
         metaDTO.setGenerationHash("generationHash");
         metaDTO.setNumStatements(20);
-        metaDTO.setSubCacheMerkleRoots(Arrays.asList("string1", "string2"));
-        metaDTO.setTotalFee(Arrays.asList(8L, 0L));
+        metaDTO.setStateHashSubCacheMerkleRoots(Arrays.asList("string1", "string2"));
+        metaDTO.setTotalFee(BigInteger.valueOf(8L));
 
         dto.setMeta(metaDTO);
 
         BlockDTO blockDto = new BlockDTO();
-        blockDto.setType(EntityTypeEnum.NUMBER_16716);
+        blockDto.setType(16716);
         blockDto.setVersion(36867);
-        blockDto.setSigner("B630EFDDFADCC4A2077AB8F1EC846B08FEE2D2972EACF95BBAC6BFAC3D31834C");
-        blockDto.setBeneficiary("B630EFDDFADCC4A2077AB8F1EC846B08FEE2D2972EACF95BBAC6BFAC3D31834C");
-        blockDto.setHeight(Arrays.asList(9L, 0L));
+        blockDto
+            .setSignerPublicKey("B630EFDDFADCC4A2077AB8F1EC846B08FEE2D2972EACF95BBAC6BFAC3D31834C");
+        blockDto.setBeneficiaryPublicKey(
+            "B630EFDDFADCC4A2077AB8F1EC846B08FEE2D2972EACF95BBAC6BFAC3D31834C");
+        blockDto.setHeight(BigInteger.valueOf(9L));
 
         dto.setBlock(blockDto);
 
@@ -86,10 +86,10 @@ public class BlockRepositoryOkHttpImplTest extends AbstractOkHttpRespositoryTest
 
         Assertions.assertNotNull(info);
 
-        Assertions.assertEquals(blockDto.getBeneficiary(),
+        Assertions.assertEquals(blockDto.getBeneficiaryPublicKey(),
             info.getBeneficiaryPublicAccount().getPublicKey().toString());
 
-        Assertions.assertEquals(blockDto.getSigner(),
+        Assertions.assertEquals(blockDto.getSignerPublicKey(),
             info.getSignerPublicAccount().getPublicKey().toString());
 
         Assertions.assertEquals(16716, info.getType());
@@ -100,11 +100,12 @@ public class BlockRepositoryOkHttpImplTest extends AbstractOkHttpRespositoryTest
         Assertions.assertEquals(metaDTO.getNumTransactions(), info.getNumTransactions());
         Assertions.assertEquals(metaDTO.getGenerationHash(), info.getGenerationHash());
         Assertions.assertEquals(metaDTO.getNumTransactions(), info.getNumTransactions());
-        Assertions.assertEquals(metaDTO.getSubCacheMerkleRoots(), info.getSubCacheMerkleRoots());
         Assertions
-            .assertEquals(UInt64.extractBigInteger(metaDTO.getTotalFee()), info.getTotalFee());
+            .assertEquals(metaDTO.getStateHashSubCacheMerkleRoots(), info.getSubCacheMerkleRoots());
+        Assertions
+            .assertEquals(metaDTO.getTotalFee(), info.getTotalFee());
 
-        Assertions.assertEquals(UInt64.extractBigInteger(blockDto.getHeight()), info.getHeight());
+        Assertions.assertEquals(blockDto.getHeight(), info.getHeight());
 
     }
 
@@ -117,17 +118,19 @@ public class BlockRepositoryOkHttpImplTest extends AbstractOkHttpRespositoryTest
         metaDTO.setNumTransactions(10);
         metaDTO.setGenerationHash("generationHash");
         metaDTO.setNumStatements(20);
-        metaDTO.setSubCacheMerkleRoots(Arrays.asList("string1", "string2"));
-        metaDTO.setTotalFee(Arrays.asList(8L, 0L));
+        metaDTO.setStateHashSubCacheMerkleRoots(Arrays.asList("string1", "string2"));
+        metaDTO.setTotalFee(BigInteger.valueOf(8));
 
         dto.setMeta(metaDTO);
 
         BlockDTO blockDto = new BlockDTO();
-        blockDto.setType(EntityTypeEnum.NUMBER_16716);
+        blockDto.setType(16716);
         blockDto.setVersion(36867);
-        blockDto.setSigner("B630EFDDFADCC4A2077AB8F1EC846B08FEE2D2972EACF95BBAC6BFAC3D31834C");
-        blockDto.setBeneficiary("B630EFDDFADCC4A2077AB8F1EC846B08FEE2D2972EACF95BBAC6BFAC3D31834C");
-        blockDto.setHeight(Arrays.asList(9L, 0L));
+        blockDto
+            .setSignerPublicKey("B630EFDDFADCC4A2077AB8F1EC846B08FEE2D2972EACF95BBAC6BFAC3D31834C");
+        blockDto.setBeneficiaryPublicKey(
+            "B630EFDDFADCC4A2077AB8F1EC846B08FEE2D2972EACF95BBAC6BFAC3D31834C");
+        blockDto.setHeight(BigInteger.valueOf(9L));
 
         dto.setBlock(blockDto);
 
@@ -140,10 +143,10 @@ public class BlockRepositoryOkHttpImplTest extends AbstractOkHttpRespositoryTest
 
         Assertions.assertNotNull(info);
 
-        Assertions.assertEquals(blockDto.getBeneficiary(),
+        Assertions.assertEquals(blockDto.getBeneficiaryPublicKey(),
             info.getBeneficiaryPublicAccount().getPublicKey().toString());
 
-        Assertions.assertEquals(blockDto.getSigner(),
+        Assertions.assertEquals(blockDto.getSignerPublicKey(),
             info.getSignerPublicAccount().getPublicKey().toString());
 
         Assertions.assertEquals(16716, info.getType());
@@ -154,11 +157,12 @@ public class BlockRepositoryOkHttpImplTest extends AbstractOkHttpRespositoryTest
         Assertions.assertEquals(metaDTO.getNumTransactions(), info.getNumTransactions());
         Assertions.assertEquals(metaDTO.getGenerationHash(), info.getGenerationHash());
         Assertions.assertEquals(metaDTO.getNumTransactions(), info.getNumTransactions());
-        Assertions.assertEquals(metaDTO.getSubCacheMerkleRoots(), info.getSubCacheMerkleRoots());
         Assertions
-            .assertEquals(UInt64.extractBigInteger(metaDTO.getTotalFee()), info.getTotalFee());
+            .assertEquals(metaDTO.getStateHashSubCacheMerkleRoots(), info.getSubCacheMerkleRoots());
+        Assertions
+            .assertEquals(metaDTO.getTotalFee(), info.getTotalFee());
 
-        Assertions.assertEquals(UInt64.extractBigInteger(blockDto.getHeight()), info.getHeight());
+        Assertions.assertEquals(blockDto.getHeight(), info.getHeight());
 
     }
 
@@ -208,12 +212,12 @@ public class BlockRepositoryOkHttpImplTest extends AbstractOkHttpRespositoryTest
         ResolutionStatementDTO addressResolutionStatement = new ResolutionStatementDTO();
         addressResolutionStatement
             .setUnresolved("9050B9837EFAB4BBE8A4B9BB32D812F9885C00D8FC1650E142");
-        addressResolutionStatement.setHeight(Arrays.asList(6L, 0L));
+        addressResolutionStatement.setHeight(BigInteger.valueOf(6L));
         dto.setAddressResolutionStatements(Collections.singletonList(addressResolutionStatement));
 
         ResolutionStatementDTO mosaicResolutionStatement = new ResolutionStatementDTO();
-        mosaicResolutionStatement.setHeight(Arrays.asList(7L, 0L));
-        mosaicResolutionStatement.setUnresolved(Arrays.asList(9L, 0L));
+        mosaicResolutionStatement.setHeight(BigInteger.valueOf(7L));
+        mosaicResolutionStatement.setUnresolved(BigInteger.valueOf(9L));
         dto.setMosaicResolutionStatements(Collections.singletonList(mosaicResolutionStatement));
 
         mockRemoteCall(dto);

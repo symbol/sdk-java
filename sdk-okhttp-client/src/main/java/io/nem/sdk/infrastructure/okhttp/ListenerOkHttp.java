@@ -21,16 +21,18 @@ import io.nem.sdk.infrastructure.Listener;
 import io.nem.sdk.infrastructure.ListenerBase;
 import io.nem.sdk.infrastructure.ListenerChannel;
 import io.nem.sdk.infrastructure.ListenerSubscribeMessage;
+import io.nem.sdk.infrastructure.okhttp.mappers.GeneralTransactionMapper;
+import io.nem.sdk.infrastructure.okhttp.mappers.TransactionMapper;
 import io.nem.sdk.model.blockchain.BlockInfo;
 import io.nem.sdk.model.transaction.CosignatureSignedTransaction;
 import io.nem.sdk.model.transaction.Deadline;
 import io.nem.sdk.model.transaction.JsonHelper;
 import io.nem.sdk.model.transaction.Transaction;
 import io.nem.sdk.model.transaction.TransactionStatusError;
-import io.nem.sdk.model.transaction.UInt64;
 import io.nem.sdk.openapi.okhttp_gson.invoker.JSON;
 import io.nem.sdk.openapi.okhttp_gson.model.BlockInfoDTO;
 import io.nem.sdk.openapi.okhttp_gson.model.TransactionInfoDTO;
+import java.math.BigInteger;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.concurrent.CompletableFuture;
@@ -53,6 +55,8 @@ public class ListenerOkHttp extends ListenerBase implements Listener {
 
     private final OkHttpClient httpClient;
 
+    private final TransactionMapper transactionMapper;
+
     private WebSocket webSocket;
 
     private String uid;
@@ -69,6 +73,7 @@ public class ListenerOkHttp extends ListenerBase implements Listener {
         }
         this.httpClient = httpClient;
         this.jsonHelper = new JsonHelperGson(json.getGson());
+        this.transactionMapper = new GeneralTransactionMapper(jsonHelper);
     }
 
     /**
@@ -118,7 +123,7 @@ public class ListenerOkHttp extends ListenerBase implements Listener {
                 jsonHelper.getString(message, "hash"),
                 jsonHelper.getString(message, "status"),
                 new Deadline(
-                    UInt64.extractBigInteger(jsonHelper.getLongList(message, "deadline"))));
+                    new BigInteger(jsonHelper.getString(message, "deadline"))));
             onNext(ListenerChannel.STATUS, messageObject);
         } else if (jsonHelper.contains(message, "meta")) {
             onNext(ListenerChannel.rawValueOf(
@@ -138,7 +143,7 @@ public class ListenerOkHttp extends ListenerBase implements Listener {
     }
 
     private Transaction toTransaction(TransactionInfoDTO transactionInfo) {
-        return new TransactionMappingOkHttp(jsonHelper).apply(transactionInfo);
+        return transactionMapper.map(transactionInfo);
     }
 
 

@@ -19,7 +19,6 @@ package io.nem.sdk.infrastructure.vertx;
 import io.nem.sdk.api.ChainRepository;
 import io.nem.sdk.model.blockchain.BlockchainScore;
 import io.nem.sdk.model.blockchain.NetworkType;
-import io.nem.sdk.model.transaction.UInt64;
 import io.nem.sdk.openapi.vertx.api.ChainRoutesApi;
 import io.nem.sdk.openapi.vertx.api.ChainRoutesApiImpl;
 import io.nem.sdk.openapi.vertx.invoker.ApiClient;
@@ -56,11 +55,8 @@ public class ChainRepositoryVertxImpl extends AbstractRepositoryVertxImpl implem
      * @return {@link Observable} of {@link BigInteger}
      */
     public Observable<BigInteger> getBlockchainHeight() {
-
         Consumer<Handler<AsyncResult<HeightInfoDTO>>> callback = client::getBlockchainHeight;
-        return exceptionHandling(
-            call(callback)
-                .map(blockchainHeight -> UInt64.extractBigInteger(blockchainHeight.getHeight())));
+        return exceptionHandling(call(callback).map(HeightInfoDTO::getHeight));
 
     }
 
@@ -74,7 +70,7 @@ public class ChainRepositoryVertxImpl extends AbstractRepositoryVertxImpl implem
         return exceptionHandling(call(callback).map(
             blockchainScoreDTO ->
                 new BlockchainScore(
-                    UInt64.extractBigInteger(blockchainScoreDTO.getScoreLow()),
-                    UInt64.extractBigInteger(blockchainScoreDTO.getScoreHigh()))));
+                    blockchainScoreDTO.getScoreLow(),
+                    blockchainScoreDTO.getScoreHigh())));
     }
 }

@@ -16,7 +16,7 @@
 
 package io.nem.sdk.model.transaction;
 
-import java.util.List;
+import java.math.BigInteger;
 
 /**
  * JSON Helper interface used by the mappers to process json objects.
@@ -135,19 +135,19 @@ public interface JsonHelper {
 
 
     /**
-     * This method retrieves a Long attribute following the the provided path
+     * This method retrieves a BigInteger attribute following the the provided path
      *
      * for example:
      *
-     * object = { "someAttribute1": {"someAttribute2": {"aLongList": [1,2,3]} } }
+     * object = { "someAttribute1": {"someAttribute2": {"aBigInteger": "123"} } }
      *
-     * getInteger(object,"someAttribute1","someAttribute2","aLongList") will return [1,2,3]
+     * getBigInteger(object,"someAttribute1","someAttribute2","aBigInteger") will return 123
      *
      * @param object the object
      * @param path the path
-     * @return an Long or null if the path doesn't exist or is null.
+     * @return a BigInteger or null if the path doesn't exist or is null.
      */
-    List<Long> getLongList(Object object, String... path);
+    BigInteger getBigInteger(Object object, String... path);
 
     /**
      * This method retrieves if there is a field/value for the given path.

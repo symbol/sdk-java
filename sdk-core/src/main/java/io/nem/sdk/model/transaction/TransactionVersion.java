@@ -26,7 +26,7 @@ package io.nem.sdk.model.transaction;
  * `DEFINE_TRANSACTION_CONSTANTS` macro is used to define the `TYPE` and `VERSION` of the
  * transaction format.
  *
- * @see https://github.com/nemtech/catapult-server/blob/master/plugins/txes/transfer/src/model/TransferTransaction.h#L37
+ * @see <a href="https://github.com/nemtech/catapult-server/blob/master/plugins/txes/transfer/src/model/TransferTransaction.h#L37"/>
  * @since 1.0
  */
 public enum TransactionVersion {

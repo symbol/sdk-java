@@ -16,19 +16,16 @@
 
 package io.nem.sdk.infrastructure.okhttp;
 
+import io.nem.core.utils.MapperUtils;
 import io.nem.sdk.model.mosaic.MosaicId;
 import io.nem.sdk.model.mosaic.MosaicInfo;
 import io.nem.sdk.model.mosaic.MosaicNames;
-import io.nem.sdk.model.transaction.UInt64;
-import io.nem.sdk.openapi.okhttp_gson.model.MosaicDefinitionDTO;
+import io.nem.sdk.openapi.okhttp_gson.model.MosaicDTO;
 import io.nem.sdk.openapi.okhttp_gson.model.MosaicInfoDTO;
-import io.nem.sdk.openapi.okhttp_gson.model.MosaicMetaDTO;
 import io.nem.sdk.openapi.okhttp_gson.model.MosaicNamesDTO;
-import io.nem.sdk.openapi.okhttp_gson.model.MosaicPropertyDTO;
-import io.nem.sdk.openapi.okhttp_gson.model.MosaicPropertyIdEnum;
+import io.nem.sdk.openapi.okhttp_gson.model.MosaicPropertiesDTO;
 import io.nem.sdk.openapi.okhttp_gson.model.MosaicsNamesDTO;
 import java.math.BigInteger;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import org.junit.jupiter.api.Assertions;
@@ -44,7 +41,6 @@ public class MosaicRepositoryOkHttpImplTest extends AbstractOkHttpRespositoryTes
 
     private MosaicRepositoryOkHttpImpl repository;
 
-
     @BeforeEach
     public void setUp() {
         super.setUp();
@@ -55,10 +51,10 @@ public class MosaicRepositoryOkHttpImplTest extends AbstractOkHttpRespositoryTes
     @Test
     public void shouldGetMosaicsNamesFromPublicKeys() throws Exception {
 
-        MosaicId mosaicId = new MosaicId(UInt64.fromLowerAndHigher(481110499, 231112638));
+        MosaicId mosaicId = MapperUtils.toMosaicId("99262122238339734");
 
         MosaicNamesDTO dto = new MosaicNamesDTO();
-        dto.setMosaicId(Arrays.asList(481110499L, 231112638L));
+        dto.setMosaicId("99262122238339734");
         dto.setNames(Collections.singletonList("accountalias"));
 
         MosaicsNamesDTO accountsNamesDTO = new MosaicsNamesDTO();
@@ -78,36 +74,25 @@ public class MosaicRepositoryOkHttpImplTest extends AbstractOkHttpRespositoryTes
         Assertions.assertEquals("accountalias", accountNames.getNames().get(0).getName());
     }
 
+
     @Test
     public void shouldGetMosaics() throws Exception {
-
         resolveNetworkType();
-        MosaicId mosaicId = new MosaicId(UInt64.fromLowerAndHigher(481110499, 231112638));
+        MosaicId mosaicId = MapperUtils.toMosaicId("481110499AAA");
 
-        MosaicMetaDTO mosiacMetaDto = new MosaicMetaDTO();
-        MosaicDefinitionDTO mosaicDto = new MosaicDefinitionDTO();
+        MosaicDTO mosaicDto = new MosaicDTO();
         MosaicInfoDTO mosaicInfoDto = new MosaicInfoDTO();
 
-        mosaicDto.setOwner("B630EFDDFADCC4A2077AB8F1EC846B08FEE2D2972EACF95BBAC6BFAC3D31834C");
-        mosaicDto.setMosaicId(Arrays.asList(481110499L, 231112638L));
+        mosaicDto
+            .setOwnerPublicKey("B630EFDDFADCC4A2077AB8F1EC846B08FEE2D2972EACF95BBAC6BFAC3D31834C");
+        mosaicDto.setId("481110499AAA");
         mosaicDto.setRevision(123);
 
-        MosaicPropertyDTO mosaicPropertyDTO1 = new MosaicPropertyDTO();
-        mosaicPropertyDTO1.setId(MosaicPropertyIdEnum.NUMBER_0);
-        mosaicPropertyDTO1.setValue(Arrays.asList(5L, 0L));
-
-        MosaicPropertyDTO mosaicPropertyDTO2 = new MosaicPropertyDTO();
-        mosaicPropertyDTO2.setId(MosaicPropertyIdEnum.NUMBER_1);
-        mosaicPropertyDTO2.setValue(Arrays.asList(6L, 0L));
-
-        MosaicPropertyDTO mosaicPropertyDTO3 = new MosaicPropertyDTO();
-        mosaicPropertyDTO3.setId(MosaicPropertyIdEnum.NUMBER_2);
-        mosaicPropertyDTO3.setValue(Arrays.asList(7L, 0L));
-
-        mosaicDto.setProperties(
-            Arrays.asList(mosaicPropertyDTO1, mosaicPropertyDTO2, mosaicPropertyDTO3));
-
-        mosaicInfoDto.setMeta(mosiacMetaDto);
+        MosaicPropertiesDTO properties = new MosaicPropertiesDTO();
+        properties.setFlags(5);
+        properties.setDivisibility(6);
+        properties.setDuration(BigInteger.valueOf(7));
+        mosaicDto.setProperties(properties);
 
         mosaicInfoDto.setMosaic(mosaicDto);
         mockRemoteCall(Collections.singletonList(mosaicInfoDto));
@@ -122,7 +107,8 @@ public class MosaicRepositoryOkHttpImplTest extends AbstractOkHttpRespositoryTes
         Assertions.assertEquals(mosaicId, mosaicInfo.getMosaicId());
         Assertions.assertEquals(mosaicDto.getRevision(), mosaicInfo.getRevision());
         Assertions
-            .assertEquals(mosaicDto.getOwner(), mosaicInfo.getOwner().getPublicKey().toString());
+            .assertEquals(mosaicDto.getOwnerPublicKey(),
+                mosaicInfo.getOwner().getPublicKey().toString());
 
         Assertions.assertFalse(mosaicInfo.isTransferable());
         Assertions.assertEquals(6, mosaicInfo.getDivisibility());
@@ -133,32 +119,22 @@ public class MosaicRepositoryOkHttpImplTest extends AbstractOkHttpRespositoryTes
     public void shouldGetMosaic() throws Exception {
 
         resolveNetworkType();
-        MosaicId mosaicId = new MosaicId(UInt64.fromLowerAndHigher(481110499, 231112638));
+        MosaicId mosaicId = MapperUtils.toMosaicId("481110499AAA");
 
-        MosaicMetaDTO mosiacMetaDto = new MosaicMetaDTO();
-        MosaicDefinitionDTO mosaicDto = new MosaicDefinitionDTO();
+        MosaicDTO mosiacMetaDto = new MosaicDTO();
+        MosaicDTO mosaicDto = new MosaicDTO();
         MosaicInfoDTO mosaicInfoDto = new MosaicInfoDTO();
 
-        mosaicDto.setOwner("B630EFDDFADCC4A2077AB8F1EC846B08FEE2D2972EACF95BBAC6BFAC3D31834C");
-        mosaicDto.setMosaicId(Arrays.asList(481110499L, 231112638L));
+        mosaicDto
+            .setOwnerPublicKey("B630EFDDFADCC4A2077AB8F1EC846B08FEE2D2972EACF95BBAC6BFAC3D31834C");
+        mosaicDto.setId("481110499AAA");
         mosaicDto.setRevision(123);
 
-        MosaicPropertyDTO mosaicPropertyDTO1 = new MosaicPropertyDTO();
-        mosaicPropertyDTO1.setId(MosaicPropertyIdEnum.NUMBER_0);
-        mosaicPropertyDTO1.setValue(Arrays.asList(5L, 0L));
-
-        MosaicPropertyDTO mosaicPropertyDTO2 = new MosaicPropertyDTO();
-        mosaicPropertyDTO2.setId(MosaicPropertyIdEnum.NUMBER_1);
-        mosaicPropertyDTO2.setValue(Arrays.asList(6L, 0L));
-
-        MosaicPropertyDTO mosaicPropertyDTO3 = new MosaicPropertyDTO();
-        mosaicPropertyDTO3.setId(MosaicPropertyIdEnum.NUMBER_2);
-        mosaicPropertyDTO3.setValue(Arrays.asList(7L, 0L));
-
-        mosaicDto.setProperties(
-            Arrays.asList(mosaicPropertyDTO1, mosaicPropertyDTO2, mosaicPropertyDTO3));
-
-        mosaicInfoDto.setMeta(mosiacMetaDto);
+        MosaicPropertiesDTO properties = new MosaicPropertiesDTO();
+        properties.setFlags(5);
+        properties.setDivisibility(6);
+        properties.setDuration(BigInteger.valueOf(7));
+        mosaicDto.setProperties(properties);
 
         mosaicInfoDto.setMosaic(mosaicDto);
         mockRemoteCall(mosaicInfoDto);
@@ -170,13 +146,13 @@ public class MosaicRepositoryOkHttpImplTest extends AbstractOkHttpRespositoryTes
         Assertions.assertEquals(mosaicId, mosaicInfo.getMosaicId());
         Assertions.assertEquals(mosaicDto.getRevision(), mosaicInfo.getRevision());
         Assertions
-            .assertEquals(mosaicDto.getOwner(), mosaicInfo.getOwner().getPublicKey().toString());
+            .assertEquals(mosaicDto.getOwnerPublicKey(),
+                mosaicInfo.getOwner().getPublicKey().toString());
 
         Assertions.assertFalse(mosaicInfo.isTransferable());
         Assertions.assertEquals(6, mosaicInfo.getDivisibility());
         Assertions.assertEquals(BigInteger.valueOf(7), mosaicInfo.getDuration());
     }
-
 
     @Override
     public MosaicRepositoryOkHttpImpl getRepository() {

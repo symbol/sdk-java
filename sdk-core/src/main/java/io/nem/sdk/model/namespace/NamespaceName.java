@@ -28,7 +28,7 @@ public class NamespaceName {
     private final Optional<NamespaceId> parentId;
 
     public NamespaceName(String name) {
-        this(new NamespaceId(name), name, Optional.empty());
+        this(NamespaceId.createFromName(name), name, Optional.empty());
     }
 
     public NamespaceName(NamespaceId namespaceId, String name) {

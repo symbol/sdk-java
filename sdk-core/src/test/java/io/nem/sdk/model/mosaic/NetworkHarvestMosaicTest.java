@@ -4,7 +4,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import io.nem.sdk.model.namespace.NamespaceId;
-import io.nem.sdk.model.transaction.UInt64;
 import java.math.BigInteger;
 import org.junit.jupiter.api.Test;
 
@@ -37,8 +36,7 @@ class NetworkHarvestMosaicTest {
 
     @Test
     void shouldCompareNamespaceIdsForEquality() {
-        NamespaceId namespaceId = new NamespaceId(
-            UInt64.fromLowerAndHigher(3084986652L, 2484246962L));
+        NamespaceId namespaceId = NamespaceId.createFromId(BigInteger.valueOf(-7776984613647210212L));
         assertEquals(-7776984613647210212L, namespaceId.getIdAsLong());
         assertEquals(NetworkHarvestMosaic.NAMESPACEID.getIdAsLong(), namespaceId.getIdAsLong());
         assertEquals(NetworkHarvestMosaic.NAMESPACEID.getIdAsHex(), namespaceId.getIdAsHex());

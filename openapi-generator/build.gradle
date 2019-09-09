@@ -7,7 +7,7 @@ task clean(type: Delete) {
 }
 
 ext {
-    generateVersion = "0.7.17-SNAPSHOT"
+    generateVersion = "0.7.18-SNAPSHOT"
 }
 
 //NOTE - For some reason the library field is ignored. I had to create a configFile per library.
@@ -25,6 +25,7 @@ ext {
         invokerPackage = "io.nem.sdk.openapi.${library}.invoker".toString()
         modelPackage = "io.nem.sdk.openapi.${library}.model".toString()
         outputDir = "$rootDir/target/api-${library}-client".toString()
+        typeMappings =  ["x-number-string": "java.math.BigInteger"]
     }
 }
 

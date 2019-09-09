@@ -138,7 +138,7 @@ public class AccountOperationRestrictionModificationTransaction extends Transact
     /**
      * Get account restriction type
      *
-     * @return {@linke AccountRestrictionType}
+     * @return {@link AccountRestrictionType}
      */
     public AccountRestrictionType getRestrictionType() {
         return this.restrictionType;

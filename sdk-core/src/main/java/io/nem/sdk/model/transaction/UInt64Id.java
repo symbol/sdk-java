@@ -11,6 +11,8 @@
  */
 package io.nem.sdk.model.transaction;
 
+import io.nem.core.utils.ByteUtils;
+import io.nem.core.utils.HexEncoder;
 import java.math.BigInteger;
 import java.util.Optional;
 
@@ -38,12 +40,15 @@ public interface UInt64Id {
      *
      * @return Hex id.
      */
-    String getIdAsHex();
+    default String getIdAsHex() {
+        byte[] bytes = ByteUtils.bigIntToBytes(getId());
+        return HexEncoder.getString(bytes);
+    }
 
     /**
      * Get the optional UInt64Id full name.
      *
-     * @return Optional<String> full name.
+     * @return Optional of String with full name.
      */
     Optional<String> getFullName();
 

@@ -17,7 +17,7 @@ public class NetworkHarvestMosaic extends Mosaic {
     /**
      * Namespace id of `currency` namespace.
      */
-    public static final NamespaceId NAMESPACEID = new NamespaceId("cat.harvest");
+    public static final NamespaceId NAMESPACEID = NamespaceId.createFromName("cat.harvest");
     /**
      * Divisibility
      */
