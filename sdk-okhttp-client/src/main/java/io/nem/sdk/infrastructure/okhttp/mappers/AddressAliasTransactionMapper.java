@@ -17,8 +17,9 @@
 
 package io.nem.sdk.infrastructure.okhttp.mappers;
 
+import static io.nem.core.utils.MapperUtils.toAddressFromUnresolved;
+
 import io.nem.core.utils.MapperUtils;
-import io.nem.sdk.model.account.Address;
 import io.nem.sdk.model.account.PublicAccount;
 import io.nem.sdk.model.blockchain.NetworkType;
 import io.nem.sdk.model.namespace.AliasAction;
@@ -55,7 +56,7 @@ public class AddressAliasTransactionMapper extends
             transaction.getMaxFee(),
             aliasAction,
             namespaceId,
-            Address.createFromEncoded(transaction.getAddress()),
+            toAddressFromUnresolved(transaction.getAddress()),
             Optional.ofNullable(transaction.getSignature()),
             Optional.of(new PublicAccount(transaction.getSignerPublicKey(), networkType)),
             Optional.of(transactionInfo));

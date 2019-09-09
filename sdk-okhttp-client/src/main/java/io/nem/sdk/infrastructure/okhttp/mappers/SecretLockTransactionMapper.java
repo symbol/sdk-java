@@ -17,9 +17,9 @@
 
 package io.nem.sdk.infrastructure.okhttp.mappers;
 
+import static io.nem.core.utils.MapperUtils.toAddressFromUnresolved;
 import static io.nem.core.utils.MapperUtils.toMosaicId;
 
-import io.nem.sdk.model.account.Address;
 import io.nem.sdk.model.account.PublicAccount;
 import io.nem.sdk.model.blockchain.NetworkType;
 import io.nem.sdk.model.mosaic.Mosaic;
@@ -57,7 +57,7 @@ class SecretLockTransactionMapper extends AbstractTransactionMapper<SecretLockTr
             transaction.getDuration(),
             HashType.rawValueOf(transaction.getHashAlgorithm().getValue()),
             transaction.getSecret(),
-            Address.createFromEncoded(transaction.getRecipientAddress()),
+            toAddressFromUnresolved(transaction.getRecipientAddress()),
             transaction.getSignature(),
             new PublicAccount(transaction.getSignerPublicKey(), networkType),
             transactionInfo);

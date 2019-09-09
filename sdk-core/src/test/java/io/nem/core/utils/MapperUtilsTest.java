@@ -17,7 +17,9 @@
 
 package io.nem.core.utils;
 
+import io.nem.sdk.model.account.Address;
 import java.math.BigInteger;
+import org.junit.Assert;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -33,7 +35,24 @@ public class MapperUtilsTest {
     @Test
     void shouldMapToAddress() {
         Assertions.assertNull(MapperUtils.toAddress(null));
-        Assertions.assertNotNull(MapperUtils.toAddress("SBCPGZ3S2SCC3YHBBTYDCUZV4ZZEPHM2KGCP4QXX"));
+        Address address = MapperUtils
+            .toAddress("SBCPGZ3S2SCC3YHBBTYDCUZV4ZZEPHM2KGCP4QXX");
+        Assertions.assertNotNull(address);
+        Assert.assertEquals("SBCPGZ3S2SCC3YHBBTYDCUZV4ZZEPHM2KGCP4QXX", address.plain());
+        Assert.assertEquals("SBCPGZ-3S2SCC-3YHBBT-YDCUZV-4ZZEPH-M2KGCP-4QXX", address.pretty());
+    }
+
+    @Test
+    void shouldMapToAddressFromUnresolved() {
+
+        Assertions.assertNull(MapperUtils.toAddressFromUnresolved(null));
+        Address address = MapperUtils
+            .toAddressFromUnresolved("9050B9837EFAB4BBE8A4B9BB32D812F9885C00D8FC1650E142");
+        Assertions.assertNotNull(
+            address);
+
+        Assert.assertEquals("SBILTA367K2LX2FEXG5TFWAS7GEFYAGY7QLFBYKC", address.plain());
+        Assert.assertEquals("SBILTA-367K2L-X2FEXG-5TFWAS-7GEFYA-GY7QLF-BYKC", address.pretty());
     }
 
     @Test

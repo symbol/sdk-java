@@ -78,7 +78,7 @@ public class ListenerVertx extends ListenerBase implements Listener {
     }
 
     /**
-     * @param @param url of the host
+     * @param url of the host
      */
     public ListenerVertx(String url) {
         this(createHttpClient(), url);

@@ -17,6 +17,7 @@
 package io.nem.sdk.infrastructure.okhttp;
 
 import static io.nem.core.utils.MapperUtils.toAddress;
+import static io.nem.core.utils.MapperUtils.toMosaicId;
 
 import io.nem.core.crypto.PublicKey;
 import io.nem.sdk.api.AccountRepository;
@@ -32,7 +33,6 @@ import io.nem.sdk.model.account.MultisigAccountInfo;
 import io.nem.sdk.model.account.PublicAccount;
 import io.nem.sdk.model.blockchain.NetworkType;
 import io.nem.sdk.model.mosaic.Mosaic;
-import io.nem.sdk.model.mosaic.MosaicId;
 import io.nem.sdk.model.namespace.NamespaceName;
 import io.nem.sdk.model.transaction.AggregateTransaction;
 import io.nem.sdk.model.transaction.Transaction;
@@ -142,8 +142,7 @@ public class AccountRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl im
      * @return {@link AccountNames}
      */
     private AccountNames toAccountNames(AccountNamesDTO dto) throws DecoderException {
-        return new AccountNames(
-            toAddress(getAddressEncoded(dto.getAddress())),
+        return new AccountNames(toAddress(getAddressEncoded(dto.getAddress())),
             dto.getNames().stream().map(NamespaceName::new).collect(Collectors.toList()));
     }
 
@@ -159,21 +158,17 @@ public class AccountRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl im
 
     @Override
     public Observable<MultisigAccountGraphInfo> getMultisigAccountGraphInfo(Address address) {
-
         return exceptionHandling(call(
-            () -> getClient()
-                .getAccountMultisigGraph(address.plain()))
-            .map(
-                multisigAccountGraphInfoDTOList -> {
-                    Map<Integer, List<MultisigAccountInfo>> multisigAccountInfoMap =
-                        new HashMap<>();
-                    multisigAccountGraphInfoDTOList.forEach(
-                        item ->
-                            multisigAccountInfoMap.put(
-                                item.getLevel(),
-                                toMultisigAccountInfo(item)));
-                    return new MultisigAccountGraphInfo(multisigAccountInfoMap);
-                }));
+            () -> getClient().getAccountMultisigGraph(address.plain()))
+            .map(multisigAccountGraphInfoDTOList -> {
+                Map<Integer, List<MultisigAccountInfo>> multisigAccountInfoMap = new HashMap<>();
+                multisigAccountGraphInfoDTOList.forEach(
+                    item ->
+                        multisigAccountInfoMap.put(
+                            item.getLevel(),
+                            toMultisigAccountInfo(item)));
+                return new MultisigAccountGraphInfo(multisigAccountInfoMap);
+            }));
     }
 
     private List<MultisigAccountInfo> toMultisigAccountInfo(MultisigAccountGraphInfoDTO item) {
@@ -312,17 +307,13 @@ public class AccountRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl im
     private AccountInfo toAccountInfo(AccountDTO accountDTO) throws DecoderException {
         return new AccountInfo(
             toAddress(getAddressEncoded(accountDTO.getAddress())),
-            (accountDTO.getAddressHeight()),
+            accountDTO.getAddressHeight(),
             accountDTO.getPublicKey(),
-            (accountDTO.getPublicKeyHeight()),
-            (accountDTO.getImportance()),
-            (accountDTO.getImportanceHeight()),
+            accountDTO.getPublicKeyHeight(),
+            accountDTO.getImportance(),
+            accountDTO.getImportanceHeight(),
             accountDTO.getMosaics().stream()
-                .map(
-                    mosaicDTO ->
-                        new Mosaic(
-                            new MosaicId((mosaicDTO.getId())),
-                            (mosaicDTO.getAmount())))
+                .map(mosaicDTO -> new Mosaic(toMosaicId(mosaicDTO.getId()), mosaicDTO.getAmount()))
                 .collect(Collectors.toList()),
             AccountType.rawValueOf(accountDTO.getAccountType().getValue()));
     }
@@ -335,17 +326,10 @@ public class AccountRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl im
             dto.getMinApproval(),
             dto.getMinRemoval(),
             dto.getCosignatoryPublicKeys().stream()
-                .map(
-                    cosigner ->
-                        new PublicAccount(
-                            cosigner, networkType))
+                .map(cosigner -> new PublicAccount(cosigner, networkType))
                 .collect(Collectors.toList()),
             dto.getMultisigPublicKeys().stream()
-                .map(
-                    multisigAccount ->
-                        new PublicAccount(
-                            multisigAccount,
-                            networkType))
+                .map(multisigAccount -> new PublicAccount(multisigAccount, networkType))
                 .collect(Collectors.toList()));
     }
 

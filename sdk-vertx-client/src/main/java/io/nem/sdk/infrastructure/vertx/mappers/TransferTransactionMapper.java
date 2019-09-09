@@ -19,7 +19,7 @@ package io.nem.sdk.infrastructure.vertx.mappers;
 
 import static io.nem.core.utils.MapperUtils.toMosaicId;
 
-import io.nem.sdk.model.account.Address;
+import io.nem.core.utils.MapperUtils;
 import io.nem.sdk.model.account.PublicAccount;
 import io.nem.sdk.model.mosaic.Mosaic;
 import io.nem.sdk.model.transaction.Deadline;
@@ -74,7 +74,7 @@ class TransferTransactionMapper extends AbstractTransactionMapper<TransferTransa
             extractTransactionVersion(transaction.getVersion()),
             deadline,
             transaction.getMaxFee(),
-            Optional.of(Address.createFromEncoded(transaction.getRecipientAddress())),
+            Optional.of(MapperUtils.toAddressFromUnresolved(transaction.getRecipientAddress())),
             Optional.empty(),
             mosaics,
             message,

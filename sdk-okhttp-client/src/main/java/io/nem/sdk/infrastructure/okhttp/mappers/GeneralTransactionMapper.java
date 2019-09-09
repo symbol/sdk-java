@@ -23,7 +23,6 @@ import io.nem.sdk.model.transaction.TransactionType;
 import io.nem.sdk.openapi.okhttp_gson.model.EmbeddedTransactionInfoDTO;
 import io.nem.sdk.openapi.okhttp_gson.model.TransactionInfoDTO;
 import java.util.EnumMap;
-import java.util.HashMap;
 import java.util.Map;
 
 /**

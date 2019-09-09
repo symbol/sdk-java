@@ -58,7 +58,7 @@ public class MosaicRepositoryVertxImplTest extends AbstractVertxRespositoryTest 
         dto.setNames(Collections.singletonList("accountalias"));
 
         MosaicsNamesDTO accountsNamesDTO = new MosaicsNamesDTO();
-        accountsNamesDTO.setAccountNames(Collections.singletonList(dto));
+        accountsNamesDTO.setMosaicNames(Collections.singletonList(dto));
 
         mockRemoteCall(accountsNamesDTO);
 

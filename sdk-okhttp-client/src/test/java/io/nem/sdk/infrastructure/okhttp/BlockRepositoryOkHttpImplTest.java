@@ -27,6 +27,7 @@ import io.nem.sdk.openapi.okhttp_gson.model.BlockInfoDTO;
 import io.nem.sdk.openapi.okhttp_gson.model.BlockMetaDTO;
 import io.nem.sdk.openapi.okhttp_gson.model.MerklePathItem;
 import io.nem.sdk.openapi.okhttp_gson.model.MerkleProofInfoDTO;
+import io.nem.sdk.openapi.okhttp_gson.model.ResolutionStatementBodyDTO;
 import io.nem.sdk.openapi.okhttp_gson.model.ResolutionStatementDTO;
 import io.nem.sdk.openapi.okhttp_gson.model.StatementsDTO;
 import io.nem.sdk.openapi.okhttp_gson.model.TransactionInfoDTO;
@@ -207,24 +208,29 @@ public class BlockRepositoryOkHttpImplTest extends AbstractOkHttpRespositoryTest
 
     @Test
     public void shouldGetBlockReceipts() throws Exception {
+
         resolveNetworkType();
+
         StatementsDTO dto = new StatementsDTO();
         ResolutionStatementDTO addressResolutionStatement = new ResolutionStatementDTO();
-        addressResolutionStatement
-            .setUnresolved("9050B9837EFAB4BBE8A4B9BB32D812F9885C00D8FC1650E142");
-        addressResolutionStatement.setHeight(BigInteger.valueOf(6L));
+
+        ResolutionStatementBodyDTO statement1 = new ResolutionStatementBodyDTO();
+        addressResolutionStatement.setStatement(statement1);
+        statement1.setUnresolved("9050B9837EFAB4BBE8A4B9BB32D812F9885C00D8FC1650E142");
+        statement1.setHeight(BigInteger.valueOf(6L));
         dto.setAddressResolutionStatements(Collections.singletonList(addressResolutionStatement));
 
+        ResolutionStatementBodyDTO statement2 = new ResolutionStatementBodyDTO();
         ResolutionStatementDTO mosaicResolutionStatement = new ResolutionStatementDTO();
-        mosaicResolutionStatement.setHeight(BigInteger.valueOf(7L));
-        mosaicResolutionStatement.setUnresolved(BigInteger.valueOf(9L));
+        mosaicResolutionStatement.setStatement(statement2);
+        statement2.setUnresolved("9");
+        statement2.setHeight(BigInteger.valueOf(7L));
         dto.setMosaicResolutionStatements(Collections.singletonList(mosaicResolutionStatement));
 
         mockRemoteCall(dto);
 
         BigInteger height = BigInteger.valueOf(10L);
-        Statement info = repository.getBlockReceipts(height).toFuture()
-            .get();
+        Statement info = repository.getBlockReceipts(height).toFuture().get();
 
         Assertions.assertNotNull(info);
 

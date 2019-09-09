@@ -88,7 +88,7 @@ public class MosaicRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl imp
         Callable<MosaicsNamesDTO> callback = () -> getClient()
             .getMosaicsNames(mosaicIds);
         return exceptionHandling(
-            call(callback).map(MosaicsNamesDTO::getAccountNames).flatMapIterable(item -> item)
+            call(callback).map(MosaicsNamesDTO::getMosaicNames).flatMapIterable(item -> item)
                 .map(this::toMosaicNames).toList()
                 .toObservable());
     }

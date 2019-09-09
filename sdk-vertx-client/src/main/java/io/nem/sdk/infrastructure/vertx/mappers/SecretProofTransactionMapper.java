@@ -17,7 +17,7 @@
 
 package io.nem.sdk.infrastructure.vertx.mappers;
 
-import io.nem.sdk.model.account.Address;
+import io.nem.core.utils.MapperUtils;
 import io.nem.sdk.model.account.PublicAccount;
 import io.nem.sdk.model.blockchain.NetworkType;
 import io.nem.sdk.model.transaction.Deadline;
@@ -47,7 +47,7 @@ class SecretProofTransactionMapper extends
             deadline,
             transaction.getMaxFee(),
             HashType.rawValueOf(transaction.getHashAlgorithm().getValue()),
-            Address.createFromEncoded(transaction.getRecipientAddress()),
+            MapperUtils.toAddressFromUnresolved(transaction.getRecipientAddress()),
             transaction.getSecret(),
             transaction.getProof(),
             transaction.getSignature(),

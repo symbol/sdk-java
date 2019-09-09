@@ -17,7 +17,8 @@
 
 package io.nem.sdk.infrastructure.okhttp.mappers;
 
-import io.nem.sdk.model.account.Address;
+import static io.nem.core.utils.MapperUtils.toAddressFromUnresolved;
+
 import io.nem.sdk.model.account.PublicAccount;
 import io.nem.sdk.model.blockchain.NetworkType;
 import io.nem.sdk.model.transaction.Deadline;
@@ -47,7 +48,7 @@ class SecretProofTransactionMapper extends
             deadline,
             transaction.getMaxFee(),
             HashType.rawValueOf(transaction.getHashAlgorithm().getValue()),
-            Address.createFromEncoded(transaction.getRecipientAddress()),
+            toAddressFromUnresolved(transaction.getRecipientAddress()),
             transaction.getSecret(),
             transaction.getProof(),
             transaction.getSignature(),

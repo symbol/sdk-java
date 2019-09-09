@@ -55,6 +55,16 @@ public class MapperUtils {
     }
 
     /**
+     * Creates a {@link Address} from an unresolved address.
+     *
+     * @param unresolvedAddress the unresolvedAddress
+     * @return a {@link Address} from the unresolved  address or null if the parameter is null
+     */
+    public static Address toAddressFromUnresolved(String unresolvedAddress) {
+        return unresolvedAddress != null ? Address.createFromEncoded(unresolvedAddress) : null;
+    }
+
+    /**
      * Creates a {@link Address} from the provided raw address.
      *
      * @param rawAddress the rawAddress

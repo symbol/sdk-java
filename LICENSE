@@ -234,7 +234,6 @@ The following components are provided under the Apache License. See project link
 The text of each license is also included at licenses/LICENSE-[project].txt.
 
     (APACHE-2.0 License) rxjava2 (io.reactivex.rxjava2:rxjava:2.1.7 - http://reactivex.io)
-    (APACHE-2.0 License) log4j (org.apache.logging.log4j:log4j-core:2.5 - https://logging.apache.org/log4j/1.2)
     (APACHE-2.0 License) commons-codec (commons-codec:commons-codec:1.11 - https://commons.apache.org/proper/commons-codec)
     (APACHE-2.0 License) commons-lang (commons-lang:commons-lang:2.6 - https://commons.apache.org/proper/commons-lang)
     (APACHE-2.0 License) commons-io (commons-io:commons-io:2.4 - https://commons.apache.org/proper/commons-io)

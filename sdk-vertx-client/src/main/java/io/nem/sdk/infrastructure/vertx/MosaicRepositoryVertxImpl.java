@@ -103,7 +103,7 @@ public class MosaicRepositoryVertxImpl extends AbstractRepositoryVertxImpl imple
         Consumer<Handler<AsyncResult<MosaicsNamesDTO>>> callback = handler -> getClient()
             .getMosaicsNames(mosaicIds, handler);
         return exceptionHandling(
-            call(callback).map(MosaicsNamesDTO::getAccountNames).flatMapIterable(item -> item)
+            call(callback).map(MosaicsNamesDTO::getMosaicNames).flatMapIterable(item -> item)
                 .map(this::toMosaicNames).toList()
                 .toObservable());
     }

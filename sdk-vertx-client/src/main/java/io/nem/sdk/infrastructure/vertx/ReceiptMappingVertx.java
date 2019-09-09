@@ -40,8 +40,10 @@ import io.nem.sdk.openapi.vertx.model.ArtifactExpiryReceiptDTO;
 import io.nem.sdk.openapi.vertx.model.BalanceChangeReceiptDTO;
 import io.nem.sdk.openapi.vertx.model.BalanceTransferReceiptDTO;
 import io.nem.sdk.openapi.vertx.model.InflationReceiptDTO;
+import io.nem.sdk.openapi.vertx.model.ResolutionStatementBodyDTO;
 import io.nem.sdk.openapi.vertx.model.ResolutionStatementDTO;
 import io.nem.sdk.openapi.vertx.model.StatementsDTO;
+import io.nem.sdk.openapi.vertx.model.TransactionStatementBodyDTO;
 import io.nem.sdk.openapi.vertx.model.TransactionStatementDTO;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -75,15 +77,16 @@ public class ReceiptMappingVertx {
 
     public ResolutionStatement<Address> createAddressResolutionStatementFromDto(
         ResolutionStatementDTO receiptDto) {
+        ResolutionStatementBodyDTO statement = receiptDto.getStatement();
         return new ResolutionStatement<>(
-            receiptDto.getHeight(),
-            createAddressFromNumber(receiptDto.getUnresolved()),
-            receiptDto.getResolutionEntries().stream()
+            statement.getHeight(),
+            MapperUtils.toAddressFromUnresolved(statement.getUnresolved().toString()),
+            statement.getResolutionEntries().stream()
                 .map(
                     entry ->
                         new ResolutionEntry<>(
                             new AddressAlias(
-                                createAddressFromNumber(entry.getResolved())),
+                                MapperUtils.toAddress(entry.getResolved().toString())),
                             new ReceiptSource(
                                 entry.getSource().getPrimaryId(),
                                 entry.getSource().getSecondaryId()),
@@ -91,16 +94,12 @@ public class ReceiptMappingVertx {
                 .collect(Collectors.toList()));
     }
 
-    private Address createAddressFromNumber(Object object) {
-        return Address.createFromEncoded(object.toString());
-    }
-
     public ResolutionStatement<MosaicId> createMosaicResolutionStatementFromDto(
         ResolutionStatementDTO receiptDto) {
         return new ResolutionStatement<>(
-            receiptDto.getHeight(),
-            MapperUtils.toMosaicId(receiptDto.getUnresolved().toString()),
-            receiptDto.getResolutionEntries().stream()
+            receiptDto.getStatement().getHeight(),
+            MapperUtils.toMosaicId(receiptDto.getStatement().getUnresolved().toString()),
+            receiptDto.getStatement().getResolutionEntries().stream()
                 .map(entry -> new ResolutionEntry<>(
                     new MosaicAlias(MapperUtils.toMosaicId(entry.getResolved().toString())),
                     new ReceiptSource(
@@ -113,12 +112,13 @@ public class ReceiptMappingVertx {
 
     public TransactionStatement createTransactionStatement(
         TransactionStatementDTO input, NetworkType networkType) {
+        TransactionStatementBodyDTO statement = input.getStatement();
         return new TransactionStatement(
-            input.getHeight(),
+            statement.getHeight(),
             new ReceiptSource(
-                input.getSource().getPrimaryId(),
-                input.getSource().getSecondaryId()),
-            input.getReceipts().stream()
+                statement.getSource().getPrimaryId(),
+                statement.getSource().getSecondaryId()),
+            statement.getReceipts().stream()
                 .map(receipt -> createReceiptFromDto(receipt, networkType))
                 .collect(Collectors.toList()));
     }
@@ -173,7 +173,7 @@ public class ReceiptMappingVertx {
         BalanceTransferReceiptDTO receipt, NetworkType networkType) {
         return new BalanceTransferReceipt<>(
             PublicAccount.createFromPublicKey(receipt.getSenderPublicKey(), networkType),
-            Address.createFromEncoded(receipt.getRecipientAddress()),
+            MapperUtils.toAddressFromUnresolved(receipt.getRecipientAddress()),
             new MosaicId(receipt.getMosaicId()),
             receipt.getAmount(),
             ReceiptType.rawValueOf(receipt.getType().getValue()),

@@ -19,7 +19,6 @@ package io.nem.sdk.model.account;
 import io.nem.core.crypto.Hashes;
 import io.nem.core.utils.ArrayUtils;
 import io.nem.core.utils.Base32Encoder;
-import io.nem.core.utils.ExceptionUtils;
 import io.nem.sdk.model.blockchain.NetworkType;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
@@ -28,6 +27,7 @@ import java.util.Objects;
 import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.binary.Base32;
 import org.apache.commons.codec.binary.Hex;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 
 /**
  * The address structure describes an address with its network.
@@ -92,10 +92,13 @@ public class Address {
      * @return {@link Address}
      */
     public static Address createFromEncoded(String encodedAddress) {
-        return ExceptionUtils.propagate(
-            () ->
-                Address.createFromRawAddress(
-                    new String(new Base32().encode(Hex.decodeHex(encodedAddress)))));
+        try {
+            return Address.createFromRawAddress(
+                new String(new Base32().encode(Hex.decodeHex(encodedAddress))));
+        } catch (DecoderException e) {
+            throw new IllegalArgumentException(
+                encodedAddress + " could not be decoded. " + ExceptionUtils.getMessage(e), e);
+        }
     }
 
     /**
@@ -207,7 +210,8 @@ public class Address {
             return false;
         }
         Address address1 = (Address) o;
-        return Objects.equals(plainAddress, address1.plainAddress) && networkType == address1.networkType;
+        return Objects.equals(plainAddress, address1.plainAddress)
+            && networkType == address1.networkType;
     }
 
     @Override
