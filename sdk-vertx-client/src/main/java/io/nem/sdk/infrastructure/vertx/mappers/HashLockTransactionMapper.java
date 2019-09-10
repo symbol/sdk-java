@@ -24,16 +24,16 @@ import io.nem.sdk.model.blockchain.NetworkType;
 import io.nem.sdk.model.mosaic.Mosaic;
 import io.nem.sdk.model.transaction.Deadline;
 import io.nem.sdk.model.transaction.JsonHelper;
-import io.nem.sdk.model.transaction.LockFundsTransaction;
+import io.nem.sdk.model.transaction.HashLockTransaction;
 import io.nem.sdk.model.transaction.SignedTransaction;
 import io.nem.sdk.model.transaction.Transaction;
 import io.nem.sdk.model.transaction.TransactionInfo;
 import io.nem.sdk.model.transaction.TransactionType;
 import io.nem.sdk.openapi.vertx.model.HashLockTransactionDTO;
 
-class LockFundsTransactionMapper extends AbstractTransactionMapper<HashLockTransactionDTO> {
+class HashLockTransactionMapper extends AbstractTransactionMapper<HashLockTransactionDTO> {
 
-    public LockFundsTransactionMapper(JsonHelper jsonHelper) {
+    public HashLockTransactionMapper(JsonHelper jsonHelper) {
         super(jsonHelper, TransactionType.LOCK, HashLockTransactionDTO.class);
     }
 
@@ -44,7 +44,7 @@ class LockFundsTransactionMapper extends AbstractTransactionMapper<HashLockTrans
         Deadline deadline = new Deadline(transaction.getDeadline());
         NetworkType networkType = extractNetworkType(transaction.getVersion());
         Mosaic mosaic = getMosaic(transaction.getMosaic());
-        return new LockFundsTransaction(
+        return new HashLockTransaction(
             networkType,
             extractTransactionVersion(transaction.getVersion()),
             deadline,

@@ -21,7 +21,7 @@ import io.nem.sdk.model.account.PublicAccount;
 import io.nem.sdk.model.blockchain.NetworkType;
 import io.nem.sdk.model.transaction.Deadline;
 import io.nem.sdk.model.transaction.JsonHelper;
-import io.nem.sdk.model.transaction.ModifyMultisigAccountTransaction;
+import io.nem.sdk.model.transaction.MultisigAccountModificationTransaction;
 import io.nem.sdk.model.transaction.MultisigCosignatoryModification;
 import io.nem.sdk.model.transaction.MultisigCosignatoryModificationType;
 import io.nem.sdk.model.transaction.Transaction;
@@ -32,10 +32,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-class MultisigModificationTransactionMapper extends
+class MultisigAccountModificationTransactionMapper extends
     AbstractTransactionMapper<MultisigAccountModificationTransactionDTO> {
 
-    public MultisigModificationTransactionMapper(JsonHelper jsonHelper) {
+    public MultisigAccountModificationTransactionMapper(JsonHelper jsonHelper) {
         super(jsonHelper, TransactionType.MODIFY_MULTISIG_ACCOUNT,
             MultisigAccountModificationTransactionDTO.class);
     }
@@ -59,7 +59,7 @@ class MultisigModificationTransactionMapper extends
                                     networkType)))
                     .collect(Collectors.toList());
 
-        return new ModifyMultisigAccountTransaction(
+        return new MultisigAccountModificationTransaction(
             networkType,
             extractTransactionVersion(transaction.getVersion()),
             deadline,

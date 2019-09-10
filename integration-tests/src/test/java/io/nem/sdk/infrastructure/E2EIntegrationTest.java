@@ -43,15 +43,15 @@ import io.nem.sdk.model.transaction.CosignatureSignedTransaction;
 import io.nem.sdk.model.transaction.CosignatureTransaction;
 import io.nem.sdk.model.transaction.Deadline;
 import io.nem.sdk.model.transaction.HashType;
-import io.nem.sdk.model.transaction.LockFundsTransaction;
-import io.nem.sdk.model.transaction.ModifyMultisigAccountTransaction;
+import io.nem.sdk.model.transaction.HashLockTransaction;
+import io.nem.sdk.model.transaction.MultisigAccountModificationTransaction;
 import io.nem.sdk.model.transaction.MosaicAliasTransaction;
 import io.nem.sdk.model.transaction.MosaicDefinitionTransaction;
 import io.nem.sdk.model.transaction.MosaicSupplyChangeTransaction;
 import io.nem.sdk.model.transaction.MultisigCosignatoryModification;
 import io.nem.sdk.model.transaction.MultisigCosignatoryModificationType;
 import io.nem.sdk.model.transaction.PlainMessage;
-import io.nem.sdk.model.transaction.RegisterNamespaceTransaction;
+import io.nem.sdk.model.transaction.NamespaceRegistrationTransaction;
 import io.nem.sdk.model.transaction.SecretLockTransaction;
 import io.nem.sdk.model.transaction.SecretProofTransaction;
 import io.nem.sdk.model.transaction.SignedTransaction;
@@ -217,18 +217,18 @@ class E2EIntegrationTest extends BaseIntegrationTest {
         String namespaceName =
             "test-root-namespace-" + new Double(Math.floor(Math.random() * 10000)).intValue();
 
-        RegisterNamespaceTransaction registerNamespaceTransaction =
-            RegisterNamespaceTransaction.createRootNamespace(
+        NamespaceRegistrationTransaction namespaceRegistrationTransaction =
+            NamespaceRegistrationTransaction.createRootNamespace(
                 new Deadline(2, HOURS),
                 BigInteger.ZERO,
                 namespaceName,
                 BigInteger.valueOf(100),
                 NetworkType.MIJIN_TEST);
 
-        this.rootNamespaceId = registerNamespaceTransaction.getNamespaceId();
+        this.rootNamespaceId = namespaceRegistrationTransaction.getNamespaceId();
 
         SignedTransaction signedTransaction =
-            this.account.sign(registerNamespaceTransaction, generationHash);
+            this.account.sign(namespaceRegistrationTransaction, generationHash);
 
         TransactionAnnounceResponse transactionAnnounceResponse =
             getTransactionRepository(type).announce(signedTransaction).toFuture().get();
@@ -245,22 +245,22 @@ class E2EIntegrationTest extends BaseIntegrationTest {
         String namespaceName =
             "test-root-namespace-" + new Double(Math.floor(Math.random() * 10000)).intValue();
 
-        RegisterNamespaceTransaction registerNamespaceTransaction =
-            RegisterNamespaceTransaction.createRootNamespace(
+        NamespaceRegistrationTransaction namespaceRegistrationTransaction =
+            NamespaceRegistrationTransaction.createRootNamespace(
                 new Deadline(2, HOURS),
                 BigInteger.ZERO,
                 namespaceName,
                 BigInteger.valueOf(100),
                 NetworkType.MIJIN_TEST);
 
-        this.rootNamespaceId = registerNamespaceTransaction.getNamespaceId();
+        this.rootNamespaceId = namespaceRegistrationTransaction.getNamespaceId();
 
         AggregateTransaction aggregateTransaction =
             AggregateTransaction.createComplete(
                 new Deadline(2, HOURS),
                 BigInteger.ZERO,
                 Collections.singletonList(
-                    registerNamespaceTransaction.toAggregate(this.account.getPublicAccount())),
+                    namespaceRegistrationTransaction.toAggregate(this.account.getPublicAccount())),
                 NetworkType.MIJIN_TEST);
 
         SignedTransaction signedTransaction = this.account
@@ -283,22 +283,22 @@ class E2EIntegrationTest extends BaseIntegrationTest {
             "test-root-namespace-for-address-alias-" + new Double(Math.floor(Math.random() * 10000))
                 .intValue();
 
-        RegisterNamespaceTransaction registerNamespaceTransaction =
-            RegisterNamespaceTransaction.createRootNamespace(
+        NamespaceRegistrationTransaction namespaceRegistrationTransaction =
+            NamespaceRegistrationTransaction.createRootNamespace(
                 new Deadline(2, HOURS),
                 BigInteger.ZERO,
                 namespaceName,
                 BigInteger.valueOf(100),
                 NetworkType.MIJIN_TEST);
 
-        this.rootNamespaceId = registerNamespaceTransaction.getNamespaceId();
+        this.rootNamespaceId = namespaceRegistrationTransaction.getNamespaceId();
 
         AggregateTransaction aggregateTransaction =
             AggregateTransaction.createComplete(
                 new Deadline(2, HOURS),
                 BigInteger.ZERO,
                 Collections.singletonList(
-                    registerNamespaceTransaction.toAggregate(this.account.getPublicAccount())),
+                    namespaceRegistrationTransaction.toAggregate(this.account.getPublicAccount())),
                 NetworkType.MIJIN_TEST);
 
         SignedTransaction signedTransaction = this.account
@@ -311,7 +311,7 @@ class E2EIntegrationTest extends BaseIntegrationTest {
         this.validateTransactionAnnounceCorrectly(
             this.account.getAddress(), signedTransaction.getHash(), type);
 
-        this.rootNamespaceId = registerNamespaceTransaction.getNamespaceId();
+        this.rootNamespaceId = namespaceRegistrationTransaction.getNamespaceId();
 
         AddressAliasTransaction addressAliasTransaction =
             AddressAliasTransaction.create(
@@ -364,8 +364,8 @@ class E2EIntegrationTest extends BaseIntegrationTest {
         String namespaceName =
             "test-sub-namespace-" + new Double(Math.floor(Math.random() * 10000)).intValue();
 
-        RegisterNamespaceTransaction registerNamespaceTransaction =
-            RegisterNamespaceTransaction.createSubNamespace(
+        NamespaceRegistrationTransaction namespaceRegistrationTransaction =
+            NamespaceRegistrationTransaction.createSubNamespace(
                 new Deadline(2, HOURS),
                 BigInteger.ZERO,
                 namespaceName,
@@ -373,7 +373,7 @@ class E2EIntegrationTest extends BaseIntegrationTest {
                 NetworkType.MIJIN_TEST);
 
         SignedTransaction signedTransaction =
-            this.account.sign(registerNamespaceTransaction, generationHash);
+            this.account.sign(namespaceRegistrationTransaction, generationHash);
 
         TransactionAnnounceResponse transactionAnnounceResponse =
             getTransactionRepository(type).announce(signedTransaction).toFuture().get();
@@ -393,8 +393,8 @@ class E2EIntegrationTest extends BaseIntegrationTest {
         String namespaceName =
             "test-sub-namespace-" + new Double(Math.floor(Math.random() * 10000)).intValue();
 
-        RegisterNamespaceTransaction registerNamespaceTransaction =
-            RegisterNamespaceTransaction.createSubNamespace(
+        NamespaceRegistrationTransaction namespaceRegistrationTransaction =
+            NamespaceRegistrationTransaction.createSubNamespace(
                 new Deadline(2, HOURS),
                 BigInteger.ZERO,
                 namespaceName,
@@ -406,7 +406,7 @@ class E2EIntegrationTest extends BaseIntegrationTest {
                 new Deadline(2, HOURS),
                 BigInteger.ZERO,
                 Collections.singletonList(
-                    registerNamespaceTransaction.toAggregate(this.account.getPublicAccount())),
+                    namespaceRegistrationTransaction.toAggregate(this.account.getPublicAccount())),
                 NetworkType.MIJIN_TEST);
 
         SignedTransaction signedTransaction = this.account
@@ -464,22 +464,22 @@ class E2EIntegrationTest extends BaseIntegrationTest {
 
         MosaicId mosaicId = createMosaic(type);
 
-        RegisterNamespaceTransaction registerNamespaceTransaction =
-            RegisterNamespaceTransaction.createRootNamespace(
+        NamespaceRegistrationTransaction namespaceRegistrationTransaction =
+            NamespaceRegistrationTransaction.createRootNamespace(
                 new Deadline(2, HOURS),
                 BigInteger.ZERO,
                 namespaceName,
                 BigInteger.valueOf(100),
                 NetworkType.MIJIN_TEST);
 
-        this.rootNamespaceId = registerNamespaceTransaction.getNamespaceId();
+        this.rootNamespaceId = namespaceRegistrationTransaction.getNamespaceId();
 
         AggregateTransaction aggregateTransaction =
             AggregateTransaction.createComplete(
                 new Deadline(2, HOURS),
                 BigInteger.ZERO,
                 Collections.singletonList(
-                    registerNamespaceTransaction.toAggregate(this.account.getPublicAccount())),
+                    namespaceRegistrationTransaction.toAggregate(this.account.getPublicAccount())),
                 NetworkType.MIJIN_TEST);
 
         SignedTransaction signedTransaction = this.account
@@ -492,7 +492,7 @@ class E2EIntegrationTest extends BaseIntegrationTest {
         this.validateTransactionAnnounceCorrectly(
             this.account.getAddress(), signedTransaction.getHash(), type);
 
-        this.rootNamespaceId = registerNamespaceTransaction.getNamespaceId();
+        this.rootNamespaceId = namespaceRegistrationTransaction.getNamespaceId();
 
         MosaicAliasTransaction addressAliasTransaction =
             MosaicAliasTransaction.create(
@@ -662,8 +662,8 @@ class E2EIntegrationTest extends BaseIntegrationTest {
                 NetworkType.MIJIN_TEST);
         SignedTransaction signedTransaction = this.account
             .sign(aggregateTransaction, generationHash);
-        LockFundsTransaction lockFundstx =
-            LockFundsTransaction.create(
+        HashLockTransaction lockFundstx =
+            HashLockTransaction.create(
                 new Deadline(2, HOURS),
                 NetworkCurrencyMosaic.createRelative(BigInteger.valueOf(10)),
                 BigInteger.valueOf(100),
@@ -688,8 +688,8 @@ class E2EIntegrationTest extends BaseIntegrationTest {
                 NetworkType.MIJIN_TEST);
         SignedTransaction signedTransaction = this.account
             .sign(aggregateTransaction, generationHash);
-        LockFundsTransaction lockFundstx =
-            LockFundsTransaction.create(
+        HashLockTransaction lockFundstx =
+            HashLockTransaction.create(
                 new Deadline(2, HOURS),
                 NetworkCurrencyMosaic.createRelative(BigInteger.valueOf(10)),
                 BigInteger.valueOf(100),
@@ -878,8 +878,8 @@ class E2EIntegrationTest extends BaseIntegrationTest {
     @EnumSource(RepositoryType.class)
     void shouldSignModifyMultisigAccountTransactionWithCosignatories(RepositoryType type)
         throws ExecutionException, InterruptedException, TimeoutException {
-        ModifyMultisigAccountTransaction modifyMultisigAccountTransaction =
-            ModifyMultisigAccountTransaction.create(
+        MultisigAccountModificationTransaction multisigAccountModificationTransaction =
+            MultisigAccountModificationTransaction.create(
                 new Deadline(2, HOURS),
                 (byte) 0,
                 (byte) 0,
@@ -893,7 +893,7 @@ class E2EIntegrationTest extends BaseIntegrationTest {
                 new Deadline(2, HOURS),
                 BigInteger.ZERO,
                 Collections.singletonList(
-                    modifyMultisigAccountTransaction.toAggregate(
+                    multisigAccountModificationTransaction.toAggregate(
                         this.multisigAccount.getPublicAccount())),
                 NetworkType.MIJIN_TEST);
 
@@ -903,8 +903,8 @@ class E2EIntegrationTest extends BaseIntegrationTest {
                 Collections.singletonList(this.cosignatoryAccount2),
                 generationHash);
 
-        LockFundsTransaction lockFundsTransaction =
-            LockFundsTransaction.create(
+        HashLockTransaction hashLockTransaction =
+            HashLockTransaction.create(
                 new Deadline(2, HOURS),
                 NetworkCurrencyMosaic.createRelative(BigInteger.valueOf(10)),
                 BigInteger.valueOf(100),
@@ -912,7 +912,7 @@ class E2EIntegrationTest extends BaseIntegrationTest {
                 NetworkType.MIJIN_TEST);
 
         SignedTransaction lockFundsSignedTransaction =
-            this.cosignatoryAccount.sign(lockFundsTransaction, generationHash);
+            this.cosignatoryAccount.sign(hashLockTransaction, generationHash);
 
         getTransactionRepository(type).announce(lockFundsSignedTransaction).toFuture().get();
 
@@ -948,8 +948,8 @@ class E2EIntegrationTest extends BaseIntegrationTest {
         SignedTransaction signedTransaction =
             this.cosignatoryAccount.sign(aggregateTransaction, generationHash);
 
-        LockFundsTransaction lockFundsTransaction =
-            LockFundsTransaction.create(
+        HashLockTransaction hashLockTransaction =
+            HashLockTransaction.create(
                 new Deadline(2, HOURS),
                 NetworkCurrencyMosaic.createRelative(BigInteger.valueOf(10)),
                 BigInteger.valueOf(100),
@@ -957,7 +957,7 @@ class E2EIntegrationTest extends BaseIntegrationTest {
                 NetworkType.MIJIN_TEST);
 
         SignedTransaction lockFundsSignedTransaction =
-            this.cosignatoryAccount.sign(lockFundsTransaction, generationHash);
+            this.cosignatoryAccount.sign(hashLockTransaction, generationHash);
 
         getTransactionRepository(type).announce(lockFundsSignedTransaction).toFuture().get();
 

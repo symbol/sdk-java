@@ -40,12 +40,12 @@ public class GeneralTransactionMapper implements TransactionMapper {
         this.jsonHelper = jsonHelper;
         register(new AccountLinkTransactionMapper(jsonHelper));
         register(new AddressAliasTransactionMapper(jsonHelper));
-        register(new LockFundsTransactionMapper(jsonHelper));
+        register(new HashLockTransactionMapper(jsonHelper));
         register(new MosaicAliasTransactionMapper(jsonHelper));
-        register(new MosaicCreationTransactionMapper(jsonHelper));
+        register(new MosaicDefinitionTransactionMapper(jsonHelper));
         register(new MosaicSupplyChangeTransactionMapper(jsonHelper));
-        register(new MultisigModificationTransactionMapper(jsonHelper));
-        register(new NamespaceCreationTransactionMapper(jsonHelper));
+        register(new MultisigAccountModificationTransactionMapper(jsonHelper));
+        register(new NamespaceRegistrationTransactionMapper(jsonHelper));
         register(new SecretLockTransactionMapper(jsonHelper));
         register(new SecretProofTransactionMapper(jsonHelper));
         register(new TransferTransactionMapper(jsonHelper));

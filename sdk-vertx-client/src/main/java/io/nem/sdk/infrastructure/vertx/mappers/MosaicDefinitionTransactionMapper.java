@@ -30,10 +30,10 @@ import io.nem.sdk.model.transaction.TransactionInfo;
 import io.nem.sdk.model.transaction.TransactionType;
 import io.nem.sdk.openapi.vertx.model.MosaicDefinitionTransactionDTO;
 
-class MosaicCreationTransactionMapper extends
+class MosaicDefinitionTransactionMapper extends
     AbstractTransactionMapper<MosaicDefinitionTransactionDTO> {
 
-    public MosaicCreationTransactionMapper(JsonHelper jsonHelper) {
+    public MosaicDefinitionTransactionMapper(JsonHelper jsonHelper) {
         super(jsonHelper, TransactionType.MOSAIC_DEFINITION, MosaicDefinitionTransactionDTO.class);
     }
 

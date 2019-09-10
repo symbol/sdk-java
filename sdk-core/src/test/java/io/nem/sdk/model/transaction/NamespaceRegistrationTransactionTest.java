@@ -31,7 +31,7 @@ import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-class RegisterNamespaceTransactionTest {
+class NamespaceRegistrationTransactionTest {
 
     private final String publicKey =
         "b4f12e7c9f6946091e2cb8b6d3a12b50d17ccbbf646386ea27ce2946a7423dcf";
@@ -43,8 +43,8 @@ class RegisterNamespaceTransactionTest {
     @Test
     void createANamespaceCreationRootNamespaceTransactionViaStaticConstructor() {
         NamespaceId namespaceId = NamespaceId.createFromName("root-test-namespace");
-        RegisterNamespaceTransaction registerNamespaceTransaction =
-            RegisterNamespaceTransaction.createRootNamespace(
+        NamespaceRegistrationTransaction namespaceRegistrationTransaction =
+            NamespaceRegistrationTransaction.createRootNamespace(
                 new Deadline(2, ChronoUnit.HOURS),
                 BigInteger.ZERO,
                 "root-test-namespace",
@@ -52,28 +52,28 @@ class RegisterNamespaceTransactionTest {
                 NetworkType.MIJIN_TEST);
 
         SignedTransaction signedTransaction =
-            registerNamespaceTransaction.signWith(testAccount, generationHash);
+            namespaceRegistrationTransaction.signWith(testAccount, generationHash);
 
         assertEquals("00E803000000000000CFCBE72D994BE69B13726F6F742D746573742D6E616D657370616365",
             signedTransaction.getPayload().substring(240)
         );
-        assertEquals(NetworkType.MIJIN_TEST, registerNamespaceTransaction.getNetworkType());
-        assertTrue(1 == registerNamespaceTransaction.getVersion());
+        assertEquals(NetworkType.MIJIN_TEST, namespaceRegistrationTransaction.getNetworkType());
+        assertTrue(1 == namespaceRegistrationTransaction.getVersion());
         assertTrue(
             LocalDateTime.now()
-                .isBefore(registerNamespaceTransaction.getDeadline().getLocalDateTime()));
-        assertEquals(BigInteger.valueOf(0), registerNamespaceTransaction.getFee());
-        assertEquals("root-test-namespace", registerNamespaceTransaction.getNamespaceName());
-        assertEquals(NamespaceType.ROOT_NAMESPACE, registerNamespaceTransaction.getNamespaceType());
-        assertEquals(BigInteger.valueOf(1000), registerNamespaceTransaction.getDuration().get());
+                .isBefore(namespaceRegistrationTransaction.getDeadline().getLocalDateTime()));
+        assertEquals(BigInteger.valueOf(0), namespaceRegistrationTransaction.getFee());
+        assertEquals("root-test-namespace", namespaceRegistrationTransaction.getNamespaceName());
+        assertEquals(NamespaceType.ROOT_NAMESPACE, namespaceRegistrationTransaction.getNamespaceType());
+        assertEquals(BigInteger.valueOf(1000), namespaceRegistrationTransaction.getDuration().get());
         assertEquals(
-            namespaceId.getIdAsHex(), registerNamespaceTransaction.getNamespaceId().getIdAsHex());
+            namespaceId.getIdAsHex(), namespaceRegistrationTransaction.getNamespaceId().getIdAsHex());
     }
 
     @Test
     void createANamespaceCreationSubNamespaceTransactionViaStaticConstructor() {
-        RegisterNamespaceTransaction registerNamespaceTransaction =
-            RegisterNamespaceTransaction.createSubNamespace(
+        NamespaceRegistrationTransaction namespaceRegistrationTransaction =
+            NamespaceRegistrationTransaction.createSubNamespace(
                 new Deadline(2, ChronoUnit.HOURS),
                 BigInteger.ZERO,
                 "root-test-namespace",
@@ -81,29 +81,29 @@ class RegisterNamespaceTransactionTest {
                 NetworkType.MIJIN_TEST);
 
         SignedTransaction signedTransaction =
-            registerNamespaceTransaction.signWith(testAccount, generationHash);
+            namespaceRegistrationTransaction.signWith(testAccount, generationHash);
 
         assertEquals(
             "014DF55E7F6D8FB7FF924207DF2CA1BBF313726F6F742D746573742D6E616D657370616365",
             signedTransaction.getPayload().substring(240));
-        assertEquals(NetworkType.MIJIN_TEST, registerNamespaceTransaction.getNetworkType());
-        assertTrue(1 == registerNamespaceTransaction.getVersion());
+        assertEquals(NetworkType.MIJIN_TEST, namespaceRegistrationTransaction.getNetworkType());
+        assertTrue(1 == namespaceRegistrationTransaction.getVersion());
         assertTrue(
             LocalDateTime.now()
-                .isBefore(registerNamespaceTransaction.getDeadline().getLocalDateTime()));
-        assertEquals(BigInteger.valueOf(0), registerNamespaceTransaction.getFee());
-        assertEquals("root-test-namespace", registerNamespaceTransaction.getNamespaceName());
-        assertEquals(NamespaceType.SUB_NAMESPACE, registerNamespaceTransaction.getNamespaceType());
-        assertEquals(Optional.empty(), registerNamespaceTransaction.getDuration());
+                .isBefore(namespaceRegistrationTransaction.getDeadline().getLocalDateTime()));
+        assertEquals(BigInteger.valueOf(0), namespaceRegistrationTransaction.getFee());
+        assertEquals("root-test-namespace", namespaceRegistrationTransaction.getNamespaceName());
+        assertEquals(NamespaceType.SUB_NAMESPACE, namespaceRegistrationTransaction.getNamespaceType());
+        assertEquals(Optional.empty(), namespaceRegistrationTransaction.getDuration());
         assertEquals(
             new BigInteger("-883935687755742574"),
-            registerNamespaceTransaction.getNamespaceId().getId());
+            namespaceRegistrationTransaction.getNamespaceId().getId());
     }
 
     @Test
     void createANamespaceCreationSubNamespaceWithParentIdTransactionViaStaticConstructor() {
-        RegisterNamespaceTransaction registerNamespaceTransaction =
-            RegisterNamespaceTransaction.createSubNamespace(
+        NamespaceRegistrationTransaction namespaceRegistrationTransaction =
+            NamespaceRegistrationTransaction.createSubNamespace(
                 new Deadline(2, ChronoUnit.HOURS),
                 BigInteger.ZERO,
                 "root-test-namespace",
@@ -111,25 +111,25 @@ class RegisterNamespaceTransactionTest {
                 NetworkType.MIJIN_TEST);
 
         SignedTransaction signedTransaction =
-            registerNamespaceTransaction.signWith(testAccount, generationHash);
+            namespaceRegistrationTransaction.signWith(testAccount, generationHash);
 
         assertEquals("014DF55E7F6D8FB7FF924207DF2CA1BBF313726F6F742D746573742D6E616D657370616365",
             signedTransaction.getPayload().substring(240));
-        assertEquals(NetworkType.MIJIN_TEST, registerNamespaceTransaction.getNetworkType());
-        assertTrue(1 == registerNamespaceTransaction.getVersion());
+        assertEquals(NetworkType.MIJIN_TEST, namespaceRegistrationTransaction.getNetworkType());
+        assertTrue(1 == namespaceRegistrationTransaction.getVersion());
         assertTrue(
             LocalDateTime.now()
-                .isBefore(registerNamespaceTransaction.getDeadline().getLocalDateTime()));
-        assertEquals(BigInteger.valueOf(0), registerNamespaceTransaction.getFee());
-        assertEquals("root-test-namespace", registerNamespaceTransaction.getNamespaceName());
-        assertEquals(NamespaceType.SUB_NAMESPACE, registerNamespaceTransaction.getNamespaceType());
-        assertEquals(Optional.empty(), registerNamespaceTransaction.getDuration());
+                .isBefore(namespaceRegistrationTransaction.getDeadline().getLocalDateTime()));
+        assertEquals(BigInteger.valueOf(0), namespaceRegistrationTransaction.getFee());
+        assertEquals("root-test-namespace", namespaceRegistrationTransaction.getNamespaceName());
+        assertEquals(NamespaceType.SUB_NAMESPACE, namespaceRegistrationTransaction.getNamespaceType());
+        assertEquals(Optional.empty(), namespaceRegistrationTransaction.getDuration());
         assertEquals(
             new BigInteger("-883935687755742574"),
-            registerNamespaceTransaction.getNamespaceId().getId());
+            namespaceRegistrationTransaction.getNamespaceId().getId());
         assertEquals(
             new BigInteger("18426354100860810573"),
-            registerNamespaceTransaction.getParentId().get().getId());
+            namespaceRegistrationTransaction.getParentId().get().getId());
     }
 
     @Test
@@ -138,15 +138,15 @@ class RegisterNamespaceTransactionTest {
         // Generated at nem2-library-js/test/transactions/RegisterNamespaceTransaction.spec.js
         String expected =
             "9600000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001904e41000000000000000001000000000000000010270000000000007ee9b3b8afdf53c00c6e65776e616d657370616365";
-        RegisterNamespaceTransaction registerNamespaceTransaction =
-            RegisterNamespaceTransaction.createRootNamespace(
+        NamespaceRegistrationTransaction namespaceRegistrationTransaction =
+            NamespaceRegistrationTransaction.createRootNamespace(
                 new FakeDeadline(),
                 BigInteger.ZERO,
                 "newnamespace",
                 BigInteger.valueOf(10000),
                 NetworkType.MIJIN_TEST);
 
-        byte[] actual = registerNamespaceTransaction.generateBytes();
+        byte[] actual = namespaceRegistrationTransaction.generateBytes();
         assertEquals(expected, HexEncoder.getString(actual));
     }
 
@@ -156,15 +156,15 @@ class RegisterNamespaceTransactionTest {
         // Generated at nem2-library-js/test/transactions/RegisterNamespaceTransaction.spec.js
         String expected =
             "9600000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001904e4100000000000000000100000000000000017ee9b3b8afdf53400312981b7879a3f10c7375626e616d657370616365";
-        RegisterNamespaceTransaction registerNamespaceTransaction =
-            RegisterNamespaceTransaction.createSubNamespace(
+        NamespaceRegistrationTransaction namespaceRegistrationTransaction =
+            NamespaceRegistrationTransaction.createSubNamespace(
                 new FakeDeadline(),
                 BigInteger.ZERO,
                 "subnamespace",
                 NamespaceId.createFromId(new BigInteger("4635294387305441662")),
                 NetworkType.MIJIN_TEST);
 
-        byte[] actual = registerNamespaceTransaction.generateBytes();
+        byte[] actual = namespaceRegistrationTransaction.generateBytes();
         assertEquals(expected, HexEncoder.getString(actual));
     }
 }

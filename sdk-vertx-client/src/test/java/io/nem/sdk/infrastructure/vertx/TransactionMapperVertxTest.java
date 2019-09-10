@@ -29,12 +29,12 @@ import io.nem.sdk.model.namespace.NamespaceType;
 import io.nem.sdk.model.transaction.AddressAliasTransaction;
 import io.nem.sdk.model.transaction.AggregateTransaction;
 import io.nem.sdk.model.transaction.JsonHelper;
-import io.nem.sdk.model.transaction.LockFundsTransaction;
-import io.nem.sdk.model.transaction.ModifyMultisigAccountTransaction;
+import io.nem.sdk.model.transaction.HashLockTransaction;
+import io.nem.sdk.model.transaction.MultisigAccountModificationTransaction;
 import io.nem.sdk.model.transaction.MosaicAliasTransaction;
 import io.nem.sdk.model.transaction.MosaicDefinitionTransaction;
 import io.nem.sdk.model.transaction.MosaicSupplyChangeTransaction;
-import io.nem.sdk.model.transaction.RegisterNamespaceTransaction;
+import io.nem.sdk.model.transaction.NamespaceRegistrationTransaction;
 import io.nem.sdk.model.transaction.SecretLockTransaction;
 import io.nem.sdk.model.transaction.SecretProofTransaction;
 import io.nem.sdk.model.transaction.Transaction;
@@ -373,17 +373,17 @@ public class TransactionMapperVertxTest {
         if (transaction.getType() == TransactionType.TRANSFER) {
             validateTransferTx((TransferTransaction) transaction, transactionDTO);
         } else if (transaction.getType() == TransactionType.REGISTER_NAMESPACE) {
-            validateNamespaceCreationTx((RegisterNamespaceTransaction) transaction, transactionDTO);
+            validateNamespaceCreationTx((NamespaceRegistrationTransaction) transaction, transactionDTO);
         } else if (transaction.getType() == TransactionType.MOSAIC_DEFINITION) {
             validateMosaicCreationTx((MosaicDefinitionTransaction) transaction, transactionDTO);
         } else if (transaction.getType() == TransactionType.MOSAIC_SUPPLY_CHANGE) {
             validateMosaicSupplyChangeTx((MosaicSupplyChangeTransaction) transaction,
                 transactionDTO);
         } else if (transaction.getType() == TransactionType.MODIFY_MULTISIG_ACCOUNT) {
-            validateMultisigModificationTx((ModifyMultisigAccountTransaction) transaction,
+            validateMultisigModificationTx((MultisigAccountModificationTransaction) transaction,
                 transactionDTO);
         } else if (transaction.getType() == TransactionType.LOCK) {
-            validateLockFundsTx((LockFundsTransaction) transaction, transactionDTO);
+            validateLockFundsTx((HashLockTransaction) transaction, transactionDTO);
         } else if (transaction.getType() == TransactionType.SECRET_LOCK) {
             validateSecretLockTx((SecretLockTransaction) transaction, transactionDTO);
         } else if (transaction.getType() == TransactionType.SECRET_PROOF) {
@@ -537,7 +537,7 @@ public class TransactionMapperVertxTest {
     }
 
     void validateNamespaceCreationTx(
-        RegisterNamespaceTransaction transaction, TransactionInfoDTO transactionDTO) {
+        NamespaceRegistrationTransaction transaction, TransactionInfoDTO transactionDTO) {
 
         NamespaceRegistrationTransactionDTO registerNamespaceTransaction = jsonHelper
             .convert(transactionDTO.getTransaction(), NamespaceRegistrationTransactionDTO.class);
@@ -594,7 +594,7 @@ public class TransactionMapperVertxTest {
     }
 
     void validateMultisigModificationTx(
-        ModifyMultisigAccountTransaction transaction, TransactionInfoDTO transactionDTO) {
+        MultisigAccountModificationTransaction transaction, TransactionInfoDTO transactionDTO) {
 
         MultisigAccountModificationTransactionDTO modifyMultisigAccountTransaction = jsonHelper
             .convert(transactionDTO.getTransaction(),
@@ -616,7 +616,7 @@ public class TransactionMapperVertxTest {
                 .getValue(), transaction.getModifications().get(0).getType().getValue());
     }
 
-    void validateLockFundsTx(LockFundsTransaction transaction, TransactionInfoDTO transactionDTO) {
+    void validateLockFundsTx(HashLockTransaction transaction, TransactionInfoDTO transactionDTO) {
 
         HashLockTransactionDTO hashLockTransactionDTO = jsonHelper
             .convert(transactionDTO.getTransaction(), HashLockTransactionDTO.class);

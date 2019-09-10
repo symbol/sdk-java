@@ -31,7 +31,7 @@ import io.nem.sdk.model.transaction.TransactionType;
 import io.nem.sdk.openapi.vertx.model.AddressAliasTransactionDTO;
 import java.util.Optional;
 
-public class AddressAliasTransactionMapper extends
+class AddressAliasTransactionMapper extends
     AbstractTransactionMapper<AddressAliasTransactionDTO> {
 
 

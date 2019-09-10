@@ -41,14 +41,14 @@ import org.apache.commons.lang3.Validate;
  *
  * @since 1.0
  */
-public class ModifyMultisigAccountTransaction extends Transaction {
+public class MultisigAccountModificationTransaction extends Transaction {
 
     private final byte minApprovalDelta;
     private final byte minRemovalDelta;
     private final List<MultisigCosignatoryModification> modifications;
 
     @SuppressWarnings("squid:S00107")
-    public ModifyMultisigAccountTransaction(
+    public MultisigAccountModificationTransaction(
         NetworkType networkType,
         Integer version,
         Deadline deadline,
@@ -72,7 +72,7 @@ public class ModifyMultisigAccountTransaction extends Transaction {
             Optional.of(transactionInfo));
     }
 
-    public ModifyMultisigAccountTransaction(
+    public MultisigAccountModificationTransaction(
         NetworkType networkType,
         Integer version,
         Deadline deadline,
@@ -94,7 +94,7 @@ public class ModifyMultisigAccountTransaction extends Transaction {
     }
 
     @SuppressWarnings("squid:S00107")
-    private ModifyMultisigAccountTransaction(
+    private MultisigAccountModificationTransaction(
         NetworkType networkType,
         Integer version,
         Deadline deadline,
@@ -128,15 +128,15 @@ public class ModifyMultisigAccountTransaction extends Transaction {
      * @param minRemovalDelta The min removal relative change.
      * @param modifications The list of modifications.
      * @param networkType The network type.
-     * @return {@link ModifyMultisigAccountTransaction}
+     * @return {@link MultisigAccountModificationTransaction}
      */
-    public static ModifyMultisigAccountTransaction create(
+    public static MultisigAccountModificationTransaction create(
         Deadline deadline,
         byte minApprovalDelta,
         byte minRemovalDelta,
         List<MultisigCosignatoryModification> modifications,
         NetworkType networkType) {
-        return new ModifyMultisigAccountTransaction(
+        return new MultisigAccountModificationTransaction(
             networkType,
             TransactionVersion.MODIFY_MULTISIG_ACCOUNT.getValue(),
             deadline,

@@ -24,17 +24,17 @@ import io.nem.sdk.model.account.PublicAccount;
 import io.nem.sdk.model.namespace.NamespaceType;
 import io.nem.sdk.model.transaction.Deadline;
 import io.nem.sdk.model.transaction.JsonHelper;
-import io.nem.sdk.model.transaction.RegisterNamespaceTransaction;
+import io.nem.sdk.model.transaction.NamespaceRegistrationTransaction;
 import io.nem.sdk.model.transaction.Transaction;
 import io.nem.sdk.model.transaction.TransactionInfo;
 import io.nem.sdk.model.transaction.TransactionType;
 import io.nem.sdk.openapi.okhttp_gson.model.NamespaceRegistrationTransactionDTO;
 import java.util.Optional;
 
-class NamespaceCreationTransactionMapper extends
+class NamespaceRegistrationTransactionMapper extends
     AbstractTransactionMapper<NamespaceRegistrationTransactionDTO> {
 
-    public NamespaceCreationTransactionMapper(JsonHelper jsonHelper) {
+    public NamespaceRegistrationTransactionMapper(JsonHelper jsonHelper) {
         super(jsonHelper, TransactionType.REGISTER_NAMESPACE,
             NamespaceRegistrationTransactionDTO.class);
     }
@@ -47,7 +47,7 @@ class NamespaceCreationTransactionMapper extends
         NamespaceType namespaceType = NamespaceType
             .rawValueOf(transaction.getRegistrationType().getValue());
 
-        return new RegisterNamespaceTransaction(
+        return new NamespaceRegistrationTransaction(
             extractNetworkType(transaction.getVersion()),
             extractTransactionVersion(transaction.getVersion()),
             deadline,

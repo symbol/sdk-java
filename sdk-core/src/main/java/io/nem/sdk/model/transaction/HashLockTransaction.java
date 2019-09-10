@@ -38,18 +38,18 @@ import org.bouncycastle.util.encoders.Hex;
 /**
  * Lock funds transaction is used before sending an Aggregate bonded transaction, as a deposit to
  * announce the transaction. When aggregate bonded transaction is confirmed funds are returned to
- * LockFundsTransaction signer.
+ * HashLockTransaction signer.
  *
  * @since 1.0
  */
-public class LockFundsTransaction extends Transaction {
+public class HashLockTransaction extends Transaction {
 
     private final Mosaic mosaic;
     private final BigInteger duration;
     private final SignedTransaction signedTransaction;
 
     @SuppressWarnings("squid:S00107")
-    public LockFundsTransaction(
+    public HashLockTransaction(
         NetworkType networkType,
         Integer version,
         Deadline deadline,
@@ -73,7 +73,7 @@ public class LockFundsTransaction extends Transaction {
             Optional.of(transactionInfo));
     }
 
-    public LockFundsTransaction(
+    public HashLockTransaction(
         NetworkType networkType,
         Integer version,
         Deadline deadline,
@@ -95,7 +95,7 @@ public class LockFundsTransaction extends Transaction {
     }
 
     @SuppressWarnings("squid:S00107")
-    private LockFundsTransaction(
+    private HashLockTransaction(
         NetworkType networkType,
         Integer version,
         Deadline deadline,
@@ -137,13 +137,13 @@ public class LockFundsTransaction extends Transaction {
      * @param networkType The network type.
      * @return a LockFundsTransaction instance
      */
-    public static LockFundsTransaction create(
+    public static HashLockTransaction create(
         Deadline deadline,
         Mosaic mosaic,
         BigInteger duration,
         SignedTransaction signedTransaction,
         NetworkType networkType) {
-        return new LockFundsTransaction(
+        return new HashLockTransaction(
             networkType,
             TransactionVersion.LOCK.getValue(),
             deadline,

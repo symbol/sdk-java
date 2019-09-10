@@ -28,7 +28,7 @@ import io.nem.sdk.model.transaction.TransactionInfo;
 import io.nem.sdk.model.transaction.TransactionType;
 import io.nem.sdk.openapi.vertx.model.AccountLinkTransactionDTO;
 
-public class AccountLinkTransactionMapper extends AbstractTransactionMapper<AccountLinkTransactionDTO> {
+class AccountLinkTransactionMapper extends AbstractTransactionMapper<AccountLinkTransactionDTO> {
 
 
     public AccountLinkTransactionMapper(JsonHelper jsonHelper) {

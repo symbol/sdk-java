@@ -43,7 +43,7 @@ JsonHelperJackson2 implements JsonHelper {
     @SuppressWarnings("squid:CallToDeprecatedMethod")
     public static ObjectMapper configureMapper(ObjectMapper objectMapper) {
         objectMapper.configure(SerializationFeature.WRITE_EMPTY_JSON_ARRAYS,
-            false); //I cannot annotate the generated classes like alternative recommended by jackson
+            false); //I cannot annotate the generated classes like the alternative recommended by jackson
         objectMapper.configure(DeserializationFeature.USE_LONG_FOR_INTS, true);
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         return objectMapper;
