@@ -18,12 +18,8 @@ package io.nem.sdk.infrastructure.vertx;
 
 import io.nem.sdk.api.QueryParams;
 import io.nem.sdk.api.RepositoryCallException;
-import io.nem.sdk.model.account.Address;
 import io.nem.sdk.model.blockchain.NetworkType;
-import io.nem.sdk.model.mosaic.MosaicId;
-import io.nem.sdk.model.namespace.NamespaceId;
 import io.nem.sdk.model.transaction.JsonHelper;
-import io.nem.sdk.model.transaction.UInt64;
 import io.nem.sdk.openapi.vertx.invoker.ApiClient;
 import io.nem.sdk.openapi.vertx.invoker.ApiException;
 import io.reactivex.Observable;
@@ -32,7 +28,6 @@ import io.reactivex.functions.Function;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Handler;
 import io.vertx.reactivex.core.impl.AsyncResultSingle;
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -93,27 +88,6 @@ public abstract class AbstractRepositoryVertxImpl {
 
     public <T> Observable<T> onError(Throwable e) {
         return Observable.error(exceptionHandling(e));
-    }
-
-    public static BigInteger extractBigInteger(List<Long> list) {
-        return UInt64.extractBigInteger(list);
-    }
-
-
-    protected boolean isUInt64(List<Long> id) {
-        return UInt64.isUInt64(id);
-    }
-
-    protected NamespaceId toNamespaceId(List<Long> id) {
-        return isUInt64(id) ? new NamespaceId(extractBigInteger(id)) : null;
-    }
-
-    protected MosaicId toMosaicId(List<Long> id) {
-        return isUInt64(id) ? new MosaicId(extractBigInteger(id)) : null;
-    }
-
-    protected Address toAddress(String rawAddress) {
-        return rawAddress != null ? Address.createFromRawAddress(rawAddress) : null;
     }
 
     protected NetworkType getNetworkTypeBlocking() {

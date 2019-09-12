@@ -68,6 +68,15 @@ public class MosaicNonce {
     }
 
     /**
+     * Create a MosaicNonce from a BigInteger.
+     *
+     * @return MosaicNonce
+     */
+    public static MosaicNonce createFromBigInteger(Long number) {
+        return new MosaicNonce(ByteUtils.bigIntToBytesOfSize(BigInteger.valueOf(number), 4));
+    }
+
+    /**
      * @return nonce
      */
     public byte[] getNonce() {

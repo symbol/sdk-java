@@ -140,7 +140,7 @@ public class AccountAddressRestrictionModificationTransaction extends Transactio
     /**
      * Get account restriction type
      *
-     * @return {@linke AccountRestrictionType}
+     * @return {@link AccountRestrictionType}
      */
     public AccountRestrictionType getRestrictionType() {
         return this.restrictionType;
@@ -149,7 +149,7 @@ public class AccountAddressRestrictionModificationTransaction extends Transactio
     /**
      * Get account address restriction modifications
      *
-     * @return {@link List<AccountRestrictionModification<Address>>}
+     * @return List of {@link AccountRestrictionModification}
      */
     public List<AccountRestrictionModification<Address>> getModifications() {
         return this.modifications;

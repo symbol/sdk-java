@@ -27,7 +27,7 @@ public class MerkelProofInfo {
     /**
      * Return Payload
      *
-     * @return List<MerkelPathItem>
+     * @return {@link List} of MerkelPathItem
      */
     public List<MerkelPathItem> getPayload() {
         return this.payload;

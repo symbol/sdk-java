@@ -17,21 +17,14 @@
 
 package io.nem.sdk.model.transaction;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import io.nem.core.utils.HexEncoder;
-import io.nem.sdk.model.account.Address;
 import io.nem.sdk.model.account.PublicAccount;
 import io.nem.sdk.model.blockchain.NetworkType;
-import io.nem.sdk.model.mosaic.MosaicId;
-import io.nem.sdk.model.mosaic.MosaicNonce;
-import io.nem.sdk.model.mosaic.MosaicProperties;
 import io.nem.sdk.model.namespace.AliasAction;
 import io.nem.sdk.model.namespace.NamespaceId;
 import java.math.BigInteger;
 import java.time.temporal.ChronoUnit;
 import java.util.Optional;
-import org.junit.Assert;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -44,7 +37,7 @@ public class AddressAliasTransactionTest {
         Integer version = 1;
         Deadline deadline = new Deadline(2, ChronoUnit.HOURS);
         BigInteger fee = BigInteger.ONE;
-        NamespaceId namespaceId = new NamespaceId(new BigInteger("-8884663987180930485"));
+        NamespaceId namespaceId = NamespaceId.createFromId(new BigInteger("-8884663987180930485"));
         PublicAccount signature = PublicAccount.createFromPublicKey(
             "68b3fbb18729c1fde225c57f8ce080fa828f0067e451a3fd81fa628842b0b763",
             NetworkType.MIJIN_TEST);

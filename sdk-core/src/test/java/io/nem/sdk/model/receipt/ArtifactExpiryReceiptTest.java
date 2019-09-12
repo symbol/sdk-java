@@ -43,7 +43,7 @@ public class ArtifactExpiryReceiptTest {
 
     @Test
     void shouldCreateNamespaceExpiryReceipt() {
-        NamespaceId namespaceId = new NamespaceId(new BigInteger("-8884663987180930485"));
+        NamespaceId namespaceId = NamespaceId.createFromId(new BigInteger("-8884663987180930485"));
         ArtifactExpiryReceipt<NamespaceId> namespaceExpiryReceipt =
             new ArtifactExpiryReceipt<>(
                 namespaceId, ReceiptType.NAMESPACE_EXPIRED, ReceiptVersion.ARTIFACT_EXPIRY);

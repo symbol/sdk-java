@@ -30,7 +30,7 @@ public class AccountRestrictionModification<T> {
     }
 
     /**
-     * @return AccountRestrictionModification<Address>
+     * @return AccountRestrictionModification of {@link Address}
      */
     public static AccountRestrictionModification<Address> createForAddress(
         AccountRestrictionModificationType modificationType, Address address) {
@@ -38,7 +38,7 @@ public class AccountRestrictionModification<T> {
     }
 
     /**
-     * @return AccountRestrictionModification<MosaicId>
+     * @return AccountRestrictionModification {@link Address}
      */
     public static AccountRestrictionModification<Address> createForMosaic(
         AccountRestrictionModificationType modificationType, MosaicId mosaicId) {
@@ -46,7 +46,7 @@ public class AccountRestrictionModification<T> {
     }
 
     /**
-     * @return AccountRestrictionModification<TransactionType>
+     * @return AccountRestrictionModification of {@link TransactionType}
      */
     public static AccountRestrictionModification<TransactionType> createForEntityType(
         AccountRestrictionModificationType modificationType, TransactionType transactionType) {

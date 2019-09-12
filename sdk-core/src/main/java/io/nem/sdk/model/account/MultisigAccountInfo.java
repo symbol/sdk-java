@@ -74,7 +74,7 @@ public class MultisigAccountInfo {
     /**
      * Returns multisig account cosignatories.
      *
-     * @return List <{@link PublicAccount}>
+     * @return List {@link PublicAccount}
      */
     public List<PublicAccount> getCosignatories() {
         return cosignatories;

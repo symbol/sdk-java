@@ -43,7 +43,7 @@ public interface TransactionRepository {
      * Gets an list of transactions for different transaction hashes.
      *
      * @param transactionHashes List of String
-     * @return Observable of List<{@link Transaction}>
+     * @return {@link Observable} of {@link Transaction} List
      */
     Observable<List<Transaction>> getTransactions(List<String> transactionHashes);
 
@@ -59,7 +59,7 @@ public interface TransactionRepository {
      * Gets an list of transaction status for different transaction hashes.
      *
      * @param transactionHashes List of String
-     * @return Observable of List<{@link TransactionStatus}>
+     * @return {@link Observable} of {@link TransactionStatus} List
      */
     Observable<List<TransactionStatus>> getTransactionStatuses(List<String> transactionHashes);
 

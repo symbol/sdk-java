@@ -29,7 +29,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-class LockFundsTransactionTest {
+class HashLockTransactionTest {
 
     static Account account;
     static String generationHash;
@@ -53,8 +53,8 @@ class LockFundsTransactionTest {
                 "payload",
                 "8498B38D89C1DC8A448EA5824938FF828926CD9F7747B1844B59B4B6807E878B",
                 TransactionType.AGGREGATE_BONDED);
-        LockFundsTransaction lockFundstx =
-            LockFundsTransaction.create(
+        HashLockTransaction lockFundstx =
+            HashLockTransaction.create(
                 new FakeDeadline(),
                 NetworkCurrencyMosaic.createRelative(BigInteger.valueOf(10)),
                 BigInteger.valueOf(100),
@@ -75,8 +75,8 @@ class LockFundsTransactionTest {
                 "payload",
                 "8498B38D89C1DC8A448EA5824938FF828926CD9F7747B1844B59B4B6807E878B",
                 TransactionType.AGGREGATE_BONDED);
-        LockFundsTransaction lockFundstx =
-            LockFundsTransaction.create(
+        HashLockTransaction lockFundstx =
+            HashLockTransaction.create(
                 new FakeDeadline(),
                 NetworkCurrencyMosaic.createRelative(BigInteger.valueOf(10)),
                 BigInteger.valueOf(100),
@@ -99,8 +99,8 @@ class LockFundsTransactionTest {
                 "payload",
                 "8498B38D89C1DC8A448EA5824938FF828926CD9F7747B1844B59B4B6807E878B",
                 TransactionType.AGGREGATE_BONDED);
-        LockFundsTransaction lockFundstx =
-            LockFundsTransaction.create(
+        HashLockTransaction lockFundstx =
+            HashLockTransaction.create(
                 new FakeDeadline(),
                 NetworkCurrencyMosaic.createRelative(BigInteger.valueOf(10)),
                 BigInteger.valueOf(100),
@@ -130,7 +130,7 @@ class LockFundsTransactionTest {
         assertThrows(
             IllegalArgumentException.class,
             () -> {
-                LockFundsTransaction.create(
+                HashLockTransaction.create(
                     new FakeDeadline(),
                     NetworkCurrencyMosaic.createRelative(BigInteger.valueOf(10)),
                     BigInteger.valueOf(100),

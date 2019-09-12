@@ -16,9 +16,9 @@
 
 package io.nem.sdk.infrastructure.okhttp;
 
+import static io.nem.sdk.infrastructure.okhttp.TestHelperOkHttp.loadTransactionInfoDTO;
 import static java.time.temporal.ChronoUnit.HOURS;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static io.nem.sdk.infrastructure.okhttp.TestHelperOkHttp.loadTransactionInfoDTO;
 
 import io.nem.sdk.model.account.Account;
 import io.nem.sdk.model.account.Address;
@@ -36,7 +36,6 @@ import io.nem.sdk.openapi.okhttp_gson.model.AnnounceTransactionInfoDTO;
 import io.nem.sdk.openapi.okhttp_gson.model.TransactionInfoDTO;
 import io.nem.sdk.openapi.okhttp_gson.model.TransactionStatusDTO;
 import java.math.BigInteger;
-import java.util.Arrays;
 import java.util.Collections;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -98,8 +97,8 @@ public class TransactionRepositoryOkHttpImplTest extends AbstractOkHttpResposito
 
         TransactionStatusDTO transactionStatusDTO = new TransactionStatusDTO();
         transactionStatusDTO.setGroup("someGorup");
-        transactionStatusDTO.setDeadline(Arrays.asList(5L, 0L));
-        transactionStatusDTO.setHeight(Arrays.asList(6L, 0L));
+        transactionStatusDTO.setDeadline(BigInteger.valueOf(5L));
+        transactionStatusDTO.setHeight(BigInteger.valueOf(6L));
         transactionStatusDTO.setStatus("SomeStatus");
         transactionStatusDTO.setHash("someHash");
         mockRemoteCall(transactionStatusDTO);
@@ -120,8 +119,8 @@ public class TransactionRepositoryOkHttpImplTest extends AbstractOkHttpResposito
 
         TransactionStatusDTO transactionStatusDTO = new TransactionStatusDTO();
         transactionStatusDTO.setGroup("someGorup");
-        transactionStatusDTO.setDeadline(Arrays.asList(5L, 0L));
-        transactionStatusDTO.setHeight(Arrays.asList(6L, 0L));
+        transactionStatusDTO.setDeadline(BigInteger.valueOf(5L));
+        transactionStatusDTO.setHeight(BigInteger.valueOf(6L));
         transactionStatusDTO.setStatus("SomeStatus");
         transactionStatusDTO.setHash("someHash");
         mockRemoteCall(Collections.singletonList(transactionStatusDTO));

@@ -25,14 +25,14 @@ public interface ChainRepository {
     /**
      * Gets current blockchain height.
      *
-     * @return Observable<BigInteger>
+     * @return Observable of BigInteger
      */
     Observable<BigInteger> getBlockchainHeight();
 
     /**
      * Gets current blockchain score.
      *
-     * @return Observable<BigInteger>
+     * @return Observable of BigInteger
      */
     Observable<BlockchainScore> getBlockchainScore();
 }

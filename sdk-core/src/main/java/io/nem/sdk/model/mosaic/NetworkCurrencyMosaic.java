@@ -17,7 +17,7 @@ public class NetworkCurrencyMosaic extends Mosaic {
     /**
      * Namespace id of `currency` namespace.
      */
-    public static final NamespaceId NAMESPACEID = new NamespaceId("cat.currency");
+    public static final NamespaceId NAMESPACEID = NamespaceId.createFromName("cat.currency");
     /**
      * Divisibility
      */

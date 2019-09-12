@@ -16,9 +16,14 @@
 
 package io.nem.sdk.infrastructure.okhttp;
 
+import static io.nem.core.utils.MapperUtils.toAddress;
+import static io.nem.core.utils.MapperUtils.toMosaicId;
+
 import io.nem.core.crypto.PublicKey;
 import io.nem.sdk.api.AccountRepository;
 import io.nem.sdk.api.QueryParams;
+import io.nem.sdk.infrastructure.okhttp.mappers.GeneralTransactionMapper;
+import io.nem.sdk.infrastructure.okhttp.mappers.TransactionMapper;
 import io.nem.sdk.model.account.AccountInfo;
 import io.nem.sdk.model.account.AccountNames;
 import io.nem.sdk.model.account.AccountType;
@@ -28,11 +33,9 @@ import io.nem.sdk.model.account.MultisigAccountInfo;
 import io.nem.sdk.model.account.PublicAccount;
 import io.nem.sdk.model.blockchain.NetworkType;
 import io.nem.sdk.model.mosaic.Mosaic;
-import io.nem.sdk.model.mosaic.MosaicId;
 import io.nem.sdk.model.namespace.NamespaceName;
 import io.nem.sdk.model.transaction.AggregateTransaction;
 import io.nem.sdk.model.transaction.Transaction;
-import io.nem.sdk.model.transaction.UInt64;
 import io.nem.sdk.openapi.okhttp_gson.api.AccountRoutesApi;
 import io.nem.sdk.openapi.okhttp_gson.invoker.ApiClient;
 import io.nem.sdk.openapi.okhttp_gson.model.AccountDTO;
@@ -63,12 +66,14 @@ import org.apache.commons.codec.binary.Hex;
 public class AccountRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl implements
     AccountRepository {
 
-
     private final AccountRoutesApi client;
+
+    private final TransactionMapper transactionMapper;
 
     public AccountRepositoryOkHttpImpl(ApiClient apiClient) {
         super(apiClient);
         this.client = new AccountRoutesApi(apiClient);
+        this.transactionMapper = new GeneralTransactionMapper(getJsonHelper());
     }
 
     private String getAddressEncoded(String address) throws DecoderException {
@@ -137,8 +142,7 @@ public class AccountRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl im
      * @return {@link AccountNames}
      */
     private AccountNames toAccountNames(AccountNamesDTO dto) throws DecoderException {
-        return new AccountNames(
-            toAddress(getAddressEncoded(dto.getAddress())),
+        return new AccountNames(toAddress(getAddressEncoded(dto.getAddress())),
             dto.getNames().stream().map(NamespaceName::new).collect(Collectors.toList()));
     }
 
@@ -154,21 +158,17 @@ public class AccountRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl im
 
     @Override
     public Observable<MultisigAccountGraphInfo> getMultisigAccountGraphInfo(Address address) {
-
         return exceptionHandling(call(
-            () -> getClient()
-                .getAccountMultisigGraph(address.plain()))
-            .map(
-                multisigAccountGraphInfoDTOList -> {
-                    Map<Integer, List<MultisigAccountInfo>> multisigAccountInfoMap =
-                        new HashMap<>();
-                    multisigAccountGraphInfoDTOList.forEach(
-                        item ->
-                            multisigAccountInfoMap.put(
-                                item.getLevel(),
-                                toMultisigAccountInfo(item)));
-                    return new MultisigAccountGraphInfo(multisigAccountInfoMap);
-                }));
+            () -> getClient().getAccountMultisigGraph(address.plain()))
+            .map(multisigAccountGraphInfoDTOList -> {
+                Map<Integer, List<MultisigAccountInfo>> multisigAccountInfoMap = new HashMap<>();
+                multisigAccountGraphInfoDTOList.forEach(
+                    item ->
+                        multisigAccountInfoMap.put(
+                            item.getLevel(),
+                            toMultisigAccountInfo(item)));
+                return new MultisigAccountGraphInfo(multisigAccountInfoMap);
+            }));
     }
 
     private List<MultisigAccountInfo> toMultisigAccountInfo(MultisigAccountGraphInfoDTO item) {
@@ -252,7 +252,7 @@ public class AccountRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl im
     }
 
     private Transaction toTransaction(TransactionInfoDTO input) {
-        return new TransactionMappingOkHttp(getJsonHelper()).apply(input);
+        return transactionMapper.map(input);
     }
 
 
@@ -307,17 +307,13 @@ public class AccountRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl im
     private AccountInfo toAccountInfo(AccountDTO accountDTO) throws DecoderException {
         return new AccountInfo(
             toAddress(getAddressEncoded(accountDTO.getAddress())),
-            UInt64.extractBigInteger(accountDTO.getAddressHeight()),
+            accountDTO.getAddressHeight(),
             accountDTO.getPublicKey(),
-            UInt64.extractBigInteger(accountDTO.getPublicKeyHeight()),
-            extractBigInteger(accountDTO.getImportance()),
-            UInt64.extractBigInteger(accountDTO.getImportanceHeight()),
+            accountDTO.getPublicKeyHeight(),
+            accountDTO.getImportance(),
+            accountDTO.getImportanceHeight(),
             accountDTO.getMosaics().stream()
-                .map(
-                    mosaicDTO ->
-                        new Mosaic(
-                            new MosaicId(UInt64.extractBigInteger(mosaicDTO.getId())),
-                            UInt64.extractBigInteger(mosaicDTO.getAmount())))
+                .map(mosaicDTO -> new Mosaic(toMosaicId(mosaicDTO.getId()), mosaicDTO.getAmount()))
                 .collect(Collectors.toList()),
             AccountType.rawValueOf(accountDTO.getAccountType().getValue()));
     }
@@ -326,21 +322,14 @@ public class AccountRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl im
         NetworkType networkType = getNetworkTypeBlocking();
         return new MultisigAccountInfo(
             new PublicAccount(
-                dto.getAccount(), networkType),
+                dto.getAccountPublicKey(), networkType),
             dto.getMinApproval(),
             dto.getMinRemoval(),
-            dto.getCosignatories().stream()
-                .map(
-                    cosigner ->
-                        new PublicAccount(
-                            cosigner, networkType))
+            dto.getCosignatoryPublicKeys().stream()
+                .map(cosigner -> new PublicAccount(cosigner, networkType))
                 .collect(Collectors.toList()),
-            dto.getMultisigAccounts().stream()
-                .map(
-                    multisigAccount ->
-                        new PublicAccount(
-                            multisigAccount,
-                            networkType))
+            dto.getMultisigPublicKeys().stream()
+                .map(multisigAccount -> new PublicAccount(multisigAccount, networkType))
                 .collect(Collectors.toList()));
     }
 

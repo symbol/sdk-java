@@ -25,7 +25,6 @@ import io.nem.sdk.openapi.vertx.model.NodeInfoDTO;
 import io.nem.sdk.openapi.vertx.model.NodeTimeDTO;
 import io.nem.sdk.openapi.vertx.model.RolesTypeEnum;
 import java.math.BigInteger;
-import java.util.Arrays;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -78,8 +77,8 @@ public class NodeRepositoryOkVertxImplTest extends AbstractVertxRespositoryTest 
 
         NodeTimeDTO dto = new NodeTimeDTO();
         CommunicationTimestampsDTO comm = new CommunicationTimestampsDTO();
-        comm.setReceiveTimestamp(Arrays.asList(1L, 0L));
-        comm.setSendTimestamp(Arrays.asList(2L, 0L));
+        comm.setReceiveTimestamp(BigInteger.ONE);
+        comm.setSendTimestamp(BigInteger.valueOf(2));
 
         dto.setCommunicationTimestamps(comm);
         mockRemoteCall(dto);

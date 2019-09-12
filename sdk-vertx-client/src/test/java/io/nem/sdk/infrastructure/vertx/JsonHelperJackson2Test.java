@@ -20,8 +20,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.nem.sdk.model.transaction.JsonHelper;
 import java.math.BigInteger;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Objects;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -42,9 +40,11 @@ public class JsonHelperJackson2Test {
         ObjectMapper mapper = new ObjectMapper();
         jsonHelper = new JsonHelperJackson2(mapper);
     }
+
     @Test
     public void shouldFailtWhenParsingInvalid() {
-        Assertions.assertEquals("Unexpected end-of-input: expected close marker for Object (start marker at [Source: (String)\"{\"; line: 1, column: 1])\n"
+        Assertions.assertEquals(
+            "Unexpected end-of-input: expected close marker for Object (start marker at [Source: (String)\"{\"; line: 1, column: 1])\n"
                 + " at [Source: (String)\"{\"; line: 1, column: 3]",
             Assertions.assertThrows(IllegalArgumentException.class,
                 () -> jsonHelper.parse("{", Car.class)).getMessage());
@@ -107,7 +107,7 @@ public class JsonHelperJackson2Test {
 
     @Test
     public void shouldReturnValues() {
-        Car car = new Car("Renault", "11", 1989, 1L, 2L, 3L, 4L);
+        Car car = new Car("Renault", "11", 1989);
         Assertions.assertEquals(car.getBrand(), jsonHelper.getString(car, "brand"));
         Assertions.assertEquals(car.getModel(), jsonHelper.getString(car, "model"));
         Assertions
@@ -121,26 +121,29 @@ public class JsonHelperJackson2Test {
         Assertions.assertNull(jsonHelper.getBoolean(car, "invalidProp"));
         Assertions.assertNull(jsonHelper.getString(car, "invalidProp"));
         Assertions.assertNull(jsonHelper.getInteger(car, "invalidProp"));
-        Assertions.assertNull(jsonHelper.getLongList(car, "invalidProp"));
+        Assertions.assertNull(jsonHelper.getBigInteger(car, "invalidProp"));
         Assertions.assertNull(jsonHelper.getLong(car, "invalidProp"));
 
         Assertions.assertTrue(jsonHelper.contains(car, "model"));
         Assertions.assertFalse(jsonHelper.contains(car, "invalidProp"));
 
         Assertions.assertNull(jsonHelper.getInteger(car, "model", "notInnerProperty"));
-        Assertions.assertEquals(car.getValues(), jsonHelper.getLongList(car, "values"));
+        Assertions.assertEquals(car.getYear(), jsonHelper.getBigInteger(car, "year"));
+        Assertions
+            .assertEquals(new BigInteger(car.getModel()), jsonHelper.getBigInteger(car, "model"));
 
     }
 
     @Test
     public void shouldRaiseErrorOnInvalidPath() {
-        Car car = new Car("Renault", "11", 1989, 1L, 2L, 3L, 4L);
+        Car car = new Car("Renault", "11", 1989);
 
         Assertions.assertThrows(IllegalArgumentException.class, () -> jsonHelper.getInteger(car));
         Assertions.assertThrows(IllegalArgumentException.class, () -> jsonHelper.getString(car));
         Assertions.assertThrows(IllegalArgumentException.class, () -> jsonHelper.getBoolean(car));
         Assertions.assertThrows(IllegalArgumentException.class, () -> jsonHelper.getLong(car));
-        Assertions.assertThrows(IllegalArgumentException.class, () -> jsonHelper.getLongList(car));
+        Assertions
+            .assertThrows(IllegalArgumentException.class, () -> jsonHelper.getBigInteger(car));
     }
 
     private static class Car {
@@ -151,14 +154,11 @@ public class JsonHelperJackson2Test {
 
         private BigInteger year;
 
-        private List<Long> values;
 
-
-        public Car(String brand, String model, int year, Long... values) {
+        public Car(String brand, String model, int year) {
             this.brand = brand;
             this.model = model;
             this.year = BigInteger.valueOf(year);
-            this.values = values == null ? null : Arrays.asList(values);
         }
 
         public Car() {
@@ -188,13 +188,6 @@ public class JsonHelperJackson2Test {
             this.year = year;
         }
 
-        public List<Long> getValues() {
-            return values;
-        }
-
-        public void setValues(List<Long> values) {
-            this.values = values;
-        }
 
         @Override
         public boolean equals(Object o) {
@@ -207,13 +200,12 @@ public class JsonHelperJackson2Test {
             Car car = (Car) o;
             return Objects.equals(brand, car.brand) &&
                 Objects.equals(model, car.model) &&
-                Objects.equals(year, car.year) &&
-                Objects.equals(values, car.values);
+                Objects.equals(year, car.year);
         }
 
         @Override
         public int hashCode() {
-            return Objects.hash(brand, model, year, values);
+            return Objects.hash(brand, model, year);
         }
     }
 

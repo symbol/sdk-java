@@ -16,6 +16,9 @@
 
 package io.nem.sdk.infrastructure.okhttp;
 
+import static io.nem.core.utils.MapperUtils.toNamespaceId;
+
+import io.nem.core.utils.MapperUtils;
 import io.nem.sdk.api.NamespaceRepository;
 import io.nem.sdk.api.QueryParams;
 import io.nem.sdk.model.account.Address;
@@ -30,7 +33,7 @@ import io.nem.sdk.model.namespace.NamespaceId;
 import io.nem.sdk.model.namespace.NamespaceInfo;
 import io.nem.sdk.model.namespace.NamespaceName;
 import io.nem.sdk.model.namespace.NamespaceType;
-import io.nem.sdk.model.transaction.UInt64;
+import io.nem.sdk.model.transaction.UInt64Id;
 import io.nem.sdk.openapi.okhttp_gson.api.NamespaceRoutesApi;
 import io.nem.sdk.openapi.okhttp_gson.invoker.ApiClient;
 import io.nem.sdk.openapi.okhttp_gson.model.AccountIds;
@@ -67,7 +70,7 @@ public class NamespaceRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl 
     @Override
     public Observable<NamespaceInfo> getNamespace(NamespaceId namespaceId) {
         Callable<NamespaceInfoDTO> callback = () -> getClient()
-            .getNamespace(UInt64.bigIntegerToHex(namespaceId.getId()));
+            .getNamespace(namespaceId.getIdAsHex());
         return exceptionHandling(call(callback).map(this::toNamespaceInfo));
     }
 
@@ -128,8 +131,7 @@ public class NamespaceRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl 
     public Observable<List<NamespaceName>> getNamespaceNames(List<NamespaceId> namespaceIds) {
 
         NamespaceIds ids = new NamespaceIds()
-            .namespaceIds(namespaceIds.stream()
-                .map(id -> UInt64.bigIntegerToHex(id.getId()))
+            .namespaceIds(namespaceIds.stream().map(UInt64Id::getIdAsHex)
                 .collect(Collectors.toList()));
 
         Callable<List<NamespaceNameDTO>> callback = () ->
@@ -141,16 +143,9 @@ public class NamespaceRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl 
     }
 
     private NamespaceName toNamespaceName(NamespaceNameDTO dto) {
-        if (dto.getParentId() != null && !dto.getParentId().isEmpty()) {
-            return new NamespaceName(
-                new NamespaceId(extractBigInteger(dto.getNamespaceId())),
-                dto.getName(),
-                new NamespaceId(extractBigInteger(dto.getParentId())));
-        } else {
-            return new NamespaceName(
-                new NamespaceId(extractBigInteger(dto.getNamespaceId())),
-                dto.getName());
-        }
+        return new NamespaceName(
+            toNamespaceId(dto.getNamespaceId()),
+            dto.getName(), Optional.ofNullable(toNamespaceId(dto.getParentId())));
     }
 
 
@@ -158,12 +153,12 @@ public class NamespaceRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl 
      * Gets the MosaicId from a MosaicAlias
      *
      * @param namespaceId - the namespaceId of the namespace
-     * @return Observable of <{@link MosaicId}>
+     * @return Observable of {@link MosaicId}
      */
     @Override
     public Observable<MosaicId> getLinkedMosaicId(NamespaceId namespaceId) {
         Callable<NamespaceInfoDTO> callback = () -> getClient()
-            .getNamespace(UInt64.bigIntegerToHex(namespaceId.getId()));
+            .getNamespace(namespaceId.getIdAsHex());
         return exceptionHandling(call(callback).map(namespaceInfoDTO -> this
             .toMosaicId(namespaceInfoDTO.getNamespace())));
     }
@@ -172,12 +167,12 @@ public class NamespaceRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl 
      * Gets the Address from a AddressAlias
      *
      * @param namespaceId - the namespaceId of the namespace
-     * @return Observable of <{@link MosaicId}>
+     * @return Observable of {@link MosaicId}
      */
     @Override
     public Observable<Address> getLinkedAddress(NamespaceId namespaceId) {
         Callable<NamespaceInfoDTO> callback = () -> getClient()
-            .getNamespace(UInt64.bigIntegerToHex(namespaceId.getId()));
+            .getNamespace(namespaceId.getIdAsHex());
         return exceptionHandling(call(callback).map(namespaceInfoDTO -> this
             .toAddress(namespaceInfoDTO.getNamespace())));
     }
@@ -195,13 +190,15 @@ public class NamespaceRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl 
             namespaceInfoDTO.getMeta().getActive(),
             namespaceInfoDTO.getMeta().getIndex(),
             namespaceInfoDTO.getMeta().getId(),
-            NamespaceType.rawValueOf(namespaceInfoDTO.getNamespace().getType().getValue()),
+            NamespaceType
+                .rawValueOf(namespaceInfoDTO.getNamespace().getRegistrationType().getValue()),
             namespaceInfoDTO.getNamespace().getDepth(),
             this.extractLevels(namespaceInfoDTO),
             toNamespaceId(namespaceInfoDTO.getNamespace().getParentId()),
-            new PublicAccount(namespaceInfoDTO.getNamespace().getOwner(), getNetworkTypeBlocking()),
-            extractBigInteger(namespaceInfoDTO.getNamespace().getStartHeight()),
-            extractBigInteger(namespaceInfoDTO.getNamespace().getEndHeight()),
+            new PublicAccount(namespaceInfoDTO.getNamespace().getOwnerPublicKey(),
+                getNetworkTypeBlocking()),
+            namespaceInfoDTO.getNamespace().getStartHeight(),
+            namespaceInfoDTO.getNamespace().getEndHeight(),
             this.extractAlias(namespaceInfoDTO.getNamespace()));
     }
 
@@ -214,15 +211,15 @@ public class NamespaceRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl 
      */
     private List<NamespaceId> extractLevels(NamespaceInfoDTO namespaceInfoDTO) {
         List<NamespaceId> levels = new ArrayList<>();
-        if (isUInt64(namespaceInfoDTO.getNamespace().getLevel0())) {
+        if (namespaceInfoDTO.getNamespace().getLevel0() != null) {
             levels.add(toNamespaceId(namespaceInfoDTO.getNamespace().getLevel0()));
         }
 
-        if (isUInt64(namespaceInfoDTO.getNamespace().getLevel1())) {
+        if (namespaceInfoDTO.getNamespace().getLevel1() != null) {
             levels.add(toNamespaceId(namespaceInfoDTO.getNamespace().getLevel1()));
         }
 
-        if (isUInt64(namespaceInfoDTO.getNamespace().getLevel2())) {
+        if (namespaceInfoDTO.getNamespace().getLevel2() != null) {
             levels.add(toNamespaceId(namespaceInfoDTO.getNamespace().getLevel2()));
         }
 
@@ -258,7 +255,7 @@ public class NamespaceRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl 
     private MosaicId toMosaicId(NamespaceDTO namespaceDTO) {
         if (namespaceDTO.getAlias() != null && AliasType.MOSAIC.getValue()
             .equals(namespaceDTO.getAlias().getType().getValue())) {
-            return toMosaicId(namespaceDTO.getAlias().getMosaicId());
+            return MapperUtils.toMosaicId(namespaceDTO.getAlias().getMosaicId());
         } else {
             return null;
         }
@@ -273,7 +270,7 @@ public class NamespaceRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl 
     private Address toAddress(NamespaceDTO namespaceDTO) {
         if (namespaceDTO.getAlias() != null && AliasType.ADDRESS.getValue()
             .equals(namespaceDTO.getAlias().getType().getValue())) {
-            return toAddress(namespaceDTO.getAlias().getAddress());
+            return MapperUtils.toAddress(namespaceDTO.getAlias().getAddress());
 
         } else {
             return null;

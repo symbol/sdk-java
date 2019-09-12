@@ -15,6 +15,9 @@
  */
 package io.nem.sdk.infrastructure.vertx;
 
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.when;
+
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.nem.sdk.infrastructure.ListenerChannel;
 import io.nem.sdk.infrastructure.ListenerSubscribeMessage;
@@ -42,8 +45,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
-
-import static org.mockito.Mockito.*;
 
 /**
  * Tests for the {@link ListenerVertx} implementation of the {@link io.nem.sdk.infrastructure.Listener}
@@ -95,7 +96,7 @@ public class ListenerVertxTest {
             .convert(transactionInfo, ObjectNode.class);
 
         Address address = Address.createFromPublicKey(
-            jsonHelper.getString(transactionInfoDtoJsonObject, "transaction", "signer"),
+            jsonHelper.getString(transactionInfoDtoJsonObject, "transaction", "signerPublicKey"),
             NetworkType.MIJIN_TEST);
 
         String channelName = ListenerChannel.CONFIRMED_ADDED.toString();

@@ -95,7 +95,7 @@ public class MosaicAliasTransaction extends Transaction {
      * @param namespaceId Namespace id.
      * @param mosaicId Mosaic id.
      * @param networkType Network type.
-     * @returns Mosaic alias transaction.
+     * @return Mosaic alias transaction.
      */
     public static MosaicAliasTransaction create(
         final Deadline deadline,

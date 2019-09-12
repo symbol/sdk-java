@@ -17,11 +17,9 @@
 package io.nem.sdk.infrastructure.okhttp;
 
 import io.nem.sdk.model.blockchain.BlockchainScore;
-import io.nem.sdk.model.transaction.UInt64;
 import io.nem.sdk.openapi.okhttp_gson.model.ChainScoreDTO;
 import io.nem.sdk.openapi.okhttp_gson.model.HeightInfoDTO;
 import java.math.BigInteger;
-import java.util.Arrays;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -45,22 +43,22 @@ public class ChainRepositoryOkHttpImplTest extends AbstractOkHttpRespositoryTest
     @Test
     public void shouldGetBlockchainHeight() throws Exception {
         HeightInfoDTO dto = new HeightInfoDTO();
-        dto.setHeight(Arrays.asList(8L, 0L));
+        dto.setHeight(BigInteger.valueOf(8L));
         mockRemoteCall(dto);
         BigInteger blockchainHeight = repository.getBlockchainHeight().toFuture().get();
-        Assertions.assertEquals(UInt64.extractBigInteger(dto.getHeight()), blockchainHeight);
+        Assertions.assertEquals((dto.getHeight()), blockchainHeight);
     }
 
     @Test
     public void shouldGetBlockchainScore() throws Exception {
         ChainScoreDTO dto = new ChainScoreDTO();
-        dto.setScoreLow(Arrays.asList(3L, 0L));
-        dto.setScoreHigh(Arrays.asList(5L, 0L));
+        dto.setScoreLow(BigInteger.valueOf(3L));
+        dto.setScoreHigh(BigInteger.valueOf(5L));
         mockRemoteCall(dto);
         BlockchainScore blockchainScore = repository.getBlockchainScore().toFuture().get();
-        Assertions.assertEquals(UInt64.extractBigInteger(dto.getScoreLow()),
+        Assertions.assertEquals((dto.getScoreLow()),
             blockchainScore.getScoreLow());
-        Assertions.assertEquals(UInt64.extractBigInteger(dto.getScoreHigh()),
+        Assertions.assertEquals((dto.getScoreHigh()),
             blockchainScore.getScoreHigh());
     }
 

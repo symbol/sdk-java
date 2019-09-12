@@ -35,7 +35,6 @@ class MosaicInfoTest {
 
         MosaicInfo mosaicInfo =
             MosaicInfo.create(
-                "5A3CD9B09CD1E8000159249B",
                 mosaicId,
                 new BigInteger("100"),
                 new BigInteger("0"),
@@ -45,7 +44,6 @@ class MosaicInfoTest {
                 1,
                 mosaicProperties);
 
-        assertEquals("5A3CD9B09CD1E8000159249B", mosaicInfo.getMetaId());
         assertEquals(mosaicId, mosaicInfo.getMosaicId());
         assertEquals(new BigInteger("100"), mosaicInfo.getSupply());
         assertEquals(new BigInteger("0"), mosaicInfo.getHeight());
@@ -67,7 +65,6 @@ class MosaicInfoTest {
 
         MosaicInfo mosaicInfo =
             MosaicInfo.create(
-                "5A3CD9B09CD1E8000159249B",
                 new MosaicId(new BigInteger("-3087871471161192663")),
                 new BigInteger("100"),
                 new BigInteger("0"),
@@ -87,7 +84,6 @@ class MosaicInfoTest {
 
         MosaicInfo mosaicInfo =
             MosaicInfo.create(
-                "5A3CD9B09CD1E8000159249B",
                 new MosaicId(new BigInteger("-3087871471161192663")),
                 new BigInteger("100"),
                 new BigInteger("0"),
@@ -107,7 +103,6 @@ class MosaicInfoTest {
 
         MosaicInfo mosaicInfo =
             MosaicInfo.create(
-                "5A3CD9B09CD1E8000159249B",
                 new MosaicId(new BigInteger("-3087871471161192663")),
                 new BigInteger("100"),
                 new BigInteger("0"),
@@ -127,7 +122,6 @@ class MosaicInfoTest {
 
         MosaicInfo mosaicInfo =
             MosaicInfo.create(
-                "5A3CD9B09CD1E8000159249B",
                 new MosaicId(new BigInteger("-3087871471161192663")),
                 new BigInteger("100"),
                 new BigInteger("0"),

@@ -139,10 +139,12 @@ public class AccountRepositoryVertxImplTest extends AbstractVertxRespositoryTest
 
         mockErrorCode(404, "Account not found!");
 
-        Assertions.assertEquals("ApiException: Not Found - 404 - Code Not Found - Account not found!",
-            Assertions.assertThrows(RepositoryCallException.class, () -> {
-                ExceptionUtils.propagate(() -> repository.getAccountInfo(address).toFuture().get());
-            }).getMessage());
+        Assertions
+            .assertEquals("ApiException: Not Found - 404 - Code Not Found - Account not found!",
+                Assertions.assertThrows(RepositoryCallException.class, () -> {
+                    ExceptionUtils
+                        .propagate(() -> repository.getAccountInfo(address).toFuture().get());
+                }).getMessage());
 
     }
 

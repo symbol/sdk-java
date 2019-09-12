@@ -2,10 +2,6 @@ dependencies {
 
     compile "io.reactivex.rxjava2:rxjava:${rxjavaVersion}"
 
-    // Log
-    compile 'org.apache.logging.log4j:log4j-core:2.5'
-    compile 'org.apache.logging.log4j:log4j-jul:2.5'
-
     compile 'org.bouncycastle:bcprov-jdk15on:1.58'
     compile 'commons-codec:commons-codec:1.11'
     compile 'org.apache.commons:commons-lang3:3.9'

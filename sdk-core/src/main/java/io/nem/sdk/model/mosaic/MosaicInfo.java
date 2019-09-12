@@ -20,7 +20,6 @@ import java.math.BigInteger;
  */
 public class MosaicInfo {
 
-    private final String metaId;
     private final MosaicId mosaicId;
     private final BigInteger supply;
     private final BigInteger height;
@@ -28,10 +27,9 @@ public class MosaicInfo {
     private final Integer revision;
     private final MosaicProperties properties;
 
-    private MosaicInfo(final String metaId, final MosaicId mosaicId, final BigInteger supply,
+    private MosaicInfo(final MosaicId mosaicId, final BigInteger supply,
         final BigInteger height,
         final PublicAccount owner, final Integer revision, final MosaicProperties properties) {
-        this.metaId = metaId;
         this.mosaicId = mosaicId;
         this.supply = supply;
         this.height = height;
@@ -40,19 +38,10 @@ public class MosaicInfo {
         this.properties = properties;
     }
 
-    public static MosaicInfo create(final String metaId, final MosaicId mosaicId,
+    public static MosaicInfo create(final MosaicId mosaicId,
         final BigInteger supply, final BigInteger height,
         final PublicAccount owner, final Integer revision, final MosaicProperties properties) {
-        return new MosaicInfo(metaId, mosaicId, supply, height, owner, revision, properties);
-    }
-
-    /**
-     * Returns the meta id
-     *
-     * @return meta id
-     */
-    public String getMetaId() {
-        return metaId;
+        return new MosaicInfo(mosaicId, supply, height, owner, revision, properties);
     }
 
     /**

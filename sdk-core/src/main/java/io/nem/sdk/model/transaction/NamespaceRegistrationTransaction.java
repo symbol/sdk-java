@@ -37,11 +37,11 @@ import org.apache.commons.lang3.Validate;
 
 /**
  * Accounts can rent a namespace for an amount of blocks and after a this renew the contract. This
- * is done via a RegisterNamespaceTransaction.
+ * is done via a NamespaceRegistrationTransaction.
  *
  * @since 1.0
  */
-public class RegisterNamespaceTransaction extends Transaction {
+public class NamespaceRegistrationTransaction extends Transaction {
 
     private final String namespaceName;
     private final NamespaceId namespaceId;
@@ -50,7 +50,7 @@ public class RegisterNamespaceTransaction extends Transaction {
     private final NamespaceType namespaceType;
 
     @SuppressWarnings("squid:S00107")
-    public RegisterNamespaceTransaction(final NetworkType networkType, final Integer version,
+    public NamespaceRegistrationTransaction(final NetworkType networkType, final Integer version,
         final Deadline deadline, final BigInteger fee,
         final String namespaceName, final NamespaceId namespaceId,
         final NamespaceType namespaceType,
@@ -63,7 +63,7 @@ public class RegisterNamespaceTransaction extends Transaction {
     }
 
     @SuppressWarnings("squid:S00107")
-    private RegisterNamespaceTransaction(final NetworkType networkType, final Integer version,
+    private NamespaceRegistrationTransaction(final NetworkType networkType, final Integer version,
         final Deadline deadline,
         final BigInteger fee, final String namespaceName, final NamespaceId namespaceId,
         final NamespaceType namespaceType, final Optional<BigInteger> duration,
@@ -74,7 +74,7 @@ public class RegisterNamespaceTransaction extends Transaction {
     }
 
     @SuppressWarnings("squid:S00107")
-    private RegisterNamespaceTransaction(final NetworkType networkType, final Integer version,
+    private NamespaceRegistrationTransaction(final NetworkType networkType, final Integer version,
         final Deadline deadline,
         final BigInteger fee, final String namespaceName, final NamespaceId namespaceId,
         final NamespaceType namespaceType, final Optional<BigInteger> duration,
@@ -107,13 +107,14 @@ public class RegisterNamespaceTransaction extends Transaction {
      * @param networkType Network type.
      * @return Register namespace transaction.
      */
-    public static RegisterNamespaceTransaction createRootNamespace(final Deadline deadline,
+    public static NamespaceRegistrationTransaction createRootNamespace(final Deadline deadline,
         final BigInteger fee,
-        final String namespaceName, final BigInteger duration,
+        final String namespaceName,
+        final BigInteger duration,
         final NetworkType networkType) {
         Validate.notNull(namespaceName, "NamespaceName must not be null");
-        NamespaceId namespaceId = new NamespaceId(IdGenerator.generateNamespaceId(namespaceName));
-        return new RegisterNamespaceTransaction(networkType,
+        NamespaceId namespaceId = NamespaceId.createFromName(namespaceName);
+        return new NamespaceRegistrationTransaction(networkType,
             TransactionVersion.REGISTER_NAMESPACE.getValue(), deadline, fee, namespaceName,
             namespaceId, NamespaceType.ROOT_NAMESPACE, Optional.of(duration), Optional.empty());
     }
@@ -128,14 +129,14 @@ public class RegisterNamespaceTransaction extends Transaction {
      * @param networkType Network type.
      * @return instance of RegisterNamespaceTransaction
      */
-    public static RegisterNamespaceTransaction createSubNamespace(final Deadline deadline,
+    public static NamespaceRegistrationTransaction createSubNamespace(final Deadline deadline,
         final BigInteger fee, final String namespaceName,
         final String parentNamespaceName,
         final NetworkType networkType) {
         Validate.notNull(namespaceName, "NamespaceName must not be null");
         Validate.notNull(parentNamespaceName, "ParentNamespaceName must not be null");
-        NamespaceId parentId = new NamespaceId(parentNamespaceName);
-        return RegisterNamespaceTransaction
+        NamespaceId parentId = NamespaceId.createFromName(parentNamespaceName);
+        return NamespaceRegistrationTransaction
             .createSubNamespace(deadline, fee, namespaceName, parentId, networkType);
     }
 
@@ -149,15 +150,15 @@ public class RegisterNamespaceTransaction extends Transaction {
      * @param networkType Network type.
      * @return instance of RegisterNamespaceTransaction
      */
-    public static RegisterNamespaceTransaction createSubNamespace(final Deadline deadline,
+    public static NamespaceRegistrationTransaction createSubNamespace(final Deadline deadline,
         final BigInteger fee, final String namespaceName,
         final NamespaceId parentId,
         final NetworkType networkType) {
         Validate.notNull(namespaceName, "NamespaceName must not be null");
         Validate.notNull(parentId, "ParentId must not be null");
-        NamespaceId namespaceId = new NamespaceId(
-            IdGenerator.generateNamespaceId(namespaceName, parentId.getId()));
-        return new RegisterNamespaceTransaction(networkType,
+        NamespaceId namespaceId = NamespaceId
+            .createFromNameAndParentId(namespaceName, parentId.getId());
+        return new NamespaceRegistrationTransaction(networkType,
             TransactionVersion.REGISTER_NAMESPACE.getValue(), deadline,
             fee, namespaceName, namespaceId, NamespaceType.SUB_NAMESPACE, Optional.empty(),
             Optional.of(parentId));

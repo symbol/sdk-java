@@ -18,7 +18,6 @@ package io.nem.sdk.infrastructure.okhttp;
 
 import io.nem.sdk.api.ChainRepository;
 import io.nem.sdk.model.blockchain.BlockchainScore;
-import io.nem.sdk.model.transaction.UInt64;
 import io.nem.sdk.openapi.okhttp_gson.api.ChainRoutesApi;
 import io.nem.sdk.openapi.okhttp_gson.invoker.ApiClient;
 import io.nem.sdk.openapi.okhttp_gson.model.ChainScoreDTO;
@@ -53,7 +52,7 @@ public class ChainRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl impl
 
         Callable<HeightInfoDTO> callback = getClient()::getBlockchainHeight;
         return exceptionHandling(
-            call(callback).map(blockchainHeight -> extractBigInteger(blockchainHeight.getHeight())));
+            call(callback).map(blockchainHeight -> (blockchainHeight.getHeight())));
 
     }
 
@@ -67,7 +66,7 @@ public class ChainRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl impl
         return exceptionHandling(call(callback).map(
             blockchainScoreDTO ->
                 new BlockchainScore(
-                    UInt64.extractBigInteger(blockchainScoreDTO.getScoreLow()),
-                    UInt64.extractBigInteger(blockchainScoreDTO.getScoreHigh()))));
+                    (blockchainScoreDTO.getScoreLow()),
+                    (blockchainScoreDTO.getScoreHigh()))));
     }
 }

@@ -30,12 +30,12 @@ import org.bouncycastle.util.encoders.Hex;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-class ModifyMultisigAccountTransactionTest {
+class MultisigAccountModificationTransactionTest {
 
     @Test
     void createAMultisigModificationTransactionViaConstructor() {
-        ModifyMultisigAccountTransaction modifyMultisigAccountTransaction =
-            ModifyMultisigAccountTransaction.create(
+        MultisigAccountModificationTransaction multisigAccountModificationTransaction =
+            MultisigAccountModificationTransaction.create(
                 new Deadline(2, ChronoUnit.HOURS),
                 (byte) 2,
                 (byte) 1,
@@ -47,17 +47,17 @@ class ModifyMultisigAccountTransactionTest {
                             NetworkType.MIJIN_TEST))),
                 NetworkType.MIJIN_TEST);
 
-        assertEquals(NetworkType.MIJIN_TEST, modifyMultisigAccountTransaction.getNetworkType());
-        assertTrue(1 == modifyMultisigAccountTransaction.getVersion());
+        assertEquals(NetworkType.MIJIN_TEST, multisigAccountModificationTransaction.getNetworkType());
+        assertTrue(1 == multisigAccountModificationTransaction.getVersion());
         assertTrue(
             LocalDateTime.now()
-                .isBefore(modifyMultisigAccountTransaction.getDeadline().getLocalDateTime()));
-        assertEquals(BigInteger.valueOf(0), modifyMultisigAccountTransaction.getFee());
-        assertEquals(2, modifyMultisigAccountTransaction.getMinApprovalDelta());
-        assertEquals(1, modifyMultisigAccountTransaction.getMinRemovalDelta());
+                .isBefore(multisigAccountModificationTransaction.getDeadline().getLocalDateTime()));
+        assertEquals(BigInteger.valueOf(0), multisigAccountModificationTransaction.getFee());
+        assertEquals(2, multisigAccountModificationTransaction.getMinApprovalDelta());
+        assertEquals(1, multisigAccountModificationTransaction.getMinRemovalDelta());
         assertEquals(
             "68b3fbb18729c1fde225c57f8ce080fa828f0067e451a3fd81fa628842b0b763".toUpperCase(),
-            modifyMultisigAccountTransaction
+            multisigAccountModificationTransaction
                 .getModifications()
                 .get(0)
                 .getCosignatoryPublicAccount()
@@ -66,7 +66,7 @@ class ModifyMultisigAccountTransactionTest {
                 .toUpperCase());
         assertEquals(
             MultisigCosignatoryModificationType.ADD,
-            modifyMultisigAccountTransaction.getModifications().get(0).getType());
+            multisigAccountModificationTransaction.getModifications().get(0).getType());
     }
 
     @Test
@@ -75,8 +75,8 @@ class ModifyMultisigAccountTransactionTest {
         // Generated at nem2-library-js/test/transactions/ModifyMultisigAccountTransaction.spec.js
         String expected =
             "bd00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001905541000000000000000001000000000000000102020168b3fbb18729c1fde225c57f8ce080fa828f0067e451a3fd81fa628842b0b76301cf893ffcc47c33e7f68ab1db56365c156b0736824a0c1e273f9e00b8df8f01eb";
-        ModifyMultisigAccountTransaction modifyMultisigAccountTransaction =
-            ModifyMultisigAccountTransaction.create(
+        MultisigAccountModificationTransaction multisigAccountModificationTransaction =
+            MultisigAccountModificationTransaction.create(
                 new FakeDeadline(),
                 (byte) 2,
                 (byte) 1,
@@ -93,7 +93,7 @@ class ModifyMultisigAccountTransactionTest {
                             NetworkType.MIJIN_TEST))),
                 NetworkType.MIJIN_TEST);
 
-        byte[] actual = modifyMultisigAccountTransaction.generateBytes();
+        byte[] actual = multisigAccountModificationTransaction.generateBytes();
         assertEquals(expected, Hex.toHexString(actual));
     }
 }

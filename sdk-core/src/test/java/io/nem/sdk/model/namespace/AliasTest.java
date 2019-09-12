@@ -5,15 +5,14 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 import io.nem.sdk.model.account.Address;
 import io.nem.sdk.model.mosaic.MosaicId;
-import io.nem.sdk.model.transaction.UInt64;
 import org.junit.jupiter.api.Test;
 
 public class AliasTest {
 
     Address address = Address.createFromRawAddress("SCTVW23D2MN5VE4AQ4TZIDZENGNOZXPRPRLIKCF2");
     Address address2 = Address.createFromRawAddress("SARNASAS2BIAB6LMFA3FPMGBPGIJGK6IJETM3ZSP");
-    MosaicId mosaicId = new MosaicId(UInt64.fromLowerAndHigher(481110499, 231112638));
-    MosaicId mosaicId2 = new MosaicId(UInt64.fromLowerAndHigher(481110498, 231112637));
+    MosaicId mosaicId = new MosaicId("0dc67fbe1cad29e3");
+    MosaicId mosaicId2 = new MosaicId("0dc67fbd1cad29e2");
 
     @Test
     void shouldCreateAEmptyAlias() {

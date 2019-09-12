@@ -16,9 +16,14 @@
 
 package io.nem.sdk.infrastructure.vertx;
 
+import static io.nem.core.utils.MapperUtils.toAddress;
+import static io.nem.core.utils.MapperUtils.toMosaicId;
+
 import io.nem.core.crypto.PublicKey;
 import io.nem.sdk.api.AccountRepository;
 import io.nem.sdk.api.QueryParams;
+import io.nem.sdk.infrastructure.vertx.mappers.GeneralTransactionMapper;
+import io.nem.sdk.infrastructure.vertx.mappers.TransactionMapper;
 import io.nem.sdk.model.account.AccountInfo;
 import io.nem.sdk.model.account.AccountNames;
 import io.nem.sdk.model.account.AccountType;
@@ -68,10 +73,14 @@ public class AccountRepositoryVertxImpl extends AbstractRepositoryVertxImpl impl
 
     private final AccountRoutesApi client;
 
+    private final TransactionMapper transactionMapper;
+
     public AccountRepositoryVertxImpl(ApiClient apiClient,
         Supplier<NetworkType> networkType) {
         super(apiClient, networkType);
         this.client = new AccountRoutesApiImpl(apiClient);
+
+        transactionMapper = new GeneralTransactionMapper(getJsonHelper());
     }
 
     private String getAddressEncoded(String address) throws DecoderException {
@@ -263,7 +272,8 @@ public class AccountRepositoryVertxImpl extends AbstractRepositoryVertxImpl impl
     }
 
     private Transaction toTransaction(TransactionInfoDTO input) {
-        return new TransactionMappingVertx(getJsonHelper()).apply(input);
+
+        return transactionMapper.map(input);
     }
 
 
@@ -323,34 +333,34 @@ public class AccountRepositoryVertxImpl extends AbstractRepositoryVertxImpl impl
     private AccountInfo toAccountInfo(AccountDTO accountDTO) throws DecoderException {
         return new AccountInfo(
             toAddress(getAddressEncoded(accountDTO.getAddress())),
-            extractBigInteger(accountDTO.getAddressHeight()),
+            accountDTO.getAddressHeight(),
             accountDTO.getPublicKey(),
-            extractBigInteger(accountDTO.getPublicKeyHeight()),
-            extractBigInteger(accountDTO.getImportance()),
-            extractBigInteger(accountDTO.getImportanceHeight()),
+            accountDTO.getPublicKeyHeight(),
+            accountDTO.getImportance(),
+            accountDTO.getImportanceHeight(),
             accountDTO.getMosaics().stream()
                 .map(
                     mosaicDTO ->
                         new Mosaic(
-                            toMosaicId((mosaicDTO.getId())),
-                            extractBigInteger(mosaicDTO.getAmount())))
-                .collect(Collectors.toList()), AccountType.rawValueOf(accountDTO.getAccountType().getValue()));
+                            toMosaicId(mosaicDTO.getId()),
+                            mosaicDTO.getAmount()))
+                .collect(Collectors.toList()),
+            AccountType.rawValueOf(accountDTO.getAccountType().getValue()));
     }
 
     private MultisigAccountInfo toMultisigAccountInfo(MultisigDTO dto) {
         NetworkType networkType = getNetworkTypeBlocking();
         return new MultisigAccountInfo(
-            new PublicAccount(
-                dto.getAccount(), networkType),
+            new PublicAccount(dto.getAccountPublicKey(), networkType),
             dto.getMinApproval(),
             dto.getMinRemoval(),
-            dto.getCosignatories().stream()
+            dto.getCosignatoryPublicKeys().stream()
                 .map(
                     cosigner ->
                         new PublicAccount(
                             cosigner, networkType))
                 .collect(Collectors.toList()),
-            dto.getMultisigAccounts().stream()
+            dto.getMultisigPublicKeys().stream()
                 .map(
                     multisigAccount ->
                         new PublicAccount(

@@ -50,7 +50,7 @@ public class NodeRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl imple
     /**
      * Get node info
      *
-     * @return Observable<NodeInfo>
+     * @return {@link Observable} of NodeInfo
      */
     public Observable<NodeInfo> getNodeInfo() {
         return exceptionHandling(call(getClient()::getNodeInfo).map(this::toNodeInfo));
@@ -70,7 +70,7 @@ public class NodeRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl imple
     /**
      * Get node time
      *
-     * @return Observable<NodeTime>
+     * @return {@link Observable} of NodeTime
      */
     public Observable<NodeTime> getNodeTime() {
         Callable<NodeTimeDTO> callback = () -> getClient()
@@ -80,9 +80,9 @@ public class NodeRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl imple
     }
 
     private NodeTime toNodeTime(NodeTimeDTO nodeTimeDTO) {
-        BigInteger sendTimeStamp = extractBigInteger(
+        BigInteger sendTimeStamp = (
             nodeTimeDTO.getCommunicationTimestamps().getSendTimestamp());
-        BigInteger receiveTimeStamp = extractBigInteger(
+        BigInteger receiveTimeStamp = (
             nodeTimeDTO.getCommunicationTimestamps().getReceiveTimestamp());
         return new NodeTime(
             sendTimeStamp,

@@ -20,8 +20,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import io.nem.sdk.model.transaction.JsonHelper;
-import java.util.ArrayList;
-import java.util.List;
+import java.math.BigInteger;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -92,7 +91,7 @@ public class JsonHelperGson implements JsonHelper {
         if (child.isJsonObject()) {
             throw new IllegalArgumentException("Cannot extract a Integer from an json object");
         }
-        return child.getAsInt();
+        return (int) child.getAsDouble();
     }
 
     @Override
@@ -116,7 +115,7 @@ public class JsonHelperGson implements JsonHelper {
         if (child.isJsonObject()) {
             throw new IllegalArgumentException("Cannot extract a Long from an json object");
         }
-        return child.getAsLong();
+        return (long) child.getAsDouble();
     }
 
     @Override
@@ -133,18 +132,12 @@ public class JsonHelperGson implements JsonHelper {
     }
 
     @Override
-    @SuppressWarnings("squid:S1168")
-    public List<Long> getLongList(Object object, String... path) {
-        JsonElement child = getNode(convert(object, JsonObject.class), path);
-        if (child == null || child.isJsonNull()) {
+    public BigInteger getBigInteger(Object object, String... path) {
+        String string = getString(object, path);
+        if (string == null) {
             return null;
         }
-        if (child.isJsonObject()) {
-            throw new IllegalArgumentException("Cannot extract a Long List from an json object");
-        }
-        List<Long> array = new ArrayList<>();
-        child.getAsJsonArray().iterator().forEachRemaining(n -> array.add(n.getAsLong()));
-        return array;
+        return new BigInteger(string);
     }
 
     @Override

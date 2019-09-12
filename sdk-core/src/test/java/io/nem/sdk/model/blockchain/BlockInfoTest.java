@@ -17,10 +17,9 @@
 package io.nem.sdk.model.blockchain;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import io.nem.sdk.model.account.PublicAccount;
-import io.nem.sdk.model.transaction.UInt64;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.Assertions;
@@ -63,16 +62,16 @@ class BlockInfoTest {
             BlockInfo.create(
                 hash,
                 generationHash,
-                UInt64.fromLongArray(new long[]{0, 0}),
+                BigInteger.ZERO,
                 25,
                 subCacheMerkleRoots,
                 signature,
                 signer,
                 36867,
                 32768,
-                UInt64.fromLongArray(new long[]{1, 0}),
-                UInt64.fromLongArray(new long[]{0, 0}),
-                UInt64.fromLongArray(new long[]{276447232, 23283}),
+                BigInteger.ONE,
+                BigInteger.ZERO,
+                BigInteger.valueOf(276447232L),
                 1,
                 previousBlockHash,
                 blockTransactionsHash,
@@ -85,18 +84,18 @@ class BlockInfoTest {
     void createANewBlockInfo() {
         assertEquals(hash, blockInfo.getHash());
         assertEquals(generationHash, blockInfo.getGenerationHash());
-        assertEquals(UInt64.fromLongArray(new long[]{0, 0}), blockInfo.getTotalFee());
+        assertEquals(BigInteger.valueOf(0), blockInfo.getTotalFee());
         assertEquals(new Integer(25), blockInfo.getNumTransactions());
         assertEquals(signature, blockInfo.getSignature());
         Assertions.assertEquals(
             new PublicAccount(signer, NetworkType.MIJIN_TEST), blockInfo.getSignerPublicAccount());
         assertEquals(NetworkType.MIJIN_TEST, blockInfo.getNetworkType());
-        assertTrue(3 == blockInfo.getVersion());
+        assertEquals(3, (int) blockInfo.getVersion());
         assertEquals(32768, blockInfo.getType());
-        assertEquals(UInt64.fromLongArray(new long[]{1, 0}), blockInfo.getHeight());
-        assertEquals(UInt64.fromLongArray(new long[]{0, 0}), blockInfo.getTimestamp());
-        assertEquals(UInt64.fromLongArray(new long[]{276447232, 23283}), blockInfo.getDifficulty());
-        assertTrue(1 == blockInfo.getFeeMultiplier());
+        assertEquals(BigInteger.valueOf(1), blockInfo.getHeight());
+        assertEquals(BigInteger.valueOf(0), blockInfo.getTimestamp());
+        assertEquals(BigInteger.valueOf(276447232), blockInfo.getDifficulty());
+        assertEquals(1, (int) blockInfo.getFeeMultiplier());
         assertEquals(previousBlockHash, blockInfo.getPreviousBlockHash());
         assertEquals(blockTransactionsHash, blockInfo.getBlockTransactionsHash());
         assertEquals(blockReceiptsHash, blockInfo.getBlockReceiptsHash());

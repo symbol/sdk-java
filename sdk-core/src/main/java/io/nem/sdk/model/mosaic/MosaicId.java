@@ -18,7 +18,6 @@ package io.nem.sdk.model.mosaic;
 
 import io.nem.sdk.model.account.PublicAccount;
 import io.nem.sdk.model.transaction.IdGenerator;
-import io.nem.sdk.model.transaction.UInt64;
 import io.nem.sdk.model.transaction.UInt64Id;
 import java.math.BigInteger;
 import java.util.Objects;
@@ -32,6 +31,7 @@ import java.util.Optional;
 public class MosaicId implements UInt64Id {
 
     private final BigInteger id;
+
     private final Optional<String> fullName;
 
     /**
@@ -41,7 +41,7 @@ public class MosaicId implements UInt64Id {
      */
     public MosaicId(String hex) {
         if (!hex.matches("^[0-9A-Fa-f]{16}$")) {
-            throw new IllegalIdentifierException("invalid hex string");
+            throw new IllegalIdentifierException(hex + " is an invalid hex string");
         }
         this.id = new BigInteger(hex, 16);
         this.fullName = Optional.empty();
@@ -78,7 +78,6 @@ public class MosaicId implements UInt64Id {
      * @return mosaic BigInteger id
      */
     public BigInteger getId() {
-
         return id;
     }
 
@@ -88,17 +87,9 @@ public class MosaicId implements UInt64Id {
      * @return id long
      */
     public long getIdAsLong() {
-
         return this.id.longValue();
     }
 
-    /**
-     * Returns mosaic id as a hexadecimal string
-     */
-    public String getIdAsHex() {
-
-        return UInt64.bigIntegerToHex(this.id);
-    }
 
     /**
      * Returns optional mosaic alias full name (ex: nem.xem)
@@ -106,7 +97,6 @@ public class MosaicId implements UInt64Id {
      * @return namespace full name
      */
     public Optional<String> getFullName() {
-
         return fullName;
     }
 
@@ -130,6 +120,14 @@ public class MosaicId implements UInt64Id {
     @Override
     public int hashCode() {
         return Objects.hash(id);
+    }
+
+    @Override
+    public String toString() {
+        return "MosaicId{" +
+            "id=" + id +
+            ", fullName=" + fullName +
+            '}';
     }
 }
 

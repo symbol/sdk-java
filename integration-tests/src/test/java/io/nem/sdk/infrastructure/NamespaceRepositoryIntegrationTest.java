@@ -26,7 +26,6 @@ import io.nem.sdk.model.mosaic.NetworkCurrencyMosaic;
 import io.nem.sdk.model.namespace.NamespaceId;
 import io.nem.sdk.model.namespace.NamespaceInfo;
 import io.nem.sdk.model.namespace.NamespaceName;
-import io.nem.sdk.model.transaction.UInt64;
 import io.reactivex.schedulers.Schedulers;
 import java.math.BigInteger;
 import java.util.Collections;
@@ -59,13 +58,9 @@ class NamespaceRepositoryIntegrationTest extends BaseIntegrationTest {
             .toFuture()
             .get();
 
-        //  9636553580561478212 85BBEA6CC462B244
-        // -8810190493148073404 85BBEA6CC462B244
         assertEquals(new BigInteger("1"), namespaceInfo.getStartHeight());
         assertEquals(new BigInteger("-1"), namespaceInfo.getEndHeight());
-        String namespaceIdHex =
-            UInt64.bigIntegerToHex(UInt64.fromLowerAndHigher(3294802500L, 2243684972L));
-        assertEquals(namespaceIdHex, namespaceId.getIdAsHex());
+        assertEquals(BigInteger.valueOf(3294802500L), namespaceId.getId());
         assertEquals(namespaceId.getIdAsLong(), namespaceInfo.getLevels().get(1).getIdAsLong());
     }
 
@@ -122,7 +117,7 @@ class NamespaceRepositoryIntegrationTest extends BaseIntegrationTest {
         RepositoryType type) {
         // TestObserver<NamespaceInfo> testObserver = new TestObserver<>();
         getNamespaceRepository(type)
-            .getNamespace(new NamespaceId("nonregisterednamespace"))
+            .getNamespace(NamespaceId.createFromName("nonregisterednamespace"))
             .subscribeOn(Schedulers.single())
             .test()
             .awaitDone(2, TimeUnit.SECONDS)

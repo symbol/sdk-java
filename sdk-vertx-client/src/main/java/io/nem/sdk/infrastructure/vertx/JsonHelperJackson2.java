@@ -22,8 +22,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.nem.sdk.model.transaction.JsonHelper;
-import java.util.ArrayList;
-import java.util.List;
+import java.math.BigInteger;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -44,7 +43,7 @@ JsonHelperJackson2 implements JsonHelper {
     @SuppressWarnings("squid:CallToDeprecatedMethod")
     public static ObjectMapper configureMapper(ObjectMapper objectMapper) {
         objectMapper.configure(SerializationFeature.WRITE_EMPTY_JSON_ARRAYS,
-            false); //I cannot annotate the generated classes like alternative recommended by jackson
+            false); //I cannot annotate the generated classes like the alternative recommended by jackson
         objectMapper.configure(DeserializationFeature.USE_LONG_FOR_INTS, true);
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         return objectMapper;
@@ -116,7 +115,7 @@ JsonHelperJackson2 implements JsonHelper {
         if (child.isObject()) {
             throw new IllegalArgumentException("Cannot extract a String from an json object");
         }
-        return child.textValue();
+        return child.asText();
     }
 
     @Override
@@ -145,18 +144,12 @@ JsonHelperJackson2 implements JsonHelper {
     }
 
     @Override
-    @SuppressWarnings("squid:S1168")
-    public List<Long> getLongList(Object object, String... path) {
-        JsonNode child = getNode(convert(object, JsonNode.class), path);
-        if (child == null || child.isNull()) {
+    public BigInteger getBigInteger(Object object, String... path) {
+        String string = getString(object, path);
+        if (string == null) {
             return null;
         }
-        if (child.isObject()) {
-            throw new IllegalArgumentException("Cannot extract a long list from an json object");
-        }
-        List<Long> array = new ArrayList<>();
-        child.iterator().forEachRemaining(n -> array.add(n.longValue()));
-        return array;
+        return new BigInteger(string);
     }
 
     @Override

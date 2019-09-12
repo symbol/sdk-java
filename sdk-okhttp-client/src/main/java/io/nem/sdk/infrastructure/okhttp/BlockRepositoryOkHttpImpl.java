@@ -18,6 +18,7 @@ package io.nem.sdk.infrastructure.okhttp;
 
 import io.nem.sdk.api.BlockRepository;
 import io.nem.sdk.api.QueryParams;
+import io.nem.sdk.infrastructure.okhttp.mappers.GeneralTransactionMapper;
 import io.nem.sdk.model.blockchain.BlockInfo;
 import io.nem.sdk.model.blockchain.MerkelPathItem;
 import io.nem.sdk.model.blockchain.MerkelProofInfo;
@@ -46,9 +47,12 @@ public class BlockRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl impl
 
     private final BlockRoutesApi client;
 
+    private final GeneralTransactionMapper transactionMapper;
+
     public BlockRepositoryOkHttpImpl(ApiClient apiClient) {
         super(apiClient);
-        client = new BlockRoutesApi(apiClient);
+        this.client = new BlockRoutesApi(apiClient);
+        this.transactionMapper = new GeneralTransactionMapper(getJsonHelper());
     }
 
     public Observable<BlockInfo> getBlockByHeight(BigInteger height) {
@@ -126,29 +130,29 @@ public class BlockRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl impl
     }
 
     private Transaction toTransaction(TransactionInfoDTO input) {
-        return new TransactionMappingOkHttp(getJsonHelper()).apply(input);
+        return transactionMapper.map(input);
     }
 
     public static BlockInfo toBlockInfo(BlockInfoDTO blockInfoDTO) {
         return BlockInfo.create(
             blockInfoDTO.getMeta().getHash(),
             blockInfoDTO.getMeta().getGenerationHash(),
-            extractBigInteger(blockInfoDTO.getMeta().getTotalFee()),
+            (blockInfoDTO.getMeta().getTotalFee()),
             blockInfoDTO.getMeta().getNumTransactions(),
-            blockInfoDTO.getMeta().getSubCacheMerkleRoots(),
+            blockInfoDTO.getMeta().getStateHashSubCacheMerkleRoots(),
             blockInfoDTO.getBlock().getSignature(),
-            blockInfoDTO.getBlock().getSigner(),
+            blockInfoDTO.getBlock().getSignerPublicKey(),
             blockInfoDTO.getBlock().getVersion(),
-            blockInfoDTO.getBlock().getType().getValue(),
-            extractBigInteger(blockInfoDTO.getBlock().getHeight()),
-            extractBigInteger(blockInfoDTO.getBlock().getTimestamp()),
-            extractBigInteger(blockInfoDTO.getBlock().getDifficulty()),
+            blockInfoDTO.getBlock().getType(),
+            (blockInfoDTO.getBlock().getHeight()),
+            (blockInfoDTO.getBlock().getTimestamp()),
+            (blockInfoDTO.getBlock().getDifficulty()),
             blockInfoDTO.getBlock().getFeeMultiplier(),
             blockInfoDTO.getBlock().getPreviousBlockHash(),
-            blockInfoDTO.getBlock().getBlockTransactionsHash(),
-            blockInfoDTO.getBlock().getBlockReceiptsHash(),
+            blockInfoDTO.getBlock().getTransactionsHash(),
+            blockInfoDTO.getBlock().getReceiptsHash(),
             blockInfoDTO.getBlock().getStateHash(),
-            blockInfoDTO.getBlock().getBeneficiary());
+            blockInfoDTO.getBlock().getBeneficiaryPublicKey());
     }
 
     public BlockRoutesApi getClient() {

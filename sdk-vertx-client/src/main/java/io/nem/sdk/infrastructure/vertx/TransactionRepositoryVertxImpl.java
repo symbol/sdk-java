@@ -17,6 +17,8 @@
 package io.nem.sdk.infrastructure.vertx;
 
 import io.nem.sdk.api.TransactionRepository;
+import io.nem.sdk.infrastructure.vertx.mappers.GeneralTransactionMapper;
+import io.nem.sdk.infrastructure.vertx.mappers.TransactionMapper;
 import io.nem.sdk.model.blockchain.NetworkType;
 import io.nem.sdk.model.transaction.CosignatureSignedTransaction;
 import io.nem.sdk.model.transaction.Deadline;
@@ -51,10 +53,13 @@ public class TransactionRepositoryVertxImpl extends AbstractRepositoryVertxImpl 
 
     private final TransactionRoutesApi client;
 
+    private final TransactionMapper transactionMapper;
+
     public TransactionRepositoryVertxImpl(ApiClient apiClient,
         Supplier<NetworkType> networkType) {
         super(apiClient, networkType);
         client = new TransactionRoutesApiImpl(apiClient);
+        transactionMapper = new GeneralTransactionMapper(getJsonHelper());
     }
 
 
@@ -70,7 +75,7 @@ public class TransactionRepositoryVertxImpl extends AbstractRepositoryVertxImpl 
     }
 
     private Transaction toTransaction(TransactionInfoDTO input) {
-        return new TransactionMappingVertx(getJsonHelper()).apply(input);
+        return transactionMapper.map(input);
     }
 
     @Override
@@ -96,8 +101,8 @@ public class TransactionRepositoryVertxImpl extends AbstractRepositoryVertxImpl 
             transactionStatusDTO.getGroup(),
             transactionStatusDTO.getStatus(),
             transactionStatusDTO.getHash(),
-            new Deadline(extractBigInteger(transactionStatusDTO.getDeadline())),
-            extractBigInteger(transactionStatusDTO.getHeight()));
+            new Deadline(transactionStatusDTO.getDeadline()),
+            transactionStatusDTO.getHeight());
     }
 
     @Override

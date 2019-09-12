@@ -28,16 +28,14 @@ plugins {
     id "org.sonarqube" version "2.7"
 }
 
-
 apply plugin: 'com.github.kt3k.coveralls'
 apply plugin: 'jacoco'
-
 
 ext {
     vertxVersion = "3.5.0"
     rxjavaVersion = "2.1.7"
     junitVersion = "5.0.2"
-    restApiVersion = "0.7.17-SNAPSHOT"
+    restApiVersion = "0.7.18-SNAPSHOT"
 }
 
 repositories {
@@ -60,6 +58,7 @@ def sonarProjectKey = getPropertyValue('sonarProjectKey');
 def sonarLogin = getPropertyValue('sonarLogin');
 def sonarOrganization = getPropertyValue('sonarOrganization');
 def sonarHostUrl = getPropertyValue('sonarHostUrl');
+def sonarBranchName = getPropertyValue('sonarBranchName');
 
 def signingSecretKeyRingFile = getPropertyValue('signingSecretKeyRingFile')
 def signingKeyId = getPropertyValue('signingKeyId')
@@ -79,6 +78,7 @@ subprojects {
     apply plugin: 'maven'
     apply plugin: 'jacoco'
     apply plugin: 'org.sonarqube'
+    apply plugin: 'project-report'
     group 'io.nem'
     sourceCompatibility = 1.8
     version = '0.13.0-SNAPSHOT'
@@ -113,7 +113,6 @@ subprojects {
     junitPlatform {
         details 'tree'
         platformVersion '1.0.2' // optional, defaults to plugin version
-        logManager 'org.apache.logging.log4j.jul.LogManager'
         reportsDir file('build/test-results/junit-platform') // this is the default
         enableStandardTestTask true
         // selectors (optional)
@@ -273,7 +272,7 @@ def gitBranch() {
 
 sonarqube {
     properties {
-        property "sonar.branch.name", gitBranch()
+        property "sonar.branch.name", sonarBranchName == null ? gitBranch() : sonarBranchName
         property "sonar.projectKey", sonarProjectKey
         property "sonar.organization", sonarOrganization
         property "sonar.login", sonarLogin

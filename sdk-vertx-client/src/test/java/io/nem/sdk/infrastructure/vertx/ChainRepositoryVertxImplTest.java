@@ -17,11 +17,9 @@
 package io.nem.sdk.infrastructure.vertx;
 
 import io.nem.sdk.model.blockchain.BlockchainScore;
-import io.nem.sdk.model.transaction.UInt64;
 import io.nem.sdk.openapi.vertx.model.ChainScoreDTO;
 import io.nem.sdk.openapi.vertx.model.HeightInfoDTO;
 import java.math.BigInteger;
-import java.util.Arrays;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -45,21 +43,21 @@ public class ChainRepositoryVertxImplTest extends AbstractVertxRespositoryTest {
     @Test
     public void shouldGetBlockchainHeight() throws Exception {
         HeightInfoDTO dto = new HeightInfoDTO();
-        dto.setHeight(Arrays.asList(8L, 0L));
+        dto.setHeight(BigInteger.valueOf(8));
         mockRemoteCall(dto);
         BigInteger blockchainHeight = repository.getBlockchainHeight().toFuture().get();
-        Assertions.assertEquals(UInt64.extractBigInteger(dto.getHeight()), blockchainHeight);
+        Assertions.assertEquals((dto.getHeight()), blockchainHeight);
     }
 
     @Test
     public void shouldGetBlockchainScore() throws Exception {
         ChainScoreDTO dto = new ChainScoreDTO();
-        dto.setScoreLow(Arrays.asList(3L, 0L));
-        dto.setScoreHigh(Arrays.asList(5L, 0L));
+        dto.setScoreLow(BigInteger.valueOf(3));
+        dto.setScoreHigh(BigInteger.valueOf(5));
         mockRemoteCall(dto);
         BlockchainScore blockchainScore = repository.getBlockchainScore().toFuture().get();
-        Assertions.assertEquals(UInt64.extractBigInteger(dto.getScoreLow()), blockchainScore.getScoreLow());
-        Assertions.assertEquals(UInt64.extractBigInteger(dto.getScoreHigh()), blockchainScore.getScoreHigh());
+        Assertions.assertEquals((dto.getScoreLow()), blockchainScore.getScoreLow());
+        Assertions.assertEquals((dto.getScoreHigh()), blockchainScore.getScoreHigh());
     }
 
 }

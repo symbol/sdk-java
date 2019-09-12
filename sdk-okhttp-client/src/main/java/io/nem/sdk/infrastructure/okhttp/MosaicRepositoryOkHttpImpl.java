@@ -16,22 +16,21 @@
 
 package io.nem.sdk.infrastructure.okhttp;
 
+import io.nem.core.utils.MapperUtils;
 import io.nem.sdk.api.MosaicRepository;
 import io.nem.sdk.model.account.PublicAccount;
 import io.nem.sdk.model.blockchain.NetworkType;
-import io.nem.sdk.model.mosaic.MosaicId;
 import io.nem.sdk.model.mosaic.MosaicInfo;
 import io.nem.sdk.model.mosaic.MosaicNames;
 import io.nem.sdk.model.mosaic.MosaicProperties;
 import io.nem.sdk.model.namespace.NamespaceName;
-import io.nem.sdk.model.transaction.UInt64;
 import io.nem.sdk.model.transaction.UInt64Id;
 import io.nem.sdk.openapi.okhttp_gson.api.MosaicRoutesApi;
 import io.nem.sdk.openapi.okhttp_gson.invoker.ApiClient;
 import io.nem.sdk.openapi.okhttp_gson.model.MosaicIds;
 import io.nem.sdk.openapi.okhttp_gson.model.MosaicInfoDTO;
 import io.nem.sdk.openapi.okhttp_gson.model.MosaicNamesDTO;
-import io.nem.sdk.openapi.okhttp_gson.model.MosaicPropertyDTO;
+import io.nem.sdk.openapi.okhttp_gson.model.MosaicPropertiesDTO;
 import io.nem.sdk.openapi.okhttp_gson.model.MosaicsNamesDTO;
 import io.reactivex.Observable;
 import java.util.List;
@@ -61,8 +60,7 @@ public class MosaicRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl imp
     @Override
     public Observable<MosaicInfo> getMosaic(UInt64Id mosaicId) {
 
-        Callable<MosaicInfoDTO> callback = () -> getClient()
-            .getMosaic(UInt64.bigIntegerToHex(mosaicId.getId()));
+        Callable<MosaicInfoDTO> callback = () -> getClient().getMosaic(mosaicId.getIdAsHex());
         return exceptionHandling(call(callback).map(this::createMosaicInfo));
     }
 
@@ -72,7 +70,7 @@ public class MosaicRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl imp
 
         MosaicIds mosaicIds = new MosaicIds();
         mosaicIds.mosaicIds(ids.stream()
-            .map(id -> UInt64.bigIntegerToHex(id.getId()))
+            .map(UInt64Id::getIdAsHex)
             .collect(Collectors.toList()));
         Callable<List<MosaicInfoDTO>> callback = () -> getClient()
             .getMosaics(mosaicIds);
@@ -85,15 +83,16 @@ public class MosaicRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl imp
     public Observable<List<MosaicNames>> getMosaicsNames(List<UInt64Id> ids) {
         MosaicIds mosaicIds = new MosaicIds();
         mosaicIds.mosaicIds(ids.stream()
-            .map(id -> UInt64.bigIntegerToHex(id.getId()))
+            .map(UInt64Id::getIdAsHex)
             .collect(Collectors.toList()));
         Callable<MosaicsNamesDTO> callback = () -> getClient()
             .getMosaicsNames(mosaicIds);
         return exceptionHandling(
-            call(callback).map(MosaicsNamesDTO::getAccountNames).flatMapIterable(item -> item)
+            call(callback).map(MosaicsNamesDTO::getMosaicNames).flatMapIterable(item -> item)
                 .map(this::toMosaicNames).toList()
                 .toObservable());
     }
+
     /**
      * Converts a {@link MosaicNamesDTO} into a {@link MosaicNames}
      *
@@ -102,7 +101,7 @@ public class MosaicRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl imp
      */
     private MosaicNames toMosaicNames(MosaicNamesDTO dto) {
         return new MosaicNames(
-            new MosaicId(extractBigInteger(dto.getMosaicId())),
+            MapperUtils.toMosaicId(dto.getMosaicId()),
             dto.getNames().stream().map(NamespaceName::new).collect(Collectors.toList()));
     }
 
@@ -110,24 +109,22 @@ public class MosaicRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl imp
     private MosaicInfo createMosaicInfo(MosaicInfoDTO mosaicInfoDTO) {
         NetworkType networkType = getNetworkTypeBlocking();
         return MosaicInfo.create(
-            mosaicInfoDTO.getMeta().getId(),
-            new MosaicId(extractBigInteger(mosaicInfoDTO.getMosaic().getMosaicId())),
-            extractBigInteger(mosaicInfoDTO.getMosaic().getSupply()),
-            extractBigInteger(mosaicInfoDTO.getMosaic().getHeight()),
-            new PublicAccount(mosaicInfoDTO.getMosaic().getOwner(), networkType),
+            MapperUtils.toMosaicId(mosaicInfoDTO.getMosaic().getId()),
+            mosaicInfoDTO.getMosaic().getSupply(),
+            mosaicInfoDTO.getMosaic().getStartHeight(),
+            new PublicAccount(mosaicInfoDTO.getMosaic().getOwnerPublicKey(), networkType),
             mosaicInfoDTO.getMosaic().getRevision(),
             extractMosaicProperties(mosaicInfoDTO.getMosaic().getProperties()));
     }
 
-    private MosaicProperties extractMosaicProperties(List<MosaicPropertyDTO> mosaicPropertiesDTO) {
+    private MosaicProperties extractMosaicProperties(MosaicPropertiesDTO mosaicPropertiesDTO) {
         String flags =
-            "00" + Integer.toBinaryString(
-                extractBigInteger(mosaicPropertiesDTO.get(0).getValue()).intValue());
+            "00" + Integer.toBinaryString(mosaicPropertiesDTO.getFlags());
         String bitMapFlags = flags.substring(flags.length() - 2);
         return MosaicProperties.create(
             bitMapFlags.charAt(1) == '1',
             bitMapFlags.charAt(0) == '1',
-            extractBigInteger(mosaicPropertiesDTO.get(1).getValue()).intValue(),
-            extractBigInteger(mosaicPropertiesDTO.get(2).getValue()));
+            mosaicPropertiesDTO.getDivisibility(),
+            mosaicPropertiesDTO.getDuration());
     }
 }
