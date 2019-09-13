@@ -55,68 +55,67 @@ public class TransactionTest {
     @Test
     void shouldReturnTransactionIsUnannouncedWhenThereIsNoTransactionInfo() {
         FakeTransferTransaction fakeTransaction =
-            new FakeTransferTransaction(
-                NetworkType.MIJIN_TEST, 1, new FakeDeadline(), BigInteger.valueOf(0));
-
+            new FakeTransferTransactionFactory(NetworkType.MIJIN_TEST).deadline(new FakeDeadline())
+                .build();
         assertTrue(fakeTransaction.isUnannounced());
     }
 
     @Test
     void shouldReturnTransactionIsUnconfirmedWhenHeightIs0() {
+        TransactionInfo transactionInfo = TransactionInfo
+            .create(BigInteger.valueOf(0), 1, "id_hash", "hash", "hash");
         FakeTransferTransaction fakeTransaction =
-            new FakeTransferTransaction(
-                NetworkType.MIJIN_TEST,
-                1,
-                new FakeDeadline(),
-                BigInteger.valueOf(0),
-                "signature",
-                signer,
-                TransactionInfo.create(BigInteger.valueOf(0), 1, "id_hash", "hash", "hash"));
+            new FakeTransferTransactionFactory(NetworkType.MIJIN_TEST)
+                .deadline(new FakeDeadline())
+                .signature("signature")
+                .signer(signer)
+                .transactionInfo(transactionInfo)
+                .build();
 
         assertTrue(fakeTransaction.isUnconfirmed());
     }
 
     @Test
     void shouldReturnTransactionIsNotUnconfirmedWhenHeightIsNot0() {
+        TransactionInfo transactionInfo = TransactionInfo
+            .create(BigInteger.valueOf(100), 1, "id_hash", "hash", "hash");
         FakeTransferTransaction fakeTransaction =
-            new FakeTransferTransaction(
-                NetworkType.MIJIN_TEST,
-                1,
-                new FakeDeadline(),
-                BigInteger.valueOf(0),
-                "signature",
-                signer,
-                TransactionInfo.create(BigInteger.valueOf(100), 1, "id_hash", "hash", "hash"));
+            new FakeTransferTransactionFactory(NetworkType.MIJIN_TEST)
+                .deadline(new FakeDeadline())
+                .signature("signature")
+                .signer(signer)
+                .transactionInfo(transactionInfo)
+                .build();
 
         assertFalse(fakeTransaction.isUnconfirmed());
     }
 
     @Test
     void shouldReturnTransactionIsConfirmedWhenHeightIsNot0() {
+        TransactionInfo transactionInfo = TransactionInfo
+            .create(BigInteger.valueOf(100), 1, "id_hash", "hash", "hash");
         FakeTransferTransaction fakeTransaction =
-            new FakeTransferTransaction(
-                NetworkType.MIJIN_TEST,
-                1,
-                new FakeDeadline(),
-                BigInteger.valueOf(0),
-                "signature",
-                signer,
-                TransactionInfo.create(BigInteger.valueOf(100), 1, "id_hash", "hash", "hash"));
+            new FakeTransferTransactionFactory(NetworkType.MIJIN_TEST)
+                .deadline(new FakeDeadline())
+                .signature("signature")
+                .signer(signer)
+                .transactionInfo(transactionInfo)
+                .build();
 
         assertTrue(fakeTransaction.isConfirmed());
     }
 
     @Test
     void shouldReturnTransactionIsAggregateBondedWhenHeightIs0AndHashAndMerkHashAreDifferent() {
+        TransactionInfo transactionInfo = TransactionInfo
+            .create(BigInteger.valueOf(0), 1, "id_hash", "hash", "hash_2");
         FakeTransferTransaction fakeTransaction =
-            new FakeTransferTransaction(
-                NetworkType.MIJIN_TEST,
-                1,
-                new FakeDeadline(),
-                BigInteger.valueOf(0),
-                "signature",
-                signer,
-                TransactionInfo.create(BigInteger.valueOf(0), 1, "id_hash", "hash", "hash_2"));
+            new FakeTransferTransactionFactory(NetworkType.MIJIN_TEST)
+                .deadline(new FakeDeadline())
+                .signature("signature")
+                .signer(signer)
+                .transactionInfo(transactionInfo)
+                .build();
 
         assertTrue(fakeTransaction.hasMissingSignatures());
     }

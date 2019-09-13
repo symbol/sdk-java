@@ -52,15 +52,17 @@ class AccountRepositoryIntegrationTest extends BaseIntegrationTest {
 
 
     public AccountRepository getAccountRepository(RepositoryType type) {
-
         return getRepositoryFactory(type).createAccountRepository();
     }
 
     @ParameterizedTest
     @EnumSource(RepositoryType.class)
     void getAccountInfo(RepositoryType type) throws ExecutionException, InterruptedException {
+
+        System.out.println(this.getTestAccount().getPublicAccount().getAddress().plain());
+        System.out.println(this.getTestAccount().getPublicAccount().getAddress().pretty());
         AccountInfo accountInfo =
-            this.getAccountRepository(type).getAccountInfo(this.getTestAccountAddress()).toFuture()
+            this.getAccountRepository(type).getAccountInfo(this.getTestAccount().getPublicAccount().getAddress()).toFuture()
                 .get();
 
         assertEquals(this.config().getTestAccountPublicKey(), accountInfo.getPublicKey());
@@ -242,7 +244,7 @@ class AccountRepositoryIntegrationTest extends BaseIntegrationTest {
 
         Assert.assertTrue(transaction.getSignature().isPresent());
         Assert.assertTrue(transaction.getSignatureBytes().isPresent());
-        Assert.assertNotNull(transaction.getFee());
+        Assert.assertNotNull(transaction.getMaxFee());
         Assert.assertNotNull(transaction.getVersion());
         Assert.assertNotNull(transaction.getDeadline());
 

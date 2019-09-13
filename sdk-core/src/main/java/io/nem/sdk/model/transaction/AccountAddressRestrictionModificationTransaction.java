@@ -21,120 +21,26 @@ import io.nem.catapult.builders.AccountRestrictionModificationActionDto;
 import io.nem.catapult.builders.AccountRestrictionTypeDto;
 import io.nem.catapult.builders.AmountDto;
 import io.nem.catapult.builders.EmbeddedAccountAddressRestrictionTransactionBuilder;
-import io.nem.catapult.builders.EntityTypeDto;
 import io.nem.catapult.builders.KeyDto;
 import io.nem.catapult.builders.SignatureDto;
 import io.nem.catapult.builders.TimestampDto;
 import io.nem.catapult.builders.UnresolvedAddressDto;
 import io.nem.sdk.model.account.Address;
-import io.nem.sdk.model.account.PublicAccount;
-import io.nem.sdk.model.blockchain.NetworkType;
-import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-import org.apache.commons.lang3.Validate;
 
 public class AccountAddressRestrictionModificationTransaction extends Transaction {
 
     private final AccountRestrictionType restrictionType;
+
     private final List<AccountRestrictionModification<Address>> modifications;
 
-    /**
-     * public constructor
-     */
-    @SuppressWarnings("squid:S00107")
-    public AccountAddressRestrictionModificationTransaction(
-        final NetworkType networkType,
-        final Integer version,
-        final Deadline deadline,
-        final BigInteger fee,
-        final AccountRestrictionType restrictionType,
-        final List<AccountRestrictionModification<Address>> modifications,
-        final String signature,
-        final PublicAccount signer,
-        final TransactionInfo transactionInfo) {
-        this(
-            networkType,
-            version,
-            deadline,
-            fee,
-            restrictionType,
-            modifications,
-            Optional.of(signature),
-            Optional.of(signer),
-            Optional.of(transactionInfo));
-    }
-
-    /**
-     * private constructor
-     */
-    private AccountAddressRestrictionModificationTransaction(
-        final NetworkType networkType,
-        final Integer version,
-        final Deadline deadline,
-        final BigInteger fee,
-        final AccountRestrictionType restrictionType,
-        final List<AccountRestrictionModification<Address>> modifications) {
-        this(
-            networkType,
-            version,
-            deadline,
-            fee,
-            restrictionType,
-            modifications,
-            Optional.empty(),
-            Optional.empty(),
-            Optional.empty());
-    }
-
-    /**
-     * private constructor
-     */
-    @SuppressWarnings("squid:S00107")
-    private AccountAddressRestrictionModificationTransaction(
-        final NetworkType networkType,
-        final Integer version,
-        final Deadline deadline,
-        final BigInteger fee,
-        final AccountRestrictionType restrictionType,
-        final List<AccountRestrictionModification<Address>> modifications,
-        final Optional<String> signature,
-        final Optional<PublicAccount> signer,
-        final Optional<TransactionInfo> transactionInfo) {
-        super(
-            TransactionType.ACCOUNT_PROPERTIES_ADDRESS,
-            networkType,
-            version,
-            deadline,
-            fee,
-            signature,
-            signer,
-            transactionInfo);
-        Validate.notNull(restrictionType, "RestrictionType must not be null");
-        Validate.notNull(modifications, "Modifications must not be null");
-        this.restrictionType = restrictionType;
-        this.modifications = modifications;
-    }
-
-    /**
-     * Create account address restriction transaction object
-     *
-     * @return {@link AccountAddressRestrictionModificationTransaction}
-     */
-    public static AccountAddressRestrictionModificationTransaction create(
-        Deadline deadline,
-        AccountRestrictionType restrictionType,
-        List<AccountRestrictionModification<Address>> modifications,
-        NetworkType networkType) {
-        return new AccountAddressRestrictionModificationTransaction(
-            networkType,
-            TransactionVersion.ACCOUNT_PROPERTIES_ADDRESS.getValue(),
-            deadline,
-            BigInteger.ZERO,
-            restrictionType,
-            modifications);
+    AccountAddressRestrictionModificationTransaction(
+        AccountAddressRestrictionModificationTransactionFactory factory) {
+        super(factory);
+        this.restrictionType = factory.getRestrictionType();
+        this.modifications = factory.getModifications();
     }
 
     /**
@@ -170,8 +76,8 @@ public class AccountAddressRestrictionModificationTransaction extends Transactio
                 new SignatureDto(signatureBuffer),
                 new KeyDto(signerBuffer),
                 getNetworkVersion(),
-                EntityTypeDto.ACCOUNT_ADDRESS_RESTRICTION_TRANSACTION,
-                new AmountDto(getFee().longValue()),
+                getEntityTypeDto(),
+                new AmountDto(getMaxFee().longValue()),
                 new TimestampDto(getDeadline().getInstant()),
                 AccountRestrictionTypeDto.rawValueOf(this.restrictionType.getValue()),
                 getModificationBuilder());
@@ -188,7 +94,7 @@ public class AccountAddressRestrictionModificationTransaction extends Transactio
             EmbeddedAccountAddressRestrictionTransactionBuilder.create(
                 new KeyDto(getRequiredSignerBytes()),
                 getNetworkVersion(),
-                EntityTypeDto.ACCOUNT_ADDRESS_RESTRICTION_TRANSACTION,
+                getEntityTypeDto(),
                 AccountRestrictionTypeDto.rawValueOf(this.restrictionType.getValue()),
                 getModificationBuilder());
         return txBuilder.serialize();

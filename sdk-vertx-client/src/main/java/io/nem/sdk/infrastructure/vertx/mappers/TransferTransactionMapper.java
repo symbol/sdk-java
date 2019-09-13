@@ -17,19 +17,18 @@
 
 package io.nem.sdk.infrastructure.vertx.mappers;
 
+import static io.nem.core.utils.MapperUtils.toAddressFromUnresolved;
 import static io.nem.core.utils.MapperUtils.toMosaicId;
 
-import io.nem.core.utils.MapperUtils;
-import io.nem.sdk.model.account.PublicAccount;
+import io.nem.sdk.model.blockchain.NetworkType;
 import io.nem.sdk.model.mosaic.Mosaic;
-import io.nem.sdk.model.transaction.Deadline;
 import io.nem.sdk.model.transaction.JsonHelper;
 import io.nem.sdk.model.transaction.Message;
 import io.nem.sdk.model.transaction.PlainMessage;
-import io.nem.sdk.model.transaction.Transaction;
-import io.nem.sdk.model.transaction.TransactionInfo;
+import io.nem.sdk.model.transaction.TransactionFactory;
 import io.nem.sdk.model.transaction.TransactionType;
 import io.nem.sdk.model.transaction.TransferTransaction;
+import io.nem.sdk.model.transaction.TransferTransactionFactory;
 import io.nem.sdk.openapi.vertx.model.TransferTransactionDTO;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -38,16 +37,16 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import org.bouncycastle.util.encoders.Hex;
 
-class TransferTransactionMapper extends AbstractTransactionMapper<TransferTransactionDTO> {
+class TransferTransactionMapper extends
+    AbstractTransactionMapper<TransferTransactionDTO, TransferTransaction> {
 
     public TransferTransactionMapper(JsonHelper jsonHelper) {
         super(jsonHelper, TransactionType.TRANSFER, TransferTransactionDTO.class);
     }
 
     @Override
-    protected Transaction basicMap(TransactionInfo transactionInfo,
+    protected TransactionFactory<TransferTransaction> createFactory(NetworkType networkType,
         TransferTransactionDTO transaction) {
-        Deadline deadline = new Deadline(transaction.getDeadline());
         List<Mosaic> mosaics = new ArrayList<>();
         if (transaction.getMosaics() != null) {
             mosaics =
@@ -69,19 +68,11 @@ class TransferTransactionMapper extends AbstractTransactionMapper<TransferTransa
                         StandardCharsets.UTF_8));
         }
 
-        return new TransferTransaction(
-            extractNetworkType(transaction.getVersion()),
-            extractTransactionVersion(transaction.getVersion()),
-            deadline,
-            transaction.getMaxFee(),
-            Optional.of(MapperUtils.toAddressFromUnresolved(transaction.getRecipientAddress())),
+        return new TransferTransactionFactory(networkType,
+            Optional.of(toAddressFromUnresolved(transaction.getRecipientAddress())),
             Optional.empty(),
             mosaics,
-            message,
-            transaction.getSignature(),
-            new PublicAccount(
-                transaction.getSignerPublicKey(),
-                extractNetworkType(transaction.getVersion())),
-            transactionInfo);
+            message);
     }
+
 }

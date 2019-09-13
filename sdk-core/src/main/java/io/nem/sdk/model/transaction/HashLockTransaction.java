@@ -18,7 +18,6 @@ package io.nem.sdk.model.transaction;
 import io.nem.catapult.builders.AmountDto;
 import io.nem.catapult.builders.BlockDurationDto;
 import io.nem.catapult.builders.EmbeddedHashLockTransactionBuilder;
-import io.nem.catapult.builders.EntityTypeDto;
 import io.nem.catapult.builders.Hash256Dto;
 import io.nem.catapult.builders.HashLockTransactionBuilder;
 import io.nem.catapult.builders.KeyDto;
@@ -26,13 +25,9 @@ import io.nem.catapult.builders.SignatureDto;
 import io.nem.catapult.builders.TimestampDto;
 import io.nem.catapult.builders.UnresolvedMosaicBuilder;
 import io.nem.catapult.builders.UnresolvedMosaicIdDto;
-import io.nem.sdk.model.account.PublicAccount;
-import io.nem.sdk.model.blockchain.NetworkType;
 import io.nem.sdk.model.mosaic.Mosaic;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
-import java.util.Optional;
-import org.apache.commons.lang3.Validate;
 import org.bouncycastle.util.encoders.Hex;
 
 /**
@@ -48,109 +43,20 @@ public class HashLockTransaction extends Transaction {
     private final BigInteger duration;
     private final SignedTransaction signedTransaction;
 
-    @SuppressWarnings("squid:S00107")
-    public HashLockTransaction(
-        NetworkType networkType,
-        Integer version,
-        Deadline deadline,
-        BigInteger fee,
-        Mosaic mosaic,
-        BigInteger duration,
-        SignedTransaction signedTransaction,
-        String signature,
-        PublicAccount signer,
-        TransactionInfo transactionInfo) {
-        this(
-            networkType,
-            version,
-            deadline,
-            fee,
-            mosaic,
-            duration,
-            signedTransaction,
-            Optional.of(signature),
-            Optional.of(signer),
-            Optional.of(transactionInfo));
-    }
-
-    public HashLockTransaction(
-        NetworkType networkType,
-        Integer version,
-        Deadline deadline,
-        BigInteger fee,
-        Mosaic mosaic,
-        BigInteger duration,
-        SignedTransaction signedTransaction) {
-        this(
-            networkType,
-            version,
-            deadline,
-            fee,
-            mosaic,
-            duration,
-            signedTransaction,
-            Optional.empty(),
-            Optional.empty(),
-            Optional.empty());
-    }
-
-    @SuppressWarnings("squid:S00107")
-    private HashLockTransaction(
-        NetworkType networkType,
-        Integer version,
-        Deadline deadline,
-        BigInteger fee,
-        Mosaic mosaic,
-        BigInteger duration,
-        SignedTransaction signedTransaction,
-        Optional<String> signature,
-        Optional<PublicAccount> signer,
-        Optional<TransactionInfo> transactionInfo) {
-        super(
-            TransactionType.LOCK,
-            networkType,
-            version,
-            deadline,
-            fee,
-            signature,
-            signer,
-            transactionInfo);
-        Validate.notNull(mosaic, "Mosaic must not be null");
-        Validate.notNull(duration, "Duration must not be null");
-        Validate.notNull(signedTransaction, "Signed transaction must not be null");
-        this.mosaic = mosaic;
-        this.duration = duration;
-        this.signedTransaction = signedTransaction;
+    /**
+     * It creates a {@link HashLockTransaction} based on the factory.
+     *
+     * @param factory the factory with the configured information.
+     */
+    HashLockTransaction(HashLockTransactionFactory factory) {
+        super(factory);
+        this.mosaic = factory.getMosaic();
+        this.duration = factory.getDuration();
+        this.signedTransaction = factory.getSignedTransaction();
         if (signedTransaction.getType() != TransactionType.AGGREGATE_BONDED) {
             throw new IllegalArgumentException(
                 "Signed transaction must be Aggregate Bonded Transaction");
         }
-    }
-
-    /**
-     * Create a lock funds transaction object.
-     *
-     * @param deadline The deadline to include the transaction.
-     * @param mosaic The locked mosaic.
-     * @param duration The funds lock duration.
-     * @param signedTransaction The signed transaction for which funds are locked.
-     * @param networkType The network type.
-     * @return a LockFundsTransaction instance
-     */
-    public static HashLockTransaction create(
-        Deadline deadline,
-        Mosaic mosaic,
-        BigInteger duration,
-        SignedTransaction signedTransaction,
-        NetworkType networkType) {
-        return new HashLockTransaction(
-            networkType,
-            TransactionVersion.LOCK.getValue(),
-            deadline,
-            BigInteger.valueOf(0),
-            mosaic,
-            duration,
-            signedTransaction);
     }
 
     /**
@@ -196,8 +102,8 @@ public class HashLockTransaction extends Transaction {
                 new SignatureDto(signatureBuffer),
                 new KeyDto(signerBuffer),
                 getNetworkVersion(),
-                EntityTypeDto.HASH_LOCK_TRANSACTION,
-                new AmountDto(getFee().longValue()),
+                getEntityTypeDto(),
+                new AmountDto(getMaxFee().longValue()),
                 new TimestampDto(getDeadline().getInstant()),
                 UnresolvedMosaicBuilder.create(
                     new UnresolvedMosaicIdDto(getMosaic().getId().getId().longValue()),
@@ -218,7 +124,7 @@ public class HashLockTransaction extends Transaction {
             EmbeddedHashLockTransactionBuilder.create(
                 new KeyDto(getRequiredSignerBytes()),
                 getNetworkVersion(),
-                EntityTypeDto.HASH_LOCK_TRANSACTION,
+                getEntityTypeDto(),
                 UnresolvedMosaicBuilder.create(
                     new UnresolvedMosaicIdDto(getMosaic().getId().getId().longValue()),
                     new AmountDto(getMosaic().getAmount().longValue())),

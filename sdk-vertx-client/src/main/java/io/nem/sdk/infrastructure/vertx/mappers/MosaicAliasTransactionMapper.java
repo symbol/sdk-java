@@ -18,44 +18,33 @@
 package io.nem.sdk.infrastructure.vertx.mappers;
 
 import io.nem.core.utils.MapperUtils;
-import io.nem.sdk.model.account.PublicAccount;
 import io.nem.sdk.model.blockchain.NetworkType;
 import io.nem.sdk.model.namespace.AliasAction;
 import io.nem.sdk.model.namespace.NamespaceId;
-import io.nem.sdk.model.transaction.Deadline;
 import io.nem.sdk.model.transaction.JsonHelper;
 import io.nem.sdk.model.transaction.MosaicAliasTransaction;
-import io.nem.sdk.model.transaction.Transaction;
-import io.nem.sdk.model.transaction.TransactionInfo;
+import io.nem.sdk.model.transaction.MosaicAliasTransactionFactory;
+import io.nem.sdk.model.transaction.TransactionFactory;
 import io.nem.sdk.model.transaction.TransactionType;
 import io.nem.sdk.openapi.vertx.model.MosaicAliasTransactionDTO;
-import java.util.Optional;
 
 class MosaicAliasTransactionMapper extends
-    AbstractTransactionMapper<MosaicAliasTransactionDTO> {
+    AbstractTransactionMapper<MosaicAliasTransactionDTO, MosaicAliasTransaction> {
 
     public MosaicAliasTransactionMapper(JsonHelper jsonHelper) {
         super(jsonHelper, TransactionType.MOSAIC_ALIAS, MosaicAliasTransactionDTO.class);
     }
 
     @Override
-    protected Transaction basicMap(TransactionInfo transactionInfo,
+    protected TransactionFactory<MosaicAliasTransaction> createFactory(NetworkType networkType,
         MosaicAliasTransactionDTO transaction) {
         NamespaceId namespaceId = MapperUtils.toNamespaceId(transaction.getNamespaceId());
-        Deadline deadline = new Deadline(transaction.getDeadline());
-        NetworkType networkType = extractNetworkType(transaction.getVersion());
         AliasAction aliasAction = AliasAction
             .rawValueOf(transaction.getAliasAction().getValue().byteValue());
-        return new MosaicAliasTransaction(
+        return new MosaicAliasTransactionFactory(
             networkType,
-            extractTransactionVersion(transaction.getVersion()),
-            deadline,
-            transaction.getMaxFee(),
             aliasAction,
             namespaceId,
-            MapperUtils.toMosaicId(transaction.getMosaicId()),
-            Optional.ofNullable(transaction.getSignature()),
-            Optional.of(new PublicAccount(transaction.getSignerPublicKey(), networkType)),
-            Optional.of(transactionInfo));
+            MapperUtils.toMosaicId(transaction.getMosaicId()));
     }
 }

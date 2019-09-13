@@ -17,41 +17,33 @@
 
 package io.nem.sdk.infrastructure.vertx.mappers;
 
-import io.nem.core.utils.MapperUtils;
-import io.nem.sdk.model.account.PublicAccount;
+import static io.nem.core.utils.MapperUtils.toAddressFromUnresolved;
+
 import io.nem.sdk.model.blockchain.NetworkType;
-import io.nem.sdk.model.transaction.Deadline;
 import io.nem.sdk.model.transaction.HashType;
 import io.nem.sdk.model.transaction.JsonHelper;
 import io.nem.sdk.model.transaction.SecretProofTransaction;
-import io.nem.sdk.model.transaction.Transaction;
-import io.nem.sdk.model.transaction.TransactionInfo;
+import io.nem.sdk.model.transaction.SecretProofTransactionFactory;
+import io.nem.sdk.model.transaction.TransactionFactory;
 import io.nem.sdk.model.transaction.TransactionType;
 import io.nem.sdk.openapi.vertx.model.SecretProofTransactionDTO;
 
 class SecretProofTransactionMapper extends
-    AbstractTransactionMapper<SecretProofTransactionDTO> {
+    AbstractTransactionMapper<SecretProofTransactionDTO, SecretProofTransaction> {
 
     public SecretProofTransactionMapper(JsonHelper jsonHelper) {
         super(jsonHelper, TransactionType.SECRET_PROOF, SecretProofTransactionDTO.class);
     }
 
     @Override
-    protected Transaction basicMap(TransactionInfo transactionInfo,
+    protected TransactionFactory<SecretProofTransaction> createFactory(NetworkType networkType,
         SecretProofTransactionDTO transaction) {
-        Deadline deadline = new Deadline(transaction.getDeadline());
-        NetworkType networkType = extractNetworkType(transaction.getVersion());
-        return new SecretProofTransaction(
+        return new SecretProofTransactionFactory(
             networkType,
-            extractTransactionVersion(transaction.getVersion()),
-            deadline,
-            transaction.getMaxFee(),
             HashType.rawValueOf(transaction.getHashAlgorithm().getValue()),
-            MapperUtils.toAddressFromUnresolved(transaction.getRecipientAddress()),
+            toAddressFromUnresolved(transaction.getRecipientAddress()),
             transaction.getSecret(),
-            transaction.getProof(),
-            transaction.getSignature(),
-            new PublicAccount(transaction.getSignerPublicKey(), networkType),
-            transactionInfo);
+            transaction.getProof());
     }
+
 }

@@ -19,7 +19,6 @@ package io.nem.sdk.model.transaction;
 import io.nem.catapult.builders.AmountDto;
 import io.nem.catapult.builders.BlockDurationDto;
 import io.nem.catapult.builders.EmbeddedMosaicDefinitionTransactionBuilder;
-import io.nem.catapult.builders.EntityTypeDto;
 import io.nem.catapult.builders.KeyDto;
 import io.nem.catapult.builders.MosaicDefinitionTransactionBuilder;
 import io.nem.catapult.builders.MosaicFlagsDto;
@@ -27,16 +26,11 @@ import io.nem.catapult.builders.MosaicIdDto;
 import io.nem.catapult.builders.MosaicNonceDto;
 import io.nem.catapult.builders.SignatureDto;
 import io.nem.catapult.builders.TimestampDto;
-import io.nem.sdk.model.account.PublicAccount;
-import io.nem.sdk.model.blockchain.NetworkType;
 import io.nem.sdk.model.mosaic.MosaicId;
 import io.nem.sdk.model.mosaic.MosaicNonce;
 import io.nem.sdk.model.mosaic.MosaicProperties;
-import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.util.EnumSet;
-import java.util.Optional;
-import org.apache.commons.lang3.Validate;
 
 /**
  * Before a mosaic can be created or transferred, a corresponding definition of the mosaic has to be
@@ -50,69 +44,11 @@ public class MosaicDefinitionTransaction extends Transaction {
     private final MosaicId mosaicId;
     private final MosaicProperties mosaicProperties;
 
-    @SuppressWarnings("squid:S00107")
-    public MosaicDefinitionTransaction(NetworkType networkType, Integer version, Deadline deadline,
-        BigInteger fee,
-        MosaicNonce mosaicNonce, MosaicId mosaicId, MosaicProperties mosaicProperties,
-        String signature, PublicAccount signer, TransactionInfo transactionInfo) {
-        this(networkType, version, deadline, fee, mosaicNonce, mosaicId, mosaicProperties,
-            Optional.of(signature), Optional.of(signer), Optional.of(transactionInfo));
-    }
-
-    @SuppressWarnings("squid:S00107")
-    public MosaicDefinitionTransaction(NetworkType networkType, Integer version, Deadline deadline,
-        BigInteger fee,
-        MosaicNonce mosaicNonce, MosaicId mosaicId, MosaicProperties mosaicProperties) {
-        this(networkType, version, deadline, fee, mosaicNonce, mosaicId, mosaicProperties,
-            Optional.empty(),
-            Optional.empty(), Optional.empty());
-    }
-
-    @SuppressWarnings("squid:S00107")
-    private MosaicDefinitionTransaction(NetworkType networkType, Integer version, Deadline deadline,
-        BigInteger fee,
-        MosaicNonce mosaicNonce, MosaicId mosaicId, MosaicProperties mosaicProperties,
-        Optional<String> signature, Optional<PublicAccount> signer,
-        Optional<TransactionInfo> transactionInfo) {
-        super(TransactionType.MOSAIC_DEFINITION, networkType, version, deadline, fee, signature,
-            signer,
-            transactionInfo);
-        Validate.notNull(mosaicNonce, "MosaicNonce must not be null");
-        Validate.notNull(mosaicId, "MosaicId must not be null");
-        Validate.notNull(mosaicProperties, "MosaicProperties must not be null");
-        this.mosaicNonce = mosaicNonce;
-        this.mosaicId = mosaicId;
-        this.mosaicProperties = mosaicProperties;
-    }
-
-    /**
-     * Create a mosaic creation transaction object.
-     *
-     * @param deadline The deadline to include the transaction.
-     * @param maxFee Max fee.
-     * @param mosaicNonce The mosaicNonce
-     * @param mosaicId The mosaicId.
-     * @param mosaicProperties The mosaic properties.
-     * @param networkType The network type.
-     * @return {@link MosaicDefinitionTransaction}
-     */
-    public static MosaicDefinitionTransaction create(
-        Deadline deadline,
-        BigInteger maxFee,
-        MosaicNonce mosaicNonce,
-        MosaicId mosaicId,
-        MosaicProperties mosaicProperties,
-        NetworkType networkType) {
-        Validate.notNull(mosaicNonce, "MosaicNonce must not be null");
-        Validate.notNull(mosaicId, "MosaicId must not be null");
-        return new MosaicDefinitionTransaction(
-            networkType,
-            TransactionVersion.MOSAIC_DEFINITION.getValue(),
-            deadline,
-            maxFee,
-            mosaicNonce,
-            mosaicId,
-            mosaicProperties);
+    public MosaicDefinitionTransaction(MosaicDefinitionTransactionFactory factory) {
+        super(factory);
+        this.mosaicNonce = factory.getMosaicNonce();
+        this.mosaicId = factory.getMosaicId();
+        this.mosaicProperties = factory.getMosaicProperties();
     }
 
     /**
@@ -157,8 +93,8 @@ public class MosaicDefinitionTransaction extends Transaction {
                 new SignatureDto(signatureBuffer),
                 new KeyDto(signerBuffer),
                 getNetworkVersion(),
-                EntityTypeDto.MOSAIC_DEFINITION_TRANSACTION,
-                new AmountDto(getFee().longValue()),
+                getEntityTypeDto(),
+                new AmountDto(getMaxFee().longValue()),
                 new TimestampDto(getDeadline().getInstant()),
                 new MosaicNonceDto(getMosaicNonce().getNonceAsInt()),
                 new MosaicIdDto(getMosaicId().getId().longValue()),
@@ -178,7 +114,7 @@ public class MosaicDefinitionTransaction extends Transaction {
             EmbeddedMosaicDefinitionTransactionBuilder.create(
                 new KeyDto(getRequiredSignerBytes()),
                 getNetworkVersion(),
-                EntityTypeDto.MOSAIC_DEFINITION_TRANSACTION,
+                getEntityTypeDto(),
                 new MosaicNonceDto(getMosaicNonce().getNonceAsInt()),
                 new MosaicIdDto(getMosaicId().getId().longValue()),
                 getMosaicFlags(),

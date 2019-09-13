@@ -17,13 +17,17 @@
 
 package io.nem.sdk.infrastructure.vertx.mappers;
 
+import io.nem.sdk.model.account.PublicAccount;
 import io.nem.sdk.model.blockchain.NetworkType;
+import io.nem.sdk.model.transaction.Deadline;
 import io.nem.sdk.model.transaction.JsonHelper;
 import io.nem.sdk.model.transaction.Transaction;
+import io.nem.sdk.model.transaction.TransactionFactory;
 import io.nem.sdk.model.transaction.TransactionInfo;
 import io.nem.sdk.model.transaction.TransactionType;
 import io.nem.sdk.openapi.vertx.model.EmbeddedTransactionInfoDTO;
 import io.nem.sdk.openapi.vertx.model.EmbeddedTransactionMetaDTO;
+import io.nem.sdk.openapi.vertx.model.TransactionDTO;
 import io.nem.sdk.openapi.vertx.model.TransactionInfoDTO;
 import io.nem.sdk.openapi.vertx.model.TransactionMetaDTO;
 import java.util.Collections;
@@ -35,16 +39,17 @@ import java.util.Map;
  *
  * @param <T> the dto type of the transaction object.
  */
-public abstract class AbstractTransactionMapper<T> implements TransactionMapper {
+public abstract class AbstractTransactionMapper<D, T extends Transaction> implements
+    TransactionMapper {
 
     private final TransactionType transactionType;
 
     private final JsonHelper jsonHelper;
 
-    private Class<T> transactionDtoClass;
+    private Class<D> transactionDtoClass;
 
     public AbstractTransactionMapper(JsonHelper jsonHelper, TransactionType transactionType,
-        Class<T> transactionDtoClass) {
+        Class<D> transactionDtoClass) {
         this.jsonHelper = jsonHelper;
         this.transactionType = transactionType;
         this.transactionDtoClass = transactionDtoClass;
@@ -78,21 +83,45 @@ public abstract class AbstractTransactionMapper<T> implements TransactionMapper 
     public Transaction map(EmbeddedTransactionInfoDTO transactionInfoDTO) {
         patchTransaction(transactionInfoDTO.getTransaction());
         TransactionInfo transactionInfo = createTransactionInfo(transactionInfoDTO.getMeta());
-        T transaction = getJsonHelper()
-            .convert(transactionInfoDTO.getTransaction(), transactionDtoClass);
-        return basicMap(transactionInfo, transaction);
+        return basicMap(transactionInfo, transactionInfoDTO.getTransaction());
     }
 
     @Override
     public Transaction map(TransactionInfoDTO transactionInfoDTO) {
         patchTransaction(transactionInfoDTO.getTransaction());
         TransactionInfo transactionInfo = createTransactionInfo(transactionInfoDTO.getMeta());
-        T transaction = getJsonHelper()
-            .convert(transactionInfoDTO.getTransaction(), transactionDtoClass);
-        return basicMap(transactionInfo, transaction);
+        return basicMap(transactionInfo, transactionInfoDTO.getTransaction());
     }
 
-    protected abstract Transaction basicMap(TransactionInfo transactionInfo, T transaction);
+    protected final T basicMap(TransactionInfo transactionInfo, Object transactionDto) {
+        D transaction = getJsonHelper().convert(transactionDto, transactionDtoClass);
+        TransactionDTO transactionDTO = getJsonHelper().convert(transaction, TransactionDTO.class);
+        NetworkType networkType = extractNetworkType(transactionDTO.getVersion());
+        TransactionFactory<T> factory = createFactory(networkType, transaction);
+        factory.version(extractTransactionVersion(transactionDTO.getVersion()));
+        factory.deadline(new Deadline(transactionDTO.getDeadline()));
+        if (transactionDTO.getSignerPublicKey() != null) {
+            factory.signer(
+                PublicAccount
+                    .createFromPublicKey(transactionDTO.getSignerPublicKey(), networkType));
+        }
+        if (transactionDTO.getSignature() != null) {
+            factory.signature(transactionDTO.getSignature());
+        }
+        if (transactionDTO.getMaxFee() != null) {
+            factory.maxFee(transactionDTO.getMaxFee());
+        }
+        factory.transactionInfo(transactionInfo);
+        T transactionModel = factory.build();
+        if (transactionModel.getType() != getTransactionType()) {
+            throw new IllegalStateException(
+                "Expected transaction to be " + getTransactionType() + " but got "
+                    + transactionModel.getType());
+        }
+        return transactionModel;
+    }
+
+    protected abstract TransactionFactory<T> createFactory(NetworkType networkType, D transaction);
 
     protected TransactionInfo createTransactionInfo(TransactionMetaDTO meta) {
         return TransactionInfo.create(meta.getHeight(),

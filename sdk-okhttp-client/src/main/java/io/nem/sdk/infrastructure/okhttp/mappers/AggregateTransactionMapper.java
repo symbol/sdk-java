@@ -21,10 +21,9 @@ import io.nem.sdk.model.account.PublicAccount;
 import io.nem.sdk.model.blockchain.NetworkType;
 import io.nem.sdk.model.transaction.AggregateTransaction;
 import io.nem.sdk.model.transaction.AggregateTransactionCosignature;
-import io.nem.sdk.model.transaction.Deadline;
+import io.nem.sdk.model.transaction.AggregateTransactionFactory;
 import io.nem.sdk.model.transaction.JsonHelper;
 import io.nem.sdk.model.transaction.Transaction;
-import io.nem.sdk.model.transaction.TransactionInfo;
 import io.nem.sdk.model.transaction.TransactionType;
 import io.nem.sdk.openapi.okhttp_gson.model.AggregateBondedTransactionDTO;
 import io.nem.sdk.openapi.okhttp_gson.model.EmbeddedTransactionInfoDTO;
@@ -34,7 +33,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 class AggregateTransactionMapper extends
-    AbstractTransactionMapper<AggregateBondedTransactionDTO> {
+    AbstractTransactionMapper<AggregateBondedTransactionDTO, AggregateTransaction> {
 
     private TransactionMapper transactionMapper;
 
@@ -46,11 +45,8 @@ class AggregateTransactionMapper extends
     }
 
     @Override
-    protected Transaction basicMap(TransactionInfo transactionInfo,
+    protected AggregateTransactionFactory createFactory(NetworkType networkType,
         AggregateBondedTransactionDTO transaction) {
-
-        Deadline deadline = new Deadline(transaction.getDeadline());
-        NetworkType networkType = extractNetworkType(transaction.getVersion());
 
         List<Transaction> transactions = transaction.getTransactions().stream()
             .map(embeddedTransactionInfoDTO -> {
@@ -76,23 +72,13 @@ class AggregateTransactionMapper extends
                         aggregateCosignature ->
                             new AggregateTransactionCosignature(
                                 aggregateCosignature.getSignature(),
-                                new PublicAccount(aggregateCosignature.getSignerPublicKey(),
-                                    networkType)))
+                                PublicAccount
+                                    .createFromPublicKey(aggregateCosignature.getSignerPublicKey(),
+                                        networkType)))
                     .collect(Collectors.toList());
         }
 
-        return new AggregateTransaction(
-            networkType,
-            TransactionType.rawValueOf(transaction.getType()),
-            extractTransactionVersion(transaction.getVersion()),
-            deadline,
-            transaction.getMaxFee(),
-            transactions,
-            cosignatures,
-            transaction.getSignature(),
-            new PublicAccount(transaction.getSignerPublicKey(), networkType),
-            transactionInfo);
+        return new AggregateTransactionFactory(getTransactionType(), networkType, transactions,
+            cosignatures);
     }
-
-
 }

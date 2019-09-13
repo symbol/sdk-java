@@ -34,7 +34,8 @@ public class GeneralTransactionMapper implements TransactionMapper {
 
     private final JsonHelper jsonHelper;
 
-    private Map<TransactionType, TransactionMapper> transactionMappers = new EnumMap<>(TransactionType.class);
+    private Map<TransactionType, TransactionMapper> transactionMappers = new EnumMap<>(
+        TransactionType.class);
 
     public GeneralTransactionMapper(JsonHelper jsonHelper) {
         this.jsonHelper = jsonHelper;
@@ -49,6 +50,7 @@ public class GeneralTransactionMapper implements TransactionMapper {
         register(new SecretLockTransactionMapper(jsonHelper));
         register(new SecretProofTransactionMapper(jsonHelper));
         register(new TransferTransactionMapper(jsonHelper));
+        register(new AccountMetadataTransactionMapper(jsonHelper));
         register(
             new AggregateTransactionMapper(jsonHelper, TransactionType.AGGREGATE_BONDED, this));
         register(

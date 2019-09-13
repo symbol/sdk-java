@@ -19,21 +19,17 @@ package io.nem.sdk.model.transaction;
 import io.nem.catapult.builders.AmountDto;
 import io.nem.catapult.builders.BlockDurationDto;
 import io.nem.catapult.builders.EmbeddedNamespaceRegistrationTransactionBuilder;
-import io.nem.catapult.builders.EntityTypeDto;
 import io.nem.catapult.builders.KeyDto;
 import io.nem.catapult.builders.NamespaceIdDto;
 import io.nem.catapult.builders.NamespaceRegistrationTransactionBuilder;
 import io.nem.catapult.builders.SignatureDto;
 import io.nem.catapult.builders.TimestampDto;
-import io.nem.sdk.model.account.PublicAccount;
-import io.nem.sdk.model.blockchain.NetworkType;
 import io.nem.sdk.model.namespace.NamespaceId;
 import io.nem.sdk.model.namespace.NamespaceType;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.Optional;
-import org.apache.commons.lang3.Validate;
 
 /**
  * Accounts can rent a namespace for an amount of blocks and after a this renew the contract. This
@@ -49,121 +45,17 @@ public class NamespaceRegistrationTransaction extends Transaction {
     private final Optional<NamespaceId> parentId;
     private final NamespaceType namespaceType;
 
-    @SuppressWarnings("squid:S00107")
-    public NamespaceRegistrationTransaction(final NetworkType networkType, final Integer version,
-        final Deadline deadline, final BigInteger fee,
-        final String namespaceName, final NamespaceId namespaceId,
-        final NamespaceType namespaceType,
-        final Optional<BigInteger> duration, final Optional<NamespaceId> parentId,
-        final String signature,
-        final PublicAccount signer, final TransactionInfo transactionInfo) {
-        this(networkType, version, deadline, fee, namespaceName, namespaceId, namespaceType,
-            duration, parentId, Optional.of(signature),
-            Optional.of(signer), Optional.of(transactionInfo));
-    }
-
-    @SuppressWarnings("squid:S00107")
-    private NamespaceRegistrationTransaction(final NetworkType networkType, final Integer version,
-        final Deadline deadline,
-        final BigInteger fee, final String namespaceName, final NamespaceId namespaceId,
-        final NamespaceType namespaceType, final Optional<BigInteger> duration,
-        final Optional<NamespaceId> parentId) {
-        this(networkType, version, deadline, fee, namespaceName, namespaceId, namespaceType,
-            duration, parentId, Optional.empty(),
-            Optional.empty(), Optional.empty());
-    }
-
-    @SuppressWarnings("squid:S00107")
-    private NamespaceRegistrationTransaction(final NetworkType networkType, final Integer version,
-        final Deadline deadline,
-        final BigInteger fee, final String namespaceName, final NamespaceId namespaceId,
-        final NamespaceType namespaceType, final Optional<BigInteger> duration,
-        final Optional<NamespaceId> parentId, final Optional<String> signature,
-        final Optional<PublicAccount> signer, final Optional<TransactionInfo> transactionInfo) {
-        super(TransactionType.REGISTER_NAMESPACE, networkType, version, deadline, fee, signature,
-            signer, transactionInfo);
-        Validate.notNull(namespaceName, "NamespaceName must not be null");
-        Validate.notNull(namespaceType, "NamespaceType must not be null");
-        Validate.notNull(namespaceId, "NamespaceId must not be null");
-        if (namespaceType == NamespaceType.ROOT_NAMESPACE) {
-            Validate.notNull(duration, "Duration must not be null");
-        } else {
-            Validate.notNull(parentId, "ParentId must not be null");
-        }
-        this.namespaceName = namespaceName;
-        this.namespaceType = namespaceType;
-        this.namespaceId = namespaceId;
-        this.duration = duration;
-        this.parentId = parentId;
-    }
-
     /**
-     * Creates a root namespace object.
-     *
-     * @param deadline Deadline to complete the transaction.
-     * @param fee Fee for the transaction.
-     * @param namespaceName Namespace name.
-     * @param duration Duration of the namespace.
-     * @param networkType Network type.
-     * @return Register namespace transaction.
+     * @param factory the factory with the configured fields.
      */
-    public static NamespaceRegistrationTransaction createRootNamespace(final Deadline deadline,
-        final BigInteger fee,
-        final String namespaceName,
-        final BigInteger duration,
-        final NetworkType networkType) {
-        Validate.notNull(namespaceName, "NamespaceName must not be null");
-        NamespaceId namespaceId = NamespaceId.createFromName(namespaceName);
-        return new NamespaceRegistrationTransaction(networkType,
-            TransactionVersion.REGISTER_NAMESPACE.getValue(), deadline, fee, namespaceName,
-            namespaceId, NamespaceType.ROOT_NAMESPACE, Optional.of(duration), Optional.empty());
+    NamespaceRegistrationTransaction(NamespaceRegistrationTransactionFactory factory) {
+        super(factory);
+        this.namespaceName = factory.getNamespaceName();
+        this.namespaceType = factory.getNamespaceType();
+        this.namespaceId = factory.getNamespaceId();
+        this.duration = factory.getDuration();
+        this.parentId = factory.getParentId();
     }
-
-    /**
-     * Creates a sub namespace object.
-     *
-     * @param deadline Deadline to include the transaction.
-     * @param fee Fee for the namespace.
-     * @param namespaceName Namespace name.
-     * @param parentNamespaceName Parent namespace name.
-     * @param networkType Network type.
-     * @return instance of RegisterNamespaceTransaction
-     */
-    public static NamespaceRegistrationTransaction createSubNamespace(final Deadline deadline,
-        final BigInteger fee, final String namespaceName,
-        final String parentNamespaceName,
-        final NetworkType networkType) {
-        Validate.notNull(namespaceName, "NamespaceName must not be null");
-        Validate.notNull(parentNamespaceName, "ParentNamespaceName must not be null");
-        NamespaceId parentId = NamespaceId.createFromName(parentNamespaceName);
-        return NamespaceRegistrationTransaction
-            .createSubNamespace(deadline, fee, namespaceName, parentId, networkType);
-    }
-
-    /**
-     * Create a sub namespace object.
-     *
-     * @param deadline Deadline to include the transaction.
-     * @param fee Fee for the namespace.
-     * @param namespaceName Namespace name.
-     * @param parentId Parent id name.
-     * @param networkType Network type.
-     * @return instance of RegisterNamespaceTransaction
-     */
-    public static NamespaceRegistrationTransaction createSubNamespace(final Deadline deadline,
-        final BigInteger fee, final String namespaceName,
-        final NamespaceId parentId,
-        final NetworkType networkType) {
-        Validate.notNull(namespaceName, "NamespaceName must not be null");
-        Validate.notNull(parentId, "ParentId must not be null");
-        NamespaceId namespaceId = NamespaceId
-            .createFromNameAndParentId(namespaceName, parentId.getId());
-        return new NamespaceRegistrationTransaction(networkType,
-            TransactionVersion.REGISTER_NAMESPACE.getValue(), deadline,
-            fee, namespaceName, namespaceId, NamespaceType.SUB_NAMESPACE, Optional.empty(),
-            Optional.of(parentId));
-    }
-
 
     /**
      * Returns namespace name.
@@ -228,8 +120,8 @@ public class NamespaceRegistrationTransaction extends Transaction {
                     new SignatureDto(signatureBuffer),
                     new KeyDto(signerBuffer),
                     getNetworkVersion(),
-                    EntityTypeDto.REGISTER_NAMESPACE_TRANSACTION,
-                    new AmountDto(getFee().longValue()),
+                    getEntityTypeDto(),
+                    new AmountDto(getMaxFee().longValue()),
                     new TimestampDto(getDeadline().getInstant()),
                     new BlockDurationDto(getDuration()
                         .orElseThrow(() -> new IllegalStateException("Duration is required"))
@@ -243,8 +135,8 @@ public class NamespaceRegistrationTransaction extends Transaction {
                     new SignatureDto(signatureBuffer),
                     new KeyDto(signerBuffer),
                     getNetworkVersion(),
-                    EntityTypeDto.REGISTER_NAMESPACE_TRANSACTION,
-                    new AmountDto(getFee().longValue()),
+                    getEntityTypeDto(),
+                    new AmountDto(getMaxFee().longValue()),
                     new TimestampDto(getDeadline().getInstant()),
                     new NamespaceIdDto(getParentId()
                         .orElseThrow(() -> new IllegalStateException("ParentId is required"))
@@ -267,7 +159,7 @@ public class NamespaceRegistrationTransaction extends Transaction {
                 EmbeddedNamespaceRegistrationTransactionBuilder.create(
                     new KeyDto(getRequiredSignerBytes()),
                     getNetworkVersion(),
-                    EntityTypeDto.REGISTER_NAMESPACE_TRANSACTION,
+                    getEntityTypeDto(),
                     new BlockDurationDto(getDuration()
                         .orElseThrow(() -> new IllegalStateException("Duration is required"))
                         .longValue()),
@@ -279,7 +171,7 @@ public class NamespaceRegistrationTransaction extends Transaction {
                 EmbeddedNamespaceRegistrationTransactionBuilder.create(
                     new KeyDto(getRequiredSignerBytes()),
                     getNetworkVersion(),
-                    EntityTypeDto.REGISTER_NAMESPACE_TRANSACTION,
+                    getEntityTypeDto(),
                     new NamespaceIdDto(getParentId()
                         .orElseThrow(() -> new IllegalStateException("ParentId is required"))
                         .getId().longValue()),

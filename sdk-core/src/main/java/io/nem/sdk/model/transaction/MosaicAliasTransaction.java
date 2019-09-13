@@ -19,22 +19,16 @@ package io.nem.sdk.model.transaction;
 import io.nem.catapult.builders.AliasActionDto;
 import io.nem.catapult.builders.AmountDto;
 import io.nem.catapult.builders.EmbeddedMosaicAliasTransactionBuilder;
-import io.nem.catapult.builders.EntityTypeDto;
 import io.nem.catapult.builders.KeyDto;
 import io.nem.catapult.builders.MosaicAliasTransactionBuilder;
 import io.nem.catapult.builders.MosaicIdDto;
 import io.nem.catapult.builders.NamespaceIdDto;
 import io.nem.catapult.builders.SignatureDto;
 import io.nem.catapult.builders.TimestampDto;
-import io.nem.sdk.model.account.PublicAccount;
-import io.nem.sdk.model.blockchain.NetworkType;
 import io.nem.sdk.model.mosaic.MosaicId;
 import io.nem.sdk.model.namespace.AliasAction;
 import io.nem.sdk.model.namespace.NamespaceId;
-import java.math.BigInteger;
 import java.nio.ByteBuffer;
-import java.util.Optional;
-import org.apache.commons.lang3.Validate;
 
 /**
  * Mosaic alias transaction.
@@ -46,75 +40,15 @@ public class MosaicAliasTransaction extends Transaction {
     private final MosaicId mosaicId;
 
     /**
-     * @param networkType Network type.
-     * @param version Transaction version.
-     * @param deadline Deadline to include the transaction.
-     * @param maxFee Max fee defined by the sender.
-     * @param aliasAction Alias action.
-     * @param namespaceId Namespace id.
-     * @param mosaicId Mosaic id.
-     * @param signature Signature.
-     * @param signer Signer for the transaction.
-     * @param transactionInfo Transaction info.
-     */
-    @SuppressWarnings("squid:S00107")
-    public MosaicAliasTransaction(
-        final NetworkType networkType,
-        final int version,
-        final Deadline deadline,
-        final BigInteger maxFee,
-        final AliasAction aliasAction,
-        final NamespaceId namespaceId,
-        final MosaicId mosaicId,
-        final Optional<String> signature,
-        final Optional<PublicAccount> signer,
-        final Optional<TransactionInfo> transactionInfo) {
-        super(
-            TransactionType.MOSAIC_ALIAS,
-            networkType,
-            version,
-            deadline,
-            maxFee,
-            signature,
-            signer,
-            transactionInfo);
-        Validate.notNull(namespaceId, "namespaceId must not be null");
-        Validate.notNull(mosaicId, "mosaicId must not be null");
-
-        this.aliasAction = aliasAction;
-        this.namespaceId = namespaceId;
-        this.mosaicId = mosaicId;
-    }
-
-    /**
-     * Create a mosaic alias transaction object
+     * Crates a {@link MosaicAliasTransaction} based on the factory.
      *
-     * @param deadline Deadline to include the transaction.
-     * @param maxFee Max fee defined by the sender.
-     * @param aliasAction Alias action.
-     * @param namespaceId Namespace id.
-     * @param mosaicId Mosaic id.
-     * @param networkType Network type.
-     * @return Mosaic alias transaction.
+     * @param factory the factory.
      */
-    public static MosaicAliasTransaction create(
-        final Deadline deadline,
-        final BigInteger maxFee,
-        final AliasAction aliasAction,
-        final NamespaceId namespaceId,
-        final MosaicId mosaicId,
-        final NetworkType networkType) {
-        return new MosaicAliasTransaction(
-            networkType,
-            TransactionVersion.MOSAIC_ALIAS.getValue(),
-            deadline,
-            maxFee,
-            aliasAction,
-            namespaceId,
-            mosaicId,
-            Optional.empty(),
-            Optional.empty(),
-            Optional.empty());
+    MosaicAliasTransaction(MosaicAliasTransactionFactory factory) {
+        super(factory);
+        this.aliasAction = factory.getAliasAction();
+        this.namespaceId = factory.getNamespaceId();
+        this.mosaicId = factory.getMosaicId();
     }
 
     /**
@@ -160,8 +94,8 @@ public class MosaicAliasTransaction extends Transaction {
                 new SignatureDto(signatureBuffer),
                 new KeyDto(signerBuffer),
                 getNetworkVersion(),
-                EntityTypeDto.MOSAIC_ALIAS_TRANSACTION,
-                new AmountDto(getFee().longValue()),
+                getEntityTypeDto(),
+                new AmountDto(getMaxFee().longValue()),
                 new TimestampDto(getDeadline().getInstant()),
                 AliasActionDto.rawValueOf(getAliasAction().getValue()),
                 new NamespaceIdDto(getNamespaceId().getIdAsLong()),
@@ -180,7 +114,7 @@ public class MosaicAliasTransaction extends Transaction {
             EmbeddedMosaicAliasTransactionBuilder.create(
                 new KeyDto(getRequiredSignerBytes()),
                 getNetworkVersion(),
-                EntityTypeDto.MOSAIC_ALIAS_TRANSACTION,
+                getEntityTypeDto(),
                 AliasActionDto.rawValueOf(getAliasAction().getValue()),
                 new NamespaceIdDto(getNamespaceId().getIdAsLong()),
                 new MosaicIdDto(getMosaicId().getIdAsLong()));

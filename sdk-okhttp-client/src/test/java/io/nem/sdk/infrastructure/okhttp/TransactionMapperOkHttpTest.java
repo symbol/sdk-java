@@ -355,7 +355,7 @@ public class TransactionMapperOkHttpTest {
         assertEquals(transaction.getNetworkType().getValue(), networkType);
         assertEquals(
             jsonHelper.getBigInteger(parentTransaction.getTransaction(), "maxFee"),
-            transaction.getFee());
+            transaction.getMaxFee());
         assertNotNull(transaction.getDeadline());
 
         if (transaction.getType() == TransactionType.TRANSFER) {
@@ -477,7 +477,7 @@ public class TransactionMapperOkHttpTest {
             (int) jsonHelper.getInteger(transactionDto.getTransaction(), "type"));
         assertEquals(
             jsonHelper.getBigInteger(transactionDto.getTransaction(), "maxFee"),
-            aggregateTransaction.getFee());
+            aggregateTransaction.getMaxFee());
         assertNotNull(aggregateTransaction.getDeadline());
 
         assertEquals(

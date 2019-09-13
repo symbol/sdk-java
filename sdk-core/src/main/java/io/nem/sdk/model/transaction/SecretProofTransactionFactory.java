@@ -1,0 +1,103 @@
+/*
+ * Copyright 2019. NEM
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ *
+ */
+
+package io.nem.sdk.model.transaction;
+
+import io.nem.sdk.model.account.Address;
+import io.nem.sdk.model.blockchain.NetworkType;
+import org.apache.commons.lang3.Validate;
+
+/**
+ * Factory of {@link SecretProofTransaction}
+ */
+public class SecretProofTransactionFactory extends TransactionFactory<SecretProofTransaction> {
+
+    private final HashType hashType;
+    private final String secret;
+    private final String proof;
+    private final Address recipient;
+
+    /**
+     * Constructor.
+     *
+     * @param networkType Network type.
+     * @param hashType Hash algorithm secret is generated with.
+     * @param recipient Address of recipient.
+     * @param secret Seed proof hashed.
+     * @param proof Seed proof
+     */
+
+    public SecretProofTransactionFactory(
+        final NetworkType networkType,
+        final HashType hashType,
+        final Address recipient,
+        final String secret,
+        final String proof) {
+        super(TransactionType.SECRET_PROOF, networkType);
+        Validate.notNull(secret, "Secret must not be null.");
+        Validate.notNull(proof, "Proof must not be null.");
+        Validate.notNull(recipient, "Recipient must not be null.");
+        if (!HashType.validator(hashType, secret)) {
+            throw new IllegalArgumentException(
+                "HashType and Secret have incompatible length or not hexadecimal string");
+        }
+        this.hashType = hashType;
+        this.secret = secret;
+        this.proof = proof;
+        this.recipient = recipient;
+    }
+
+
+    /**
+     * Returns the hash algorithm secret is generated with.
+     *
+     * @return the hash algorithm secret is generated with.
+     */
+    public HashType getHashType() {
+        return hashType;
+    }
+
+    /**
+     * Returns the proof hashed.
+     *
+     * @return the proof hashed.
+     */
+    public String getSecret() {
+        return secret;
+    }
+
+    /**
+     * Returns proof.
+     *
+     * @return proof.
+     */
+    public String getProof() {
+        return proof;
+    }
+
+    /**
+     * @return the recipient
+     */
+    public Address getRecipient() {
+        return recipient;
+    }
+
+    @Override
+    public SecretProofTransaction build() {
+        return new SecretProofTransaction(this);
+    }
+}

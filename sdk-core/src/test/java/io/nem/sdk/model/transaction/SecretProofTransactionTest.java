@@ -23,7 +23,6 @@ import io.nem.sdk.model.account.Account;
 import io.nem.sdk.model.account.Address;
 import io.nem.sdk.model.account.PublicAccount;
 import io.nem.sdk.model.blockchain.NetworkType;
-import java.math.BigInteger;
 import org.bouncycastle.util.encoders.Hex;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
@@ -58,14 +57,12 @@ public class SecretProofTransactionTest {
         String secret = "3fc8ba10229ab5778d05d9c4b7f56676a88bf9295c185acfc0f961db5408cafe";
         String secretSeed = "9a493664";
         SecretProofTransaction secretProoftx =
-            SecretProofTransaction.create(
-                new FakeDeadline(),
-                BigInteger.ZERO,
+            new SecretProofTransactionFactory(
+                NetworkType.MIJIN_TEST,
                 HashType.SHA3_256,
                 recipient,
                 secret,
-                secretSeed,
-                NetworkType.MIJIN_TEST);
+                secretSeed).deadline(new FakeDeadline()).build();
         byte[] actual = secretProoftx.generateBytes();
         assertEquals(expected, Hex.toHexString(actual));
     }
@@ -79,14 +76,12 @@ public class SecretProofTransactionTest {
         String secret = "3fc8ba10229ab5778d05d9c4b7f56676a88bf9295c185acfc0f961db5408cafe";
         String secretSeed = "9a493664";
         SecretProofTransaction secretProoftx =
-            SecretProofTransaction.create(
-                new FakeDeadline(),
-                BigInteger.ZERO,
+            new SecretProofTransactionFactory(NetworkType.MIJIN_TEST,
                 HashType.SHA3_256,
                 recipient,
                 secret,
-                secretSeed,
-                NetworkType.MIJIN_TEST);
+                secretSeed
+            ).deadline(new FakeDeadline()).build();
         byte[] actual =
             secretProoftx
                 .toAggregate(
@@ -102,14 +97,12 @@ public class SecretProofTransactionTest {
         String secret = "3fc8ba10229ab5778d05d9c4b7f56676a88bf9295c185acfc0f961db5408cafe";
         String secretSeed = "9a493664";
         SecretProofTransaction secretProoftx =
-            SecretProofTransaction.create(
-                new FakeDeadline(),
-                BigInteger.ZERO,
+            new SecretProofTransactionFactory(
+                NetworkType.MIJIN_TEST,
                 HashType.SHA3_256,
                 recipient,
                 secret,
-                secretSeed,
-                NetworkType.MIJIN_TEST);
+                secretSeed).deadline(new FakeDeadline()).build();
         SignedTransaction signedTransaction = secretProoftx.signWith(account, generationHash);
         String payload = signedTransaction.getPayload();
         assertEquals(
@@ -129,14 +122,12 @@ public class SecretProofTransactionTest {
             IllegalArgumentException.class,
             () -> {
                 SecretProofTransaction secretProoftx =
-                    SecretProofTransaction.create(
-                        new FakeDeadline(),
-                        BigInteger.ZERO,
+                    new SecretProofTransactionFactory(
+                        NetworkType.MIJIN_TEST,
                         HashType.SHA3_256,
                         recipient,
                         "non valid hash",
-                        proof,
-                        NetworkType.MIJIN_TEST);
+                        proof).deadline(new FakeDeadline()).build();
             },
             "not a valid secret");
     }

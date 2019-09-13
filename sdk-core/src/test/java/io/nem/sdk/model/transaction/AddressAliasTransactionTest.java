@@ -23,8 +23,6 @@ import io.nem.sdk.model.blockchain.NetworkType;
 import io.nem.sdk.model.namespace.AliasAction;
 import io.nem.sdk.model.namespace.NamespaceId;
 import java.math.BigInteger;
-import java.time.temporal.ChronoUnit;
-import java.util.Optional;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -34,8 +32,6 @@ public class AddressAliasTransactionTest {
     void shouldSerialize() {
 
         NetworkType networkType = NetworkType.MIJIN_TEST;
-        Integer version = 1;
-        Deadline deadline = new Deadline(2, ChronoUnit.HOURS);
         BigInteger fee = BigInteger.ONE;
         NamespaceId namespaceId = NamespaceId.createFromId(new BigInteger("-8884663987180930485"));
         PublicAccount signature = PublicAccount.createFromPublicKey(
@@ -49,10 +45,9 @@ public class AddressAliasTransactionTest {
                 "3D28C804EDD07D5A728E5C5FFEC01AB07AFA5766AE6997B38526D36015A4D006",
                 "5A0069D83F17CF0001777E55");
 
-        AddressAliasTransaction transaction = new AddressAliasTransaction(networkType, version,
-            deadline, fee, AliasAction.LINK, namespaceId, signature.getAddress(),
-            Optional.of("signing"),
-            Optional.of(signature), Optional.of(transactionInfo));
+        AddressAliasTransaction transaction = new AddressAliasTransactionFactory(networkType,
+            AliasAction.LINK, namespaceId, signature.getAddress()).signer(signature)
+            .transactionInfo(transactionInfo).signature("signing").maxFee(fee).build();
 
         Assertions.assertTrue(
             HexEncoder.getString(transaction.generateBytes())

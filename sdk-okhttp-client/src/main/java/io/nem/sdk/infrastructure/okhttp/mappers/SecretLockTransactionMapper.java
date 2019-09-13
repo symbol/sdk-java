@@ -20,46 +20,37 @@ package io.nem.sdk.infrastructure.okhttp.mappers;
 import static io.nem.core.utils.MapperUtils.toAddressFromUnresolved;
 import static io.nem.core.utils.MapperUtils.toMosaicId;
 
-import io.nem.sdk.model.account.PublicAccount;
 import io.nem.sdk.model.blockchain.NetworkType;
 import io.nem.sdk.model.mosaic.Mosaic;
-import io.nem.sdk.model.transaction.Deadline;
 import io.nem.sdk.model.transaction.HashType;
 import io.nem.sdk.model.transaction.JsonHelper;
 import io.nem.sdk.model.transaction.SecretLockTransaction;
-import io.nem.sdk.model.transaction.Transaction;
-import io.nem.sdk.model.transaction.TransactionInfo;
+import io.nem.sdk.model.transaction.SecretLockTransactionFactory;
+import io.nem.sdk.model.transaction.TransactionFactory;
 import io.nem.sdk.model.transaction.TransactionType;
 import io.nem.sdk.openapi.okhttp_gson.model.SecretLockTransactionDTO;
 
-class SecretLockTransactionMapper extends AbstractTransactionMapper<SecretLockTransactionDTO> {
+class SecretLockTransactionMapper extends
+    AbstractTransactionMapper<SecretLockTransactionDTO, SecretLockTransaction> {
 
     public SecretLockTransactionMapper(JsonHelper jsonHelper) {
         super(jsonHelper, TransactionType.SECRET_LOCK, SecretLockTransactionDTO.class);
     }
 
     @Override
-    protected Transaction basicMap(TransactionInfo transactionInfo,
+    protected TransactionFactory<SecretLockTransaction> createFactory(NetworkType networkType,
         SecretLockTransactionDTO transaction) {
-
-        Deadline deadline = new Deadline(transaction.getDeadline());
-        NetworkType networkType = extractNetworkType(transaction.getVersion());
         Mosaic mosaic =
             new Mosaic(
                 toMosaicId(transaction.getMosaicId()),
                 transaction.getAmount());
-        return new SecretLockTransaction(
+        return new SecretLockTransactionFactory(
             networkType,
-            extractTransactionVersion(transaction.getVersion()),
-            deadline,
-            transaction.getMaxFee(),
             mosaic,
             transaction.getDuration(),
             HashType.rawValueOf(transaction.getHashAlgorithm().getValue()),
             transaction.getSecret(),
-            toAddressFromUnresolved(transaction.getRecipientAddress()),
-            transaction.getSignature(),
-            new PublicAccount(transaction.getSignerPublicKey(), networkType),
-            transactionInfo);
+            toAddressFromUnresolved(transaction.getRecipientAddress()));
     }
+
 }

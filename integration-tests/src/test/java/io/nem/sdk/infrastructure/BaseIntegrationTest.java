@@ -86,7 +86,7 @@ public abstract class BaseIntegrationTest {
     }
 
     public String getApiUrl() {
-        return this.config().getApiUrl() + "/";
+        return this.config().getApiUrl();
     }
 
     public NetworkType getNetworkType() {

@@ -21,120 +21,25 @@ import io.nem.catapult.builders.AccountRestrictionModificationActionDto;
 import io.nem.catapult.builders.AccountRestrictionTypeDto;
 import io.nem.catapult.builders.AmountDto;
 import io.nem.catapult.builders.EmbeddedAccountMosaicRestrictionTransactionBuilder;
-import io.nem.catapult.builders.EntityTypeDto;
 import io.nem.catapult.builders.KeyDto;
 import io.nem.catapult.builders.SignatureDto;
 import io.nem.catapult.builders.TimestampDto;
 import io.nem.catapult.builders.UnresolvedMosaicIdDto;
-import io.nem.sdk.model.account.PublicAccount;
-import io.nem.sdk.model.blockchain.NetworkType;
 import io.nem.sdk.model.mosaic.MosaicId;
-import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-import org.apache.commons.lang3.Validate;
 
 public class AccountMosaicRestrictionModificationTransaction extends Transaction {
 
     private final AccountRestrictionType restrictionType;
     private final List<AccountRestrictionModification<MosaicId>> modifications;
 
-    /**
-     * public constructor
-     */
-    @SuppressWarnings("squid:S00107")
     public AccountMosaicRestrictionModificationTransaction(
-        final NetworkType networkType,
-        final Integer version,
-        final Deadline deadline,
-        final BigInteger fee,
-        final AccountRestrictionType restrictionType,
-        final List<AccountRestrictionModification<MosaicId>> modifications,
-        final String signature,
-        final PublicAccount signer,
-        final TransactionInfo transactionInfo) {
-        this(
-            networkType,
-            version,
-            deadline,
-            fee,
-            restrictionType,
-            modifications,
-            Optional.of(signature),
-            Optional.of(signer),
-            Optional.of(transactionInfo));
-    }
-
-    /**
-     * private constructor
-     */
-    private AccountMosaicRestrictionModificationTransaction(
-        final NetworkType networkType,
-        final Integer version,
-        final Deadline deadline,
-        final BigInteger fee,
-        final AccountRestrictionType restrictionType,
-        final List<AccountRestrictionModification<MosaicId>> modifications) {
-        this(
-            networkType,
-            version,
-            deadline,
-            fee,
-            restrictionType,
-            modifications,
-            Optional.empty(),
-            Optional.empty(),
-            Optional.empty());
-    }
-
-    /**
-     * private constructor
-     */
-    @SuppressWarnings("squid:S00107")
-    private AccountMosaicRestrictionModificationTransaction(
-        final NetworkType networkType,
-        final Integer version,
-        final Deadline deadline,
-        final BigInteger fee,
-        final AccountRestrictionType restrictionType,
-        final List<AccountRestrictionModification<MosaicId>> modifications,
-        final Optional<String> signature,
-        final Optional<PublicAccount> signer,
-        final Optional<TransactionInfo> transactionInfo) {
-        super(
-            TransactionType.ACCOUNT_PROPERTIES_MOSAIC,
-            networkType,
-            version,
-            deadline,
-            fee,
-            signature,
-            signer,
-            transactionInfo);
-        Validate.notNull(restrictionType, "RestrictionType must not be null");
-        Validate.notNull(modifications, "Modifications must not be null");
-        this.restrictionType = restrictionType;
-        this.modifications = modifications;
-    }
-
-    /**
-     * Create account mosaic restriction transaction object
-     *
-     * @return {@link AccountMosaicRestrictionModificationTransaction}
-     */
-    public static AccountMosaicRestrictionModificationTransaction create(
-        Deadline deadline,
-        AccountRestrictionType restrictionType,
-        List<AccountRestrictionModification<MosaicId>> modifications,
-        NetworkType networkType) {
-        return new AccountMosaicRestrictionModificationTransaction(
-            networkType,
-            TransactionVersion.ACCOUNT_PROPERTIES_MOSAIC.getValue(),
-            deadline,
-            BigInteger.ZERO,
-            restrictionType,
-            modifications);
+        AccountMosaicRestrictionModificationTransactionFactory factory) {
+        super(factory);
+        this.restrictionType = factory.getRestrictionType();
+        this.modifications = factory.getModifications();
     }
 
     /**
@@ -170,8 +75,8 @@ public class AccountMosaicRestrictionModificationTransaction extends Transaction
                 new SignatureDto(signatureBuffer),
                 new KeyDto(signerBuffer),
                 getNetworkVersion(),
-                EntityTypeDto.ACCOUNT_MOSAIC_RESTRICTION_TRANSACTION,
-                new AmountDto(getFee().longValue()),
+                getEntityTypeDto(),
+                new AmountDto(getMaxFee().longValue()),
                 new TimestampDto(getDeadline().getInstant()),
                 AccountRestrictionTypeDto.rawValueOf(this.restrictionType.getValue()),
                 getModificationBuilder());
@@ -188,7 +93,7 @@ public class AccountMosaicRestrictionModificationTransaction extends Transaction
             EmbeddedAccountMosaicRestrictionTransactionBuilder.create(
                 new KeyDto(getRequiredSignerBytes()),
                 getNetworkVersion(),
-                EntityTypeDto.ACCOUNT_MOSAIC_RESTRICTION_TRANSACTION,
+                getEntityTypeDto(),
                 AccountRestrictionTypeDto.rawValueOf(this.restrictionType.getValue()),
                 getModificationBuilder());
         return txBuilder.serialize();

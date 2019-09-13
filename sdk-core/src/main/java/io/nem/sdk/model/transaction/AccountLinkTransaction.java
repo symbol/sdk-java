@@ -20,113 +20,25 @@ import io.nem.catapult.builders.AccountLinkActionDto;
 import io.nem.catapult.builders.AccountLinkTransactionBuilder;
 import io.nem.catapult.builders.AmountDto;
 import io.nem.catapult.builders.EmbeddedAccountLinkTransactionBuilder;
-import io.nem.catapult.builders.EntityTypeDto;
 import io.nem.catapult.builders.KeyDto;
 import io.nem.catapult.builders.SignatureDto;
 import io.nem.catapult.builders.TimestampDto;
 import io.nem.sdk.model.account.PublicAccount;
-import io.nem.sdk.model.blockchain.NetworkType;
-import java.math.BigInteger;
 import java.nio.ByteBuffer;
-import java.util.Optional;
-import org.apache.commons.lang3.Validate;
 
+/**
+ *
+ */
 public class AccountLinkTransaction extends Transaction {
 
     private final PublicAccount remoteAccount;
+
     private final AccountLinkAction linkAction;
 
-    @SuppressWarnings("squid:S00107")
-    public AccountLinkTransaction(
-        final NetworkType networkType,
-        final Integer version,
-        final Deadline deadline,
-        final BigInteger maxFee,
-        final PublicAccount remoteAccount,
-        final AccountLinkAction linkAction,
-        final String signature,
-        final PublicAccount signer,
-        final TransactionInfo transactionInfo) {
-        this(
-            networkType,
-            version,
-            deadline,
-            maxFee,
-            remoteAccount,
-            linkAction,
-            Optional.of(signature),
-            Optional.of(signer),
-            Optional.of(transactionInfo));
-    }
-
-    public AccountLinkTransaction(
-        final NetworkType networkType,
-        final Integer version,
-        final Deadline deadline,
-        final BigInteger maxFee,
-        final PublicAccount remoteAccount,
-        final AccountLinkAction linkAction) {
-        this(
-            networkType,
-            version,
-            deadline,
-            maxFee,
-            remoteAccount,
-            linkAction,
-            Optional.empty(),
-            Optional.empty(),
-            Optional.empty());
-    }
-
-    @SuppressWarnings("squid:S00107")
-    private AccountLinkTransaction(
-        final NetworkType networkType,
-        final Integer version,
-        final Deadline deadline,
-        final BigInteger maxFee,
-        final PublicAccount remoteAccount,
-        final AccountLinkAction linkAction,
-        final Optional<String> signature,
-        final Optional<PublicAccount> signer,
-        final Optional<TransactionInfo> transactionInfo) {
-        super(
-            TransactionType.ACCOUNT_LINK,
-            networkType,
-            version,
-            deadline,
-            maxFee,
-            signature,
-            signer,
-            transactionInfo);
-        Validate.notNull(remoteAccount, "remoteAccount must not be null");
-        Validate.notNull(linkAction, "linkAction must not be null");
-        this.remoteAccount = remoteAccount;
-        this.linkAction = linkAction;
-    }
-
-    /**
-     * Creates an account link transaction.
-     *
-     * @param deadline Deadline to include the transaction.
-     * @param maxFee Max fee defined by the sender.
-     * @param remoteAccountKey Remote account key.
-     * @param linkAction Link action.
-     * @param networkType Network type.
-     * @return Account link transaction
-     */
-    public static AccountLinkTransaction create(
-        final Deadline deadline,
-        final BigInteger maxFee,
-        final PublicAccount remoteAccountKey,
-        final AccountLinkAction linkAction,
-        final NetworkType networkType) {
-        return new AccountLinkTransaction(
-            networkType,
-            TransactionVersion.ACCOUNT_LINK.getValue(),
-            deadline,
-            maxFee,
-            remoteAccountKey,
-            linkAction);
+    public AccountLinkTransaction(AccountLinkTransactionFactory factory) {
+        super(factory);
+        this.remoteAccount = factory.getRemoteAccount();
+        this.linkAction = factory.getLinkAction();
     }
 
     /**
@@ -163,8 +75,8 @@ public class AccountLinkTransaction extends Transaction {
                 new SignatureDto(signatureBuffer),
                 new KeyDto(signerBuffer),
                 getNetworkVersion(),
-                EntityTypeDto.ACCOUNT_LINK_TRANSACTION,
-                new AmountDto(getFee().longValue()),
+                getEntityTypeDto(),
+                new AmountDto(getMaxFee().longValue()),
                 new TimestampDto(getDeadline().getInstant()),
                 new KeyDto(getRemoteAccount().getPublicKey().getByteBuffer()),
                 AccountLinkActionDto.rawValueOf(getLinkAction().getValue()));
@@ -182,7 +94,7 @@ public class AccountLinkTransaction extends Transaction {
             EmbeddedAccountLinkTransactionBuilder.create(
                 new KeyDto(getRequiredSignerBytes()),
                 getNetworkVersion(),
-                EntityTypeDto.ADDRESS_ALIAS_TRANSACTION,
+                getEntityTypeDto(),
                 new KeyDto(getRemoteAccount().getPublicKey().getByteBuffer()),
                 AccountLinkActionDto.rawValueOf(getLinkAction().getValue()));
         return txBuilder.serialize();
