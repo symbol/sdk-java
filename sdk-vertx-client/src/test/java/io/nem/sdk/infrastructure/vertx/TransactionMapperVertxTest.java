@@ -26,6 +26,8 @@ import io.nem.sdk.infrastructure.vertx.mappers.GeneralTransactionMapper;
 import io.nem.sdk.model.account.Address;
 import io.nem.sdk.model.namespace.AliasAction;
 import io.nem.sdk.model.namespace.NamespaceRegistrationType;
+import io.nem.sdk.model.transaction.AccountLinkAction;
+import io.nem.sdk.model.transaction.AccountLinkTransaction;
 import io.nem.sdk.model.transaction.AccountMetadataTransaction;
 import io.nem.sdk.model.transaction.AddressAliasTransaction;
 import io.nem.sdk.model.transaction.AggregateTransaction;
@@ -509,6 +511,25 @@ public class TransactionMapperVertxTest {
         Assertions.assertEquals(2, transaction.getValueSize());
         Assertions.assertEquals(BigInteger.valueOf(3), transaction.getScopedMetadataKey());
         Assertions.assertEquals("ABC", transaction.getValue());
+    }
+
+    @Test
+    void shouldCreateAggregateAccountLinkTransaction() {
+        TransactionInfoDTO aggregateTransferTransactionDTO = loadTransactionInfoDTO(
+            "shouldCreateAggregateAccountLinkTransaction.json"
+        );
+
+        Transaction aggregateTransferTransaction = map(aggregateTransferTransactionDTO);
+
+        validateAggregateTransaction(
+            (AggregateTransaction) aggregateTransferTransaction, aggregateTransferTransactionDTO);
+
+        AccountLinkTransaction transaction = (AccountLinkTransaction) ((AggregateTransaction) aggregateTransferTransaction)
+            .getInnerTransactions().get(0);
+
+        Assertions.assertEquals(AccountLinkAction.LINK, transaction.getLinkAction());
+        Assertions.assertEquals("SARNASAS2BIAB6LMFA3FPMGBPGIJGK6IJETM3ZSP",
+            transaction.getRemoteAccount().getAddress().plain());
     }
 
 
