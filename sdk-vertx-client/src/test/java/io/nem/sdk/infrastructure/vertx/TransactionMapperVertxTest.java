@@ -26,14 +26,17 @@ import io.nem.sdk.infrastructure.vertx.mappers.GeneralTransactionMapper;
 import io.nem.sdk.model.account.Address;
 import io.nem.sdk.model.namespace.AliasAction;
 import io.nem.sdk.model.namespace.NamespaceType;
+import io.nem.sdk.model.transaction.AccountMetadataTransaction;
 import io.nem.sdk.model.transaction.AddressAliasTransaction;
 import io.nem.sdk.model.transaction.AggregateTransaction;
 import io.nem.sdk.model.transaction.HashLockTransaction;
 import io.nem.sdk.model.transaction.JsonHelper;
 import io.nem.sdk.model.transaction.MosaicAliasTransaction;
 import io.nem.sdk.model.transaction.MosaicDefinitionTransaction;
+import io.nem.sdk.model.transaction.MosaicMetadataTransaction;
 import io.nem.sdk.model.transaction.MosaicSupplyChangeTransaction;
 import io.nem.sdk.model.transaction.MultisigAccountModificationTransaction;
+import io.nem.sdk.model.transaction.NamespaceMetadataTransaction;
 import io.nem.sdk.model.transaction.NamespaceRegistrationTransaction;
 import io.nem.sdk.model.transaction.SecretLockTransaction;
 import io.nem.sdk.model.transaction.SecretProofTransaction;
@@ -407,12 +410,14 @@ public class TransactionMapperVertxTest {
         AddressAliasTransaction transaction = (AddressAliasTransaction) ((AggregateTransaction) aggregateTransferTransaction)
             .getInnerTransactions().get(0);
 
-        Assert.assertEquals("SDT4THYNVUQK2GM6XXYTWHZXSPE3AUA2GTDPM2XA",
+        Assertions.assertEquals("SDT4THYNVUQK2GM6XXYTWHZXSPE3AUA2GTDPM2XA",
             transaction.getAddress().plain());
-        Assert.assertEquals(AliasAction.LINK, transaction.getAliasAction());
-        Assert.assertEquals(new BigInteger("307262000798378"),
+        Assertions.assertEquals(AliasAction.LINK, transaction.getAliasAction());
+        Assertions.assertEquals(new BigInteger("307262000798378"),
             transaction.getNamespaceId().getId());
     }
+
+
 
     @Test
     void shouldCreateAggregateMosaicAliasTransaction() {
@@ -430,9 +435,80 @@ public class TransactionMapperVertxTest {
 
         Assert
             .assertEquals(new BigInteger("884562898459306"), transaction.getMosaicId().getId());
-        Assert.assertEquals(AliasAction.LINK, transaction.getAliasAction());
-        Assert.assertEquals(new BigInteger("307262000798378"),
+        Assertions.assertEquals(AliasAction.LINK, transaction.getAliasAction());
+        Assertions.assertEquals(new BigInteger("307262000798378"),
             transaction.getNamespaceId().getId());
+    }
+
+    @Test
+    void shouldCreateAggregateMosaicMetadataTransaction() {
+        TransactionInfoDTO aggregateTransferTransactionDTO = loadTransactionInfoDTO(
+            "shouldCreateAggregateMosaicMetadataTransaction.json"
+        );
+
+        AggregateTransaction aggregateTransferTransaction = (AggregateTransaction) map(
+            aggregateTransferTransactionDTO);
+
+        validateAggregateTransaction(aggregateTransferTransaction, aggregateTransferTransactionDTO);
+
+        MosaicMetadataTransaction transaction = (MosaicMetadataTransaction) aggregateTransferTransaction
+            .getInnerTransactions().get(0);
+
+        Assertions.assertEquals("SDT4THYNVUQK2GM6XXYTWHZXSPE3AUA2GTDPM2XA",
+            transaction.getTargetAccount().getAddress().plain());
+
+        Assertions.assertEquals(1, transaction.getValueSizeDelta());
+        Assertions.assertEquals(2, transaction.getValueSize());
+        Assertions.assertEquals(BigInteger.valueOf(3), transaction.getScopedMetadataKey());
+        Assertions.assertEquals("ABC", transaction.getValue());
+        Assertions.assertEquals("0003070467832aaa", transaction.getTargetMosaicId().getIdAsHex());
+    }
+
+    @Test
+    void shouldCreateAggregateNamespaceMetadataTransaction() {
+        TransactionInfoDTO aggregateTransferTransactionDTO = loadTransactionInfoDTO(
+            "shouldCreateAggregateNamespaceMetadataTransaction.json"
+        );
+
+        AggregateTransaction aggregateTransferTransaction = (AggregateTransaction) map(
+            aggregateTransferTransactionDTO);
+
+        validateAggregateTransaction(aggregateTransferTransaction, aggregateTransferTransactionDTO);
+
+        NamespaceMetadataTransaction transaction = (NamespaceMetadataTransaction) aggregateTransferTransaction
+            .getInnerTransactions().get(0);
+
+        Assertions.assertEquals("SDT4THYNVUQK2GM6XXYTWHZXSPE3AUA2GTDPM2XA",
+            transaction.getTargetAccount().getAddress().plain());
+
+        Assertions.assertEquals(1, transaction.getValueSizeDelta());
+        Assertions.assertEquals(2, transaction.getValueSize());
+        Assertions.assertEquals(BigInteger.valueOf(3), transaction.getScopedMetadataKey());
+        Assertions.assertEquals("ABC", transaction.getValue());
+        Assertions.assertEquals("0003070467832aaa", transaction.getTargetNamespaceId().getIdAsHex());
+    }
+
+    @Test
+    void shouldCreateAggregateAccountMetadataTransaction() {
+        TransactionInfoDTO aggregateTransferTransactionDTO = loadTransactionInfoDTO(
+            "shouldCreateAggregateAccountMetadataTransaction.json"
+        );
+
+        AggregateTransaction aggregateTransferTransaction = (AggregateTransaction) map(
+            aggregateTransferTransactionDTO);
+
+        validateAggregateTransaction(aggregateTransferTransaction, aggregateTransferTransactionDTO);
+
+        AccountMetadataTransaction transaction = (AccountMetadataTransaction) aggregateTransferTransaction
+            .getInnerTransactions().get(0);
+
+        Assertions.assertEquals("SDT4THYNVUQK2GM6XXYTWHZXSPE3AUA2GTDPM2XA",
+            transaction.getTargetAccount().getAddress().plain());
+
+        Assertions.assertEquals(1, transaction.getValueSizeDelta());
+        Assertions.assertEquals(2, transaction.getValueSize());
+        Assertions.assertEquals(BigInteger.valueOf(3), transaction.getScopedMetadataKey());
+        Assertions.assertEquals("ABC", transaction.getValue());
     }
 
 

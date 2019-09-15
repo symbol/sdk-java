@@ -21,7 +21,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import io.nem.sdk.api.DiagnosticRepository;
 import io.nem.sdk.model.blockchain.BlockchainStorageInfo;
 import io.nem.sdk.model.blockchain.ServerInfo;
-import java.util.concurrent.ExecutionException;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -36,9 +35,9 @@ class DiagnosticRepositoryIntegrationTest extends BaseIntegrationTest {
 
     @ParameterizedTest
     @EnumSource(RepositoryType.class)
-    void getBlockchainStorage(RepositoryType type) throws ExecutionException, InterruptedException {
-        BlockchainStorageInfo blockchainStorageInfo =
-            getDiagnosticRepository(type).getBlockchainStorage().toFuture().get();
+    public void getBlockchainStorage(RepositoryType type) {
+        BlockchainStorageInfo blockchainStorageInfo = get(
+            getDiagnosticRepository(type).getBlockchainStorage());
 
         assertTrue(blockchainStorageInfo.getNumAccounts() > 0);
         assertTrue(blockchainStorageInfo.getNumTransactions() > 0);
@@ -47,8 +46,8 @@ class DiagnosticRepositoryIntegrationTest extends BaseIntegrationTest {
 
 
     @BeforeAll
-    void getServerInfo(RepositoryType type) throws ExecutionException, InterruptedException {
-        ServerInfo serverInfo = getDiagnosticRepository(type).getServerInfo().toFuture().get();
+    void getServerInfo(RepositoryType type) {
+        ServerInfo serverInfo = get(getDiagnosticRepository(type).getServerInfo());
 
         assertTrue(!serverInfo.getRestVersion().equals(""));
         assertTrue(!serverInfo.getSdkVersion().equals(""));

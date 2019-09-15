@@ -53,6 +53,7 @@ import org.junit.jupiter.params.provider.EnumSource;
 
 @SuppressWarnings("squid:S1607")
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+//TODO BROKEN!
 class ListenerIntegrationTest extends BaseIntegrationTest {
 
     private static final int TIMEOUT = 10;
@@ -293,7 +294,7 @@ class ListenerIntegrationTest extends BaseIntegrationTest {
                 Collections.singletonList(
                     NetworkCurrencyMosaic.createRelative(new BigInteger("100000000000"))),
                 PlainMessage.create("test-message")
-                ).build();
+            ).build();
 
         SignedTransaction signedTransaction = this.account
             .sign(transferTransaction, generationHash);
@@ -310,7 +311,7 @@ class ListenerIntegrationTest extends BaseIntegrationTest {
                 new Address("SBILTA367K2LX2FEXG5TFWAS7GEFYAGY7QLFBYKC", NetworkType.MIJIN_TEST),
                 Arrays.asList(),
                 PlainMessage.create("test-message")
-                ).build();
+            ).build();
 
         AggregateTransaction aggregateTransaction =
             AggregateTransactionFactory.createComplete(

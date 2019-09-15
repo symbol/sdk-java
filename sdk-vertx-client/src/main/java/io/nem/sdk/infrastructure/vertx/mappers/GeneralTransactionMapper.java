@@ -51,6 +51,8 @@ public class GeneralTransactionMapper implements TransactionMapper {
         register(new SecretProofTransactionMapper(jsonHelper));
         register(new TransferTransactionMapper(jsonHelper));
         register(new AccountMetadataTransactionMapper(jsonHelper));
+        register(new MosaicMetadataTransactionMapper(jsonHelper));
+        register(new NamespaceMetadataTransactionMapper(jsonHelper));
         register(
             new AggregateTransactionMapper(jsonHelper, TransactionType.AGGREGATE_BONDED, this));
         register(

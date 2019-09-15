@@ -201,4 +201,14 @@ public class TransferTransaction extends Transaction {
         namespaceIdAlias.putLong(namespaceId.getIdAsLong());
         return namespaceIdAlias;
     }
+
+    @Override
+    public String toString() {
+        return "TransferTransaction{" +
+            "recipient=" + recipient +
+            ", mosaics=" + mosaics +
+            ", message=" + message +
+            ", namespaceId=" + namespaceId +
+            '}';
+    }
 }

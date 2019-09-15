@@ -27,19 +27,13 @@ package io.nem.sdk.api;
  */
 public class RepositoryCallException extends RuntimeException {
 
-    public RepositoryCallException() {
-    }
-
-    public RepositoryCallException(String message) {
-        super(message);
-    }
-
+    /**
+     * @param message the message. It may be resolved from the response body an status of a failed
+     * request.
+     * @param cause the original exception, probably linked to the specific implementation.
+     */
     public RepositoryCallException(String message, Throwable cause) {
         super(message, cause);
-    }
-
-    public RepositoryCallException(Throwable cause) {
-        super(cause);
     }
 
 

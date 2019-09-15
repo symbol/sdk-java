@@ -54,7 +54,7 @@ public class MosaicNonce {
             }
             return new MosaicNonce(bytes);
         } catch (DecoderException e) {
-            throw new IllegalIdentifierException("DecoderException:" + e);
+            throw new IllegalIdentifierException(ExceptionUtils.getMessage(e), e);
         }
     }
 

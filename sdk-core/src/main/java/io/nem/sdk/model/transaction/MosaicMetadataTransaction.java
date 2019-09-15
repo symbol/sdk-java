@@ -17,25 +17,32 @@
 
 package io.nem.sdk.model.transaction;
 
-import io.nem.catapult.builders.AccountMetadataTransactionBuilder;
 import io.nem.catapult.builders.AmountDto;
-import io.nem.catapult.builders.EmbeddedAccountMetadataTransactionBuilder;
+import io.nem.catapult.builders.EmbeddedMosaicMetadataTransactionBuilder;
 import io.nem.catapult.builders.KeyDto;
+import io.nem.catapult.builders.MosaicMetadataTransactionBuilder;
 import io.nem.catapult.builders.SignatureDto;
 import io.nem.catapult.builders.TimestampDto;
+import io.nem.catapult.builders.UnresolvedMosaicIdDto;
 import io.nem.sdk.model.account.PublicAccount;
+import io.nem.sdk.model.mosaic.MosaicId;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
+import org.bouncycastle.util.encoders.Hex;
 
 /**
- * Announce an AccountMetadataTransaction to associate a key-value state to an account.
+ * Announce an MosaicMetadataTransaction to associate a key-value state to an mosaic.
  */
-public class AccountMetadataTransaction extends Transaction {
+public class MosaicMetadataTransaction extends Transaction {
 
     /**
      * Metadata target public key.
      */
     private final PublicAccount targetAccount;
+    /**
+     * Metadata target mosaic id.
+     */
+    private final MosaicId targetMosaicId;
 
     /**
      * Metadata key scoped to source, target and type.
@@ -61,18 +68,22 @@ public class AccountMetadataTransaction extends Transaction {
      *
      * @param factory the factory with the configured data.
      */
-    AccountMetadataTransaction(AccountMetadataTransactionFactory factory) {
+    MosaicMetadataTransaction(MosaicMetadataTransactionFactory factory) {
         super(factory);
         this.targetAccount = factory.getTargetAccount();
+        this.targetMosaicId = factory.getTargetMosaicId();
         this.scopedMetadataKey = factory.getScopedMetadataKey();
         this.valueSizeDelta = factory.getValueSizeDelta();
         this.valueSize = factory.getValueSize();
         this.value = factory.getValue();
     }
 
-
     public PublicAccount getTargetAccount() {
         return targetAccount;
+    }
+
+    public MosaicId getTargetMosaicId() {
+        return targetMosaicId;
     }
 
     public BigInteger getScopedMetadataKey() {
@@ -97,17 +108,18 @@ public class AccountMetadataTransaction extends Transaction {
         final ByteBuffer signerBuffer = ByteBuffer.allocate(32);
         final ByteBuffer signatureBuffer = ByteBuffer.allocate(64);
 
-        AccountMetadataTransactionBuilder txBuilder =
-            AccountMetadataTransactionBuilder.create(
+        MosaicMetadataTransactionBuilder txBuilder =
+            MosaicMetadataTransactionBuilder.create(
                 new SignatureDto(signatureBuffer),
                 new KeyDto(signerBuffer),
                 getNetworkVersion(),
                 getEntityTypeDto(),
                 new AmountDto(getMaxFee().longValue()),
                 new TimestampDto(getDeadline().getInstant()),
-                new KeyDto(this.getTargetAccount().getPublicKey().getByteBuffer()),
-                this.getScopedMetadataKey().longValue(),
-                (short) this.getValueSizeDelta(),
+                new KeyDto(this.targetAccount.getPublicKey().getByteBuffer()),
+                this.scopedMetadataKey.longValue(),
+                new UnresolvedMosaicIdDto(getTargetMosaicId().getId().longValue()),
+                (short) getValueSizeDelta(),
                 getValueBuffer()
             );
         return txBuilder.serialize();
@@ -115,14 +127,15 @@ public class AccountMetadataTransaction extends Transaction {
 
     @Override
     byte[] generateEmbeddedBytes() {
-        EmbeddedAccountMetadataTransactionBuilder txBuilder =
-            EmbeddedAccountMetadataTransactionBuilder.create(
+        EmbeddedMosaicMetadataTransactionBuilder txBuilder =
+            EmbeddedMosaicMetadataTransactionBuilder.create(
                 new KeyDto(getRequiredSignerBytes()),
                 getNetworkVersion(),
                 getEntityTypeDto(),
                 new KeyDto(this.getTargetAccount().getPublicKey().getByteBuffer()),
                 this.getScopedMetadataKey().longValue(),
-                (short) this.getValueSizeDelta(),
+                new UnresolvedMosaicIdDto(getTargetMosaicId().getId().longValue()),
+                (short) getValueSizeDelta(),
                 getValueBuffer()
             );
         return txBuilder.serialize();

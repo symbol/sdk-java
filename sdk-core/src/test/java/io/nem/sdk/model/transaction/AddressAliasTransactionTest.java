@@ -47,14 +47,13 @@ public class AddressAliasTransactionTest {
 
         AddressAliasTransaction transaction = new AddressAliasTransactionFactory(networkType,
             AliasAction.LINK, namespaceId, signature.getAddress()).signer(signature)
-            .transactionInfo(transactionInfo).signature("signing").maxFee(fee).build();
+            .transactionInfo(transactionInfo).signature("signing").deadline(new FakeDeadline()).maxFee(fee).build();
 
-        Assertions.assertTrue(
-            HexEncoder.getString(transaction.generateBytes())
-                .startsWith("9a000000000000000000000000000000"));
+        String expectedHash = "9a00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001904e4201000000000000000100000000000000014bfa5f372d55b3849049e14bebca93758eb36805bae760a57239976f009a545cad";
+        Assertions.assertEquals(expectedHash, HexEncoder.getString(transaction.generateBytes()));
 
-        Assertions.assertTrue(
-            HexEncoder.getString(transaction.generateEmbeddedBytes())
-                .startsWith("4a00000068b3fbb18729c1fde225c57f8"));
+        String expectedEmbeddedHash = "4a00000068b3fbb18729c1fde225c57f8ce080fa828f0067e451a3fd81fa628842b0b76301904e42014bfa5f372d55b3849049e14bebca93758eb36805bae760a57239976f009a545cad";
+        Assertions.assertEquals(expectedEmbeddedHash,
+            HexEncoder.getString(transaction.generateEmbeddedBytes()));
     }
 }

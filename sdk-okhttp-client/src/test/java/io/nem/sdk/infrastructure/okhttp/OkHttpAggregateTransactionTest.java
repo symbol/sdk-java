@@ -26,6 +26,7 @@ import io.nem.sdk.model.account.Address;
 import io.nem.sdk.model.account.PublicAccount;
 import io.nem.sdk.model.blockchain.NetworkType;
 import io.nem.sdk.model.mosaic.Mosaic;
+import io.nem.sdk.model.mosaic.MosaicId;
 import io.nem.sdk.model.mosaic.NetworkCurrencyMosaic;
 import io.nem.sdk.model.transaction.AggregateTransaction;
 import io.nem.sdk.model.transaction.AggregateTransactionFactory;
@@ -91,7 +92,8 @@ public class OkHttpAggregateTransactionTest {
                 NetworkType.MIJIN_TEST,
                 new Address("SBILTA367K2LX2FEXG5TFWAS7GEFYAGY7QLFBYKC", NetworkType.MIJIN_TEST),
                 Collections.singletonList(
-                    new Mosaic(NetworkCurrencyMosaic.NAMESPACEID, BigInteger.valueOf(10000000))),
+                    new Mosaic(new MosaicId(NetworkCurrencyMosaic.NAMESPACEID.getId()),
+                        BigInteger.valueOf(10000000))),
                 PlainMessage.Empty).deadline(new OkHttpFakeDeadline()).build();
 
         AggregateTransaction aggregateTx =

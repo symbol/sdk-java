@@ -19,6 +19,7 @@ package io.nem.sdk.infrastructure;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import io.nem.sdk.api.NamespaceRepository;
+import io.nem.sdk.api.RepositoryCallException;
 import io.nem.sdk.model.account.Address;
 import io.nem.sdk.model.account.PublicAccount;
 import io.nem.sdk.model.blockchain.NetworkType;
@@ -26,18 +27,17 @@ import io.nem.sdk.model.mosaic.NetworkCurrencyMosaic;
 import io.nem.sdk.model.namespace.NamespaceId;
 import io.nem.sdk.model.namespace.NamespaceInfo;
 import io.nem.sdk.model.namespace.NamespaceName;
-import io.reactivex.schedulers.Schedulers;
 import java.math.BigInteger;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+//TODO Broken!!
 class NamespaceRepositoryIntegrationTest extends BaseIntegrationTest {
 
     private PublicAccount publicAccount;
@@ -53,10 +53,8 @@ class NamespaceRepositoryIntegrationTest extends BaseIntegrationTest {
 
     @ParameterizedTest
     @EnumSource(RepositoryType.class)
-    void getNamespace(RepositoryType type) throws ExecutionException, InterruptedException {
-        NamespaceInfo namespaceInfo = getNamespaceRepository(type).getNamespace(namespaceId)
-            .toFuture()
-            .get();
+    void getNamespace(RepositoryType type) {
+        NamespaceInfo namespaceInfo = get(getNamespaceRepository(type).getNamespace(namespaceId));
 
         assertEquals(new BigInteger("1"), namespaceInfo.getStartHeight());
         assertEquals(new BigInteger("-1"), namespaceInfo.getEndHeight());
@@ -66,12 +64,9 @@ class NamespaceRepositoryIntegrationTest extends BaseIntegrationTest {
 
     @ParameterizedTest
     @EnumSource(RepositoryType.class)
-    void getNamespacesFromAccount(RepositoryType type)
-        throws ExecutionException, InterruptedException {
+    void getNamespacesFromAccount(RepositoryType type) {
         List<NamespaceInfo> namespacesInfo =
-            getNamespaceRepository(type).getNamespacesFromAccount(publicAccount.getAddress())
-                .toFuture()
-                .get();
+            get(getNamespaceRepository(type).getNamespacesFromAccount(publicAccount.getAddress()));
 
         assertEquals(1, namespacesInfo.size());
         assertEquals(new BigInteger("1"), namespacesInfo.get(0).getStartHeight());
@@ -82,15 +77,11 @@ class NamespaceRepositoryIntegrationTest extends BaseIntegrationTest {
 
     @ParameterizedTest
     @EnumSource(RepositoryType.class)
-    void getNamespacesFromAccounts(RepositoryType type)
-        throws ExecutionException, InterruptedException {
-        List<NamespaceInfo> namespacesInfo =
-            getNamespaceRepository(type)
-                .getNamespacesFromAccounts(
-                    Collections.singletonList(
-                        Address.createFromRawAddress("SARNASAS2BIAB6LMFA3FPMGBPGIJGK6IJETM3ZSP")))
-                .toFuture()
-                .get();
+    void getNamespacesFromAccounts(RepositoryType type) {
+        List<NamespaceInfo> namespacesInfo = get(getNamespaceRepository(type)
+            .getNamespacesFromAccounts(
+                Collections.singletonList(
+                    Address.createFromRawAddress("SARNASAS2BIAB6LMFA3FPMGBPGIJGK6IJETM3ZSP"))));
 
         assertEquals(1, namespacesInfo.size());
         assertEquals(new BigInteger("1"), namespacesInfo.get(0).getStartHeight());
@@ -100,11 +91,10 @@ class NamespaceRepositoryIntegrationTest extends BaseIntegrationTest {
 
     @ParameterizedTest
     @EnumSource(RepositoryType.class)
-    void getNamespaceNames(RepositoryType type) throws ExecutionException, InterruptedException {
+    void getNamespaceNames(RepositoryType type) {
         List<NamespaceName> namespaceNames =
-            getNamespaceRepository(type).getNamespaceNames(Collections.singletonList(namespaceId))
-                .toFuture()
-                .get();
+            get(getNamespaceRepository(type)
+                .getNamespaceNames(Collections.singletonList(namespaceId)));
 
         assertEquals(1, namespaceNames.size());
         assertEquals("nem", namespaceNames.get(0).getName());
@@ -113,15 +103,13 @@ class NamespaceRepositoryIntegrationTest extends BaseIntegrationTest {
 
     @ParameterizedTest
     @EnumSource(RepositoryType.class)
-    void throwExceptionWhenNamespaceDoesNotExists(
-        RepositoryType type) {
-        // TestObserver<NamespaceInfo> testObserver = new TestObserver<>();
-        getNamespaceRepository(type)
-            .getNamespace(NamespaceId.createFromName("nonregisterednamespace"))
-            .subscribeOn(Schedulers.single())
-            .test()
-            .awaitDone(2, TimeUnit.SECONDS)
-            .assertFailure(RuntimeException.class);
+    void throwExceptionWhenNamespaceDoesNotExists(RepositoryType type) {
+        RepositoryCallException exception = Assertions
+            .assertThrows(RepositoryCallException.class, () -> get(getNamespaceRepository(type)
+                .getNamespace(NamespaceId.createFromName("nonregisterednamespace"))));
+        Assertions.assertEquals(
+            "ApiException: Not Found - 404 - ResourceNotFound - no resource exists with id 'f75cf605c224a9e7'",
+            exception.getMessage());
     }
 
     private NamespaceRepository getNamespaceRepository(RepositoryType type) {

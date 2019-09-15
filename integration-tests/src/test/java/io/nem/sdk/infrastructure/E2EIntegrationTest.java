@@ -87,6 +87,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+//TODO BROKEN!!
 class E2EIntegrationTest extends BaseIntegrationTest {
 
     private Account account;
@@ -154,7 +155,7 @@ class E2EIntegrationTest extends BaseIntegrationTest {
         assertEquals(420, payload.length());
 
         TransactionAnnounceResponse transactionAnnounceResponse =
-            getTransactionRepository(type).announce(signedTransaction).toFuture().get();
+            get(getTransactionRepository(type).announce(signedTransaction));
         assertEquals(
             "packet 9 was pushed to the network via /transaction",
             transactionAnnounceResponse.getMessage());
@@ -203,7 +204,7 @@ class E2EIntegrationTest extends BaseIntegrationTest {
             .sign(aggregateTransaction, generationHash);
 
         TransactionAnnounceResponse transactionAnnounceResponse =
-            getTransactionRepository(type).announce(signedTransaction).toFuture().get();
+            get(getTransactionRepository(type).announce(signedTransaction));
         System.out.println(transactionAnnounceResponse.getMessage());
 
         this.validateTransactionAnnounceCorrectly(
@@ -234,7 +235,7 @@ class E2EIntegrationTest extends BaseIntegrationTest {
             this.account.sign(namespaceRegistrationTransaction, generationHash);
 
         TransactionAnnounceResponse transactionAnnounceResponse =
-            getTransactionRepository(type).announce(signedTransaction).toFuture().get();
+            get(getTransactionRepository(type).announce(signedTransaction));
         System.out.println(transactionAnnounceResponse.getMessage());
 
         this.validateTransactionAnnounceCorrectly(
@@ -266,7 +267,7 @@ class E2EIntegrationTest extends BaseIntegrationTest {
             .sign(aggregateTransaction, generationHash);
 
         TransactionAnnounceResponse transactionAnnounceResponse =
-            getTransactionRepository(type).announce(signedTransaction).toFuture().get();
+            get(getTransactionRepository(type).announce(signedTransaction));
         System.out.println(transactionAnnounceResponse.getMessage());
 
         this.validateTransactionAnnounceCorrectly(
@@ -301,7 +302,7 @@ class E2EIntegrationTest extends BaseIntegrationTest {
             .sign(aggregateTransaction, generationHash);
 
         TransactionAnnounceResponse transactionAnnounceResponse =
-            getTransactionRepository(type).announce(signedTransaction).toFuture().get();
+            get(getTransactionRepository(type).announce(signedTransaction));
         System.out.println(transactionAnnounceResponse.getMessage());
 
         this.validateTransactionAnnounceCorrectly(
@@ -327,16 +328,14 @@ class E2EIntegrationTest extends BaseIntegrationTest {
             .sign(aggregateTransaction2, generationHash);
 
         TransactionAnnounceResponse transactionAnnounceResponse2 =
-            getTransactionRepository(type).announce(signedTransaction2).toFuture().get();
+            get(getTransactionRepository(type).announce(signedTransaction2));
         System.out.println(transactionAnnounceResponse2.getMessage());
 
         this.validateTransactionAnnounceCorrectly(
             this.account.getAddress(), signedTransaction2.getHash(), type);
 
-        List<AccountNames> accountNames = getRepositoryFactory(type).createAccountRepository()
-            .getAccountsNamesFromAddresses(Collections.singletonList(this.account.getAddress()))
-            .toFuture()
-            .get();
+        List<AccountNames> accountNames = get(getRepositoryFactory(type).createAccountRepository()
+            .getAccountsNamesFromAddresses(Collections.singletonList(this.account.getAddress())));
 
         Assert.assertEquals(1, accountNames.size());
 
@@ -368,7 +367,7 @@ class E2EIntegrationTest extends BaseIntegrationTest {
             this.account.sign(namespaceRegistrationTransaction, generationHash);
 
         TransactionAnnounceResponse transactionAnnounceResponse =
-            getTransactionRepository(type).announce(signedTransaction).toFuture().get();
+            get(getTransactionRepository(type).announce(signedTransaction));
         System.out.println(transactionAnnounceResponse.getMessage());
 
         this.validateTransactionAnnounceCorrectly(
@@ -402,7 +401,7 @@ class E2EIntegrationTest extends BaseIntegrationTest {
             .sign(aggregateTransaction, generationHash);
 
         TransactionAnnounceResponse transactionAnnounceResponse =
-            getTransactionRepository(type).announce(signedTransaction).toFuture().get();
+            get(getTransactionRepository(type).announce(signedTransaction));
         System.out.println(transactionAnnounceResponse.getMessage());
 
         this.validateTransactionAnnounceCorrectly(
@@ -428,7 +427,7 @@ class E2EIntegrationTest extends BaseIntegrationTest {
             this.account.sign(mosaicDefinitionTransaction, generationHash);
 
         TransactionAnnounceResponse transactionAnnounceResponse =
-            getTransactionRepository(type).announce(signedTransaction).toFuture().get();
+            get(getTransactionRepository(type).announce(signedTransaction));
         System.out.println(transactionAnnounceResponse.getMessage());
 
         this.validateTransactionAnnounceCorrectly(
@@ -443,9 +442,8 @@ class E2EIntegrationTest extends BaseIntegrationTest {
             "test-root-namespace-for-mosaic-alias-" + new Double(Math.floor(Math.random() * 10000))
                 .intValue();
 
-        AccountInfo accountInfo = getRepositoryFactory(type).createAccountRepository()
-            .getAccountInfo(this.account.getPublicAccount().getAddress()).toFuture()
-            .get(timeoutSeconds, TimeUnit.SECONDS);
+        AccountInfo accountInfo = get(getRepositoryFactory(type).createAccountRepository()
+            .getAccountInfo(this.account.getPublicAccount().getAddress()));
 
         Assert.assertFalse(
             accountInfo.getMosaics().isEmpty());
@@ -471,7 +469,7 @@ class E2EIntegrationTest extends BaseIntegrationTest {
             .sign(aggregateTransaction, generationHash);
 
         TransactionAnnounceResponse transactionAnnounceResponse =
-            getTransactionRepository(type).announce(signedTransaction).toFuture().get();
+            get(getTransactionRepository(type).announce(signedTransaction));
         System.out.println(transactionAnnounceResponse.getMessage());
 
         this.validateTransactionAnnounceCorrectly(
@@ -497,15 +495,14 @@ class E2EIntegrationTest extends BaseIntegrationTest {
             .sign(aggregateTransaction2, generationHash);
 
         TransactionAnnounceResponse transactionAnnounceResponse2 =
-            getTransactionRepository(type).announce(signedTransaction2).toFuture().get();
+            get(getTransactionRepository(type).announce(signedTransaction2));
         System.out.println(transactionAnnounceResponse2.getMessage());
 
         this.validateTransactionAnnounceCorrectly(
             this.account.getAddress(), signedTransaction2.getHash(), type);
 
-        List<MosaicNames> accountNames = getRepositoryFactory(type).createMosaicRepository()
-            .getMosaicsNames(Collections.singletonList(mosaicId)).toFuture()
-            .get();
+        List<MosaicNames> accountNames = get(getRepositoryFactory(type).createMosaicRepository()
+            .getMosaicsNames(Collections.singletonList(mosaicId)));
 
         Assert.assertEquals(1, accountNames.size());
 
@@ -530,7 +527,7 @@ class E2EIntegrationTest extends BaseIntegrationTest {
             this.account.sign(mosaicDefinitionTransaction, generationHash);
 
         TransactionAnnounceResponse transactionAnnounceResponse =
-            getTransactionRepository(type).announce(signedTransaction).toFuture().get();
+            get(getTransactionRepository(type).announce(signedTransaction));
         System.out.println(transactionAnnounceResponse.getMessage());
 
         this.validateTransactionAnnounceCorrectly(this.account.getAddress(),
@@ -563,7 +560,7 @@ class E2EIntegrationTest extends BaseIntegrationTest {
             .sign(aggregateTransaction, generationHash);
 
         TransactionAnnounceResponse transactionAnnounceResponse =
-            getTransactionRepository(type).announce(signedTransaction).toFuture().get();
+            get(getTransactionRepository(type).announce(signedTransaction));
         System.out.println(transactionAnnounceResponse.getMessage());
 
         this.validateTransactionAnnounceCorrectly(
@@ -587,7 +584,7 @@ class E2EIntegrationTest extends BaseIntegrationTest {
             this.account.sign(mosaicSupplyChangeTransaction, generationHash);
 
         TransactionAnnounceResponse transactionAnnounceResponse =
-            getTransactionRepository(type).announce(signedTransaction).toFuture().get();
+            get(getTransactionRepository(type).announce(signedTransaction));
         System.out.println(transactionAnnounceResponse.getMessage());
 
         this.validateTransactionAnnounceCorrectly(
@@ -618,7 +615,7 @@ class E2EIntegrationTest extends BaseIntegrationTest {
             .sign(aggregateTransaction, generationHash);
 
         TransactionAnnounceResponse transactionAnnounceResponse =
-            getTransactionRepository(type).announce(signedTransaction).toFuture().get();
+            get(getTransactionRepository(type).announce(signedTransaction));
         System.out.println(transactionAnnounceResponse.getMessage());
 
         this.validateTransactionAnnounceCorrectly(
@@ -628,8 +625,7 @@ class E2EIntegrationTest extends BaseIntegrationTest {
 
     @ParameterizedTest
     @EnumSource(RepositoryType.class)
-    void standaloneLockFundsTransaction(RepositoryType type)
-        throws ExecutionException, InterruptedException, TimeoutException {
+    void standaloneLockFundsTransaction(RepositoryType type) {
         AggregateTransaction aggregateTransaction =
             AggregateTransactionFactory.createBonded(
                 NetworkType.MIJIN_TEST,
@@ -645,7 +641,7 @@ class E2EIntegrationTest extends BaseIntegrationTest {
 
         SignedTransaction lockFundsTransactionSigned = this.account
             .sign(lockFundstx, generationHash);
-        getTransactionRepository(type).announce(lockFundsTransactionSigned).toFuture().get();
+        get(getTransactionRepository(type).announce(lockFundsTransactionSigned));
 
         this.validateTransactionAnnounceCorrectly(
             this.account.getAddress(), lockFundsTransactionSigned.getHash(), type);
@@ -653,8 +649,7 @@ class E2EIntegrationTest extends BaseIntegrationTest {
 
     @ParameterizedTest
     @EnumSource(RepositoryType.class)
-    void aggregateLockFundsTransaction(RepositoryType type)
-        throws ExecutionException, InterruptedException, TimeoutException {
+    void aggregateLockFundsTransaction(RepositoryType type) {
         AggregateTransaction aggregateTransaction =
             AggregateTransactionFactory.createBonded(
                 NetworkType.MIJIN_TEST,
@@ -677,7 +672,7 @@ class E2EIntegrationTest extends BaseIntegrationTest {
         SignedTransaction lockFundsTransactionSigned =
             this.account.sign(lockFundsAggregatetx, generationHash);
 
-        getTransactionRepository(type).announce(lockFundsTransactionSigned).toFuture().get();
+        get(getTransactionRepository(type).announce(lockFundsTransactionSigned));
 
         this.validateTransactionAnnounceCorrectly(
             this.account.getAddress(), lockFundsTransactionSigned.getHash(), type);
@@ -685,8 +680,7 @@ class E2EIntegrationTest extends BaseIntegrationTest {
 
     @ParameterizedTest
     @EnumSource(RepositoryType.class)
-    void standaloneSecretLockTransaction(RepositoryType type)
-        throws ExecutionException, InterruptedException, TimeoutException {
+    void standaloneSecretLockTransaction(RepositoryType type) {
         byte[] secretBytes = new byte[20];
         new Random().nextBytes(secretBytes);
         byte[] result = Hashes.sha3_256(secretBytes);
@@ -703,7 +697,7 @@ class E2EIntegrationTest extends BaseIntegrationTest {
         SignedTransaction secretLockTransactionSigned = this.account
             .sign(secretLocktx, generationHash);
 
-        getTransactionRepository(type).announce(secretLockTransactionSigned).toFuture().get();
+        get(getTransactionRepository(type).announce(secretLockTransactionSigned));
 
         this.validateTransactionAnnounceCorrectly(
             this.account.getAddress(), secretLockTransactionSigned.getHash(), type);
@@ -711,8 +705,7 @@ class E2EIntegrationTest extends BaseIntegrationTest {
 
     @ParameterizedTest
     @EnumSource(RepositoryType.class)
-    void aggregateSecretLockTransaction(RepositoryType type)
-        throws ExecutionException, InterruptedException, TimeoutException {
+    void aggregateSecretLockTransaction(RepositoryType type) {
         byte[] secretBytes = new byte[20];
         new Random().nextBytes(secretBytes);
         byte[] result = Hashes.sha3_256(secretBytes);
@@ -735,7 +728,7 @@ class E2EIntegrationTest extends BaseIntegrationTest {
         SignedTransaction secretLockTransactionSigned =
             this.account.sign(secretLockAggregatetx, generationHash);
 
-        getTransactionRepository(type).announce(secretLockTransactionSigned).toFuture().get();
+        get(getTransactionRepository(type).announce(secretLockTransactionSigned));
 
         this.validateTransactionAnnounceCorrectly(
             this.account.getAddress(), secretLockTransactionSigned.getHash(), type);
@@ -743,8 +736,7 @@ class E2EIntegrationTest extends BaseIntegrationTest {
 
     @ParameterizedTest
     @EnumSource(RepositoryType.class)
-    void standaloneSecretProofTransaction(RepositoryType type)
-        throws ExecutionException, InterruptedException, TimeoutException {
+    void standaloneSecretProofTransaction(RepositoryType type) {
         byte[] secretBytes = new byte[20];
         new Random().nextBytes(secretBytes);
         byte[] result = Hashes.sha3_256(secretBytes);
@@ -763,7 +755,7 @@ class E2EIntegrationTest extends BaseIntegrationTest {
         SignedTransaction lockFundsTransactionSigned = this.account
             .sign(secretLocktx, generationHash);
 
-        getTransactionRepository(type).announce(lockFundsTransactionSigned).toFuture().get();
+        get(getTransactionRepository(type).announce(lockFundsTransactionSigned));
 
         this.validateTransactionAnnounceCorrectly(
             this.account.getAddress(), lockFundsTransactionSigned.getHash(), type);
@@ -779,7 +771,7 @@ class E2EIntegrationTest extends BaseIntegrationTest {
         SignedTransaction secretProofTransactionSigned =
             this.account.sign(secretProoftx, generationHash);
 
-        getTransactionRepository(type).announce(secretProofTransactionSigned).toFuture().get();
+        get(getTransactionRepository(type).announce(secretProofTransactionSigned));
 
         this.validateTransactionAnnounceCorrectly(
             this.account.getAddress(), secretProofTransactionSigned.getHash(), type);
@@ -787,8 +779,7 @@ class E2EIntegrationTest extends BaseIntegrationTest {
 
     @ParameterizedTest
     @EnumSource(RepositoryType.class)
-    void aggregateSecretProofTransaction(RepositoryType type)
-        throws ExecutionException, InterruptedException, TimeoutException {
+    void aggregateSecretProofTransaction(RepositoryType type) {
         byte[] secretBytes = new byte[20];
         new Random().nextBytes(secretBytes);
         byte[] result = Hashes.sha3_256(secretBytes);
@@ -806,7 +797,7 @@ class E2EIntegrationTest extends BaseIntegrationTest {
         SignedTransaction lockFundsTransactionSigned = this.account
             .sign(secretLocktx, generationHash);
 
-        getTransactionRepository(type).announce(lockFundsTransactionSigned).toFuture().get();
+        get(getTransactionRepository(type).announce(lockFundsTransactionSigned));
 
         this.validateTransactionAnnounceCorrectly(
             this.account.getAddress(), lockFundsTransactionSigned.getHash(), type);
@@ -828,7 +819,7 @@ class E2EIntegrationTest extends BaseIntegrationTest {
         SignedTransaction secretProofTransactionSigned =
             this.account.sign(secretProofAggregatetx, generationHash);
 
-        getTransactionRepository(type).announce(secretProofTransactionSigned).toFuture().get();
+        get(getTransactionRepository(type).announce(secretProofTransactionSigned));
 
         this.validateTransactionAnnounceCorrectly(
             this.account.getAddress(), secretProofTransactionSigned.getHash(), type);
@@ -836,8 +827,7 @@ class E2EIntegrationTest extends BaseIntegrationTest {
 
     @ParameterizedTest
     @EnumSource(RepositoryType.class)
-    void shouldSignModifyMultisigAccountTransactionWithCosignatories(RepositoryType type)
-        throws ExecutionException, InterruptedException, TimeoutException {
+    void shouldSignModifyMultisigAccountTransactionWithCosignatories(RepositoryType type) {
         MultisigAccountModificationTransaction multisigAccountModificationTransaction =
             new MultisigAccountModificationTransactionFactory(
                 NetworkType.MIJIN_TEST,
@@ -871,11 +861,11 @@ class E2EIntegrationTest extends BaseIntegrationTest {
         SignedTransaction lockFundsSignedTransaction =
             this.cosignatoryAccount.sign(hashLockTransaction, generationHash);
 
-        getTransactionRepository(type).announce(lockFundsSignedTransaction).toFuture().get();
+        get(getTransactionRepository(type).announce(lockFundsSignedTransaction));
 
-        getListener(type).confirmed(this.cosignatoryAccount.getAddress()).take(1).toFuture().get();
+        get(getListener(type).confirmed(this.cosignatoryAccount.getAddress()).take(1));
 
-        getTransactionRepository(type).announceAggregateBonded(signedTransaction).toFuture().get();
+        get(getTransactionRepository(type).announceAggregateBonded(signedTransaction));
 
         this.validateAggregateBondedTransactionAnnounceCorrectly(
             this.cosignatoryAccount.getAddress(), signedTransaction.getHash(), type);
@@ -883,8 +873,7 @@ class E2EIntegrationTest extends BaseIntegrationTest {
 
     @ParameterizedTest
     @EnumSource(RepositoryType.class)
-    void cosignatureTransaction(RepositoryType type)
-        throws ExecutionException, InterruptedException, TimeoutException {
+    void cosignatureTransaction(RepositoryType type) {
         TransferTransaction transferTransaction =
             TransferTransactionFactory.create(
                 NetworkType.MIJIN_TEST,
@@ -912,11 +901,11 @@ class E2EIntegrationTest extends BaseIntegrationTest {
         SignedTransaction lockFundsSignedTransaction =
             this.cosignatoryAccount.sign(hashLockTransaction, generationHash);
 
-        getTransactionRepository(type).announce(lockFundsSignedTransaction).toFuture().get();
+        get(getTransactionRepository(type).announce(lockFundsSignedTransaction));
 
-        getListener(type).confirmed(this.cosignatoryAccount.getAddress()).take(1).toFuture().get();
+        get(getListener(type).confirmed(this.cosignatoryAccount.getAddress()).take(1));
 
-        getTransactionRepository(type).announceAggregateBonded(signedTransaction).toFuture().get();
+        get(getTransactionRepository(type).announceAggregateBonded(signedTransaction));
 
         this.validateAggregateBondedTransactionAnnounceCorrectly(
             this.cosignatoryAccount.getAddress(), signedTransaction.getHash(), type);
@@ -927,10 +916,8 @@ class E2EIntegrationTest extends BaseIntegrationTest {
         CosignatureSignedTransaction cosignatureSignedTransaction =
             this.cosignatoryAccount2.signCosignatureTransaction(cosignatureTransaction);
 
-        getTransactionRepository(type)
-            .announceAggregateBondedCosignature(cosignatureSignedTransaction)
-            .toFuture()
-            .get();
+        get(getTransactionRepository(type)
+            .announceAggregateBondedCosignature(cosignatureSignedTransaction));
 
         this.validateAggregateBondedCosignatureTransactionAnnounceCorrectly(
             this.cosignatoryAccount.getAddress(), cosignatureSignedTransaction.getParentHash(),
@@ -938,30 +925,24 @@ class E2EIntegrationTest extends BaseIntegrationTest {
     }
 
     void validateTransactionAnnounceCorrectly(Address address, String transactionHash,
-        RepositoryType type)
-        throws ExecutionException, InterruptedException, TimeoutException {
-        Transaction transaction = getListener(type).confirmed(address).take(1).toFuture()
-            .get(this.timeoutSeconds, TimeUnit.SECONDS);
+        RepositoryType type) {
+        Transaction transaction = get(getListener(type).confirmed(address).take(1));
 
         assertEquals(transactionHash, transaction.getTransactionInfo().get().getHash().get());
     }
 
     void validateAggregateBondedTransactionAnnounceCorrectly(Address address,
-        String transactionHash, RepositoryType type)
-        throws ExecutionException, InterruptedException, TimeoutException {
+        String transactionHash, RepositoryType type) {
         AggregateTransaction aggregateTransaction =
-            getListener(type).aggregateBondedAdded(address).take(1).toFuture()
-                .get(this.timeoutSeconds, TimeUnit.SECONDS);
+            get(getListener(type).aggregateBondedAdded(address).take(1));
         assertEquals(transactionHash,
             aggregateTransaction.getTransactionInfo().get().getHash().get());
     }
 
     void validateAggregateBondedCosignatureTransactionAnnounceCorrectly(
         Address address, String transactionHash,
-        RepositoryType type)
-        throws ExecutionException, InterruptedException, TimeoutException {
-        String hash = getListener(type).cosignatureAdded(address).take(1).toFuture()
-            .get(this.timeoutSeconds, TimeUnit.SECONDS).getParentHash();
+        RepositoryType type) {
+        String hash = get(getListener(type).cosignatureAdded(address).take(1)).getParentHash();
         assertEquals(transactionHash, hash);
     }
 }

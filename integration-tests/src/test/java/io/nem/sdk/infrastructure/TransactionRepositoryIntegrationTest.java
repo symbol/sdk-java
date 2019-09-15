@@ -18,16 +18,18 @@ package io.nem.sdk.infrastructure;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import io.nem.sdk.api.AccountRepository;
+import io.nem.sdk.api.RepositoryCallException;
 import io.nem.sdk.api.TransactionRepository;
 import io.nem.sdk.model.transaction.Transaction;
 import io.nem.sdk.model.transaction.TransactionStatus;
 import io.nem.sdk.model.transaction.TransactionType;
-import io.reactivex.observers.TestObserver;
-import io.reactivex.schedulers.Schedulers;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
@@ -35,19 +37,28 @@ import org.junit.jupiter.params.provider.EnumSource;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class TransactionRepositoryIntegrationTest extends BaseIntegrationTest {
 
-    private final String transactionHash =
-        "EE5B39DBDA00BA39D06B9E67AE5B43162366C862D9B8F656F7E7068D327377BE";
+    private String transactionHash;
 
+    private String invalidTransactionHash = "AAAAAADBDA00BA39D06B9E67AE5B43162366C862D9B8F656F7E7068D327377BE";
+
+    @BeforeAll
+    void setup() {
+        AccountRepository accountRepository = getRepositoryFactory(RepositoryType.VERTX)
+            .createAccountRepository();
+        List<Transaction> transactions = get(accountRepository.transactions(getTestPublicAccount()))
+            .stream().filter(t -> t.getType() == TransactionType.TRANSFER).collect(
+                Collectors.toList());
+        Assertions.assertTrue(transactions.size() > 0);
+        transactionHash = transactions.get(0).getTransactionInfo().get().getHash().get();
+    }
 
     @ParameterizedTest
     @EnumSource(RepositoryType.class)
-    public void getTransaction(RepositoryType type)
-        throws ExecutionException, InterruptedException {
-        Transaction transaction = getTransactionRepository(type).getTransaction(transactionHash)
-            .toFuture()
-            .get();
+    public void getTransaction(RepositoryType type) {
+        Transaction transaction = get(
+            getTransactionRepository(type).getTransaction(transactionHash));
 
-        assertEquals(TransactionType.TRANSFER.getValue(), transaction.getType().getValue());
+        assertEquals(TransactionType.TRANSFER, transaction.getType());
         assertEquals(transactionHash, transaction.getTransactionInfo().get().getHash().get());
     }
 
@@ -61,30 +72,28 @@ public class TransactionRepositoryIntegrationTest extends BaseIntegrationTest {
                 .toFuture()
                 .get();
 
-        assertEquals(TransactionType.TRANSFER.getValue(), transaction.get(0).getType().getValue());
+        assertEquals(TransactionType.TRANSFER, transaction.get(0).getType());
         assertEquals(transactionHash,
             transaction.get(0).getTransactionInfo().get().getHash().get());
     }
 
     @ParameterizedTest
     @EnumSource(RepositoryType.class)
-    public void getTransactionStatus(RepositoryType type)
-        throws ExecutionException, InterruptedException {
+    public void getTransactionStatus(RepositoryType type) {
         TransactionStatus transactionStatus =
-            getTransactionRepository(type).getTransactionStatus(transactionHash).toFuture().get();
+            get(getTransactionRepository(type).getTransactionStatus(transactionHash));
 
         assertEquals(transactionHash, transactionStatus.getHash());
     }
 
     @ParameterizedTest
     @EnumSource(RepositoryType.class)
-    public void getTransactionsStatuses(RepositoryType type)
-        throws ExecutionException, InterruptedException {
-        List<TransactionStatus> transactionStatuses =
-            getTransactionRepository(type)
-                .getTransactionStatuses(Collections.singletonList(transactionHash))
-                .toFuture()
-                .get();
+    public void getTransactionsStatuses(RepositoryType type) {
+
+        TransactionRepository transactionRepository = getTransactionRepository(type);
+
+        List<TransactionStatus> transactionStatuses = get(transactionRepository
+            .getTransactionStatuses(Collections.singletonList(transactionHash)));
 
         assertEquals(transactionHash, transactionStatuses.get(0).getHash());
     }
@@ -93,26 +102,25 @@ public class TransactionRepositoryIntegrationTest extends BaseIntegrationTest {
     @EnumSource(RepositoryType.class)
     public void throwExceptionWhenTransactionStatusOfATransactionDoesNotExists(
         RepositoryType type) {
-        TestObserver<TransactionStatus> testObserver = new TestObserver<>();
-        getTransactionRepository(type)
-            .getTransactionStatus(transactionHash)
-            .subscribeOn(Schedulers.single())
-            .test()
-            .awaitDone(2, TimeUnit.SECONDS)
-            .assertFailure(RuntimeException.class);
+        RepositoryCallException exception = Assertions
+            .assertThrows(RepositoryCallException.class, () ->
+                get(getTransactionRepository(type)
+                    .getTransactionStatus(invalidTransactionHash)));
+        Assertions.assertEquals(
+            "ApiException: Not Found - 404 - ResourceNotFound - no resource exists with id '"
+                + invalidTransactionHash + "'", exception.getMessage());
     }
 
     @ParameterizedTest
     @EnumSource(RepositoryType.class)
     public void throwExceptionWhenTransactionDoesNotExists(
         RepositoryType type) {
-        TestObserver<Transaction> testObserver = new TestObserver<>();
-        getTransactionRepository(type)
-            .getTransaction(transactionHash)
-            .subscribeOn(Schedulers.single())
-            .test()
-            .awaitDone(2, TimeUnit.SECONDS)
-            .assertFailure(RuntimeException.class);
+        RepositoryCallException exception = Assertions
+            .assertThrows(RepositoryCallException.class, () -> get(getTransactionRepository(type)
+                .getTransaction(invalidTransactionHash)));
+        Assertions.assertEquals(
+            "ApiException: Not Found - 404 - ResourceNotFound - no resource exists with id '"
+                + invalidTransactionHash + "'", exception.getMessage());
     }
 
     private TransactionRepository getTransactionRepository(

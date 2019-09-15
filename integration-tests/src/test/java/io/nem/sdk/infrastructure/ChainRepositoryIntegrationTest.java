@@ -21,7 +21,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import io.nem.sdk.api.ChainRepository;
 import io.nem.sdk.model.blockchain.BlockchainScore;
 import java.math.BigInteger;
-import java.util.concurrent.ExecutionException;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
@@ -31,18 +30,15 @@ class ChainRepositoryIntegrationTest extends BaseIntegrationTest {
 
     @ParameterizedTest
     @EnumSource(RepositoryType.class)
-    void getBlockchainHeight(RepositoryType type) throws ExecutionException, InterruptedException {
-        BigInteger blockchainHeight = getChainRepository(type).getBlockchainHeight().toFuture()
-            .get();
+    void getBlockchainHeight(RepositoryType type) {
+        BigInteger blockchainHeight = get(getChainRepository(type).getBlockchainHeight());
         assertTrue(blockchainHeight.intValue() > 0);
     }
 
     @ParameterizedTest
     @EnumSource(RepositoryType.class)
-    void getBlockchainScore(RepositoryType type) throws ExecutionException, InterruptedException {
-        BlockchainScore blockchainScore = getChainRepository(type).getBlockchainScore().toFuture()
-            .get();
-
+    void getBlockchainScore(RepositoryType type) {
+        BlockchainScore blockchainScore = get(getChainRepository(type).getBlockchainScore());
         assertTrue(blockchainScore.getScoreLow().longValue() >= 0);
         assertTrue(blockchainScore.getScoreHigh().longValue() >= 0);
     }

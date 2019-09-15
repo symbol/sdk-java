@@ -24,6 +24,7 @@ import io.nem.sdk.openapi.okhttp_gson.model.EmbeddedTransactionInfoDTO;
 import io.nem.sdk.openapi.okhttp_gson.model.TransactionInfoDTO;
 import java.util.EnumMap;
 import java.util.Map;
+import javax.xml.stream.events.Namespace;
 
 /**
  * Entry point for the transaction mapping. This mapper should support all the known transactions.
@@ -51,6 +52,8 @@ public class GeneralTransactionMapper implements TransactionMapper {
         register(new SecretProofTransactionMapper(jsonHelper));
         register(new TransferTransactionMapper(jsonHelper));
         register(new AccountMetadataTransactionMapper(jsonHelper));
+        register(new MosaicMetadataTransactionMapper(jsonHelper));
+        register(new NamespaceMetadataTransactionMapper(jsonHelper));
         register(
             new AggregateTransactionMapper(jsonHelper, TransactionType.AGGREGATE_BONDED, this));
         register(
