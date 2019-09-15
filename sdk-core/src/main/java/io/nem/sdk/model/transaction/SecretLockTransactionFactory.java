@@ -30,7 +30,7 @@ public class SecretLockTransactionFactory extends TransactionFactory<SecretLockT
 
     private final Mosaic mosaic;
     private final BigInteger duration;
-    private final HashType hashType;
+    private final LockHashAlgorithmType hashAlgorithm;
     private final String secret;
     private final Address recipient;
 
@@ -38,7 +38,7 @@ public class SecretLockTransactionFactory extends TransactionFactory<SecretLockT
         NetworkType networkType,
         Mosaic mosaic,
         BigInteger duration,
-        HashType hashType,
+        LockHashAlgorithmType hashAlgorithm,
         String secret,
         Address recipient) {
         super(TransactionType.SECRET_LOCK, networkType);
@@ -46,13 +46,13 @@ public class SecretLockTransactionFactory extends TransactionFactory<SecretLockT
         Validate.notNull(duration, "Duration must not be null");
         Validate.notNull(secret, "Secret must not be null");
         Validate.notNull(recipient, "Recipient must not be null");
-        if (!HashType.validator(hashType, secret)) {
+        if (!LockHashAlgorithmType.validator(hashAlgorithm, secret)) {
             throw new IllegalArgumentException(
                 "HashType and Secret have incompatible length or not hexadecimal string");
         }
         this.mosaic = mosaic;
         this.duration = duration;
-        this.hashType = hashType;
+        this.hashAlgorithm = hashAlgorithm;
         this.secret = secret;
         this.recipient = recipient;
     }
@@ -80,8 +80,8 @@ public class SecretLockTransactionFactory extends TransactionFactory<SecretLockT
      *
      * @return the hash algorithm, secret is generated with.
      */
-    public HashType getHashType() {
-        return hashType;
+    public LockHashAlgorithmType getHashAlgorithm() {
+        return hashAlgorithm;
     }
 
     /**

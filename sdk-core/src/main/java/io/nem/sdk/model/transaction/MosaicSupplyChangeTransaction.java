@@ -25,7 +25,7 @@ import io.nem.catapult.builders.SignatureDto;
 import io.nem.catapult.builders.TimestampDto;
 import io.nem.catapult.builders.UnresolvedMosaicIdDto;
 import io.nem.sdk.model.mosaic.MosaicId;
-import io.nem.sdk.model.mosaic.MosaicSupplyType;
+import io.nem.sdk.model.mosaic.MosaicSupplyChangeActionType;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
 
@@ -38,13 +38,13 @@ import java.nio.ByteBuffer;
 public class MosaicSupplyChangeTransaction extends Transaction {
 
     private final MosaicId mosaicId;
-    private final MosaicSupplyType mosaicSupplyType;
+    private final MosaicSupplyChangeActionType action;
     private final BigInteger delta;
 
     MosaicSupplyChangeTransaction(MosaicSupplyChangeTransactionFactory factory) {
         super(factory);
         this.mosaicId = factory.getMosaicId();
-        this.mosaicSupplyType = factory.getMosaicSupplyType();
+        this.action = factory.getAction();
         this.delta = factory.getDelta();
     }
 
@@ -60,10 +60,10 @@ public class MosaicSupplyChangeTransaction extends Transaction {
     /**
      * Returns mosaic supply type.
      *
-     * @return {@link MosaicSupplyType}
+     * @return {@link MosaicSupplyChangeActionType}
      */
-    public MosaicSupplyType getMosaicSupplyType() {
-        return mosaicSupplyType;
+    public MosaicSupplyChangeActionType getAction() {
+        return action;
     }
 
     /**
@@ -94,7 +94,7 @@ public class MosaicSupplyChangeTransaction extends Transaction {
                 new AmountDto(getMaxFee().longValue()),
                 new TimestampDto(getDeadline().getInstant()),
                 new UnresolvedMosaicIdDto(getMosaicId().getId().longValue()),
-                MosaicSupplyChangeActionDto.rawValueOf((byte) getMosaicSupplyType().getValue()),
+                MosaicSupplyChangeActionDto.rawValueOf((byte) getAction().getValue()),
                 new AmountDto(getDelta().longValue()));
         return txBuilder.serialize();
     }
@@ -111,7 +111,7 @@ public class MosaicSupplyChangeTransaction extends Transaction {
                 getNetworkVersion(),
                 getEntityTypeDto(),
                 new UnresolvedMosaicIdDto(getMosaicId().getId().longValue()),
-                MosaicSupplyChangeActionDto.rawValueOf((byte) getMosaicSupplyType().getValue()),
+                MosaicSupplyChangeActionDto.rawValueOf((byte) getAction().getValue()),
                 new AmountDto(getDelta().longValue()));
         return txBuilder.serialize();
     }

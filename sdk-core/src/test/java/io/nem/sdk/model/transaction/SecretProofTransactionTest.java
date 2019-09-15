@@ -59,7 +59,7 @@ public class SecretProofTransactionTest {
         SecretProofTransaction secretProoftx =
             new SecretProofTransactionFactory(
                 NetworkType.MIJIN_TEST,
-                HashType.SHA3_256,
+                LockHashAlgorithmType.SHA3_256,
                 recipient,
                 secret,
                 secretSeed).deadline(new FakeDeadline()).build();
@@ -77,7 +77,7 @@ public class SecretProofTransactionTest {
         String secretSeed = "9a493664";
         SecretProofTransaction secretProoftx =
             new SecretProofTransactionFactory(NetworkType.MIJIN_TEST,
-                HashType.SHA3_256,
+                LockHashAlgorithmType.SHA3_256,
                 recipient,
                 secret,
                 secretSeed
@@ -99,7 +99,7 @@ public class SecretProofTransactionTest {
         SecretProofTransaction secretProoftx =
             new SecretProofTransactionFactory(
                 NetworkType.MIJIN_TEST,
-                HashType.SHA3_256,
+                LockHashAlgorithmType.SHA3_256,
                 recipient,
                 secret,
                 secretSeed).deadline(new FakeDeadline()).build();
@@ -124,7 +124,7 @@ public class SecretProofTransactionTest {
                 SecretProofTransaction secretProoftx =
                     new SecretProofTransactionFactory(
                         NetworkType.MIJIN_TEST,
-                        HashType.SHA3_256,
+                        LockHashAlgorithmType.SHA3_256,
                         recipient,
                         "non valid hash",
                         proof).deadline(new FakeDeadline()).build();

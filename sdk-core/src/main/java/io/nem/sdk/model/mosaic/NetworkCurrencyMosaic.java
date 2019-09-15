@@ -39,7 +39,7 @@ public class NetworkCurrencyMosaic extends Mosaic {
      *
      */
     public NetworkCurrencyMosaic(BigInteger amount) {
-        super(new MosaicId(NetworkCurrencyMosaic.NAMESPACEID.getId()), amount);
+        super(NetworkCurrencyMosaic.NAMESPACEID, amount);
     }
 
     /**

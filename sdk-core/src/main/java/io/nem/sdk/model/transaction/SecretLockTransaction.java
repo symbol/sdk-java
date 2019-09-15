@@ -38,7 +38,7 @@ public class SecretLockTransaction extends Transaction {
 
     private final Mosaic mosaic;
     private final BigInteger duration;
-    private final HashType hashType;
+    private final LockHashAlgorithmType hashAlgorithm;
     private final String secret;
     private final Address recipient;
 
@@ -51,7 +51,7 @@ public class SecretLockTransaction extends Transaction {
         super(factory);
         this.mosaic = factory.getMosaic();
         this.duration = factory.getDuration();
-        this.hashType = factory.getHashType();
+        this.hashAlgorithm = factory.getHashAlgorithm();
         this.secret = factory.getSecret();
         this.recipient = factory.getRecipient();
     }
@@ -80,8 +80,8 @@ public class SecretLockTransaction extends Transaction {
      *
      * @return the hash algorithm, secret is generated with.
      */
-    public HashType getHashType() {
-        return hashType;
+    public LockHashAlgorithmType getHashAlgorithm() {
+        return hashAlgorithm;
     }
 
     /**
@@ -125,7 +125,7 @@ public class SecretLockTransaction extends Transaction {
                     new UnresolvedMosaicIdDto(mosaic.getId().getId().longValue()),
                     new AmountDto(mosaic.getAmount().longValue())),
                 new BlockDurationDto(duration.longValue()),
-                LockHashAlgorithmDto.rawValueOf((byte) hashType.getValue()),
+                LockHashAlgorithmDto.rawValueOf((byte) hashAlgorithm.getValue()),
                 new Hash256Dto(getSecretBuffer()),
                 new UnresolvedAddressDto(getRecipient().getByteBuffer()));
         return txBuilder.serialize();
@@ -147,7 +147,7 @@ public class SecretLockTransaction extends Transaction {
                     new UnresolvedMosaicIdDto(mosaic.getId().getId().longValue()),
                     new AmountDto(mosaic.getAmount().longValue())),
                 new BlockDurationDto(duration.longValue()),
-                LockHashAlgorithmDto.rawValueOf((byte) hashType.getValue()),
+                LockHashAlgorithmDto.rawValueOf((byte) hashAlgorithm.getValue()),
                 new Hash256Dto(getSecretBuffer()),
                 new UnresolvedAddressDto(getRecipient().getByteBuffer()));
         return txBuilder.serialize();

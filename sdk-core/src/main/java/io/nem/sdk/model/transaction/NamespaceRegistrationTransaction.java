@@ -25,7 +25,7 @@ import io.nem.catapult.builders.NamespaceRegistrationTransactionBuilder;
 import io.nem.catapult.builders.SignatureDto;
 import io.nem.catapult.builders.TimestampDto;
 import io.nem.sdk.model.namespace.NamespaceId;
-import io.nem.sdk.model.namespace.NamespaceType;
+import io.nem.sdk.model.namespace.NamespaceRegistrationType;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
@@ -43,7 +43,7 @@ public class NamespaceRegistrationTransaction extends Transaction {
     private final NamespaceId namespaceId;
     private final Optional<BigInteger> duration;
     private final Optional<NamespaceId> parentId;
-    private final NamespaceType namespaceType;
+    private final NamespaceRegistrationType namespaceRegistrationType;
 
     /**
      * @param factory the factory with the configured fields.
@@ -51,7 +51,7 @@ public class NamespaceRegistrationTransaction extends Transaction {
     NamespaceRegistrationTransaction(NamespaceRegistrationTransactionFactory factory) {
         super(factory);
         this.namespaceName = factory.getNamespaceName();
-        this.namespaceType = factory.getNamespaceType();
+        this.namespaceRegistrationType = factory.getNamespaceRegistrationType();
         this.namespaceId = factory.getNamespaceId();
         this.duration = factory.getDuration();
         this.parentId = factory.getParentId();
@@ -99,8 +99,8 @@ public class NamespaceRegistrationTransaction extends Transaction {
      *
      * @return namespace type
      */
-    public NamespaceType getNamespaceType() {
-        return namespaceType;
+    public NamespaceRegistrationType getNamespaceRegistrationType() {
+        return namespaceRegistrationType;
     }
 
     /**
@@ -114,7 +114,7 @@ public class NamespaceRegistrationTransaction extends Transaction {
         final ByteBuffer signatureBuffer = ByteBuffer.allocate(64);
 
         NamespaceRegistrationTransactionBuilder txBuilder;
-        if (namespaceType == NamespaceType.ROOT_NAMESPACE) {
+        if (namespaceRegistrationType == NamespaceRegistrationType.ROOT_NAMESPACE) {
             txBuilder =
                 NamespaceRegistrationTransactionBuilder.create(
                     new SignatureDto(signatureBuffer),
@@ -154,7 +154,7 @@ public class NamespaceRegistrationTransaction extends Transaction {
      */
     byte[] generateEmbeddedBytes() {
         EmbeddedNamespaceRegistrationTransactionBuilder txBuilder;
-        if (namespaceType == NamespaceType.ROOT_NAMESPACE) {
+        if (namespaceRegistrationType == NamespaceRegistrationType.ROOT_NAMESPACE) {
             txBuilder =
                 EmbeddedNamespaceRegistrationTransactionBuilder.create(
                     new KeyDto(getRequiredSignerBytes()),

@@ -19,7 +19,7 @@ package io.nem.sdk.model.transaction;
 
 import io.nem.sdk.model.blockchain.NetworkType;
 import io.nem.sdk.model.mosaic.MosaicId;
-import io.nem.sdk.model.mosaic.MosaicSupplyType;
+import io.nem.sdk.model.mosaic.MosaicSupplyChangeActionType;
 import java.math.BigInteger;
 import org.apache.commons.lang3.Validate;
 
@@ -30,19 +30,19 @@ public class MosaicSupplyChangeTransactionFactory extends
     TransactionFactory<MosaicSupplyChangeTransaction> {
 
     private final MosaicId mosaicId;
-    private final MosaicSupplyType mosaicSupplyType;
+    private final MosaicSupplyChangeActionType action;
     private final BigInteger delta;
 
     public MosaicSupplyChangeTransactionFactory(
         NetworkType networkType, MosaicId mosaicId,
-        MosaicSupplyType mosaicSupplyType,
+        MosaicSupplyChangeActionType action,
         BigInteger delta) {
         super(TransactionType.MOSAIC_SUPPLY_CHANGE, networkType);
         Validate.notNull(mosaicId, "MosaicId must not be null");
-        Validate.notNull(mosaicSupplyType, "MosaicSupplyType must not be null");
+        Validate.notNull(action, "Action must not be null");
         Validate.notNull(delta, "Delta must not be null");
         this.mosaicId = mosaicId;
-        this.mosaicSupplyType = mosaicSupplyType;
+        this.action = action;
         this.delta = delta;
     }
 
@@ -58,10 +58,10 @@ public class MosaicSupplyChangeTransactionFactory extends
     /**
      * Returns mosaic supply type.
      *
-     * @return {@link MosaicSupplyType}
+     * @return {@link MosaicSupplyChangeActionType}
      */
-    public MosaicSupplyType getMosaicSupplyType() {
-        return mosaicSupplyType;
+    public MosaicSupplyChangeActionType getAction() {
+        return action;
     }
 
     /**

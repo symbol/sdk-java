@@ -56,7 +56,7 @@ public class SecretLockTransactionTest {
                 NetworkType.MIJIN_TEST,
                 NetworkCurrencyMosaic.createRelative(BigInteger.valueOf(10)),
                 BigInteger.valueOf(100),
-                HashType.SHA3_256,
+                LockHashAlgorithmType.SHA3_256,
                 secret,
                 Address.createFromRawAddress("SDUP5PLHDXKBX3UU5Q52LAY4WYEKGEWC6IB3VBFM"))
                 .deadline(new FakeDeadline()).build();
@@ -76,7 +76,7 @@ public class SecretLockTransactionTest {
                 NetworkType.MIJIN_TEST,
                 NetworkCurrencyMosaic.createRelative(BigInteger.valueOf(10)),
                 BigInteger.valueOf(100),
-                HashType.SHA3_256,
+                LockHashAlgorithmType.SHA3_256,
                 secret,
                 Address.createFromRawAddress("SDUP5PLHDXKBX3UU5Q52LAY4WYEKGEWC6IB3VBFM"))
                 .deadline(new FakeDeadline()).build();
@@ -97,7 +97,7 @@ public class SecretLockTransactionTest {
             new SecretLockTransactionFactory(NetworkType.MIJIN_TEST,
                 NetworkCurrencyMosaic.createRelative(BigInteger.valueOf(10)),
                 BigInteger.valueOf(100),
-                HashType.SHA3_256,
+                LockHashAlgorithmType.SHA3_256,
                 secret,
                 Address.createFromRawAddress("SDUP5PLHDXKBX3UU5Q52LAY4WYEKGEWC6IB3VBFM")
             ).deadline(new FakeDeadline()).build();
@@ -122,7 +122,7 @@ public class SecretLockTransactionTest {
                         NetworkType.MIJIN_TEST,
                         NetworkCurrencyMosaic.createRelative(BigInteger.valueOf(10)),
                         BigInteger.valueOf(100),
-                        HashType.SHA3_256,
+                        LockHashAlgorithmType.SHA3_256,
                         "non valid hash",
                         Address.createFromRawAddress("SDUP5PLHDXKBX3UU5Q52LAY4WYEKGEWC6IB3VBFM"))
                         .deadline(new FakeDeadline()).build();

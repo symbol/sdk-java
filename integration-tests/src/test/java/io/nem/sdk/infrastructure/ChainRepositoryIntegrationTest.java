@@ -38,7 +38,7 @@ class ChainRepositoryIntegrationTest extends BaseIntegrationTest {
     @ParameterizedTest
     @EnumSource(RepositoryType.class)
     void getBlockchainScore(RepositoryType type) {
-        BlockchainScore blockchainScore = get(getChainRepository(type).getBlockchainScore());
+        BlockchainScore blockchainScore = get(getChainRepository(type).getChainScore());
         assertTrue(blockchainScore.getScoreLow().longValue() >= 0);
         assertTrue(blockchainScore.getScoreHigh().longValue() >= 0);
     }

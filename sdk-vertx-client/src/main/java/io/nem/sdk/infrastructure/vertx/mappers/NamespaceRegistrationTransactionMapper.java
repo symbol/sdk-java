@@ -21,7 +21,7 @@ import static io.nem.core.utils.MapperUtils.toNamespaceId;
 
 import io.nem.core.utils.MapperUtils;
 import io.nem.sdk.model.blockchain.NetworkType;
-import io.nem.sdk.model.namespace.NamespaceType;
+import io.nem.sdk.model.namespace.NamespaceRegistrationType;
 import io.nem.sdk.model.transaction.JsonHelper;
 import io.nem.sdk.model.transaction.NamespaceRegistrationTransaction;
 import io.nem.sdk.model.transaction.NamespaceRegistrationTransactionFactory;
@@ -42,17 +42,17 @@ class NamespaceRegistrationTransactionMapper extends
     protected TransactionFactory<NamespaceRegistrationTransaction> createFactory(
         NetworkType networkType, NamespaceRegistrationTransactionDTO transaction) {
 
-        NamespaceType namespaceType = NamespaceType
+        NamespaceRegistrationType namespaceRegistrationType = NamespaceRegistrationType
             .rawValueOf(transaction.getRegistrationType().getValue());
 
         return new NamespaceRegistrationTransactionFactory(networkType,
             transaction.getName(),
             toNamespaceId(transaction.getId()),
-            namespaceType,
-            namespaceType == NamespaceType.ROOT_NAMESPACE
+            namespaceRegistrationType,
+            namespaceRegistrationType == NamespaceRegistrationType.ROOT_NAMESPACE
                 ? Optional.of(transaction.getDuration())
                 : Optional.empty(),
-            namespaceType == NamespaceType.SUB_NAMESPACE
+            namespaceRegistrationType == NamespaceRegistrationType.SUB_NAMESPACE
                 ? Optional
                 .of(MapperUtils.toNamespaceId(transaction.getParentId()))
                 : Optional.empty());

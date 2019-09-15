@@ -27,22 +27,22 @@ import io.nem.sdk.model.account.PublicAccount;
  */
 public class MultisigCosignatoryModification {
 
-    private final MultisigCosignatoryModificationType type;
+    private final CosignatoryModificationActionType modificationAction;
     private final PublicAccount cosignatoryPublicAccount;
 
     public MultisigCosignatoryModification(
-        MultisigCosignatoryModificationType type, PublicAccount cosignatoryPublicAccount) {
-        this.type = type;
+        CosignatoryModificationActionType modificationAction, PublicAccount cosignatoryPublicAccount) {
+        this.modificationAction = modificationAction;
         this.cosignatoryPublicAccount = cosignatoryPublicAccount;
     }
 
     /**
      * Returns multisig modification type.
      *
-     * @return {@link MultisigCosignatoryModificationType}
+     * @return {@link CosignatoryModificationActionType}
      */
-    public MultisigCosignatoryModificationType getType() {
-        return type;
+    public CosignatoryModificationActionType getModificationAction() {
+        return modificationAction;
     }
 
     /**

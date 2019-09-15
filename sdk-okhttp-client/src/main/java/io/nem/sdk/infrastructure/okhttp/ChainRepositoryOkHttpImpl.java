@@ -61,7 +61,7 @@ public class ChainRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl impl
      *
      * @return io.reactivex.Observable of {@link BigInteger}
      */
-    public Observable<BlockchainScore> getBlockchainScore() {
+    public Observable<BlockchainScore> getChainScore() {
         Callable<ChainScoreDTO> callback = getClient()::getChainScore;
         return exceptionHandling(call(callback).map(
             blockchainScoreDTO ->

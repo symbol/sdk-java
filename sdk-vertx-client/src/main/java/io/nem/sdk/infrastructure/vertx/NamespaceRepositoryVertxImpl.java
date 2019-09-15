@@ -33,7 +33,7 @@ import io.nem.sdk.model.namespace.MosaicAlias;
 import io.nem.sdk.model.namespace.NamespaceId;
 import io.nem.sdk.model.namespace.NamespaceInfo;
 import io.nem.sdk.model.namespace.NamespaceName;
-import io.nem.sdk.model.namespace.NamespaceType;
+import io.nem.sdk.model.namespace.NamespaceRegistrationType;
 import io.nem.sdk.model.transaction.UInt64Id;
 import io.nem.sdk.openapi.vertx.api.NamespaceRoutesApi;
 import io.nem.sdk.openapi.vertx.api.NamespaceRoutesApiImpl;
@@ -198,7 +198,7 @@ public class NamespaceRepositoryVertxImpl extends AbstractRepositoryVertxImpl im
             namespaceInfoDTO.getMeta().getActive(),
             namespaceInfoDTO.getMeta().getIndex(),
             namespaceInfoDTO.getMeta().getId(),
-            NamespaceType
+            NamespaceRegistrationType
                 .rawValueOf(namespaceInfoDTO.getNamespace().getRegistrationType().getValue()),
             namespaceInfoDTO.getNamespace().getDepth(),
             this.extractLevels(namespaceInfoDTO),

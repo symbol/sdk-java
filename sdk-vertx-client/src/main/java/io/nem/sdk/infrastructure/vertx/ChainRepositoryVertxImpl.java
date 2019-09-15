@@ -65,7 +65,7 @@ public class ChainRepositoryVertxImpl extends AbstractRepositoryVertxImpl implem
      *
      * @return {@link Observable} of {@link BigInteger}
      */
-    public Observable<BlockchainScore> getBlockchainScore() {
+    public Observable<BlockchainScore> getChainScore() {
         Consumer<Handler<AsyncResult<ChainScoreDTO>>> callback = client::getChainScore;
         return exceptionHandling(call(callback).map(
             blockchainScoreDTO ->

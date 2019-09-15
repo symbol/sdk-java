@@ -31,7 +31,7 @@ import io.nem.sdk.model.mosaic.MosaicId;
 import io.nem.sdk.model.mosaic.MosaicNames;
 import io.nem.sdk.model.mosaic.MosaicNonce;
 import io.nem.sdk.model.mosaic.MosaicProperties;
-import io.nem.sdk.model.mosaic.MosaicSupplyType;
+import io.nem.sdk.model.mosaic.MosaicSupplyChangeActionType;
 import io.nem.sdk.model.mosaic.NetworkCurrencyMosaic;
 import io.nem.sdk.model.namespace.AliasAction;
 import io.nem.sdk.model.namespace.NamespaceId;
@@ -44,7 +44,7 @@ import io.nem.sdk.model.transaction.CosignatureSignedTransaction;
 import io.nem.sdk.model.transaction.CosignatureTransaction;
 import io.nem.sdk.model.transaction.HashLockTransaction;
 import io.nem.sdk.model.transaction.HashLockTransactionFactory;
-import io.nem.sdk.model.transaction.HashType;
+import io.nem.sdk.model.transaction.LockHashAlgorithmType;
 import io.nem.sdk.model.transaction.MosaicAliasTransaction;
 import io.nem.sdk.model.transaction.MosaicAliasTransactionFactory;
 import io.nem.sdk.model.transaction.MosaicDefinitionTransaction;
@@ -54,7 +54,7 @@ import io.nem.sdk.model.transaction.MosaicSupplyChangeTransactionFactory;
 import io.nem.sdk.model.transaction.MultisigAccountModificationTransaction;
 import io.nem.sdk.model.transaction.MultisigAccountModificationTransactionFactory;
 import io.nem.sdk.model.transaction.MultisigCosignatoryModification;
-import io.nem.sdk.model.transaction.MultisigCosignatoryModificationType;
+import io.nem.sdk.model.transaction.CosignatoryModificationActionType;
 import io.nem.sdk.model.transaction.NamespaceRegistrationTransaction;
 import io.nem.sdk.model.transaction.NamespaceRegistrationTransactionFactory;
 import io.nem.sdk.model.transaction.PlainMessage;
@@ -576,7 +576,7 @@ class E2EIntegrationTest extends BaseIntegrationTest {
         MosaicSupplyChangeTransaction mosaicSupplyChangeTransaction =
             new MosaicSupplyChangeTransactionFactory(NetworkType.MIJIN_TEST,
                 this.mosaicId,
-                MosaicSupplyType.INCREASE,
+                MosaicSupplyChangeActionType.INCREASE,
                 BigInteger.valueOf(11)
             ).build();
 
@@ -601,7 +601,7 @@ class E2EIntegrationTest extends BaseIntegrationTest {
             new MosaicSupplyChangeTransactionFactory(
                 NetworkType.MIJIN_TEST,
                 this.mosaicId,
-                MosaicSupplyType.INCREASE,
+                MosaicSupplyChangeActionType.INCREASE,
                 BigInteger.valueOf(12)).build();
 
         AggregateTransaction aggregateTransaction =
@@ -689,7 +689,7 @@ class E2EIntegrationTest extends BaseIntegrationTest {
             new SecretLockTransactionFactory(NetworkType.MIJIN_TEST,
                 NetworkCurrencyMosaic.createRelative(BigInteger.valueOf(10)),
                 BigInteger.valueOf(100),
-                HashType.SHA3_256,
+                LockHashAlgorithmType.SHA3_256,
                 secret,
                 Address.createFromRawAddress("SDUP5PLHDXKBX3UU5Q52LAY4WYEKGEWC6IB3VBFM")
             ).build();
@@ -715,7 +715,7 @@ class E2EIntegrationTest extends BaseIntegrationTest {
                 NetworkType.MIJIN_TEST,
                 NetworkCurrencyMosaic.createRelative(BigInteger.valueOf(10)),
                 BigInteger.valueOf(100),
-                HashType.SHA3_256,
+                LockHashAlgorithmType.SHA3_256,
                 secret,
                 Address.createFromRawAddress("SDUP5PLHDXKBX3UU5Q52LAY4WYEKGEWC6IB3VBFM")
             ).build();
@@ -747,7 +747,7 @@ class E2EIntegrationTest extends BaseIntegrationTest {
                 NetworkType.MIJIN_TEST,
                 NetworkCurrencyMosaic.createRelative(BigInteger.valueOf(10)),
                 BigInteger.valueOf(100),
-                HashType.SHA3_256,
+                LockHashAlgorithmType.SHA3_256,
                 secret,
                 Address.createFromRawAddress("SDUP5PLHDXKBX3UU5Q52LAY4WYEKGEWC6IB3VBFM")
             ).build();
@@ -763,7 +763,7 @@ class E2EIntegrationTest extends BaseIntegrationTest {
         SecretProofTransaction secretProoftx =
             new SecretProofTransactionFactory(
                 NetworkType.MIJIN_TEST,
-                HashType.SHA3_256,
+                LockHashAlgorithmType.SHA3_256,
                 Address.createFromRawAddress("SDUP5PLHDXKBX3UU5Q52LAY4WYEKGEWC6IB3VBFM"),
                 secret,
                 proof).build();
@@ -790,7 +790,7 @@ class E2EIntegrationTest extends BaseIntegrationTest {
                 NetworkType.MIJIN_TEST,
                 NetworkCurrencyMosaic.createRelative(BigInteger.valueOf(10)),
                 BigInteger.valueOf(100),
-                HashType.SHA3_256,
+                LockHashAlgorithmType.SHA3_256,
                 secret,
                 Address.createFromRawAddress("SDUP5PLHDXKBX3UU5Q52LAY4WYEKGEWC6IB3VBFM")).build();
 
@@ -804,7 +804,7 @@ class E2EIntegrationTest extends BaseIntegrationTest {
 
         SecretProofTransaction secretProoftx =
             new SecretProofTransactionFactory(NetworkType.MIJIN_TEST,
-                HashType.SHA3_256,
+                LockHashAlgorithmType.SHA3_256,
                 Address.createFromRawAddress("SDUP5PLHDXKBX3UU5Q52LAY4WYEKGEWC6IB3VBFM"),
                 secret,
                 proof
@@ -835,7 +835,7 @@ class E2EIntegrationTest extends BaseIntegrationTest {
                 (byte) 0,
                 Collections.singletonList(
                     new MultisigCosignatoryModification(
-                        MultisigCosignatoryModificationType.ADD,
+                        CosignatoryModificationActionType.ADD,
                         this.cosignatoryAccount2.getPublicAccount()))).build();
         AggregateTransaction aggregateTransaction =
             AggregateTransactionFactory.createComplete(

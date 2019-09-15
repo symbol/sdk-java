@@ -34,7 +34,7 @@ import org.bouncycastle.util.encoders.Hex;
  */
 public class SecretProofTransaction extends Transaction {
 
-    private final HashType hashType;
+    private final LockHashAlgorithmType hashType;
     private final String secret;
     private final String proof;
     private final Address recipient;
@@ -59,7 +59,7 @@ public class SecretProofTransaction extends Transaction {
      *
      * @return the hash algorithm secret is generated with.
      */
-    public HashType getHashType() {
+    public LockHashAlgorithmType getHashType() {
         return hashType;
     }
 

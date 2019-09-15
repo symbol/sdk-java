@@ -23,7 +23,7 @@ import io.nem.core.utils.HexEncoder;
 import io.nem.sdk.model.account.Account;
 import io.nem.sdk.model.blockchain.NetworkType;
 import io.nem.sdk.model.namespace.NamespaceId;
-import io.nem.sdk.model.namespace.NamespaceType;
+import io.nem.sdk.model.namespace.NamespaceRegistrationType;
 import java.math.BigInteger;
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -61,8 +61,8 @@ class NamespaceRegistrationTransactionTest {
                 .isBefore(namespaceRegistrationTransaction.getDeadline().getLocalDateTime()));
         assertEquals(BigInteger.valueOf(0), namespaceRegistrationTransaction.getMaxFee());
         assertEquals("root-test-namespace", namespaceRegistrationTransaction.getNamespaceName());
-        assertEquals(NamespaceType.ROOT_NAMESPACE,
-            namespaceRegistrationTransaction.getNamespaceType());
+        assertEquals(NamespaceRegistrationType.ROOT_NAMESPACE,
+            namespaceRegistrationTransaction.getNamespaceRegistrationType());
         assertEquals(BigInteger.valueOf(1000),
             namespaceRegistrationTransaction.getDuration().get());
         assertEquals(
@@ -92,8 +92,8 @@ class NamespaceRegistrationTransactionTest {
                 .isBefore(namespaceRegistrationTransaction.getDeadline().getLocalDateTime()));
         assertEquals(BigInteger.valueOf(0), namespaceRegistrationTransaction.getMaxFee());
         assertEquals("root-test-namespace", namespaceRegistrationTransaction.getNamespaceName());
-        assertEquals(NamespaceType.SUB_NAMESPACE,
-            namespaceRegistrationTransaction.getNamespaceType());
+        assertEquals(NamespaceRegistrationType.SUB_NAMESPACE,
+            namespaceRegistrationTransaction.getNamespaceRegistrationType());
         assertEquals(Optional.empty(), namespaceRegistrationTransaction.getDuration());
         assertEquals(
             new BigInteger("-883935687755742574"),
@@ -121,8 +121,8 @@ class NamespaceRegistrationTransactionTest {
                 .isBefore(namespaceRegistrationTransaction.getDeadline().getLocalDateTime()));
         assertEquals(BigInteger.valueOf(0), namespaceRegistrationTransaction.getMaxFee());
         assertEquals("root-test-namespace", namespaceRegistrationTransaction.getNamespaceName());
-        assertEquals(NamespaceType.SUB_NAMESPACE,
-            namespaceRegistrationTransaction.getNamespaceType());
+        assertEquals(NamespaceRegistrationType.SUB_NAMESPACE,
+            namespaceRegistrationTransaction.getNamespaceRegistrationType());
         assertEquals(Optional.empty(), namespaceRegistrationTransaction.getDuration());
         assertEquals(
             new BigInteger("-883935687755742574"),

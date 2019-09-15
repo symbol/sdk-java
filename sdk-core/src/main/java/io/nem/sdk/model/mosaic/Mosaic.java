@@ -27,10 +27,10 @@ import java.math.BigInteger;
  */
 public class Mosaic {
 
-    private final MosaicId id;
+    private final UInt64Id id;
     private final BigInteger amount;
 
-    public Mosaic(MosaicId id, BigInteger amount) {
+    public Mosaic(UInt64Id id, BigInteger amount) {
         this.id = id;
         this.amount = amount;
     }
@@ -40,7 +40,7 @@ public class Mosaic {
      *
      * @return mosaic identifier
      */
-    public MosaicId getId() {
+    public UInt64Id getId() {
         return id;
     }
 

@@ -135,7 +135,7 @@ public class MultisigAccountModificationTransaction extends Transaction {
             final CosignatoryModificationBuilder cosignatoryModificationBuilder =
                 CosignatoryModificationBuilder.create(
                     CosignatoryModificationActionDto.rawValueOf(
-                        (byte) multisigCosignatoryModification.getType().getValue()),
+                        (byte) multisigCosignatoryModification.getModificationAction().getValue()),
                     new KeyDto(keyBuffer));
             modificationBuilder.add(cosignatoryModificationBuilder);
         }

@@ -25,7 +25,7 @@ import io.nem.core.utils.MapperUtils;
 import io.nem.sdk.infrastructure.vertx.mappers.GeneralTransactionMapper;
 import io.nem.sdk.model.account.Address;
 import io.nem.sdk.model.namespace.AliasAction;
-import io.nem.sdk.model.namespace.NamespaceType;
+import io.nem.sdk.model.namespace.NamespaceRegistrationType;
 import io.nem.sdk.model.transaction.AccountMetadataTransaction;
 import io.nem.sdk.model.transaction.AddressAliasTransaction;
 import io.nem.sdk.model.transaction.AggregateTransaction;
@@ -621,7 +621,7 @@ public class TransactionMapperVertxTest {
             .convert(transactionDTO.getTransaction(), NamespaceRegistrationTransactionDTO.class);
 
         assertEquals((int) registerNamespaceTransaction.getRegistrationType().getValue(),
-            transaction.getNamespaceType().getValue());
+            transaction.getNamespaceRegistrationType().getValue());
         assertEquals(
             registerNamespaceTransaction.getName(),
             transaction.getNamespaceName());
@@ -629,7 +629,7 @@ public class TransactionMapperVertxTest {
             MapperUtils.fromHex(registerNamespaceTransaction.getId()),
             transaction.getNamespaceId().getId());
 
-        if (transaction.getNamespaceType() == NamespaceType.ROOT_NAMESPACE) {
+        if (transaction.getNamespaceRegistrationType() == NamespaceRegistrationType.ROOT_NAMESPACE) {
             assertEquals(
                 registerNamespaceTransaction.getDuration(),
                 transaction.getDuration().get());
@@ -667,7 +667,7 @@ public class TransactionMapperVertxTest {
         assertEquals(MapperUtils.fromHex(mosaicSupplyChangeTransaction.getMosaicId()),
             transaction.getMosaicId().getId());
         assertEquals(mosaicSupplyChangeTransaction.getDelta(), transaction.getDelta());
-        assertEquals(transaction.getMosaicSupplyType().getValue(),
+        assertEquals(transaction.getAction().getValue(),
             mosaicSupplyChangeTransaction.getAction().getValue().intValue());
     }
 
@@ -691,7 +691,7 @@ public class TransactionMapperVertxTest {
                 .toString());
         assertEquals(
             (int) modifyMultisigAccountTransaction.getModifications().get(0).getModificationAction()
-                .getValue(), transaction.getModifications().get(0).getType().getValue());
+                .getValue(), transaction.getModifications().get(0).getModificationAction().getValue());
     }
 
     void validateLockFundsTx(HashLockTransaction transaction, TransactionInfoDTO transactionDTO) {
@@ -727,7 +727,7 @@ public class TransactionMapperVertxTest {
             secretLockTransaction.getDuration(),
             transaction.getDuration());
         assertEquals((int) secretLockTransaction.getHashAlgorithm().getValue(),
-            transaction.getHashType().getValue());
+            transaction.getHashAlgorithm().getValue());
         assertEquals(
             secretLockTransaction.getSecret(),
             transaction.getSecret());

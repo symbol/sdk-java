@@ -55,7 +55,7 @@ public class ChainRepositoryVertxImplTest extends AbstractVertxRespositoryTest {
         dto.setScoreLow(BigInteger.valueOf(3));
         dto.setScoreHigh(BigInteger.valueOf(5));
         mockRemoteCall(dto);
-        BlockchainScore blockchainScore = repository.getBlockchainScore().toFuture().get();
+        BlockchainScore blockchainScore = repository.getChainScore().toFuture().get();
         Assertions.assertEquals((dto.getScoreLow()), blockchainScore.getScoreLow());
         Assertions.assertEquals((dto.getScoreHigh()), blockchainScore.getScoreHigh());
     }

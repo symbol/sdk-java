@@ -26,7 +26,7 @@ import org.apache.commons.lang3.Validate;
  */
 public class SecretProofTransactionFactory extends TransactionFactory<SecretProofTransaction> {
 
-    private final HashType hashType;
+    private final LockHashAlgorithmType hashType;
     private final String secret;
     private final String proof;
     private final Address recipient;
@@ -43,7 +43,7 @@ public class SecretProofTransactionFactory extends TransactionFactory<SecretProo
 
     public SecretProofTransactionFactory(
         final NetworkType networkType,
-        final HashType hashType,
+        final LockHashAlgorithmType hashType,
         final Address recipient,
         final String secret,
         final String proof) {
@@ -51,7 +51,7 @@ public class SecretProofTransactionFactory extends TransactionFactory<SecretProo
         Validate.notNull(secret, "Secret must not be null.");
         Validate.notNull(proof, "Proof must not be null.");
         Validate.notNull(recipient, "Recipient must not be null.");
-        if (!HashType.validator(hashType, secret)) {
+        if (!LockHashAlgorithmType.validator(hashType, secret)) {
             throw new IllegalArgumentException(
                 "HashType and Secret have incompatible length or not hexadecimal string");
         }
@@ -67,7 +67,7 @@ public class SecretProofTransactionFactory extends TransactionFactory<SecretProo
      *
      * @return the hash algorithm secret is generated with.
      */
-    public HashType getHashType() {
+    public LockHashAlgorithmType getHashType() {
         return hashType;
     }
 

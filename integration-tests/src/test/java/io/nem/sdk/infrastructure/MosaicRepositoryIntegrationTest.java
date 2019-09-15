@@ -53,7 +53,7 @@ class MosaicRepositoryIntegrationTest extends BaseIntegrationTest {
     @EnumSource(RepositoryType.class)
     void getMosaicViaMosaicId(RepositoryType type) {
         MosaicInfo mosaicInfo = get(getMosaicRepository(type).getMosaic(mosaicId));
-        assertEquals(new BigInteger("1"), mosaicInfo.getHeight());
+        assertEquals(new BigInteger("1"), mosaicInfo.getStartHeight());
         assertEquals(mosaicId, mosaicInfo.getMosaicId());
     }
 

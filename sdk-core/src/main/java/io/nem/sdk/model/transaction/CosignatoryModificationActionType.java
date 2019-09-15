@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 NEM
+ * Copyright 2019 NEM
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,36 +14,48 @@
  * limitations under the License.
  */
 
-package io.nem.sdk.model.namespace;
+package io.nem.sdk.model.transaction;
 
 import java.util.Arrays;
 
 /**
- * Enum containing namespace supply type.
+ * Enum containing multisig cosignatory modification type constants.
  *
  * @since 1.0
  */
-public enum NamespaceType {
+public enum CosignatoryModificationActionType {
     /**
-     * Root namespace
+     * Add cosignatory.
      */
-    ROOT_NAMESPACE(0),
+    ADD(1),
+
     /**
-     * Sub namespace
+     * Remove cosignatory
      */
-    SUB_NAMESPACE(1);
+    REMOVE(0);
 
     private final int value;
 
-    NamespaceType(int value) {
+    CosignatoryModificationActionType(int value) {
         this.value = value;
     }
 
-    public static NamespaceType rawValueOf(int value) {
+    /**
+     * Static constructor converting multsig cosignatory modification raw value to enum instance.
+     *
+     * @param value Multisig cosignatory modification type raw value
+     * @return {@link CosignatoryModificationActionType}
+     */
+    public static CosignatoryModificationActionType rawValueOf(int value) {
         return Arrays.stream(values()).filter(e -> e.value == value).findFirst()
             .orElseThrow(() -> new IllegalArgumentException(value + " is not a valid value"));
     }
 
+    /**
+     * Returns enum value.
+     *
+     * @return int
+     */
     public int getValue() {
         return value;
     }

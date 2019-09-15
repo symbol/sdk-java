@@ -20,7 +20,7 @@ package io.nem.sdk.infrastructure.vertx.mappers;
 import static io.nem.core.utils.MapperUtils.toMosaicId;
 
 import io.nem.sdk.model.blockchain.NetworkType;
-import io.nem.sdk.model.mosaic.MosaicSupplyType;
+import io.nem.sdk.model.mosaic.MosaicSupplyChangeActionType;
 import io.nem.sdk.model.transaction.JsonHelper;
 import io.nem.sdk.model.transaction.MosaicSupplyChangeTransaction;
 import io.nem.sdk.model.transaction.MosaicSupplyChangeTransactionFactory;
@@ -41,7 +41,7 @@ class MosaicSupplyChangeTransactionMapper extends
         NetworkType networkType, MosaicSupplyChangeTransactionDTO transaction) {
         return new MosaicSupplyChangeTransactionFactory(networkType,
             toMosaicId(transaction.getMosaicId()),
-            MosaicSupplyType.rawValueOf(transaction.getAction().getValue()),
+            MosaicSupplyChangeActionType.rawValueOf(transaction.getAction().getValue()),
             transaction.getDelta());
     }
 }

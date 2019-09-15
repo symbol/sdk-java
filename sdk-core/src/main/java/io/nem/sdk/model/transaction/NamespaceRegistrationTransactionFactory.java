@@ -19,7 +19,7 @@ package io.nem.sdk.model.transaction;
 
 import io.nem.sdk.model.blockchain.NetworkType;
 import io.nem.sdk.model.namespace.NamespaceId;
-import io.nem.sdk.model.namespace.NamespaceType;
+import io.nem.sdk.model.namespace.NamespaceRegistrationType;
 import java.math.BigInteger;
 import java.util.Optional;
 import org.apache.commons.lang3.Validate;
@@ -34,27 +34,27 @@ public class NamespaceRegistrationTransactionFactory extends
     private final NamespaceId namespaceId;
     private final Optional<BigInteger> duration;
     private final Optional<NamespaceId> parentId;
-    private final NamespaceType namespaceType;
+    private final NamespaceRegistrationType namespaceRegistrationType;
 
 
     public NamespaceRegistrationTransactionFactory(
         final NetworkType networkType,
         final String namespaceName,
         final NamespaceId namespaceId,
-        final NamespaceType namespaceType,
+        final NamespaceRegistrationType namespaceRegistrationType,
         final Optional<BigInteger> duration,
         final Optional<NamespaceId> parentId) {
         super(TransactionType.REGISTER_NAMESPACE, networkType);
         Validate.notNull(namespaceName, "NamespaceName must not be null");
-        Validate.notNull(namespaceType, "NamespaceType must not be null");
+        Validate.notNull(namespaceRegistrationType, "NamespaceType must not be null");
         Validate.notNull(namespaceId, "NamespaceId must not be null");
-        if (namespaceType == NamespaceType.ROOT_NAMESPACE) {
+        if (namespaceRegistrationType == NamespaceRegistrationType.ROOT_NAMESPACE) {
             Validate.isTrue(duration.isPresent(), "Duration must be provided");
         } else {
             Validate.isTrue(parentId.isPresent(), "ParentId must be provided");
         }
         this.namespaceName = namespaceName;
-        this.namespaceType = namespaceType;
+        this.namespaceRegistrationType = namespaceRegistrationType;
         this.namespaceId = namespaceId;
         this.duration = duration;
         this.parentId = parentId;
@@ -74,7 +74,7 @@ public class NamespaceRegistrationTransactionFactory extends
         final BigInteger duration) {
         NamespaceId namespaceId = NamespaceId.createFromName(namespaceName);
         return new NamespaceRegistrationTransactionFactory(networkType, namespaceName,
-            namespaceId, NamespaceType.ROOT_NAMESPACE, Optional.of(duration), Optional.empty());
+            namespaceId, NamespaceRegistrationType.ROOT_NAMESPACE, Optional.of(duration), Optional.empty());
     }
 
 
@@ -93,7 +93,7 @@ public class NamespaceRegistrationTransactionFactory extends
         NamespaceId namespaceId = NamespaceId
             .createFromNameAndParentId(namespaceName, parentId.getId());
         return new NamespaceRegistrationTransactionFactory(networkType, namespaceName, namespaceId,
-            NamespaceType.SUB_NAMESPACE, Optional.empty(),
+            NamespaceRegistrationType.SUB_NAMESPACE, Optional.empty(),
             Optional.of(parentId));
     }
 
@@ -140,8 +140,8 @@ public class NamespaceRegistrationTransactionFactory extends
      *
      * @return namespace type
      */
-    public NamespaceType getNamespaceType() {
-        return namespaceType;
+    public NamespaceRegistrationType getNamespaceRegistrationType() {
+        return namespaceRegistrationType;
     }
 
     @Override

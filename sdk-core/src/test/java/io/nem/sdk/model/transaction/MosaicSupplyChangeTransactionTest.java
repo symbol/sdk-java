@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import io.nem.sdk.model.blockchain.NetworkType;
 import io.nem.sdk.model.mosaic.MosaicId;
-import io.nem.sdk.model.mosaic.MosaicSupplyType;
+import io.nem.sdk.model.mosaic.MosaicSupplyChangeActionType;
 import java.math.BigInteger;
 import java.time.LocalDateTime;
 import org.bouncycastle.util.encoders.Hex;
@@ -37,7 +37,7 @@ class MosaicSupplyChangeTransactionTest {
             new MosaicSupplyChangeTransactionFactory(
                 NetworkType.MIJIN_TEST,
                 new MosaicId(new BigInteger("6300565133566699912")),
-                MosaicSupplyType.INCREASE,
+                MosaicSupplyChangeActionType.INCREASE,
                 BigInteger.valueOf(10)).build();
 
         assertEquals(NetworkType.MIJIN_TEST, mosaicSupplyChangeTx.getNetworkType());
@@ -47,7 +47,8 @@ class MosaicSupplyChangeTransactionTest {
         assertEquals(BigInteger.valueOf(0), mosaicSupplyChangeTx.getMaxFee());
         assertEquals(new BigInteger("6300565133566699912"),
             mosaicSupplyChangeTx.getMosaicId().getId());
-        assertEquals(MosaicSupplyType.INCREASE, mosaicSupplyChangeTx.getMosaicSupplyType());
+        assertEquals(
+            MosaicSupplyChangeActionType.INCREASE, mosaicSupplyChangeTx.getAction());
         assertEquals(BigInteger.valueOf(10), mosaicSupplyChangeTx.getDelta());
     }
 
@@ -62,7 +63,7 @@ class MosaicSupplyChangeTransactionTest {
             new MosaicSupplyChangeTransactionFactory(
                 NetworkType.MIJIN_TEST,
                 new MosaicId(new BigInteger("6300565133566699912")),
-                MosaicSupplyType.INCREASE,
+                MosaicSupplyChangeActionType.INCREASE,
                 BigInteger.valueOf(10)
             ).deadline(new FakeDeadline()).build();
 

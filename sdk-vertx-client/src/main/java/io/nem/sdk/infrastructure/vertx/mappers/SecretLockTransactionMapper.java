@@ -22,7 +22,7 @@ import static io.nem.core.utils.MapperUtils.toMosaicId;
 
 import io.nem.sdk.model.blockchain.NetworkType;
 import io.nem.sdk.model.mosaic.Mosaic;
-import io.nem.sdk.model.transaction.HashType;
+import io.nem.sdk.model.transaction.LockHashAlgorithmType;
 import io.nem.sdk.model.transaction.JsonHelper;
 import io.nem.sdk.model.transaction.SecretLockTransaction;
 import io.nem.sdk.model.transaction.SecretLockTransactionFactory;
@@ -48,7 +48,7 @@ class SecretLockTransactionMapper extends
             networkType,
             mosaic,
             transaction.getDuration(),
-            HashType.rawValueOf(transaction.getHashAlgorithm().getValue()),
+            LockHashAlgorithmType.rawValueOf(transaction.getHashAlgorithm().getValue()),
             transaction.getSecret(),
             toAddressFromUnresolved(transaction.getRecipientAddress()));
     }

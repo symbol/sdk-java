@@ -23,7 +23,7 @@ import io.nem.sdk.model.transaction.JsonHelper;
 import io.nem.sdk.model.transaction.MultisigAccountModificationTransaction;
 import io.nem.sdk.model.transaction.MultisigAccountModificationTransactionFactory;
 import io.nem.sdk.model.transaction.MultisigCosignatoryModification;
-import io.nem.sdk.model.transaction.MultisigCosignatoryModificationType;
+import io.nem.sdk.model.transaction.CosignatoryModificationActionType;
 import io.nem.sdk.model.transaction.TransactionType;
 import io.nem.sdk.openapi.okhttp_gson.model.MultisigAccountModificationTransactionDTO;
 import java.util.Collections;
@@ -48,7 +48,7 @@ class MultisigAccountModificationTransactionMapper extends
                     .map(
                         multisigModification ->
                             new MultisigCosignatoryModification(
-                                MultisigCosignatoryModificationType.rawValueOf(
+                                CosignatoryModificationActionType.rawValueOf(
                                     multisigModification.getModificationAction().getValue()),
                                 PublicAccount.createFromPublicKey(
                                     multisigModification.getCosignatoryPublicKey(),

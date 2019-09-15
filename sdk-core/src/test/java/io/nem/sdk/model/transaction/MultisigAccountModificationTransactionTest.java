@@ -40,7 +40,7 @@ class MultisigAccountModificationTransactionTest {
                 (byte) 1,
                 Collections.singletonList(
                     new MultisigCosignatoryModification(
-                        MultisigCosignatoryModificationType.ADD,
+                        CosignatoryModificationActionType.ADD,
                         PublicAccount.createFromPublicKey(
                             "68b3fbb18729c1fde225c57f8ce080fa828f0067e451a3fd81fa628842b0b763",
                             NetworkType.MIJIN_TEST)))
@@ -65,8 +65,8 @@ class MultisigAccountModificationTransactionTest {
                 .toString()
                 .toUpperCase());
         assertEquals(
-            MultisigCosignatoryModificationType.ADD,
-            multisigAccountModificationTransaction.getModifications().get(0).getType());
+            CosignatoryModificationActionType.ADD,
+            multisigAccountModificationTransaction.getModifications().get(0).getModificationAction());
     }
 
     @Test
@@ -82,12 +82,12 @@ class MultisigAccountModificationTransactionTest {
                 (byte) 1,
                 Arrays.asList(
                     new MultisigCosignatoryModification(
-                        MultisigCosignatoryModificationType.ADD,
+                        CosignatoryModificationActionType.ADD,
                         PublicAccount.createFromPublicKey(
                             "68b3fbb18729c1fde225c57f8ce080fa828f0067e451a3fd81fa628842b0b763",
                             NetworkType.MIJIN_TEST)),
                     new MultisigCosignatoryModification(
-                        MultisigCosignatoryModificationType.ADD,
+                        CosignatoryModificationActionType.ADD,
                         PublicAccount.createFromPublicKey(
                             "cf893ffcc47c33e7f68ab1db56365c156b0736824a0c1e273f9e00b8df8f01eb",
                             NetworkType.MIJIN_TEST)))

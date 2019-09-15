@@ -40,7 +40,7 @@ class NamespaceInfoTest {
                 true,
                 0,
                 "5A3CD9B09CD1E8000159249B",
-                NamespaceType.ROOT_NAMESPACE,
+                NamespaceRegistrationType.ROOT_NAMESPACE,
                 1,
                 Arrays.asList(namespaceId),
                 NamespaceId.createFromId(new BigInteger("0")),
@@ -54,7 +54,7 @@ class NamespaceInfoTest {
         assertEquals(true, namespaceInfo.isActive());
         assertTrue(namespaceInfo.getIndex() == 0);
         assertEquals("5A3CD9B09CD1E8000159249B", namespaceInfo.getMetaId());
-        assertTrue(namespaceInfo.getType() == NamespaceType.ROOT_NAMESPACE);
+        assertTrue(namespaceInfo.getRegistrationType() == NamespaceRegistrationType.ROOT_NAMESPACE);
         assertTrue(namespaceInfo.getDepth() == 1);
         assertEquals(namespaceId, namespaceInfo.getLevels().get(0));
         Assertions.assertEquals(
@@ -128,7 +128,7 @@ class NamespaceInfoTest {
             true,
             0,
             "5A3CD9B09CD1E8000159249B",
-            NamespaceType.ROOT_NAMESPACE,
+            NamespaceRegistrationType.ROOT_NAMESPACE,
             1,
             Collections
                 .singletonList(NamespaceId.createFromId(new BigInteger("-8884663987180930485"))),
@@ -146,7 +146,7 @@ class NamespaceInfoTest {
             true,
             0,
             "5A3CD9B09CD1E8000159249B",
-            NamespaceType.SUB_NAMESPACE,
+            NamespaceRegistrationType.SUB_NAMESPACE,
             1,
             Arrays.asList(
                 NamespaceId.createFromId(new BigInteger("-3087871471161192663")),

@@ -23,7 +23,7 @@ import io.nem.sdk.model.mosaic.MosaicId;
 import io.nem.sdk.model.namespace.NamespaceId;
 import io.nem.sdk.model.namespace.NamespaceInfo;
 import io.nem.sdk.model.namespace.NamespaceName;
-import io.nem.sdk.model.namespace.NamespaceType;
+import io.nem.sdk.model.namespace.NamespaceRegistrationType;
 import io.nem.sdk.openapi.vertx.invoker.ApiException;
 import io.nem.sdk.openapi.vertx.model.AliasDTO;
 import io.nem.sdk.openapi.vertx.model.AliasTypeEnum;
@@ -91,7 +91,7 @@ public class NamespaceRepositoryVertxImplTest extends AbstractVertxRespositoryTe
 
         Assertions.assertNotNull(info);
 
-        Assertions.assertEquals(NamespaceType.SUB_NAMESPACE, info.getType());
+        Assertions.assertEquals(NamespaceRegistrationType.SUB_NAMESPACE, info.getRegistrationType());
 
         Assertions.assertEquals(meta.getId(), info.getMetaId());
         Assertions.assertEquals(meta.getIndex(), info.getIndex());
@@ -136,7 +136,7 @@ public class NamespaceRepositoryVertxImplTest extends AbstractVertxRespositoryTe
 
         Assertions.assertNotNull(info);
 
-        Assertions.assertEquals(NamespaceType.SUB_NAMESPACE, info.getType());
+        Assertions.assertEquals(NamespaceRegistrationType.SUB_NAMESPACE, info.getRegistrationType());
 
         Assertions.assertEquals(meta.getId(), info.getMetaId());
         Assertions.assertEquals(meta.getIndex(), info.getIndex());
@@ -184,7 +184,7 @@ public class NamespaceRepositoryVertxImplTest extends AbstractVertxRespositoryTe
 
         Assertions.assertNotNull(info);
 
-        Assertions.assertEquals(NamespaceType.SUB_NAMESPACE, info.getType());
+        Assertions.assertEquals(NamespaceRegistrationType.SUB_NAMESPACE, info.getRegistrationType());
 
         Assertions.assertEquals(meta.getId(), info.getMetaId());
         Assertions.assertEquals(meta.getIndex(), info.getIndex());

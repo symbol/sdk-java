@@ -39,7 +39,7 @@ public class NetworkHarvestMosaic extends Mosaic {
      *
      */
     public NetworkHarvestMosaic(BigInteger amount) {
-        super(new MosaicId(NetworkHarvestMosaic.NAMESPACEID.getId()), amount);
+        super(NetworkHarvestMosaic.NAMESPACEID, amount);
     }
 
     /**
