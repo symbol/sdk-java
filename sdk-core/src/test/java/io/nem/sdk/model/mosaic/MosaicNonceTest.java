@@ -31,7 +31,7 @@ public class MosaicNonceTest {
     void createNonceFromHexadecimalString() {
         MosaicNonce nonce = MosaicNonce.createFromHex("00000000");
         assertNotNull(nonce.getNonce());
-        assertArrayEquals(nonce.getNonce(), new byte[]{0x0, 0x0, 0x0, 0x0});
+        assertArrayEquals(new byte[]{0x0, 0x0, 0x0, 0x0}, nonce.getNonce());
     }
 
     @Test
@@ -39,7 +39,8 @@ public class MosaicNonceTest {
         IllegalIdentifierException exception = Assertions
             .assertThrows(IllegalIdentifierException.class,
                 () -> MosaicNonce.createFromHex("Z0000000"));
-        Assertions.assertEquals("DecoderException: Illegal hexadecimal character Z at index 0", exception.getMessage());
+        Assertions.assertEquals("DecoderException: Illegal hexadecimal character Z at index 0",
+            exception.getMessage());
     }
 
     @Test
@@ -48,8 +49,8 @@ public class MosaicNonceTest {
         MosaicNonce nonce2 = MosaicNonce.createFromHex("FFFFFFFF");
         assertNotNull(nonce1.getNonce());
         assertNotNull(nonce2.getNonce());
-        assertArrayEquals(nonce1.getNonce(), new byte[]{0x0, 0x0, 0x0, 0x0});
-        assertArrayEquals(nonce2.getNonce(), new byte[]{-0x1, -0x1, -0x1, -0x1});
+        assertArrayEquals(new byte[]{0x0, 0x0, 0x0, 0x0}, nonce1.getNonce());
+        assertArrayEquals(new byte[]{-0x1, -0x1, -0x1, -0x1}, nonce2.getNonce());
         assertFalse(Arrays.equals(nonce1.getNonce(), nonce2.getNonce()));
     }
 

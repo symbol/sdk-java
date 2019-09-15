@@ -24,7 +24,6 @@ import io.nem.sdk.openapi.okhttp_gson.model.EmbeddedTransactionInfoDTO;
 import io.nem.sdk.openapi.okhttp_gson.model.TransactionInfoDTO;
 import java.util.EnumMap;
 import java.util.Map;
-import javax.xml.stream.events.Namespace;
 
 /**
  * Entry point for the transaction mapping. This mapper should support all the known transactions.

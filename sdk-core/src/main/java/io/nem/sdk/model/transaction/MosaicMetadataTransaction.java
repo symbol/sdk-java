@@ -28,7 +28,6 @@ import io.nem.sdk.model.account.PublicAccount;
 import io.nem.sdk.model.mosaic.MosaicId;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
-import org.bouncycastle.util.encoders.Hex;
 
 /**
  * Announce an MosaicMetadataTransaction to associate a key-value state to an mosaic.
