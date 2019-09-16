@@ -272,8 +272,9 @@ def gitBranch() {
 
 sonarqube {
     properties {
-        property "sonar.branch.name", sonarBranchName == null ? gitBranch() : sonarBranchName
+        // property "sonar.branch.name", sonarBranchName == null ? gitBranch() : sonarBranchName
         property "sonar.projectKey", sonarProjectKey
+        property "sonar.projectName", sonarProjectKey
         property "sonar.organization", sonarOrganization
         property "sonar.login", sonarLogin
         property "sonar.host.url", sonarHostUrl
