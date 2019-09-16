@@ -46,6 +46,7 @@ class BlockRepositoryIntegrationTest extends BaseIntegrationTest {
         BlockInfo blockInfo = get(getBlockRepository(type).getBlockByHeight(BigInteger.valueOf(1)));
         assertEquals(1, blockInfo.getHeight().intValue());
         assertEquals(0, blockInfo.getTimestamp().intValue());
+        assertEquals(getGenerationHash(), blockInfo.getGenerationHash());
     }
 
     // TODO to fix after catbuffer integration
@@ -70,7 +71,8 @@ class BlockRepositoryIntegrationTest extends BaseIntegrationTest {
     @ParameterizedTest
     @EnumSource(RepositoryType.class)
     void getBlockReceipts(RepositoryType type) {
-        Statement statement = get(getBlockRepository(type).getBlockReceipts(BigInteger.valueOf(6262)));
+        Statement statement = get(
+            getBlockRepository(type).getBlockReceipts(BigInteger.valueOf(6262)));
         assertFalse(statement.getTransactionStatements().isEmpty());
     }
 

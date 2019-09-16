@@ -111,7 +111,7 @@ public class BlockInfo {
         NetworkType networkType = BlockInfo.getNetworkType(blockVersion);
         Integer transactionVersion = BlockInfo.getTransactionVersion(blockVersion);
         PublicAccount signerPublicAccount = BlockInfo.getPublicAccount(signer, networkType);
-        PublicAccount beneficiaryPublicAccount =
+        PublicAccount beneficiaryPublicAccount = beneficiaryPublicKey == null ? null :
             BlockInfo.getPublicAccount(beneficiaryPublicKey, networkType);
         return new BlockInfo(
             hash,

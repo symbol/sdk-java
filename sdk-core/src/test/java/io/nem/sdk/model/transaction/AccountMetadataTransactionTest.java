@@ -49,9 +49,9 @@ public class AccountMetadataTransactionTest {
             new AccountMetadataTransactionFactory(
                 NetworkType.MIJIN_TEST,
                 account.getPublicAccount(),
-                BigInteger.TEN, 10, 20, "TheValue").deadline(new FakeDeadline()).build();
+                BigInteger.TEN, 10, 20, "123BAC").deadline(new FakeDeadline()).build();
 
-        assertEquals("TheValue", transaction.getValue());
+        assertEquals("123BAC", transaction.getValue());
         assertEquals(NetworkType.MIJIN_TEST, transaction.getNetworkType());
         assertEquals(10, transaction.getValueSizeDelta());
         assertEquals(20, transaction.getValueSize());
@@ -68,13 +68,13 @@ public class AccountMetadataTransactionTest {
             new AccountMetadataTransactionFactory(
                 NetworkType.MIJIN_TEST,
                 account.getPublicAccount(),
-                BigInteger.TEN, 10, 20, "The Value").signer(account.getPublicAccount())
+                BigInteger.TEN, 10, 20, "123BAC").signer(account.getPublicAccount())
                 .deadline(new FakeDeadline()).build();
 
-        String expected = "ad00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001904441000000000000000001000000000000009a49366406aca952b88badf5f1e9be6ce4968141035a60be503273ea65456b240a000000000000000a0009005468652056616c7565";
+        String expected = "a700000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001904441000000000000000001000000000000009a49366406aca952b88badf5f1e9be6ce4968141035a60be503273ea65456b240a000000000000000a000300123bac";
         Assertions.assertEquals(expected, HexEncoder.getString(transaction.generateBytes()));
 
-        String expectedEmbeddedHash = "5d0000009a49366406aca952b88badf5f1e9be6ce4968141035a60be503273ea65456b24019044419a49366406aca952b88badf5f1e9be6ce4968141035a60be503273ea65456b240a000000000000000a0009005468652056616c7565";
+        String expectedEmbeddedHash = "570000009a49366406aca952b88badf5f1e9be6ce4968141035a60be503273ea65456b24019044419a49366406aca952b88badf5f1e9be6ce4968141035a60be503273ea65456b240a000000000000000a000300123bac";
         Assertions.assertEquals(expectedEmbeddedHash,
             HexEncoder.getString(transaction.generateEmbeddedBytes()));
     }

@@ -74,13 +74,26 @@ public class ListenerOkHttpTest {
 
         Assertions.assertNull(listener.getUid());
 
+        Assertions.assertEquals("Listener has been open yet. Please call open before subscribing. ",
+            Assertions
+                .assertThrows(IllegalStateException.class, () -> listener.newBlock()).getMessage());
+
         simulateWebSocketStartup();
+
+        Assertions.assertNotNull(listener.newBlock());
 
         Assertions.assertEquals(wsId, listener.getUid());
 
         listener.close();
         listener.close();
+
+        Assertions.assertNull(listener.getUid());
+
+        Assertions.assertEquals("Listener has been open yet. Please call open before subscribing. ",
+            Assertions
+                .assertThrows(IllegalStateException.class, () -> listener.newBlock()).getMessage());
     }
+
 
 
     @Test

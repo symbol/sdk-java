@@ -153,6 +153,7 @@ public class ListenerOkHttp extends ListenerBase implements Listener {
     @Override
     public void close() {
         if (this.webSocket != null) {
+            this.uid = null;
             this.webSocket.close(1000, null);
             this.webSocket = null;
         }

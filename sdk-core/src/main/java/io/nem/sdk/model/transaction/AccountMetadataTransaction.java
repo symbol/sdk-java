@@ -23,38 +23,12 @@ import io.nem.catapult.builders.EmbeddedAccountMetadataTransactionBuilder;
 import io.nem.catapult.builders.KeyDto;
 import io.nem.catapult.builders.SignatureDto;
 import io.nem.catapult.builders.TimestampDto;
-import io.nem.sdk.model.account.PublicAccount;
-import java.math.BigInteger;
 import java.nio.ByteBuffer;
 
 /**
  * Announce an AccountMetadataTransaction to associate a key-value state to an account.
  */
-public class AccountMetadataTransaction extends Transaction {
-
-    /**
-     * Metadata target public key.
-     */
-    private final PublicAccount targetAccount;
-
-    /**
-     * Metadata key scoped to source, target and type.
-     */
-    private final BigInteger scopedMetadataKey;
-    /**
-     * Change in value size in bytes.
-     */
-    private final int valueSizeDelta;
-
-    /**
-     * Value size in bytes.
-     */
-    private final int valueSize;
-
-    /**
-     * When there is an existing value, the new value is calculated as xor(previous-value, value).
-     */
-    private final String value;
+public class AccountMetadataTransaction extends MetadataTransaction {
 
     /**
      * Constructor
@@ -63,33 +37,8 @@ public class AccountMetadataTransaction extends Transaction {
      */
     AccountMetadataTransaction(AccountMetadataTransactionFactory factory) {
         super(factory);
-        this.targetAccount = factory.getTargetAccount();
-        this.scopedMetadataKey = factory.getScopedMetadataKey();
-        this.valueSizeDelta = factory.getValueSizeDelta();
-        this.valueSize = factory.getValueSize();
-        this.value = factory.getValue();
     }
 
-
-    public PublicAccount getTargetAccount() {
-        return targetAccount;
-    }
-
-    public BigInteger getScopedMetadataKey() {
-        return scopedMetadataKey;
-    }
-
-    public int getValueSizeDelta() {
-        return valueSizeDelta;
-    }
-
-    public int getValueSize() {
-        return valueSize;
-    }
-
-    public String getValue() {
-        return value;
-    }
 
     @Override
     byte[] generateBytes() {
@@ -128,12 +77,4 @@ public class AccountMetadataTransaction extends Transaction {
         return txBuilder.serialize();
     }
 
-    /**
-     * Gets value buffer
-     *
-     * @return Value buffer.
-     */
-    private ByteBuffer getValueBuffer() {
-        return ByteBuffer.wrap(value.getBytes());
-    }
 }

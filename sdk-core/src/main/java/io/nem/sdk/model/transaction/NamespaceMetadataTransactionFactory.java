@@ -27,35 +27,12 @@ import org.apache.commons.lang3.Validate;
  * Factory of {@link NamespaceMetadataTransaction}
  */
 public class NamespaceMetadataTransactionFactory extends
-    TransactionFactory<NamespaceMetadataTransaction> {
+    MetadataTransactionFactory<NamespaceMetadataTransaction> {
 
-    /**
-     * Metadata target public key.
-     */
-    private final PublicAccount targetAccount;
     /**
      * Metadata target Namespace id.
      */
     private final NamespaceId targetNamespaceId;
-
-    /**
-     * Metadata key scoped to source, target and type.
-     */
-    private final BigInteger scopedMetadataKey;
-    /**
-     * Change in value size in bytes.
-     */
-    private final int valueSizeDelta;
-
-    /**
-     * Value size in bytes.
-     */
-    private final int valueSize;
-
-    /**
-     * When there is an existing value, the new value is calculated as xor(previous-value, value).
-     */
-    private final String value;
 
     public NamespaceMetadataTransactionFactory(
         NetworkType networkType,
@@ -65,45 +42,14 @@ public class NamespaceMetadataTransactionFactory extends
         int valueSizeDelta,
         int valueSize,
         String value) {
-        super(TransactionType.NAMESPACE_METADATA_TRANSACTION, networkType);
-
-        Validate.notNull(targetAccount, "TargetAccount must not be null");
+        super(TransactionType.NAMESPACE_METADATA_TRANSACTION, networkType, targetAccount,
+            scopedMetadataKey, valueSizeDelta, valueSize, value);
         Validate.notNull(targetNamespaceId, "TargetNamespaceId must not be null");
-        Validate.notNull(scopedMetadataKey, "ScopedMetadataKey must not be null");
-        Validate.notNull(valueSizeDelta, "ValueSizeDelta must not be null");
-        Validate.notNull(valueSize, "ValueSize must not be null");
-        Validate.notNull(value, "Value must not be null");
-
-        this.targetAccount = targetAccount;
         this.targetNamespaceId = targetNamespaceId;
-        this.scopedMetadataKey = scopedMetadataKey;
-        this.valueSizeDelta = valueSizeDelta;
-        this.valueSize = valueSize;
-        this.value = value;
-    }
-
-    public PublicAccount getTargetAccount() {
-        return targetAccount;
     }
 
     public NamespaceId getTargetNamespaceId() {
         return targetNamespaceId;
-    }
-
-    public BigInteger getScopedMetadataKey() {
-        return scopedMetadataKey;
-    }
-
-    public int getValueSizeDelta() {
-        return valueSizeDelta;
-    }
-
-    public int getValueSize() {
-        return valueSize;
-    }
-
-    public String getValue() {
-        return value;
     }
 
     @Override

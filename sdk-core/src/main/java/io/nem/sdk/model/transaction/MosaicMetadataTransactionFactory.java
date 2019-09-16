@@ -27,35 +27,12 @@ import org.apache.commons.lang3.Validate;
  * Factory of {@link MosaicMetadataTransaction}
  */
 public class MosaicMetadataTransactionFactory extends
-    TransactionFactory<MosaicMetadataTransaction> {
+    MetadataTransactionFactory<MosaicMetadataTransaction> {
 
-    /**
-     * Metadata target public key.
-     */
-    private final PublicAccount targetAccount;
     /**
      * Metadata target mosaic id.
      */
     private final MosaicId targetMosaicId;
-
-    /**
-     * Metadata key scoped to source, target and type.
-     */
-    private final BigInteger scopedMetadataKey;
-    /**
-     * Change in value size in bytes.
-     */
-    private final int valueSizeDelta;
-
-    /**
-     * Value size in bytes.
-     */
-    private final int valueSize;
-
-    /**
-     * When there is an existing value, the new value is calculated as xor(previous-value, value).
-     */
-    private final String value;
 
     public MosaicMetadataTransactionFactory(
         NetworkType networkType,
@@ -65,45 +42,15 @@ public class MosaicMetadataTransactionFactory extends
         int valueSizeDelta,
         int valueSize,
         String value) {
-        super(TransactionType.MOSAIC_METADATA_TRANSACTION, networkType);
-
-        Validate.notNull(targetAccount, "TargetAccount must not be null");
+        super(TransactionType.MOSAIC_METADATA_TRANSACTION, networkType, targetAccount,
+            scopedMetadataKey, valueSizeDelta, valueSize, value);
         Validate.notNull(targetMosaicId, "TargetMosaicId must not be null");
-        Validate.notNull(scopedMetadataKey, "ScopedMetadataKey must not be null");
-        Validate.notNull(valueSizeDelta, "ValueSizeDelta must not be null");
-        Validate.notNull(valueSize, "ValueSize must not be null");
-        Validate.notNull(value, "Value must not be null");
-
-        this.targetAccount = targetAccount;
         this.targetMosaicId = targetMosaicId;
-        this.scopedMetadataKey = scopedMetadataKey;
-        this.valueSizeDelta = valueSizeDelta;
-        this.valueSize = valueSize;
-        this.value = value;
     }
 
-    public PublicAccount getTargetAccount() {
-        return targetAccount;
-    }
 
     public MosaicId getTargetMosaicId() {
         return targetMosaicId;
-    }
-
-    public BigInteger getScopedMetadataKey() {
-        return scopedMetadataKey;
-    }
-
-    public int getValueSizeDelta() {
-        return valueSizeDelta;
-    }
-
-    public int getValueSize() {
-        return valueSize;
-    }
-
-    public String getValue() {
-        return value;
     }
 
     @Override

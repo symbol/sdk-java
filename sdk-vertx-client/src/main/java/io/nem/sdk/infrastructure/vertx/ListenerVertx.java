@@ -167,6 +167,7 @@ public class ListenerVertx extends ListenerBase implements Listener {
     @Override
     public void close() {
         if (this.webSocket != null) {
+            this.uid = null;
             this.webSocket.close();
             this.webSocket = null;
         }

@@ -24,43 +24,18 @@ import io.nem.catapult.builders.MosaicMetadataTransactionBuilder;
 import io.nem.catapult.builders.SignatureDto;
 import io.nem.catapult.builders.TimestampDto;
 import io.nem.catapult.builders.UnresolvedMosaicIdDto;
-import io.nem.sdk.model.account.PublicAccount;
 import io.nem.sdk.model.mosaic.MosaicId;
-import java.math.BigInteger;
 import java.nio.ByteBuffer;
 
 /**
  * Announce an MosaicMetadataTransaction to associate a key-value state to an mosaic.
  */
-public class MosaicMetadataTransaction extends Transaction {
+public class MosaicMetadataTransaction extends MetadataTransaction {
 
-    /**
-     * Metadata target public key.
-     */
-    private final PublicAccount targetAccount;
     /**
      * Metadata target mosaic id.
      */
     private final MosaicId targetMosaicId;
-
-    /**
-     * Metadata key scoped to source, target and type.
-     */
-    private final BigInteger scopedMetadataKey;
-    /**
-     * Change in value size in bytes.
-     */
-    private final int valueSizeDelta;
-
-    /**
-     * Value size in bytes.
-     */
-    private final int valueSize;
-
-    /**
-     * When there is an existing value, the new value is calculated as xor(previous-value, value).
-     */
-    private final String value;
 
     /**
      * Constructor
@@ -69,37 +44,14 @@ public class MosaicMetadataTransaction extends Transaction {
      */
     MosaicMetadataTransaction(MosaicMetadataTransactionFactory factory) {
         super(factory);
-        this.targetAccount = factory.getTargetAccount();
         this.targetMosaicId = factory.getTargetMosaicId();
-        this.scopedMetadataKey = factory.getScopedMetadataKey();
-        this.valueSizeDelta = factory.getValueSizeDelta();
-        this.valueSize = factory.getValueSize();
-        this.value = factory.getValue();
     }
 
-    public PublicAccount getTargetAccount() {
-        return targetAccount;
-    }
 
     public MosaicId getTargetMosaicId() {
         return targetMosaicId;
     }
 
-    public BigInteger getScopedMetadataKey() {
-        return scopedMetadataKey;
-    }
-
-    public int getValueSizeDelta() {
-        return valueSizeDelta;
-    }
-
-    public int getValueSize() {
-        return valueSize;
-    }
-
-    public String getValue() {
-        return value;
-    }
 
     @Override
     byte[] generateBytes() {
@@ -115,8 +67,8 @@ public class MosaicMetadataTransaction extends Transaction {
                 getEntityTypeDto(),
                 new AmountDto(getMaxFee().longValue()),
                 new TimestampDto(getDeadline().getInstant()),
-                new KeyDto(this.targetAccount.getPublicKey().getByteBuffer()),
-                this.scopedMetadataKey.longValue(),
+                new KeyDto(this.getTargetAccount().getPublicKey().getByteBuffer()),
+                this.getScopedMetadataKey().longValue(),
                 new UnresolvedMosaicIdDto(getTargetMosaicId().getId().longValue()),
                 (short) getValueSizeDelta(),
                 getValueBuffer()
@@ -140,12 +92,4 @@ public class MosaicMetadataTransaction extends Transaction {
         return txBuilder.serialize();
     }
 
-    /**
-     * Gets value buffer
-     *
-     * @return Value buffer.
-     */
-    private ByteBuffer getValueBuffer() {
-        return ByteBuffer.wrap(value.getBytes());
-    }
 }
