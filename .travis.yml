@@ -17,9 +17,15 @@ install:
 script:
   - ./gradlew install jacocoTestReport coveralls -x javadoc
 deploy:
-  provider: script
-  skip_cleanup: true
-  script: /bin/sh release.sh
-  on:
-    branch: master
-    jdk: oraclejdk8
+  - provider: script
+    skip_cleanup: true
+    script: /bin/sh uploadArchives.sh
+    on:
+      branch: master
+      jdk: oraclejdk8
+  - provider: script
+    skip_cleanup: true
+    script: /bin/sh sonarqube.sh
+    on:
+      branch: master
+      jdk: oraclejdk9
