@@ -177,7 +177,7 @@ public abstract class ListenerBase implements Listener {
     private void validateOpen() {
         if (getUid() == null) {
             throw new IllegalStateException(
-                "Listener has been open yet. Please call open before subscribing. ");
+                "Listener has not been opened yet. Please call the open method before subscribing.");
         }
     }
 

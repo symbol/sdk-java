@@ -75,7 +75,7 @@ public class ListenerVertxTest {
 
         Assertions.assertNull(listener.getUid());
 
-        Assertions.assertEquals("Listener has been open yet. Please call open before subscribing. ",
+        Assertions.assertEquals("Listener has not been opened yet. Please call the open method before subscribing.",
             Assertions
                 .assertThrows(IllegalStateException.class, () -> listener.newBlock()).getMessage());
 
@@ -90,7 +90,7 @@ public class ListenerVertxTest {
 
         Assertions.assertNull(listener.getUid());
 
-        Assertions.assertEquals("Listener has been open yet. Please call open before subscribing. ",
+        Assertions.assertEquals("Listener has not been opened yet. Please call the open method before subscribing.",
             Assertions
                 .assertThrows(IllegalStateException.class, () -> listener.newBlock()).getMessage());
     }

@@ -48,14 +48,8 @@ public class ListenerForTests extends BaseIntegrationTest {
         listener.confirmed(account.getAddress())
             .subscribe(c -> System.out.println("Received confirmed transaction " + c));
 
-        listener.aggregateBondedAdded(account.getAddress())
-            .subscribe(c -> System.out.println("Received aggregateBondedAdded transaction " + c));
-
         listener.cosignatureAdded(account.getAddress())
             .subscribe(c -> System.out.println("Received cosignatureAdded transaction " + c));
-
-        listener.aggregateBondedAdded(account.getAddress())
-            .subscribe(c -> System.out.println("Received aggregateBondedAdded transaction " + c));
 
         listener.status(account.getAddress())
             .subscribe(c -> System.out.println("Error: " + c.getStatus()));
