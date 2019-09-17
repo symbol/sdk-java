@@ -22,7 +22,7 @@ import java.util.Arrays;
  *
  * @since 1.0
  */
-public enum HashType {
+public enum LockHashAlgorithmType {
 
     /**
      * hashed using SHA3-256 (Catapult Native)
@@ -48,11 +48,11 @@ public enum HashType {
 
     private final int value;
 
-    HashType(int value) {
+    LockHashAlgorithmType(int value) {
         this.value = value;
     }
 
-    public static HashType rawValueOf(int value) {
+    public static LockHashAlgorithmType rawValueOf(int value) {
         return Arrays.stream(values()).filter(e -> e.value == value).findFirst()
             .orElseThrow(() -> new IllegalArgumentException(value + " is not a valid value"));
     }
@@ -64,14 +64,14 @@ public enum HashType {
      * @param input Input hashed
      * @return boolean when format is correct
      */
-    public static boolean validator(HashType hashType, String input) {
-        if (hashType == HashType.SHA3_256 && input.matches(VALIDATOR_REGEX)) {
+    public static boolean validator(LockHashAlgorithmType hashType, String input) {
+        if (hashType == LockHashAlgorithmType.SHA3_256 && input.matches(VALIDATOR_REGEX)) {
             return input.length() == 64;
-        } else if (hashType == HashType.KECCAK_256 && input.matches(VALIDATOR_REGEX)) {
+        } else if (hashType == LockHashAlgorithmType.KECCAK_256 && input.matches(VALIDATOR_REGEX)) {
             return input.length() == 64;
-        } else if (hashType == HashType.HASH_160 && input.matches(VALIDATOR_REGEX)) {
+        } else if (hashType == LockHashAlgorithmType.HASH_160 && input.matches(VALIDATOR_REGEX)) {
             return input.length() == 40;
-        } else if (hashType == HashType.HASH_256 && input.matches(VALIDATOR_REGEX)) {
+        } else if (hashType == LockHashAlgorithmType.HASH_256 && input.matches(VALIDATOR_REGEX)) {
             return input.length() == 64;
         }
         return false;

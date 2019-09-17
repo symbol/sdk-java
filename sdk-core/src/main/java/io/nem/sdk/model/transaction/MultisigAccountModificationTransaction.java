@@ -20,19 +20,13 @@ import io.nem.catapult.builders.AmountDto;
 import io.nem.catapult.builders.CosignatoryModificationActionDto;
 import io.nem.catapult.builders.CosignatoryModificationBuilder;
 import io.nem.catapult.builders.EmbeddedMultisigAccountModificationTransactionBuilder;
-import io.nem.catapult.builders.EntityTypeDto;
 import io.nem.catapult.builders.KeyDto;
 import io.nem.catapult.builders.MultisigAccountModificationTransactionBuilder;
 import io.nem.catapult.builders.SignatureDto;
 import io.nem.catapult.builders.TimestampDto;
-import io.nem.sdk.model.account.PublicAccount;
-import io.nem.sdk.model.blockchain.NetworkType;
-import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-import org.apache.commons.lang3.Validate;
 
 /**
  * Modify multisig account transactions are part of the NEM's multisig account system. A modify
@@ -47,103 +41,12 @@ public class MultisigAccountModificationTransaction extends Transaction {
     private final byte minRemovalDelta;
     private final List<MultisigCosignatoryModification> modifications;
 
-    @SuppressWarnings("squid:S00107")
     public MultisigAccountModificationTransaction(
-        NetworkType networkType,
-        Integer version,
-        Deadline deadline,
-        BigInteger fee,
-        byte minApprovalDelta,
-        byte minRemovalDelta,
-        List<MultisigCosignatoryModification> modifications,
-        String signature,
-        PublicAccount signer,
-        TransactionInfo transactionInfo) {
-        this(
-            networkType,
-            version,
-            deadline,
-            fee,
-            minApprovalDelta,
-            minRemovalDelta,
-            modifications,
-            Optional.of(signature),
-            Optional.of(signer),
-            Optional.of(transactionInfo));
-    }
-
-    public MultisigAccountModificationTransaction(
-        NetworkType networkType,
-        Integer version,
-        Deadline deadline,
-        BigInteger fee,
-        byte minApprovalDelta,
-        byte minRemovalDelta,
-        List<MultisigCosignatoryModification> modifications) {
-        this(
-            networkType,
-            version,
-            deadline,
-            fee,
-            minApprovalDelta,
-            minRemovalDelta,
-            modifications,
-            Optional.empty(),
-            Optional.empty(),
-            Optional.empty());
-    }
-
-    @SuppressWarnings("squid:S00107")
-    private MultisigAccountModificationTransaction(
-        NetworkType networkType,
-        Integer version,
-        Deadline deadline,
-        BigInteger fee,
-        byte minApprovalDelta,
-        byte minRemovalDelta,
-        List<MultisigCosignatoryModification> modifications,
-        Optional<String> signature,
-        Optional<PublicAccount> signer,
-        Optional<TransactionInfo> transactionInfo) {
-        super(
-            TransactionType.MODIFY_MULTISIG_ACCOUNT,
-            networkType,
-            version,
-            deadline,
-            fee,
-            signature,
-            signer,
-            transactionInfo);
-        Validate.notNull(modifications, "Modifications must not be null");
-        this.minApprovalDelta = minApprovalDelta;
-        this.minRemovalDelta = minRemovalDelta;
-        this.modifications = modifications;
-    }
-
-    /**
-     * Create a modify multisig account transaction object.
-     *
-     * @param deadline The deadline to include the transaction.
-     * @param minApprovalDelta The min approval relative change.
-     * @param minRemovalDelta The min removal relative change.
-     * @param modifications The list of modifications.
-     * @param networkType The network type.
-     * @return {@link MultisigAccountModificationTransaction}
-     */
-    public static MultisigAccountModificationTransaction create(
-        Deadline deadline,
-        byte minApprovalDelta,
-        byte minRemovalDelta,
-        List<MultisigCosignatoryModification> modifications,
-        NetworkType networkType) {
-        return new MultisigAccountModificationTransaction(
-            networkType,
-            TransactionVersion.MODIFY_MULTISIG_ACCOUNT.getValue(),
-            deadline,
-            BigInteger.valueOf(0),
-            minApprovalDelta,
-            minRemovalDelta,
-            modifications);
+        MultisigAccountModificationTransactionFactory factory) {
+        super(factory);
+        this.minApprovalDelta = factory.getMinApprovalDelta();
+        this.minRemovalDelta = factory.getMinRemovalDelta();
+        this.modifications = factory.getModifications();
     }
 
     /**
@@ -190,8 +93,8 @@ public class MultisigAccountModificationTransaction extends Transaction {
                 new SignatureDto(signatureBuffer),
                 new KeyDto(signerBuffer),
                 getNetworkVersion(),
-                EntityTypeDto.MODIFY_MULTISIG_ACCOUNT_TRANSACTION,
-                new AmountDto(getFee().longValue()),
+                getEntityTypeDto(),
+                new AmountDto(getMaxFee().longValue()),
                 new TimestampDto(getDeadline().getInstant()),
                 getMinRemovalDelta(),
                 getMinApprovalDelta(),
@@ -209,7 +112,7 @@ public class MultisigAccountModificationTransaction extends Transaction {
             EmbeddedMultisigAccountModificationTransactionBuilder.create(
                 new KeyDto(getRequiredSignerBytes()),
                 getNetworkVersion(),
-                EntityTypeDto.MODIFY_MULTISIG_ACCOUNT_TRANSACTION,
+                getEntityTypeDto(),
                 getMinRemovalDelta(),
                 getMinApprovalDelta(),
                 getModificationBuilder());
@@ -232,7 +135,7 @@ public class MultisigAccountModificationTransaction extends Transaction {
             final CosignatoryModificationBuilder cosignatoryModificationBuilder =
                 CosignatoryModificationBuilder.create(
                     CosignatoryModificationActionDto.rawValueOf(
-                        (byte) multisigCosignatoryModification.getType().getValue()),
+                        (byte) multisigCosignatoryModification.getModificationAction().getValue()),
                     new KeyDto(keyBuffer));
             modificationBuilder.add(cosignatoryModificationBuilder);
         }

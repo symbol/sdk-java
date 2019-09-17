@@ -56,23 +56,6 @@ public class AccountInfo {
         this.mosaics = mosaics;
     }
 
-    public AccountInfo(
-        Address address,
-        BigInteger addressHeight,
-        String publicKey,
-        BigInteger publicKeyHeight,
-        List<Importances> importances,
-        List<Mosaic> mosaics,
-        AccountType accountType) {
-        this.address = address;
-        this.addressHeight = addressHeight;
-        this.publicKey = publicKey;
-        this.publicKeyHeight = publicKeyHeight;
-        this.importances = importances;
-        this.mosaics = mosaics;
-        this.accountType = accountType;
-    }
-
     /**
      * Returns account address.
      *

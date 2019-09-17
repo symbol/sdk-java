@@ -38,6 +38,7 @@ public abstract class ListenerBase implements Listener {
 
     @Override
     public Observable<BlockInfo> newBlock() {
+        validateOpen();
         this.subscribeTo(ListenerChannel.BLOCK.toString());
         return getMessageSubject()
             .filter(rawMessage -> rawMessage.getChannel().equals(ListenerChannel.BLOCK))
@@ -54,6 +55,7 @@ public abstract class ListenerBase implements Listener {
      */
     @Override
     public Observable<Transaction> confirmed(final Address address) {
+        validateOpen();
         this.subscribeTo(ListenerChannel.STATUS.toString() + "/" + address.plain());
         this.subscribeTo(ListenerChannel.CONFIRMED_ADDED.toString() + "/" + address.plain());
         return getMessageSubject()
@@ -72,6 +74,7 @@ public abstract class ListenerBase implements Listener {
      */
     @Override
     public Observable<Transaction> unconfirmedAdded(Address address) {
+        validateOpen();
         this.subscribeTo(ListenerChannel.UNCONFIRMED_ADDED + "/" + address.plain());
         return getMessageSubject()
             .filter(rawMessage -> rawMessage.getChannel().equals(ListenerChannel.UNCONFIRMED_ADDED))
@@ -89,6 +92,7 @@ public abstract class ListenerBase implements Listener {
      */
     @Override
     public Observable<String> unconfirmedRemoved(Address address) {
+        validateOpen();
         this.subscribeTo(ListenerChannel.UNCONFIRMED_REMOVED + "/" + address.plain());
         return getMessageSubject()
             .filter(
@@ -106,6 +110,7 @@ public abstract class ListenerBase implements Listener {
      */
     @Override
     public Observable<AggregateTransaction> aggregateBondedAdded(Address address) {
+        validateOpen();
         this.subscribeTo(ListenerChannel.AGGREGATE_BONDED_ADDED + "/" + address.plain());
         return getMessageSubject()
             .filter(
@@ -125,6 +130,7 @@ public abstract class ListenerBase implements Listener {
      */
     @Override
     public Observable<String> aggregateBondedRemoved(Address address) {
+        validateOpen();
         this.subscribeTo(ListenerChannel.AGGREGATE_BONDED_REMOVED + "/" + address.plain());
         return getMessageSubject()
             .filter(
@@ -143,6 +149,7 @@ public abstract class ListenerBase implements Listener {
      */
     @Override
     public Observable<TransactionStatusError> status(Address address) {
+        validateOpen();
         this.subscribeTo(ListenerChannel.STATUS + "/" + address.plain());
         return getMessageSubject()
             .filter(rawMessage -> rawMessage.getChannel().equals(ListenerChannel.STATUS))
@@ -160,10 +167,18 @@ public abstract class ListenerBase implements Listener {
      */
     @Override
     public Observable<CosignatureSignedTransaction> cosignatureAdded(Address address) {
+        validateOpen();
         this.subscribeTo(ListenerChannel.CONFIRMED_ADDED + "/" + address.plain());
         return getMessageSubject()
             .filter(rawMessage -> rawMessage.getChannel().equals(ListenerChannel.COSIGNATURE))
             .map(rawMessage -> (CosignatureSignedTransaction) rawMessage.getMessage());
+    }
+
+    private void validateOpen() {
+        if (getUid() == null) {
+            throw new IllegalStateException(
+                "Listener has not been opened yet. Please call the open method before subscribing.");
+        }
     }
 
 

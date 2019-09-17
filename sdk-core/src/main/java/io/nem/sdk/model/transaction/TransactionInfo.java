@@ -88,8 +88,8 @@ public class TransactionInfo {
         BigInteger height, Integer index, String id, String hash, String merkleComponentHash) {
         return new TransactionInfo(
             height,
-            Optional.of(index),
-            Optional.of(id),
+            Optional.ofNullable(index),
+            Optional.ofNullable(id),
             Optional.of(hash),
             Optional.of(merkleComponentHash),
             Optional.empty(),

@@ -18,7 +18,6 @@ package io.nem.sdk.model.transaction;
 
 import io.nem.catapult.builders.AmountDto;
 import io.nem.catapult.builders.EmbeddedTransferTransactionBuilder;
-import io.nem.catapult.builders.EntityTypeDto;
 import io.nem.catapult.builders.KeyDto;
 import io.nem.catapult.builders.SignatureDto;
 import io.nem.catapult.builders.TimestampDto;
@@ -27,18 +26,14 @@ import io.nem.catapult.builders.UnresolvedAddressDto;
 import io.nem.catapult.builders.UnresolvedMosaicBuilder;
 import io.nem.catapult.builders.UnresolvedMosaicIdDto;
 import io.nem.sdk.model.account.Address;
-import io.nem.sdk.model.account.PublicAccount;
-import io.nem.sdk.model.blockchain.NetworkType;
 import io.nem.sdk.model.mosaic.Mosaic;
 import io.nem.sdk.model.namespace.NamespaceId;
-import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import org.apache.commons.lang3.Validate;
 
 /**
  * The transfer transactions object contain data about transfers of mosaics and message to another
@@ -51,144 +46,17 @@ public class TransferTransaction extends Transaction {
     private final Message message;
     private final Optional<NamespaceId> namespaceId;
 
-    @SuppressWarnings("squid:S00107")
-    public TransferTransaction(
-        final NetworkType networkType,
-        final Integer version,
-        final Deadline deadline,
-        final BigInteger fee,
-        final Optional<Address> recipient,
-        final Optional<NamespaceId> namespaceId,
-        final List<Mosaic> mosaics,
-        final Message message,
-        final String signature,
-        final PublicAccount signer,
-        final TransactionInfo transactionInfo) {
-        this(
-            networkType,
-            version,
-            deadline,
-            fee,
-            recipient,
-            namespaceId,
-            mosaics,
-            message,
-            Optional.of(signature),
-            Optional.of(signer),
-            Optional.of(transactionInfo));
-    }
-
-    @SuppressWarnings("squid:S00107")
-    private TransferTransaction(
-        final NetworkType networkType,
-        final Integer version,
-        final Deadline deadline,
-        final BigInteger fee,
-        final Optional<Address> recipient,
-        final Optional<NamespaceId> namespaceId,
-        final List<Mosaic> mosaics,
-        final Message message) {
-        this(
-            networkType,
-            version,
-            deadline,
-            fee,
-            recipient,
-            namespaceId,
-            mosaics,
-            message,
-            Optional.empty(),
-            Optional.empty(),
-            Optional.empty());
-    }
-
-    @SuppressWarnings("squid:S00107")
-    private TransferTransaction(
-        final NetworkType networkType,
-        final Integer version,
-        final Deadline deadline,
-        final BigInteger fee,
-        final Optional<Address> recipient,
-        final Optional<NamespaceId> namespaceId,
-        final List<Mosaic> mosaics,
-        final Message message,
-        final Optional<String> signature,
-        final Optional<PublicAccount> signer,
-        final Optional<TransactionInfo> transactionInfo) {
-        super(
-            TransactionType.TRANSFER,
-            networkType,
-            version,
-            deadline,
-            fee,
-            signature,
-            signer,
-            transactionInfo);
-        Validate.notNull(recipient, "Recipient must not be null");
-        Validate.notNull(mosaics, "Mosaics must not be null");
-        Validate.notNull(message, "Message must not be null");
-        this.recipient = recipient;
-        this.mosaics = mosaics;
-        this.message = message;
-        this.namespaceId = namespaceId;
-    }
-
     /**
-     * Create a transfer transaction object.
+     * Constructor of the transfer transaction using the factory.
      *
-     * @param deadline Deadline to include the transaction.
-     * @param maxFee MaxFee for the transaction.
-     * @param recipient Recipient of the transaction.
-     * @param mosaics Array of mosaics.
-     * @param message Transaction message.
-     * @param networkType Network type.
-     * @return Transfer transaction.
+     * @param factory the factory;
      */
-    public static TransferTransaction create(
-        final Deadline deadline,
-        final BigInteger maxFee,
-        final Address recipient,
-        final List<Mosaic> mosaics,
-        final Message message,
-        final NetworkType networkType) {
-        return new TransferTransaction(
-            networkType,
-            TransactionVersion.TRANSFER.getValue(),
-            deadline,
-            maxFee,
-            Optional.of(recipient),
-            Optional.empty(),
-            mosaics,
-            message);
-    }
-
-    /**
-     * Create a transfer transaction object.
-     *
-     * @param deadline Deadline to include the transaction.
-     * @param maxFee MaxFee for the transaction.
-     * @param namespaceId Recipient alias.
-     * @param mosaics Array of mosaics.
-     * @param message Transaction message.
-     * @param networkType Network type.
-     * @return Transfer transaction.
-     */
-    public static TransferTransaction create(
-        final Deadline deadline,
-        final BigInteger maxFee,
-        final NamespaceId namespaceId,
-        final List<Mosaic> mosaics,
-        final Message message,
-        final NetworkType networkType) {
-        return new TransferTransaction(
-            networkType,
-            TransactionVersion.TRANSFER.getValue(),
-            deadline,
-            maxFee,
-            Optional.empty(),
-            Optional.of(namespaceId),
-            mosaics,
-            message);
+    TransferTransaction(TransferTransactionFactory factory) {
+        super(factory);
+        this.recipient = factory.getRecipient();
+        this.mosaics = factory.getMosaics();
+        this.message = factory.getMessage();
+        this.namespaceId = factory.getNamespaceId();
     }
 
     /**
@@ -243,8 +111,8 @@ public class TransferTransaction extends Transaction {
                 new SignatureDto(signatureBuffer),
                 new KeyDto(signerBuffer),
                 getNetworkVersion(),
-                EntityTypeDto.TRANSFER_TRANSACTION,
-                new AmountDto(getFee().longValue()),
+                getEntityTypeDto(),
+                new AmountDto(getMaxFee().longValue()),
                 new TimestampDto(getDeadline().getInstant()),
                 new UnresolvedAddressDto(getUnresolveAddressBuffer()),
                 getMessageBuffer(),
@@ -263,7 +131,7 @@ public class TransferTransaction extends Transaction {
             EmbeddedTransferTransactionBuilder.create(
                 new KeyDto(getRequiredSignerBytes()),
                 getNetworkVersion(),
-                EntityTypeDto.TRANSFER_TRANSACTION,
+                getEntityTypeDto(),
                 new UnresolvedAddressDto(getUnresolveAddressBuffer()),
                 getMessageBuffer(),
                 getUnresolvedMosaicArray());
@@ -332,5 +200,15 @@ public class TransferTransaction extends Transaction {
         namespaceIdAlias.put(firstByte);
         namespaceIdAlias.putLong(namespaceId.getIdAsLong());
         return namespaceIdAlias;
+    }
+
+    @Override
+    public String toString() {
+        return "TransferTransaction{" +
+            "recipient=" + recipient +
+            ", mosaics=" + mosaics +
+            ", message=" + message +
+            ", namespaceId=" + namespaceId +
+            '}';
     }
 }

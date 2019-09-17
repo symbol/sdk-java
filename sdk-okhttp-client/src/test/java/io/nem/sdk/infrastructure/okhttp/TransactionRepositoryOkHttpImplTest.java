@@ -17,26 +17,26 @@
 package io.nem.sdk.infrastructure.okhttp;
 
 import static io.nem.sdk.infrastructure.okhttp.TestHelperOkHttp.loadTransactionInfoDTO;
-import static java.time.temporal.ChronoUnit.HOURS;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import io.nem.sdk.model.account.Account;
 import io.nem.sdk.model.account.Address;
 import io.nem.sdk.model.blockchain.NetworkType;
 import io.nem.sdk.model.mosaic.NetworkCurrencyMosaic;
-import io.nem.sdk.model.transaction.Deadline;
 import io.nem.sdk.model.transaction.PlainMessage;
 import io.nem.sdk.model.transaction.SignedTransaction;
 import io.nem.sdk.model.transaction.Transaction;
 import io.nem.sdk.model.transaction.TransactionAnnounceResponse;
 import io.nem.sdk.model.transaction.TransactionStatus;
 import io.nem.sdk.model.transaction.TransferTransaction;
+import io.nem.sdk.model.transaction.TransferTransactionFactory;
 import io.nem.sdk.openapi.okhttp_gson.invoker.ApiException;
 import io.nem.sdk.openapi.okhttp_gson.model.AnnounceTransactionInfoDTO;
 import io.nem.sdk.openapi.okhttp_gson.model.TransactionInfoDTO;
 import io.nem.sdk.openapi.okhttp_gson.model.TransactionStatusDTO;
 import java.math.BigInteger;
 import java.util.Collections;
+import java.util.Optional;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -187,14 +187,13 @@ public class TransactionRepositoryOkHttpImplTest extends AbstractOkHttpResposito
                 "SBCPGZ3S2SCC3YHBBTYDCUZV4ZZEPHM2KGCP4QXX");
 
         TransferTransaction transferTransaction =
-            TransferTransaction.create(
-                new Deadline(2, HOURS),
-                BigInteger.ZERO,
-                address,
+            new TransferTransactionFactory(NetworkType.MIJIN_TEST,
+                Optional.of(address),
+                Optional.empty(),
                 Collections
                     .singletonList(NetworkCurrencyMosaic.createAbsolute(BigInteger.valueOf(1))),
-                new PlainMessage("E2ETest:standaloneTransferTransaction:message"),
-                NetworkType.MIJIN_TEST);
+                new PlainMessage("E2ETest:standaloneTransferTransaction:message")
+            ).build();
 
         SignedTransaction signedTransaction = account.sign(transferTransaction, generationHash);
         String payload = signedTransaction.getPayload();

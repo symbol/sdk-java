@@ -29,10 +29,10 @@ import io.nem.sdk.model.transaction.UInt64Id;
 import io.nem.sdk.openapi.vertx.api.MosaicRoutesApi;
 import io.nem.sdk.openapi.vertx.api.MosaicRoutesApiImpl;
 import io.nem.sdk.openapi.vertx.invoker.ApiClient;
+import io.nem.sdk.openapi.vertx.model.MosaicDTO;
 import io.nem.sdk.openapi.vertx.model.MosaicIds;
 import io.nem.sdk.openapi.vertx.model.MosaicInfoDTO;
 import io.nem.sdk.openapi.vertx.model.MosaicNamesDTO;
-import io.nem.sdk.openapi.vertx.model.MosaicPropertiesDTO;
 import io.nem.sdk.openapi.vertx.model.MosaicsNamesDTO;
 import io.reactivex.Observable;
 import io.vertx.core.AsyncResult;
@@ -91,7 +91,7 @@ public class MosaicRepositoryVertxImpl extends AbstractRepositoryVertxImpl imple
             mosaicInfoDTO.getMosaic().getStartHeight(),
             new PublicAccount(mosaicInfoDTO.getMosaic().getOwnerPublicKey(), networkType),
             mosaicInfoDTO.getMosaic().getRevision(),
-            extractMosaicProperties(mosaicInfoDTO.getMosaic().getProperties()));
+            extractMosaicProperties(mosaicInfoDTO.getMosaic()));
     }
 
     @Override
@@ -120,15 +120,13 @@ public class MosaicRepositoryVertxImpl extends AbstractRepositoryVertxImpl imple
             dto.getNames().stream().map(NamespaceName::new).collect(Collectors.toList()));
     }
 
-    public static MosaicProperties extractMosaicProperties(
-        MosaicPropertiesDTO mosaicPropertiesDTO) {
-        String flags =
-            "00" + Integer.toBinaryString(mosaicPropertiesDTO.getFlags().intValue());
+    public static MosaicProperties extractMosaicProperties(MosaicDTO mosaicDTO) {
+        String flags = "00" + Integer.toBinaryString(mosaicDTO.getFlags().intValue());
         String bitMapFlags = flags.substring(flags.length() - 2);
         return MosaicProperties.create(
             bitMapFlags.charAt(1) == '1',
             bitMapFlags.charAt(0) == '1',
-            mosaicPropertiesDTO.getDivisibility(),
-            mosaicPropertiesDTO.getDuration());
+            mosaicDTO.getDivisibility(),
+            mosaicDTO.getDuration());
     }
 }

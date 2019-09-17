@@ -19,47 +19,35 @@ package io.nem.sdk.infrastructure.okhttp.mappers;
 
 import static io.nem.core.utils.MapperUtils.toMosaicId;
 
-import io.nem.sdk.model.account.PublicAccount;
 import io.nem.sdk.model.blockchain.NetworkType;
 import io.nem.sdk.model.mosaic.Mosaic;
-import io.nem.sdk.model.transaction.Deadline;
-import io.nem.sdk.model.transaction.JsonHelper;
 import io.nem.sdk.model.transaction.HashLockTransaction;
+import io.nem.sdk.model.transaction.HashLockTransactionFactory;
+import io.nem.sdk.model.transaction.JsonHelper;
 import io.nem.sdk.model.transaction.SignedTransaction;
-import io.nem.sdk.model.transaction.Transaction;
-import io.nem.sdk.model.transaction.TransactionInfo;
+import io.nem.sdk.model.transaction.TransactionFactory;
 import io.nem.sdk.model.transaction.TransactionType;
 import io.nem.sdk.openapi.okhttp_gson.model.HashLockTransactionDTO;
 
-class HashLockTransactionMapper extends AbstractTransactionMapper<HashLockTransactionDTO> {
+class HashLockTransactionMapper extends
+    AbstractTransactionMapper<HashLockTransactionDTO, HashLockTransaction> {
 
     public HashLockTransactionMapper(JsonHelper jsonHelper) {
         super(jsonHelper, TransactionType.LOCK, HashLockTransactionDTO.class);
     }
 
-    @Override
-    protected Transaction basicMap(TransactionInfo transactionInfo,
-        HashLockTransactionDTO transaction) {
-
-        Deadline deadline = new Deadline(transaction.getDeadline());
-        NetworkType networkType = extractNetworkType(transaction.getVersion());
-        Mosaic mosaic = getMosaic(transaction.getMosaic());
-        return new HashLockTransaction(
-            networkType,
-            extractTransactionVersion(transaction.getVersion()),
-            deadline,
-            transaction.getMaxFee(),
-            mosaic,
-            transaction.getDuration(),
-            new SignedTransaction("", transaction.getHash(),
-                TransactionType.AGGREGATE_BONDED),
-            transaction.getSignature(),
-            new PublicAccount(transaction.getSignerPublicKey(), networkType),
-            transactionInfo);
-    }
-
     private Mosaic getMosaic(io.nem.sdk.openapi.okhttp_gson.model.Mosaic mosaic) {
         return new Mosaic(toMosaicId(mosaic.getId()),
             mosaic.getAmount());
+    }
+
+    @Override
+    protected TransactionFactory<HashLockTransaction> createFactory(NetworkType networkType,
+        HashLockTransactionDTO transaction) {
+        Mosaic mosaic = getMosaic(transaction.getMosaic());
+        SignedTransaction signedTransaction = new SignedTransaction("", transaction.getHash(),
+            TransactionType.AGGREGATE_BONDED);
+        return new HashLockTransactionFactory(networkType, mosaic, transaction.getDuration(),
+            signedTransaction);
     }
 }

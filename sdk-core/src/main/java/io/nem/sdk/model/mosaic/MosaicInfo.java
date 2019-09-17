@@ -22,26 +22,26 @@ public class MosaicInfo {
 
     private final MosaicId mosaicId;
     private final BigInteger supply;
-    private final BigInteger height;
+    private final BigInteger startHeight;
     private final PublicAccount owner;
     private final Integer revision;
     private final MosaicProperties properties;
 
     private MosaicInfo(final MosaicId mosaicId, final BigInteger supply,
-        final BigInteger height,
+        final BigInteger startHeight,
         final PublicAccount owner, final Integer revision, final MosaicProperties properties) {
         this.mosaicId = mosaicId;
         this.supply = supply;
-        this.height = height;
+        this.startHeight = startHeight;
         this.owner = owner;
         this.revision = revision;
         this.properties = properties;
     }
 
     public static MosaicInfo create(final MosaicId mosaicId,
-        final BigInteger supply, final BigInteger height,
+        final BigInteger supply, final BigInteger startHeight,
         final PublicAccount owner, final Integer revision, final MosaicProperties properties) {
-        return new MosaicInfo(mosaicId, supply, height, owner, revision, properties);
+        return new MosaicInfo(mosaicId, supply, startHeight, owner, revision, properties);
     }
 
     /**
@@ -67,8 +67,8 @@ public class MosaicInfo {
      *
      * @return height it was created
      */
-    public BigInteger getHeight() {
-        return height;
+    public BigInteger getStartHeight() {
+        return startHeight;
     }
 
     /**

@@ -52,14 +52,14 @@ public class SecretLockTransactionTest {
 
         String secret = "3fc8ba10229ab5778d05d9c4b7f56676a88bf9295c185acfc0f961db5408cafe";
         SecretLockTransaction secretLocktx =
-            SecretLockTransaction.create(
-                new FakeDeadline(),
+            new SecretLockTransactionFactory(
+                NetworkType.MIJIN_TEST,
                 NetworkCurrencyMosaic.createRelative(BigInteger.valueOf(10)),
                 BigInteger.valueOf(100),
-                HashType.SHA3_256,
+                LockHashAlgorithmType.SHA3_256,
                 secret,
-                Address.createFromRawAddress("SDUP5PLHDXKBX3UU5Q52LAY4WYEKGEWC6IB3VBFM"),
-                NetworkType.MIJIN_TEST);
+                Address.createFromRawAddress("SDUP5PLHDXKBX3UU5Q52LAY4WYEKGEWC6IB3VBFM"))
+                .deadline(new FakeDeadline()).build();
         byte[] actual = secretLocktx.generateBytes();
         assertEquals(expected, Hex.toHexString(actual));
     }
@@ -72,14 +72,14 @@ public class SecretLockTransactionTest {
 
         String secret = "3fc8ba10229ab5778d05d9c4b7f56676a88bf9295c185acfc0f961db5408cafe";
         SecretLockTransaction secretLocktx =
-            SecretLockTransaction.create(
-                new FakeDeadline(),
+            new SecretLockTransactionFactory(
+                NetworkType.MIJIN_TEST,
                 NetworkCurrencyMosaic.createRelative(BigInteger.valueOf(10)),
                 BigInteger.valueOf(100),
-                HashType.SHA3_256,
+                LockHashAlgorithmType.SHA3_256,
                 secret,
-                Address.createFromRawAddress("SDUP5PLHDXKBX3UU5Q52LAY4WYEKGEWC6IB3VBFM"),
-                NetworkType.MIJIN_TEST);
+                Address.createFromRawAddress("SDUP5PLHDXKBX3UU5Q52LAY4WYEKGEWC6IB3VBFM"))
+                .deadline(new FakeDeadline()).build();
         byte[] actual =
             secretLocktx
                 .toAggregate(
@@ -94,17 +94,17 @@ public class SecretLockTransactionTest {
     void serializeAndSignTransaction() {
         String secret = "3fc8ba10229ab5778d05d9c4b7f56676a88bf9295c185acfc0f961db5408cafe";
         SecretLockTransaction secretLocktx =
-            SecretLockTransaction.create(
-                new FakeDeadline(),
+            new SecretLockTransactionFactory(NetworkType.MIJIN_TEST,
                 NetworkCurrencyMosaic.createRelative(BigInteger.valueOf(10)),
                 BigInteger.valueOf(100),
-                HashType.SHA3_256,
+                LockHashAlgorithmType.SHA3_256,
                 secret,
-                Address.createFromRawAddress("SDUP5PLHDXKBX3UU5Q52LAY4WYEKGEWC6IB3VBFM"),
-                NetworkType.MIJIN_TEST);
+                Address.createFromRawAddress("SDUP5PLHDXKBX3UU5Q52LAY4WYEKGEWC6IB3VBFM")
+            ).deadline(new FakeDeadline()).build();
         SignedTransaction signedTransaction = secretLocktx.signWith(account, generationHash);
         String payload = signedTransaction.getPayload();
-        assertEquals("44B262C46CEABB8580969800000000006400000000000000003FC8BA10229AB5778D05D9C4B7F56676A88B"
+        assertEquals(
+            "44B262C46CEABB8580969800000000006400000000000000003FC8BA10229AB5778D05D9C4B7F56676A88B"
                 + "F9295C185ACFC0F961DB5408CAFE90E8FEBD671DD41BEE94EC3BA5831CB608A312C2F203BA84AC",
             payload.substring(240));
         assertEquals(
@@ -118,14 +118,14 @@ public class SecretLockTransactionTest {
             IllegalArgumentException.class,
             () -> {
                 SecretLockTransaction secretLocktx =
-                    SecretLockTransaction.create(
-                        new FakeDeadline(),
+                    new SecretLockTransactionFactory(
+                        NetworkType.MIJIN_TEST,
                         NetworkCurrencyMosaic.createRelative(BigInteger.valueOf(10)),
                         BigInteger.valueOf(100),
-                        HashType.SHA3_256,
+                        LockHashAlgorithmType.SHA3_256,
                         "non valid hash",
-                        Address.createFromRawAddress("SDUP5PLHDXKBX3UU5Q52LAY4WYEKGEWC6IB3VBFM"),
-                        NetworkType.MIJIN_TEST);
+                        Address.createFromRawAddress("SDUP5PLHDXKBX3UU5Q52LAY4WYEKGEWC6IB3VBFM"))
+                        .deadline(new FakeDeadline()).build();
             },
             "not a valid secret");
     }

@@ -28,6 +28,7 @@ import io.nem.sdk.model.transaction.FakeDeadline;
 import io.nem.sdk.model.transaction.PlainMessage;
 import io.nem.sdk.model.transaction.SignedTransaction;
 import io.nem.sdk.model.transaction.TransferTransaction;
+import io.nem.sdk.model.transaction.TransferTransactionFactory;
 import java.math.BigInteger;
 import java.util.Collections;
 import org.junit.Assert;
@@ -115,15 +116,14 @@ class AccountTest {
                 "787225aaff3d2c71f4ffa32d4f19ec4922f3cd869747f267378f81f8e3fcb12d",
                 NetworkType.MIJIN_TEST);
         TransferTransaction transferTransaction =
-            TransferTransaction.create(
-                new FakeDeadline(),
-                BigInteger.ZERO,
+            TransferTransactionFactory.create(
+                NetworkType.MIJIN_TEST,
                 new Address("SDUP5PLHDXKBX3UU5Q52LAY4WYEKGEWC6IB3VBFM", NetworkType.MIJIN_TEST),
                 Collections.singletonList(
                     new Mosaic(
                         new MosaicId(new BigInteger("95442763262823")), BigInteger.valueOf(100))),
-                PlainMessage.Empty,
-                NetworkType.MIJIN_TEST);
+                PlainMessage.Empty
+            ).deadline(new FakeDeadline()).build();
 
         SignedTransaction signedTransaction = account.sign(transferTransaction, generationHash);
         String payload = signedTransaction.getPayload();

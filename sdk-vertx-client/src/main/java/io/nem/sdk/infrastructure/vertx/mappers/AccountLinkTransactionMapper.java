@@ -21,35 +21,26 @@ import io.nem.sdk.model.account.PublicAccount;
 import io.nem.sdk.model.blockchain.NetworkType;
 import io.nem.sdk.model.transaction.AccountLinkAction;
 import io.nem.sdk.model.transaction.AccountLinkTransaction;
-import io.nem.sdk.model.transaction.Deadline;
+import io.nem.sdk.model.transaction.AccountLinkTransactionFactory;
 import io.nem.sdk.model.transaction.JsonHelper;
-import io.nem.sdk.model.transaction.Transaction;
-import io.nem.sdk.model.transaction.TransactionInfo;
 import io.nem.sdk.model.transaction.TransactionType;
 import io.nem.sdk.openapi.vertx.model.AccountLinkTransactionDTO;
 
-class AccountLinkTransactionMapper extends AbstractTransactionMapper<AccountLinkTransactionDTO> {
-
+class AccountLinkTransactionMapper extends
+    AbstractTransactionMapper<AccountLinkTransactionDTO, AccountLinkTransaction> {
 
     public AccountLinkTransactionMapper(JsonHelper jsonHelper) {
         super(jsonHelper, TransactionType.ACCOUNT_LINK, AccountLinkTransactionDTO.class);
     }
 
     @Override
-    protected Transaction basicMap(TransactionInfo transactionInfo,
+    protected AccountLinkTransactionFactory createFactory(NetworkType networkType,
         AccountLinkTransactionDTO transaction) {
-        Deadline deadline = new Deadline(transaction.getDeadline());
-        NetworkType networkType = extractNetworkType(transaction.getVersion());
-        return new AccountLinkTransaction(
-            networkType,
-            extractTransactionVersion(transaction.getVersion()),
-            deadline,
-            transaction.getMaxFee(),
-            PublicAccount
-                .createFromPublicKey(transaction.getRemotePublicKey(), networkType),
-            AccountLinkAction.rawValueOf(transaction.getLinkAction().getValue()),
-            transaction.getSignature(),
-            new PublicAccount(transaction.getSignerPublicKey(), networkType),
-            transactionInfo);
+        PublicAccount remoteAccount = PublicAccount
+            .createFromPublicKey(transaction.getRemotePublicKey(), networkType);
+        return new AccountLinkTransactionFactory(networkType,
+            remoteAccount,
+            AccountLinkAction.rawValueOf(transaction.getLinkAction().getValue()));
     }
+
 }

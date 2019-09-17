@@ -41,7 +41,7 @@ public final class EmbeddedAccountMetadataTransactionBuilder extends EmbeddedTra
     /**
      * Constructor.
      *
-     * @param signer Entity signer's public key.
+     * @param signerPublicKey Entity signer's public key.
      * @param version Entity version.
      * @param type Entity type.
      * @param targetPublicKey Metadata target public key.
@@ -49,15 +49,15 @@ public final class EmbeddedAccountMetadataTransactionBuilder extends EmbeddedTra
      * @param valueSizeDelta Change in value size in bytes.
      * @param value Difference between existing value and new value \note when there is no existing value, new value is same this value \note when there is an existing value, new value is calculated as xor(previous-value, value).
      */
-    protected EmbeddedAccountMetadataTransactionBuilder(final KeyDto signer, final short version, final EntityTypeDto type, final KeyDto targetPublicKey, final long scopedMetadataKey, final short valueSizeDelta, final ByteBuffer value) {
-        super(signer, version, type);
+    protected EmbeddedAccountMetadataTransactionBuilder(final KeyDto signerPublicKey, final short version, final EntityTypeDto type, final KeyDto targetPublicKey, final long scopedMetadataKey, final short valueSizeDelta, final ByteBuffer value) {
+        super(signerPublicKey, version, type);
         this.accountMetadataTransactionBody = AccountMetadataTransactionBodyBuilder.create(targetPublicKey, scopedMetadataKey, valueSizeDelta, value);
     }
 
     /**
      * Creates an instance of EmbeddedAccountMetadataTransactionBuilder.
      *
-     * @param signer Entity signer's public key.
+     * @param signerPublicKey Entity signer's public key.
      * @param version Entity version.
      * @param type Entity type.
      * @param targetPublicKey Metadata target public key.
@@ -66,8 +66,8 @@ public final class EmbeddedAccountMetadataTransactionBuilder extends EmbeddedTra
      * @param value Difference between existing value and new value \note when there is no existing value, new value is same this value \note when there is an existing value, new value is calculated as xor(previous-value, value).
      * @return Instance of EmbeddedAccountMetadataTransactionBuilder.
      */
-    public static EmbeddedAccountMetadataTransactionBuilder create(final KeyDto signer, final short version, final EntityTypeDto type, final KeyDto targetPublicKey, final long scopedMetadataKey, final short valueSizeDelta, final ByteBuffer value) {
-        return new EmbeddedAccountMetadataTransactionBuilder(signer, version, type, targetPublicKey, scopedMetadataKey, valueSizeDelta, value);
+    public static EmbeddedAccountMetadataTransactionBuilder create(final KeyDto signerPublicKey, final short version, final EntityTypeDto type, final KeyDto targetPublicKey, final long scopedMetadataKey, final short valueSizeDelta, final ByteBuffer value) {
+        return new EmbeddedAccountMetadataTransactionBuilder(signerPublicKey, version, type, targetPublicKey, scopedMetadataKey, valueSizeDelta, value);
     }
 
     /**

@@ -28,14 +28,10 @@ import io.nem.core.utils.ExceptionUtils;
 import io.nem.core.utils.HexEncoder;
 import io.nem.sdk.model.account.Account;
 import io.nem.sdk.model.account.PublicAccount;
-import io.nem.sdk.model.blockchain.NetworkType;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.lang3.Validate;
 import org.bouncycastle.util.encoders.Hex;
 
 /**
@@ -47,114 +43,16 @@ import org.bouncycastle.util.encoders.Hex;
 public class AggregateTransaction extends Transaction {
 
     private final List<Transaction> innerTransactions;
+
     private final List<AggregateTransactionCosignature> cosignatures;
 
-    @SuppressWarnings("squid:S00107")
-    public AggregateTransaction(
-        NetworkType networkType,
-        TransactionType transactionType,
-        Integer version,
-        Deadline deadline,
-        BigInteger maxFee,
-        List<Transaction> innerTransactions,
-        List<AggregateTransactionCosignature> cosignatures,
-        String signature,
-        PublicAccount signer,
-        TransactionInfo transactionInfo) {
-        this(
-            networkType,
-            transactionType,
-            version,
-            deadline,
-            maxFee,
-            innerTransactions,
-            cosignatures,
-            Optional.of(signature),
-            Optional.of(signer),
-            Optional.of(transactionInfo));
-    }
-
-    public AggregateTransaction(
-        NetworkType networkType,
-        TransactionType transactionType,
-        Integer version,
-        Deadline deadline,
-        BigInteger maxFee,
-        List<Transaction> innerTransactions,
-        List<AggregateTransactionCosignature> cosignatures) {
-        this(
-            networkType,
-            transactionType,
-            version,
-            deadline,
-            maxFee,
-            innerTransactions,
-            cosignatures,
-            Optional.empty(),
-            Optional.empty(),
-            Optional.empty());
-    }
-
-    @SuppressWarnings("squid:S00107")
-    private AggregateTransaction(
-        NetworkType networkType,
-        TransactionType transactionType,
-        Integer version,
-        Deadline deadline,
-        BigInteger maxFee,
-        List<Transaction> innerTransactions,
-        List<AggregateTransactionCosignature> cosignatures,
-        Optional<String> signature,
-        Optional<PublicAccount> signer,
-        Optional<TransactionInfo> transactionInfo) {
-        super(transactionType, networkType, version, deadline, maxFee, signature, signer,
-            transactionInfo);
-        Validate.notNull(innerTransactions, "InnerTransactions must not be null");
-        Validate.notNull(cosignatures, "Cosignatures must not be null");
-        this.innerTransactions = innerTransactions;
-        this.cosignatures = cosignatures;
-    }
-
     /**
-     * Create an aggregate complete transaction object
-     *
-     * @param deadline The deadline to include the transaction.
-     * @param innerTransactions The list of inner innerTransactions.
-     * @param networkType The network type.
-     * @return {@link AggregateTransaction}
+     * AggregateTransaction constructor using factory.
      */
-    public static AggregateTransaction createComplete(
-        Deadline deadline, BigInteger maxFee, List<Transaction> innerTransactions,
-        NetworkType networkType) {
-        return new AggregateTransaction(
-            networkType,
-            TransactionType.AGGREGATE_COMPLETE,
-            TransactionVersion.AGGREGATE_COMPLETE.getValue(),
-            deadline,
-            maxFee,
-            innerTransactions,
-            new ArrayList<>());
-    }
-
-    /**
-     * Create an aggregate bonded transaction object
-     *
-     * @param deadline The deadline to include the transaction.
-     * @param innerTransactions The list of inner innerTransactions.
-     * @param networkType The network type.
-     * @return {@link AggregateTransaction}
-     */
-    public static AggregateTransaction createBonded(
-        Deadline deadline, BigInteger maxFee, List<Transaction> innerTransactions,
-        NetworkType networkType) {
-        return new AggregateTransaction(
-            networkType,
-            TransactionType.AGGREGATE_BONDED,
-            TransactionVersion.AGGREGATE_BONDED.getValue(),
-            deadline,
-            maxFee,
-            innerTransactions,
-            new ArrayList<>());
+    AggregateTransaction(AggregateTransactionFactory factory) {
+        super(factory);
+        this.innerTransactions = factory.getInnerTransactions();
+        this.cosignatures = factory.getCosignatures();
     }
 
     /**
@@ -216,7 +114,7 @@ public class AggregateTransaction extends Transaction {
                         new KeyDto(signerBuffer),
                         getNetworkVersion(),
                         EntityTypeDto.rawValueOf((short) getType().getValue()),
-                        new AmountDto(getFee().longValue()),
+                        new AmountDto(getMaxFee().longValue()),
                         new TimestampDto(getDeadline().getInstant()),
                         transactionsBuffer,
                         cosignaturesBuffer);

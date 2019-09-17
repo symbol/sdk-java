@@ -19,7 +19,6 @@ package io.nem.sdk.model.transaction;
 import io.nem.catapult.builders.AmountDto;
 import io.nem.catapult.builders.BlockDurationDto;
 import io.nem.catapult.builders.EmbeddedSecretLockTransactionBuilder;
-import io.nem.catapult.builders.EntityTypeDto;
 import io.nem.catapult.builders.Hash256Dto;
 import io.nem.catapult.builders.KeyDto;
 import io.nem.catapult.builders.LockHashAlgorithmDto;
@@ -30,147 +29,33 @@ import io.nem.catapult.builders.UnresolvedAddressDto;
 import io.nem.catapult.builders.UnresolvedMosaicBuilder;
 import io.nem.catapult.builders.UnresolvedMosaicIdDto;
 import io.nem.sdk.model.account.Address;
-import io.nem.sdk.model.account.PublicAccount;
-import io.nem.sdk.model.blockchain.NetworkType;
 import io.nem.sdk.model.mosaic.Mosaic;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
-import java.util.Optional;
-import org.apache.commons.lang3.Validate;
 import org.bouncycastle.util.encoders.Hex;
 
 public class SecretLockTransaction extends Transaction {
 
     private final Mosaic mosaic;
     private final BigInteger duration;
-    private final HashType hashType;
+    private final LockHashAlgorithmType hashAlgorithm;
     private final String secret;
     private final Address recipient;
 
-    @SuppressWarnings("squid:S00107")
-    public SecretLockTransaction(
-        NetworkType networkType,
-        Integer version,
-        Deadline deadline,
-        BigInteger fee,
-        Mosaic mosaic,
-        BigInteger duration,
-        HashType hashType,
-        String secret,
-        Address recipient,
-        String signature,
-        PublicAccount signer,
-        TransactionInfo transactionInfo) {
-        this(
-            networkType,
-            version,
-            deadline,
-            fee,
-            mosaic,
-            duration,
-            hashType,
-            secret,
-            recipient,
-            Optional.of(signature),
-            Optional.of(signer),
-            Optional.of(transactionInfo));
-    }
-
-    @SuppressWarnings("squid:S00107")
-    public SecretLockTransaction(
-        NetworkType networkType,
-        Integer version,
-        Deadline deadline,
-        BigInteger fee,
-        Mosaic mosaic,
-        BigInteger duration,
-        HashType hashType,
-        String secret,
-        Address recipient) {
-        this(
-            networkType,
-            version,
-            deadline,
-            fee,
-            mosaic,
-            duration,
-            hashType,
-            secret,
-            recipient,
-            Optional.empty(),
-            Optional.empty(),
-            Optional.empty());
-    }
-
-    @SuppressWarnings("squid:S00107")
-    public SecretLockTransaction(
-        NetworkType networkType,
-        Integer version,
-        Deadline deadline,
-        BigInteger fee,
-        Mosaic mosaic,
-        BigInteger duration,
-        HashType hashType,
-        String secret,
-        Address recipient,
-        Optional<String> signature,
-        Optional<PublicAccount> signer,
-        Optional<TransactionInfo> transactionInfo) {
-        super(
-            TransactionType.SECRET_LOCK,
-            networkType,
-            version,
-            deadline,
-            fee,
-            signature,
-            signer,
-            transactionInfo);
-        Validate.notNull(mosaic, "Mosaic must not be null");
-        Validate.notNull(duration, "Duration must not be null");
-        Validate.notNull(secret, "Secret must not be null");
-        Validate.notNull(recipient, "Recipient must not be null");
-        if (!HashType.validator(hashType, secret)) {
-            throw new IllegalArgumentException(
-                "HashType and Secret have incompatible length or not hexadecimal string");
-        }
-        this.mosaic = mosaic;
-        this.duration = duration;
-        this.hashType = hashType;
-        this.secret = secret;
-        this.recipient = recipient;
-    }
-
     /**
-     * Create a secret lock transaction object.
+     * Contructor of this transaction using the factory.
      *
-     * @param deadline The deadline to include the transaction.
-     * @param mosaic The locked mosaic.
-     * @param duration The duration for the funds to be released or returned.
-     * @param hashType The hash algorithm secret is generated with.
-     * @param secret The proof hashed.
-     * @param recipient The recipient of the funds.
-     * @param networkType The network type.
-     * @return a SecretLockTransaction instance
+     * @param factory the factory.
      */
-    public static SecretLockTransaction create(
-        Deadline deadline,
-        Mosaic mosaic,
-        BigInteger duration,
-        HashType hashType,
-        String secret,
-        Address recipient,
-        NetworkType networkType) {
-        return new SecretLockTransaction(
-            networkType,
-            TransactionVersion.SECRET_LOCK.getValue(),
-            deadline,
-            BigInteger.valueOf(0),
-            mosaic,
-            duration,
-            hashType,
-            secret,
-            recipient);
+    SecretLockTransaction(SecretLockTransactionFactory factory) {
+        super(factory);
+        this.mosaic = factory.getMosaic();
+        this.duration = factory.getDuration();
+        this.hashAlgorithm = factory.getHashAlgorithm();
+        this.secret = factory.getSecret();
+        this.recipient = factory.getRecipient();
     }
+
 
     /**
      * Returns locked mosaic.
@@ -195,8 +80,8 @@ public class SecretLockTransaction extends Transaction {
      *
      * @return the hash algorithm, secret is generated with.
      */
-    public HashType getHashType() {
-        return hashType;
+    public LockHashAlgorithmType getHashAlgorithm() {
+        return hashAlgorithm;
     }
 
     /**
@@ -233,14 +118,14 @@ public class SecretLockTransaction extends Transaction {
                 new SignatureDto(signatureBuffer),
                 new KeyDto(signerBuffer),
                 getNetworkVersion(),
-                EntityTypeDto.SECRET_LOCK_TRANSACTION,
-                new AmountDto(getFee().longValue()),
+                getEntityTypeDto(),
+                new AmountDto(getMaxFee().longValue()),
                 new TimestampDto(getDeadline().getInstant()),
                 UnresolvedMosaicBuilder.create(
                     new UnresolvedMosaicIdDto(mosaic.getId().getId().longValue()),
                     new AmountDto(mosaic.getAmount().longValue())),
                 new BlockDurationDto(duration.longValue()),
-                LockHashAlgorithmDto.rawValueOf((byte) hashType.getValue()),
+                LockHashAlgorithmDto.rawValueOf((byte) hashAlgorithm.getValue()),
                 new Hash256Dto(getSecretBuffer()),
                 new UnresolvedAddressDto(getRecipient().getByteBuffer()));
         return txBuilder.serialize();
@@ -257,12 +142,12 @@ public class SecretLockTransaction extends Transaction {
             EmbeddedSecretLockTransactionBuilder.create(
                 new KeyDto(getRequiredSignerBytes()),
                 getNetworkVersion(),
-                EntityTypeDto.SECRET_LOCK_TRANSACTION,
+                getEntityTypeDto(),
                 UnresolvedMosaicBuilder.create(
                     new UnresolvedMosaicIdDto(mosaic.getId().getId().longValue()),
                     new AmountDto(mosaic.getAmount().longValue())),
                 new BlockDurationDto(duration.longValue()),
-                LockHashAlgorithmDto.rawValueOf((byte) hashType.getValue()),
+                LockHashAlgorithmDto.rawValueOf((byte) hashAlgorithm.getValue()),
                 new Hash256Dto(getSecretBuffer()),
                 new UnresolvedAddressDto(getRecipient().getByteBuffer()));
         return txBuilder.serialize();

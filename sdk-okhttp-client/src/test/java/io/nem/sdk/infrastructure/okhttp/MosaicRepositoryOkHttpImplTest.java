@@ -23,7 +23,6 @@ import io.nem.sdk.model.mosaic.MosaicNames;
 import io.nem.sdk.openapi.okhttp_gson.model.MosaicDTO;
 import io.nem.sdk.openapi.okhttp_gson.model.MosaicInfoDTO;
 import io.nem.sdk.openapi.okhttp_gson.model.MosaicNamesDTO;
-import io.nem.sdk.openapi.okhttp_gson.model.MosaicPropertiesDTO;
 import io.nem.sdk.openapi.okhttp_gson.model.MosaicsNamesDTO;
 import java.math.BigInteger;
 import java.util.Collections;
@@ -88,11 +87,9 @@ public class MosaicRepositoryOkHttpImplTest extends AbstractOkHttpRespositoryTes
         mosaicDto.setId("481110499AAA");
         mosaicDto.setRevision(123);
 
-        MosaicPropertiesDTO properties = new MosaicPropertiesDTO();
-        properties.setFlags(5);
-        properties.setDivisibility(6);
-        properties.setDuration(BigInteger.valueOf(7));
-        mosaicDto.setProperties(properties);
+        mosaicDto.setFlags(5);
+        mosaicDto.setDivisibility(6);
+        mosaicDto.setDuration(BigInteger.valueOf(7));
 
         mosaicInfoDto.setMosaic(mosaicDto);
         mockRemoteCall(Collections.singletonList(mosaicInfoDto));
@@ -130,11 +127,9 @@ public class MosaicRepositoryOkHttpImplTest extends AbstractOkHttpRespositoryTes
         mosaicDto.setId("481110499AAA");
         mosaicDto.setRevision(123);
 
-        MosaicPropertiesDTO properties = new MosaicPropertiesDTO();
-        properties.setFlags(5);
-        properties.setDivisibility(6);
-        properties.setDuration(BigInteger.valueOf(7));
-        mosaicDto.setProperties(properties);
+        mosaicDto.setFlags(5);
+        mosaicDto.setDivisibility(6);
+        mosaicDto.setDuration(BigInteger.valueOf(7));
 
         mosaicInfoDto.setMosaic(mosaicDto);
         mockRemoteCall(mosaicInfoDto);

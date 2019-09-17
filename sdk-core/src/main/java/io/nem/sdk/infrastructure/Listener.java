@@ -45,9 +45,7 @@ public interface Listener extends Closeable {
     void close();
 
     /**
-     * // TODO: should we remove it?
-     *
-     * @return the UID connected to
+     * @return the connection UID.
      */
     String getUid();
 

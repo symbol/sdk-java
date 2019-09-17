@@ -16,6 +16,7 @@
 
 package io.nem.sdk.infrastructure;
 
+import io.nem.core.utils.ExceptionUtils;
 import io.nem.sdk.api.RepositoryFactory;
 import io.nem.sdk.infrastructure.okhttp.RepositoryFactoryOkHttpImpl;
 import io.nem.sdk.infrastructure.vertx.RepositoryFactoryVertxImpl;
@@ -23,8 +24,10 @@ import io.nem.sdk.model.account.Account;
 import io.nem.sdk.model.account.Address;
 import io.nem.sdk.model.account.PublicAccount;
 import io.nem.sdk.model.blockchain.NetworkType;
+import io.reactivex.Observable;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Abstract class for all the repository integration tests.
@@ -34,6 +37,10 @@ import java.util.Map;
  */
 public abstract class BaseIntegrationTest {
 
+    /**
+     * The default repository type used when you are not testing the different implementations.
+     */
+    protected static final RepositoryType DEFAULT_REPOSITORY_TYPE = RepositoryType.VERTX;
 
     /**
      * Known implementations of repositories that the integration tests use.
@@ -86,7 +93,7 @@ public abstract class BaseIntegrationTest {
     }
 
     public String getApiUrl() {
-        return this.config().getApiUrl() + "/";
+        return this.config().getApiUrl();
     }
 
     public NetworkType getNetworkType() {
@@ -169,5 +176,20 @@ public abstract class BaseIntegrationTest {
             this.timeoutSeconds = this.config().getTimeoutSeconds();
         }
         return this.timeoutSeconds;
+    }
+
+    /**
+     * An utility method that executes a rest call though the Observable. It simplifies and unifies
+     * the executions of rest calls.
+     *
+     * This methods adds the necessary timeouts and exception handling,
+     *
+     * @param observable the observable, typically the one that performs a rest call.
+     * @param <T> the observable type
+     * @return the response from the rest call.
+     */
+    protected <T> T get(Observable<T> observable) {
+        return ExceptionUtils
+            .propagate(() -> observable.toFuture().get(getTimeoutSeconds(), TimeUnit.SECONDS));
     }
 }

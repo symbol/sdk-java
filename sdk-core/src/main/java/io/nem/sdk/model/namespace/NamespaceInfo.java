@@ -30,7 +30,7 @@ public class NamespaceInfo {
     private final boolean active;
     private final Integer index;
     private final String metaId;
-    private final NamespaceType type;
+    private final NamespaceRegistrationType registrationType;
     private final Integer depth;
     private final List<NamespaceId> levels;
     private final NamespaceId parentId;
@@ -44,7 +44,7 @@ public class NamespaceInfo {
         boolean active,
         Integer index,
         String metaId,
-        NamespaceType type,
+        NamespaceRegistrationType registrationType,
         Integer depth,
         List<NamespaceId> levels,
         NamespaceId parentId,
@@ -55,7 +55,7 @@ public class NamespaceInfo {
         this.active = active;
         this.index = index;
         this.metaId = metaId;
-        this.type = type;
+        this.registrationType = registrationType;
         this.depth = depth;
         this.levels = levels;
         this.parentId = parentId;
@@ -96,8 +96,8 @@ public class NamespaceInfo {
      *
      * @return the namespace type
      */
-    public NamespaceType getType() {
-        return type;
+    public NamespaceRegistrationType getRegistrationType() {
+        return registrationType;
     }
 
     /**
@@ -160,7 +160,7 @@ public class NamespaceInfo {
      * @return true if namespace is Root
      */
     public boolean isRoot() {
-        return this.type == NamespaceType.ROOT_NAMESPACE;
+        return this.registrationType == NamespaceRegistrationType.ROOT_NAMESPACE;
     }
 
     /**
@@ -187,7 +187,7 @@ public class NamespaceInfo {
      * @return true if namespace is Subnamespace
      */
     public boolean isSubnamespace() {
-        return this.type == NamespaceType.SUB_NAMESPACE;
+        return this.registrationType == NamespaceRegistrationType.SUB_NAMESPACE;
     }
 
     /**

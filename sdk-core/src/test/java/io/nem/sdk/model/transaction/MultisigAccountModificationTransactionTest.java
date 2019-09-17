@@ -23,7 +23,6 @@ import io.nem.sdk.model.account.PublicAccount;
 import io.nem.sdk.model.blockchain.NetworkType;
 import java.math.BigInteger;
 import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.Collections;
 import org.bouncycastle.util.encoders.Hex;
@@ -35,24 +34,25 @@ class MultisigAccountModificationTransactionTest {
     @Test
     void createAMultisigModificationTransactionViaConstructor() {
         MultisigAccountModificationTransaction multisigAccountModificationTransaction =
-            MultisigAccountModificationTransaction.create(
-                new Deadline(2, ChronoUnit.HOURS),
+            new MultisigAccountModificationTransactionFactory(
+                NetworkType.MIJIN_TEST,
                 (byte) 2,
                 (byte) 1,
                 Collections.singletonList(
                     new MultisigCosignatoryModification(
-                        MultisigCosignatoryModificationType.ADD,
+                        CosignatoryModificationActionType.ADD,
                         PublicAccount.createFromPublicKey(
                             "68b3fbb18729c1fde225c57f8ce080fa828f0067e451a3fd81fa628842b0b763",
-                            NetworkType.MIJIN_TEST))),
-                NetworkType.MIJIN_TEST);
+                            NetworkType.MIJIN_TEST)))
+            ).build();
 
-        assertEquals(NetworkType.MIJIN_TEST, multisigAccountModificationTransaction.getNetworkType());
+        assertEquals(NetworkType.MIJIN_TEST,
+            multisigAccountModificationTransaction.getNetworkType());
         assertTrue(1 == multisigAccountModificationTransaction.getVersion());
         assertTrue(
             LocalDateTime.now()
                 .isBefore(multisigAccountModificationTransaction.getDeadline().getLocalDateTime()));
-        assertEquals(BigInteger.valueOf(0), multisigAccountModificationTransaction.getFee());
+        assertEquals(BigInteger.valueOf(0), multisigAccountModificationTransaction.getMaxFee());
         assertEquals(2, multisigAccountModificationTransaction.getMinApprovalDelta());
         assertEquals(1, multisigAccountModificationTransaction.getMinRemovalDelta());
         assertEquals(
@@ -65,8 +65,8 @@ class MultisigAccountModificationTransactionTest {
                 .toString()
                 .toUpperCase());
         assertEquals(
-            MultisigCosignatoryModificationType.ADD,
-            multisigAccountModificationTransaction.getModifications().get(0).getType());
+            CosignatoryModificationActionType.ADD,
+            multisigAccountModificationTransaction.getModifications().get(0).getModificationAction());
     }
 
     @Test
@@ -76,22 +76,22 @@ class MultisigAccountModificationTransactionTest {
         String expected =
             "bd00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001905541000000000000000001000000000000000102020168b3fbb18729c1fde225c57f8ce080fa828f0067e451a3fd81fa628842b0b76301cf893ffcc47c33e7f68ab1db56365c156b0736824a0c1e273f9e00b8df8f01eb";
         MultisigAccountModificationTransaction multisigAccountModificationTransaction =
-            MultisigAccountModificationTransaction.create(
-                new FakeDeadline(),
+            new MultisigAccountModificationTransactionFactory(
+                NetworkType.MIJIN_TEST,
                 (byte) 2,
                 (byte) 1,
                 Arrays.asList(
                     new MultisigCosignatoryModification(
-                        MultisigCosignatoryModificationType.ADD,
+                        CosignatoryModificationActionType.ADD,
                         PublicAccount.createFromPublicKey(
                             "68b3fbb18729c1fde225c57f8ce080fa828f0067e451a3fd81fa628842b0b763",
                             NetworkType.MIJIN_TEST)),
                     new MultisigCosignatoryModification(
-                        MultisigCosignatoryModificationType.ADD,
+                        CosignatoryModificationActionType.ADD,
                         PublicAccount.createFromPublicKey(
                             "cf893ffcc47c33e7f68ab1db56365c156b0736824a0c1e273f9e00b8df8f01eb",
-                            NetworkType.MIJIN_TEST))),
-                NetworkType.MIJIN_TEST);
+                            NetworkType.MIJIN_TEST)))
+            ).deadline(new FakeDeadline()).build();
 
         byte[] actual = multisigAccountModificationTransaction.generateBytes();
         assertEquals(expected, Hex.toHexString(actual));

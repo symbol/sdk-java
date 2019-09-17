@@ -17,20 +17,19 @@
 package io.nem.sdk.infrastructure.vertx;
 
 import static io.nem.sdk.infrastructure.vertx.TestHelperVertx.loadTransactionInfoDTO;
-import static java.time.temporal.ChronoUnit.HOURS;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import io.nem.sdk.model.account.Account;
 import io.nem.sdk.model.account.Address;
 import io.nem.sdk.model.blockchain.NetworkType;
 import io.nem.sdk.model.mosaic.NetworkCurrencyMosaic;
-import io.nem.sdk.model.transaction.Deadline;
 import io.nem.sdk.model.transaction.PlainMessage;
 import io.nem.sdk.model.transaction.SignedTransaction;
 import io.nem.sdk.model.transaction.Transaction;
 import io.nem.sdk.model.transaction.TransactionAnnounceResponse;
 import io.nem.sdk.model.transaction.TransactionStatus;
 import io.nem.sdk.model.transaction.TransferTransaction;
+import io.nem.sdk.model.transaction.TransferTransactionFactory;
 import io.nem.sdk.openapi.vertx.model.AnnounceTransactionInfoDTO;
 import io.nem.sdk.openapi.vertx.model.TransactionInfoDTO;
 import io.nem.sdk.openapi.vertx.model.TransactionStatusDTO;
@@ -185,14 +184,13 @@ public class TransactionRepositoryVertxImplTest extends AbstractVertxRespository
                 "SBCPGZ3S2SCC3YHBBTYDCUZV4ZZEPHM2KGCP4QXX");
 
         TransferTransaction transferTransaction =
-            TransferTransaction.create(
-                new Deadline(2, HOURS),
-                BigInteger.ZERO,
+            TransferTransactionFactory.create(
+                NetworkType.MIJIN_TEST,
                 address,
                 Collections
                     .singletonList(NetworkCurrencyMosaic.createAbsolute(BigInteger.valueOf(1))),
-                new PlainMessage("E2ETest:standaloneTransferTransaction:message"),
-                NetworkType.MIJIN_TEST);
+                new PlainMessage("E2ETest:standaloneTransferTransaction:message")
+            ).build();
 
         SignedTransaction signedTransaction = account.sign(transferTransaction, generationHash);
         String payload = signedTransaction.getPayload();

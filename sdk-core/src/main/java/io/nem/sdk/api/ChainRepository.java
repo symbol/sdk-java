@@ -34,5 +34,5 @@ public interface ChainRepository {
      *
      * @return Observable of BigInteger
      */
-    Observable<BlockchainScore> getBlockchainScore();
+    Observable<BlockchainScore> getChainScore();
 }

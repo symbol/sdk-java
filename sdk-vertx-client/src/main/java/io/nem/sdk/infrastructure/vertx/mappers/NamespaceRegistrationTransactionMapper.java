@@ -20,19 +20,18 @@ package io.nem.sdk.infrastructure.vertx.mappers;
 import static io.nem.core.utils.MapperUtils.toNamespaceId;
 
 import io.nem.core.utils.MapperUtils;
-import io.nem.sdk.model.account.PublicAccount;
-import io.nem.sdk.model.namespace.NamespaceType;
-import io.nem.sdk.model.transaction.Deadline;
+import io.nem.sdk.model.blockchain.NetworkType;
+import io.nem.sdk.model.namespace.NamespaceRegistrationType;
 import io.nem.sdk.model.transaction.JsonHelper;
 import io.nem.sdk.model.transaction.NamespaceRegistrationTransaction;
-import io.nem.sdk.model.transaction.Transaction;
-import io.nem.sdk.model.transaction.TransactionInfo;
+import io.nem.sdk.model.transaction.NamespaceRegistrationTransactionFactory;
+import io.nem.sdk.model.transaction.TransactionFactory;
 import io.nem.sdk.model.transaction.TransactionType;
 import io.nem.sdk.openapi.vertx.model.NamespaceRegistrationTransactionDTO;
 import java.util.Optional;
 
 class NamespaceRegistrationTransactionMapper extends
-    AbstractTransactionMapper<NamespaceRegistrationTransactionDTO> {
+    AbstractTransactionMapper<NamespaceRegistrationTransactionDTO, NamespaceRegistrationTransaction> {
 
     public NamespaceRegistrationTransactionMapper(JsonHelper jsonHelper) {
         super(jsonHelper, TransactionType.REGISTER_NAMESPACE,
@@ -40,32 +39,23 @@ class NamespaceRegistrationTransactionMapper extends
     }
 
     @Override
-    protected Transaction basicMap(TransactionInfo transactionInfo,
-        NamespaceRegistrationTransactionDTO transaction) {
+    protected TransactionFactory<NamespaceRegistrationTransaction> createFactory(
+        NetworkType networkType, NamespaceRegistrationTransactionDTO transaction) {
 
-        Deadline deadline = new Deadline(transaction.getDeadline());
-        NamespaceType namespaceType = NamespaceType
+        NamespaceRegistrationType namespaceRegistrationType = NamespaceRegistrationType
             .rawValueOf(transaction.getRegistrationType().getValue());
 
-        return new NamespaceRegistrationTransaction(
-            extractNetworkType(transaction.getVersion()),
-            extractTransactionVersion(transaction.getVersion()),
-            deadline,
-            transaction.getMaxFee(),
+        return new NamespaceRegistrationTransactionFactory(networkType,
             transaction.getName(),
             toNamespaceId(transaction.getId()),
-            namespaceType,
-            namespaceType == NamespaceType.ROOT_NAMESPACE
+            namespaceRegistrationType,
+            namespaceRegistrationType == NamespaceRegistrationType.ROOT_NAMESPACE
                 ? Optional.of(transaction.getDuration())
                 : Optional.empty(),
-            namespaceType == NamespaceType.SUB_NAMESPACE
+            namespaceRegistrationType == NamespaceRegistrationType.SUB_NAMESPACE
                 ? Optional
                 .of(MapperUtils.toNamespaceId(transaction.getParentId()))
-                : Optional.empty(),
-            transaction.getSignature(),
-            new PublicAccount(
-                transaction.getSignerPublicKey(),
-                extractNetworkType(transaction.getVersion())),
-            transactionInfo);
+                : Optional.empty());
     }
+
 }

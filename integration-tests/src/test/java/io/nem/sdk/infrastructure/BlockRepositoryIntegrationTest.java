@@ -25,12 +25,9 @@ import io.nem.sdk.api.RepositoryCallException;
 import io.nem.sdk.model.blockchain.BlockInfo;
 import io.nem.sdk.model.receipt.Statement;
 import io.nem.sdk.model.transaction.Transaction;
-import io.reactivex.observers.TestObserver;
-import io.reactivex.schedulers.Schedulers;
 import java.math.BigInteger;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
@@ -45,59 +42,49 @@ class BlockRepositoryIntegrationTest extends BaseIntegrationTest {
 
     @ParameterizedTest
     @EnumSource(RepositoryType.class)
-    void getBlockByHeight(RepositoryType type) throws ExecutionException, InterruptedException {
-        BlockInfo blockInfo = getBlockRepository(type).getBlockByHeight(BigInteger.valueOf(1))
-            .toFuture()
-            .get();
-
+    void getBlockByHeight(RepositoryType type) {
+        BlockInfo blockInfo = get(getBlockRepository(type).getBlockByHeight(BigInteger.valueOf(1)));
         assertEquals(1, blockInfo.getHeight().intValue());
         assertEquals(0, blockInfo.getTimestamp().intValue());
+        assertEquals(getGenerationHash(), blockInfo.getGenerationHash());
     }
 
     // TODO to fix after catbuffer integration
     @ParameterizedTest
     @EnumSource(RepositoryType.class)
-    void getBlockTransactions(RepositoryType type) throws ExecutionException, InterruptedException {
-        List<Transaction> transactions =
-            getBlockRepository(type).getBlockTransactions(BigInteger.valueOf(1)).toFuture().get();
+    void getBlockTransactions(RepositoryType type) {
+        List<Transaction> transactions = get(
+            getBlockRepository(type).getBlockTransactions(BigInteger.valueOf(1)));
 
         assertEquals(10, transactions.size());
 
-        List<Transaction> nextTransactions =
-            getBlockRepository(type)
-                .getBlockTransactions(
-                    BigInteger.valueOf(1),
-                    new QueryParams(10,
-                        transactions.get(0).getTransactionInfo().get().getId().get()))
-                .toFuture()
-                .get();
+        List<Transaction> nextTransactions = get(getBlockRepository(type).getBlockTransactions(
+            BigInteger.valueOf(1),
+            new QueryParams(10,
+                transactions.get(0).getTransactionInfo().get().getId().get())));
 
         assertEquals(10, nextTransactions.size());
-        assertEquals(
-            transactions.get(1).getTransactionInfo().get().getHash(),
+        assertEquals(transactions.get(1).getTransactionInfo().get().getHash(),
             nextTransactions.get(0).getTransactionInfo().get().getHash());
     }
 
     @ParameterizedTest
     @EnumSource(RepositoryType.class)
-    void getBlockReceipts(RepositoryType type) throws ExecutionException, InterruptedException {
-        Statement statement = getBlockRepository(type).getBlockReceipts(BigInteger.valueOf(6262))
-            .toFuture()
-            .get();
-
+    void getBlockReceipts(RepositoryType type) {
+        Statement statement = get(
+            getBlockRepository(type).getBlockReceipts(BigInteger.valueOf(6262)));
         assertFalse(statement.getTransactionStatements().isEmpty());
     }
 
     @ParameterizedTest
     @EnumSource(RepositoryType.class)
     void throwExceptionWhenBlockDoesNotExists(RepositoryType type) {
-        TestObserver<BlockInfo> testObserver = new TestObserver<>();
-        getBlockRepository(type)
-            .getBlockByHeight(BigInteger.valueOf(0))
-            .subscribeOn(Schedulers.single())
-            .test()
-            .awaitDone(2, TimeUnit.SECONDS)
-            .assertFailureAndMessage(RepositoryCallException.class,
-                "Not Found");
+        RepositoryCallException exception = Assertions
+            .assertThrows(RepositoryCallException.class, () -> get(getBlockRepository(type)
+                .getBlockByHeight(BigInteger.valueOf(0))));
+
+        Assertions.assertEquals(
+            "ApiException: Not Found - 404 - ResourceNotFound - no resource exists with id '0'",
+            exception.getMessage());
     }
 }

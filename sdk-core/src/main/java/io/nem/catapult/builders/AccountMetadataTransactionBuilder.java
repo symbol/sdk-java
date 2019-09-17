@@ -42,7 +42,7 @@ public final class AccountMetadataTransactionBuilder extends TransactionBuilder 
      * Constructor.
      *
      * @param signature Entity signature.
-     * @param signer Entity signer's public key.
+     * @param signerPublicKey Entity signer's public key.
      * @param version Entity version.
      * @param type Entity type.
      * @param fee Transaction fee.
@@ -52,8 +52,8 @@ public final class AccountMetadataTransactionBuilder extends TransactionBuilder 
      * @param valueSizeDelta Change in value size in bytes.
      * @param value Difference between existing value and new value \note when there is no existing value, new value is same this value \note when there is an existing value, new value is calculated as xor(previous-value, value).
      */
-    protected AccountMetadataTransactionBuilder(final SignatureDto signature, final KeyDto signer, final short version, final EntityTypeDto type, final AmountDto fee, final TimestampDto deadline, final KeyDto targetPublicKey, final long scopedMetadataKey, final short valueSizeDelta, final ByteBuffer value) {
-        super(signature, signer, version, type, fee, deadline);
+    protected AccountMetadataTransactionBuilder(final SignatureDto signature, final KeyDto signerPublicKey, final short version, final EntityTypeDto type, final AmountDto fee, final TimestampDto deadline, final KeyDto targetPublicKey, final long scopedMetadataKey, final short valueSizeDelta, final ByteBuffer value) {
+        super(signature, signerPublicKey, version, type, fee, deadline);
         this.accountMetadataTransactionBody = AccountMetadataTransactionBodyBuilder.create(targetPublicKey, scopedMetadataKey, valueSizeDelta, value);
     }
 
@@ -61,7 +61,7 @@ public final class AccountMetadataTransactionBuilder extends TransactionBuilder 
      * Creates an instance of AccountMetadataTransactionBuilder.
      *
      * @param signature Entity signature.
-     * @param signer Entity signer's public key.
+     * @param signerPublicKey Entity signer's public key.
      * @param version Entity version.
      * @param type Entity type.
      * @param fee Transaction fee.
@@ -72,8 +72,8 @@ public final class AccountMetadataTransactionBuilder extends TransactionBuilder 
      * @param value Difference between existing value and new value \note when there is no existing value, new value is same this value \note when there is an existing value, new value is calculated as xor(previous-value, value).
      * @return Instance of AccountMetadataTransactionBuilder.
      */
-    public static AccountMetadataTransactionBuilder create(final SignatureDto signature, final KeyDto signer, final short version, final EntityTypeDto type, final AmountDto fee, final TimestampDto deadline, final KeyDto targetPublicKey, final long scopedMetadataKey, final short valueSizeDelta, final ByteBuffer value) {
-        return new AccountMetadataTransactionBuilder(signature, signer, version, type, fee, deadline, targetPublicKey, scopedMetadataKey, valueSizeDelta, value);
+    public static AccountMetadataTransactionBuilder create(final SignatureDto signature, final KeyDto signerPublicKey, final short version, final EntityTypeDto type, final AmountDto fee, final TimestampDto deadline, final KeyDto targetPublicKey, final long scopedMetadataKey, final short valueSizeDelta, final ByteBuffer value) {
+        return new AccountMetadataTransactionBuilder(signature, signerPublicKey, version, type, fee, deadline, targetPublicKey, scopedMetadataKey, valueSizeDelta, value);
     }
 
     /**

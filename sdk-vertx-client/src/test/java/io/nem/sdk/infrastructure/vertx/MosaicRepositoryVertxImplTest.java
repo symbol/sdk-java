@@ -23,7 +23,6 @@ import io.nem.sdk.model.mosaic.MosaicNames;
 import io.nem.sdk.openapi.vertx.model.MosaicDTO;
 import io.nem.sdk.openapi.vertx.model.MosaicInfoDTO;
 import io.nem.sdk.openapi.vertx.model.MosaicNamesDTO;
-import io.nem.sdk.openapi.vertx.model.MosaicPropertiesDTO;
 import io.nem.sdk.openapi.vertx.model.MosaicsNamesDTO;
 import java.math.BigInteger;
 import java.util.Collections;
@@ -88,11 +87,9 @@ public class MosaicRepositoryVertxImplTest extends AbstractVertxRespositoryTest 
         mosaicDto.setId("481110499AAA");
         mosaicDto.setRevision(123);
 
-        MosaicPropertiesDTO properties = new MosaicPropertiesDTO();
-        properties.setFlags(5);
-        properties.setDivisibility(6);
-        properties.setDuration(BigInteger.valueOf(7));
-        mosaicDto.setProperties(properties);
+        mosaicDto.setFlags(5);
+        mosaicDto.setDivisibility(6);
+        mosaicDto.setDuration(BigInteger.valueOf(7));
 
         mosaicInfoDto.setMosaic(mosaicDto);
         mockRemoteCall(Collections.singletonList(mosaicInfoDto));
@@ -128,11 +125,9 @@ public class MosaicRepositoryVertxImplTest extends AbstractVertxRespositoryTest 
         mosaicDto.setId("481110499");
         mosaicDto.setRevision(123);
 
-        MosaicPropertiesDTO properties = new MosaicPropertiesDTO();
-        properties.setFlags(5);
-        properties.setDivisibility(6);
-        properties.setDuration(BigInteger.valueOf(7));
-        mosaicDto.setProperties(properties);
+        mosaicDto.setFlags(5);
+        mosaicDto.setDivisibility(6);
+        mosaicDto.setDuration(BigInteger.valueOf(7));
 
         mosaicInfoDto.setMosaic(mosaicDto);
         mockRemoteCall(mosaicInfoDto);

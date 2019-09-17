@@ -14,32 +14,32 @@
  * limitations under the License.
  */
 
-package io.nem.sdk.model.mosaic;
+package io.nem.sdk.model.namespace;
 
 import java.util.Arrays;
 
 /**
- * Enum containing mosaic supply type.
+ * Enum containing namespace registration type.
  *
  * @since 1.0
  */
-public enum MosaicSupplyType {
+public enum NamespaceRegistrationType {
     /**
-     * Decrease the supply.
+     * Root namespace
      */
-    DECREASE(0),
+    ROOT_NAMESPACE(0),
     /**
-     * Increase the supply.
+     * Sub namespace
      */
-    INCREASE(1);
+    SUB_NAMESPACE(1);
 
     private final int value;
 
-    MosaicSupplyType(int value) {
+    NamespaceRegistrationType(int value) {
         this.value = value;
     }
 
-    public static MosaicSupplyType rawValueOf(int value) {
+    public static NamespaceRegistrationType rawValueOf(int value) {
         return Arrays.stream(values()).filter(e -> e.value == value).findFirst()
             .orElseThrow(() -> new IllegalArgumentException(value + " is not a valid value"));
     }

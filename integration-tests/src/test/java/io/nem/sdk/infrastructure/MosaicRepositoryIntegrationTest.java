@@ -19,22 +19,22 @@ package io.nem.sdk.infrastructure;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import io.nem.sdk.api.MosaicRepository;
+import io.nem.sdk.api.RepositoryCallException;
 import io.nem.sdk.model.mosaic.MosaicId;
 import io.nem.sdk.model.mosaic.MosaicInfo;
 import io.nem.sdk.model.mosaic.MosaicNames;
 import io.nem.sdk.model.transaction.UInt64Id;
-import io.reactivex.schedulers.Schedulers;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 
+//TODO BROKEN!
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class MosaicRepositoryIntegrationTest extends BaseIntegrationTest {
 
@@ -51,19 +51,18 @@ class MosaicRepositoryIntegrationTest extends BaseIntegrationTest {
 
     @ParameterizedTest
     @EnumSource(RepositoryType.class)
-    void getMosaicViaMosaicId(RepositoryType type) throws ExecutionException, InterruptedException {
-        MosaicInfo mosaicInfo = getMosaicRepository(type).getMosaic(mosaicId).toFuture().get();
-
-        assertEquals(new BigInteger("1"), mosaicInfo.getHeight());
+    void getMosaicViaMosaicId(RepositoryType type) {
+        MosaicInfo mosaicInfo = get(getMosaicRepository(type).getMosaic(mosaicId));
+        assertEquals(new BigInteger("1"), mosaicInfo.getStartHeight());
         assertEquals(mosaicId, mosaicInfo.getMosaicId());
     }
 
 
     @ParameterizedTest
     @EnumSource(RepositoryType.class)
-    void getMosaicsNames(RepositoryType type) throws ExecutionException, InterruptedException {
-        List<MosaicNames> mosaicNames = getMosaicRepository(type)
-            .getMosaicsNames(Collections.singletonList(mosaicId)).toFuture().get();
+    void getMosaicsNames(RepositoryType type) {
+        List<MosaicNames> mosaicNames = get(getMosaicRepository(type)
+            .getMosaicsNames(Collections.singletonList(mosaicId)));
         assertEquals(1, mosaicNames.size());
         assertEquals(mosaicId, mosaicNames.get(0).getMosaicId());
         assertEquals(0, mosaicNames.get(0).getNames().size());
@@ -76,10 +75,8 @@ class MosaicRepositoryIntegrationTest extends BaseIntegrationTest {
 
     @ParameterizedTest
     @EnumSource(RepositoryType.class)
-    void getMosaicsViaMosaicId(RepositoryType type)
-        throws ExecutionException, InterruptedException {
-        List<MosaicInfo> mosaicsInfo = getMosaicRepository(type).getMosaics(mosaicIds).toFuture()
-            .get();
+    void getMosaicsViaMosaicId(RepositoryType type) {
+        List<MosaicInfo> mosaicsInfo = get(getMosaicRepository(type).getMosaics(mosaicIds));
 
         assertEquals(mosaicIds.size(), mosaicsInfo.size());
         assertEquals(mosaicIds.get(0).getIdAsHex(), mosaicsInfo.get(0).getMosaicId().getIdAsHex());
@@ -134,12 +131,11 @@ class MosaicRepositoryIntegrationTest extends BaseIntegrationTest {
     @ParameterizedTest
     @EnumSource(RepositoryType.class)
     void throwExceptionWhenMosaicDoesNotExists(RepositoryType type) {
-        // TestObserver<MosaicInfo> testObserver = new TestObserver<>();
-        getMosaicRepository(type)
-            .getMosaic(new MosaicId("1E46EE18BE375DA2"))
-            .subscribeOn(Schedulers.single())
-            .test()
-            .awaitDone(2, TimeUnit.SECONDS)
-            .assertFailure(RuntimeException.class);
+        RepositoryCallException exception = Assertions
+            .assertThrows(RepositoryCallException.class, () -> get(getMosaicRepository(type)
+                .getMosaic(new MosaicId("AAAAAE18BE375DA2"))));
+        Assertions.assertEquals(
+            "ApiException: Not Found - 404 - ResourceNotFound - no resource exists with id 'aaaaae18be375da2'",
+            exception.getMessage());
     }
 }

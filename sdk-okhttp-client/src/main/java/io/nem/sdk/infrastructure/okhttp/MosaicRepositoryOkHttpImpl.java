@@ -27,10 +27,10 @@ import io.nem.sdk.model.namespace.NamespaceName;
 import io.nem.sdk.model.transaction.UInt64Id;
 import io.nem.sdk.openapi.okhttp_gson.api.MosaicRoutesApi;
 import io.nem.sdk.openapi.okhttp_gson.invoker.ApiClient;
+import io.nem.sdk.openapi.okhttp_gson.model.MosaicDTO;
 import io.nem.sdk.openapi.okhttp_gson.model.MosaicIds;
 import io.nem.sdk.openapi.okhttp_gson.model.MosaicInfoDTO;
 import io.nem.sdk.openapi.okhttp_gson.model.MosaicNamesDTO;
-import io.nem.sdk.openapi.okhttp_gson.model.MosaicPropertiesDTO;
 import io.nem.sdk.openapi.okhttp_gson.model.MosaicsNamesDTO;
 import io.reactivex.Observable;
 import java.util.List;
@@ -114,17 +114,16 @@ public class MosaicRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl imp
             mosaicInfoDTO.getMosaic().getStartHeight(),
             new PublicAccount(mosaicInfoDTO.getMosaic().getOwnerPublicKey(), networkType),
             mosaicInfoDTO.getMosaic().getRevision(),
-            extractMosaicProperties(mosaicInfoDTO.getMosaic().getProperties()));
+            extractMosaicProperties(mosaicInfoDTO.getMosaic()));
     }
 
-    private MosaicProperties extractMosaicProperties(MosaicPropertiesDTO mosaicPropertiesDTO) {
-        String flags =
-            "00" + Integer.toBinaryString(mosaicPropertiesDTO.getFlags());
+    private MosaicProperties extractMosaicProperties(MosaicDTO mosaicDTO) {
+        String flags = "00" + Integer.toBinaryString(mosaicDTO.getFlags());
         String bitMapFlags = flags.substring(flags.length() - 2);
         return MosaicProperties.create(
             bitMapFlags.charAt(1) == '1',
             bitMapFlags.charAt(0) == '1',
-            mosaicPropertiesDTO.getDivisibility(),
-            mosaicPropertiesDTO.getDuration());
+            mosaicDTO.getDivisibility(),
+            mosaicDTO.getDuration());
     }
 }

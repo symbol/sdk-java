@@ -20,26 +20,20 @@ package io.nem.sdk.api;
  * General exception raised when there is an error during a repository call (like a rest call
  * exception)
  *
- * This exception hides the implementation specific exception (like jersey2, vertx or okhttp exceptions).
- * The original exception will be part of the cause.
+ * This exception hides the implementation specific exception (like jersey2, vertx or okhttp
+ * exceptions). The original exception will be part of the cause.
  *
  * @author Fernando Boucquez
  */
 public class RepositoryCallException extends RuntimeException {
 
-    public RepositoryCallException() {
-    }
-
-    public RepositoryCallException(String message) {
-        super(message);
-    }
-
+    /**
+     * @param message the message. It may be resolved from the response body an status of a failed
+     * request.
+     * @param cause the original exception, probably linked to the specific implementation.
+     */
     public RepositoryCallException(String message, Throwable cause) {
         super(message, cause);
-    }
-
-    public RepositoryCallException(Throwable cause) {
-        super(cause);
     }
 
 

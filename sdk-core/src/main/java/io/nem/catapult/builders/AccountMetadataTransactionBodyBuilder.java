@@ -1,22 +1,14 @@
 /**
-*** Copyright (c) 2016-present,
-*** Jaguar0625, gimre, BloodyRookie, Tech Bureau, Corp. All rights reserved.
-***
-*** This file is part of Catapult.
-***
-*** Catapult is free software: you can redistribute it and/or modify
-*** it under the terms of the GNU Lesser General Public License as published by
-*** the Free Software Foundation, either version 3 of the License, or
-*** (at your option) any later version.
-***
-*** Catapult is distributed in the hope that it will be useful,
-*** but WITHOUT ANY WARRANTY; without even the implied warranty of
-*** MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-*** GNU Lesser General Public License for more details.
-***
-*** You should have received a copy of the GNU Lesser General Public License
-*** along with Catapult. If not, see <http://www.gnu.org/licenses/>.
-**/
+ * ** Copyright (c) 2016-present, ** Jaguar0625, gimre, BloodyRookie, Tech Bureau, Corp. All rights
+ * reserved. ** ** This file is part of Catapult. ** ** Catapult is free software: you can
+ * redistribute it and/or modify ** it under the terms of the GNU Lesser General Public License as
+ * published by ** the Free Software Foundation, either version 3 of the License, or ** (at your
+ * option) any later version. ** ** Catapult is distributed in the hope that it will be useful, **
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of ** MERCHANTABILITY or FITNESS FOR
+ * A PARTICULAR PURPOSE. See the ** GNU Lesser General Public License for more details. ** ** You
+ * should have received a copy of the GNU Lesser General Public License ** along with Catapult. If
+ * not, see <http://www.gnu.org/licenses/>.
+ **/
 
 package io.nem.catapult.builders;
 
@@ -24,7 +16,8 @@ import java.io.DataInput;
 import java.nio.ByteBuffer;
 
 /** Binary layout for an account metadata transaction. */
-final class AccountMetadataTransactionBodyBuilder {
+public final class AccountMetadataTransactionBodyBuilder {
+
     /** Metadata target public key. */
     private final KeyDto targetPublicKey;
     /** Metadata key scoped to source, target and type. */
@@ -47,7 +40,7 @@ final class AccountMetadataTransactionBodyBuilder {
             final short valueSize = Short.reverseBytes(stream.readShort());
             this.value = ByteBuffer.allocate(valueSize);
             stream.readFully(this.value.array());
-        } catch(Exception e) {
+        } catch (Exception e) {
             throw GeneratorUtils.getExceptionToPropagate(e);
         }
     }
@@ -60,7 +53,8 @@ final class AccountMetadataTransactionBodyBuilder {
      * @param valueSizeDelta Change in value size in bytes.
      * @param value Difference between existing value and new value \note when there is no existing value, new value is same this value \note when there is an existing value, new value is calculated as xor(previous-value, value).
      */
-    protected AccountMetadataTransactionBodyBuilder(final KeyDto targetPublicKey, final long scopedMetadataKey, final short valueSizeDelta, final ByteBuffer value) {
+    protected AccountMetadataTransactionBodyBuilder(final KeyDto targetPublicKey,
+        final long scopedMetadataKey, final short valueSizeDelta, final ByteBuffer value) {
         GeneratorUtils.notNull(targetPublicKey, "targetPublicKey is null");
         GeneratorUtils.notNull(value, "value is null");
         this.targetPublicKey = targetPublicKey;
@@ -78,8 +72,10 @@ final class AccountMetadataTransactionBodyBuilder {
      * @param value Difference between existing value and new value \note when there is no existing value, new value is same this value \note when there is an existing value, new value is calculated as xor(previous-value, value).
      * @return Instance of AccountMetadataTransactionBodyBuilder.
      */
-    public static AccountMetadataTransactionBodyBuilder create(final KeyDto targetPublicKey, final long scopedMetadataKey, final short valueSizeDelta, final ByteBuffer value) {
-        return new AccountMetadataTransactionBodyBuilder(targetPublicKey, scopedMetadataKey, valueSizeDelta, value);
+    public static AccountMetadataTransactionBodyBuilder create(final KeyDto targetPublicKey,
+        final long scopedMetadataKey, final short valueSizeDelta, final ByteBuffer value) {
+        return new AccountMetadataTransactionBodyBuilder(targetPublicKey, scopedMetadataKey,
+            valueSizeDelta, value);
     }
 
     /**

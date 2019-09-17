@@ -20,7 +20,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import io.nem.sdk.api.NetworkRepository;
 import io.nem.sdk.model.blockchain.NetworkType;
-import java.util.concurrent.ExecutionException;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
@@ -31,10 +30,9 @@ class NetworkRepositoryIntegrationTest extends BaseIntegrationTest {
 
     @ParameterizedTest
     @EnumSource(RepositoryType.class)
-    void testNetworkType(RepositoryType type) throws ExecutionException, InterruptedException {
-        NetworkType networkType = getNetworkRepository(type).getNetworkType().toFuture().get();
-
-        assertEquals(NetworkType.MIJIN_TEST.getValue(), networkType.getValue());
+    void testNetworkType(RepositoryType type) {
+        NetworkType networkType = get(getNetworkRepository(type).getNetworkType());
+        assertEquals(NetworkType.MIJIN_TEST, networkType);
     }
 
     private NetworkRepository getNetworkRepository(RepositoryType type) {

@@ -19,105 +19,131 @@ package io.nem.sdk.model.transaction;
 import java.util.Arrays;
 
 /**
- * Enum containing transaction type constants.
+ * Enum containing transaction type constants and the current versions for new transactions.
  */
 public enum TransactionType {
 
     /**
      * RESERVED
      */
-    RESERVED(0),
+    RESERVED(0, 1),
 
     // Mosaic
     /**
      * Mosaic definition transaction type.
      */
-    MOSAIC_DEFINITION(0x414D),
+    MOSAIC_DEFINITION(0x414D, 1),
 
     /**
      * Mosaic supply change transaction.
      */
-    MOSAIC_SUPPLY_CHANGE(0x424D),
+    MOSAIC_SUPPLY_CHANGE(0x424D, 1),
 
     // Namespace
     /**
      * Register namespace transaction type.
      */
-    REGISTER_NAMESPACE(0x414E),
+    REGISTER_NAMESPACE(0x414E, 1),
 
     /**
      * Address alias transaction type.
      */
-    ADDRESS_ALIAS(0x424E),
+    ADDRESS_ALIAS(0x424E, 1),
 
     /**
      * Mosaic alias transaction type.
      */
-    MOSAIC_ALIAS(0x434E),
+    MOSAIC_ALIAS(0x434E, 1),
 
     // Transfer
     /**
      * Transfer Transaction transaction type.
      */
-    TRANSFER(0x4154),
+    TRANSFER(0x4154, 1),
 
     // Multisignature
     /**
      * Modify multisig account transaction type.
      */
-    MODIFY_MULTISIG_ACCOUNT(0x4155),
+    MODIFY_MULTISIG_ACCOUNT(0x4155, 1),
 
     /**
      * Aggregate complete transaction type.
      */
-    AGGREGATE_COMPLETE(0x4141),
+    AGGREGATE_COMPLETE(0x4141, 1),
 
     /**
      * Aggregate bonded transaction type
      */
-    AGGREGATE_BONDED(0x4241),
+    AGGREGATE_BONDED(0x4241, 1),
 
     /**
      * Hash Lock transaction type
      */
-    LOCK(0x4148),
+    LOCK(0x4148, 1),
 
     // Account filters
     /**
      * Account properties address transaction type
      */
-    ACCOUNT_PROPERTIES_ADDRESS(0x4150),
+    ACCOUNT_PROPERTIES_ADDRESS(0x4150, 1),
 
     /**
      * Account properties mosaic transaction type
      */
-    ACCOUNT_PROPERTIES_MOSAIC(0x4250),
+    ACCOUNT_PROPERTIES_MOSAIC(0x4250, 1),
 
     /**
      * Account properties entity type transaction type
      */
-    ACCOUNT_PROPERTIES_ENTITY_TYPE(0x4350),
+    ACCOUNT_PROPERTIES_ENTITY_TYPE(0x4350, 1),
 
     // Cross-chain swaps
     /**
      * Secret Lock Transaction type
      */
-    SECRET_LOCK(0x4152),
+    SECRET_LOCK(0x4152, 1),
 
     /**
      * Secret Proof transaction type
      */
-    SECRET_PROOF(0x4252),
-
+    SECRET_PROOF(0x4252, 1),
+    /**
+     * Account metadata transaction version
+     */
+    ACCOUNT_METADATA_TRANSACTION((short) 0x4144, 1),
+    /**
+     * Mosaic metadata transaction version
+     */
+    MOSAIC_METADATA_TRANSACTION((short) 0x4244, 1),
+    /**
+     * Namespace metadata transaction version
+     */
+    NAMESPACE_METADATA_TRANSACTION((short) 0x4344, 1),
     /**
      * Account link transaction type
      */
-    ACCOUNT_LINK(0x414C);
-
+    ACCOUNT_LINK(0x414C, 1);
+    /**
+     * The transaction type value
+     */
     private final int value;
 
-    TransactionType(int value) {
+    /**
+     * Transaction format versions are defined in catapult-server in each transaction's plugin
+     * source code.
+     *
+     * <p>In [catapult-server](https://github.com/nemtech/catapult-server), the
+     * `DEFINE_TRANSACTION_CONSTANTS` macro is used to define the `TYPE` and `VERSION` of the
+     * transaction format.
+     *
+     * @see <a href="https://github.com/nemtech/catapult-server/blob/master/plugins/txes/transfer/src/model/TransferTransaction.h#L37"/>
+     */
+    private final int currentVersion;
+
+    TransactionType(int value, int currentVersion) {
         this.value = value;
+        this.currentVersion = currentVersion;
     }
 
     /**
@@ -137,5 +163,14 @@ public enum TransactionType {
      */
     public int getValue() {
         return this.value;
+    }
+
+    /**
+     * Returns the current version for new transactions.
+     *
+     * @return the default version.
+     */
+    public int getCurrentVersion() {
+        return currentVersion;
     }
 }

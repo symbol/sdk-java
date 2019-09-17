@@ -17,22 +17,20 @@
 
 package io.nem.sdk.infrastructure.vertx.mappers;
 
+import static io.nem.core.utils.MapperUtils.toAddressFromUnresolved;
+
 import io.nem.core.utils.MapperUtils;
-import io.nem.sdk.model.account.PublicAccount;
 import io.nem.sdk.model.blockchain.NetworkType;
 import io.nem.sdk.model.namespace.AliasAction;
 import io.nem.sdk.model.namespace.NamespaceId;
 import io.nem.sdk.model.transaction.AddressAliasTransaction;
-import io.nem.sdk.model.transaction.Deadline;
+import io.nem.sdk.model.transaction.AddressAliasTransactionFactory;
 import io.nem.sdk.model.transaction.JsonHelper;
-import io.nem.sdk.model.transaction.Transaction;
-import io.nem.sdk.model.transaction.TransactionInfo;
 import io.nem.sdk.model.transaction.TransactionType;
 import io.nem.sdk.openapi.vertx.model.AddressAliasTransactionDTO;
-import java.util.Optional;
 
 class AddressAliasTransactionMapper extends
-    AbstractTransactionMapper<AddressAliasTransactionDTO> {
+    AbstractTransactionMapper<AddressAliasTransactionDTO, AddressAliasTransaction> {
 
 
     public AddressAliasTransactionMapper(JsonHelper jsonHelper) {
@@ -40,23 +38,15 @@ class AddressAliasTransactionMapper extends
     }
 
     @Override
-    protected Transaction basicMap(TransactionInfo transactionInfo,
+    protected AddressAliasTransactionFactory createFactory(NetworkType networkType,
         AddressAliasTransactionDTO transaction) {
         NamespaceId namespaceId = MapperUtils.toNamespaceId(transaction.getNamespaceId());
-        Deadline deadline = new Deadline(transaction.getDeadline());
-        NetworkType networkType = extractNetworkType(transaction.getVersion());
         AliasAction aliasAction = AliasAction
             .rawValueOf(transaction.getAliasAction().getValue().byteValue());
-        return new AddressAliasTransaction(
+        return new AddressAliasTransactionFactory(
             networkType,
-            extractTransactionVersion(transaction.getVersion()),
-            deadline,
-            transaction.getMaxFee(),
             aliasAction,
             namespaceId,
-            MapperUtils.toAddressFromUnresolved(transaction.getAddress()),
-            Optional.ofNullable(transaction.getSignature()),
-            Optional.of(new PublicAccount(transaction.getSignerPublicKey(), networkType)),
-            Optional.of(transactionInfo));
+            toAddressFromUnresolved(transaction.getAddress()));
     }
 }

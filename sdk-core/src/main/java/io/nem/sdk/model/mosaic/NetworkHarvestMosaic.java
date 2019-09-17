@@ -39,7 +39,6 @@ public class NetworkHarvestMosaic extends Mosaic {
      *
      */
     public NetworkHarvestMosaic(BigInteger amount) {
-
         super(NetworkHarvestMosaic.NAMESPACEID, amount);
     }
 
@@ -50,7 +49,6 @@ public class NetworkHarvestMosaic extends Mosaic {
      * @return a NetworkCurrencyMosaic instance
      */
     public static NetworkHarvestMosaic createRelative(BigInteger amount) {
-
         BigInteger relativeAmount =
             BigDecimal.valueOf(Math.pow(10, NetworkHarvestMosaic.DIVISIBILITY))
                 .toBigInteger()

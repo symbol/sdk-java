@@ -25,14 +25,12 @@ import io.nem.sdk.infrastructure.vertx.mappers.GeneralTransactionMapper;
 import io.nem.sdk.model.account.Account;
 import io.nem.sdk.model.blockchain.NetworkType;
 import io.nem.sdk.model.transaction.AggregateTransaction;
+import io.nem.sdk.model.transaction.AggregateTransactionFactory;
 import io.nem.sdk.model.transaction.CosignatureSignedTransaction;
 import io.nem.sdk.model.transaction.CosignatureTransaction;
-import io.nem.sdk.model.transaction.Deadline;
 import io.nem.sdk.model.transaction.JsonHelper;
 import io.nem.sdk.openapi.vertx.model.TransactionInfoDTO;
 import io.vertx.core.json.Json;
-import java.math.BigInteger;
-import java.time.temporal.ChronoUnit;
 import java.util.Collections;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -84,9 +82,8 @@ public class VertxCosignatureTransactionTest {
     void shouldThrowExceptionWhenTransactionToCosignHasNotBeenAnnunced() throws Exception {
 
         AggregateTransaction aggregateTransaction =
-            AggregateTransaction.createComplete(
-                Deadline.create(2, ChronoUnit.HOURS), BigInteger.ZERO, Collections.emptyList(),
-                NetworkType.MIJIN_TEST);
+            AggregateTransactionFactory
+                .createComplete(NetworkType.MIJIN_TEST, Collections.emptyList()).build();
 
         assertThrows(
             IllegalArgumentException.class,

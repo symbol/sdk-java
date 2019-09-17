@@ -54,12 +54,11 @@ class HashLockTransactionTest {
                 "8498B38D89C1DC8A448EA5824938FF828926CD9F7747B1844B59B4B6807E878B",
                 TransactionType.AGGREGATE_BONDED);
         HashLockTransaction lockFundstx =
-            HashLockTransaction.create(
-                new FakeDeadline(),
+            new HashLockTransactionFactory(
+                NetworkType.MIJIN_TEST,
                 NetworkCurrencyMosaic.createRelative(BigInteger.valueOf(10)),
                 BigInteger.valueOf(100),
-                signedTransaction,
-                NetworkType.MIJIN_TEST);
+                signedTransaction).deadline(new FakeDeadline()).build();
         byte[] actual = lockFundstx.generateBytes();
         assertEquals(expected, HexEncoder.getString(actual));
     }
@@ -76,12 +75,11 @@ class HashLockTransactionTest {
                 "8498B38D89C1DC8A448EA5824938FF828926CD9F7747B1844B59B4B6807E878B",
                 TransactionType.AGGREGATE_BONDED);
         HashLockTransaction lockFundstx =
-            HashLockTransaction.create(
-                new FakeDeadline(),
+            new HashLockTransactionFactory(
+                NetworkType.MIJIN_TEST,
                 NetworkCurrencyMosaic.createRelative(BigInteger.valueOf(10)),
                 BigInteger.valueOf(100),
-                signedTransaction,
-                NetworkType.MIJIN_TEST);
+                signedTransaction).deadline(new FakeDeadline()).build();
         byte[] actual =
             lockFundstx
                 .toAggregate(
@@ -100,12 +98,11 @@ class HashLockTransactionTest {
                 "8498B38D89C1DC8A448EA5824938FF828926CD9F7747B1844B59B4B6807E878B",
                 TransactionType.AGGREGATE_BONDED);
         HashLockTransaction lockFundstx =
-            HashLockTransaction.create(
-                new FakeDeadline(),
+            new HashLockTransactionFactory(
+                NetworkType.MIJIN_TEST,
                 NetworkCurrencyMosaic.createRelative(BigInteger.valueOf(10)),
                 BigInteger.valueOf(100),
-                signedTransaction,
-                NetworkType.MIJIN_TEST);
+                signedTransaction).deadline(new FakeDeadline()).build();
         SignedTransaction lockFundsTransactionSigned = lockFundstx
             .signWith(account, generationHash);
 
@@ -130,12 +127,12 @@ class HashLockTransactionTest {
         assertThrows(
             IllegalArgumentException.class,
             () -> {
-                HashLockTransaction.create(
-                    new FakeDeadline(),
+                new HashLockTransactionFactory(
+                    NetworkType.MIJIN_TEST,
                     NetworkCurrencyMosaic.createRelative(BigInteger.valueOf(10)),
                     BigInteger.valueOf(100),
-                    signedTransaction,
-                    NetworkType.MIJIN_TEST);
+                    signedTransaction).deadline(
+                    new FakeDeadline()).build();
             },
             "Signed transaction must be Aggregate Bonded Transaction");
     }

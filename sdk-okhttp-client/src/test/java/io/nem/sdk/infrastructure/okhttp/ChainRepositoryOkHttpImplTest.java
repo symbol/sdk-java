@@ -55,7 +55,7 @@ public class ChainRepositoryOkHttpImplTest extends AbstractOkHttpRespositoryTest
         dto.setScoreLow(BigInteger.valueOf(3L));
         dto.setScoreHigh(BigInteger.valueOf(5L));
         mockRemoteCall(dto);
-        BlockchainScore blockchainScore = repository.getBlockchainScore().toFuture().get();
+        BlockchainScore blockchainScore = repository.getChainScore().toFuture().get();
         Assertions.assertEquals((dto.getScoreLow()),
             blockchainScore.getScoreLow());
         Assertions.assertEquals((dto.getScoreHigh()),

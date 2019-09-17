@@ -22,7 +22,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import io.nem.sdk.api.NodeRepository;
 import io.nem.sdk.model.node.NodeInfo;
 import io.nem.sdk.model.node.NodeTime;
-import java.util.concurrent.ExecutionException;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
@@ -32,8 +31,8 @@ class NodeRepositoryIntegrationTest extends BaseIntegrationTest {
 
     @ParameterizedTest
     @EnumSource(RepositoryType.class)
-    void getNodeInfo(RepositoryType type) throws ExecutionException, InterruptedException {
-        NodeInfo nodeInfo = getNodeRepository(type).getNodeInfo().toFuture().get();
+    void getNodeInfo(RepositoryType type) {
+        NodeInfo nodeInfo = get(getNodeRepository(type).getNodeInfo());
 
         assertTrue(!nodeInfo.getPublicKey().equals(""));
         assertNotNull(nodeInfo.getHost());
@@ -41,15 +40,14 @@ class NodeRepositoryIntegrationTest extends BaseIntegrationTest {
         assertTrue(nodeInfo.getNetworkIdentifier().getValue() > 0);
     }
 
-    private NodeRepository getNodeRepository(
-        RepositoryType type) {
+    private NodeRepository getNodeRepository(RepositoryType type) {
         return getRepositoryFactory(type).createNodeRepository();
     }
 
     @ParameterizedTest
     @EnumSource(RepositoryType.class)
-    void getNodeTime(RepositoryType type) throws ExecutionException, InterruptedException {
-        NodeTime nodeTime = getNodeRepository(type).getNodeTime().toFuture().get();
+    void getNodeTime(RepositoryType type) {
+        NodeTime nodeTime = get(getNodeRepository(type).getNodeTime());
         assertTrue(nodeTime.getReceiveTimeStamp().longValue() > 0);
         assertTrue(nodeTime.getSendTimeStamp().longValue() > 0);
     }

@@ -27,18 +27,19 @@ import io.nem.sdk.model.account.Address;
 import io.nem.sdk.model.account.PublicAccount;
 import io.nem.sdk.model.blockchain.NetworkType;
 import io.nem.sdk.model.mosaic.Mosaic;
+import io.nem.sdk.model.mosaic.MosaicId;
 import io.nem.sdk.model.mosaic.NetworkCurrencyMosaic;
 import io.nem.sdk.model.transaction.AggregateTransaction;
-import io.nem.sdk.model.transaction.Deadline;
+import io.nem.sdk.model.transaction.AggregateTransactionFactory;
 import io.nem.sdk.model.transaction.JsonHelper;
 import io.nem.sdk.model.transaction.PlainMessage;
 import io.nem.sdk.model.transaction.SignedTransaction;
 import io.nem.sdk.model.transaction.TransferTransaction;
+import io.nem.sdk.model.transaction.TransferTransactionFactory;
 import io.nem.sdk.openapi.vertx.model.TransactionInfoDTO;
 import io.vertx.core.json.Json;
 import java.math.BigInteger;
 import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.Collections;
 import org.bouncycastle.util.encoders.Hex;
@@ -56,30 +57,26 @@ public class VertxAggregateTransactionTest {
     void createAAggregateTransactionViaStaticConstructor() {
 
         TransferTransaction transferTx =
-            TransferTransaction.create(
-                new Deadline(2, ChronoUnit.HOURS),
-                BigInteger.ZERO,
+            TransferTransactionFactory.create(NetworkType.MIJIN_TEST,
                 new Address("SDGLFW-DSHILT-IUHGIB-H5UGX2-VYF5VN-JEKCCD-BR26",
                     NetworkType.MIJIN_TEST),
                 Collections.emptyList(),
-                PlainMessage.Empty,
-                NetworkType.MIJIN_TEST);
+                PlainMessage.Empty).build();
 
         AggregateTransaction aggregateTx =
-            AggregateTransaction.createComplete(
-                new Deadline(2, ChronoUnit.HOURS),
-                BigInteger.ZERO,
+            AggregateTransactionFactory.createComplete(
+                NetworkType.MIJIN_TEST,
                 Arrays.asList(
                     transferTx.toAggregate(
                         new PublicAccount(
                             "9A49366406ACA952B88BADF5F1E9BE6CE4968141035A60BE503273EA65456B24",
-                            NetworkType.MIJIN_TEST))),
-                NetworkType.MIJIN_TEST);
+                            NetworkType.MIJIN_TEST)))
+            ).build();
 
         assertEquals(NetworkType.MIJIN_TEST, aggregateTx.getNetworkType());
         assertTrue(1 == aggregateTx.getVersion());
         assertTrue(LocalDateTime.now().isBefore(aggregateTx.getDeadline().getLocalDateTime()));
-        assertEquals(BigInteger.valueOf(0), aggregateTx.getFee());
+        assertEquals(BigInteger.valueOf(0), aggregateTx.getMaxFee());
         assertEquals(1, aggregateTx.getInnerTransactions().size());
     }
 
@@ -91,25 +88,23 @@ public class VertxAggregateTransactionTest {
             "d100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001904141000000000000000001000000000000005500000055000000846b4439154579a5903b1459c9cf69cb8153f6d0110a7a0ed61de29ae4810bf2019054419050b9837efab4bbe8a4b9bb32d812f9885c00d8fc1650e1420100010044b262c46ceabb858096980000000000";
 
         TransferTransaction transferTx =
-            TransferTransaction.create(
-                new VertxFakeDeadline(),
-                BigInteger.ZERO,
+            TransferTransactionFactory.create(
+                NetworkType.MIJIN_TEST,
                 new Address("SBILTA367K2LX2FEXG5TFWAS7GEFYAGY7QLFBYKC", NetworkType.MIJIN_TEST),
                 Collections.singletonList(
-                    new Mosaic(NetworkCurrencyMosaic.NAMESPACEID, BigInteger.valueOf(10000000))),
-                PlainMessage.Empty,
-                NetworkType.MIJIN_TEST);
+                    new Mosaic(new MosaicId(NetworkCurrencyMosaic.NAMESPACEID.getId()),
+                        BigInteger.valueOf(10000000))),
+                PlainMessage.Empty).deadline(new VertxFakeDeadline()).build();
 
         AggregateTransaction aggregateTx =
-            AggregateTransaction.createComplete(
-                new VertxFakeDeadline(),
-                BigInteger.ZERO,
+            AggregateTransactionFactory.createComplete(
+                NetworkType.MIJIN_TEST,
                 Collections.singletonList(
                     transferTx.toAggregate(
                         new PublicAccount(
                             "846B4439154579A5903B1459C9CF69CB8153F6D0110A7A0ED61DE29AE4810BF2",
-                            NetworkType.MIJIN_TEST))),
-                NetworkType.MIJIN_TEST);
+                            NetworkType.MIJIN_TEST)))
+            ).deadline(new VertxFakeDeadline()).build();
 
         byte[] actual = aggregateTx.generateBytes();
         assertEquals(expected, Hex.toHexString(actual));
@@ -119,24 +114,20 @@ public class VertxAggregateTransactionTest {
     void shouldCreateAggregateTransactionAndSignWithMultipleCosignatories() {
 
         TransferTransaction transferTx =
-            TransferTransaction.create(
-                new VertxFakeDeadline(),
-                BigInteger.ZERO,
+            TransferTransactionFactory.create(NetworkType.MIJIN_TEST,
                 new Address("SBILTA367K2LX2FEXG5TFWAS7GEFYAGY7QLFBYKC", NetworkType.MIJIN_TEST),
                 Collections.emptyList(),
-                new PlainMessage("test-message"),
-                NetworkType.MIJIN_TEST);
+                new PlainMessage("test-message")
+            ).build();
 
         AggregateTransaction aggregateTx =
-            AggregateTransaction.createComplete(
-                new VertxFakeDeadline(),
-                BigInteger.ZERO,
+            AggregateTransactionFactory.createComplete(
+                NetworkType.MIJIN_TEST,
                 Collections.singletonList(
                     transferTx.toAggregate(
                         new PublicAccount(
                             "B694186EE4AB0558CA4AFCFDD43B42114AE71094F5A1FC4A913FE9971CACD21D",
-                            NetworkType.MIJIN_TEST))),
-                NetworkType.MIJIN_TEST);
+                            NetworkType.MIJIN_TEST)))).build();
 
         Account cosignatoryAccount =
             new Account(

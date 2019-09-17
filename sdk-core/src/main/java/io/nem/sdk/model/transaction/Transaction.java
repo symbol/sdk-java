@@ -16,6 +16,7 @@
 
 package io.nem.sdk.model.transaction;
 
+import io.nem.catapult.builders.EntityTypeDto;
 import io.nem.core.crypto.Hashes;
 import io.nem.core.crypto.Signature;
 import io.nem.core.crypto.Signer;
@@ -26,7 +27,6 @@ import io.nem.sdk.model.blockchain.NetworkType;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.util.Optional;
-import org.apache.commons.lang3.Validate;
 import org.bouncycastle.util.encoders.Hex;
 
 /**
@@ -40,47 +40,25 @@ public abstract class Transaction {
     private final NetworkType networkType;
     private final Integer version;
     private final Deadline deadline;
-    private final BigInteger fee;
+    private final BigInteger maxFee;
     private final Optional<String> signature;
     private final Optional<TransactionInfo> transactionInfo;
     private Optional<PublicAccount> signer;
 
     /**
-     * Constructor
-     *
-     * @param type Transaction type.
-     * @param networkType Network type.
-     * @param version Transaction version.
-     * @param deadline Transaction deadline.
-     * @param fee Transaction fee.
-     * @param signature Transaction signature.
-     * @param signer Transaction signer.
-     * @param transactionInfo Transaction meta data info.
+     * Abstract constructors of all transactions.
      */
-    @SuppressWarnings("squid:S00107")
-    public Transaction(
-        TransactionType type,
-        NetworkType networkType,
-        Integer version,
-        Deadline deadline,
-        BigInteger fee,
-        Optional<String> signature,
-        Optional<PublicAccount> signer,
-        Optional<TransactionInfo> transactionInfo) {
-        Validate.notNull(type, "Type must not be null");
-        Validate.notNull(networkType, "NetworkType must not be null");
-        Validate.notNull(version, "Version must not be null");
-        Validate.notNull(deadline, "Deadline must not be null");
-        Validate.notNull(fee, "Fee must not be null");
-        this.type = type;
-        this.networkType = networkType;
-        this.version = version;
-        this.deadline = deadline;
-        this.fee = fee;
-        this.signature = signature;
-        this.signer = signer;
-        this.transactionInfo = transactionInfo;
+    Transaction(TransactionFactory<?> factory) {
+        this.type = factory.getType();
+        this.networkType = factory.getNetworkType();
+        this.version = factory.getVersion();
+        this.deadline = factory.getDeadline();
+        this.maxFee = factory.getMaxFee();
+        this.signature = factory.getSignature();
+        this.signer = factory.getSigner();
+        this.transactionInfo = factory.getTransactionInfo();
     }
+
 
     /**
      * Generates hash for a serialized transaction payload.
@@ -145,8 +123,8 @@ public abstract class Transaction {
      *
      * @return fee amount
      */
-    public BigInteger getFee() {
-        return fee;
+    public BigInteger getMaxFee() {
+        return maxFee;
     }
 
     /**
@@ -331,5 +309,12 @@ public abstract class Transaction {
     protected ByteBuffer getRequiredSignerBytes() {
         return getSignerBytes()
             .orElseThrow(() -> new IllegalStateException("SignerBytes is required"));
+    }
+
+    /**
+     * @return EntityTypeDto transaction type of this transaction for catbuffer.
+     */
+    protected EntityTypeDto getEntityTypeDto() {
+        return EntityTypeDto.rawValueOf((short) type.getValue());
     }
 }

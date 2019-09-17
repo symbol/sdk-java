@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 NEM
+ * Copyright 2018 NEM
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,48 +14,36 @@
  * limitations under the License.
  */
 
-package io.nem.sdk.model.transaction;
+package io.nem.sdk.model.mosaic;
 
 import java.util.Arrays;
 
 /**
- * Enum containing multisig cosignatory modification type constants.
+ * Enum containing mosaic supply type.
  *
  * @since 1.0
  */
-public enum MultisigCosignatoryModificationType {
+public enum MosaicSupplyChangeActionType {
     /**
-     * Add cosignatory.
+     * Decrease the supply.
      */
-    ADD(1),
-
+    DECREASE(0),
     /**
-     * Remove cosignatory
+     * Increase the supply.
      */
-    REMOVE(0);
+    INCREASE(1);
 
     private final int value;
 
-    MultisigCosignatoryModificationType(int value) {
+    MosaicSupplyChangeActionType(int value) {
         this.value = value;
     }
 
-    /**
-     * Static constructor converting multsig cosignatory modification raw value to enum instance.
-     *
-     * @param value Multisig cosignatory modification type raw value
-     * @return {@link MultisigCosignatoryModificationType}
-     */
-    public static MultisigCosignatoryModificationType rawValueOf(int value) {
+    public static MosaicSupplyChangeActionType rawValueOf(int value) {
         return Arrays.stream(values()).filter(e -> e.value == value).findFirst()
             .orElseThrow(() -> new IllegalArgumentException(value + " is not a valid value"));
     }
 
-    /**
-     * Returns enum value.
-     *
-     * @return int
-     */
     public int getValue() {
         return value;
     }

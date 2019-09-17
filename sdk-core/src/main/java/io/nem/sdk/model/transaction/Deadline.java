@@ -71,6 +71,15 @@ public class Deadline {
     }
 
     /**
+     * Create the default deadline of 2 hours.
+     *
+     * @return {@link Deadline}
+     */
+    public static Deadline create() {
+        return new Deadline(2, ChronoUnit.HOURS);
+    }
+
+    /**
      * Returns number of seconds elapsed since the creation of the nemesis block.
      *
      * @return long

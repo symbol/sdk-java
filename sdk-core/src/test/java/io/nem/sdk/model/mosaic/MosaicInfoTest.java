@@ -46,7 +46,7 @@ class MosaicInfoTest {
 
         assertEquals(mosaicId, mosaicInfo.getMosaicId());
         assertEquals(new BigInteger("100"), mosaicInfo.getSupply());
-        assertEquals(new BigInteger("0"), mosaicInfo.getHeight());
+        assertEquals(new BigInteger("0"), mosaicInfo.getStartHeight());
         assertEquals(
             new PublicAccount(
                 "B4F12E7C9F6946091E2CB8B6D3A12B50D17CCBBF646386EA27CE2946A7423DCF",

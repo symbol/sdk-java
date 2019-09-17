@@ -42,7 +42,8 @@ public enum PropertyType {
         try {
             int value = Integer.decode(stringValue);
             return Arrays.stream(values()).filter(e -> e.value == value).findFirst()
-                .orElseThrow(() -> new IllegalArgumentException(stringValue + " is not a valid value"));
+                .orElseThrow(
+                    () -> new IllegalArgumentException(stringValue + " is not a valid value"));
         } catch (NumberFormatException e) {
             throw new IllegalArgumentException(stringValue + " is not a valid value");
         }

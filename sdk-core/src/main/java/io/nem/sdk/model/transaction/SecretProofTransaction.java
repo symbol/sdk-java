@@ -18,7 +18,6 @@ package io.nem.sdk.model.transaction;
 
 import io.nem.catapult.builders.AmountDto;
 import io.nem.catapult.builders.EmbeddedSecretProofTransactionBuilder;
-import io.nem.catapult.builders.EntityTypeDto;
 import io.nem.catapult.builders.Hash256Dto;
 import io.nem.catapult.builders.KeyDto;
 import io.nem.catapult.builders.LockHashAlgorithmDto;
@@ -27,12 +26,7 @@ import io.nem.catapult.builders.SignatureDto;
 import io.nem.catapult.builders.TimestampDto;
 import io.nem.catapult.builders.UnresolvedAddressDto;
 import io.nem.sdk.model.account.Address;
-import io.nem.sdk.model.account.PublicAccount;
-import io.nem.sdk.model.blockchain.NetworkType;
-import java.math.BigInteger;
 import java.nio.ByteBuffer;
-import java.util.Optional;
-import org.apache.commons.lang3.Validate;
 import org.bouncycastle.util.encoders.Hex;
 
 /**
@@ -40,176 +34,32 @@ import org.bouncycastle.util.encoders.Hex;
  */
 public class SecretProofTransaction extends Transaction {
 
-    private final HashType hashType;
+    private final LockHashAlgorithmType hashType;
     private final String secret;
     private final String proof;
     private final Address recipient;
 
-    /**
-     * Constructor.
-     *
-     * @param networkType Network type.
-     * @param version Transaction version.
-     * @param deadline Deadline to include the transaction.
-     * @param maxFee Max fee the sender will pay.
-     * @param hashType Hash algorithm secret is generated with.
-     * @param recipient Address of recipient.
-     * @param secret Seed proof hashed.
-     * @param proof Seed proof.
-     * @param signature Transaction Signature.
-     * @param signer Signer of the transaction.
-     * @param transactionInfo Transaction info.
-     */
-    @SuppressWarnings("squid:S00107")
-    public SecretProofTransaction(
-        final NetworkType networkType,
-        final Integer version,
-        final Deadline deadline,
-        final BigInteger maxFee,
-        final HashType hashType,
-        final Address recipient,
-        final String secret,
-        final String proof,
-        final String signature,
-        final PublicAccount signer,
-        final TransactionInfo transactionInfo) {
-        this(
-            networkType,
-            version,
-            deadline,
-            maxFee,
-            hashType,
-            recipient,
-            secret,
-            proof,
-            Optional.of(signature),
-            Optional.of(signer),
-            Optional.of(transactionInfo));
-    }
 
     /**
-     * Constructor.
+     * The transaction contructor using the factory.
      *
-     * @param networkType Network type.
-     * @param version Transaction version.
-     * @param deadline Deadline to include the transaction.
-     * @param maxFee Max fee the sender will pay.
-     * @param hashType Hash algorithm secret is generated with.
-     * @param recipient Address of recipient.
-     * @param secret Seed proof hashed.
-     * @param proof Seed proof.
+     * @param factory the factory with the configured data.
      */
-    @SuppressWarnings("squid:S00107")
-    public SecretProofTransaction(
-        final NetworkType networkType,
-        final Integer version,
-        final Deadline deadline,
-        final BigInteger maxFee,
-        final HashType hashType,
-        final Address recipient,
-        final String secret,
-        final String proof) {
-        this(
-            networkType,
-            version,
-            deadline,
-            maxFee,
-            hashType,
-            recipient,
-            secret,
-            proof,
-            Optional.empty(),
-            Optional.empty(),
-            Optional.empty());
+    public SecretProofTransaction(SecretProofTransactionFactory factory) {
+        super(factory);
+        this.hashType = factory.getHashType();
+        this.secret = factory.getSecret();
+        this.proof = factory.getProof();
+        this.recipient = factory.getRecipient();
     }
 
-    /**
-     * Constructor.
-     *
-     * @param networkType Network type.
-     * @param version Transaction version.
-     * @param deadline Deadline to include the transaction.
-     * @param maxFee Max fee the sender will pay.
-     * @param hashType Hash algorithm secret is generated with.
-     * @param recipient Address of recipient.
-     * @param secret Seed proof hashed.
-     * @param proof Seed proof.
-     * @param signature Transaction Signature.
-     * @param signer Signer of the transaction.
-     * @param transactionInfo Transaction info.
-     */
-    @SuppressWarnings("squid:S00107")
-    public SecretProofTransaction(
-        final NetworkType networkType,
-        final Integer version,
-        final Deadline deadline,
-        final BigInteger maxFee,
-        final HashType hashType,
-        final Address recipient,
-        final String secret,
-        final String proof,
-        final Optional<String> signature,
-        final Optional<PublicAccount> signer,
-        final Optional<TransactionInfo> transactionInfo) {
-        super(
-            TransactionType.SECRET_PROOF,
-            networkType,
-            version,
-            deadline,
-            maxFee,
-            signature,
-            signer,
-            transactionInfo);
-        Validate.notNull(secret, "Secret must not be null.");
-        Validate.notNull(proof, "Proof must not be null.");
-        Validate.notNull(recipient, "Recipient must not be null.");
-        if (!HashType.validator(hashType, secret)) {
-            throw new IllegalArgumentException(
-                "HashType and Secret have incompatible length or not hexadecimal string");
-        }
-        this.hashType = hashType;
-        this.secret = secret;
-        this.proof = proof;
-        this.recipient = recipient;
-    }
-
-    /**
-     * Create a secret proof transaction object.
-     *
-     * @param deadline Deadline to include the transaction.
-     * @param maxFee Max fee the sender will pay.
-     * @param hashType Hash algorithm secret is generated with.
-     * @param recipient Address of recipient.
-     * @param secret Seed proof hashed.
-     * @param proof Seed proof.
-     * @param networkType Network type.
-     * @return a SecretLockTransaction instance
-     */
-    public static SecretProofTransaction create(
-        final Deadline deadline,
-        final BigInteger maxFee,
-        final HashType hashType,
-        final Address recipient,
-        final String secret,
-        final String proof,
-        final NetworkType networkType) {
-        return new SecretProofTransaction(
-            networkType,
-            TransactionVersion.SECRET_PROOF.getValue(),
-            deadline,
-            maxFee,
-            hashType,
-            recipient,
-            secret,
-            proof);
-    }
 
     /**
      * Returns the hash algorithm secret is generated with.
      *
      * @return the hash algorithm secret is generated with.
      */
-    public HashType getHashType() {
+    public LockHashAlgorithmType getHashType() {
         return hashType;
     }
 
@@ -247,14 +97,21 @@ public class SecretProofTransaction extends Transaction {
                 new SignatureDto(signatureBuffer),
                 new KeyDto(signerBuffer),
                 getNetworkVersion(),
-                EntityTypeDto.SECRET_PROOF_TRANSACTION,
-                new AmountDto(getFee().longValue()),
+                getEntityTypeDto(),
+                new AmountDto(getMaxFee().longValue()),
                 new TimestampDto(getDeadline().getInstant()),
                 LockHashAlgorithmDto.rawValueOf((byte) hashType.getValue()),
                 new Hash256Dto(getSecretBuffer()),
                 new UnresolvedAddressDto(this.recipient.getByteBuffer()),
                 getProofBuffer());
         return txBuilder.serialize();
+    }
+
+    /**
+     * @return the recipient
+     */
+    public Address getRecipient() {
+        return recipient;
     }
 
     /**
@@ -268,7 +125,7 @@ public class SecretProofTransaction extends Transaction {
             EmbeddedSecretProofTransactionBuilder.create(
                 new KeyDto(getRequiredSignerBytes()),
                 getNetworkVersion(),
-                EntityTypeDto.SECRET_PROOF_TRANSACTION,
+                getEntityTypeDto(),
                 LockHashAlgorithmDto.rawValueOf((byte) hashType.getValue()),
                 new Hash256Dto(getSecretBuffer()),
                 new UnresolvedAddressDto(this.recipient.getByteBuffer()),

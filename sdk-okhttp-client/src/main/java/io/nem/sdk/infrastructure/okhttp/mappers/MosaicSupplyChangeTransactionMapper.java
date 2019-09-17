@@ -19,18 +19,17 @@ package io.nem.sdk.infrastructure.okhttp.mappers;
 
 import static io.nem.core.utils.MapperUtils.toMosaicId;
 
-import io.nem.sdk.model.account.PublicAccount;
-import io.nem.sdk.model.mosaic.MosaicSupplyType;
-import io.nem.sdk.model.transaction.Deadline;
+import io.nem.sdk.model.blockchain.NetworkType;
+import io.nem.sdk.model.mosaic.MosaicSupplyChangeActionType;
 import io.nem.sdk.model.transaction.JsonHelper;
 import io.nem.sdk.model.transaction.MosaicSupplyChangeTransaction;
-import io.nem.sdk.model.transaction.Transaction;
-import io.nem.sdk.model.transaction.TransactionInfo;
+import io.nem.sdk.model.transaction.MosaicSupplyChangeTransactionFactory;
+import io.nem.sdk.model.transaction.TransactionFactory;
 import io.nem.sdk.model.transaction.TransactionType;
 import io.nem.sdk.openapi.okhttp_gson.model.MosaicSupplyChangeTransactionDTO;
 
 class MosaicSupplyChangeTransactionMapper extends
-    AbstractTransactionMapper<MosaicSupplyChangeTransactionDTO> {
+    AbstractTransactionMapper<MosaicSupplyChangeTransactionDTO, MosaicSupplyChangeTransaction> {
 
     public MosaicSupplyChangeTransactionMapper(JsonHelper jsonHelper) {
         super(jsonHelper, TransactionType.MOSAIC_SUPPLY_CHANGE,
@@ -38,23 +37,11 @@ class MosaicSupplyChangeTransactionMapper extends
     }
 
     @Override
-    protected Transaction basicMap(TransactionInfo transactionInfo,
-        MosaicSupplyChangeTransactionDTO transaction) {
-
-        Deadline deadline = new Deadline(transaction.getDeadline());
-
-        return new MosaicSupplyChangeTransaction(
-            extractNetworkType(transaction.getVersion()),
-            extractTransactionVersion(transaction.getVersion()),
-            deadline,
-            transaction.getMaxFee(),
+    protected TransactionFactory<MosaicSupplyChangeTransaction> createFactory(
+        NetworkType networkType, MosaicSupplyChangeTransactionDTO transaction) {
+        return new MosaicSupplyChangeTransactionFactory(networkType,
             toMosaicId(transaction.getMosaicId()),
-            MosaicSupplyType.rawValueOf(transaction.getAction().getValue()),
-            transaction.getDelta(),
-            transaction.getSignature(),
-            new PublicAccount(transaction.getSignerPublicKey(),
-                extractNetworkType(transaction.getVersion())),
-            transactionInfo);
+            MosaicSupplyChangeActionType.rawValueOf(transaction.getAction().getValue()),
+            transaction.getDelta());
     }
-
 }

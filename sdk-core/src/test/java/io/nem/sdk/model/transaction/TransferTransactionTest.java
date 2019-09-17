@@ -28,7 +28,6 @@ import io.nem.sdk.model.mosaic.Mosaic;
 import io.nem.sdk.model.mosaic.MosaicId;
 import java.math.BigInteger;
 import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import org.bouncycastle.util.encoders.Hex;
 import org.junit.jupiter.api.BeforeAll;
@@ -53,19 +52,17 @@ class TransferTransactionTest {
     void createATransferTransactionViaStaticConstructor() {
 
         TransferTransaction transferTx =
-            TransferTransaction.create(
-                new Deadline(2, ChronoUnit.HOURS),
-                BigInteger.ZERO,
+            TransferTransactionFactory.create(NetworkType.MIJIN_TEST,
                 new Address("SDGLFW-DSHILT-IUHGIB-H5UGX2-VYF5VN-JEKCCD-BR26",
                     NetworkType.MIJIN_TEST),
                 Arrays.asList(),
-                PlainMessage.Empty,
-                NetworkType.MIJIN_TEST);
+                PlainMessage.Empty
+            ).build();
 
         assertEquals(NetworkType.MIJIN_TEST, transferTx.getNetworkType());
         assertTrue(1 == transferTx.getVersion());
         assertTrue(LocalDateTime.now().isBefore(transferTx.getDeadline().getLocalDateTime()));
-        assertEquals(BigInteger.valueOf(0), transferTx.getFee());
+        assertEquals(BigInteger.valueOf(0), transferTx.getMaxFee());
         assertEquals(
             new Address("SDGLFW-DSHILT-IUHGIB-H5UGX2-VYF5VN-JEKCCD-BR26", NetworkType.MIJIN_TEST),
             transferTx.getRecipient().get());
@@ -80,15 +77,13 @@ class TransferTransactionTest {
         String expected =
             "a5000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000019054410000000000000000010000000000000090e8febd671dd41bee94ec3ba5831cb608a312c2f203ba84ac01000100672b0000ce5600006400000000000000";
         TransferTransaction transferTransaction =
-            TransferTransaction.create(
-                new FakeDeadline(),
-                BigInteger.ZERO,
+            TransferTransactionFactory.create(
+                NetworkType.MIJIN_TEST,
                 new Address("SDUP5PLHDXKBX3UU5Q52LAY4WYEKGEWC6IB3VBFM", NetworkType.MIJIN_TEST),
                 Arrays.asList(
                     new Mosaic(
                         new MosaicId(new BigInteger("95442763262823")), BigInteger.valueOf(100))),
-                PlainMessage.Empty,
-                NetworkType.MIJIN_TEST);
+                PlainMessage.Empty).deadline(new FakeDeadline()).build();
         byte[] actual = transferTransaction.generateBytes();
         assertEquals(expected, Hex.toHexString(actual));
     }
@@ -100,15 +95,13 @@ class TransferTransactionTest {
             "550000009a49366406aca952b88badf5f1e9be6ce4968141035a60be503273ea65456b240190544190e8febd671dd41bee94ec3ba5831cb608a312c2f203ba84ac01000100672b0000ce5600006400000000000000";
 
         TransferTransaction transferTransaction =
-            TransferTransaction.create(
-                new FakeDeadline(),
-                BigInteger.ZERO,
+            TransferTransactionFactory.create(
+                NetworkType.MIJIN_TEST,
                 new Address("SDUP5PLHDXKBX3UU5Q52LAY4WYEKGEWC6IB3VBFM", NetworkType.MIJIN_TEST),
                 Arrays.asList(
                     new Mosaic(
                         new MosaicId(new BigInteger("95442763262823")), BigInteger.valueOf(100))),
-                PlainMessage.Empty,
-                NetworkType.MIJIN_TEST);
+                PlainMessage.Empty).deadline(new FakeDeadline()).build();
         byte[] actual =
             transferTransaction
                 .toAggregate(
@@ -122,15 +115,13 @@ class TransferTransactionTest {
     @Test
     void serializeAndSignTransaction() {
         TransferTransaction transferTransaction =
-            TransferTransaction.create(
-                new FakeDeadline(),
-                BigInteger.ZERO,
+            TransferTransactionFactory.create(
+                NetworkType.MIJIN_TEST,
                 new Address("SDUP5PLHDXKBX3UU5Q52LAY4WYEKGEWC6IB3VBFM", NetworkType.MIJIN_TEST),
                 Arrays.asList(
                     new Mosaic(
                         new MosaicId(new BigInteger("95442763262823")), BigInteger.valueOf(100))),
-                PlainMessage.Empty,
-                NetworkType.MIJIN_TEST);
+                PlainMessage.Empty).deadline(new FakeDeadline()).build();
 
         SignedTransaction signedTransaction = transferTransaction.signWith(account, generationHash);
         String payload = signedTransaction.getPayload();

@@ -16,7 +16,6 @@
 
 package io.nem.sdk.infrastructure;
 
-import static java.time.temporal.ChronoUnit.HOURS;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -29,14 +28,15 @@ import io.nem.sdk.model.blockchain.BlockInfo;
 import io.nem.sdk.model.blockchain.NetworkType;
 import io.nem.sdk.model.mosaic.NetworkCurrencyMosaic;
 import io.nem.sdk.model.transaction.AggregateTransaction;
+import io.nem.sdk.model.transaction.AggregateTransactionFactory;
 import io.nem.sdk.model.transaction.CosignatureSignedTransaction;
 import io.nem.sdk.model.transaction.CosignatureTransaction;
-import io.nem.sdk.model.transaction.Deadline;
 import io.nem.sdk.model.transaction.PlainMessage;
 import io.nem.sdk.model.transaction.SignedTransaction;
 import io.nem.sdk.model.transaction.Transaction;
 import io.nem.sdk.model.transaction.TransactionStatusError;
 import io.nem.sdk.model.transaction.TransferTransaction;
+import io.nem.sdk.model.transaction.TransferTransactionFactory;
 import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.Collections;
@@ -53,6 +53,7 @@ import org.junit.jupiter.params.provider.EnumSource;
 
 @SuppressWarnings("squid:S1607")
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+//TODO BROKEN!
 class ListenerIntegrationTest extends BaseIntegrationTest {
 
     private static final int TIMEOUT = 10;
@@ -265,13 +266,12 @@ class ListenerIntegrationTest extends BaseIntegrationTest {
     private SignedTransaction announceStandaloneTransferTransaction(RepositoryType type)
         throws ExecutionException, InterruptedException, TimeoutException {
         TransferTransaction transferTransaction =
-            TransferTransaction.create(
-                new Deadline(2, HOURS),
-                BigInteger.ZERO,
+            TransferTransactionFactory.create(
+                NetworkType.MIJIN_TEST,
                 this.getRecipient(),
                 Arrays.asList(),
-                PlainMessage.create("test-message"),
-                NetworkType.MIJIN_TEST);
+                PlainMessage.create("test-message")
+            ).build();
 
         SignedTransaction signedTransaction = this.account
             .sign(transferTransaction, generationHash);
@@ -289,14 +289,12 @@ class ListenerIntegrationTest extends BaseIntegrationTest {
         RepositoryType type)
         throws ExecutionException, InterruptedException, TimeoutException {
         TransferTransaction transferTransaction =
-            TransferTransaction.create(
-                new Deadline(2, HOURS),
-                BigInteger.ZERO,
+            TransferTransactionFactory.create(NetworkType.MIJIN_TEST,
                 new Address("SBILTA367K2LX2FEXG5TFWAS7GEFYAGY7QLFBYKC", NetworkType.MIJIN_TEST),
                 Collections.singletonList(
                     NetworkCurrencyMosaic.createRelative(new BigInteger("100000000000"))),
-                PlainMessage.create("test-message"),
-                NetworkType.MIJIN_TEST);
+                PlainMessage.create("test-message")
+            ).build();
 
         SignedTransaction signedTransaction = this.account
             .sign(transferTransaction, generationHash);
@@ -309,21 +307,18 @@ class ListenerIntegrationTest extends BaseIntegrationTest {
         RepositoryType type)
         throws ExecutionException, InterruptedException, TimeoutException {
         TransferTransaction transferTransaction =
-            TransferTransaction.create(
-                new Deadline(2, HOURS),
-                BigInteger.ZERO,
+            TransferTransactionFactory.create(NetworkType.MIJIN_TEST,
                 new Address("SBILTA367K2LX2FEXG5TFWAS7GEFYAGY7QLFBYKC", NetworkType.MIJIN_TEST),
                 Arrays.asList(),
-                PlainMessage.create("test-message"),
-                NetworkType.MIJIN_TEST);
+                PlainMessage.create("test-message")
+            ).build();
 
         AggregateTransaction aggregateTransaction =
-            AggregateTransaction.createComplete(
-                new Deadline(2, HOURS),
-                BigInteger.ZERO,
+            AggregateTransactionFactory.createComplete(
+                NetworkType.MIJIN_TEST,
                 Collections.singletonList(
-                    transferTransaction.toAggregate(this.multisigAccount.getPublicAccount())),
-                NetworkType.MIJIN_TEST);
+                    transferTransaction.toAggregate(this.multisigAccount.getPublicAccount())))
+                .build();
 
         SignedTransaction signedTransaction =
             this.cosignatoryAccount.sign(aggregateTransaction, generationHash);

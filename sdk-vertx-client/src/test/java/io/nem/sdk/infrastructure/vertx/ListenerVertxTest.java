@@ -75,12 +75,24 @@ public class ListenerVertxTest {
 
         Assertions.assertNull(listener.getUid());
 
+        Assertions.assertEquals("Listener has not been opened yet. Please call the open method before subscribing.",
+            Assertions
+                .assertThrows(IllegalStateException.class, () -> listener.newBlock()).getMessage());
+
         simulateWebSocketStartup();
+
+        Assertions.assertNotNull(listener.newBlock());
 
         Assertions.assertEquals(wsId, listener.getUid());
 
         listener.close();
         listener.close();
+
+        Assertions.assertNull(listener.getUid());
+
+        Assertions.assertEquals("Listener has not been opened yet. Please call the open method before subscribing.",
+            Assertions
+                .assertThrows(IllegalStateException.class, () -> listener.newBlock()).getMessage());
     }
 
 

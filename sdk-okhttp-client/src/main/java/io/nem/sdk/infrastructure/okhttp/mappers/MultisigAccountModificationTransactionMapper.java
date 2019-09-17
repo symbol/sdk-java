@@ -19,13 +19,11 @@ package io.nem.sdk.infrastructure.okhttp.mappers;
 
 import io.nem.sdk.model.account.PublicAccount;
 import io.nem.sdk.model.blockchain.NetworkType;
-import io.nem.sdk.model.transaction.Deadline;
 import io.nem.sdk.model.transaction.JsonHelper;
 import io.nem.sdk.model.transaction.MultisigAccountModificationTransaction;
+import io.nem.sdk.model.transaction.MultisigAccountModificationTransactionFactory;
 import io.nem.sdk.model.transaction.MultisigCosignatoryModification;
-import io.nem.sdk.model.transaction.MultisigCosignatoryModificationType;
-import io.nem.sdk.model.transaction.Transaction;
-import io.nem.sdk.model.transaction.TransactionInfo;
+import io.nem.sdk.model.transaction.CosignatoryModificationActionType;
 import io.nem.sdk.model.transaction.TransactionType;
 import io.nem.sdk.openapi.okhttp_gson.model.MultisigAccountModificationTransactionDTO;
 import java.util.Collections;
@@ -33,7 +31,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 class MultisigAccountModificationTransactionMapper extends
-    AbstractTransactionMapper<MultisigAccountModificationTransactionDTO> {
+    AbstractTransactionMapper<MultisigAccountModificationTransactionDTO, MultisigAccountModificationTransaction> {
 
     public MultisigAccountModificationTransactionMapper(JsonHelper jsonHelper) {
         super(jsonHelper, TransactionType.MODIFY_MULTISIG_ACCOUNT,
@@ -41,10 +39,8 @@ class MultisigAccountModificationTransactionMapper extends
     }
 
     @Override
-    protected Transaction basicMap(TransactionInfo transactionInfo,
-        MultisigAccountModificationTransactionDTO transaction) {
-        Deadline deadline = new Deadline(transaction.getDeadline());
-        NetworkType networkType = extractNetworkType(transaction.getVersion());
+    protected MultisigAccountModificationTransactionFactory createFactory(
+        NetworkType networkType, MultisigAccountModificationTransactionDTO transaction) {
 
         List<MultisigCosignatoryModification> modifications =
             transaction.getModifications() == null ? Collections.emptyList()
@@ -52,23 +48,19 @@ class MultisigAccountModificationTransactionMapper extends
                     .map(
                         multisigModification ->
                             new MultisigCosignatoryModification(
-                                MultisigCosignatoryModificationType.rawValueOf(
+                                CosignatoryModificationActionType.rawValueOf(
                                     multisigModification.getModificationAction().getValue()),
                                 PublicAccount.createFromPublicKey(
                                     multisigModification.getCosignatoryPublicKey(),
                                     networkType)))
                     .collect(Collectors.toList());
 
-        return new MultisigAccountModificationTransaction(
+        return new MultisigAccountModificationTransactionFactory(
             networkType,
-            extractTransactionVersion(transaction.getVersion()),
-            deadline,
-            transaction.getMaxFee(),
             transaction.getMinApprovalDelta().byteValue(),
             transaction.getMinRemovalDelta().byteValue(),
-            modifications,
-            transaction.getSignature(),
-            new PublicAccount(transaction.getSignerPublicKey(), networkType),
-            transactionInfo);
+            modifications);
     }
+
+
 }
