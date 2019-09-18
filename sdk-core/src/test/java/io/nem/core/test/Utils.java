@@ -16,7 +16,6 @@
 
 package io.nem.core.test;
 
-import io.nem.core.crypto.KeyPair;
 import io.nem.core.crypto.PrivateKey;
 import io.nem.core.crypto.PublicKey;
 import io.nem.core.crypto.Signature;
@@ -28,16 +27,6 @@ import java.security.SecureRandom;
  * Static class containing test utilities.
  */
 public class Utils {
-
-    /**
-     * Generates a random public key.
-     *
-     * @return A random public key.
-     */
-    public static PublicKey generateRandomPublicKey() {
-        final KeyPair pair = new KeyPair();
-        return pair.getPublicKey();
-    }
 
     public static Long generateRandomId() {
         final SecureRandom rand = new SecureRandom();
