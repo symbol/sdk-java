@@ -136,6 +136,9 @@ public class MosaicDefinitionTransaction extends Transaction {
         if (getMosaicProperties().isTransferable()) {
             mosaicFlagsBuilder.add(MosaicFlagsDto.TRANSFERABLE);
         }
+        if (getMosaicProperties().isRestrictable()) {
+            mosaicFlagsBuilder.add(MosaicFlagsDto.RESTRICTABLE);
+        }
         return mosaicFlagsBuilder;
     }
 

@@ -38,7 +38,7 @@ class MosaicDefinitionTransactionTest {
             new MosaicDefinitionTransactionFactory(NetworkType.MIJIN_TEST,
                 MosaicNonce.createFromBigInteger(new BigInteger("0")),
                 new MosaicId(new BigInteger("0")),
-                MosaicProperties.create(true, true, 3, BigInteger.valueOf(10))
+                MosaicProperties.create(true, true, 3, true, BigInteger.valueOf(10))
             ).build();
 
         assertEquals(NetworkType.MIJIN_TEST, mosaicCreationTx.getNetworkType());
@@ -49,6 +49,7 @@ class MosaicDefinitionTransactionTest {
         assertEquals(true, mosaicCreationTx.getMosaicProperties().isSupplyMutable());
         assertEquals(true, mosaicCreationTx.getMosaicProperties().isTransferable());
         assertEquals(3, mosaicCreationTx.getMosaicProperties().getDivisibility());
+        assertEquals(true, mosaicCreationTx.getMosaicProperties().isRestrictable());
         assertEquals(
             BigInteger.valueOf(10).longValue(),
             mosaicCreationTx.getMosaicProperties().getDuration().longValue());
@@ -58,12 +59,12 @@ class MosaicDefinitionTransactionTest {
     @DisplayName("Serialization")
     void serialization() {
         String expected =
-            "8e00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001904d410000000000000000010000000000000000000000000000000000000003041027000000000000";
+            "8e00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001904d410000000000000000010000000000000000000000000000000000000007041027000000000000";
         MosaicDefinitionTransaction mosaicDefinitionTransaction =
             new MosaicDefinitionTransactionFactory(NetworkType.MIJIN_TEST,
                 MosaicNonce.createFromBigInteger(new BigInteger("0")),
                 new MosaicId(new BigInteger("0")),
-                MosaicProperties.create(true, true, 4, BigInteger.valueOf(10000))
+                MosaicProperties.create(true, true, 4, true, BigInteger.valueOf(10000))
             ).deadline(new FakeDeadline()).build();
 
         byte[] actual = mosaicDefinitionTransaction.generateBytes();
@@ -74,14 +75,14 @@ class MosaicDefinitionTransactionTest {
     @DisplayName("SerializationEmbeddedBytes")
     void shouldGenerateEmbeddedBytes() {
         String expected =
-            "3e00000068b3fbb18729c1fde225c57f8ce080fa828f0067e451a3fd81fa628842b0b76301904d4100000000000000000000000003030a00000000000000";
+            "3e00000068b3fbb18729c1fde225c57f8ce080fa828f0067e451a3fd81fa628842b0b76301904d4100000000000000000000000007030a00000000000000";
 
         NetworkType networkType = NetworkType.MIJIN_TEST;
         MosaicId mosaicId = new MosaicId(new BigInteger("0"));
         BigInteger fee = BigInteger.ONE;
         MosaicNonce mosaicNonce = MosaicNonce.createFromBigInteger(new BigInteger("0"));
         MosaicProperties mosaicProperties = MosaicProperties
-            .create(true, true, 3, BigInteger.valueOf(10));
+            .create(true, true, 3, true, BigInteger.valueOf(10));
 
         PublicAccount signature = PublicAccount.createFromPublicKey(
             "68b3fbb18729c1fde225c57f8ce080fa828f0067e451a3fd81fa628842b0b763",

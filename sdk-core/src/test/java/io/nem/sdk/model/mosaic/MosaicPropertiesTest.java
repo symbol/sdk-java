@@ -27,10 +27,23 @@ class MosaicPropertiesTest {
     @Test
     void shouldCreateMosaicPropertiesViaConstructor() {
         MosaicProperties mosaicProperties =
+            MosaicProperties.create(true, true, 1, true, BigInteger.valueOf(1000));
+        assertTrue(mosaicProperties.isSupplyMutable());
+        assertTrue(mosaicProperties.isTransferable());
+        assertEquals(1, mosaicProperties.getDivisibility());
+        assertTrue(mosaicProperties.isRestrictable());
+        assertEquals(
+            BigInteger.valueOf(1000).intValue(), mosaicProperties.getDuration().longValue());
+    }
+
+    @Test
+    void shouldCreateMosaicPropertiesWithDefaultValuesViaConstructor() {
+        MosaicProperties mosaicProperties =
             MosaicProperties.create(true, true, 1, BigInteger.valueOf(1000));
         assertTrue(mosaicProperties.isSupplyMutable());
         assertTrue(mosaicProperties.isTransferable());
         assertEquals(1, mosaicProperties.getDivisibility());
+        assertTrue(!mosaicProperties.isRestrictable());
         assertEquals(
             BigInteger.valueOf(1000).intValue(), mosaicProperties.getDuration().longValue());
     }

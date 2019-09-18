@@ -41,6 +41,12 @@ public class MosaicProperties {
      */
     private final boolean transferable;
     /**
+     * Not all the mosaics of a given network will be subject to mosaic restrictions. The feature will only affect
+     * those to which the issuer adds the "restrictable" property explicitly at the moment of its creation. This
+     * property appears disabled by default, as it is undesirable for autonomous tokens like the public network currency.
+     */
+    private final boolean restrictable;
+    /**
      * The divisibility determines up to what decimal place the mosaic can be divided into. Thus a
      * divisibility of 3 means that a mosaic can be divided into smallest parts of 0.001 mosaics
      * i.e. milli mosaics is the smallest sub-unit. When transferring mosaics via a transfer
@@ -58,12 +64,43 @@ public class MosaicProperties {
         final boolean supplyMutable,
         final boolean transferable,
         final int divisibility,
+        final boolean restrictable,
         final BigInteger duration) {
         Validate.notNull(duration, "Duration cannot be null");
         this.supplyMutable = supplyMutable;
         this.transferable = transferable;
         this.divisibility = divisibility;
+        this.restrictable = restrictable;
         this.duration = duration;
+    }
+
+    /**
+     * Creates a mosaic properties.
+     *
+     * @param supplyMutable True supply can change.
+     * @param transferable True mosaic can be transfer.
+     * @param divisibility Decimal place of the mosaic.
+     * @param restrictable True mosaic supports restrictions.
+     * @param duration Duration in blocks a mosaic will be available.
+     * @return Mosaic properties.
+     */
+    public static MosaicProperties create(
+        boolean supplyMutable, boolean transferable, int divisibility, boolean restrictable, BigInteger duration) {
+        return new MosaicProperties(supplyMutable, transferable, divisibility, restrictable, duration);
+    }
+
+    /**
+     * Creates a mosaic properties.
+     *
+     * @param supplyMutable True supply can change.
+     * @param transferable True mosaic can be transfer.
+     * @param divisibility Decimal place of the mosaic.
+     * @param restrictable True mosaic supports restrictions.
+     * @return Mosaic properties.
+     */
+    public static MosaicProperties create(
+        boolean supplyMutable, boolean transferable, int divisibility, boolean restrictable) {
+        return new MosaicProperties(supplyMutable, transferable, divisibility, restrictable, BigInteger.ZERO);
     }
 
     /**
@@ -77,7 +114,7 @@ public class MosaicProperties {
      */
     public static MosaicProperties create(
         boolean supplyMutable, boolean transferable, int divisibility, BigInteger duration) {
-        return new MosaicProperties(supplyMutable, transferable, divisibility, duration);
+        return new MosaicProperties(supplyMutable, transferable, divisibility, false, duration);
     }
 
     /**
@@ -90,7 +127,7 @@ public class MosaicProperties {
      */
     public static MosaicProperties create(
         boolean supplyMutable, boolean transferable, int divisibility) {
-        return new MosaicProperties(supplyMutable, transferable, divisibility, BigInteger.ZERO);
+        return new MosaicProperties(supplyMutable, transferable, divisibility, false, BigInteger.ZERO);
     }
 
     /**
@@ -109,6 +146,15 @@ public class MosaicProperties {
      */
     public boolean isTransferable() {
         return transferable;
+    }
+
+    /**
+     * Returns true if mosaic is restrictable
+     *
+     * @return if mosaic is restrictable
+     */
+    public boolean isRestrictable() {
+        return restrictable;
     }
 
     /**
