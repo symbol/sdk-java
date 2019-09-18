@@ -122,11 +122,12 @@ public class MosaicRepositoryVertxImpl extends AbstractRepositoryVertxImpl imple
 
     public static MosaicProperties extractMosaicProperties(MosaicDTO mosaicDTO) {
         String flags = "00" + Integer.toBinaryString(mosaicDTO.getFlags().intValue());
-        String bitMapFlags = flags.substring(flags.length() - 2);
+        String bitMapFlags = flags.substring(flags.length() - 3);
         return MosaicProperties.create(
+            bitMapFlags.charAt(2) == '1',
             bitMapFlags.charAt(1) == '1',
-            bitMapFlags.charAt(0) == '1',
             mosaicDTO.getDivisibility(),
+            bitMapFlags.charAt(0) == '1',
             mosaicDTO.getDuration());
     }
 }

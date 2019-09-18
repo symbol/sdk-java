@@ -40,12 +40,13 @@ class MosaicDefinitionTransactionMapper extends
     protected TransactionFactory<MosaicDefinitionTransaction> createFactory(NetworkType networkType,
         MosaicDefinitionTransactionDTO transaction) {
         String flags = "00" + Integer.toBinaryString(transaction.getFlags().intValue());
-        String bitMapFlags = flags.substring(flags.length() - 2);
+        String bitMapFlags = flags.substring(flags.length() - 3);
         MosaicProperties properties =
             MosaicProperties.create(
+                bitMapFlags.charAt(2) == '1',
                 bitMapFlags.charAt(1) == '1',
-                bitMapFlags.charAt(0) == '1',
                 transaction.getDivisibility(),
+                bitMapFlags.charAt(0) == '1',
                 transaction.getDuration());
         return new MosaicDefinitionTransactionFactory(networkType,
             MosaicNonce
