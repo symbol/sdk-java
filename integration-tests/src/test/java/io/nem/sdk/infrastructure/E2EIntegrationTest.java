@@ -416,7 +416,7 @@ class E2EIntegrationTest extends BaseIntegrationTest {
                 NetworkType.MIJIN_TEST,
                 nonce,
                 this.mosaicId,
-                MosaicProperties.create(true, true, 4, BigInteger.valueOf(100))
+                MosaicProperties.create(true, true, 4, true, BigInteger.valueOf(100))
             ).build();
 
         SignedTransaction signedTransaction =
@@ -590,7 +590,7 @@ class E2EIntegrationTest extends BaseIntegrationTest {
             new MosaicDefinitionTransactionFactory(NetworkType.MIJIN_TEST,
                 nonce,
                 mosaicId,
-                MosaicProperties.create(true, true, 4, BigInteger.valueOf(100))
+                MosaicProperties.create(true, true, 4, true, BigInteger.valueOf(100))
             ).build();
 
         SignedTransaction signedTransaction =
@@ -616,7 +616,7 @@ class E2EIntegrationTest extends BaseIntegrationTest {
                 NetworkType.MIJIN_TEST,
                 nonce,
                 this.mosaicId,
-                MosaicProperties.create(true, false, 4, BigInteger.valueOf(100))).build();
+                MosaicProperties.create(true, false, 4, true, BigInteger.valueOf(100))).build();
 
         AggregateTransaction aggregateTransaction =
             AggregateTransactionFactory.createComplete(
