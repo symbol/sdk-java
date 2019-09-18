@@ -49,12 +49,7 @@ public class RawAddress {
      * @return an encoded address that can be used to identify accounts.
      */
     public static String generateAddress(final String publicKey, final NetworkType networkType) {
-        return generateAddress(publicKey, networkType, resolveSignSchema(networkType));
-    }
-
-    private static SignSchema resolveSignSchema(NetworkType networkType) {
-        return networkType == NetworkType.MIJIN_TEST || networkType == NetworkType.MIJIN
-            ? SignSchema.SHA3 : SignSchema.KECCAK_REVERSED_KEY;
+        return generateAddress(publicKey, networkType, networkType.resolveSignSchema());
     }
 
     /**
@@ -76,7 +71,7 @@ public class RawAddress {
         } catch (DecoderException e) {
             throw new IllegalArgumentException("Public key is not valid");
         }
-        final byte[] publicKeyHash = toHash(publicKeyBytes, signSchema);
+        final byte[] publicKeyHash = SignSchema.toHashShort(signSchema, publicKeyBytes);
 
         // step 2: ripemd160 hash of (1)
         final byte[] ripemd160StepOneHash = Hashes.ripemd160(publicKeyHash);
@@ -96,23 +91,13 @@ public class RawAddress {
         return Base32Encoder.getString(concatStepThreeAndStepSix);
     }
 
-    private static byte[] toHash(byte[] publicKeyBytes, SignSchema signSchema) {
-        if (signSchema == SignSchema.SHA3) {
-            return Hashes.sha3_256(publicKeyBytes);
-        }
-
-        if (signSchema == SignSchema.KECCAK_REVERSED_KEY) {
-            return Hashes.keccak256(publicKeyBytes);
-        }
-        throw new IllegalStateException("Unknown SignSchema " + signSchema);
-    }
 
     private static byte[] generateChecksum(final byte[] input, SignSchema signSchema) {
         // step 1: sha3 hash of (input
-        final byte[] sha3StepThreeHash = toHash(input, signSchema);
+        final byte[] stepThreeHash = SignSchema.toHashShort(signSchema, input);
 
         // step 2: get the first X bytes of (1)
-        return Arrays.copyOfRange(sha3StepThreeHash, 0, NUM_CHECKSUM_BYTES);
+        return Arrays.copyOfRange(stepThreeHash, 0, NUM_CHECKSUM_BYTES);
     }
 }
 

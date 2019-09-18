@@ -18,25 +18,28 @@ package io.nem.core.crypto;
 
 import org.hamcrest.core.IsEqual;
 import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 
 public abstract class KeyAnalyzerTest {
 
-    @Test
-    public void isKeyCompressedReturnsTrueForCompressedPublicKey() {
+    @ParameterizedTest
+    @EnumSource(SignSchema.class)
+    public void isKeyCompressedReturnsTrueForCompressedPublicKey(SignSchema signSchema) {
         // Arrange:
         final KeyAnalyzer analyzer = this.getKeyAnalyzer();
-        final KeyPair keyPair = this.getCryptoEngine().createKeyGenerator().generateKeyPair();
+        final KeyPair keyPair = this.getCryptoEngine().createKeyGenerator(signSchema).generateKeyPair();
 
         // Act + Assert:
         Assert.assertThat(analyzer.isKeyCompressed(keyPair.getPublicKey()), IsEqual.equalTo(true));
     }
 
-    @Test
-    public void isKeyCompressedReturnsFalseIfKeyHasWrongLength() {
+    @ParameterizedTest
+    @EnumSource(SignSchema.class)
+    public void isKeyCompressedReturnsFalseIfKeyHasWrongLength(SignSchema signSchema) {
         // Arrange:
         final KeyAnalyzer analyzer = this.getKeyAnalyzer();
-        final KeyPair keyPair = this.getCryptoEngine().createKeyGenerator().generateKeyPair();
+        final KeyPair keyPair = this.getCryptoEngine().createKeyGenerator(signSchema).generateKeyPair();
         final PublicKey key = new PublicKey(new byte[keyPair.getPublicKey().getBytes().length + 1]);
 
         // Act + Assert:

@@ -49,6 +49,9 @@ class AddressTest {
             Arguments.of("NDGLFW-DSHILT-IUHGIB-H5UGX2-VYF5VN-JEKCCD-BR26", NetworkType.TEST_NET));
     }
 
+
+
+
     private static Stream<Arguments> publicKeysSha3() {
         return Stream.of(
             Arguments.of(
@@ -69,6 +72,20 @@ class AddressTest {
                 "NARNASAS2BIAB6LMFA3FPMGBPGIJGK6IJFJKUV32"));
     }
 
+    //    String publicKey = "c2f93346e27ce6ad1a9f8f5e3066f8326593a406bdf357acb041e2f9ab402efe";
+//
+//        arguments.add(Arguments
+//            .of(NetworkType.MAIN_NET, publicKey, "NCTVW23D2MN5VE4AQ4TZIDZENGNOZXPRPQUJ2ZML"));
+//
+//        arguments.add(Arguments
+//            .of(NetworkType.TEST_NET, publicKey, "TCTVW23D2MN5VE4AQ4TZIDZENGNOZXPRPSDRSFRF"));
+//
+//        arguments.add(
+//            Arguments.of(NetworkType.MIJIN, publicKey, "MCTVW23D2MN5VE4AQ4TZIDZENGNOZXPRPR72DYSX"));
+//
+//        arguments.add(Arguments
+//            .of(NetworkType.MIJIN_TEST, publicKey, "SCTVW23D2MN5VE4AQ4TZIDZENGNOZXPRPRLIKCF2"));
+
     private static Stream<Arguments> publicKeysKeccak() {
         return Stream.of(
             Arguments.of(
@@ -77,8 +94,8 @@ class AddressTest {
                 "MDD2CT6LQLIYQ56KIXI3ENTM6EK3D44P5LDT7JHT"),
             Arguments.of(
                 "c5f54ba980fcbb657dbaaa42700539b207873e134d2375efeab5f1ab52f87844",
-                NetworkType.MIJIN,
-                "MDD2CT6LQLIYQ56KIXI3ENTM6EK3D44P5LDT7JHT"),
+                NetworkType.MIJIN_TEST,
+                "SDD2CT6LQLIYQ56KIXI3ENTM6EK3D44P5JGDTV3S"),
             Arguments.of(
                 "c5f54ba980fcbb657dbaaa42700539b207873e134d2375efeab5f1ab52f87844",
                 NetworkType.TEST_NET,
@@ -250,7 +267,7 @@ class AddressTest {
     void testCreateAddressFromPublicKeyKeccak(String publicKey, NetworkType networkType,
         String input) {
         Address address = Address
-            .createFromPublicKey(publicKey, networkType, SignSchema.KECCAK_REVERSED_KEY);
+            .createFromPublicKey(publicKey, networkType, SignSchema.KECCAK);
         assertEquals(input, address.plain());
     }
 

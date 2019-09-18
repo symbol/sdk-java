@@ -20,6 +20,7 @@ import io.nem.core.utils.ExceptionUtils;
 import java.security.MessageDigest;
 import java.security.Security;
 import org.bouncycastle.jcajce.provider.digest.Keccak;
+import org.bouncycastle.jcajce.provider.digest.Keccak.DigestKeccak;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.util.encoders.Hex;
 
@@ -105,15 +106,35 @@ public class Hashes {
     }
 
     /**
+     * Performs a KECCAK_512 hash of the concatenated inputs.
+     *
+     * @param inputs The byte arrays to concatenate and hash.
+     * @return The hash of the concatenated inputs.
+     * @throws CryptoException if the hash operation failed.
+     */
+    public static byte[] keccak512(final byte[]... inputs) {
+        return keccak(new Keccak.Digest512(), inputs);
+    }
+
+    /**
      * Performs a KECCAK_256 hash of the concatenated inputs.
      *
      * @param inputs The byte arrays to concatenate and hash.
      * @return The hash of the concatenated inputs.
      * @throws CryptoException if the hash operation failed.
      */
-    public static byte[] keccak256(final byte[][] inputs) {
+    public static byte[] keccak256(final byte[]... inputs) {
+        return keccak(new Keccak.Digest256(), inputs);
+    }
 
-        Keccak.Digest256 keccak = new Keccak.Digest256();
+    /**
+     * Performs a KECCAK_256 hash of the concatenated inputs.
+     *
+     * @param inputs The byte arrays to concatenate and hash.
+     * @return The hash of the concatenated inputs.
+     * @throws CryptoException if the hash operation failed.
+     */
+    public static byte[] keccak(DigestKeccak keccak, final byte[]... inputs) {
 
         byte[] concatInputs = new byte[0];
         byte[] concatInputsCopy;

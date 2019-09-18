@@ -21,6 +21,7 @@ import io.nem.core.crypto.KeyGenerator;
 import io.nem.core.crypto.KeyPair;
 import io.nem.core.crypto.PrivateKey;
 import io.nem.core.crypto.PublicKey;
+import io.nem.core.crypto.SignSchema;
 import io.nem.core.crypto.ed25519.arithmetic.Ed25519EncodedFieldElement;
 import io.nem.core.crypto.ed25519.arithmetic.Ed25519Group;
 import io.nem.core.crypto.ed25519.arithmetic.Ed25519GroupElement;
@@ -34,7 +35,10 @@ public class Ed25519KeyGenerator implements KeyGenerator {
 
     private final SecureRandom random;
 
-    public Ed25519KeyGenerator() {
+    private final SignSchema signSchema;
+
+    public Ed25519KeyGenerator(SignSchema signSchema) {
+        this.signSchema = signSchema;
         this.random = new SecureRandom();
     }
 
@@ -45,13 +49,13 @@ public class Ed25519KeyGenerator implements KeyGenerator {
 
         // seed is the private key.
         final PrivateKey privateKey = new PrivateKey(new BigInteger(seed));
-
-        return new KeyPair(privateKey, CryptoEngines.ed25519Engine());
+        return KeyPair.fromPrivate(privateKey, CryptoEngines.ed25519Engine(), signSchema);
     }
 
     @Override
     public PublicKey derivePublicKey(final PrivateKey privateKey) {
-        final Ed25519EncodedFieldElement a = Ed25519Utils.prepareForScalarMultiply(privateKey);
+        final Ed25519EncodedFieldElement a = Ed25519Utils
+            .prepareForScalarMultiply(privateKey, signSchema);
 
         // a * base point is the public key.
         final Ed25519GroupElement pubKey = Ed25519Group.BASE_POINT.scalarMultiply(a);

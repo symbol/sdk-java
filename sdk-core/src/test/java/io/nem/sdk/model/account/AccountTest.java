@@ -20,6 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 import io.nem.core.crypto.KeyPair;
+import io.nem.core.crypto.SignSchema;
 import io.nem.core.crypto.ed25519.Ed25519CryptoEngine;
 import io.nem.sdk.model.blockchain.NetworkType;
 import io.nem.sdk.model.mosaic.Mosaic;
@@ -137,10 +138,12 @@ class AccountTest {
 
     @Test
     void shouldAcceptKeyPairAsConstructor() {
-        KeyPair random = KeyPair.random(new Ed25519CryptoEngine());
-        Account account = new Account(random, NetworkType.MIJIN_TEST);
+        NetworkType networkType = NetworkType.MIJIN_TEST;
+        KeyPair random = KeyPair
+            .random(new Ed25519CryptoEngine(), networkType.resolveSignSchema());
+        Account account = new Account(random, networkType);
         assertEquals(random.getPrivateKey().toString().toUpperCase(), account.getPrivateKey());
-        assertEquals(NetworkType.MIJIN_TEST, account.getAddress().getNetworkType());
+        assertEquals(networkType, account.getAddress().getNetworkType());
     }
 
     @Test

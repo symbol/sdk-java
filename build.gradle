@@ -36,6 +36,8 @@ ext {
     rxjavaVersion = "2.1.7"
     junitVersion = "5.0.2"
     restApiVersion = "0.7.18-SNAPSHOT"
+    jackson_version = "2.9.9"
+    jackson_databind_version = "2.9.9"
 }
 
 repositories {

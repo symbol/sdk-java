@@ -17,10 +17,10 @@
 package io.nem.core.crypto.ed25519;
 
 import io.nem.core.crypto.BlockCipher;
-import io.nem.core.crypto.Hashes;
 import io.nem.core.crypto.KeyPair;
 import io.nem.core.crypto.PrivateKey;
 import io.nem.core.crypto.PublicKey;
+import io.nem.core.crypto.SignSchema;
 import io.nem.core.crypto.ed25519.arithmetic.Ed25519EncodedGroupElement;
 import io.nem.core.crypto.ed25519.arithmetic.Ed25519GroupElement;
 import java.security.SecureRandom;
@@ -45,10 +45,13 @@ public class Ed25519BlockCipher implements BlockCipher {
     private final KeyPair recipientKeyPair;
     private final SecureRandom random;
     private final int keyLength;
+    private final SignSchema signSchema;
 
-    public Ed25519BlockCipher(final KeyPair senderKeyPair, final KeyPair recipientKeyPair) {
+    public Ed25519BlockCipher(final KeyPair senderKeyPair, final KeyPair recipientKeyPair,
+        final SignSchema signSchema) {
         this.senderKeyPair = senderKeyPair;
         this.recipientKeyPair = recipientKeyPair;
+        this.signSchema = signSchema;
         this.random = new SecureRandom();
         this.keyLength = recipientKeyPair.getPublicKey().getBytes().length;
     }
@@ -61,9 +64,9 @@ public class Ed25519BlockCipher implements BlockCipher {
         this.random.nextBytes(salt);
 
         // Derive shared key.
-        final byte[] sharedKey =
-            this.getSharedKey(
-                this.senderKeyPair.getPrivateKey(), this.recipientKeyPair.getPublicKey(), salt);
+        final byte[] sharedKey = getSharedKey(
+            this.senderKeyPair.getPrivateKey(), this.recipientKeyPair.getPublicKey(), salt,
+            signSchema);
 
         // Setup IV.
         final byte[] ivData = new byte[16];
@@ -97,9 +100,9 @@ public class Ed25519BlockCipher implements BlockCipher {
         final byte[] encData = Arrays.copyOfRange(input, 48, input.length);
 
         // Derive shared key.
-        final byte[] sharedKey =
-            this.getSharedKey(
-                this.recipientKeyPair.getPrivateKey(), this.senderKeyPair.getPublicKey(), salt);
+        final byte[] sharedKey = getSharedKey(
+            this.recipientKeyPair.getPrivateKey(), this.senderKeyPair.getPublicKey(), salt,
+            signSchema);
 
         // Setup block cipher.
         final BufferedBlockCipher cipher = this.setupBlockCipher(sharedKey, ivData, false);
@@ -136,18 +139,22 @@ public class Ed25519BlockCipher implements BlockCipher {
         return cipher;
     }
 
-    private byte[] getSharedKey(
-        final PrivateKey privateKey, final PublicKey publicKey, final byte[] salt) {
+    public static byte[] getSharedKey(final PrivateKey privateKey, final PublicKey publicKey,
+        final byte[] salt, final SignSchema signSchema) {
+        final byte[] sharedKey = sharedKeyNotSalted(privateKey, publicKey, signSchema);
+        for (int i = 0; i < sharedKey.length; i++) {
+            sharedKey[i] ^= salt[i];
+        }
+        return SignSchema.toHashShort(signSchema, sharedKey);
+    }
+
+    public static byte[] sharedKeyNotSalted(final PrivateKey privateKey, final PublicKey publicKey,
+        final SignSchema signSchema) {
         final Ed25519GroupElement senderA =
             new Ed25519EncodedGroupElement(publicKey.getBytes()).decode();
         senderA.precomputeForScalarMultiplication();
-        final byte[] sharedKey =
-            senderA.scalarMultiply(Ed25519Utils.prepareForScalarMultiply(privateKey)).encode()
-                .getRaw();
-        for (int i = 0; i < this.keyLength; i++) {
-            sharedKey[i] ^= salt[i];
-        }
-
-        return Hashes.sha3_256(sharedKey);
+        return senderA.scalarMultiply(Ed25519Utils.prepareForScalarMultiply(privateKey, signSchema))
+            .encode()
+            .getRaw();
     }
 }
