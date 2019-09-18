@@ -26,9 +26,10 @@ import io.nem.catapult.builders.MosaicIdDto;
 import io.nem.catapult.builders.MosaicNonceDto;
 import io.nem.catapult.builders.SignatureDto;
 import io.nem.catapult.builders.TimestampDto;
+import io.nem.sdk.model.blockchain.BlockDuration;
 import io.nem.sdk.model.mosaic.MosaicId;
 import io.nem.sdk.model.mosaic.MosaicNonce;
-import io.nem.sdk.model.mosaic.MosaicProperties;
+import io.nem.sdk.model.mosaic.MosaicFlags;
 import java.nio.ByteBuffer;
 import java.util.EnumSet;
 
@@ -42,13 +43,28 @@ public class MosaicDefinitionTransaction extends Transaction {
 
     private final MosaicNonce mosaicNonce;
     private final MosaicId mosaicId;
-    private final MosaicProperties mosaicProperties;
+    private final MosaicFlags mosaicFlags;
+    /**
+     * The divisibility determines up to what decimal place the mosaic can be divided into. Thus a
+     * divisibility of 3 means that a mosaic can be divided into smallest parts of 0.001 mosaics
+     * i.e. milli mosaics is the smallest sub-unit. When transferring mosaics via a transfer
+     * transaction the quantity transferred is given in multiples of those smallest parts. The
+     * divisibility must be in the range of 0 and 6. The default value is "0".
+     */
+    private final int divisibility;
+    /**
+     * The duration in blocks a mosaic will be available. After the duration finishes mosaic is
+     * inactive and can be renewed. Duration is required when defining the mosaic
+     */
+    private final BlockDuration blockDuration;
 
     public MosaicDefinitionTransaction(MosaicDefinitionTransactionFactory factory) {
         super(factory);
         this.mosaicNonce = factory.getMosaicNonce();
         this.mosaicId = factory.getMosaicId();
-        this.mosaicProperties = factory.getMosaicProperties();
+        this.mosaicFlags = factory.getMosaicFlags();
+        this.divisibility = factory.getDivisibility();
+        this.blockDuration = factory.getBlockDuration();
     }
 
     /**
@@ -70,12 +86,30 @@ public class MosaicDefinitionTransaction extends Transaction {
     }
 
     /**
-     * Returns mosaic properties defining mosaic.
+     * Returns mosaic flags defining mosaic.
      *
-     * @return {@link MosaicProperties}
+     * @return {@link MosaicFlags}
      */
-    public MosaicProperties getMosaicProperties() {
-        return mosaicProperties;
+    public MosaicFlags getMosaicFlags() {
+        return mosaicFlags;
+    }
+
+    /**
+     * Returns the number of blocks from height it will be active
+     *
+     * @return the number of blocks from height it will be active
+     */
+    public BlockDuration getBlockDuration() {
+        return blockDuration;
+    }
+
+    /**
+     * Returns the mosaic divisibility.
+     *
+     * @return mosaic divisibility
+     */
+    public int getDivisibility() {
+        return divisibility;
     }
 
     /**
@@ -98,9 +132,9 @@ public class MosaicDefinitionTransaction extends Transaction {
                 new TimestampDto(getDeadline().getInstant()),
                 new MosaicNonceDto(getMosaicNonce().getNonceAsInt()),
                 new MosaicIdDto(getMosaicId().getId().longValue()),
-                getMosaicFlags(),
-                (byte) getMosaicProperties().getDivisibility(),
-                getDuration());
+                getMosaicFlagsEnumSet(),
+                (byte) getDivisibility(),
+                new BlockDurationDto(getBlockDuration().getDuration()));
         return txBuilder.serialize();
     }
 
@@ -117,9 +151,9 @@ public class MosaicDefinitionTransaction extends Transaction {
                 getEntityTypeDto(),
                 new MosaicNonceDto(getMosaicNonce().getNonceAsInt()),
                 new MosaicIdDto(getMosaicId().getId().longValue()),
-                getMosaicFlags(),
-                (byte) getMosaicProperties().getDivisibility(),
-                getDuration());
+                getMosaicFlagsEnumSet(),
+                (byte) getDivisibility(),
+                new BlockDurationDto(getBlockDuration().getDuration()));
         return txBuilder.serialize();
     }
 
@@ -128,27 +162,17 @@ public class MosaicDefinitionTransaction extends Transaction {
      *
      * @return Mosaic flags
      */
-    private EnumSet<MosaicFlagsDto> getMosaicFlags() {
+    private EnumSet<MosaicFlagsDto> getMosaicFlagsEnumSet() {
         EnumSet<MosaicFlagsDto> mosaicFlagsBuilder = EnumSet.of(MosaicFlagsDto.NONE);
-        if (getMosaicProperties().isSupplyMutable()) {
+        if (getMosaicFlags().isSupplyMutable()) {
             mosaicFlagsBuilder.add(MosaicFlagsDto.SUPPLY_MUTABLE);
         }
-        if (getMosaicProperties().isTransferable()) {
+        if (getMosaicFlags().isTransferable()) {
             mosaicFlagsBuilder.add(MosaicFlagsDto.TRANSFERABLE);
         }
-        if (getMosaicProperties().isRestrictable()) {
+        if (getMosaicFlags().isRestrictable()) {
             mosaicFlagsBuilder.add(MosaicFlagsDto.RESTRICTABLE);
         }
         return mosaicFlagsBuilder;
-    }
-
-    /**
-     * Gets the duration.
-     *
-     * @return Duration.
-     */
-    private BlockDurationDto getDuration() {
-        final long duration = getMosaicProperties().getDuration().longValue();
-        return new BlockDurationDto(duration);
     }
 }

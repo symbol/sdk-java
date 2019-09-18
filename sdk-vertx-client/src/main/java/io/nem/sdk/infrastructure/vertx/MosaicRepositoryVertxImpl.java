@@ -23,7 +23,7 @@ import io.nem.sdk.model.account.PublicAccount;
 import io.nem.sdk.model.blockchain.NetworkType;
 import io.nem.sdk.model.mosaic.MosaicInfo;
 import io.nem.sdk.model.mosaic.MosaicNames;
-import io.nem.sdk.model.mosaic.MosaicProperties;
+import io.nem.sdk.model.mosaic.MosaicFlags;
 import io.nem.sdk.model.namespace.NamespaceName;
 import io.nem.sdk.model.transaction.UInt64Id;
 import io.nem.sdk.openapi.vertx.api.MosaicRoutesApi;
@@ -91,7 +91,9 @@ public class MosaicRepositoryVertxImpl extends AbstractRepositoryVertxImpl imple
             mosaicInfoDTO.getMosaic().getStartHeight(),
             new PublicAccount(mosaicInfoDTO.getMosaic().getOwnerPublicKey(), networkType),
             mosaicInfoDTO.getMosaic().getRevision(),
-            extractMosaicProperties(mosaicInfoDTO.getMosaic()));
+            extractMosaicFlags(mosaicInfoDTO.getMosaic()),
+            mosaicInfoDTO.getMosaic().getDivisibility(),
+            mosaicInfoDTO.getMosaic().getDuration());
     }
 
     @Override
@@ -120,14 +122,12 @@ public class MosaicRepositoryVertxImpl extends AbstractRepositoryVertxImpl imple
             dto.getNames().stream().map(NamespaceName::new).collect(Collectors.toList()));
     }
 
-    public static MosaicProperties extractMosaicProperties(MosaicDTO mosaicDTO) {
+    public static MosaicFlags extractMosaicFlags(MosaicDTO mosaicDTO) {
         String flags = "00" + Integer.toBinaryString(mosaicDTO.getFlags().intValue());
         String bitMapFlags = flags.substring(flags.length() - 3);
-        return MosaicProperties.create(
+        return MosaicFlags.create(
             bitMapFlags.charAt(2) == '1',
             bitMapFlags.charAt(1) == '1',
-            mosaicDTO.getDivisibility(),
-            bitMapFlags.charAt(0) == '1',
-            mosaicDTO.getDuration());
+            bitMapFlags.charAt(0) == '1');
     }
 }

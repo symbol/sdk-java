@@ -19,9 +19,10 @@ package io.nem.sdk.infrastructure.okhttp.mappers;
 
 import static io.nem.core.utils.MapperUtils.toMosaicId;
 
+import io.nem.sdk.model.blockchain.BlockDuration;
 import io.nem.sdk.model.blockchain.NetworkType;
 import io.nem.sdk.model.mosaic.MosaicNonce;
-import io.nem.sdk.model.mosaic.MosaicProperties;
+import io.nem.sdk.model.mosaic.MosaicFlags;
 import io.nem.sdk.model.transaction.JsonHelper;
 import io.nem.sdk.model.transaction.MosaicDefinitionTransaction;
 import io.nem.sdk.model.transaction.MosaicDefinitionTransactionFactory;
@@ -41,17 +42,15 @@ class MosaicDefinitionTransactionMapper extends
         MosaicDefinitionTransactionDTO transaction) {
         String flags = "00" + Integer.toBinaryString(transaction.getFlags().intValue());
         String bitMapFlags = flags.substring(flags.length() - 3);
-        MosaicProperties properties =
-            MosaicProperties.create(
+        MosaicFlags mosaicFlags =
+            MosaicFlags.create(
                 bitMapFlags.charAt(2) == '1',
                 bitMapFlags.charAt(1) == '1',
-                transaction.getDivisibility(),
-                bitMapFlags.charAt(0) == '1',
-                transaction.getDuration());
+                bitMapFlags.charAt(0) == '1');
         return new MosaicDefinitionTransactionFactory(networkType,
             MosaicNonce
                 .createFromBigInteger(transaction.getNonce()),
             toMosaicId(transaction.getId()),
-            properties);
+            mosaicFlags, transaction.getDivisibility(), new BlockDuration(transaction.getDuration()));
     }
 }

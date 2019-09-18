@@ -17,10 +17,11 @@
 
 package io.nem.sdk.model.transaction;
 
+import io.nem.sdk.model.blockchain.BlockDuration;
 import io.nem.sdk.model.blockchain.NetworkType;
 import io.nem.sdk.model.mosaic.MosaicId;
 import io.nem.sdk.model.mosaic.MosaicNonce;
-import io.nem.sdk.model.mosaic.MosaicProperties;
+import io.nem.sdk.model.mosaic.MosaicFlags;
 import org.apache.commons.lang3.Validate;
 
 /**
@@ -31,18 +32,25 @@ public class MosaicDefinitionTransactionFactory extends
 
     private final MosaicNonce mosaicNonce;
     private final MosaicId mosaicId;
-    private final MosaicProperties mosaicProperties;
+    private final MosaicFlags mosaicFlags;
+    private final int divisibility;
+    private final BlockDuration blockDuration;
 
 
     public MosaicDefinitionTransactionFactory(NetworkType networkType, MosaicNonce mosaicNonce,
-        MosaicId mosaicId, MosaicProperties mosaicProperties) {
+        MosaicId mosaicId, MosaicFlags mosaicFlags, int divisibility,
+        BlockDuration blockDuration) {
         super(TransactionType.MOSAIC_DEFINITION, networkType);
         Validate.notNull(mosaicNonce, "MosaicNonce must not be null");
         Validate.notNull(mosaicId, "MosaicId must not be null");
-        Validate.notNull(mosaicProperties, "MosaicProperties must not be null");
+        Validate.notNull(mosaicFlags, "MosaicFlags must not be null");
+        Validate.notNull(divisibility, "Divisibility must not be null");
+        Validate.notNull(blockDuration, "BlockDuration must not be null");
         this.mosaicNonce = mosaicNonce;
         this.mosaicId = mosaicId;
-        this.mosaicProperties = mosaicProperties;
+        this.mosaicFlags = mosaicFlags;
+        this.divisibility = divisibility;
+        this.blockDuration = blockDuration;
     }
 
     /**
@@ -64,12 +72,30 @@ public class MosaicDefinitionTransactionFactory extends
     }
 
     /**
-     * Returns mosaic properties defining mosaic.
+     * Returns mosaic flags defining mosaic.
      *
-     * @return {@link MosaicProperties}
+     * @return {@link MosaicFlags}
      */
-    public MosaicProperties getMosaicProperties() {
-        return mosaicProperties;
+    public MosaicFlags getMosaicFlags() {
+        return mosaicFlags;
+    }
+
+    /**
+     * Returns the number of blocks from height it will be active
+     *
+     * @return the number of blocks from height it will be active
+     */
+    public BlockDuration getBlockDuration() {
+        return blockDuration;
+    }
+
+    /**
+     * Returns the mosaic divisibility.
+     *
+     * @return mosaic divisibility
+     */
+    public int getDivisibility() {
+        return divisibility;
     }
 
     @Override

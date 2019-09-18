@@ -28,11 +28,12 @@ import io.nem.sdk.model.account.AccountInfo;
 import io.nem.sdk.model.account.AccountNames;
 import io.nem.sdk.model.account.Address;
 import io.nem.sdk.model.account.PublicAccount;
+import io.nem.sdk.model.blockchain.BlockDuration;
 import io.nem.sdk.model.blockchain.NetworkType;
 import io.nem.sdk.model.mosaic.MosaicId;
 import io.nem.sdk.model.mosaic.MosaicNames;
 import io.nem.sdk.model.mosaic.MosaicNonce;
-import io.nem.sdk.model.mosaic.MosaicProperties;
+import io.nem.sdk.model.mosaic.MosaicFlags;
 import io.nem.sdk.model.mosaic.MosaicSupplyChangeActionType;
 import io.nem.sdk.model.mosaic.NetworkCurrencyMosaic;
 import io.nem.sdk.model.namespace.AliasAction;
@@ -416,8 +417,8 @@ class E2EIntegrationTest extends BaseIntegrationTest {
                 NetworkType.MIJIN_TEST,
                 nonce,
                 this.mosaicId,
-                MosaicProperties.create(true, true, 4, true, BigInteger.valueOf(100))
-            ).build();
+                MosaicFlags.create(true, true, true),
+                4, new BlockDuration(100)).build();
 
         SignedTransaction signedTransaction =
             this.account.sign(mosaicDefinitionTransaction, generationHash);
@@ -590,8 +591,8 @@ class E2EIntegrationTest extends BaseIntegrationTest {
             new MosaicDefinitionTransactionFactory(NetworkType.MIJIN_TEST,
                 nonce,
                 mosaicId,
-                MosaicProperties.create(true, true, 4, true, BigInteger.valueOf(100))
-            ).build();
+                MosaicFlags.create(true, true, true),
+                4, new BlockDuration(100)).build();
 
         SignedTransaction signedTransaction =
             this.account.sign(mosaicDefinitionTransaction, generationHash);
@@ -616,7 +617,8 @@ class E2EIntegrationTest extends BaseIntegrationTest {
                 NetworkType.MIJIN_TEST,
                 nonce,
                 this.mosaicId,
-                MosaicProperties.create(true, false, 4, true, BigInteger.valueOf(100))).build();
+                MosaicFlags.create(true, false, true),
+                4, new BlockDuration(100)).build();
 
         AggregateTransaction aggregateTransaction =
             AggregateTransactionFactory.createComplete(
