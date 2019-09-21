@@ -15,27 +15,28 @@
  */
 package io.nem.sdk.model.transaction;
 
-import io.nem.catapult.builders.AccountOperationRestrictionModificationBuilder;
-import io.nem.catapult.builders.AccountOperationRestrictionTransactionBuilder;
+import io.nem.catapult.builders.AccountMosaicRestrictionModificationBuilder;
+import io.nem.catapult.builders.AccountMosaicRestrictionTransactionBuilder;
 import io.nem.catapult.builders.AccountRestrictionModificationActionDto;
 import io.nem.catapult.builders.AccountRestrictionTypeDto;
 import io.nem.catapult.builders.AmountDto;
-import io.nem.catapult.builders.EmbeddedAccountOperationRestrictionTransactionBuilder;
-import io.nem.catapult.builders.EntityTypeDto;
+import io.nem.catapult.builders.EmbeddedAccountMosaicRestrictionTransactionBuilder;
 import io.nem.catapult.builders.KeyDto;
 import io.nem.catapult.builders.SignatureDto;
 import io.nem.catapult.builders.TimestampDto;
+import io.nem.catapult.builders.UnresolvedMosaicIdDto;
+import io.nem.sdk.model.mosaic.MosaicId;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AccountOperationRestrictionModificationTransaction extends Transaction {
+public class AccountMosaicRestrictionTransaction extends Transaction {
 
     private final AccountRestrictionType restrictionType;
-    private final List<AccountRestrictionModification<TransactionType>> modifications;
+    private final List<AccountRestrictionModification<MosaicId>> modifications;
 
-    AccountOperationRestrictionModificationTransaction(
-        AccountOperationRestrictionModificationTransactionFactory factory) {
+    public AccountMosaicRestrictionTransaction(
+        AccountMosaicRestrictionTransactionFactory factory) {
         super(factory);
         this.restrictionType = factory.getRestrictionType();
         this.modifications = factory.getModifications();
@@ -51,11 +52,11 @@ public class AccountOperationRestrictionModificationTransaction extends Transact
     }
 
     /**
-     * Get account operation restriction modifications
+     * Get account mosaic restriction modifications
      *
-     * @return {@link List<AccountRestrictionModification<TransactionType>>}
+     * @return {@link List<AccountRestrictionModification<MosaicId>>}
      */
-    public List<AccountRestrictionModification<TransactionType>> getModifications() {
+    public List<AccountRestrictionModification<MosaicId>> getModifications() {
         return this.modifications;
     }
 
@@ -69,15 +70,15 @@ public class AccountOperationRestrictionModificationTransaction extends Transact
         final ByteBuffer signerBuffer = ByteBuffer.allocate(32);
         final ByteBuffer signatureBuffer = ByteBuffer.allocate(64);
 
-        AccountOperationRestrictionTransactionBuilder txBuilder =
-            AccountOperationRestrictionTransactionBuilder.create(
+        AccountMosaicRestrictionTransactionBuilder txBuilder =
+            AccountMosaicRestrictionTransactionBuilder.create(
                 new SignatureDto(signatureBuffer),
                 new KeyDto(signerBuffer),
                 getNetworkVersion(),
                 getEntityTypeDto(),
                 new AmountDto(getMaxFee().longValue()),
                 new TimestampDto(getDeadline().getInstant()),
-                AccountRestrictionTypeDto.rawValueOf(this.restrictionType.getValue()),
+                AccountRestrictionTypeDto.rawValueOf((byte) this.restrictionType.getValue()),
                 getModificationBuilder());
         return txBuilder.serialize();
     }
@@ -88,12 +89,12 @@ public class AccountOperationRestrictionModificationTransaction extends Transact
      * @return Embedded tx bytes
      */
     byte[] generateEmbeddedBytes() {
-        EmbeddedAccountOperationRestrictionTransactionBuilder txBuilder =
-            EmbeddedAccountOperationRestrictionTransactionBuilder.create(
+        EmbeddedAccountMosaicRestrictionTransactionBuilder txBuilder =
+            EmbeddedAccountMosaicRestrictionTransactionBuilder.create(
                 new KeyDto(getRequiredSignerBytes()),
                 getNetworkVersion(),
                 getEntityTypeDto(),
-                AccountRestrictionTypeDto.rawValueOf(this.restrictionType.getValue()),
+                AccountRestrictionTypeDto.rawValueOf((byte) this.restrictionType.getValue()),
                 getModificationBuilder());
         return txBuilder.serialize();
     }
@@ -103,17 +104,16 @@ public class AccountOperationRestrictionModificationTransaction extends Transact
      *
      * @return account restriction modification.
      */
-    private ArrayList<AccountOperationRestrictionModificationBuilder> getModificationBuilder() {
-        final ArrayList<AccountOperationRestrictionModificationBuilder> modificationBuilder =
+    private ArrayList<AccountMosaicRestrictionModificationBuilder> getModificationBuilder() {
+        final ArrayList<AccountMosaicRestrictionModificationBuilder> modificationBuilder =
             new ArrayList<>(modifications.size());
-        for (AccountRestrictionModification<TransactionType> accountRestrictionModification :
-            modifications) {
-            final AccountOperationRestrictionModificationBuilder builder =
-                AccountOperationRestrictionModificationBuilder.create(
+        for (AccountRestrictionModification<MosaicId> accountRestrictionModification : modifications) {
+            final AccountMosaicRestrictionModificationBuilder builder =
+                AccountMosaicRestrictionModificationBuilder.create(
                     AccountRestrictionModificationActionDto.rawValueOf(
-                        accountRestrictionModification.getModificationType().getValue()),
-                    EntityTypeDto.rawValueOf(
-                        (short) accountRestrictionModification.getValue().getValue()));
+                        accountRestrictionModification.getModificationAction().getValue()),
+                    new UnresolvedMosaicIdDto(
+                        accountRestrictionModification.getValue().getIdAsLong()));
             modificationBuilder.add(builder);
         }
         return modificationBuilder;

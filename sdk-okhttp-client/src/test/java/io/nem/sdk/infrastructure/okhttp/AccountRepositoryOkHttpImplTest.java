@@ -23,11 +23,14 @@ import io.nem.sdk.model.account.AccountInfo;
 import io.nem.sdk.model.account.AccountNames;
 import io.nem.sdk.model.account.AccountType;
 import io.nem.sdk.model.account.Address;
+import io.nem.sdk.model.transaction.AccountRestrictionType;
 import io.nem.sdk.openapi.okhttp_gson.model.AccountDTO;
 import io.nem.sdk.openapi.okhttp_gson.model.AccountInfoDTO;
 import io.nem.sdk.openapi.okhttp_gson.model.AccountNamesDTO;
+import io.nem.sdk.openapi.okhttp_gson.model.AccountRestrictionTypeEnum;
 import io.nem.sdk.openapi.okhttp_gson.model.AccountTypeEnum;
 import io.nem.sdk.openapi.okhttp_gson.model.AccountsNamesDTO;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import org.junit.jupiter.api.Assertions;
@@ -227,5 +230,18 @@ public class AccountRepositoryOkHttpImplTest extends AbstractOkHttpRespositoryTe
     @Override
     public AccountRepositoryOkHttpImpl getRepository() {
         return repository;
+    }
+
+    @Test
+    public void shouldAccountRestrictionTypeEnumMapToAccountRestrictionType() {
+        Arrays.stream(AccountRestrictionTypeEnum.values()).forEach(
+            v -> Assertions.assertNotNull(AccountRestrictionType.rawValueOf(v.getValue())));
+    }
+
+    @Test
+    public void shouldAccountRestrictionTypeMapToAccountRestrictionType() {
+        Arrays.stream(AccountRestrictionType.values()).forEach(
+            v -> Assertions.assertNotNull(AccountRestrictionTypeEnum.fromValue(v.getValue())));
+
     }
 }

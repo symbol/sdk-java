@@ -120,26 +120,26 @@ class TransactionTypeTest {
 
     @Test
     void accountPropertiesAddressType() {
-        TransactionType transactionType = TransactionType.ACCOUNT_PROPERTIES_ADDRESS;
+        TransactionType transactionType = TransactionType.ACCOUNT_ADDRESS_RESTRICTION;
         assertEquals(0x4150, transactionType.getValue());
         assertEquals(16720, transactionType.getValue());
-        assertEquals(TransactionType.ACCOUNT_PROPERTIES_ADDRESS, TransactionType.rawValueOf(16720));
+        assertEquals(TransactionType.ACCOUNT_ADDRESS_RESTRICTION, TransactionType.rawValueOf(16720));
     }
 
     @Test
     void accountPropertiesMosaic() {
-        TransactionType transactionType = TransactionType.ACCOUNT_PROPERTIES_MOSAIC;
+        TransactionType transactionType = TransactionType.ACCOUNT_MOSAIC_RESTRICTION;
         assertEquals(0x4250, transactionType.getValue());
         assertEquals(16976, transactionType.getValue());
-        assertEquals(TransactionType.ACCOUNT_PROPERTIES_MOSAIC, TransactionType.rawValueOf(16976));
+        assertEquals(TransactionType.ACCOUNT_MOSAIC_RESTRICTION, TransactionType.rawValueOf(16976));
     }
 
     @Test
     void accountPropertiesEntityType() {
-        TransactionType transactionType = TransactionType.ACCOUNT_PROPERTIES_ENTITY_TYPE;
+        TransactionType transactionType = TransactionType.ACCOUNT_OPERATION_RESTRICTION;
         assertEquals(0x4350, transactionType.getValue());
         assertEquals(17232, transactionType.getValue());
-        assertEquals(TransactionType.ACCOUNT_PROPERTIES_ENTITY_TYPE,
+        assertEquals(TransactionType.ACCOUNT_OPERATION_RESTRICTION,
             TransactionType.rawValueOf(17232));
     }
 

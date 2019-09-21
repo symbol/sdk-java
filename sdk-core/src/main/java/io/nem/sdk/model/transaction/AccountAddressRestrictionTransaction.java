@@ -30,14 +30,14 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AccountAddressRestrictionModificationTransaction extends Transaction {
+public class AccountAddressRestrictionTransaction extends Transaction {
 
     private final AccountRestrictionType restrictionType;
 
     private final List<AccountRestrictionModification<Address>> modifications;
 
-    AccountAddressRestrictionModificationTransaction(
-        AccountAddressRestrictionModificationTransactionFactory factory) {
+    AccountAddressRestrictionTransaction(
+        AccountAddressRestrictionTransactionFactory factory) {
         super(factory);
         this.restrictionType = factory.getRestrictionType();
         this.modifications = factory.getModifications();
@@ -79,7 +79,7 @@ public class AccountAddressRestrictionModificationTransaction extends Transactio
                 getEntityTypeDto(),
                 new AmountDto(getMaxFee().longValue()),
                 new TimestampDto(getDeadline().getInstant()),
-                AccountRestrictionTypeDto.rawValueOf(this.restrictionType.getValue()),
+                AccountRestrictionTypeDto.rawValueOf((byte) this.restrictionType.getValue()),
                 getModificationBuilder());
         return txBuilder.serialize();
     }
@@ -95,7 +95,7 @@ public class AccountAddressRestrictionModificationTransaction extends Transactio
                 new KeyDto(getRequiredSignerBytes()),
                 getNetworkVersion(),
                 getEntityTypeDto(),
-                AccountRestrictionTypeDto.rawValueOf(this.restrictionType.getValue()),
+                AccountRestrictionTypeDto.rawValueOf((byte) this.restrictionType.getValue()),
                 getModificationBuilder());
         return txBuilder.serialize();
     }
@@ -114,7 +114,7 @@ public class AccountAddressRestrictionModificationTransaction extends Transactio
             final AccountAddressRestrictionModificationBuilder builder =
                 AccountAddressRestrictionModificationBuilder.create(
                     AccountRestrictionModificationActionDto.rawValueOf(
-                        accountRestrictionModification.getModificationType().getValue()),
+                        accountRestrictionModification.getModificationAction().getValue()),
                     new UnresolvedAddressDto(addressByteBuffer));
             modificationBuilder.add(builder);
         }

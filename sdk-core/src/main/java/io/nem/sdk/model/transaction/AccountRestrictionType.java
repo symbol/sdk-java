@@ -19,49 +19,93 @@ package io.nem.sdk.model.transaction;
 import java.util.Arrays;
 
 /**
- * Account restriction types.
+ * Type of account restriction (DTO):
+ *
+ * 0x01 (1 decimal) - Allow only incoming transactions from a given address.
+ *
+ * 0x02 (2 decimal) - Allow only incoming transactions containing a given mosaic identifier.
+ *
+ * 0x05 (5 decimal) - Account restriction sentinel.
+ *
+ * 0x41 (65 decimal) - Allow only outgoing transactions to a given address.
+ *
+ * 0x44 (68 decimal) - Allow only outgoing transactions with a given transaction type.
+ *
+ * 0x81 (129 decimal) - Block incoming transactions from a given address.
+ *
+ * 0x82 (130 decimal) - Block incoming transactions containing a given mosaic identifier.
+ *
+ * 0xC1 (193 decimal) - Block outgoing transactions to a given address.
+ *
+ * 0xC4 (196 decimal) - Block outgoing transactions with a given transaction type.
  */
+
 public enum AccountRestrictionType {
     /**
-     * Account restriction type is an address.
+     * Allow only incoming transactions from a given address.
      */
-    ADDRESS((byte) 1),
+    ALLOW_INCOMING_ADDRESS(AccountRestrictionTypeValueOptions.ADDRESS_VALUE),
+
     /**
-     * Account restriction type is a mosaic id.
+     * Allow only incoming transactions containing a a given mosaic identifier.
      */
-    MOSAIC_ID((byte) 2),
+    ALLOW_INCOMING_MOSAIC(AccountRestrictionTypeValueOptions.MOSAIC_VALUE),
+
     /**
-     * Account restriction type is a transaction type.
+     * Allow only outgoing transactions from a given address.
      */
-    TRANSACTION_TYPE((byte) 4),
+    ALLOW_OUTGOING_ADDRESS(AccountRestrictionTypeValueOptions.ADDRESS_VALUE
+        + AccountRestrictionTypeValueOptions.OUTGOING_VALUE),
+
+    /**
+     * Allow only outgoing transactions of a given type.
+     */
+    ALLOW_OUTGOING_TRANSACTION_TYPE(AccountRestrictionTypeValueOptions.TRANSACTION_TYPE_VALUE
+        + AccountRestrictionTypeValueOptions.OUTGOING_VALUE),
+
     /**
      * Account restriction type sentinel.
      */
-    SENTINEL((byte) 5),
+    SENTINEL(AccountRestrictionTypeValueOptions.SENTINEL_VALUE),
+
     /**
      * Account restriction is interpreted as blocking address operation.
      */
-    BLOCK_ADDRESS((byte) 129),
+    BLOCK_ADDRESS(AccountRestrictionTypeValueOptions.ADDRESS_VALUE
+        + AccountRestrictionTypeValueOptions.BLOCK_VALUE),
+
     /**
      * Account restriction is interpreted as blocking mosaicId operation.
      */
-    BLOCK_MOSAIC_ID((byte) 130),
+    BLOCK_MOSAIC(AccountRestrictionTypeValueOptions.MOSAIC_VALUE
+        + AccountRestrictionTypeValueOptions.BLOCK_VALUE),
+
     /**
-     * Account restriction is interpreted as blocking transaction type operation.
+     * Block outgoing transactions for a given address.
      */
-    BLOCK_TRANSACTION_TYPE((byte) 132);
+    BLOCK_OUTGOING_ADDRESS(AccountRestrictionTypeValueOptions.ADDRESS_VALUE
+        + AccountRestrictionTypeValueOptions.BLOCK_VALUE
+        + AccountRestrictionTypeValueOptions.OUTGOING_VALUE),
+
+    /**
+     * Block outgoing transactions for a given transactionType.
+     */
+    BLOCK_OUTGOING_TRANSACTION_TYPE(
+        AccountRestrictionTypeValueOptions.TRANSACTION_TYPE_VALUE
+            + AccountRestrictionTypeValueOptions.BLOCK_VALUE
+            + AccountRestrictionTypeValueOptions.OUTGOING_VALUE);
 
     /**
      * Enum value.
      */
-    private final byte value;
+    private final int value;
 
     /**
      * Constructor.
      *
      * @param value Enum value.
      */
-    AccountRestrictionType(final byte value) {
+    AccountRestrictionType(final int value) {
         this.value = value;
     }
 
@@ -71,7 +115,7 @@ public enum AccountRestrictionType {
      * @param value Raw value of the enum.
      * @return Enum value.
      */
-    public static AccountRestrictionType rawValueOf(final byte value) {
+    public static AccountRestrictionType rawValueOf(final int value) {
         return Arrays.stream(values()).filter(e -> e.value == value).findFirst()
             .orElseThrow(() -> new IllegalArgumentException(value + " is not a valid value"));
     }
@@ -81,7 +125,7 @@ public enum AccountRestrictionType {
      *
      * @return byte
      */
-    public byte getValue() {
+    public int getValue() {
         return value;
     }
 }

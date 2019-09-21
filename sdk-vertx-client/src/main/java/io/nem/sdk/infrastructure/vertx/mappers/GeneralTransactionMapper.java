@@ -53,6 +53,10 @@ public class GeneralTransactionMapper implements TransactionMapper {
         register(new AccountMetadataTransactionMapper(jsonHelper));
         register(new MosaicMetadataTransactionMapper(jsonHelper));
         register(new NamespaceMetadataTransactionMapper(jsonHelper));
+        register(new AccountAddressRestrictionTransactionMapper(jsonHelper));
+        register(new AccountMosaicRestrictionTransactionMapper(jsonHelper));
+        register(new AccountOperationRestrictionTransactionMapper(jsonHelper));
+
         register(
             new AggregateTransactionMapper(jsonHelper, TransactionType.AGGREGATE_BONDED, this));
         register(

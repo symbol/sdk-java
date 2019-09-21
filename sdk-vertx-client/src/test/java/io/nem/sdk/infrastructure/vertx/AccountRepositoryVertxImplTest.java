@@ -23,11 +23,14 @@ import io.nem.sdk.model.account.AccountInfo;
 import io.nem.sdk.model.account.AccountNames;
 import io.nem.sdk.model.account.AccountType;
 import io.nem.sdk.model.account.Address;
+import io.nem.sdk.model.transaction.AccountRestrictionType;
 import io.nem.sdk.openapi.vertx.model.AccountDTO;
 import io.nem.sdk.openapi.vertx.model.AccountInfoDTO;
 import io.nem.sdk.openapi.vertx.model.AccountNamesDTO;
+import io.nem.sdk.openapi.vertx.model.AccountRestrictionTypeEnum;
 import io.nem.sdk.openapi.vertx.model.AccountTypeEnum;
 import io.nem.sdk.openapi.vertx.model.AccountsNamesDTO;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import org.junit.jupiter.api.Assertions;
@@ -225,5 +228,16 @@ public class AccountRepositoryVertxImplTest extends AbstractVertxRespositoryTest
         Assertions.assertEquals("accountalias", accountNames.getNames().get(0).getName());
     }
 
+    @Test
+    public void shouldAccountRestrictionTypeEnumMapToAccountRestrictionType() {
+        Arrays.stream(AccountRestrictionTypeEnum.values()).forEach(
+            v -> Assertions.assertNotNull(AccountRestrictionType.rawValueOf(v.getValue())));
+    }
 
+    @Test
+    public void shouldAccountRestrictionTypeMapToAccountRestrictionType() {
+        Arrays.stream(AccountRestrictionType.values()).forEach(
+            v -> Assertions.assertNotNull(AccountRestrictionTypeEnum.fromValue(v.getValue())));
+
+    }
 }

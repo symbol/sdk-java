@@ -95,7 +95,7 @@ public abstract class AbstractTransactionMapper<D, T extends Transaction> implem
 
     protected final T basicMap(TransactionInfo transactionInfo, Object transactionDto) {
         D transaction = getJsonHelper().convert(transactionDto, transactionDtoClass);
-        TransactionDTO transactionDTO = getJsonHelper().convert(transaction, TransactionDTO.class);
+        TransactionDTO transactionDTO = getJsonHelper().convert(transactionDto, TransactionDTO.class);
         NetworkType networkType = extractNetworkType(transactionDTO.getVersion());
         TransactionFactory<T> factory = createFactory(networkType, transaction);
         factory.version(extractTransactionVersion(transactionDTO.getVersion()));

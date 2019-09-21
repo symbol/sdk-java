@@ -17,31 +17,31 @@
 package io.nem.sdk.model.transaction;
 
 import io.nem.sdk.model.blockchain.NetworkType;
-import io.nem.sdk.model.mosaic.MosaicId;
 import java.util.List;
 import org.apache.commons.lang3.Validate;
 
 /**
- * Factory of {@link AccountMosaicRestrictionModificationTransaction}
+ * Factory of {@link AccountOperationRestrictionTransaction}
  */
-public class AccountMosaicRestrictionModificationTransactionFactory extends
-    TransactionFactory<AccountMosaicRestrictionModificationTransaction> {
+public class AccountOperationRestrictionTransactionFactory extends
+    TransactionFactory<AccountOperationRestrictionTransaction> {
 
     private final AccountRestrictionType restrictionType;
 
-    private final List<AccountRestrictionModification<MosaicId>> modifications;
+    private final List<AccountRestrictionModification<TransactionType>> modifications;
 
-
-    public AccountMosaicRestrictionModificationTransactionFactory(
+    @SuppressWarnings("squid:S00107")
+    public AccountOperationRestrictionTransactionFactory(
         final NetworkType networkType,
         final AccountRestrictionType restrictionType,
-        final List<AccountRestrictionModification<MosaicId>> modifications) {
-        super(TransactionType.ACCOUNT_PROPERTIES_MOSAIC, networkType);
+        final List<AccountRestrictionModification<TransactionType>> modifications) {
+        super(TransactionType.ACCOUNT_OPERATION_RESTRICTION, networkType);
         Validate.notNull(restrictionType, "RestrictionType must not be null");
         Validate.notNull(modifications, "Modifications must not be null");
         this.restrictionType = restrictionType;
         this.modifications = modifications;
     }
+
 
     /**
      * Get account restriction type
@@ -53,16 +53,16 @@ public class AccountMosaicRestrictionModificationTransactionFactory extends
     }
 
     /**
-     * Get account mosaic restriction modifications
+     * Get account operation restriction modifications
      *
-     * @return {@link List<AccountRestrictionModification<MosaicId>>}
+     * @return {@link List<AccountRestrictionModification<TransactionType>>}
      */
-    public List<AccountRestrictionModification<MosaicId>> getModifications() {
+    public List<AccountRestrictionModification<TransactionType>> getModifications() {
         return this.modifications;
     }
 
     @Override
-    public AccountMosaicRestrictionModificationTransaction build() {
-        return new AccountMosaicRestrictionModificationTransaction(this);
+    public AccountOperationRestrictionTransaction build() {
+        return new AccountOperationRestrictionTransaction(this);
     }
 }
