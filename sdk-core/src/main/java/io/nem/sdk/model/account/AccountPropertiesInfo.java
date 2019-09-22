@@ -22,18 +22,18 @@ package io.nem.sdk.model.account;
 public class AccountPropertiesInfo {
 
     private final String metaId;
-    private final AccountProperties accountProperties;
+    private final AccountRestrictions accountRestrictions;
 
-    public AccountPropertiesInfo(String metaId, AccountProperties accountProperties) {
+    public AccountPropertiesInfo(String metaId, AccountRestrictions accountRestrictions) {
         this.metaId = metaId;
-        this.accountProperties = accountProperties;
+        this.accountRestrictions = accountRestrictions;
     }
 
     public String getMetaId() {
         return metaId;
     }
 
-    public AccountProperties getAccountProperties() {
-        return accountProperties;
+    public AccountRestrictions getAccountRestrictions() {
+        return accountRestrictions;
     }
 }

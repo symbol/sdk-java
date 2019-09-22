@@ -44,48 +44,52 @@ public enum AccountRestrictionType {
     /**
      * Allow only incoming transactions from a given address.
      */
-    ALLOW_INCOMING_ADDRESS(AccountRestrictionTypeValueOptions.ADDRESS_VALUE),
+    ALLOW_INCOMING_ADDRESS(AccountRestrictionTypeValueOptions.ADDRESS_VALUE,
+        AccountRestrictionTargetType.ADDRESS),
 
     /**
      * Allow only incoming transactions containing a a given mosaic identifier.
      */
-    ALLOW_INCOMING_MOSAIC(AccountRestrictionTypeValueOptions.MOSAIC_VALUE),
+    ALLOW_INCOMING_MOSAIC(AccountRestrictionTypeValueOptions.MOSAIC_VALUE,
+        AccountRestrictionTargetType.MOSAIC_ID),
 
     /**
      * Allow only outgoing transactions from a given address.
      */
     ALLOW_OUTGOING_ADDRESS(AccountRestrictionTypeValueOptions.ADDRESS_VALUE
-        + AccountRestrictionTypeValueOptions.OUTGOING_VALUE),
+        + AccountRestrictionTypeValueOptions.OUTGOING_VALUE, AccountRestrictionTargetType.ADDRESS),
 
     /**
      * Allow only outgoing transactions of a given type.
      */
     ALLOW_OUTGOING_TRANSACTION_TYPE(AccountRestrictionTypeValueOptions.TRANSACTION_TYPE_VALUE
-        + AccountRestrictionTypeValueOptions.OUTGOING_VALUE),
+        + AccountRestrictionTypeValueOptions.OUTGOING_VALUE,
+        AccountRestrictionTargetType.TRANSACTION_TYPE),
 
     /**
      * Account restriction type sentinel.
      */
-    SENTINEL(AccountRestrictionTypeValueOptions.SENTINEL_VALUE),
+    SENTINEL(AccountRestrictionTypeValueOptions.SENTINEL_VALUE,
+        AccountRestrictionTargetType.ADDRESS),
 
     /**
      * Account restriction is interpreted as blocking address operation.
      */
     BLOCK_ADDRESS(AccountRestrictionTypeValueOptions.ADDRESS_VALUE
-        + AccountRestrictionTypeValueOptions.BLOCK_VALUE),
+        + AccountRestrictionTypeValueOptions.BLOCK_VALUE, AccountRestrictionTargetType.ADDRESS),
 
     /**
      * Account restriction is interpreted as blocking mosaicId operation.
      */
     BLOCK_MOSAIC(AccountRestrictionTypeValueOptions.MOSAIC_VALUE
-        + AccountRestrictionTypeValueOptions.BLOCK_VALUE),
+        + AccountRestrictionTypeValueOptions.BLOCK_VALUE, AccountRestrictionTargetType.MOSAIC_ID),
 
     /**
      * Block outgoing transactions for a given address.
      */
     BLOCK_OUTGOING_ADDRESS(AccountRestrictionTypeValueOptions.ADDRESS_VALUE
         + AccountRestrictionTypeValueOptions.BLOCK_VALUE
-        + AccountRestrictionTypeValueOptions.OUTGOING_VALUE),
+        + AccountRestrictionTypeValueOptions.OUTGOING_VALUE, AccountRestrictionTargetType.ADDRESS),
 
     /**
      * Block outgoing transactions for a given transactionType.
@@ -93,7 +97,8 @@ public enum AccountRestrictionType {
     BLOCK_OUTGOING_TRANSACTION_TYPE(
         AccountRestrictionTypeValueOptions.TRANSACTION_TYPE_VALUE
             + AccountRestrictionTypeValueOptions.BLOCK_VALUE
-            + AccountRestrictionTypeValueOptions.OUTGOING_VALUE);
+            + AccountRestrictionTypeValueOptions.OUTGOING_VALUE,
+        AccountRestrictionTargetType.TRANSACTION_TYPE);
 
     /**
      * Enum value.
@@ -101,12 +106,20 @@ public enum AccountRestrictionType {
     private final int value;
 
     /**
+     * The target type.
+     */
+    private final AccountRestrictionTargetType targetType;
+
+    /**
      * Constructor.
      *
      * @param value Enum value.
+     * @param targetType the target type
      */
-    AccountRestrictionType(final int value) {
+    AccountRestrictionType(final int value,
+        AccountRestrictionTargetType targetType) {
         this.value = value;
+        this.targetType = targetType;
     }
 
     /**
@@ -127,5 +140,12 @@ public enum AccountRestrictionType {
      */
     public int getValue() {
         return value;
+    }
+
+    /**
+     * @return the target type.
+     */
+    public AccountRestrictionTargetType getTargetType() {
+        return targetType;
     }
 }

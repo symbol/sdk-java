@@ -111,15 +111,15 @@ public enum TransactionType {
     /**
      * Account metadata transaction version
      */
-    ACCOUNT_METADATA_TRANSACTION((short) 0x4144, 1),
+    ACCOUNT_METADATA_TRANSACTION(0x4144, 1),
     /**
      * Mosaic metadata transaction version
      */
-    MOSAIC_METADATA_TRANSACTION((short) 0x4244, 1),
+    MOSAIC_METADATA_TRANSACTION(0x4244, 1),
     /**
      * Namespace metadata transaction version
      */
-    NAMESPACE_METADATA_TRANSACTION((short) 0x4344, 1),
+    NAMESPACE_METADATA_TRANSACTION(0x4344, 1),
     /**
      * Account link transaction type
      */

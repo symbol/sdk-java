@@ -18,16 +18,22 @@ package io.nem.sdk.infrastructure.vertx;
 
 import io.nem.core.crypto.PublicKey;
 import io.nem.core.utils.ExceptionUtils;
+import io.nem.core.utils.MapperUtils;
 import io.nem.sdk.api.RepositoryCallException;
 import io.nem.sdk.model.account.AccountInfo;
 import io.nem.sdk.model.account.AccountNames;
+import io.nem.sdk.model.account.AccountRestrictions;
 import io.nem.sdk.model.account.AccountType;
 import io.nem.sdk.model.account.Address;
 import io.nem.sdk.model.transaction.AccountRestrictionType;
+import io.nem.sdk.model.transaction.TransactionType;
 import io.nem.sdk.openapi.vertx.model.AccountDTO;
 import io.nem.sdk.openapi.vertx.model.AccountInfoDTO;
 import io.nem.sdk.openapi.vertx.model.AccountNamesDTO;
+import io.nem.sdk.openapi.vertx.model.AccountRestrictionDTO;
 import io.nem.sdk.openapi.vertx.model.AccountRestrictionTypeEnum;
+import io.nem.sdk.openapi.vertx.model.AccountRestrictionsDTO;
+import io.nem.sdk.openapi.vertx.model.AccountRestrictionsInfoDTO;
 import io.nem.sdk.openapi.vertx.model.AccountTypeEnum;
 import io.nem.sdk.openapi.vertx.model.AccountsNamesDTO;
 import java.util.Arrays;
@@ -226,6 +232,100 @@ public class AccountRepositoryVertxImplTest extends AbstractVertxRespositoryTest
 
         Assertions.assertEquals(address, accountNames.getAddress());
         Assertions.assertEquals("accountalias", accountNames.getNames().get(0).getName());
+    }
+
+    @Test
+    public void shouldGetAccountRestrictions() throws Exception {
+        Address address =
+            Address.createFromRawAddress(
+                "SBCPGZ3S2SCC3YHBBTYDCUZV4ZZEPHM2KGCP4QXX");
+
+        AccountRestrictionsDTO dto = new AccountRestrictionsDTO();
+        dto.setAddress(address.plain());
+        AccountRestrictionDTO restriction = new AccountRestrictionDTO();
+        restriction.setRestrictionType(AccountRestrictionTypeEnum.NUMBER_2);
+        restriction.setValues(Arrays.asList("9636553580561478212"));
+        dto.setRestrictions(Collections.singletonList(restriction));
+
+        AccountRestrictionsInfoDTO info = new AccountRestrictionsInfoDTO();
+        info.setAccountRestrictions(dto);
+        mockRemoteCall(info);
+
+        AccountRestrictions accountRestrictions = repository
+            .getAccountRestrictions(address).toFuture().get();
+
+        Assertions.assertEquals(address, accountRestrictions.getAddress());
+        Assertions.assertEquals(1, accountRestrictions.getRestrictions().size());
+        Assertions.assertEquals(AccountRestrictionType.ALLOW_INCOMING_MOSAIC,
+            accountRestrictions.getRestrictions().get(0).getRestrictionType());
+        Assertions.assertEquals(
+            Arrays.asList(MapperUtils.toMosaicId("9636553580561478212")),
+            accountRestrictions.getRestrictions().get(0).getValues());
+
+    }
+
+    @Test
+    public void shouldGetAccountsRestrictionsFromAddresses() throws Exception {
+        Address address =
+            Address.createFromRawAddress(
+                "SBCPGZ3S2SCC3YHBBTYDCUZV4ZZEPHM2KGCP4QXX");
+
+        AccountRestrictionsDTO dto = new AccountRestrictionsDTO();
+        dto.setAddress(address.plain());
+        AccountRestrictionDTO restriction = new AccountRestrictionDTO();
+        restriction.setRestrictionType(AccountRestrictionTypeEnum.NUMBER_1);
+        restriction.setValues(Arrays.asList("9050B9837EFAB4BBE8A4B9BB32D812F9885C00D8FC1650E142"));
+        dto.setRestrictions(Collections.singletonList(restriction));
+
+        AccountRestrictionsInfoDTO info = new AccountRestrictionsInfoDTO();
+        info.setAccountRestrictions(dto);
+        mockRemoteCall(Collections.singletonList(info));
+
+        AccountRestrictions accountRestrictions = repository
+            .getAccountsRestrictionsFromAddresses(Collections.singletonList(address)).toFuture()
+            .get().get(0);
+
+        Assertions.assertEquals(address, accountRestrictions.getAddress());
+        Assertions.assertEquals(1, accountRestrictions.getRestrictions().size());
+        Assertions.assertEquals(AccountRestrictionType.ALLOW_INCOMING_ADDRESS,
+            accountRestrictions.getRestrictions().get(0).getRestrictionType());
+        Assertions.assertEquals(Collections.singletonList(MapperUtils
+                .toAddressFromUnresolved("9050B9837EFAB4BBE8A4B9BB32D812F9885C00D8FC1650E142")),
+            accountRestrictions.getRestrictions().get(0).getValues());
+
+    }
+
+    @Test
+    public void shouldGetAccountsRestrictionsInfoFromPublicKeys() throws Exception {
+        Address address =
+            Address.createFromRawAddress(
+                "SBCPGZ3S2SCC3YHBBTYDCUZV4ZZEPHM2KGCP4QXX");
+        final PublicKey key = PublicKey.fromHexString("227F");
+        AccountRestrictionsDTO dto = new AccountRestrictionsDTO();
+        dto.setAddress(address.plain());
+        AccountRestrictionDTO restriction = new AccountRestrictionDTO();
+        restriction.setRestrictionType(AccountRestrictionTypeEnum.NUMBER_196);
+        restriction
+            .setValues(
+                Collections
+                    .singletonList(Integer.toString(TransactionType.SECRET_PROOF.getValue())));
+        dto.setRestrictions(Collections.singletonList(restriction));
+
+        AccountRestrictionsInfoDTO info = new AccountRestrictionsInfoDTO();
+        info.setAccountRestrictions(dto);
+        mockRemoteCall(Collections.singletonList(info));
+
+        AccountRestrictions accountRestrictions = repository
+            .getAccountsRestrictionsInfoFromPublicKeys(Collections.singletonList(key)).toFuture()
+            .get().get(0);
+
+        Assertions.assertEquals(address, accountRestrictions.getAddress());
+        Assertions.assertEquals(1, accountRestrictions.getRestrictions().size());
+        Assertions.assertEquals(AccountRestrictionType.BLOCK_OUTGOING_TRANSACTION_TYPE,
+            accountRestrictions.getRestrictions().get(0).getRestrictionType());
+        Assertions.assertEquals(Arrays.asList(TransactionType.SECRET_PROOF),
+            accountRestrictions.getRestrictions().get(0).getValues());
+
     }
 
     @Test
