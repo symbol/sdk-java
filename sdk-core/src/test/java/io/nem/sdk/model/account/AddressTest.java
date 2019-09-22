@@ -156,6 +156,21 @@ class AddressTest {
     }
 
     @Test
+    void shouldCreateFromEncoded() {
+        String encoded = "901508D3519B6CC0936A04233073D3D903E1DFBEF95DC204AB";
+        Address address = Address
+            .createFromEncoded(encoded);
+        assertEquals(encoded, address.encoded().toUpperCase());
+    }
+
+    @Test
+    void shouldCreateFromEncodedFailWhenInvalid() {
+        Assertions.assertEquals("invalid! could not be decoded. DecoderException: Illegal hexadecimal character i at index 0", Assertions.assertThrows(IllegalArgumentException.class,
+            () -> Address.createFromEncoded("invalid!")).getMessage());
+    }
+
+
+    @Test
     void addressInPrettyFormat() {
         Address address =
             new Address("SDRDGF-TDLLCB-67D4HP-GIMIHP-NSRYRJ-RT7DOB-GWZY", NetworkType.MIJIN_TEST);
