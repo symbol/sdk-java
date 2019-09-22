@@ -145,7 +145,7 @@ public class Ed25519BlockCipher implements BlockCipher {
         for (int i = 0; i < sharedKey.length; i++) {
             sharedKey[i] ^= salt[i];
         }
-        return SignSchema.toHashShort(signSchema, sharedKey);
+        return SignSchema.toHash32Bytes(signSchema, sharedKey);
     }
 
     public static byte[] sharedKeyNotSalted(final PrivateKey privateKey, final PublicKey publicKey,

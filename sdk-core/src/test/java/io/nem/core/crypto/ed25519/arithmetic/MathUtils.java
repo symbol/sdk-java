@@ -557,14 +557,14 @@ public class MathUtils {
         a[0] &= 0xF8;
         final Ed25519EncodedFieldElement r =
             new Ed25519EncodedFieldElement(
-                SignSchema.toHashLong(signSchema, Arrays.copyOfRange(hash, 32, 64), data));
+                SignSchema.toHash64Bytes(signSchema, Arrays.copyOfRange(hash, 32, 64), data));
         final Ed25519EncodedFieldElement rReduced = reduceModGroupOrder(r);
         final Ed25519GroupElement R = scalarMultiplyGroupElement(Ed25519Group.BASE_POINT,
             toFieldElement(toBigInteger(rReduced)));
         final Ed25519EncodedFieldElement h =
             new Ed25519EncodedFieldElement(
                 SignSchema
-                    .toHashLong(signSchema, R.encode().getRaw(), keyPair.getPublicKey().getBytes(),
+                    .toHash64Bytes(signSchema, R.encode().getRaw(), keyPair.getPublicKey().getBytes(),
                         data));
         final Ed25519EncodedFieldElement hReduced = reduceModGroupOrder(h);
         final BigInteger S =

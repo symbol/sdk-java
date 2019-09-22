@@ -17,6 +17,7 @@
 
 package io.nem.core.crypto;
 
+import io.nem.core.crypto.SignSchema.HashSize;
 import java.util.stream.Stream;
 import org.bouncycastle.util.encoders.Hex;
 import org.junit.jupiter.api.Assertions;
@@ -31,30 +32,30 @@ public class SignSchemaTest {
 
     private static Stream<Arguments> params() {
         return Stream.of(
-            Arguments.of("227F", SignSchema.SHA3, true,
+            Arguments.of("227F", SignSchema.SHA3, HashSize.HASH_SIZE_64_BYTES,
                 "dc229a6d2bb1ee8ce10e5b283254c68b4ee8ab8a28fa078f6c47ddd3d2bb25ee1cdb45f58b6fb2bb164cd5652ba482e6b44beeca293a2b24b70cdf9fe8d4051c"),
-            Arguments.of("227F", SignSchema.KECCAK, true,
+            Arguments.of("227F", SignSchema.KECCAK, HashSize.HASH_SIZE_64_BYTES,
                 "764011e5b78404847b0a0a55f3a19c3db5401889ff438fc950537797baf42d7724ed681857bfe632cf5a132fa43dd881dbf15e4d11f518acb7fd03cacb81177a"),
-            Arguments.of("AAAA", SignSchema.SHA3, true,
+            Arguments.of("AAAA", SignSchema.SHA3, HashSize.HASH_SIZE_64_BYTES,
                 "e192911d630f8fcad20b896b9d42f7a79c9fe2146bc8543ab4dcf7263e119215a741a9e774d97c3ccd5a63c484787903f9cb694e22c3f865f866a4f93537eb23"),
-            Arguments.of("AAAA", SignSchema.KECCAK, true,
+            Arguments.of("AAAA", SignSchema.KECCAK, HashSize.HASH_SIZE_64_BYTES,
                 "e9cc94aeeab674586e0d62ad5f7dab2678dbdf43b73f13debdd014ed5a0c68ca18a35c6a68c9b8c7a6bd3d62a2d94f492b9f61837e985d80217f4b12ce0bd4c9"),
-            Arguments.of("BBADABA123", SignSchema.SHA3, true,
+            Arguments.of("BBADABA123", SignSchema.SHA3, HashSize.HASH_SIZE_64_BYTES,
                 "800df91a0217b997945f94dbd62c2b278925a56f040ebbc677671e396e7e38996992ee527087800b2bb5cdb1cc29658afd8ba49f734e2e17c11b6dffacdd2de6"),
-            Arguments.of("BBADABA123", SignSchema.KECCAK, true,
+            Arguments.of("BBADABA123", SignSchema.KECCAK, HashSize.HASH_SIZE_64_BYTES,
                 "72f35d7c791981554bae85677606e61e1f29e70e0d8d7f288af795933f03a6c2b5fccdae53b437238df35cd531cfaac5fb9d4a5590d764adb8c5dec315ab80bd"),
 
-            Arguments.of("227F", SignSchema.SHA3, false,
+            Arguments.of("227F", SignSchema.SHA3, HashSize.HASH_SIZE_32_BYTES,
                 "7f735e6b0665ceb120bff1bc1478ef2684bace93e82d5ff6d6e5066381bb365e"),
-            Arguments.of("227F", SignSchema.KECCAK, false,
+            Arguments.of("227F", SignSchema.KECCAK, HashSize.HASH_SIZE_32_BYTES,
                 "8b768bd38b5ff80edb8a9aeb460606a682580616d512ff566d0176b1c8fc1034"),
-            Arguments.of("AAAA", SignSchema.SHA3, false,
+            Arguments.of("AAAA", SignSchema.SHA3, HashSize.HASH_SIZE_32_BYTES,
                 "4ee18b807b7dfa443a9d87dd51bc03d868b1cde26581c092ca57a366b8b408ca"),
-            Arguments.of("AAAA", SignSchema.KECCAK, false,
+            Arguments.of("AAAA", SignSchema.KECCAK, HashSize.HASH_SIZE_32_BYTES,
                 "6330b989705733cc5c1f7285b8a5b892e08be86ed6fbe9d254713a4277bc5bd2"),
-            Arguments.of("BBADABA123", SignSchema.SHA3, false,
+            Arguments.of("BBADABA123", SignSchema.SHA3, HashSize.HASH_SIZE_32_BYTES,
                 "faff241e629dfc621077481a4fec760a86675f74fba39a3c90587f0cefe177f4"),
-            Arguments.of("BBADABA123", SignSchema.KECCAK, false,
+            Arguments.of("BBADABA123", SignSchema.KECCAK, HashSize.HASH_SIZE_32_BYTES,
                 "9aad08fdd5ee6599b94c0440b81d5fddc8d03882f1856d72b38d72f743123304")
         );
     }
@@ -101,10 +102,19 @@ public class SignSchemaTest {
             Hex.toHexString(SignSchema.reverse(Hex.decode(input))).toUpperCase());
     }
 
+
+    @ParameterizedTest
+    @MethodSource("reverse")
+    public void shouldReverseHex(String input, String expected) {
+        Assertions.assertEquals(expected,
+            (SignSchema.reverse(input).toUpperCase()));
+    }
+
+
     @ParameterizedTest
     @MethodSource("params")
     public void shouldGetHasherHash(String input, SignSchema signSchema,
-        boolean longSize, String expected) {
+        HashSize longSize, String expected) {
         Assertions.assertEquals(expected,
             Hex.toHexString(SignSchema.getHasher(signSchema, longSize).hash(Hex.decode(input))));
     }
@@ -113,10 +123,11 @@ public class SignSchemaTest {
     @ParameterizedTest
     @MethodSource("params")
     public void shouldHashAccordingToSize(String input, SignSchema signSchema,
-        boolean longSize, String expected) {
+        HashSize longSize, String expected) {
         byte[] hexInput = Hex.decode(input);
-        byte[] hexOutput = longSize ? SignSchema.toHashLong(signSchema, hexInput)
-            : SignSchema.toHashShort(signSchema, hexInput);
+        byte[] hexOutput =
+            longSize == HashSize.HASH_SIZE_64_BYTES ? SignSchema.toHash64Bytes(signSchema, hexInput)
+                : SignSchema.toHash32Bytes(signSchema, hexInput);
         Assertions.assertEquals(expected, Hex.toHexString(hexOutput));
     }
 

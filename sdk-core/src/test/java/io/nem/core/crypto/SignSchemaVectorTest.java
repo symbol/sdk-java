@@ -56,7 +56,7 @@ public class SignSchemaVectorTest extends AbstractVectorTest {
         byte[] decode = Hex.decode(data);
         Assertions.assertEquals(length, decode.length);
         Assertions.assertEquals(hash.toUpperCase(),
-            Hex.toHexString(SignSchema.toHashShort(SignSchema.SHA3, decode)).toUpperCase());
+            Hex.toHexString(SignSchema.toHash32Bytes(SignSchema.SHA3, decode)).toUpperCase());
     }
 
     @ParameterizedTest
@@ -65,7 +65,7 @@ public class SignSchemaVectorTest extends AbstractVectorTest {
         byte[] decode = Hex.decode(data);
         Assertions.assertEquals(length, decode.length);
         Assertions.assertEquals(hash.toUpperCase(),
-            Hex.toHexString(SignSchema.toHashShort(SignSchema.KECCAK, decode)).toUpperCase());
+            Hex.toHexString(SignSchema.toHash32Bytes(SignSchema.KECCAK, decode)).toUpperCase());
     }
 
 

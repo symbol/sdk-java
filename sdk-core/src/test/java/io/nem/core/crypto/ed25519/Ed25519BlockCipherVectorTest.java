@@ -31,7 +31,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-public class Ed25519BlockCipherVectorTest extends AbstractVectorTest {
+class Ed25519BlockCipherVectorTest extends AbstractVectorTest {
 
     private static Stream<Arguments> testResolveSharedKey() {
         //NOTE!! first example of each file is broken?????
@@ -39,12 +39,12 @@ public class Ed25519BlockCipherVectorTest extends AbstractVectorTest {
             entry -> extractArguments(SignSchema.SHA3, entry), 1, 20
         );
         Stream<Arguments> nis1Arguments = createArguments("3.test-derive-nis1.json",
-            entry -> extractArguments(SignSchema.KECCAK_REVERSED_KEY, entry), 1, 20
+            entry -> extractArguments(SignSchema.KECCAK, entry), 1, 20
         );
         return Stream.concat(catapultArguments, nis1Arguments);
     }
 
-    private static List<Arguments> extractArguments(Object signSchema,
+    private static List<Arguments> extractArguments(SignSchema signSchema,
         Map<String, String> entry) {
         return Collections
             .singletonList(Arguments.of(
@@ -60,8 +60,9 @@ public class Ed25519BlockCipherVectorTest extends AbstractVectorTest {
     @MethodSource("testResolveSharedKey")
     void testResolveSharedKey(SignSchema signSchema, String salt, String privateKey,
         String otherPublicKey, String scalarMulResult, String sharedKey) {
-
-        PrivateKey privateKeyObject = PrivateKey.fromHexString(privateKey);
+        PrivateKey privateKeyObject = PrivateKey
+            .fromHexString(signSchema == SignSchema.KECCAK ? SignSchema.reverse(privateKey):
+                privateKey);
         PublicKey otherPublicKeyObject = PublicKey.fromHexString(otherPublicKey);
         byte[] resolvedSharedKey = Ed25519BlockCipher.getSharedKey(
             privateKeyObject,

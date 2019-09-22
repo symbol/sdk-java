@@ -122,23 +122,6 @@ public class Address {
     }
 
     /**
-     * Creates an address based on the public key, the {@link NetworkType} and {@link SignSchema}.
-     * Most of the time, the SignSchema would be resolved based on the {@link NetworkType}. Use
-     * method above.
-     *
-     * @param publicKey String
-     * @param networkType the {@link NetworkType}
-     * @param signSchema the {@link SignSchema}
-     * @return Address
-     * @see RawAddress
-     */
-    public static Address createFromPublicKey(String publicKey, NetworkType networkType,
-        SignSchema signSchema) {
-        return new Address(RawAddress.generateAddress(publicKey, networkType, signSchema),
-            networkType);
-    }
-
-    /**
      * Get address in plain format ex: SB3KUBHATFCPV7UZQLWAQ2EUR6SIHBSBEOEDDDF3.
      *
      * @return String

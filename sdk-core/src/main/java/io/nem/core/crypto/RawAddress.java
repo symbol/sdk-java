@@ -49,20 +49,8 @@ public class RawAddress {
      * @return an encoded address that can be used to identify accounts.
      */
     public static String generateAddress(final String publicKey, final NetworkType networkType) {
-        return generateAddress(publicKey, networkType, networkType.resolveSignSchema());
-    }
 
-    /**
-     * This method generates an address based on the public key, and the Catapult configuration
-     * network type and sign schema.
-     *
-     * @param publicKey the public key
-     * @param networkType the network type
-     * @param signSchema the signature
-     * @return an encoded address that can be used to identify accounts.
-     */
-    public static String generateAddress(final String publicKey, final NetworkType networkType,
-        final SignSchema signSchema) {
+        SignSchema signSchema = networkType.resolveSignSchema();
         byte version = (byte) networkType.getValue();
         // step 1: sha3 hash of the public key
         byte[] publicKeyBytes;
@@ -71,7 +59,7 @@ public class RawAddress {
         } catch (DecoderException e) {
             throw new IllegalArgumentException("Public key is not valid");
         }
-        final byte[] publicKeyHash = SignSchema.toHashShort(signSchema, publicKeyBytes);
+        final byte[] publicKeyHash = SignSchema.toHash32Bytes(signSchema, publicKeyBytes);
 
         // step 2: ripemd160 hash of (1)
         final byte[] ripemd160StepOneHash = Hashes.ripemd160(publicKeyHash);
@@ -94,7 +82,7 @@ public class RawAddress {
 
     private static byte[] generateChecksum(final byte[] input, SignSchema signSchema) {
         // step 1: sha3 hash of (input
-        final byte[] stepThreeHash = SignSchema.toHashShort(signSchema, input);
+        final byte[] stepThreeHash = SignSchema.toHash32Bytes(signSchema, input);
 
         // step 2: get the first X bytes of (1)
         return Arrays.copyOfRange(stepThreeHash, 0, NUM_CHECKSUM_BYTES);

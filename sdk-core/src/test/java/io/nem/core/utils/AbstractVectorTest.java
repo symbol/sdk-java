@@ -20,6 +20,7 @@ package io.nem.core.utils;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.Reader;
 import java.net.URL;
 import java.util.List;
 import java.util.Map;
@@ -38,21 +39,25 @@ public class AbstractVectorTest {
     protected static Stream<Arguments> createArguments(String fileName,
         Function<Map<String, String>, List<Arguments>> extractArguments, long skip, int limit) {
         try {
-            //We may copy the vector test files locally. If we do, change the loading below.
-            URL url = new URL(
-                "https://raw.githubusercontent.com/nemtech/test-vectors/master/" + fileName);
+            //The files loaded here are a trimmed down version of the vectors tests https://github.com/nemtech/test-vectors
+            URL url = AbstractVectorTest.class.getClassLoader()
+                .getResource("vectors/" + fileName);
             ObjectMapper objectMapper = new ObjectMapper();
             // Change this to just load the first 'limit' objects from the json array file.
             List<Map<String, String>> list = objectMapper
                 .readValue(url, new TypeReference<List<Map<String, String>>>() {
                 });
+            //Not all the tests can be run every time as it would be slow.
+            //It may be good to shuffle the list so different vectors are tested each run.
             return list.stream().skip(skip).limit(limit).map(extractArguments::apply)
                 .flatMap(List::stream)
                 .filter(Objects::nonNull);
 
         } catch (Exception e) {
             throw new IllegalArgumentException(
-                "Arguments could not be generated: " + ExceptionUtils.getMessage(e), e);
+                "Arguments could not be generated: for file name " + fileName + ". Exception: "
+                    + ExceptionUtils
+                    .getMessage(e), e);
         }
 
     }

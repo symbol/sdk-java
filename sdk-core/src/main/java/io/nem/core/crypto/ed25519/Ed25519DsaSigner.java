@@ -20,6 +20,7 @@ import io.nem.core.crypto.CryptoException;
 import io.nem.core.crypto.DsaSigner;
 import io.nem.core.crypto.KeyPair;
 import io.nem.core.crypto.SignSchema;
+import io.nem.core.crypto.SignSchema.HashSize;
 import io.nem.core.crypto.SignSchema.Hasher;
 import io.nem.core.crypto.Signature;
 import io.nem.core.crypto.ed25519.arithmetic.Ed25519EncodedFieldElement;
@@ -71,7 +72,7 @@ public class Ed25519DsaSigner implements DsaSigner {
         // r = H(hash_b,...,hash_2b-1, data) where b=256.
         final Ed25519EncodedFieldElement r =
             new Ed25519EncodedFieldElement(
-                SignSchema.toHashLong(signSchema,
+                SignSchema.toHash64Bytes(signSchema,
                     Arrays.copyOfRange(
                         hash, 32, 64), // only include the last 32 bytes of the private key hash
                     data));
@@ -89,7 +90,7 @@ public class Ed25519DsaSigner implements DsaSigner {
         // a is the lower 32 bytes of hash after clamping.
         final Ed25519EncodedFieldElement h =
             new Ed25519EncodedFieldElement(
-                SignSchema.toHashLong(signSchema, encodedR.getRaw(),
+                SignSchema.toHash64Bytes(signSchema, encodedR.getRaw(),
                     this.getKeyPair().getPublicKey().getBytes(),
                     data));
         final Ed25519EncodedFieldElement hModQ = h.modQ();
@@ -117,7 +118,7 @@ public class Ed25519DsaSigner implements DsaSigner {
             this.getKeyPair().getPublicKey().getBytes(), new byte[32])) {
             return false;
         }
-        Hasher hasher = SignSchema.getHasher(signSchema, true);
+        Hasher hasher = SignSchema.getHasher(signSchema, HashSize.HASH_SIZE_64_BYTES);
         // h = H(encodedR, encodedA, data).
         final byte[] rawEncodedR = signature.getBinaryR();
         final byte[] rawEncodedA = this.getKeyPair().getPublicKey().getBytes();

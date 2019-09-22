@@ -35,20 +35,25 @@ import org.junit.jupiter.params.provider.MethodSource;
 class AddressVectorTest extends AbstractVectorTest {
 
     private static Stream<Arguments> testAddressCatapult() throws Exception {
-        return createArguments("1.test-address-catapult.json", AddressVectorTest::extractArguments,
+        return createArguments("1.test-address-catapult.json", AddressVectorTest::extractArgumentsSha,
             0, 5
         );
     }
 
     private static Stream<Arguments> testAddressNis1() throws Exception {
-        return createArguments("1.test-address-nis1.json", AddressVectorTest::extractArguments, 0, 5
+        return createArguments("1.test-address-nis1.json", AddressVectorTest::extractArgumentsKeccak, 0, 5
         );
     }
 
-    private static List<Arguments> extractArguments(Map<String, String> entry) {
+    private static List<Arguments> extractArgumentsKeccak(Map<String, String> entry) {
         List<Arguments> arguments = new ArrayList<>();
         arguments.add(extractArguments(entry, NetworkType.MAIN_NET, "address_public"));
         arguments.add(extractArguments(entry, NetworkType.TEST_NET, "address_public_test"));
+        return arguments;
+    }
+
+    private static List<Arguments> extractArgumentsSha(Map<String, String> entry) {
+        List<Arguments> arguments = new ArrayList<>();
         arguments.add(extractArguments(entry, NetworkType.MIJIN, "address_mijin"));
         arguments.add(extractArguments(entry, NetworkType.MIJIN_TEST, "address_mijin_test"));
         return arguments;
@@ -67,7 +72,7 @@ class AddressVectorTest extends AbstractVectorTest {
     @ParameterizedTest
     @MethodSource("testAddressCatapult")
     void testAddressCatapult(NetworkType networkType, String publicKey, String encoded) {
-        Address address = Address.createFromPublicKey(publicKey, networkType, SignSchema.SHA3);
+        Address address = Address.createFromPublicKey(publicKey, networkType);
         Assertions.assertEquals(encoded, address.plain());
         Assertions.assertEquals(networkType, address.getNetworkType());
     }
@@ -75,7 +80,7 @@ class AddressVectorTest extends AbstractVectorTest {
     @ParameterizedTest
     @MethodSource("testAddressNis1")
     void testAddressNis1(NetworkType networkType, String publicKey, String encoded) {
-        Address address = Address.createFromPublicKey(publicKey, networkType, SignSchema.KECCAK);
+        Address address = Address.createFromPublicKey(publicKey, networkType);
         Assertions.assertEquals(encoded, address.plain());
         Assertions.assertEquals(networkType, address.getNetworkType());
     }

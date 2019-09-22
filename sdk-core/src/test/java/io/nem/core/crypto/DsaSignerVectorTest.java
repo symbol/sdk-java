@@ -38,13 +38,12 @@ public class DsaSignerVectorTest extends AbstractVectorTest {
             entry -> extractArguments(SignSchema.SHA3, entry), 0, 10
         );
         Stream<Arguments> nis1Arguments = createArguments("2.test-sign-nis1.json",
-            entry -> extractArguments(SignSchema.KECCAK_REVERSED_KEY, entry), 0, 10
+            entry -> extractArguments(SignSchema.KECCAK, entry), 0, 10
         );
         return Stream.concat(catapultArguments, nis1Arguments);
     }
 
-    private static List<Arguments> extractArguments(Object signSchema,
-        Map<String, String> entry) {
+    private static List<Arguments> extractArguments(SignSchema signSchema, Map<String, String> entry) {
         return Collections
             .singletonList(Arguments.of(
                 signSchema,
@@ -58,12 +57,17 @@ public class DsaSignerVectorTest extends AbstractVectorTest {
 
     @ParameterizedTest
     @MethodSource("testSignAll")
-    void testSignAll(SignSchema signSchema, String privateKey, String publicKey, String data,
+    void testSignAll(SignSchema signSchema,  String privateKey, String publicKey,
+        String data,
         int length, String signature) {
         final CryptoEngine engine = CryptoEngines.defaultEngine();
 
+        //Reusing vector NIS 1 vector tests by reversing the private key when using SignSchema.KECCAK
         final KeyPair keyPair = KeyPair
-            .fromPrivate(PrivateKey.fromHexString(privateKey), signSchema);
+            .fromPrivate(
+                PrivateKey.fromHexString(
+                    signSchema == SignSchema.KECCAK ? SignSchema.reverse(privateKey) : privateKey),
+                signSchema);
         final DsaSigner signer = engine.createDsaSigner(keyPair, signSchema);
 
         // Act:

@@ -50,9 +50,7 @@ class AddressTest {
     }
 
 
-
-
-    private static Stream<Arguments> publicKeysSha3() {
+    private static Stream<Arguments> publicKeys() {
         return Stream.of(
             Arguments.of(
                 "b4f12e7c9f6946091e2cb8b6d3a12b50d17ccbbf646386ea27ce2946a7423dcf",
@@ -65,37 +63,19 @@ class AddressTest {
             Arguments.of(
                 "b4f12e7c9f6946091e2cb8b6d3a12b50d17ccbbf646386ea27ce2946a7423dcf",
                 NetworkType.TEST_NET,
-                "TARNASAS2BIAB6LMFA3FPMGBPGIJGK6IJE47FYR3"),
+                "TDGMF64NDRRK6RLTDRG3LIGZ2C5LVFMTDXXPJNGI"),
             Arguments.of(
                 "b4f12e7c9f6946091e2cb8b6d3a12b50d17ccbbf646386ea27ce2946a7423dcf",
                 NetworkType.MAIN_NET,
-                "NARNASAS2BIAB6LMFA3FPMGBPGIJGK6IJFJKUV32"));
-    }
-
-    //    String publicKey = "c2f93346e27ce6ad1a9f8f5e3066f8326593a406bdf357acb041e2f9ab402efe";
-//
-//        arguments.add(Arguments
-//            .of(NetworkType.MAIN_NET, publicKey, "NCTVW23D2MN5VE4AQ4TZIDZENGNOZXPRPQUJ2ZML"));
-//
-//        arguments.add(Arguments
-//            .of(NetworkType.TEST_NET, publicKey, "TCTVW23D2MN5VE4AQ4TZIDZENGNOZXPRPSDRSFRF"));
-//
-//        arguments.add(
-//            Arguments.of(NetworkType.MIJIN, publicKey, "MCTVW23D2MN5VE4AQ4TZIDZENGNOZXPRPR72DYSX"));
-//
-//        arguments.add(Arguments
-//            .of(NetworkType.MIJIN_TEST, publicKey, "SCTVW23D2MN5VE4AQ4TZIDZENGNOZXPRPRLIKCF2"));
-
-    private static Stream<Arguments> publicKeysKeccak() {
-        return Stream.of(
+                "NDGMF64NDRRK6RLTDRG3LIGZ2C5LVFMTDVFEAGXC"),
             Arguments.of(
                 "c5f54ba980fcbb657dbaaa42700539b207873e134d2375efeab5f1ab52f87844",
                 NetworkType.MIJIN,
-                "MDD2CT6LQLIYQ56KIXI3ENTM6EK3D44P5LDT7JHT"),
+                "MAKIIYW7AXR3YGQBH5L5PF7JUFULUKJYQ4FB7MFF"),
             Arguments.of(
                 "c5f54ba980fcbb657dbaaa42700539b207873e134d2375efeab5f1ab52f87844",
                 NetworkType.MIJIN_TEST,
-                "SDD2CT6LQLIYQ56KIXI3ENTM6EK3D44P5JGDTV3S"),
+                "SAKIIYW7AXR3YGQBH5L5PF7JUFULUKJYQ6FYMGNN"),
             Arguments.of(
                 "c5f54ba980fcbb657dbaaa42700539b207873e134d2375efeab5f1ab52f87844",
                 NetworkType.TEST_NET,
@@ -111,15 +91,11 @@ class AddressTest {
             Arguments.of(
                 "fbb91b16df828e21a9802980a44fc757c588bc1382a4cea429d6fa2ae0333f56",
                 NetworkType.MIJIN,
-                "MBAF3BFLLPWH33MYE6VUPP5T6DQBZBKIDEBBSGE2"),
+                "MCC3LX5AJZFAU7KC24GK32JSQARCFAHXDEUVY6Y5"),
             Arguments.of(
                 "6d34c04f3a0e42f0c3c6f50e475ae018cfa2f56df58c481ad4300424a6270cbb",
                 NetworkType.MAIN_NET,
-                "NA5IG3XFXZHIPJ5QLKX2FBJPEZYPMBPPK2ZRC3EH"));
-    }
-
-    private static Stream<Arguments> publicKeysUsingDefault() {
-        return Stream.of(
+                "NA5IG3XFXZHIPJ5QLKX2FBJPEZYPMBPPK2ZRC3EH"),
             Arguments.of(
                 "b4f12e7c9f6946091e2cb8b6d3a12b50d17ccbbf646386ea27ce2946a7423dcf",
                 NetworkType.MIJIN_TEST,
@@ -235,13 +211,11 @@ class AddressTest {
     }
 
     @ParameterizedTest
-    @EnumSource(SignSchema.class)
-    void createShouldFailWhenInvalidPublicKey(SignSchema signSchema) {
+    @EnumSource(NetworkType.class)
+    void createShouldFailWhenInvalidPublicKey(NetworkType networkType) {
         Assertions.assertEquals("Public key is not valid", assertThrows(
             IllegalArgumentException.class,
-            () -> {
-                Address.createFromPublicKey("InvalidPublicKey", NetworkType.MIJIN, signSchema);
-            }).getMessage());
+            () -> Address.createFromPublicKey("InvalidPublicKey", networkType)).getMessage());
     }
 
     @ParameterizedTest
@@ -253,30 +227,12 @@ class AddressTest {
     }
 
     @ParameterizedTest
-    @MethodSource("publicKeysSha3")
-    @DisplayName("AddressFromPublicKey")
-    void testCreateAddressFromPublicKeySha3(String publicKey, NetworkType networkType,
-        String input) {
-        Address address = Address.createFromPublicKey(publicKey, networkType, SignSchema.SHA3);
-        assertEquals(input, address.plain());
-    }
-
-    @ParameterizedTest
-    @MethodSource("publicKeysKeccak")
-    @DisplayName("AddressFromPublicKey")
-    void testCreateAddressFromPublicKeyKeccak(String publicKey, NetworkType networkType,
-        String input) {
-        Address address = Address
-            .createFromPublicKey(publicKey, networkType, SignSchema.KECCAK);
-        assertEquals(input, address.plain());
-    }
-
-    @ParameterizedTest
-    @MethodSource("publicKeysUsingDefault")
-    @DisplayName("AddressFromPublicKey")
-    void testCreateAddressFromPublicKeyUsingDefault(String publicKey, NetworkType networkType,
+    @MethodSource("publicKeys")
+    void testCreateAddressFromPublicKeys(String publicKey, NetworkType networkType,
         String input) {
         Address address = Address.createFromPublicKey(publicKey, networkType);
         assertEquals(input, address.plain());
+        assertEquals(networkType, address.getNetworkType());
     }
+
 }
