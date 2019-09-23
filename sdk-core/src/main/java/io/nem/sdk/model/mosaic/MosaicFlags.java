@@ -20,11 +20,11 @@ import java.math.BigInteger;
 import org.apache.commons.lang3.Validate;
 
 /**
- * The mosaic properties structure describes mosaic properties.
+ * The mosaic flags structure describes mosaic flags.
  *
  * @since 1.0
  */
-public class MosaicProperties {
+public class MosaicFlags {
 
     /**
      * The creator can choose between a definition that allows a mosaic supply change at a later
@@ -41,56 +41,44 @@ public class MosaicProperties {
      */
     private final boolean transferable;
     /**
-     * The divisibility determines up to what decimal place the mosaic can be divided into. Thus a
-     * divisibility of 3 means that a mosaic can be divided into smallest parts of 0.001 mosaics
-     * i.e. milli mosaics is the smallest sub-unit. When transferring mosaics via a transfer
-     * transaction the quantity transferred is given in multiples of those smallest parts. The
-     * divisibility must be in the range of 0 and 6. The default value is "0".
+     * Not all the mosaics of a given network will be subject to mosaic restrictions. The feature will only affect
+     * those to which the issuer adds the "restrictable" property explicitly at the moment of its creation. This
+     * property appears disabled by default, as it is undesirable for autonomous tokens like the public network currency.
      */
-    private final int divisibility;
-    /**
-     * The duration in blocks a mosaic will be available. After the duration finishes mosaic is
-     * inactive and can be renewed. Duration is optional when defining the mosaic
-     */
-    private final BigInteger duration;
+    private final boolean restrictable;
 
-    private MosaicProperties(
+    private MosaicFlags(
         final boolean supplyMutable,
         final boolean transferable,
-        final int divisibility,
-        final BigInteger duration) {
-        Validate.notNull(duration, "Duration cannot be null");
+        final boolean restrictable) {
         this.supplyMutable = supplyMutable;
         this.transferable = transferable;
-        this.divisibility = divisibility;
-        this.duration = duration;
+        this.restrictable = restrictable;
     }
 
     /**
-     * Creates a mosaic properties.
+     * Creates a mosaic flags.
      *
      * @param supplyMutable True supply can change.
      * @param transferable True mosaic can be transfer.
-     * @param divisibility Decimal place of the mosaic.
-     * @param duration Duration in blocks a mosaic will be available.
-     * @return Mosaic properties.
+     * @param restrictable True mosaic supports restrictions.
+     * @return Mosaic flags.
      */
-    public static MosaicProperties create(
-        boolean supplyMutable, boolean transferable, int divisibility, BigInteger duration) {
-        return new MosaicProperties(supplyMutable, transferable, divisibility, duration);
+    public static MosaicFlags create(
+        boolean supplyMutable, boolean transferable, boolean restrictable) {
+        return new MosaicFlags(supplyMutable, transferable, restrictable);
     }
 
     /**
-     * Creates a mosaic properties.
+     * Creates a mosaic flags.
      *
      * @param supplyMutable True supply can change.
      * @param transferable True mosaic can be transfer.
-     * @param divisibility Decimal place of the mosaic.
-     * @return Mosaic properties.
+     * @return Mosaic flags.
      */
-    public static MosaicProperties create(
-        boolean supplyMutable, boolean transferable, int divisibility) {
-        return new MosaicProperties(supplyMutable, transferable, divisibility, BigInteger.ZERO);
+    public static MosaicFlags create(
+        boolean supplyMutable, boolean transferable) {
+        return new MosaicFlags(supplyMutable, transferable, false);
     }
 
     /**
@@ -112,20 +100,12 @@ public class MosaicProperties {
     }
 
     /**
-     * Returns the number of blocks from height it will be active
+     * Returns true if mosaic is restrictable
      *
-     * @return the number of blocks from height it will be active
+     * @return if mosaic is restrictable
      */
-    public BigInteger getDuration() {
-        return duration;
+    public boolean isRestrictable() {
+        return restrictable;
     }
 
-    /**
-     * Returns the mosaic divisibility.
-     *
-     * @return mosaic divisibility
-     */
-    public int getDivisibility() {
-        return divisibility;
-    }
 }
