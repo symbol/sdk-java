@@ -22,16 +22,23 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.math.BigInteger;
 import org.junit.jupiter.api.Test;
 
-class MosaicPropertiesTest {
+class MosaicFlagsTest {
 
     @Test
-    void shouldCreateMosaicPropertiesViaConstructor() {
-        MosaicProperties mosaicProperties =
-            MosaicProperties.create(true, true, 1, BigInteger.valueOf(1000));
-        assertTrue(mosaicProperties.isSupplyMutable());
-        assertTrue(mosaicProperties.isTransferable());
-        assertEquals(1, mosaicProperties.getDivisibility());
-        assertEquals(
-            BigInteger.valueOf(1000).intValue(), mosaicProperties.getDuration().longValue());
+    void shouldCreateMosaicFlagsViaConstructor() {
+        MosaicFlags mosaicFlags =
+            MosaicFlags.create(true, true, true);
+        assertTrue(mosaicFlags.isSupplyMutable());
+        assertTrue(mosaicFlags.isTransferable());
+        assertTrue(mosaicFlags.isRestrictable());
+    }
+
+    @Test
+    void shouldCreateMosaicFlagsWithDefaultValuesViaConstructor() {
+        MosaicFlags mosaicFlags =
+            MosaicFlags.create(true, true);
+        assertTrue(mosaicFlags.isSupplyMutable());
+        assertTrue(mosaicFlags.isTransferable());
+        assertTrue(!mosaicFlags.isRestrictable());
     }
 }
