@@ -17,63 +17,74 @@
 
 package io.nem.sdk.model.transaction;
 
-import io.nem.sdk.model.account.Address;
 import io.nem.sdk.model.blockchain.NetworkType;
 import io.nem.sdk.model.mosaic.MosaicId;
 import java.math.BigInteger;
 import org.apache.commons.lang3.Validate;
 
-public class MosaicAddressRestrictionTransactionFactory
-    extends TransactionFactory<MosaicAddressRestrictionTransaction> {
+public class MosaicGlobalRestrictionTransactionFactory
+    extends TransactionFactory<MosaicGlobalRestrictionTransaction> {
 
     private final MosaicId mosaicId;
+    private final MosaicId referenceMosaicId;
     private final BigInteger restrictionKey;
-    private final Address targetAddress;
     private final BigInteger previousRestrictionValue;
+    private final MosaicRestrictionType previousRestrictionType;
     private final BigInteger newRestrictionValue;
+    private final MosaicRestrictionType newRestrictionType;
 
-    public MosaicAddressRestrictionTransactionFactory(
+    public MosaicGlobalRestrictionTransactionFactory(
         NetworkType networkType,
         MosaicId mosaicId,
+        MosaicId referenceMosaicId,
         BigInteger restrictionKey,
-        Address targetAddress,
         BigInteger previousRestrictionValue,
-        BigInteger newRestrictionValue) {
-        super(TransactionType.MOSAIC_ADDRESS_RESTRICTION, networkType);
-        Validate.notNull(mosaicId, "UnresolvedMosaicId must not be null");
+        MosaicRestrictionType previousRestrictionType,
+        BigInteger newRestrictionValue,
+        MosaicRestrictionType newRestrictionType) {
+        super(TransactionType.MOSAIC_GLOBAL_RESTRICTION, networkType);
+        Validate.notNull(mosaicId, "RestrictedMosaicId must not be null");
+        Validate.notNull(referenceMosaicId, "ReferenceMosaicId must not be null");
         Validate.notNull(restrictionKey, "RestrictionKey must not be null");
-        Validate.notNull(targetAddress, "TargetAddress must not be null");
         Validate.notNull(previousRestrictionValue, "PreviousRestrictionValue must not be null");
+        Validate.notNull(previousRestrictionType, "PreviousRestrictionType must not be null");
         Validate.notNull(newRestrictionValue, "NewRestrictionValue must not be null");
+        Validate.notNull(newRestrictionType, "NewRestrictionType must not be null");
         this.mosaicId = mosaicId;
+        this.referenceMosaicId = referenceMosaicId;
         this.restrictionKey = restrictionKey;
-        this.targetAddress = targetAddress;
         this.previousRestrictionValue = previousRestrictionValue;
+        this.previousRestrictionType = previousRestrictionType;
         this.newRestrictionValue = newRestrictionValue;
+        this.newRestrictionType = newRestrictionType;
     }
 
     @Override
-    public MosaicAddressRestrictionTransaction build() {
-        return new MosaicAddressRestrictionTransaction(this);
+    public MosaicGlobalRestrictionTransaction build() {
+        return new MosaicGlobalRestrictionTransaction(this);
     }
 
     public MosaicId getMosaicId() {
         return mosaicId;
     }
 
-    public BigInteger getRestrictionKey() {
-        return restrictionKey;
+    public MosaicId getReferenceMosaicId() {
+        return referenceMosaicId;
     }
 
-    public Address getTargetAddress() {
-        return targetAddress;
+    public BigInteger getRestrictionKey() {
+        return restrictionKey;
     }
 
     public BigInteger getPreviousRestrictionValue() {
         return previousRestrictionValue;
     }
 
+    public MosaicRestrictionType getPreviousRestrictionType() { return  previousRestrictionType; }
+
     public BigInteger getNewRestrictionValue() {
         return newRestrictionValue;
     }
+
+    public MosaicRestrictionType getNewRestrictionType() { return  newRestrictionType; }
 }

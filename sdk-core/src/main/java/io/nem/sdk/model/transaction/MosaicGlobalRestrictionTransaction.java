@@ -18,54 +18,61 @@
 package io.nem.sdk.model.transaction;
 
 import io.nem.catapult.builders.AmountDto;
-import io.nem.catapult.builders.EmbeddedMosaicAddressRestrictionTransactionBuilder;
+import io.nem.catapult.builders.EmbeddedMosaicGlobalRestrictionTransactionBuilder;
 import io.nem.catapult.builders.KeyDto;
-import io.nem.catapult.builders.MosaicAddressRestrictionTransactionBuilder;
+import io.nem.catapult.builders.MosaicGlobalRestrictionTransactionBuilder;
+import io.nem.catapult.builders.MosaicRestrictionTypeDto;
 import io.nem.catapult.builders.SignatureDto;
 import io.nem.catapult.builders.TimestampDto;
-import io.nem.catapult.builders.UnresolvedAddressDto;
 import io.nem.catapult.builders.UnresolvedMosaicIdDto;
-import io.nem.sdk.model.account.Address;
 import io.nem.sdk.model.mosaic.MosaicId;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
 
-public class MosaicAddressRestrictionTransaction extends Transaction {
+public class MosaicGlobalRestrictionTransaction extends Transaction {
 
     private final MosaicId mosaicId;
+    private final MosaicId referenceMosaicId;
     private final BigInteger restrictionKey;
-    private final Address targetAddress;
     private final BigInteger previousRestrictionValue;
+    private final MosaicRestrictionType previousRestrictionType;
     private final BigInteger newRestrictionValue;
+    private final MosaicRestrictionType newRestrictionType;
 
-    MosaicAddressRestrictionTransaction(MosaicAddressRestrictionTransactionFactory factory) {
+    MosaicGlobalRestrictionTransaction(MosaicGlobalRestrictionTransactionFactory factory) {
         super(factory);
         mosaicId = factory.getMosaicId();
+        referenceMosaicId = factory.getReferenceMosaicId();
         restrictionKey = factory.getRestrictionKey();
-        targetAddress = factory.getTargetAddress();
         previousRestrictionValue = factory.getPreviousRestrictionValue();
+        previousRestrictionType = factory.getPreviousRestrictionType();
         newRestrictionValue = factory.getNewRestrictionValue();
+        newRestrictionType = factory.getNewRestrictionType();
     }
 
     public MosaicId getMosaicId() {
         return mosaicId;
     }
 
-    public BigInteger getRestrictionKey() {
-        return restrictionKey;
+    public MosaicId getReferenceMosaicId() {
+        return referenceMosaicId;
     }
 
-    public Address getTargetAddress() {
-        return targetAddress;
+    public BigInteger getRestrictionKey() {
+        return restrictionKey;
     }
 
     public BigInteger getPreviousRestrictionValue() {
         return previousRestrictionValue;
     }
 
+    public MosaicRestrictionType getPreviousRestrictionType() { return  previousRestrictionType; }
+
     public BigInteger getNewRestrictionValue() {
         return newRestrictionValue;
     }
+
+    public MosaicRestrictionType getNewRestrictionType() { return  newRestrictionType; }
 
     @Override
     byte[] generateBytes() {
@@ -73,8 +80,8 @@ public class MosaicAddressRestrictionTransaction extends Transaction {
         final ByteBuffer signerBuffer = ByteBuffer.allocate(32);
         final ByteBuffer signatureBuffer = ByteBuffer.allocate(64);
 
-        MosaicAddressRestrictionTransactionBuilder txBuilder =
-            MosaicAddressRestrictionTransactionBuilder.create(
+        MosaicGlobalRestrictionTransactionBuilder txBuilder =
+            MosaicGlobalRestrictionTransactionBuilder.create(
                 new SignatureDto(signatureBuffer),
                 new KeyDto(signerBuffer),
                 getNetworkVersion(),
@@ -82,10 +89,12 @@ public class MosaicAddressRestrictionTransaction extends Transaction {
                 new AmountDto(getMaxFee().longValue()),
                 new TimestampDto(getDeadline().getInstant()),
                 new UnresolvedMosaicIdDto(getMosaicId().getIdAsLong()),
+                new UnresolvedMosaicIdDto(getReferenceMosaicId().getIdAsLong()),
                 getRestrictionKey().longValue(),
-                new UnresolvedAddressDto(getTargetAddress().getByteBuffer()),
                 getPreviousRestrictionValue().longValue(),
-                getNewRestrictionValue().longValue()
+                MosaicRestrictionTypeDto.rawValueOf(getPreviousRestrictionType().getValue()),
+                getNewRestrictionValue().longValue(),
+                MosaicRestrictionTypeDto.rawValueOf(getNewRestrictionType().getValue())
             );
         return txBuilder.serialize();
     }
@@ -93,16 +102,18 @@ public class MosaicAddressRestrictionTransaction extends Transaction {
     @Override
     byte[] generateEmbeddedBytes() {
 
-        EmbeddedMosaicAddressRestrictionTransactionBuilder txBuilder =
-            EmbeddedMosaicAddressRestrictionTransactionBuilder.create(
+        EmbeddedMosaicGlobalRestrictionTransactionBuilder txBuilder =
+            EmbeddedMosaicGlobalRestrictionTransactionBuilder.create(
                 new KeyDto(getRequiredSignerBytes()),
                 getNetworkVersion(),
                 getEntityTypeDto(),
                 new UnresolvedMosaicIdDto(getMosaicId().getIdAsLong()),
+                new UnresolvedMosaicIdDto(getReferenceMosaicId().getIdAsLong()),
                 getRestrictionKey().longValue(),
-                new UnresolvedAddressDto(getTargetAddress().getByteBuffer()),
                 getPreviousRestrictionValue().longValue(),
-                getNewRestrictionValue().longValue()
+                MosaicRestrictionTypeDto.rawValueOf(getPreviousRestrictionType().getValue()),
+                getNewRestrictionValue().longValue(),
+                MosaicRestrictionTypeDto.rawValueOf(getNewRestrictionType().getValue())
             );
         return txBuilder.serialize();
     }
