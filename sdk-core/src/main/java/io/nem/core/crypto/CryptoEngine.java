@@ -34,14 +34,14 @@ public interface CryptoEngine {
      * @param keyPair The key pair.
      * @return The DSA signer.
      */
-    DsaSigner createDsaSigner(final KeyPair keyPair);
+    DsaSigner createDsaSigner(final KeyPair keyPair, SignSchema signSchema);
 
     /**
      * Creates a key generator.
      *
      * @return The key generator.
      */
-    KeyGenerator createKeyGenerator();
+    KeyGenerator createKeyGenerator(SignSchema signSchema);
 
     /**
      * Creates a block cipher.
@@ -52,7 +52,8 @@ public interface CryptoEngine {
      * decryption.
      * @return The IES cipher.
      */
-    BlockCipher createBlockCipher(final KeyPair senderKeyPair, final KeyPair recipientKeyPair);
+    BlockCipher createBlockCipher(final KeyPair senderKeyPair, final KeyPair recipientKeyPair,
+        SignSchema signSchema);
 
     /**
      * Creates a key analyzer.

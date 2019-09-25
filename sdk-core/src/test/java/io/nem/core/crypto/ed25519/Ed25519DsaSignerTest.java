@@ -23,23 +23,25 @@ import io.nem.core.crypto.DsaSigner;
 import io.nem.core.crypto.DsaSignerTest;
 import io.nem.core.crypto.KeyPair;
 import io.nem.core.crypto.PublicKey;
+import io.nem.core.crypto.SignSchema;
 import io.nem.core.crypto.Signature;
 import io.nem.core.crypto.ed25519.arithmetic.MathUtils;
 import io.nem.core.test.Utils;
 import java.math.BigInteger;
-import org.hamcrest.core.IsEqual;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.mockito.Mockito;
 
 public class Ed25519DsaSignerTest extends DsaSignerTest {
 
-    @Test
-    public void isCanonicalReturnsFalseForNonCanonicalSignature() {
+    @ParameterizedTest
+    @EnumSource(SignSchema.class)
+    public void isCanonicalReturnsFalseForNonCanonicalSignature(SignSchema signSchema) {
         // Arrange:
         final CryptoEngine engine = this.getCryptoEngine();
-        final KeyPair kp = KeyPair.random(engine);
-        final DsaSigner dsaSigner = this.getDsaSigner(kp);
+        final KeyPair kp = KeyPair.random(engine, signSchema);
+        final DsaSigner dsaSigner = this.getDsaSigner(kp, signSchema);
         final byte[] input = Utils.generateRandomBytes();
 
         // Act:
@@ -48,39 +50,38 @@ public class Ed25519DsaSignerTest extends DsaSignerTest {
         final Signature nonCanonicalSignature = new Signature(signature.getR(), nonCanonicalS);
 
         // Assert:
-        Assert.assertThat(
-            dsaSigner.isCanonicalSignature(nonCanonicalSignature), IsEqual.equalTo(false));
+        Assertions.assertFalse(dsaSigner.isCanonicalSignature(nonCanonicalSignature));
     }
 
-    @Test
-    public void makeCanonicalMakesNonCanonicalSignatureCanonical() {
+    @ParameterizedTest
+    @EnumSource(SignSchema.class)
+    public void makeCanonicalMakesNonCanonicalSignatureCanonical(SignSchema signSchema) {
         // Arrange:
         final CryptoEngine engine = this.getCryptoEngine();
-        final KeyPair kp = KeyPair.random(engine);
-        final DsaSigner dsaSigner = this.getDsaSigner(kp);
+        final KeyPair kp = KeyPair.random(engine, signSchema);
+        final DsaSigner dsaSigner = this.getDsaSigner(kp, signSchema);
         final byte[] input = Utils.generateRandomBytes();
 
         // Act:
         final Signature signature = dsaSigner.sign(input);
         final BigInteger nonCanonicalS = engine.getCurve().getGroupOrder().add(signature.getS());
         final Signature nonCanonicalSignature = new Signature(signature.getR(), nonCanonicalS);
-        Assert.assertThat(
-            dsaSigner.isCanonicalSignature(nonCanonicalSignature), IsEqual.equalTo(false));
+        Assertions.assertFalse(dsaSigner.isCanonicalSignature(nonCanonicalSignature));
         final Signature canonicalSignature = dsaSigner
             .makeSignatureCanonical(nonCanonicalSignature);
 
         // Assert:
-        Assert
-            .assertThat(dsaSigner.isCanonicalSignature(canonicalSignature), IsEqual.equalTo(true));
+        Assertions.assertTrue(dsaSigner.isCanonicalSignature(canonicalSignature));
     }
 
-    @Test
-    public void replacingRWithGroupOrderPlusRInSignatureRuinsSignature() {
+    @ParameterizedTest
+    @EnumSource(SignSchema.class)
+    public void replacingRWithGroupOrderPlusRInSignatureRuinsSignature(SignSchema signSchema) {
         // Arrange:
         final CryptoEngine engine = this.getCryptoEngine();
         final BigInteger groupOrder = engine.getCurve().getGroupOrder();
-        final KeyPair kp = KeyPair.random(engine);
-        final DsaSigner dsaSigner = this.getDsaSigner(kp);
+        final KeyPair kp = KeyPair.random(engine, signSchema);
+        final DsaSigner dsaSigner = this.getDsaSigner(kp, signSchema);
         Signature signature;
         byte[] input;
         while (true) {
@@ -96,65 +97,73 @@ public class Ed25519DsaSignerTest extends DsaSignerTest {
             signature.getS());
 
         // Assert:
-        Assert.assertThat(dsaSigner.verify(input, signature2), IsEqual.equalTo(false));
+        Assertions.assertFalse(dsaSigner.verify(input, signature2));
     }
 
-    @Test
-    public void signReturnsExpectedSignature() {
+    @ParameterizedTest
+    @EnumSource(SignSchema.class)
+    public void signReturnsExpectedSignature(SignSchema signSchema) {
         // Arrange:
         final CryptoEngine engine = this.getCryptoEngine();
-        final KeyPair keyPair = KeyPair.random(engine);
+        final KeyPair keyPair = KeyPair.random(engine, signSchema);
         for (int i = 0; i < 20; i++) {
-            final DsaSigner dsaSigner = this.getDsaSigner(keyPair);
+            final DsaSigner dsaSigner = this.getDsaSigner(keyPair, signSchema);
             final byte[] input = Utils.generateRandomBytes();
 
             // Act:
             final Signature signature1 = dsaSigner.sign(input);
-            final Signature signature2 = MathUtils.sign(keyPair, input);
+            final Signature signature2 = MathUtils.sign(keyPair, input, signSchema);
 
             // Assert:
-            Assert.assertThat(signature1, IsEqual.equalTo(signature2));
+            Assertions.assertEquals(signature1, signature2);
         }
     }
 
-    @Test
-    public void signReturnsVerifiableSignature() {
+    @ParameterizedTest
+    @EnumSource(SignSchema.class)
+    public void signReturnsVerifiableSignature(SignSchema signSchema) {
         // Arrange:
         final CryptoEngine engine = this.getCryptoEngine();
-        final KeyPair keyPair = KeyPair.random(engine);
+        final KeyPair keyPair = KeyPair.random(engine, signSchema);
         for (int i = 0; i < 20; i++) {
-            final DsaSigner dsaSigner = this.getDsaSigner(keyPair);
+            final DsaSigner dsaSigner = this.getDsaSigner(keyPair, signSchema);
             final byte[] input = Utils.generateRandomBytes();
 
             // Act:
             final Signature signature1 = dsaSigner.sign(input);
 
             // Assert:
-            Assert.assertThat(dsaSigner.verify(input, signature1), IsEqual.equalTo(true));
+            Assertions.assertTrue(dsaSigner.verify(input, signature1));
         }
     }
 
-    @Test(expected = CryptoException.class)
-    public void signThrowsIfGeneratedSignatureIsNotCanonical() {
+    @ParameterizedTest
+    @EnumSource(SignSchema.class)
+    public void signThrowsIfGeneratedSignatureIsNotCanonical(SignSchema signSchema) {
         // Arrange:
         final CryptoEngine engine = this.getCryptoEngine();
-        final KeyPair keyPair = KeyPair.random(engine);
-        final Ed25519DsaSigner dsaSigner = Mockito.mock(Ed25519DsaSigner.class);
+        final KeyPair keyPair = KeyPair.random(engine, signSchema);
+        final Ed25519DsaSigner dsaSigner = new Ed25519DsaSigner(keyPair, signSchema) {
+            @Override
+            public boolean isCanonicalSignature(Signature signature) {
+                return false;
+            }
+        };
         final byte[] input = Utils.generateRandomBytes();
-        Mockito.when(dsaSigner.getKeyPair()).thenReturn(keyPair);
-        Mockito.when(dsaSigner.sign(input)).thenCallRealMethod();
-        Mockito.when(dsaSigner.isCanonicalSignature(Mockito.any())).thenReturn(false);
 
         // Act:
-        dsaSigner.sign(input);
+        Assertions.assertEquals("Generated signature is not canonical",
+            Assertions.assertThrows(CryptoException.class, () -> dsaSigner.sign(input))
+                .getMessage());
     }
 
-    @Test
-    public void verifyReturnsFalseIfPublicKeyIsZeroArray() {
+    @ParameterizedTest
+    @EnumSource(SignSchema.class)
+    public void verifyReturnsFalseIfPublicKeyIsZeroArray(SignSchema signSchema) {
         // Arrange:
         final CryptoEngine engine = this.getCryptoEngine();
-        final KeyPair kp = KeyPair.random(engine);
-        final DsaSigner dsaSigner = this.getDsaSigner(kp);
+        final KeyPair kp = KeyPair.random(engine, signSchema);
+        final DsaSigner dsaSigner = this.getDsaSigner(kp, signSchema);
         final byte[] input = Utils.generateRandomBytes();
         final Signature signature = dsaSigner.sign(input);
         final Ed25519DsaSigner dsaSignerWithZeroArrayPublicKey = Mockito
@@ -172,11 +181,12 @@ public class Ed25519DsaSignerTest extends DsaSignerTest {
         final boolean result = dsaSignerWithZeroArrayPublicKey.verify(input, signature);
 
         // Assert (getKeyPair() would be called more than once if it got beyond the second check):
-        Assert.assertThat(result, IsEqual.equalTo(false));
+        Assertions.assertFalse(result);
         Mockito.verify(dsaSignerWithZeroArrayPublicKey, Mockito.times(1))
             .isCanonicalSignature(signature);
         Mockito.verify(dsaSignerWithZeroArrayPublicKey, Mockito.times(1)).getKeyPair();
     }
+
 
     @Override
     protected CryptoEngine getCryptoEngine() {

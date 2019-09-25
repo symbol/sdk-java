@@ -23,7 +23,8 @@ import io.nem.catapult.builders.EntityTypeDto;
 import io.nem.catapult.builders.KeyDto;
 import io.nem.catapult.builders.SignatureDto;
 import io.nem.catapult.builders.TimestampDto;
-import io.nem.core.crypto.Signer;
+import io.nem.core.crypto.CryptoEngines;
+import io.nem.core.crypto.DsaSigner;
 import io.nem.core.utils.ExceptionUtils;
 import io.nem.core.utils.HexEncoder;
 import io.nem.sdk.model.account.Account;
@@ -146,7 +147,9 @@ public class AggregateTransaction extends Transaction {
         StringBuilder payload = new StringBuilder(signedTransaction.getPayload());
 
         for (Account cosignatory : cosignatories) {
-            Signer signer = new Signer(cosignatory.getKeyPair());
+            final DsaSigner signer = CryptoEngines.defaultEngine()
+                .createDsaSigner(cosignatory.getKeyPair(),
+                    cosignatory.getNetworkType().resolveSignSchema());
             byte[] bytes = Hex.decode(signedTransaction.getHash());
             byte[] signatureBytes = signer.sign(bytes).getBytes();
             payload.append(cosignatory.getPublicKey()).append(Hex.toHexString(signatureBytes));

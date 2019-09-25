@@ -16,13 +16,11 @@
 
 package io.nem.sdk.model.account;
 
-import io.nem.core.crypto.Hashes;
-import io.nem.core.utils.ArrayUtils;
-import io.nem.core.utils.Base32Encoder;
+import io.nem.core.crypto.RawAddress;
+import io.nem.core.crypto.SignSchema;
 import io.nem.sdk.model.blockchain.NetworkType;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
 import java.util.Objects;
 import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.binary.Base32;
@@ -36,7 +34,7 @@ import org.apache.commons.lang3.exception.ExceptionUtils;
  */
 public class Address {
 
-    private static final int NUM_CHECKSUM_BYTES = 4;
+
     private final String plainAddress;
     private final NetworkType networkType;
 
@@ -111,50 +109,16 @@ public class Address {
     }
 
     /**
-     * Create from private key.
+     * Creates an address based on the public key and the network type. The sign schema will be
+     * resolved based on the @{@link NetworkType}. See RawAddress.
      *
      * @param publicKey String
-     * @param networkType NetworkType
+     * @param networkType the {@link NetworkType}
      * @return Address
+     * @see RawAddress
      */
     public static Address createFromPublicKey(String publicKey, NetworkType networkType) {
-        return new Address(generateEncoded((byte) networkType.getValue(), publicKey), networkType);
-    }
-
-    private static String generateEncoded(final byte version, final String publicKey) {
-        // step 1: sha3 hash of the public key
-        byte[] publicKeyBytes;
-        try {
-            publicKeyBytes = Hex.decodeHex(publicKey);
-        } catch (DecoderException e) {
-            throw new IllegalArgumentException("Public key is not valid");
-        }
-        final byte[] sha3PublicKeyHash = Hashes.sha3_256(publicKeyBytes);
-
-        // step 2: ripemd160 hash of (1)
-        final byte[] ripemd160StepOneHash = Hashes.ripemd160(sha3PublicKeyHash);
-
-        // step 3: add version byte in front of (2)
-        final byte[] versionPrefixedRipemd160Hash =
-            ArrayUtils.concat(new byte[]{version}, ripemd160StepOneHash);
-
-        // step 4: get the checksum of (3)
-        final byte[] stepThreeChecksum = generateChecksum(versionPrefixedRipemd160Hash);
-
-        // step 5: concatenate (3) and (4)
-        final byte[] concatStepThreeAndStepSix =
-            ArrayUtils.concat(versionPrefixedRipemd160Hash, stepThreeChecksum);
-
-        // step 6: base32 encode (5)
-        return Base32Encoder.getString(concatStepThreeAndStepSix);
-    }
-
-    private static byte[] generateChecksum(final byte[] input) {
-        // step 1: sha3 hash of (input
-        final byte[] sha3StepThreeHash = Hashes.sha3_256(input);
-
-        // step 2: get the first X bytes of (1)
-        return Arrays.copyOfRange(sha3StepThreeHash, 0, NUM_CHECKSUM_BYTES);
+        return new Address(RawAddress.generateAddress(publicKey, networkType), networkType);
     }
 
     /**
