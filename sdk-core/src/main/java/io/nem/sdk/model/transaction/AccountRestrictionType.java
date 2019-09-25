@@ -116,8 +116,7 @@ public enum AccountRestrictionType {
      * @param value Enum value.
      * @param targetType the target type
      */
-    AccountRestrictionType(final int value,
-        AccountRestrictionTargetType targetType) {
+    AccountRestrictionType(final int value, AccountRestrictionTargetType targetType) {
         this.value = value;
         this.targetType = targetType;
     }

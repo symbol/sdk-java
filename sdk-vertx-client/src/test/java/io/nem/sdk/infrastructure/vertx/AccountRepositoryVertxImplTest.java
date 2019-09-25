@@ -26,7 +26,6 @@ import io.nem.sdk.model.account.AccountRestrictions;
 import io.nem.sdk.model.account.AccountType;
 import io.nem.sdk.model.account.Address;
 import io.nem.sdk.model.transaction.AccountRestrictionType;
-import io.nem.sdk.model.transaction.TransactionType;
 import io.nem.sdk.openapi.vertx.model.AccountDTO;
 import io.nem.sdk.openapi.vertx.model.AccountInfoDTO;
 import io.nem.sdk.openapi.vertx.model.AccountNamesDTO;
@@ -241,7 +240,7 @@ public class AccountRepositoryVertxImplTest extends AbstractVertxRespositoryTest
                 "SBCPGZ3S2SCC3YHBBTYDCUZV4ZZEPHM2KGCP4QXX");
 
         AccountRestrictionsDTO dto = new AccountRestrictionsDTO();
-        dto.setAddress(address.plain());
+        dto.setAddress(address.encoded());
         AccountRestrictionDTO restriction = new AccountRestrictionDTO();
         restriction.setRestrictionType(AccountRestrictionTypeEnum.NUMBER_2);
         restriction.setValues(Arrays.asList("9636553580561478212"));
@@ -267,11 +266,11 @@ public class AccountRepositoryVertxImplTest extends AbstractVertxRespositoryTest
     @Test
     public void shouldGetAccountsRestrictionsFromAddresses() throws Exception {
         Address address =
-            Address.createFromRawAddress(
-                "SBCPGZ3S2SCC3YHBBTYDCUZV4ZZEPHM2KGCP4QXX");
+            Address.createFromEncoded(
+                "9050B9837EFAB4BBE8A4B9BB32D812F9885C00D8FC1650E142");
 
         AccountRestrictionsDTO dto = new AccountRestrictionsDTO();
-        dto.setAddress(address.plain());
+        dto.setAddress(address.encoded());
         AccountRestrictionDTO restriction = new AccountRestrictionDTO();
         restriction.setRestrictionType(AccountRestrictionTypeEnum.NUMBER_1);
         restriction.setValues(Arrays.asList("9050B9837EFAB4BBE8A4B9BB32D812F9885C00D8FC1650E142"));
@@ -282,7 +281,7 @@ public class AccountRepositoryVertxImplTest extends AbstractVertxRespositoryTest
         mockRemoteCall(Collections.singletonList(info));
 
         AccountRestrictions accountRestrictions = repository
-            .getAccountsRestrictionsFromAddresses(Collections.singletonList(address)).toFuture()
+            .getAccountsRestrictions(Collections.singletonList(address)).toFuture()
             .get().get(0);
 
         Assertions.assertEquals(address, accountRestrictions.getAddress());
@@ -296,39 +295,6 @@ public class AccountRepositoryVertxImplTest extends AbstractVertxRespositoryTest
     }
 
     @Test
-    public void shouldGetAccountsRestrictionsInfoFromPublicKeys() throws Exception {
-        Address address =
-            Address.createFromRawAddress(
-                "SBCPGZ3S2SCC3YHBBTYDCUZV4ZZEPHM2KGCP4QXX");
-        final PublicKey key = PublicKey.fromHexString("227F");
-        AccountRestrictionsDTO dto = new AccountRestrictionsDTO();
-        dto.setAddress(address.plain());
-        AccountRestrictionDTO restriction = new AccountRestrictionDTO();
-        restriction.setRestrictionType(AccountRestrictionTypeEnum.NUMBER_196);
-        restriction
-            .setValues(
-                Collections
-                    .singletonList(Integer.toString(TransactionType.SECRET_PROOF.getValue())));
-        dto.setRestrictions(Collections.singletonList(restriction));
-
-        AccountRestrictionsInfoDTO info = new AccountRestrictionsInfoDTO();
-        info.setAccountRestrictions(dto);
-        mockRemoteCall(Collections.singletonList(info));
-
-        AccountRestrictions accountRestrictions = repository
-            .getAccountsRestrictionsInfoFromPublicKeys(Collections.singletonList(key)).toFuture()
-            .get().get(0);
-
-        Assertions.assertEquals(address, accountRestrictions.getAddress());
-        Assertions.assertEquals(1, accountRestrictions.getRestrictions().size());
-        Assertions.assertEquals(AccountRestrictionType.BLOCK_OUTGOING_TRANSACTION_TYPE,
-            accountRestrictions.getRestrictions().get(0).getRestrictionType());
-        Assertions.assertEquals(Arrays.asList(TransactionType.SECRET_PROOF),
-            accountRestrictions.getRestrictions().get(0).getValues());
-
-    }
-
-    @Test
     public void shouldAccountRestrictionTypeEnumMapToAccountRestrictionType() {
         Arrays.stream(AccountRestrictionTypeEnum.values()).forEach(
             v -> Assertions.assertNotNull(AccountRestrictionType.rawValueOf(v.getValue())));
@@ -337,7 +303,8 @@ public class AccountRepositoryVertxImplTest extends AbstractVertxRespositoryTest
     @Test
     public void shouldAccountRestrictionTypeMapToAccountRestrictionType() {
         Arrays.stream(AccountRestrictionType.values()).forEach(
-            v -> Assertions.assertNotNull(AccountRestrictionTypeEnum.fromValue(v.getValue())));
+            v -> Assertions
+                .assertNotNull(AccountRestrictionTypeEnum.fromValue((int) v.getValue())));
 
     }
 }

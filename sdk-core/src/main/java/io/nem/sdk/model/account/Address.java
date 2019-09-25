@@ -102,6 +102,15 @@ public class Address {
     }
 
     /**
+     * Returns the encoded address.
+     *
+     * @return the encoded plain address.
+     */
+    public String encoded() {
+        return Hex.encodeHexString(new Base32().decode(plainAddress));
+    }
+
+    /**
      * Create from private key.
      *
      * @param publicKey String

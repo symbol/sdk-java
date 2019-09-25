@@ -30,6 +30,7 @@ import io.nem.sdk.model.account.AccountType;
 import io.nem.sdk.model.account.Address;
 import io.nem.sdk.model.account.MultisigAccountGraphInfo;
 import io.nem.sdk.model.account.MultisigAccountInfo;
+import io.nem.sdk.model.account.PublicAccount;
 import io.nem.sdk.model.blockchain.NetworkType;
 import io.nem.sdk.model.transaction.AggregateTransaction;
 import io.nem.sdk.model.transaction.Transaction;
@@ -60,7 +61,7 @@ class AccountRepositoryIntegrationTest extends BaseIntegrationTest {
             get(this.getAccountRepository(type)
                 .getAccountInfo(this.getTestAccount().getPublicAccount().getAddress()));
 
-        assertEquals(this.config().getTestAccountPublicKey(), accountInfo.getPublicKey());
+        assertEquals(getTestAccount().getPublicKey(), accountInfo.getPublicKey());
         assertEquals(AccountType.UNLINKED, accountInfo.getAccountType());
     }
 
@@ -73,7 +74,7 @@ class AccountRepositoryIntegrationTest extends BaseIntegrationTest {
                     Collections.singletonList(this.getTestAccountAddress())));
 
         assertEquals(1, accountInfos.size());
-        assertEquals(this.config().getTestAccountPublicKey(), accountInfos.get(0).getPublicKey());
+        assertEquals(getTestAccount().getPublicKey(), accountInfos.get(0).getPublicKey());
         assertEquals(AccountType.UNLINKED, accountInfos.get(0).getAccountType());
     }
 
@@ -85,8 +86,8 @@ class AccountRepositoryIntegrationTest extends BaseIntegrationTest {
                 Collections.singletonList(this.getTestAccountAddress())));
 
         assertEquals(1, accountNames.size());
-        assertEquals(this.config().getTestAccountAddress(),
-            accountNames.get(0).getAddress().plain());
+        assertEquals(getTestAccountAddress(),
+            accountNames.get(0).getAddress());
         assertNotNull(accountNames.get(0).getNames());
     }
 
@@ -95,10 +96,10 @@ class AccountRepositoryIntegrationTest extends BaseIntegrationTest {
     void getAccountsInfoFromPublicKeys(RepositoryType type) {
         List<AccountInfo> accountInfos = get(this.getAccountRepository(type)
             .getAccountsInfoFromPublicKeys(Collections.singletonList(
-                PublicKey.fromHexString(this.config().getTestAccountPublicKey()))));
+                PublicKey.fromHexString(getTestAccount().getPublicKey()))));
 
         assertEquals(1, accountInfos.size());
-        assertEquals(this.config().getTestAccountPublicKey(), accountInfos.get(0).getPublicKey());
+        assertEquals(getTestAccount().getPublicKey(), accountInfos.get(0).getPublicKey());
     }
 
     @ParameterizedTest
@@ -106,12 +107,11 @@ class AccountRepositoryIntegrationTest extends BaseIntegrationTest {
     void getAccountsNamesFromPublicKeys(RepositoryType type) {
         List<AccountNames> accountNames = get(this.getAccountRepository(type)
             .getAccountsNamesFromPublicKeys(Collections.singletonList(
-                PublicKey.fromHexString(this.config().getTestAccountPublicKey())))
+                PublicKey.fromHexString(getTestAccount().getPublicKey())))
         );
 
         assertEquals(1, accountNames.size());
-        assertEquals(this.config().getTestAccountAddress(),
-            accountNames.get(0).getAddress().plain());
+        assertEquals(this.getTestAccountAddress(), accountNames.get(0).getAddress());
         assertEquals(0, accountNames.get(0).getNames().size());
     }
 
@@ -163,7 +163,7 @@ class AccountRepositoryIntegrationTest extends BaseIntegrationTest {
     void transactions(RepositoryType type) {
         List<Transaction> transactions = get(
             this.getAccountRepository(type).transactions(this.getTestPublicAccount()));
-        assertEquals(10, transactions.size());
+        assertTrue(transactions.size() > 0);
     }
 
     @ParameterizedTest
@@ -191,11 +191,14 @@ class AccountRepositoryIntegrationTest extends BaseIntegrationTest {
     @EnumSource(RepositoryType.class)
     void transactionsWithPaginationManyTransactions(RepositoryType type) {
         //Testing that many transaction can be at at least parsed.
+        PublicAccount publicAccount = this.getTestPublicAccount();
+        System.out.println(publicAccount.getPublicKey());
         List<Transaction> transactions =
             get(this.getAccountRepository(type)
-                .transactions(this.getTestPublicAccount(), new QueryParams(100, null)));
+                .transactions(publicAccount, new QueryParams(100, null)));
         assertTrue(transactions.size() <= 100);
 
+        System.out.println(transactions.size());
         transactions.forEach(this::assertTransaction);
     }
 
@@ -204,8 +207,6 @@ class AccountRepositoryIntegrationTest extends BaseIntegrationTest {
         Assert.assertNotNull(transaction.getType());
         Assert.assertTrue(transaction.getTransactionInfo().isPresent());
         Assert.assertEquals(getNetworkType(), transaction.getNetworkType());
-        Assert.assertEquals(getTestAccount().getAddress(),
-            transaction.getSigner().get().getAddress());
 
         Assert.assertTrue(transaction.getSignature().isPresent());
         Assert.assertTrue(transaction.getSignatureBytes().isPresent());
@@ -258,7 +259,9 @@ class AccountRepositoryIntegrationTest extends BaseIntegrationTest {
             .assertThrows(RepositoryCallException.class, () -> get(this.getAccountRepository(type)
                 .getAccountInfo(
                     Address.createFromRawAddress("SAAAAACB67D4HPGIMIHPNSRYRJRT7DOBGWZY"))));
-        Assertions.assertEquals("ApiException: Conflict - 409 - InvalidArgument - accountId has an invalid format", exception.getMessage());
+        Assertions.assertEquals(
+            "ApiException: Conflict - 409 - InvalidArgument - accountId has an invalid format",
+            exception.getMessage());
     }
 
     @ParameterizedTest
@@ -268,7 +271,9 @@ class AccountRepositoryIntegrationTest extends BaseIntegrationTest {
             .assertThrows(RepositoryCallException.class, () -> get(this.getAccountRepository(type)
                 .getAccountInfo(
                     Address.createFromRawAddress("SARDGFTDLLCB67D4HPGIMIHPNSRYRJRT7DOBGWZY"))));
-        Assertions.assertEquals("ApiException: Not Found - 404 - ResourceNotFound - no resource exists with id 'SARDGFTDLLCB67D4HPGIMIHPNSRYRJRT7DOBGWZY'", exception.getMessage());
+        Assertions.assertEquals(
+            "ApiException: Not Found - 404 - ResourceNotFound - no resource exists with id 'SARDGFTDLLCB67D4HPGIMIHPNSRYRJRT7DOBGWZY'",
+            exception.getMessage());
     }
 
 

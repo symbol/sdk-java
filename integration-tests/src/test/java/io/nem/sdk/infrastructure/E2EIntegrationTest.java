@@ -103,7 +103,6 @@ class E2EIntegrationTest extends BaseIntegrationTest {
     private MosaicId mosaicId;
     private String generationHash;
     private long timeoutSeconds;
-    private Map<RepositoryType, Listener> listenerMap = new HashMap<>();
 
     @BeforeAll
     void setup() {
@@ -116,29 +115,6 @@ class E2EIntegrationTest extends BaseIntegrationTest {
         timeoutSeconds = this.getTimeoutSeconds();
     }
 
-    @AfterAll
-    void tearDown() {
-        listenerMap.values().forEach(Listener::close);
-    }
-
-    /**
-     * Method that creates a {@link RepositoryFactory} based on the {@link RepositoryType}.
-     */
-    public Listener getListener(RepositoryType type) {
-        return listenerMap.computeIfAbsent(type, this::createListener);
-    }
-
-    private Listener createListener(RepositoryType type) {
-        Listener listener = getRepositoryFactory(type).createListener();
-        try {
-            listener.open().get(timeoutSeconds, TimeUnit.SECONDS);
-        } catch (Exception e) {
-            throw new IllegalArgumentException(
-                "Listener could not be created or opened. Error " + ExceptionUtils.getMessage(e),
-                e);
-        }
-        return listener;
-    }
 
     @ParameterizedTest
     @EnumSource(RepositoryType.class)
@@ -339,8 +315,7 @@ class E2EIntegrationTest extends BaseIntegrationTest {
         Assert.assertEquals(1, accountNames.size());
 
         assertEquals(1, accountNames.size());
-        assertEquals(this.config().getTestAccountAddress(),
-            accountNames.get(0).getAddress().plain());
+        assertEquals(this.getTestAccountAddress(), accountNames.get(0).getAddress());
         assertTrue(accountNames.get(0).getNames().stream().map(NamespaceName::getName).collect(
             Collectors.toList()).contains(namespaceName));
     }
@@ -991,24 +966,5 @@ class E2EIntegrationTest extends BaseIntegrationTest {
             type);
     }
 
-    void validateTransactionAnnounceCorrectly(Address address, String transactionHash,
-        RepositoryType type) {
-        Transaction transaction = get(getListener(type).confirmed(address).take(1));
-        assertEquals(transactionHash, transaction.getTransactionInfo().get().getHash().get());
-    }
 
-    void validateAggregateBondedTransactionAnnounceCorrectly(Address address,
-        String transactionHash, RepositoryType type) {
-        AggregateTransaction aggregateTransaction =
-            get(getListener(type).aggregateBondedAdded(address).take(1));
-        assertEquals(transactionHash,
-            aggregateTransaction.getTransactionInfo().get().getHash().get());
-    }
-
-    void validateAggregateBondedCosignatureTransactionAnnounceCorrectly(
-        Address address, String transactionHash,
-        RepositoryType type) {
-        String hash = get(getListener(type).cosignatureAdded(address).take(1)).getParentHash();
-        assertEquals(transactionHash, hash);
-    }
 }

@@ -57,7 +57,8 @@ public enum AccountRestrictionTargetType {
                 return MapperUtils.toMosaicId(value);
             }
             if (this == TRANSACTION_TYPE) {
-                return TransactionType.rawValueOf(Integer.parseInt(value));
+                // https://stackoverflow.com/questions/15507997/how-to-prevent-gson-from-expressing-integers-as-floats/15508288
+                return TransactionType.rawValueOf((int) Double.parseDouble(value));
             }
             throw new IllegalStateException("Unknown enum value " + this);
         } catch (RuntimeException e) {

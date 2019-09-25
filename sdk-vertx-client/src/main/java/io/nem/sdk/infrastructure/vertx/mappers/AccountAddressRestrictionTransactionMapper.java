@@ -48,7 +48,7 @@ public class AccountAddressRestrictionTransactionMapper extends
     protected AccountAddressRestrictionTransactionFactory createFactory(
         NetworkType networkType, AccountAddressRestrictionTransactionBodyDTO transaction) {
         AccountRestrictionType restrictionType = AccountRestrictionType
-            .rawValueOf(transaction.getRestrictionType().getValue().byteValue());
+            .rawValueOf(transaction.getRestrictionType().getValue());
         List<AccountRestrictionModification<Address>> modifications = transaction
             .getModifications().stream().map(this::toModification).collect(Collectors.toList());
         return new AccountAddressRestrictionTransactionFactory(networkType, restrictionType,

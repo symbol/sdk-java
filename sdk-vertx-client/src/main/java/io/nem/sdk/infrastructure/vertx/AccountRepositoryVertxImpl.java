@@ -16,7 +16,7 @@
 
 package io.nem.sdk.infrastructure.vertx;
 
-import static io.nem.core.utils.MapperUtils.toAddress;
+import static io.nem.core.utils.MapperUtils.toAddressFromUnresolved;
 import static io.nem.core.utils.MapperUtils.toMosaicId;
 
 import io.nem.core.crypto.PublicKey;
@@ -66,9 +66,6 @@ import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
-import org.apache.commons.codec.DecoderException;
-import org.apache.commons.codec.binary.Base32;
-import org.apache.commons.codec.binary.Hex;
 
 /**
  * Created by fernando on 29/07/19.
@@ -91,9 +88,6 @@ public class AccountRepositoryVertxImpl extends AbstractRepositoryVertxImpl impl
         transactionMapper = new GeneralTransactionMapper(getJsonHelper());
     }
 
-    private String getAddressEncoded(String address) throws DecoderException {
-        return new String(new Base32().encode(Hex.decodeHex(address)));
-    }
 
     @Override
     public Observable<AccountInfo> getAccountInfo(Address address) {
@@ -134,9 +128,9 @@ public class AccountRepositoryVertxImpl extends AbstractRepositoryVertxImpl impl
      * @param dto {@link AccountNamesDTO}
      * @return {@link AccountNames}
      */
-    private AccountNames toAccountNames(AccountNamesDTO dto) throws DecoderException {
+    private AccountNames toAccountNames(AccountNamesDTO dto) {
         return new AccountNames(
-            toAddress(getAddressEncoded(dto.getAddress())),
+            toAddressFromUnresolved(dto.getAddress()),
             dto.getNames().stream().map(NamespaceName::new).collect(Collectors.toList()));
     }
 
@@ -204,15 +198,7 @@ public class AccountRepositoryVertxImpl extends AbstractRepositoryVertxImpl impl
     }
 
     @Override
-    public Observable<List<AccountRestrictions>> getAccountsRestrictionsInfoFromPublicKeys(
-        List<PublicKey> publicKeys) {
-        AccountIds accountIds = new AccountIds()
-            .publicKeys(publicKeys.stream().map(PublicKey::toString).collect(Collectors.toList()));
-        return getAccountsRestrictions(accountIds);
-    }
-
-    @Override
-    public Observable<List<AccountRestrictions>> getAccountsRestrictionsFromAddresses(
+    public Observable<List<AccountRestrictions>> getAccountsRestrictions(
         List<Address> addresses) {
         AccountIds accountIds = new AccountIds()
             .addresses(addresses.stream().map(Address::plain).collect(Collectors.toList()));
@@ -230,7 +216,7 @@ public class AccountRepositoryVertxImpl extends AbstractRepositoryVertxImpl impl
 
 
     private AccountRestrictions toAccountRestrictions(AccountRestrictionsDTO dto) {
-        return new AccountRestrictions(MapperUtils.toAddress(dto.getAddress()),
+        return new AccountRestrictions(MapperUtils.toAddressFromUnresolved(dto.getAddress()),
             dto.getRestrictions().stream().map(this::toAccountRestriction).collect(
                 Collectors.toList()));
     }
@@ -390,9 +376,9 @@ public class AccountRepositoryVertxImpl extends AbstractRepositoryVertxImpl impl
     }
 
 
-    private AccountInfo toAccountInfo(AccountDTO accountDTO) throws DecoderException {
+    private AccountInfo toAccountInfo(AccountDTO accountDTO) {
         return new AccountInfo(
-            toAddress(getAddressEncoded(accountDTO.getAddress())),
+            toAddressFromUnresolved(accountDTO.getAddress()),
             accountDTO.getAddressHeight(),
             accountDTO.getPublicKey(),
             accountDTO.getPublicKeyHeight(),

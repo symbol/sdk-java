@@ -16,7 +16,7 @@
 
 package io.nem.sdk.infrastructure.okhttp;
 
-import static io.nem.core.utils.MapperUtils.toAddress;
+import static io.nem.core.utils.MapperUtils.toAddressFromUnresolved;
 import static io.nem.core.utils.MapperUtils.toMosaicId;
 
 import io.nem.core.crypto.PublicKey;
@@ -62,9 +62,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.Callable;
 import java.util.stream.Collectors;
-import org.apache.commons.codec.DecoderException;
-import org.apache.commons.codec.binary.Base32;
-import org.apache.commons.codec.binary.Hex;
 
 /**
  * Created by fernando on 29/07/19.
@@ -84,9 +81,6 @@ public class AccountRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl im
         this.transactionMapper = new GeneralTransactionMapper(getJsonHelper());
     }
 
-    private String getAddressEncoded(String address) throws DecoderException {
-        return new String(new Base32().encode(Hex.decodeHex(address)));
-    }
 
     @Override
     public Observable<AccountInfo> getAccountInfo(Address address) {
@@ -149,8 +143,8 @@ public class AccountRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl im
      * @param dto {@link AccountNamesDTO}
      * @return {@link AccountNames}
      */
-    private AccountNames toAccountNames(AccountNamesDTO dto) throws DecoderException {
-        return new AccountNames(toAddress(getAddressEncoded(dto.getAddress())),
+    private AccountNames toAccountNames(AccountNamesDTO dto) {
+        return new AccountNames(toAddressFromUnresolved(dto.getAddress()),
             dto.getNames().stream().map(NamespaceName::new).collect(Collectors.toList()));
     }
 
@@ -312,9 +306,9 @@ public class AccountRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl im
     }
 
 
-    private AccountInfo toAccountInfo(AccountDTO accountDTO) throws DecoderException {
+    private AccountInfo toAccountInfo(AccountDTO accountDTO) {
         return new AccountInfo(
-            toAddress(getAddressEncoded(accountDTO.getAddress())),
+            toAddressFromUnresolved(accountDTO.getAddress()),
             accountDTO.getAddressHeight(),
             accountDTO.getPublicKey(),
             accountDTO.getPublicKeyHeight(),
@@ -352,15 +346,7 @@ public class AccountRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl im
     }
 
     @Override
-    public Observable<List<AccountRestrictions>> getAccountsRestrictionsInfoFromPublicKeys(
-        List<PublicKey> publicKeys) {
-        AccountIds accountIds = new AccountIds()
-            .publicKeys(publicKeys.stream().map(PublicKey::toString).collect(Collectors.toList()));
-        return getAccountsRestrictions(accountIds);
-    }
-
-    @Override
-    public Observable<List<AccountRestrictions>> getAccountsRestrictionsFromAddresses(
+    public Observable<List<AccountRestrictions>> getAccountsRestrictions(
         List<Address> addresses) {
         AccountIds accountIds = new AccountIds()
             .addresses(addresses.stream().map(Address::plain).collect(Collectors.toList()));
@@ -378,7 +364,7 @@ public class AccountRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl im
 
 
     private AccountRestrictions toAccountRestrictions(AccountRestrictionsDTO dto) {
-        return new AccountRestrictions(MapperUtils.toAddress(dto.getAddress()),
+        return new AccountRestrictions(MapperUtils.toAddressFromUnresolved(dto.getAddress()),
             dto.getRestrictions().stream().map(this::toAccountRestriction).collect(
                 Collectors.toList()));
     }

@@ -48,7 +48,7 @@ public class AccountMosaicRestrictionTransactionMapper extends
     protected AccountMosaicRestrictionTransactionFactory createFactory(
         NetworkType networkType, AccountMosaicRestrictionTransactionBodyDTO transaction) {
         AccountRestrictionType restrictionType = AccountRestrictionType
-            .rawValueOf(transaction.getRestrictionType().getValue().byteValue());
+            .rawValueOf(transaction.getRestrictionType().getValue());
         List<AccountRestrictionModification<MosaicId>> modifications = transaction
             .getModifications().stream().map(this::toModification).collect(Collectors.toList());
         return new AccountMosaicRestrictionTransactionFactory(networkType, restrictionType,
