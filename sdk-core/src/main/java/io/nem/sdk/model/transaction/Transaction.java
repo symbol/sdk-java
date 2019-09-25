@@ -17,9 +17,11 @@
 package io.nem.sdk.model.transaction;
 
 import io.nem.catapult.builders.EntityTypeDto;
+import io.nem.core.crypto.CryptoEngines;
+import io.nem.core.crypto.DsaSigner;
 import io.nem.core.crypto.Hashes;
+import io.nem.core.crypto.SignSchema;
 import io.nem.core.crypto.Signature;
-import io.nem.core.crypto.Signer;
 import io.nem.core.utils.HexEncoder;
 import io.nem.sdk.model.account.Account;
 import io.nem.sdk.model.account.PublicAccount;
@@ -173,7 +175,8 @@ public abstract class Transaction {
      */
     public SignedTransaction signWith(final Account account, final String generationHash) {
 
-        final Signer theSigner = new Signer(account.getKeyPair());
+        final DsaSigner theSigner = CryptoEngines.defaultEngine()
+            .createDsaSigner(account.getKeyPair(), getNetworkType().resolveSignSchema());
         final byte[] bytes = this.generateBytes();
         final byte[] generationHashBytes = HexEncoder.getBytes(generationHash);
         final byte[] signingBytes = new byte[bytes.length + generationHashBytes.length - 100];

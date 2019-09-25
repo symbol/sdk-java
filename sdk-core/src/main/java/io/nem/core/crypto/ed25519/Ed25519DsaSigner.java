@@ -18,8 +18,10 @@ package io.nem.core.crypto.ed25519;
 
 import io.nem.core.crypto.CryptoException;
 import io.nem.core.crypto.DsaSigner;
-import io.nem.core.crypto.Hashes;
 import io.nem.core.crypto.KeyPair;
+import io.nem.core.crypto.SignSchema;
+import io.nem.core.crypto.SignSchema.HashSize;
+import io.nem.core.crypto.SignSchema.Hasher;
 import io.nem.core.crypto.Signature;
 import io.nem.core.crypto.ed25519.arithmetic.Ed25519EncodedFieldElement;
 import io.nem.core.crypto.ed25519.arithmetic.Ed25519EncodedGroupElement;
@@ -34,6 +36,8 @@ import java.util.Arrays;
  */
 public class Ed25519DsaSigner implements DsaSigner {
 
+    private final SignSchema signSchema;
+
     private final KeyPair keyPair;
 
     /**
@@ -41,8 +45,9 @@ public class Ed25519DsaSigner implements DsaSigner {
      *
      * @param keyPair The key pair to use.
      */
-    public Ed25519DsaSigner(final KeyPair keyPair) {
+    public Ed25519DsaSigner(final KeyPair keyPair, final SignSchema signSchema) {
         this.keyPair = keyPair;
+        this.signSchema = signSchema;
     }
 
     /**
@@ -62,12 +67,12 @@ public class Ed25519DsaSigner implements DsaSigner {
         }
 
         // Hash the private key to improve randomness.
-        final byte[] hash = Hashes.sha3_512(this.getKeyPair().getPrivateKey().getBytes());
+        final byte[] hash = SignSchema.toHash(this.getKeyPair().getPrivateKey(), signSchema);
 
         // r = H(hash_b,...,hash_2b-1, data) where b=256.
         final Ed25519EncodedFieldElement r =
             new Ed25519EncodedFieldElement(
-                Hashes.sha3_512(
+                SignSchema.toHash64Bytes(signSchema,
                     Arrays.copyOfRange(
                         hash, 32, 64), // only include the last 32 bytes of the private key hash
                     data));
@@ -85,12 +90,15 @@ public class Ed25519DsaSigner implements DsaSigner {
         // a is the lower 32 bytes of hash after clamping.
         final Ed25519EncodedFieldElement h =
             new Ed25519EncodedFieldElement(
-                Hashes.sha3_512(encodedR.getRaw(), this.getKeyPair().getPublicKey().getBytes(),
+                SignSchema.toHash64Bytes(signSchema, encodedR.getRaw(),
+                    this.getKeyPair().getPublicKey().getBytes(),
                     data));
         final Ed25519EncodedFieldElement hModQ = h.modQ();
         final Ed25519EncodedFieldElement encodedS =
             hModQ.multiplyAndAddModQ(
-                Ed25519Utils.prepareForScalarMultiply(this.getKeyPair().getPrivateKey()), rModQ);
+                Ed25519Utils
+                    .prepareForScalarMultiply(this.getKeyPair().getPrivateKey(), signSchema),
+                rModQ);
 
         // Signature is (encodedR, encodedS)
         final Signature signature = new Signature(encodedR.getRaw(), encodedS.getRaw());
@@ -106,18 +114,16 @@ public class Ed25519DsaSigner implements DsaSigner {
         if (!this.isCanonicalSignature(signature)) {
             return false;
         }
-
-        if (1
-            == ArrayUtils.isEqualConstantTime(
+        if (1 == ArrayUtils.isEqualConstantTime(
             this.getKeyPair().getPublicKey().getBytes(), new byte[32])) {
             return false;
         }
-
+        Hasher hasher = SignSchema.getHasher(signSchema, HashSize.HASH_SIZE_64_BYTES);
         // h = H(encodedR, encodedA, data).
         final byte[] rawEncodedR = signature.getBinaryR();
         final byte[] rawEncodedA = this.getKeyPair().getPublicKey().getBytes();
         final Ed25519EncodedFieldElement h =
-            new Ed25519EncodedFieldElement(Hashes.sha3_512(rawEncodedR, rawEncodedA, data));
+            new Ed25519EncodedFieldElement(hasher.hash(rawEncodedR, rawEncodedA, data));
 
         // hReduced = h mod group order
         final Ed25519EncodedFieldElement hModQ = h.modQ();

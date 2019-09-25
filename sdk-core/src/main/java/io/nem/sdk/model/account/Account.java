@@ -18,6 +18,7 @@ package io.nem.sdk.model.account;
 
 import io.nem.core.crypto.KeyPair;
 import io.nem.core.crypto.PrivateKey;
+import io.nem.core.crypto.SignSchema;
 import io.nem.sdk.model.blockchain.NetworkType;
 import io.nem.sdk.model.transaction.AggregateTransaction;
 import io.nem.sdk.model.transaction.CosignatureSignedTransaction;
@@ -35,7 +36,10 @@ import java.util.List;
 public class Account {
 
     private final KeyPair keyPair;
+
     private final PublicAccount publicAccount;
+
+    private final NetworkType networkType;
 
     /**
      * Constructor
@@ -44,13 +48,16 @@ public class Account {
      * @param networkType NetworkType
      */
     public Account(String privateKey, NetworkType networkType) {
-        this.keyPair = new KeyPair(PrivateKey.fromHexString(privateKey));
+        this.keyPair = KeyPair.fromPrivate(PrivateKey.fromHexString(privateKey),
+            networkType.resolveSignSchema());
         this.publicAccount = new PublicAccount(this.getPublicKey(), networkType);
+        this.networkType = networkType;
     }
 
     public Account(KeyPair keyPair, NetworkType networkType) {
         this.keyPair = keyPair;
         this.publicAccount = new PublicAccount(this.getPublicKey(), networkType);
+        this.networkType = networkType;
     }
 
     /**
@@ -68,7 +75,7 @@ public class Account {
      * Create an new Account
      */
     public static Account generateNewAccount(NetworkType networkType) {
-        KeyPair keyPair = new KeyPair();
+        KeyPair keyPair = KeyPair.random(networkType.resolveSignSchema());
         return new Account(keyPair.getPrivateKey().toString(), networkType);
     }
 
@@ -150,5 +157,9 @@ public class Account {
         final List<Account> cosignatories,
         final String generationHash) {
         return transaction.signTransactionWithCosigners(this, cosignatories, generationHash);
+    }
+
+    public NetworkType getNetworkType() {
+        return networkType;
     }
 }

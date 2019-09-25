@@ -22,7 +22,7 @@ package io.nem.core.crypto;
 public interface DsaSigner {
 
     /**
-     * Signs the SHA3 hash of an arbitrarily sized message.
+     * Signs the hash of an arbitrarily sized message.
      *
      * @param data The message to sign.
      * @return The generated signature.

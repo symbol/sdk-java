@@ -18,11 +18,13 @@ package io.nem.core.crypto;
 
 import org.hamcrest.core.IsInstanceOf;
 import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 
 public abstract class CryptoEngineTest {
 
-    @Test
+    @ParameterizedTest
+    @EnumSource(SignSchema.class)
     public void canGetCurve() {
         // Act:
         final Curve curve = this.getCryptoEngine().getCurve();
@@ -31,26 +33,30 @@ public abstract class CryptoEngineTest {
         Assert.assertThat(curve, IsInstanceOf.instanceOf(Curve.class));
     }
 
-    @Test
-    public void canCreateDsaSigner() {
+    @ParameterizedTest
+    @EnumSource(SignSchema.class)
+    public void canCreateDsaSigner(SignSchema signSchema) {
         // Act:
         final CryptoEngine engine = this.getCryptoEngine();
-        final DsaSigner signer = engine.createDsaSigner(KeyPair.random(engine));
+        final DsaSigner signer = engine
+            .createDsaSigner(KeyPair.random(engine, signSchema), signSchema);
 
         // Assert:
         Assert.assertThat(signer, IsInstanceOf.instanceOf(DsaSigner.class));
     }
 
-    @Test
-    public void canCreateKeyGenerator() {
+    @ParameterizedTest
+    @EnumSource(SignSchema.class)
+    public void canCreateKeyGenerator(SignSchema signSchema) {
         // Act:
-        final KeyGenerator keyGenerator = this.getCryptoEngine().createKeyGenerator();
+        final KeyGenerator keyGenerator = this.getCryptoEngine().createKeyGenerator(signSchema);
 
         // Assert:
         Assert.assertThat(keyGenerator, IsInstanceOf.instanceOf(KeyGenerator.class));
     }
 
-    @Test
+    @ParameterizedTest
+    @EnumSource(SignSchema.class)
     public void canCreateKeyAnalyzer() {
         // Act:
         final KeyAnalyzer keyAnalyzer = this.getCryptoEngine().createKeyAnalyzer();
@@ -59,12 +65,14 @@ public abstract class CryptoEngineTest {
         Assert.assertThat(keyAnalyzer, IsInstanceOf.instanceOf(KeyAnalyzer.class));
     }
 
-    @Test
-    public void canCreateBlockCipher() {
+    @ParameterizedTest
+    @EnumSource(SignSchema.class)
+    public void canCreateBlockCipher(SignSchema signSchema) {
         // Act:
         final CryptoEngine engine = this.getCryptoEngine();
         final BlockCipher blockCipher =
-            engine.createBlockCipher(KeyPair.random(engine), KeyPair.random(engine));
+            engine.createBlockCipher(KeyPair.random(engine, signSchema), KeyPair.random(engine,
+                signSchema), signSchema);
 
         // Assert:
         Assert.assertThat(blockCipher, IsInstanceOf.instanceOf(BlockCipher.class));

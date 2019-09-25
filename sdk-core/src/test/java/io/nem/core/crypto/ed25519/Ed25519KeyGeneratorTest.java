@@ -23,20 +23,25 @@ import io.nem.core.crypto.KeyGeneratorTest;
 import io.nem.core.crypto.KeyPair;
 import io.nem.core.crypto.PrivateKey;
 import io.nem.core.crypto.PublicKey;
+import io.nem.core.crypto.SignSchema;
 import io.nem.core.crypto.ed25519.arithmetic.Ed25519EncodedGroupElement;
 import io.nem.core.crypto.ed25519.arithmetic.Ed25519GroupElement;
 import io.nem.core.crypto.ed25519.arithmetic.MathUtils;
 import org.hamcrest.core.IsEqual;
 import org.junit.Assert;
-import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 
 public class Ed25519KeyGeneratorTest extends KeyGeneratorTest {
 
-    @Test
-    public void derivedPublicKeyIsValidPointOnCurve() {
+
+    @ParameterizedTest
+    @EnumSource(SignSchema.class)
+    public void derivedPublicKeyIsValidPointOnCurve(SignSchema signSchema) {
         // Arrange:
-        final KeyGenerator generator = this.getKeyGenerator();
+        final KeyGenerator generator = this.getKeyGenerator(signSchema);
         for (int i = 0; i < 100; i++) {
             final KeyPair kp = generator.generateKeyPair();
 
@@ -51,16 +56,17 @@ public class Ed25519KeyGeneratorTest extends KeyGeneratorTest {
         }
     }
 
-    @Test
-    public void derivePublicKeyReturnsExpectedPublicKey() {
+    @ParameterizedTest
+    @EnumSource(SignSchema.class)
+    public void derivePublicKeyReturnsExpectedPublicKey(SignSchema signSchema) {
         // Arrange:
-        final KeyGenerator generator = this.getKeyGenerator();
+        final KeyGenerator generator = this.getKeyGenerator(signSchema);
         for (int i = 0; i < 100; i++) {
             final KeyPair kp = generator.generateKeyPair();
 
             // Act:
             final PublicKey publicKey1 = generator.derivePublicKey(kp.getPrivateKey());
-            final PublicKey publicKey2 = MathUtils.derivePublicKey(kp.getPrivateKey());
+            final PublicKey publicKey2 = MathUtils.derivePublicKey(kp.getPrivateKey(), signSchema);
 
             // Assert:
             Assert.assertThat(publicKey1, IsEqual.equalTo(publicKey2));
@@ -69,11 +75,13 @@ public class Ed25519KeyGeneratorTest extends KeyGeneratorTest {
 
     @Test
     public void derivePublicKey() {
-        final KeyGenerator generator = this.getKeyGenerator();
+        SignSchema signSchema = SignSchema.SHA3;
+        final KeyGenerator generator = this.getKeyGenerator(signSchema);
         final KeyPair keyPair =
-            new KeyPair(
+            KeyPair.fromPrivate(
                 PrivateKey.fromHexString(
-                    "787225aaff3d2c71f4ffa32d4f19ec4922f3cd869747f267378f81f8e3fcb12d"));
+                    "787225aaff3d2c71f4ffa32d4f19ec4922f3cd869747f267378f81f8e3fcb12d"),
+                signSchema);
 
         final PublicKey publicKey = generator.derivePublicKey(keyPair.getPrivateKey());
 
