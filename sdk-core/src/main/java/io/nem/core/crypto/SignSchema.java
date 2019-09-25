@@ -71,9 +71,10 @@ public enum SignSchema {
     }
 
     /**
-     * Reversed convertion an byte array;
+     * Reversed conversion of an byte array;
      *
-     * @@return the reverse of input.
+     * @param input the byte array.
+     * @return the reverse of the input.
      */
     public static byte[] reverse(byte[] input) {
         byte[] output = new byte[input.length];
@@ -84,9 +85,10 @@ public enum SignSchema {
     }
 
     /**
-     * Reversed convertion hash;
+     * Reversed conversion of hex hash;
      *
-     * @@return the reverse of input.
+     * @param input the hex encoded hash.
+     * @return the reverse of the input.
      */
     public static String reverse(String input) {
         try {
@@ -138,6 +140,7 @@ public enum SignSchema {
         HASH_SIZE_64_BYTES;
 
     }
+
     /**
      * Function that hashes inputs according to the preconfigured schema.
      */
@@ -147,4 +150,4 @@ public enum SignSchema {
         byte[] hash(byte[]... inputs);
     }
 
-    }
+}
