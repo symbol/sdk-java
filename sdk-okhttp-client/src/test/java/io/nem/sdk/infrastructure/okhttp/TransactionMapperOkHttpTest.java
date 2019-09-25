@@ -724,13 +724,13 @@ public class TransactionMapperOkHttpTest {
             transaction.getMosaicId());
         // assertEquals(transactionDTO.getJsonObject("transaction").getString("name"),
         //        transaction.getMosaicName());
-        assertEquals(transaction.getMosaicProperties().getDivisibility(),
+        assertEquals(transaction.getDivisibility(),
             mosaicDefinitionTransactionDTO.getDivisibility().intValue());
         assertEquals(
             mosaicDefinitionTransactionDTO.getDuration().longValue(),
-            transaction.getMosaicProperties().getDuration().longValue());
-        assertTrue(transaction.getMosaicProperties().isSupplyMutable());
-        assertTrue(transaction.getMosaicProperties().isTransferable());
+            transaction.getBlockDuration().getDuration());
+        assertTrue(transaction.getMosaicFlags().isSupplyMutable());
+        assertTrue(transaction.getMosaicFlags().isTransferable());
     }
 
     void validateMosaicSupplyChangeTx(

@@ -123,7 +123,12 @@ public enum TransactionType {
     /**
      * Account link transaction type
      */
-    ACCOUNT_LINK(0x414C, 1);
+    ACCOUNT_LINK(0x414C, 1),
+    /**
+     * Mosaic address restriction type
+     */
+    MOSAIC_ADDRESS_RESTRICTION((short) 0x4251, 1);
+
     /**
      * The transaction type value
      */

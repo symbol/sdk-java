@@ -25,23 +25,28 @@ public class MosaicInfo {
     private final BigInteger startHeight;
     private final PublicAccount owner;
     private final Integer revision;
-    private final MosaicProperties properties;
+    private final MosaicFlags mosaicFlags;
+    private final int divisibility;
+    private final BigInteger duration;
 
     private MosaicInfo(final MosaicId mosaicId, final BigInteger supply,
-        final BigInteger startHeight,
-        final PublicAccount owner, final Integer revision, final MosaicProperties properties) {
+        final BigInteger startHeight, final PublicAccount owner, final Integer revision,
+        final MosaicFlags mosaicFlags, final int divisibility, final BigInteger duration) {
         this.mosaicId = mosaicId;
         this.supply = supply;
         this.startHeight = startHeight;
         this.owner = owner;
         this.revision = revision;
-        this.properties = properties;
+        this.mosaicFlags = mosaicFlags;
+        this.divisibility = divisibility;
+        this.duration = duration;
     }
 
     public static MosaicInfo create(final MosaicId mosaicId,
         final BigInteger supply, final BigInteger startHeight,
-        final PublicAccount owner, final Integer revision, final MosaicProperties properties) {
-        return new MosaicInfo(mosaicId, supply, startHeight, owner, revision, properties);
+        final PublicAccount owner, final Integer revision, final MosaicFlags mosaicFlags,
+        final int divisibility, final BigInteger duration) {
+        return new MosaicInfo(mosaicId, supply, startHeight, owner, revision, mosaicFlags, divisibility, duration);
     }
 
     /**
@@ -95,7 +100,7 @@ public class MosaicInfo {
      * @return if supply is mutable
      */
     public boolean isSupplyMutable() {
-        return properties.isSupplyMutable();
+        return mosaicFlags.isSupplyMutable();
     }
 
     /**
@@ -103,17 +108,15 @@ public class MosaicInfo {
      *
      * @return if the mosaic is transferable between non-owner accounts
      */
-    public boolean isTransferable() {
-        return properties.isTransferable();
+    public boolean isTransferable() { return mosaicFlags.isTransferable();
     }
 
     /**
-     * Return the number of blocks from height it will be active
+     * Returns tue if the mosaic is restrictable between non-owner accounts
      *
-     * @return the number of blocks from height it will be active
+     * @return if the mosaic is restrictable between non-owner accounts
      */
-    public BigInteger getDuration() {
-        return properties.getDuration();
+    public boolean isRestrictable() { return mosaicFlags.isRestrictable();
     }
 
     /**
@@ -121,7 +124,14 @@ public class MosaicInfo {
      *
      * @return mosaic divisibility
      */
-    public int getDivisibility() {
-        return properties.getDivisibility();
+    public int getDivisibility() { return divisibility; }
+
+    /**
+     * Return the number of blocks from height it will be active
+     *
+     * @return the number of blocks from height it will be active
+     */
+    public BigInteger getDuration() {
+        return duration;
     }
 }

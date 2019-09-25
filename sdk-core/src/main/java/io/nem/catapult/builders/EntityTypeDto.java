@@ -96,7 +96,11 @@ public enum EntityTypeDto {
     /**
      * Transfer transaction.
      */
-    TRANSFER_TRANSACTION((short) 0x4154);
+    TRANSFER_TRANSACTION((short) 0x4154),
+    /**
+     * Mosaic address restriction transaction
+     */
+    MOSAIC_ADDRESS_RESTRICTION((short) 0x4251);
 
     /**
      * Enum value.
