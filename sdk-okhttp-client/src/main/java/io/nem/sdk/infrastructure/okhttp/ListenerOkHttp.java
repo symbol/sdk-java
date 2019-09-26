@@ -59,7 +59,9 @@ public class ListenerOkHttp extends ListenerBase implements Listener {
     private WebSocket webSocket;
 
     /**
+     * @param httpClient the ok http client
      * @param url nis host
+     * @param json gson's json.
      */
     public ListenerOkHttp(OkHttpClient httpClient, String url, JSON json) {
         super(new JsonHelperGson(json.getGson()));

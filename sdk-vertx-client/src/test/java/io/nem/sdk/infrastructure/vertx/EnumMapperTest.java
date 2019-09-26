@@ -66,11 +66,11 @@ public class EnumMapperTest {
                 .assertTrue(existingValues.add(v.getValue()), v.getValue() + " is duplicated!!");
         });
     }
+
     @Test
     void testReceiptTypeEnumDTO() {
         Set<Integer> existingValues = new HashSet<>();
         Arrays.stream(ReceiptType.values()).forEach(v -> {
-            System.out.println(v.name() + " " + v.getValue());
             Assertions.assertNotNull(ReceiptTypeEnum.fromValue(v.getValue()), v.name());
             Assertions
                 .assertTrue(existingValues.add(v.getValue()), v.getValue() + " is duplicated!!");
@@ -87,8 +87,6 @@ public class EnumMapperTest {
         });
     }
 
-
-
     @Test
     void testFromAccountLinkActionEnumToAccountLinkAction() {
         Set<Integer> existingValues = new HashSet<>();
@@ -98,7 +96,6 @@ public class EnumMapperTest {
                 .assertTrue(existingValues.add(v.getValue()), v.getValue() + " is duplicated!!");
         });
     }
-
 
     @Test
     void testAliasActionModel() {
