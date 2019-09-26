@@ -32,11 +32,11 @@ class MosaicGlobalRestrictionTransactionTest {
                 NetworkType.MIJIN_TEST,
                 new MosaicId(new BigInteger("1")), // restrictedMosaicId
                 new MosaicId(new BigInteger("2")), // referenceMosaicId
-                BigInteger.valueOf(1), // restrictionKey
-                BigInteger.valueOf(9), // previousRestrictionValue
+                BigInteger.valueOf(1),    // restrictionKey
+                BigInteger.valueOf(9),    // previousRestrictionValue
                 MosaicRestrictionType.EQ, // previousRestrictionType
-                BigInteger.valueOf(8), // newRestrictionValue
-                MosaicRestrictionType.GE // newRestrictionType
+                BigInteger.valueOf(8),    // newRestrictionValue
+                MosaicRestrictionType.GE  // newRestrictionType
             ).build();
 
         assertEquals(NetworkType.MIJIN_TEST, mosaicGlobalRestrictionTx.getNetworkType());
@@ -59,11 +59,11 @@ class MosaicGlobalRestrictionTransactionTest {
                 NetworkType.MIJIN_TEST,
                 new MosaicId(new BigInteger("1")), // restricted MosaicId
                 new MosaicId(new BigInteger("2")), // referenceMosaicId
-                BigInteger.valueOf(1), // restrictionKey
-                BigInteger.valueOf(9), // previousRestrictionValue
+                BigInteger.valueOf(1),    // restrictionKey
+                BigInteger.valueOf(9),    // previousRestrictionValue
                 MosaicRestrictionType.EQ, // previousRestrictionType
-                BigInteger.valueOf(8), // newRestrictionValue
-                MosaicRestrictionType.GE // newRestrictionType
+                BigInteger.valueOf(8),    // newRestrictionValue
+                MosaicRestrictionType.GE  // newRestrictionType
             ).build();
 
         SignedTransaction signedTransaction = mosaicGlobalRestrictionTx.signWith(account, generationHash);

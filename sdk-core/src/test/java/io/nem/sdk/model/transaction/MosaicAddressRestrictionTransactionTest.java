@@ -46,11 +46,12 @@ class MosaicAddressRestrictionTransactionTest {
         MosaicAddressRestrictionTransaction mosaicAddressRestrictionTx =
             new MosaicAddressRestrictionTransactionFactory(
                 NetworkType.MIJIN_TEST,
-                new MosaicId(new BigInteger("0")), // unresolvedMosaicId
+                new MosaicId(new BigInteger("0")), // restricted MosaicId
                 BigInteger.valueOf(1), // restrictionKey
-                account.getAddress(), // targetAddress
+                account.getAddress(),  // targetAddress
                 BigInteger.valueOf(9), // previousRestrictionValue
-                BigInteger.valueOf(8)).build(); // newRestrictionValue
+                BigInteger.valueOf(8)  // newRestrictionValue
+            ).build();
 
         assertEquals(NetworkType.MIJIN_TEST, mosaicAddressRestrictionTx.getNetworkType());
         assertTrue(1 == mosaicAddressRestrictionTx.getVersion());
@@ -70,9 +71,10 @@ class MosaicAddressRestrictionTransactionTest {
                 NetworkType.MIJIN_TEST,
                 new MosaicId(new BigInteger("1")), // restricted MosaicId
                 BigInteger.valueOf(1), // restrictionKey
-                account.getAddress(), // targetAddress
+                account.getAddress(),  // targetAddress
                 BigInteger.valueOf(9), // previousRestrictionValue
-                BigInteger.valueOf(8)).build(); // newRestrictionValue
+                BigInteger.valueOf(8)  // newRestrictionValue
+            ).build();
 
         SignedTransaction signedTransaction = mosaicAddressRestrictionTx.signWith(account, generationHash);
 

@@ -30,6 +30,19 @@ import io.nem.sdk.model.mosaic.MosaicId;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
 
+/**
+ * Mosaic address restriction transaction.
+ *
+ * Enabling accounts to transact with the token is similar to the process of
+ * adding elevated permissions to a user in a company computer network.
+ *
+ * The mosaic creator can modify the permissions of an account by sending a
+ * mosaic restriction transaction targeting the account address.
+ *
+ * **MosaicAddressRestrictionTransaction can only be announced in with Aggregate Transaction
+ *
+ * @since 1.0
+ */
 public class MosaicAddressRestrictionTransaction extends Transaction {
 
     private final MosaicId mosaicId;
@@ -38,6 +51,11 @@ public class MosaicAddressRestrictionTransaction extends Transaction {
     private final BigInteger previousRestrictionValue;
     private final BigInteger newRestrictionValue;
 
+    /**
+     * Constructor.
+     *
+     * @param factory {@link MosaicAddressRestrictionTransactionFactory}
+     */
     MosaicAddressRestrictionTransaction(MosaicAddressRestrictionTransactionFactory factory) {
         super(factory);
         mosaicId = factory.getMosaicId();
@@ -47,22 +65,47 @@ public class MosaicAddressRestrictionTransaction extends Transaction {
         newRestrictionValue = factory.getNewRestrictionValue();
     }
 
+    /**
+     * Returns the mosaic id.
+     *
+     * @return {@link MosaicId}
+     */
     public MosaicId getMosaicId() {
         return mosaicId;
     }
 
+    /**
+     * Returns the restriction key.
+     *
+     * @return BigInteger restrictionKey
+     */
     public BigInteger getRestrictionKey() {
         return restrictionKey;
     }
 
+    /**
+     * Returns the target address.
+     *
+     * @return {@link Address}
+     */
     public Address getTargetAddress() {
         return targetAddress;
     }
 
+    /**
+     * Returns the previous restriction value.
+     *
+     * @return BigInteger previousRestrictionValue
+     */
     public BigInteger getPreviousRestrictionValue() {
         return previousRestrictionValue;
     }
 
+    /**
+     * Returns the new restriction value.
+     *
+     * @return BigInteger newRestrictionValue
+     */
     public BigInteger getNewRestrictionValue() {
         return newRestrictionValue;
     }

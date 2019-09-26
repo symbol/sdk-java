@@ -23,6 +23,9 @@ import io.nem.sdk.model.mosaic.MosaicId;
 import java.math.BigInteger;
 import org.apache.commons.lang3.Validate;
 
+/**
+ * Factory of {@link MosaicAddressRestrictionTransaction}
+ */
 public class MosaicAddressRestrictionTransactionFactory
     extends TransactionFactory<MosaicAddressRestrictionTransaction> {
 
@@ -32,6 +35,16 @@ public class MosaicAddressRestrictionTransactionFactory
     private final BigInteger previousRestrictionValue;
     private final BigInteger newRestrictionValue;
 
+    /**
+     * Create a mosaic address restriction transaction object with factory build and modifier methods.
+     *
+     * @param networkType {@link NetworkType}
+     * @param mosaicId {@link MosaicId}
+     * @param restrictionKey BigInteger
+     * @param targetAddress {@link Address}
+     * @param previousRestrictionValue BigInteger
+     * @param newRestrictionValue BigInteger
+     */
     public MosaicAddressRestrictionTransactionFactory(
         NetworkType networkType,
         MosaicId mosaicId,
@@ -57,14 +70,29 @@ public class MosaicAddressRestrictionTransactionFactory
         return new MosaicAddressRestrictionTransaction(this);
     }
 
+    /**
+     * Returns the mosaic id.
+     *
+     * @return {@link MosaicId}
+     */
     public MosaicId getMosaicId() {
         return mosaicId;
     }
 
+    /**
+     * Returns the restriction key.
+     *
+     * @return BigInteger restrictionKey
+     */
     public BigInteger getRestrictionKey() {
         return restrictionKey;
     }
 
+    /**
+     * Returns the target address.
+     *
+     * @return {@link Address}
+     */
     public Address getTargetAddress() {
         return targetAddress;
     }
@@ -73,6 +101,11 @@ public class MosaicAddressRestrictionTransactionFactory
         return previousRestrictionValue;
     }
 
+    /**
+     * Returns the new restriction value.
+     *
+     * @return BigInteger newRestrictionValue
+     */
     public BigInteger getNewRestrictionValue() {
         return newRestrictionValue;
     }

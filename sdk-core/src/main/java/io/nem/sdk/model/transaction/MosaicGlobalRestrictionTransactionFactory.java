@@ -22,6 +22,9 @@ import io.nem.sdk.model.mosaic.MosaicId;
 import java.math.BigInteger;
 import org.apache.commons.lang3.Validate;
 
+/**
+ * Factory of {@link MosaicGlobalRestrictionTransaction}
+ */
 public class MosaicGlobalRestrictionTransactionFactory
     extends TransactionFactory<MosaicGlobalRestrictionTransaction> {
 
@@ -33,6 +36,18 @@ public class MosaicGlobalRestrictionTransactionFactory
     private final BigInteger newRestrictionValue;
     private final MosaicRestrictionType newRestrictionType;
 
+    /**
+     * Create a mosaic global restriction transaction object with factory build and modifier methods.
+     *
+     * @param networkType {@link NetworkType}
+     * @param mosaicId {@link MosaicId}
+     * @param referenceMosaicId {@link MosaicId}
+     * @param restrictionKey BigInteger
+     * @param previousRestrictionValue BigInteger
+     * @param previousRestrictionType {@link MosaicRestrictionType}
+     * @param newRestrictionValue BigInteger
+     * @param newRestrictionType {@link MosaicRestrictionType}
+     */
     public MosaicGlobalRestrictionTransactionFactory(
         NetworkType networkType,
         MosaicId mosaicId,
@@ -64,27 +79,57 @@ public class MosaicGlobalRestrictionTransactionFactory
         return new MosaicGlobalRestrictionTransaction(this);
     }
 
+    /**
+     * Returns the mosaic id.
+     *
+     * @return {@link MosaicId}
+     */
     public MosaicId getMosaicId() {
         return mosaicId;
     }
 
+    /**
+     * Returns the reference mosaic id.
+     *
+     * @return {@link MosaicId}
+     */
     public MosaicId getReferenceMosaicId() {
         return referenceMosaicId;
     }
 
+    /**
+     * Returns the restriction key.
+     *
+     * @return BigInteger
+     */
     public BigInteger getRestrictionKey() {
         return restrictionKey;
     }
 
+    /**
+     * Returns the previous restriction value.
+     *
+     * @return BigInteger
+     */
     public BigInteger getPreviousRestrictionValue() {
         return previousRestrictionValue;
     }
 
+    /**
+     * Returns the previous mosaic restriction type.
+     *
+     * @return {@link MosaicRestrictionType}
+     */
     public MosaicRestrictionType getPreviousRestrictionType() { return  previousRestrictionType; }
 
     public BigInteger getNewRestrictionValue() {
         return newRestrictionValue;
     }
 
+    /**
+     * Returns the new mosaic restriction type.
+     *
+     * @return {@link MosaicRestrictionType}
+     */
     public MosaicRestrictionType getNewRestrictionType() { return  newRestrictionType; }
 }

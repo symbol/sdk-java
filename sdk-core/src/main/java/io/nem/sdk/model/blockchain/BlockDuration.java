@@ -26,11 +26,20 @@ public class BlockDuration {
      */
     private final long duration;
 
-
+    /**
+     * Constructor.
+     *
+     * @param duration long
+     */
     public BlockDuration(long duration) {
         this.duration = duration;
     }
 
+    /**
+     * Constructor.
+     *
+     * @param duration BigInteger
+     */
     public BlockDuration(BigInteger duration) {
         this.duration = duration.longValue();
     }
@@ -38,7 +47,7 @@ public class BlockDuration {
     /**
      * Returns the number of blocks from height it will be active
      *
-     * @return the number of blocks from height it will be active
+     * @return long duration
      */
     public long getDuration() {
         return duration;

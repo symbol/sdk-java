@@ -34,6 +34,8 @@ import java.nio.ByteBuffer;
 import java.util.EnumSet;
 
 /**
+ * Mosaic definition transaction.
+ *
  * Before a mosaic can be created or transferred, a corresponding definition of the mosaic has to be
  * created and published to the network. This is done via a mosaic definition transaction.
  *
@@ -58,6 +60,11 @@ public class MosaicDefinitionTransaction extends Transaction {
      */
     private final BlockDuration blockDuration;
 
+    /**
+     * Constructor.
+     *
+     * @param factory {@link MosaicDefinitionTransactionFactory}
+     */
     public MosaicDefinitionTransaction(MosaicDefinitionTransactionFactory factory) {
         super(factory);
         this.mosaicNonce = factory.getMosaicNonce();
