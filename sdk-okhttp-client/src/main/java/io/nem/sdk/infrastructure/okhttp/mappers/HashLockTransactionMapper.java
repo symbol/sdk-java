@@ -29,6 +29,9 @@ import io.nem.sdk.model.transaction.TransactionFactory;
 import io.nem.sdk.model.transaction.TransactionType;
 import io.nem.sdk.openapi.okhttp_gson.model.HashLockTransactionDTO;
 
+/**
+ * Hash lock transaction mapper.
+ */
 class HashLockTransactionMapper extends
     AbstractTransactionMapper<HashLockTransactionDTO, HashLockTransaction> {
 

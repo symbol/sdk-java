@@ -29,6 +29,9 @@ import io.nem.sdk.model.transaction.JsonHelper;
 import io.nem.sdk.model.transaction.TransactionType;
 import io.nem.sdk.openapi.okhttp_gson.model.AddressAliasTransactionDTO;
 
+/**
+ * Address alias transaction mapper.
+ */
 class AddressAliasTransactionMapper extends
     AbstractTransactionMapper<AddressAliasTransactionDTO, AddressAliasTransaction> {
 

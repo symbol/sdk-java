@@ -28,7 +28,10 @@ import io.nem.sdk.model.transaction.TransactionType;
 import io.nem.sdk.openapi.okhttp_gson.model.NamespaceMetadataTransactionDTO;
 import java.math.BigInteger;
 
-public class NamespaceMetadataTransactionMapper extends
+/**
+ * Namespace metadata transaction mapper
+ */
+class NamespaceMetadataTransactionMapper extends
     AbstractTransactionMapper<NamespaceMetadataTransactionDTO, NamespaceMetadataTransaction> {
 
     public NamespaceMetadataTransactionMapper(JsonHelper jsonHelper) {

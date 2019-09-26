@@ -29,6 +29,9 @@ import io.nem.sdk.model.transaction.TransactionType;
 import io.nem.sdk.openapi.okhttp_gson.model.GlobalMosaicRestrictionTransactionDTO;
 import java.math.BigInteger;
 
+/**
+ * Mosaic global restriction transaction mapper.
+ */
 class MosaicGlobalRestrictionTransactionMapper extends
     AbstractTransactionMapper<GlobalMosaicRestrictionTransactionDTO, MosaicGlobalRestrictionTransaction> {
 

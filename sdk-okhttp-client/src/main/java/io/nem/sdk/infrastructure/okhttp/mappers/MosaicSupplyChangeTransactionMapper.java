@@ -28,6 +28,9 @@ import io.nem.sdk.model.transaction.TransactionFactory;
 import io.nem.sdk.model.transaction.TransactionType;
 import io.nem.sdk.openapi.okhttp_gson.model.MosaicSupplyChangeTransactionDTO;
 
+/**
+ * Mosaic supply change transaction mapper.
+ */
 class MosaicSupplyChangeTransactionMapper extends
     AbstractTransactionMapper<MosaicSupplyChangeTransactionDTO, MosaicSupplyChangeTransaction> {
 
