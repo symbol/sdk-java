@@ -17,28 +17,65 @@
 package io.nem.core.crypto.ed25519;
 
 import io.nem.core.crypto.PrivateKey;
+import io.nem.core.crypto.SignSchema;
 import io.nem.core.test.Utils;
 import java.math.BigInteger;
+import java.util.stream.Stream;
+import org.bouncycastle.util.encoders.Hex;
 import org.hamcrest.core.IsEqual;
 import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.EnumSource;
+import org.junit.jupiter.params.provider.MethodSource;
 
 public class Ed25519UtilsTest {
 
+    private static Stream<Arguments> params() {
+        return Stream.of(
+            Arguments.of("227F", SignSchema.SHA3,
+                "d8229a6d2bb1ee8ce10e5b283254c68b4ee8ab8a28fa078f6c47ddd3d2bb256e"),
+            Arguments.of("227F", SignSchema.KECCAK,
+                "704011e5b78404847b0a0a55f3a19c3db5401889ff438fc950537797baf42d77"),
+            Arguments.of("AAAA", SignSchema.SHA3,
+                "e092911d630f8fcad20b896b9d42f7a79c9fe2146bc8543ab4dcf7263e119255"),
+            Arguments.of("AAAA", SignSchema.KECCAK,
+                "e8cc94aeeab674586e0d62ad5f7dab2678dbdf43b73f13debdd014ed5a0c684a"),
+            Arguments.of("BBADABA123", SignSchema.SHA3,
+                "800df91a0217b997945f94dbd62c2b278925a56f040ebbc677671e396e7e3859"),
+            Arguments.of("BBADABA123", SignSchema.KECCAK,
+                "70f35d7c791981554bae85677606e61e1f29e70e0d8d7f288af795933f03a642")
+        );
+    }
+
     // region prepareForScalarMultiply
 
-    @Test
-    public void prepareForScalarMultiplyReturnsClampedValue() {
+    @ParameterizedTest
+    @EnumSource(SignSchema.class)
+    public void prepareForScalarMultiplyReturnsClampedValue(SignSchema signSchema) {
         // Arrange:
         final PrivateKey privateKey = new PrivateKey(new BigInteger(Utils.generateRandomBytes(32)));
 
         // Act:
-        final byte[] a = Ed25519Utils.prepareForScalarMultiply(privateKey).getRaw();
+        final byte[] a = Ed25519Utils.prepareForScalarMultiply(privateKey, signSchema).getRaw();
 
         // Assert:
         Assert.assertThat(a[31] & 0x40, IsEqual.equalTo(0x40));
         Assert.assertThat(a[31] & 0x80, IsEqual.equalTo(0x0));
         Assert.assertThat(a[0] & 0x7, IsEqual.equalTo(0x0));
+    }
+
+    @ParameterizedTest
+    @MethodSource("params")
+    public void shouldPrepareForScalarMultiply(String input,
+        SignSchema signSchema, String expected) {
+        // Arrange:
+        final PrivateKey privateKey = PrivateKey.fromHexString(input);
+        Assertions.assertEquals(expected,
+            Hex.toHexString(
+                Ed25519Utils.prepareForScalarMultiply(privateKey, signSchema).getRaw()));
     }
 
     // endregion

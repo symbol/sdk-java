@@ -16,7 +16,8 @@
 
 package io.nem.sdk.model.transaction;
 
-import io.nem.core.crypto.Signer;
+import io.nem.core.crypto.CryptoEngines;
+import io.nem.core.crypto.DsaSigner;
 import io.nem.sdk.model.account.Account;
 import org.bouncycastle.util.encoders.Hex;
 
@@ -69,7 +70,8 @@ public class CosignatureTransaction {
      * @return {@link CosignatureSignedTransaction}
      */
     public CosignatureSignedTransaction signWith(Account account) {
-        Signer signer = new Signer(account.getKeyPair());
+        DsaSigner signer = CryptoEngines.defaultEngine().createDsaSigner(account.getKeyPair(),
+            account.getNetworkType().resolveSignSchema());
         byte[] bytes = Hex.decode(transactionHash);
         byte[] signatureBytes = signer.sign(bytes).getBytes();
         return new CosignatureSignedTransaction(transactionHash, Hex.toHexString(signatureBytes),
