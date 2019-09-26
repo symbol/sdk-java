@@ -30,6 +30,9 @@ import io.nem.sdk.model.transaction.TransactionType;
 import io.nem.sdk.openapi.vertx.model.NamespaceRegistrationTransactionDTO;
 import java.util.Optional;
 
+/**
+ * Namespace registration transaction mapper.
+ */
 class NamespaceRegistrationTransactionMapper extends
     AbstractTransactionMapper<NamespaceRegistrationTransactionDTO, NamespaceRegistrationTransaction> {
 

@@ -29,6 +29,9 @@ import io.nem.sdk.model.transaction.JsonHelper;
 import io.nem.sdk.model.transaction.TransactionType;
 import io.nem.sdk.openapi.vertx.model.AddressAliasTransactionDTO;
 
+/**
+ * Account alias transaction mapper.
+ */
 class AddressAliasTransactionMapper extends
     AbstractTransactionMapper<AddressAliasTransactionDTO, AddressAliasTransaction> {
 

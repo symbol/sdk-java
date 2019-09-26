@@ -29,6 +29,9 @@ import io.nem.sdk.model.transaction.TransactionType;
 import io.nem.sdk.openapi.vertx.model.GlobalMosaicRestrictionTransactionDTO;
 import java.math.BigInteger;
 
+/**
+ * Mosaic global restriction transaction mapper.
+ */
 class MosaicGlobalRestrictionTransactionMapper extends
     AbstractTransactionMapper<GlobalMosaicRestrictionTransactionDTO, MosaicGlobalRestrictionTransaction> {
 

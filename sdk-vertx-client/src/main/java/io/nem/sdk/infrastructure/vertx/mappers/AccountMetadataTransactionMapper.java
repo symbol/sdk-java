@@ -26,7 +26,10 @@ import io.nem.sdk.model.transaction.TransactionType;
 import io.nem.sdk.openapi.vertx.model.AccountMetadataTransactionDTO;
 import java.math.BigInteger;
 
-public class AccountMetadataTransactionMapper extends
+/**
+ * Account metadata transaction mapper.
+ */
+class AccountMetadataTransactionMapper extends
     AbstractTransactionMapper<AccountMetadataTransactionDTO, AccountMetadataTransaction> {
 
     public AccountMetadataTransactionMapper(JsonHelper jsonHelper) {

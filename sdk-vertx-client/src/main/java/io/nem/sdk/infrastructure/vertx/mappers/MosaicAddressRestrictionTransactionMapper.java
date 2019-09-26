@@ -29,6 +29,9 @@ import io.nem.sdk.model.transaction.TransactionType;
 import io.nem.sdk.openapi.vertx.model.AddressMosaicRestrictionTransactionDTO;
 import java.math.BigInteger;
 
+/**
+ * Mosaic address restriction transaction mapper.
+ */
 class MosaicAddressRestrictionTransactionMapper extends
     AbstractTransactionMapper<AddressMosaicRestrictionTransactionDTO, MosaicAddressRestrictionTransaction> {
 
