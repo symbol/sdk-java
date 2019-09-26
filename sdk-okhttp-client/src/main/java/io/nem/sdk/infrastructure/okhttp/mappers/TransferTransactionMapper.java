@@ -37,6 +37,9 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import org.bouncycastle.util.encoders.Hex;
 
+/**
+ * Transfer transaction mapper.
+ */
 class TransferTransactionMapper extends
     AbstractTransactionMapper<TransferTransactionDTO, TransferTransaction> {
 

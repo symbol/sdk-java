@@ -36,7 +36,16 @@ public class MosaicDefinitionTransactionFactory extends
     private final int divisibility;
     private final BlockDuration blockDuration;
 
-
+    /**
+     * Create a mosaic definition transaction object with factory build and modifier methods.
+     *
+     * @param networkType {@link NetworkType}
+     * @param mosaicNonce {@link MosaicNonce}
+     * @param mosaicId {@link MosaicId}
+     * @param mosaicFlags {@link MosaicFlags}
+     * @param divisibility int
+     * @param blockDuration {@link BlockDuration}
+     */
     public MosaicDefinitionTransactionFactory(NetworkType networkType, MosaicNonce mosaicNonce,
         MosaicId mosaicId, MosaicFlags mosaicFlags, int divisibility,
         BlockDuration blockDuration) {
@@ -54,25 +63,25 @@ public class MosaicDefinitionTransactionFactory extends
     }
 
     /**
-     * Returns mosaic id generated from namespace name and mosaic name.
+     * Returns the mosaic id.
      *
-     * @return MosaicId
+     * @return {@link MosaicId}
      */
     public MosaicId getMosaicId() {
         return mosaicId;
     }
 
     /**
-     * Returns mosaic mosaicNonce.
+     * Returns the mosaic nonce.
      *
-     * @return String
+     * @return MosaicNonce {@link MosaicNonce}
      */
     public MosaicNonce getMosaicNonce() {
         return mosaicNonce;
     }
 
     /**
-     * Returns mosaic flags defining mosaic.
+     * Returns the mosaic flags defining mosaic.
      *
      * @return {@link MosaicFlags}
      */
@@ -81,9 +90,9 @@ public class MosaicDefinitionTransactionFactory extends
     }
 
     /**
-     * Returns the number of blocks from height it will be active
+     * Returns the block duration.
      *
-     * @return the number of blocks from height it will be active
+     * @return {@link BlockDuration}
      */
     public BlockDuration getBlockDuration() {
         return blockDuration;
@@ -92,7 +101,7 @@ public class MosaicDefinitionTransactionFactory extends
     /**
      * Returns the mosaic divisibility.
      *
-     * @return mosaic divisibility
+     * @return int divisibility
      */
     public int getDivisibility() {
         return divisibility;

@@ -22,7 +22,6 @@ import io.nem.sdk.model.transaction.TransactionType;
 import io.nem.sdk.openapi.vertx.model.EmbeddedTransactionInfoDTO;
 import io.nem.sdk.openapi.vertx.model.TransactionInfoDTO;
 
-
 /**
  * A transaction mapper knows how to map DTO for standard and embedded transactions into a {@link
  * Transaction} object.

@@ -100,7 +100,11 @@ public enum EntityTypeDto {
     /**
      * Mosaic address restriction transaction
      */
-    MOSAIC_ADDRESS_RESTRICTION((short) 0x4251);
+    MOSAIC_ADDRESS_RESTRICTION((short) 0x4251),
+    /**
+     * Mosaic global restriction transaction
+     */
+    MOSAIC_GLOBAL_RESTRICTION((short) 0x4151);
 
     /**
      * Enum value.

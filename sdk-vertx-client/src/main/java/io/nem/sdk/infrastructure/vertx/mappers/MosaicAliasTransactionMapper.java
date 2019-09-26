@@ -28,6 +28,9 @@ import io.nem.sdk.model.transaction.TransactionFactory;
 import io.nem.sdk.model.transaction.TransactionType;
 import io.nem.sdk.openapi.vertx.model.MosaicAliasTransactionDTO;
 
+/**
+ * Mosaic alias transaction mapper.
+ */
 class MosaicAliasTransactionMapper extends
     AbstractTransactionMapper<MosaicAliasTransactionDTO, MosaicAliasTransaction> {
 
