@@ -54,7 +54,7 @@ public class AccountMosaicRestrictionModificationTransaction extends Transaction
     /**
      * Get account mosaic restriction modifications
      *
-     * @return {@link List<AccountRestrictionModification<MosaicId>>}
+     * @return list of {@link AccountRestrictionModification} with {@link MosaicId}
      */
     public List<AccountRestrictionModification<MosaicId>> getModifications() {
         return this.modifications;
