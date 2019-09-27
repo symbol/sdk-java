@@ -30,6 +30,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Multisig account modification transaction mapper.
+ */
 class MultisigAccountModificationTransactionMapper extends
     AbstractTransactionMapper<MultisigAccountModificationTransactionDTO, MultisigAccountModificationTransaction> {
 

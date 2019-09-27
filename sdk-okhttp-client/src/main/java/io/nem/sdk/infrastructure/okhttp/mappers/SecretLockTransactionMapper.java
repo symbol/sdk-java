@@ -30,6 +30,9 @@ import io.nem.sdk.model.transaction.TransactionFactory;
 import io.nem.sdk.model.transaction.TransactionType;
 import io.nem.sdk.openapi.okhttp_gson.model.SecretLockTransactionDTO;
 
+/**
+ * Secret lock transaction mapper.
+ */
 class SecretLockTransactionMapper extends
     AbstractTransactionMapper<SecretLockTransactionDTO, SecretLockTransaction> {
 

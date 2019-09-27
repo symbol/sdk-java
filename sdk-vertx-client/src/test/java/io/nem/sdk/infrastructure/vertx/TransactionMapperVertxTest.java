@@ -214,6 +214,54 @@ public class TransactionMapperVertxTest {
     }
 
     @Test
+    void shouldCreateStandaloneMosaicAddressRestrictionTransaction() {
+        TransactionInfoDTO mosaicAddressRestrictionTransactionDTO = loadTransactionInfoDTO(
+            "shouldCreateStandaloneMosaicAddressRestrictionTransaction.json");
+
+        Transaction mosaicAddressRestrictionTransaction = map(mosaicAddressRestrictionTransactionDTO);
+
+        validateStandaloneTransaction(mosaicAddressRestrictionTransaction, mosaicAddressRestrictionTransactionDTO);
+    }
+
+    @Test
+    void shouldCreateAggregateMosaicAddressRestrictionTransaction() {
+        TransactionInfoDTO aggregateMosaicAddressRestrictionTransactionDTO =
+            loadTransactionInfoDTO("shouldCreateAggregateMosaicAddressRestrictionTransaction.json"
+            );
+
+        Transaction aggregateMosaicAddressRestrictionTransaction =
+            map(aggregateMosaicAddressRestrictionTransactionDTO);
+
+        validateAggregateTransaction(
+            (AggregateTransaction) aggregateMosaicAddressRestrictionTransaction,
+            aggregateMosaicAddressRestrictionTransactionDTO);
+    }
+
+    @Test
+    void shouldCreateStandaloneMosaicGlobalRestrictionTransaction() {
+        TransactionInfoDTO mosaicGlobalRestrictionTransactionDTO = loadTransactionInfoDTO(
+            "shouldCreateStandaloneMosaicGlobalRestrictionTransaction.json");
+
+        Transaction mosaicGlobalRestrictionTransaction = map(mosaicGlobalRestrictionTransactionDTO);
+
+        validateStandaloneTransaction(mosaicGlobalRestrictionTransaction, mosaicGlobalRestrictionTransactionDTO);
+    }
+
+    @Test
+    void shouldCreateAggregateMosaicGlobalRestrictionTransaction() {
+        TransactionInfoDTO aggregateMosaicGlobalRestrictionTransactionDTO =
+            loadTransactionInfoDTO("shouldCreateAggregateMosaicGlobalRestrictionTransaction.json"
+            );
+
+        Transaction aggregateMosaicGlobalRestrictionTransaction =
+            map(aggregateMosaicGlobalRestrictionTransactionDTO);
+
+        validateAggregateTransaction(
+            (AggregateTransaction) aggregateMosaicGlobalRestrictionTransaction,
+            aggregateMosaicGlobalRestrictionTransactionDTO);
+    }
+
+    @Test
     void shouldCreateStandaloneMultisigModificationTransaction() {
         TransactionInfoDTO multisigModificationTransactionDTO =
             loadTransactionInfoDTO("shouldCreateStandaloneMultisigModificationTransaction.json"

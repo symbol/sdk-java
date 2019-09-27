@@ -30,10 +30,10 @@ import io.nem.sdk.model.account.Address;
 import io.nem.sdk.model.account.PublicAccount;
 import io.nem.sdk.model.blockchain.BlockDuration;
 import io.nem.sdk.model.blockchain.NetworkType;
+import io.nem.sdk.model.mosaic.MosaicFlags;
 import io.nem.sdk.model.mosaic.MosaicId;
 import io.nem.sdk.model.mosaic.MosaicNames;
 import io.nem.sdk.model.mosaic.MosaicNonce;
-import io.nem.sdk.model.mosaic.MosaicFlags;
 import io.nem.sdk.model.mosaic.MosaicSupplyChangeActionType;
 import io.nem.sdk.model.mosaic.NetworkCurrencyMosaic;
 import io.nem.sdk.model.namespace.AliasAction;
@@ -51,12 +51,17 @@ import io.nem.sdk.model.transaction.CosignatureTransaction;
 import io.nem.sdk.model.transaction.HashLockTransaction;
 import io.nem.sdk.model.transaction.HashLockTransactionFactory;
 import io.nem.sdk.model.transaction.LockHashAlgorithmType;
+import io.nem.sdk.model.transaction.MosaicAddressRestrictionTransaction;
+import io.nem.sdk.model.transaction.MosaicAddressRestrictionTransactionFactory;
 import io.nem.sdk.model.transaction.MosaicAliasTransaction;
 import io.nem.sdk.model.transaction.MosaicAliasTransactionFactory;
 import io.nem.sdk.model.transaction.MosaicDefinitionTransaction;
 import io.nem.sdk.model.transaction.MosaicDefinitionTransactionFactory;
+import io.nem.sdk.model.transaction.MosaicGlobalRestrictionTransaction;
+import io.nem.sdk.model.transaction.MosaicGlobalRestrictionTransactionFactory;
 import io.nem.sdk.model.transaction.MosaicMetadataTransaction;
 import io.nem.sdk.model.transaction.MosaicMetadataTransactionFactory;
+import io.nem.sdk.model.transaction.MosaicRestrictionType;
 import io.nem.sdk.model.transaction.MosaicSupplyChangeTransaction;
 import io.nem.sdk.model.transaction.MosaicSupplyChangeTransactionFactory;
 import io.nem.sdk.model.transaction.MultisigAccountModificationTransaction;
@@ -666,6 +671,104 @@ class E2EIntegrationTest extends BaseIntegrationTest {
             this.account.getAddress(), signedTransaction.getHash(), type);
     }
 
+    @ParameterizedTest
+    @EnumSource(RepositoryType.class)
+    void aggregateMosaicAddressRestrictionTransaction(RepositoryType type) {
+        MosaicNonce nonce = MosaicNonce.createRandom();
+        this.mosaicId = MosaicId.createFromNonce(nonce, this.account.getPublicAccount());
+
+        MosaicAddressRestrictionTransaction mosaicAddressRestrictionTransaction =
+            new MosaicAddressRestrictionTransactionFactory(
+                NetworkType.MIJIN_TEST,
+                this.mosaicId, // restricted MosaicId
+                BigInteger.valueOf(1), // restrictionKey
+                this.account.getAddress(),  // targetAddress
+                BigInteger.valueOf(9), // previousRestrictionValue
+                BigInteger.valueOf(8)  // newRestrictionValue
+            ).build();
+
+        AggregateTransaction aggregateTransaction =
+            AggregateTransactionFactory.createComplete(
+                NetworkType.MIJIN_TEST,
+                Collections.singletonList(
+                    mosaicAddressRestrictionTransaction.toAggregate(this.account.getPublicAccount()))
+            ).build();
+
+        SignedTransaction signedTransaction = this.account
+            .sign(aggregateTransaction, generationHash);
+
+        TransactionAnnounceResponse transactionAnnounceResponse =
+            get(getTransactionRepository(type).announce(signedTransaction));
+        System.out.println(transactionAnnounceResponse.getMessage());
+
+        this.validateTransactionAnnounceCorrectly(
+            this.account.getAddress(), signedTransaction.getHash(), type);
+    }
+
+    @ParameterizedTest
+    @EnumSource(RepositoryType.class)
+    void standaloneMosaicGlobalRestrictionTransaction(RepositoryType type) {
+        MosaicNonce nonce = MosaicNonce.createRandom();
+        this.mosaicId = MosaicId.createFromNonce(nonce, this.account.getPublicAccount());
+
+        MosaicGlobalRestrictionTransaction mosaicGlobalRestrictionTransaction =
+            new MosaicGlobalRestrictionTransactionFactory(
+                NetworkType.MIJIN_TEST,
+                this.mosaicId, // restrictedMosaicId
+                new MosaicId(new BigInteger("0")), // referenceMosaicId
+                BigInteger.valueOf(1),    // restrictionKey
+                BigInteger.valueOf(9),    // previousRestrictionValue
+                MosaicRestrictionType.EQ, // previousRestrictionType
+                BigInteger.valueOf(8),    // newRestrictionValue
+                MosaicRestrictionType.GE  // newRestrictionType
+            ).build();
+
+        SignedTransaction signedTransaction =
+            this.account.sign(mosaicGlobalRestrictionTransaction, generationHash);
+
+        TransactionAnnounceResponse transactionAnnounceResponse =
+            get(getTransactionRepository(type).announce(signedTransaction));
+        System.out.println(transactionAnnounceResponse.getMessage());
+
+        this.validateTransactionAnnounceCorrectly(
+            this.account.getAddress(), signedTransaction.getHash(), type);
+    }
+
+    @ParameterizedTest
+    @EnumSource(RepositoryType.class)
+    void aggregateMosaicGlobalRestrictionTransaction(RepositoryType type) {
+        MosaicNonce nonce = MosaicNonce.createRandom();
+        this.mosaicId = MosaicId.createFromNonce(nonce, this.account.getPublicAccount());
+
+        MosaicGlobalRestrictionTransaction mosaicGlobalRestrictionTransaction =
+            new MosaicGlobalRestrictionTransactionFactory(
+                NetworkType.MIJIN_TEST,
+                this.mosaicId, // restrictedMosaicId
+                new MosaicId(new BigInteger("0")), // referenceMosaicId
+                BigInteger.valueOf(1),    // restrictionKey
+                BigInteger.valueOf(9),    // previousRestrictionValue
+                MosaicRestrictionType.EQ, // previousRestrictionType
+                BigInteger.valueOf(8),    // newRestrictionValue
+                MosaicRestrictionType.GE  // newRestrictionType
+            ).build();
+
+        AggregateTransaction aggregateTransaction =
+            AggregateTransactionFactory.createComplete(
+                NetworkType.MIJIN_TEST,
+                Collections.singletonList(
+                    mosaicGlobalRestrictionTransaction.toAggregate(this.account.getPublicAccount()))
+            ).build();
+
+        SignedTransaction signedTransaction = this.account
+            .sign(aggregateTransaction, generationHash);
+
+        TransactionAnnounceResponse transactionAnnounceResponse =
+            get(getTransactionRepository(type).announce(signedTransaction));
+        System.out.println(transactionAnnounceResponse.getMessage());
+
+        this.validateTransactionAnnounceCorrectly(
+            this.account.getAddress(), signedTransaction.getHash(), type);
+    }
 
     @ParameterizedTest
     @EnumSource(RepositoryType.class)

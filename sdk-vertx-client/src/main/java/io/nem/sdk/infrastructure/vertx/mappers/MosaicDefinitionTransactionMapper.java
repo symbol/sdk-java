@@ -30,6 +30,9 @@ import io.nem.sdk.model.transaction.TransactionFactory;
 import io.nem.sdk.model.transaction.TransactionType;
 import io.nem.sdk.openapi.vertx.model.MosaicDefinitionTransactionDTO;
 
+/**
+ * Mosaic definition transaction mapper.
+ */
 class MosaicDefinitionTransactionMapper extends
     AbstractTransactionMapper<MosaicDefinitionTransactionDTO, MosaicDefinitionTransaction> {
 

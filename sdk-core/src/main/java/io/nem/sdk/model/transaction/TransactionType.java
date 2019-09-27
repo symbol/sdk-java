@@ -127,7 +127,11 @@ public enum TransactionType {
     /**
      * Mosaic address restriction type
      */
-    MOSAIC_ADDRESS_RESTRICTION((short) 0x4251, 1);
+    MOSAIC_ADDRESS_RESTRICTION((short) 0x4251, 1),
+    /**
+     * Mosaic global restriction type
+     */
+    MOSAIC_GLOBAL_RESTRICTION((short) 0x4151, 1);
 
     /**
      * The transaction type value

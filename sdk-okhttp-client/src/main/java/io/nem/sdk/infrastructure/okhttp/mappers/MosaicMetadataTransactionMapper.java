@@ -28,7 +28,10 @@ import io.nem.sdk.model.transaction.TransactionType;
 import io.nem.sdk.openapi.okhttp_gson.model.MosaicMetadataTransactionDTO;
 import java.math.BigInteger;
 
-public class MosaicMetadataTransactionMapper extends
+/**
+ * Mosaic metadata transaction mapper.
+ */
+class MosaicMetadataTransactionMapper extends
     AbstractTransactionMapper<MosaicMetadataTransactionDTO, MosaicMetadataTransaction> {
 
     public MosaicMetadataTransactionMapper(JsonHelper jsonHelper) {

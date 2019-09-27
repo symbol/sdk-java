@@ -26,6 +26,9 @@ import io.nem.sdk.model.transaction.JsonHelper;
 import io.nem.sdk.model.transaction.TransactionType;
 import io.nem.sdk.openapi.okhttp_gson.model.AccountLinkTransactionDTO;
 
+/**
+ * Account link transaction mapper.
+ */
 class AccountLinkTransactionMapper extends
     AbstractTransactionMapper<AccountLinkTransactionDTO, AccountLinkTransaction> {
 
