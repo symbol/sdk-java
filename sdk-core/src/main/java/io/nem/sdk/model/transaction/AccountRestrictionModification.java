@@ -16,16 +16,17 @@
 package io.nem.sdk.model.transaction;
 
 import io.nem.sdk.model.account.Address;
+import io.nem.sdk.model.mosaic.Mosaic;
 import io.nem.sdk.model.mosaic.MosaicId;
 
 public class AccountRestrictionModification<T> {
 
-    private final AccountRestrictionModificationType modificationType;
+    private final AccountRestrictionModificationAction modificationAction;
     private final T value;
 
     private AccountRestrictionModification(
-        AccountRestrictionModificationType modificationType, T value) {
-        this.modificationType = modificationType;
+        AccountRestrictionModificationAction modificationAction, T value) {
+        this.modificationAction = modificationAction;
         this.value = value;
     }
 
@@ -33,24 +34,24 @@ public class AccountRestrictionModification<T> {
      * @return AccountRestrictionModification of {@link Address}
      */
     public static AccountRestrictionModification<Address> createForAddress(
-        AccountRestrictionModificationType modificationType, Address address) {
-        return new AccountRestrictionModification(modificationType, address);
+        AccountRestrictionModificationAction modificationType, Address address) {
+        return new AccountRestrictionModification<>(modificationType, address);
     }
 
     /**
      * @return AccountRestrictionModification {@link Address}
      */
-    public static AccountRestrictionModification<Address> createForMosaic(
-        AccountRestrictionModificationType modificationType, MosaicId mosaicId) {
-        return new AccountRestrictionModification(modificationType, mosaicId);
+    public static AccountRestrictionModification<MosaicId> createForMosaic(
+        AccountRestrictionModificationAction modificationType, MosaicId mosaicId) {
+        return new AccountRestrictionModification<>(modificationType, mosaicId);
     }
 
     /**
      * @return AccountRestrictionModification of {@link TransactionType}
      */
-    public static AccountRestrictionModification<TransactionType> createForEntityType(
-        AccountRestrictionModificationType modificationType, TransactionType transactionType) {
-        return new AccountRestrictionModification(modificationType, transactionType);
+    public static AccountRestrictionModification<TransactionType> createForTransactionType(
+        AccountRestrictionModificationAction modificationType, TransactionType transactionType) {
+        return new AccountRestrictionModification<>(modificationType, transactionType);
     }
 
     /**
@@ -67,7 +68,7 @@ public class AccountRestrictionModification<T> {
      *
      * @return AccountRestrictionModificationType
      */
-    public AccountRestrictionModificationType getModificationType() {
-        return this.modificationType;
+    public AccountRestrictionModificationAction getModificationAction() {
+        return this.modificationAction;
     }
 }

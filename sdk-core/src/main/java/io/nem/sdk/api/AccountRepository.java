@@ -19,6 +19,7 @@ package io.nem.sdk.api;
 import io.nem.core.crypto.PublicKey;
 import io.nem.sdk.model.account.AccountInfo;
 import io.nem.sdk.model.account.AccountNames;
+import io.nem.sdk.model.account.AccountRestrictions;
 import io.nem.sdk.model.account.Address;
 import io.nem.sdk.model.account.MultisigAccountGraphInfo;
 import io.nem.sdk.model.account.MultisigAccountInfo;
@@ -92,6 +93,22 @@ public interface AccountRepository {
      * @return Observable {@link MultisigAccountGraphInfo}
      */
     Observable<MultisigAccountGraphInfo> getMultisigAccountGraphInfo(Address address);
+
+    /**
+     * Returns the account restrictions for a given account.
+     *
+     * @param address the address
+     * @return Observable of {@link AccountRestrictions}
+     */
+    Observable<AccountRestrictions> getAccountRestrictions(Address address);
+
+    /**
+     * Returns the account restrictions for a given array of addresses.
+     *
+     * @param addresses {@link List} of {@link Address}
+     * @return Observable {@link List} of {@link AccountRestrictions}
+     */
+    Observable<List<AccountRestrictions>> getAccountsRestrictions(List<Address> addresses);
 
     /**
      * Gets an list of confirmed transactions for which an account is signer or receiver.

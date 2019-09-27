@@ -218,7 +218,7 @@ class AddressTest {
 
     @Test
     void createFromRawAddressShouldFailWhenInvalidSuffix() {
-        Assertions.assertEquals("Address is invalid", assertThrows(
+        Assertions.assertEquals("X is an invalid address.", assertThrows(
             IllegalArgumentException.class,
             () -> {
                 Address.createFromRawAddress("X");

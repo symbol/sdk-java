@@ -18,16 +18,24 @@ package io.nem.sdk.infrastructure.okhttp;
 
 import io.nem.core.crypto.PublicKey;
 import io.nem.core.utils.ExceptionUtils;
+import io.nem.core.utils.MapperUtils;
 import io.nem.sdk.api.RepositoryCallException;
 import io.nem.sdk.model.account.AccountInfo;
 import io.nem.sdk.model.account.AccountNames;
+import io.nem.sdk.model.account.AccountRestrictions;
 import io.nem.sdk.model.account.AccountType;
 import io.nem.sdk.model.account.Address;
+import io.nem.sdk.model.transaction.AccountRestrictionType;
 import io.nem.sdk.openapi.okhttp_gson.model.AccountDTO;
 import io.nem.sdk.openapi.okhttp_gson.model.AccountInfoDTO;
 import io.nem.sdk.openapi.okhttp_gson.model.AccountNamesDTO;
+import io.nem.sdk.openapi.okhttp_gson.model.AccountRestrictionDTO;
+import io.nem.sdk.openapi.okhttp_gson.model.AccountRestrictionTypeEnum;
+import io.nem.sdk.openapi.okhttp_gson.model.AccountRestrictionsDTO;
+import io.nem.sdk.openapi.okhttp_gson.model.AccountRestrictionsInfoDTO;
 import io.nem.sdk.openapi.okhttp_gson.model.AccountTypeEnum;
 import io.nem.sdk.openapi.okhttp_gson.model.AccountsNamesDTO;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import org.junit.jupiter.api.Assertions;
@@ -224,8 +232,83 @@ public class AccountRepositoryOkHttpImplTest extends AbstractOkHttpRespositoryTe
         Assertions.assertEquals("accountalias", accountNames.getNames().get(0).getName());
     }
 
+    @Test
+    public void shouldGetAccountRestrictions() throws Exception {
+        Address address =
+            Address.createFromRawAddress(
+                "SBCPGZ3S2SCC3YHBBTYDCUZV4ZZEPHM2KGCP4QXX");
+
+        AccountRestrictionsDTO dto = new AccountRestrictionsDTO();
+        dto.setAddress(address.encoded());
+        AccountRestrictionDTO restriction = new AccountRestrictionDTO();
+        restriction.setRestrictionType(AccountRestrictionTypeEnum.NUMBER_2);
+        restriction.setValues(Arrays.asList("9636553580561478212"));
+        dto.setRestrictions(Collections.singletonList(restriction));
+
+        AccountRestrictionsInfoDTO info = new AccountRestrictionsInfoDTO();
+        info.setAccountRestrictions(dto);
+        mockRemoteCall(info);
+
+        AccountRestrictions accountRestrictions = repository
+            .getAccountRestrictions(address).toFuture().get();
+
+        Assertions.assertEquals(address, accountRestrictions.getAddress());
+        Assertions.assertEquals(1, accountRestrictions.getRestrictions().size());
+        Assertions.assertEquals(AccountRestrictionType.ALLOW_INCOMING_MOSAIC,
+            accountRestrictions.getRestrictions().get(0).getRestrictionType());
+        Assertions.assertEquals(
+            Arrays.asList(MapperUtils.toMosaicId("9636553580561478212")),
+            accountRestrictions.getRestrictions().get(0).getValues());
+
+    }
+
+    @Test
+    public void shouldGetAccountsRestrictionsFromAddresses() throws Exception {
+        Address address =
+            Address.createFromRawAddress(
+                "SBCPGZ3S2SCC3YHBBTYDCUZV4ZZEPHM2KGCP4QXX");
+
+        AccountRestrictionsDTO dto = new AccountRestrictionsDTO();
+        dto.setAddress(address.encoded());
+        AccountRestrictionDTO restriction = new AccountRestrictionDTO();
+        restriction.setRestrictionType(AccountRestrictionTypeEnum.NUMBER_1);
+        restriction.setValues(Arrays.asList("9050B9837EFAB4BBE8A4B9BB32D812F9885C00D8FC1650E142"));
+        dto.setRestrictions(Collections.singletonList(restriction));
+
+        AccountRestrictionsInfoDTO info = new AccountRestrictionsInfoDTO();
+        info.setAccountRestrictions(dto);
+        mockRemoteCall(Collections.singletonList(info));
+
+        AccountRestrictions accountRestrictions = repository
+            .getAccountsRestrictions(Collections.singletonList(address)).toFuture()
+            .get().get(0);
+
+        Assertions.assertEquals(address, accountRestrictions.getAddress());
+        Assertions.assertEquals(1, accountRestrictions.getRestrictions().size());
+        Assertions.assertEquals(AccountRestrictionType.ALLOW_INCOMING_ADDRESS,
+            accountRestrictions.getRestrictions().get(0).getRestrictionType());
+        Assertions.assertEquals(Collections.singletonList(MapperUtils
+                .toAddressFromUnresolved("9050B9837EFAB4BBE8A4B9BB32D812F9885C00D8FC1650E142")),
+            accountRestrictions.getRestrictions().get(0).getValues());
+
+    }
+
     @Override
     public AccountRepositoryOkHttpImpl getRepository() {
         return repository;
+    }
+
+    @Test
+    public void shouldAccountRestrictionTypeEnumMapToAccountRestrictionType() {
+        Arrays.stream(AccountRestrictionTypeEnum.values()).forEach(
+            v -> Assertions.assertNotNull(AccountRestrictionType.rawValueOf(v.getValue())));
+    }
+
+    @Test
+    public void shouldAccountRestrictionTypeMapToAccountRestrictionType() {
+        Arrays.stream(AccountRestrictionType.values()).forEach(
+            v -> Assertions
+                .assertNotNull(AccountRestrictionTypeEnum.fromValue((int) v.getValue())));
+
     }
 }

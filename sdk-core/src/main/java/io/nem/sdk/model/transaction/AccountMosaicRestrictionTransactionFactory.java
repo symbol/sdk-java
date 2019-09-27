@@ -16,32 +16,32 @@
  */
 package io.nem.sdk.model.transaction;
 
-import io.nem.sdk.model.account.Address;
 import io.nem.sdk.model.blockchain.NetworkType;
+import io.nem.sdk.model.mosaic.MosaicId;
 import java.util.List;
 import org.apache.commons.lang3.Validate;
 
 /**
- * Factory of {@link AccountAddressRestrictionModificationTransaction}
+ * Factory of {@link AccountMosaicRestrictionTransaction}
  */
-public class AccountAddressRestrictionModificationTransactionFactory extends
-    TransactionFactory<AccountAddressRestrictionModificationTransaction> {
+public class AccountMosaicRestrictionTransactionFactory extends
+    TransactionFactory<AccountMosaicRestrictionTransaction> {
 
     private final AccountRestrictionType restrictionType;
 
-    private final List<AccountRestrictionModification<Address>> modifications;
+    private final List<AccountRestrictionModification<MosaicId>> modifications;
 
-    AccountAddressRestrictionModificationTransactionFactory(
+
+    public AccountMosaicRestrictionTransactionFactory(
         final NetworkType networkType,
         final AccountRestrictionType restrictionType,
-        final List<AccountRestrictionModification<Address>> modifications) {
-        super(TransactionType.ACCOUNT_PROPERTIES_ADDRESS, networkType);
+        final List<AccountRestrictionModification<MosaicId>> modifications) {
+        super(TransactionType.ACCOUNT_MOSAIC_RESTRICTION, networkType);
         Validate.notNull(restrictionType, "RestrictionType must not be null");
         Validate.notNull(modifications, "Modifications must not be null");
         this.restrictionType = restrictionType;
         this.modifications = modifications;
     }
-
 
     /**
      * Get account restriction type
@@ -53,16 +53,16 @@ public class AccountAddressRestrictionModificationTransactionFactory extends
     }
 
     /**
-     * Get account address restriction modifications
+     * Get account mosaic restriction modifications
      *
-     * @return List of {@link AccountRestrictionModification}
+     * @return {@link List<AccountRestrictionModification<MosaicId>>}
      */
-    public List<AccountRestrictionModification<Address>> getModifications() {
+    public List<AccountRestrictionModification<MosaicId>> getModifications() {
         return this.modifications;
     }
 
     @Override
-    public AccountAddressRestrictionModificationTransaction build() {
-        return new AccountAddressRestrictionModificationTransaction(this);
+    public AccountMosaicRestrictionTransaction build() {
+        return new AccountMosaicRestrictionTransaction(this);
     }
 }

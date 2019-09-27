@@ -16,29 +16,26 @@
  */
 package io.nem.sdk.model.transaction;
 
+import io.nem.sdk.model.account.Address;
 import io.nem.sdk.model.blockchain.NetworkType;
 import java.util.List;
 import org.apache.commons.lang3.Validate;
 
 /**
- * Factory of {@link AccountOperationRestrictionModificationTransaction}
+ * Factory of {@link AccountAddressRestrictionTransaction}
  */
-public class AccountOperationRestrictionModificationTransactionFactory extends
-    TransactionFactory<AccountOperationRestrictionModificationTransaction> {
+public class AccountAddressRestrictionTransactionFactory extends
+    TransactionFactory<AccountAddressRestrictionTransaction> {
 
     private final AccountRestrictionType restrictionType;
 
-    private final List<AccountRestrictionModification<TransactionType>> modifications;
+    private final List<AccountRestrictionModification<Address>> modifications;
 
-    /**
-     * private constructor
-     */
-    @SuppressWarnings("squid:S00107")
-    private AccountOperationRestrictionModificationTransactionFactory(
+    public AccountAddressRestrictionTransactionFactory(
         final NetworkType networkType,
         final AccountRestrictionType restrictionType,
-        final List<AccountRestrictionModification<TransactionType>> modifications) {
-        super(TransactionType.ACCOUNT_PROPERTIES_ENTITY_TYPE, networkType);
+        final List<AccountRestrictionModification<Address>> modifications) {
+        super(TransactionType.ACCOUNT_ADDRESS_RESTRICTION, networkType);
         Validate.notNull(restrictionType, "RestrictionType must not be null");
         Validate.notNull(modifications, "Modifications must not be null");
         this.restrictionType = restrictionType;
@@ -56,16 +53,16 @@ public class AccountOperationRestrictionModificationTransactionFactory extends
     }
 
     /**
-     * Get account operation restriction modifications
+     * Get account address restriction modifications
      *
-     * @return {@link List<AccountRestrictionModification<TransactionType>>}
+     * @return List of {@link AccountRestrictionModification}
      */
-    public List<AccountRestrictionModification<TransactionType>> getModifications() {
+    public List<AccountRestrictionModification<Address>> getModifications() {
         return this.modifications;
     }
 
     @Override
-    public AccountOperationRestrictionModificationTransaction build() {
-        return new AccountOperationRestrictionModificationTransaction(this);
+    public AccountAddressRestrictionTransaction build() {
+        return new AccountAddressRestrictionTransaction(this);
     }
 }

@@ -86,17 +86,17 @@ public enum TransactionType {
     /**
      * Account properties address transaction type
      */
-    ACCOUNT_PROPERTIES_ADDRESS(0x4150, 1),
+    ACCOUNT_ADDRESS_RESTRICTION(0x4150, 1),
 
     /**
      * Account properties mosaic transaction type
      */
-    ACCOUNT_PROPERTIES_MOSAIC(0x4250, 1),
+    ACCOUNT_MOSAIC_RESTRICTION(0x4250, 1),
 
     /**
      * Account properties entity type transaction type
      */
-    ACCOUNT_PROPERTIES_ENTITY_TYPE(0x4350, 1),
+    ACCOUNT_OPERATION_RESTRICTION(0x4350, 1),
 
     // Cross-chain swaps
     /**
@@ -111,15 +111,15 @@ public enum TransactionType {
     /**
      * Account metadata transaction version
      */
-    ACCOUNT_METADATA_TRANSACTION((short) 0x4144, 1),
+    ACCOUNT_METADATA_TRANSACTION(0x4144, 1),
     /**
      * Mosaic metadata transaction version
      */
-    MOSAIC_METADATA_TRANSACTION((short) 0x4244, 1),
+    MOSAIC_METADATA_TRANSACTION(0x4244, 1),
     /**
      * Namespace metadata transaction version
      */
-    NAMESPACE_METADATA_TRANSACTION((short) 0x4344, 1),
+    NAMESPACE_METADATA_TRANSACTION(0x4344, 1),
     /**
      * Account link transaction type
      */
