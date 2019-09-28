@@ -33,7 +33,6 @@ public class RepositoryFactoryOkHttpImplTest {
 
         RepositoryFactory factory = new RepositoryFactoryOkHttpImpl(
             baseUrl);
-
         Assertions.assertNotNull(factory.createAccountRepository());
         Assertions.assertNotNull(factory.createBlockRepository());
         Assertions.assertNotNull(factory.createChainRepository());
@@ -45,6 +44,9 @@ public class RepositoryFactoryOkHttpImplTest {
         Assertions.assertNotNull(factory.createNodeRepository());
         Assertions.assertNotNull(factory.createTransactionRepository());
         Assertions.assertNotNull(factory.createMetadataRepository());
+        factory.close();
+        factory.close();
+        factory.close();
     }
 
 }

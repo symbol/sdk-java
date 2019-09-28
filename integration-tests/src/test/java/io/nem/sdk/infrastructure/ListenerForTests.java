@@ -33,10 +33,11 @@ public class ListenerForTests extends BaseIntegrationTest {
     private void run() throws ExecutionException, InterruptedException {
         Listener listener = getRepositoryFactory(DEFAULT_REPOSITORY_TYPE).createListener();
         listener.open().get();
-        listener.newBlock()
-            .subscribe(c -> System.out.println("New Block: " + c.getType() + " " + c.getHash()));
         listenToAccount("Test Account 1", config().getTestAccount(), listener);
         listenToAccount("Test Account 2", config().getTestAccount2(), listener);
+        listenToAccount("Cosignatory Account", config().getCosignatoryAccount(), listener);
+        listenToAccount("Cosignatory Account 2", config().getCosignatory2Account(), listener);
+        listenToAccount("Multisign Account 2", config().getMultisigAccount(), listener);
         listenToAccount("Nemesis Account", config().getNemesisAccount(), listener);
     }
 
