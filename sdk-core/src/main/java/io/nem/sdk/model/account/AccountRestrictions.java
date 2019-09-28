@@ -21,21 +21,28 @@ import java.util.List;
 /**
  * Account properties structure describes property information for an account.
  */
-public class AccountProperties {
+public class AccountRestrictions {
 
+    /**
+     * The address where the restrictions apply.
+     */
     private final Address address;
-    private final List<AccountProperty> properties;
 
-    public AccountProperties(Address address, List<AccountProperty> properties) {
+    /**
+     * The restrictions.
+     */
+    private final List<AccountRestriction> restrictions;
+
+    public AccountRestrictions(Address address, List<AccountRestriction> restrictions) {
         this.address = address;
-        this.properties = properties;
+        this.restrictions = restrictions;
     }
 
     public Address getAddress() {
         return address;
     }
 
-    public List<AccountProperty> getProperties() {
-        return properties;
+    public List<AccountRestriction> getRestrictions() {
+        return restrictions;
     }
 }

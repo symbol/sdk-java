@@ -79,7 +79,7 @@ public class Address {
         } else if (addressNetwork == 'S') {
             return new Address(rawAddress, NetworkType.MIJIN_TEST);
         }
-        throw new IllegalArgumentException("Address is invalid");
+        throw new IllegalArgumentException(rawAddress + " is an invalid address.");
     }
 
     /**

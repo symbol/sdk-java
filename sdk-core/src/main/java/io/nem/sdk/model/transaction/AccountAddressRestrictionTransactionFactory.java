@@ -22,20 +22,20 @@ import java.util.List;
 import org.apache.commons.lang3.Validate;
 
 /**
- * Factory of {@link AccountAddressRestrictionModificationTransaction}
+ * Factory of {@link AccountAddressRestrictionTransaction}
  */
-public class AccountAddressRestrictionModificationTransactionFactory extends
-    TransactionFactory<AccountAddressRestrictionModificationTransaction> {
+public class AccountAddressRestrictionTransactionFactory extends
+    TransactionFactory<AccountAddressRestrictionTransaction> {
 
     private final AccountRestrictionType restrictionType;
 
     private final List<AccountRestrictionModification<Address>> modifications;
 
-    AccountAddressRestrictionModificationTransactionFactory(
+    public AccountAddressRestrictionTransactionFactory(
         final NetworkType networkType,
         final AccountRestrictionType restrictionType,
         final List<AccountRestrictionModification<Address>> modifications) {
-        super(TransactionType.ACCOUNT_PROPERTIES_ADDRESS, networkType);
+        super(TransactionType.ACCOUNT_ADDRESS_RESTRICTION, networkType);
         Validate.notNull(restrictionType, "RestrictionType must not be null");
         Validate.notNull(modifications, "Modifications must not be null");
         this.restrictionType = restrictionType;
@@ -62,7 +62,7 @@ public class AccountAddressRestrictionModificationTransactionFactory extends
     }
 
     @Override
-    public AccountAddressRestrictionModificationTransaction build() {
-        return new AccountAddressRestrictionModificationTransaction(this);
+    public AccountAddressRestrictionTransaction build() {
+        return new AccountAddressRestrictionTransaction(this);
     }
 }

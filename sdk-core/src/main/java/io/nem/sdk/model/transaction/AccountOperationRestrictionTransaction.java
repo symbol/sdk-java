@@ -29,13 +29,13 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AccountOperationRestrictionModificationTransaction extends Transaction {
+public class AccountOperationRestrictionTransaction extends Transaction {
 
     private final AccountRestrictionType restrictionType;
     private final List<AccountRestrictionModification<TransactionType>> modifications;
 
-    AccountOperationRestrictionModificationTransaction(
-        AccountOperationRestrictionModificationTransactionFactory factory) {
+    AccountOperationRestrictionTransaction(
+        AccountOperationRestrictionTransactionFactory factory) {
         super(factory);
         this.restrictionType = factory.getRestrictionType();
         this.modifications = factory.getModifications();
@@ -77,7 +77,7 @@ public class AccountOperationRestrictionModificationTransaction extends Transact
                 getEntityTypeDto(),
                 new AmountDto(getMaxFee().longValue()),
                 new TimestampDto(getDeadline().getInstant()),
-                AccountRestrictionTypeDto.rawValueOf(this.restrictionType.getValue()),
+                AccountRestrictionTypeDto.rawValueOf((byte) this.restrictionType.getValue()),
                 getModificationBuilder());
         return txBuilder.serialize();
     }
@@ -93,7 +93,7 @@ public class AccountOperationRestrictionModificationTransaction extends Transact
                 new KeyDto(getRequiredSignerBytes()),
                 getNetworkVersion(),
                 getEntityTypeDto(),
-                AccountRestrictionTypeDto.rawValueOf(this.restrictionType.getValue()),
+                AccountRestrictionTypeDto.rawValueOf((byte) this.restrictionType.getValue()),
                 getModificationBuilder());
         return txBuilder.serialize();
     }
@@ -111,7 +111,7 @@ public class AccountOperationRestrictionModificationTransaction extends Transact
             final AccountOperationRestrictionModificationBuilder builder =
                 AccountOperationRestrictionModificationBuilder.create(
                     AccountRestrictionModificationActionDto.rawValueOf(
-                        accountRestrictionModification.getModificationType().getValue()),
+                        accountRestrictionModification.getModificationAction().getValue()),
                     EntityTypeDto.rawValueOf(
                         (short) accountRestrictionModification.getValue().getValue()));
             modificationBuilder.add(builder);

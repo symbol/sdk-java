@@ -30,13 +30,13 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AccountMosaicRestrictionModificationTransaction extends Transaction {
+public class AccountMosaicRestrictionTransaction extends Transaction {
 
     private final AccountRestrictionType restrictionType;
     private final List<AccountRestrictionModification<MosaicId>> modifications;
 
-    public AccountMosaicRestrictionModificationTransaction(
-        AccountMosaicRestrictionModificationTransactionFactory factory) {
+    public AccountMosaicRestrictionTransaction(
+        AccountMosaicRestrictionTransactionFactory factory) {
         super(factory);
         this.restrictionType = factory.getRestrictionType();
         this.modifications = factory.getModifications();
@@ -78,7 +78,7 @@ public class AccountMosaicRestrictionModificationTransaction extends Transaction
                 getEntityTypeDto(),
                 new AmountDto(getMaxFee().longValue()),
                 new TimestampDto(getDeadline().getInstant()),
-                AccountRestrictionTypeDto.rawValueOf(this.restrictionType.getValue()),
+                AccountRestrictionTypeDto.rawValueOf((byte) this.restrictionType.getValue()),
                 getModificationBuilder());
         return txBuilder.serialize();
     }
@@ -94,7 +94,7 @@ public class AccountMosaicRestrictionModificationTransaction extends Transaction
                 new KeyDto(getRequiredSignerBytes()),
                 getNetworkVersion(),
                 getEntityTypeDto(),
-                AccountRestrictionTypeDto.rawValueOf(this.restrictionType.getValue()),
+                AccountRestrictionTypeDto.rawValueOf((byte) this.restrictionType.getValue()),
                 getModificationBuilder());
         return txBuilder.serialize();
     }
@@ -111,7 +111,7 @@ public class AccountMosaicRestrictionModificationTransaction extends Transaction
             final AccountMosaicRestrictionModificationBuilder builder =
                 AccountMosaicRestrictionModificationBuilder.create(
                     AccountRestrictionModificationActionDto.rawValueOf(
-                        accountRestrictionModification.getModificationType().getValue()),
+                        accountRestrictionModification.getModificationAction().getValue()),
                     new UnresolvedMosaicIdDto(
                         accountRestrictionModification.getValue().getIdAsLong()));
             modificationBuilder.add(builder);

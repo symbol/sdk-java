@@ -33,7 +33,20 @@ public enum AccountRestrictionTypeDto {
     /** Restriction is interpreted as outgoing. */
     OUTGOING((byte) 64),
     /** Restriction is interpreted as blocking operation. */
-    BLOCK((byte) 128);
+    BLOCK((byte) 128),
+
+    /**
+     * Catapult generated code patch!!
+     */
+    ALLOW_OUTGOING_ADDRESS((byte) 65),
+    ALLOW_OUTGOING_TRANSACTION_TYPE((byte) 68),
+    SENTINEL((byte) 5),
+    BLOCK_ADDRESS((byte) 129),
+    BLOCK_MOSAIC((byte) 130),
+    BLOCK_OUTGOING_ADDRESS((byte) 193),
+    BLOCK_OUTGOING_TRANSACTION_TYPE((byte) 196);
+    /** Catapult generated code ends! */
+
 
     /** Enum value. */
     private final byte value;

@@ -18,8 +18,10 @@ package io.nem.sdk.model.transaction;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import io.nem.core.utils.HexEncoder;
 import io.nem.sdk.model.account.Account;
 import io.nem.sdk.model.blockchain.NetworkType;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -37,14 +39,33 @@ public class AccountLinkTransactionTest {
 
     @Test
     void create() {
-        AccountLinkTransaction accountLinkTransaction =
+        AccountLinkTransaction transaction =
             new AccountLinkTransactionFactory(
                 NetworkType.MIJIN_TEST,
                 account.getPublicAccount(),
                 AccountLinkAction.LINK).deadline(new FakeDeadline()).build();
-        assertEquals(AccountLinkAction.LINK, accountLinkTransaction.getLinkAction());
+        assertEquals(AccountLinkAction.LINK, transaction.getLinkAction());
         assertEquals(
             "9A49366406ACA952B88BADF5F1E9BE6CE4968141035A60BE503273EA65456B24",
-            accountLinkTransaction.getRemoteAccount().getPublicKey().toString());
+            transaction.getRemoteAccount().getPublicKey().toString());
+    }
+
+    @Test
+    void shouldGenerateBytes() {
+
+
+        AccountLinkTransaction transaction =
+            new AccountLinkTransactionFactory(
+                NetworkType.MIJIN_TEST,
+                account.getPublicAccount(),
+                AccountLinkAction.LINK).signer(account.getPublicAccount())
+                .deadline(new FakeDeadline()).build();
+
+        String expected = "9900000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001904c41000000000000000001000000000000009a49366406aca952b88badf5f1e9be6ce4968141035a60be503273ea65456b2401";
+        Assertions.assertEquals(expected, HexEncoder.getString(transaction.generateBytes()));
+
+        String expectedEmbeddedHash = "490000009a49366406aca952b88badf5f1e9be6ce4968141035a60be503273ea65456b2401904c419a49366406aca952b88badf5f1e9be6ce4968141035a60be503273ea65456b2401";
+        Assertions.assertEquals(expectedEmbeddedHash,
+            HexEncoder.getString(transaction.generateEmbeddedBytes()));
     }
 }

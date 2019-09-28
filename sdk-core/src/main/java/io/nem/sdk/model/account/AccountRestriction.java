@@ -16,23 +16,33 @@
 
 package io.nem.sdk.model.account;
 
+import io.nem.sdk.model.transaction.AccountRestrictionType;
 import java.util.List;
 
 /**
- * Account property structure describes property information.
+ * It defines one account restriction.
  */
-public class AccountProperty {
+public class AccountRestriction {
 
-    private final PropertyType propertyType;
+    /**
+     * The restriction type.
+     */
+    private final AccountRestrictionType restrictionType;
+
+    /**
+     * The list of model objects referencing the restricted value. It can be a {@link
+     * io.nem.sdk.model.mosaic.MosaicId}, an {@link Address} or a {@link
+     * io.nem.sdk.model.transaction.TransactionType} depending on the target of the restrictionType
+     */
     private final List<Object> values;
 
-    public AccountProperty(PropertyType propertyType, List<Object> values) {
-        this.propertyType = propertyType;
+    public AccountRestriction(AccountRestrictionType restrictionType, List<Object> values) {
+        this.restrictionType = restrictionType;
         this.values = values;
     }
 
-    public PropertyType getPropertyType() {
-        return propertyType;
+    public AccountRestrictionType getRestrictionType() {
+        return restrictionType;
     }
 
     public List<Object> getValues() {

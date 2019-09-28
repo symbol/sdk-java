@@ -16,18 +16,26 @@
 
 package io.nem.sdk.infrastructure;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.nem.core.utils.ExceptionUtils;
 import io.nem.sdk.api.RepositoryFactory;
 import io.nem.sdk.infrastructure.okhttp.RepositoryFactoryOkHttpImpl;
+import io.nem.sdk.infrastructure.vertx.JsonHelperJackson2;
 import io.nem.sdk.infrastructure.vertx.RepositoryFactoryVertxImpl;
 import io.nem.sdk.model.account.Account;
 import io.nem.sdk.model.account.Address;
 import io.nem.sdk.model.account.PublicAccount;
 import io.nem.sdk.model.blockchain.NetworkType;
+import io.nem.sdk.model.transaction.AggregateTransaction;
+import io.nem.sdk.model.transaction.JsonHelper;
+import io.nem.sdk.model.transaction.Transaction;
 import io.reactivex.Observable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import org.junit.jupiter.api.AfterAll;
 
 /**
  * Abstract class for all the repository integration tests.
@@ -49,20 +57,34 @@ public abstract class BaseIntegrationTest {
         VERTX, OKHTTP
     }
 
-
     private static final Config CONFIG = Config.getInstance();
-    private NetworkType networkType;
-    private Account testAccount;
-    private Account testMultisigAccount;
-    private Account testCosignatoryAccount;
-    private Account testCosignatoryAccount2;
-    private PublicAccount testPublicAccount;
-    private Address testAccountAddress;
-    private Address testRecipient; // Test Account2 Address
-    private String generationHash;
-    private Long timeoutSeconds;
-    private Map<RepositoryType, RepositoryFactory> repositoryFactoryMap = new HashMap<>();
+    private final NetworkType networkType = this.config().getNetworkType();
+    private final String generationHash = this.config().getGenerationHash();
+    private final Long timeoutSeconds = this.config().getTimeoutSeconds();
+    private final Map<RepositoryType, RepositoryFactory> repositoryFactoryMap = new HashMap<>();
+    private final Map<RepositoryType, Listener> listenerMap = new HashMap<>();
+    private final JsonHelper jsonHelper = new JsonHelperJackson2(
+        JsonHelperJackson2.configureMapper(new ObjectMapper()));
 
+    @AfterAll
+    void tearDown() {
+        listenerMap.values().forEach(Listener::close);
+    }
+
+
+    private Listener createListener(RepositoryType type) {
+        Listener listener = getRepositoryFactory(type).createListener();
+        try {
+            listener.open().get(timeoutSeconds, TimeUnit.SECONDS);
+        } catch (Exception e) {
+            throw new IllegalArgumentException(
+                "Listener could not be created or opened. Error "
+                    + org.apache.commons.lang3.exception.ExceptionUtils
+                    .getMessage(e),
+                e);
+        }
+        return listener;
+    }
 
     /**
      * Method that create a {@link RepositoryFactory} based on the {@link RepositoryType} if
@@ -92,90 +114,52 @@ public abstract class BaseIntegrationTest {
         return BaseIntegrationTest.CONFIG;
     }
 
+    public JsonHelper jsonHelper() {
+        return this.jsonHelper;
+    }
+
     public String getApiUrl() {
         return this.config().getApiUrl();
     }
 
     public NetworkType getNetworkType() {
-        if (this.networkType == null) {
-            this.networkType = NetworkType.valueOf(this.config().getNetworkType());
-        }
         return this.networkType;
     }
 
     public Account getTestAccount() {
-        if (this.testAccount == null) {
-            this.testAccount =
-                Account.createFromPrivateKey(
-                    this.config().getTestAccountPrivateKey(), this.getNetworkType());
-        }
-        return this.testAccount;
+        return this.config().getTestAccount();
     }
 
     public PublicAccount getTestPublicAccount() {
-        if (this.testPublicAccount == null) {
-            this.testPublicAccount =
-                PublicAccount.createFromPublicKey(
-                    this.config().getTestAccountPublicKey(), this.getNetworkType());
-        }
-        return this.testPublicAccount;
+        return this.config().getTestAccount().getPublicAccount();
     }
 
     public Address getTestAccountAddress() {
-        if (this.testAccountAddress == null) {
-            this.testAccountAddress = Address
-                .createFromRawAddress(this.config().getTestAccountAddress());
-        }
-        return this.testAccountAddress;
+        return this.config().getTestAccount().getAddress();
     }
 
     public Account getTestMultisigAccount() {
-        if (this.testMultisigAccount == null) {
-            this.testMultisigAccount =
-                Account.createFromPrivateKey(
-                    this.config().getMultisigAccountPrivateKey(), this.getNetworkType());
-        }
-        return this.testMultisigAccount;
+        return this.config().getMultisigAccount();
     }
 
     public Account getTestCosignatoryAccount() {
-        if (this.testCosignatoryAccount == null) {
-            this.testCosignatoryAccount =
-                Account.createFromPrivateKey(
-                    this.config().getCosignatoryAccountPrivateKey(), this.getNetworkType());
-        }
-        return this.testCosignatoryAccount;
+        return this.config().getCosignatoryAccount();
     }
 
     public Account getTestCosignatoryAccount2() {
-        if (this.testCosignatoryAccount2 == null) {
-            this.testCosignatoryAccount2 =
-                Account.createFromPrivateKey(
-                    this.config().getCosignatory2AccountPrivateKey(), this.getNetworkType());
-        }
-        return this.testCosignatoryAccount2;
+        return this.config().getCosignatory2Account();
     }
 
     public Address getRecipient() {
-        if (this.testRecipient == null) {
-            this.testRecipient = Address
-                .createFromRawAddress(this.config().getTestAccount2Address());
-        }
-        return this.testRecipient;
+        return this.config().getTestAccount2().getAddress();
     }
 
     public String getGenerationHash() {
-        if (this.generationHash == null) {
-            this.generationHash = this.config().getGenerationHash();
-        }
-        return this.generationHash;
+        return generationHash;
     }
 
     public Long getTimeoutSeconds() {
-        if (this.timeoutSeconds == null) {
-            this.timeoutSeconds = this.config().getTimeoutSeconds();
-        }
-        return this.timeoutSeconds;
+        return timeoutSeconds;
     }
 
     /**
@@ -191,5 +175,37 @@ public abstract class BaseIntegrationTest {
     protected <T> T get(Observable<T> observable) {
         return ExceptionUtils
             .propagate(() -> observable.toFuture().get(getTimeoutSeconds(), TimeUnit.SECONDS));
+    }
+
+    /**
+     * Method that creates a {@link RepositoryFactory} based on the {@link RepositoryType}.
+     */
+    public Listener getListener(RepositoryType type) {
+        return listenerMap.computeIfAbsent(type, this::createListener);
+    }
+
+
+    void validateTransactionAnnounceCorrectly(Address address, String transactionHash,
+        RepositoryType type) {
+        Transaction transaction = get(
+            getListener(type).confirmed(address).take(1));
+        assertEquals(transactionHash, transaction.getTransactionInfo().get().getHash().get());
+    }
+
+    void validateAggregateBondedTransactionAnnounceCorrectly(Address address,
+        String transactionHash, RepositoryType type) {
+        AggregateTransaction aggregateTransaction =
+            get(getListener(type).aggregateBondedAdded(address).take(1));
+        assertEquals(transactionHash,
+            aggregateTransaction.getTransactionInfo().get().getHash().get());
+    }
+
+    void validateAggregateBondedCosignatureTransactionAnnounceCorrectly(
+        Address address, String transactionHash,
+        RepositoryType type) {
+        String hash = get(
+            getListener(type).cosignatureAdded(address).take(getTimeoutSeconds(), TimeUnit.SECONDS))
+            .getParentHash();
+        assertEquals(transactionHash, hash);
     }
 }

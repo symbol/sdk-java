@@ -22,21 +22,21 @@ import java.util.List;
 import org.apache.commons.lang3.Validate;
 
 /**
- * Factory of {@link AccountMosaicRestrictionModificationTransaction}
+ * Factory of {@link AccountMosaicRestrictionTransaction}
  */
-public class AccountMosaicRestrictionModificationTransactionFactory extends
-    TransactionFactory<AccountMosaicRestrictionModificationTransaction> {
+public class AccountMosaicRestrictionTransactionFactory extends
+    TransactionFactory<AccountMosaicRestrictionTransaction> {
 
     private final AccountRestrictionType restrictionType;
 
     private final List<AccountRestrictionModification<MosaicId>> modifications;
 
 
-    public AccountMosaicRestrictionModificationTransactionFactory(
+    public AccountMosaicRestrictionTransactionFactory(
         final NetworkType networkType,
         final AccountRestrictionType restrictionType,
         final List<AccountRestrictionModification<MosaicId>> modifications) {
-        super(TransactionType.ACCOUNT_PROPERTIES_MOSAIC, networkType);
+        super(TransactionType.ACCOUNT_MOSAIC_RESTRICTION, networkType);
         Validate.notNull(restrictionType, "RestrictionType must not be null");
         Validate.notNull(modifications, "Modifications must not be null");
         this.restrictionType = restrictionType;
@@ -62,7 +62,7 @@ public class AccountMosaicRestrictionModificationTransactionFactory extends
     }
 
     @Override
-    public AccountMosaicRestrictionModificationTransaction build() {
-        return new AccountMosaicRestrictionModificationTransaction(this);
+    public AccountMosaicRestrictionTransaction build() {
+        return new AccountMosaicRestrictionTransaction(this);
     }
 }

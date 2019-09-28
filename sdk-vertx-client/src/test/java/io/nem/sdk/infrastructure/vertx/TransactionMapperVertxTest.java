@@ -26,9 +26,14 @@ import io.nem.sdk.infrastructure.vertx.mappers.GeneralTransactionMapper;
 import io.nem.sdk.model.account.Address;
 import io.nem.sdk.model.namespace.AliasAction;
 import io.nem.sdk.model.namespace.NamespaceRegistrationType;
+import io.nem.sdk.model.transaction.AccountAddressRestrictionTransaction;
 import io.nem.sdk.model.transaction.AccountLinkAction;
 import io.nem.sdk.model.transaction.AccountLinkTransaction;
 import io.nem.sdk.model.transaction.AccountMetadataTransaction;
+import io.nem.sdk.model.transaction.AccountMosaicRestrictionTransaction;
+import io.nem.sdk.model.transaction.AccountOperationRestrictionTransaction;
+import io.nem.sdk.model.transaction.AccountRestrictionModificationAction;
+import io.nem.sdk.model.transaction.AccountRestrictionType;
 import io.nem.sdk.model.transaction.AddressAliasTransaction;
 import io.nem.sdk.model.transaction.AggregateTransaction;
 import io.nem.sdk.model.transaction.HashLockTransaction;
@@ -468,7 +473,6 @@ public class TransactionMapperVertxTest {
     }
 
 
-
     @Test
     void shouldCreateAggregateMosaicAliasTransaction() {
         TransactionInfoDTO aggregateTransferTransactionDTO = loadTransactionInfoDTO(
@@ -535,7 +539,8 @@ public class TransactionMapperVertxTest {
         Assertions.assertEquals(2, transaction.getValueSize());
         Assertions.assertEquals(BigInteger.valueOf(3), transaction.getScopedMetadataKey());
         Assertions.assertEquals("ABC", transaction.getValue());
-        Assertions.assertEquals("0003070467832aaa", transaction.getTargetNamespaceId().getIdAsHex());
+        Assertions
+            .assertEquals("0003070467832aaa", transaction.getTargetNamespaceId().getIdAsHex());
     }
 
     @Test
@@ -560,6 +565,68 @@ public class TransactionMapperVertxTest {
         Assertions.assertEquals(BigInteger.valueOf(3), transaction.getScopedMetadataKey());
         Assertions.assertEquals("ABC", transaction.getValue());
     }
+
+    @Test
+    public void shouldCreateAccountAddressRestriction() throws Exception {
+
+        TransactionInfoDTO transactionInfoDTO = loadTransactionInfoDTO(
+            "shouldCreateAccountAddressRestrictionTransaction.json");
+
+        AccountAddressRestrictionTransaction transaction = (AccountAddressRestrictionTransaction) map(
+            transactionInfoDTO);
+
+        validateStandaloneTransaction(transaction, transactionInfoDTO);
+
+        Assertions.assertEquals(AccountRestrictionType.ALLOW_INCOMING_ADDRESS, transaction.getRestrictionType());
+        Assertions.assertEquals(1, transaction.getModifications().size());
+        Assertions.assertEquals("SBILTA367K2LX2FEXG5TFWAS7GEFYAGY7QLFBYKC",
+            transaction.getModifications().get(0).getValue().plain());
+        Assertions.assertEquals(
+            AccountRestrictionModificationAction.ADD,
+            transaction.getModifications().get(0).getModificationAction());
+    }
+
+    @Test
+    public void shouldCreateAccountMosaicRestriction() throws Exception {
+
+        TransactionInfoDTO transactionInfoDTO = loadTransactionInfoDTO(
+            "shouldCreateAccountMosaicRestrictionTransaction.json");
+
+        AccountMosaicRestrictionTransaction transaction = (AccountMosaicRestrictionTransaction) map(
+            transactionInfoDTO);
+
+        validateStandaloneTransaction(transaction, transactionInfoDTO);
+
+        Assertions.assertEquals(AccountRestrictionType.ALLOW_INCOMING_MOSAIC, transaction.getRestrictionType());
+        Assertions.assertEquals(1, transaction.getModifications().size());
+        Assertions.assertEquals("00003646934825aa",
+            transaction.getModifications().get(0).getValue().getIdAsHex());
+        Assertions.assertEquals(
+            AccountRestrictionModificationAction.ADD,
+            transaction.getModifications().get(0).getModificationAction());
+    }
+
+    @Test
+    public void shouldCreateAccountOperationRestriction() throws Exception {
+
+        TransactionInfoDTO transactionInfoDTO = loadTransactionInfoDTO(
+            "shouldCreateAccountOperationRestrictionTransaction.json");
+
+        AccountOperationRestrictionTransaction transaction = (AccountOperationRestrictionTransaction) map(
+            transactionInfoDTO);
+
+        validateStandaloneTransaction(transaction, transactionInfoDTO);
+
+        Assertions.assertEquals(AccountRestrictionType.ALLOW_INCOMING_MOSAIC,
+            transaction.getRestrictionType());
+        Assertions.assertEquals(1, transaction.getModifications().size());
+        Assertions.assertEquals(TransactionType.MOSAIC_METADATA_TRANSACTION,
+            transaction.getModifications().get(0).getValue());
+        Assertions.assertEquals(
+            AccountRestrictionModificationAction.REMOVE,
+            transaction.getModifications().get(0).getModificationAction());
+    }
+
 
     @Test
     void shouldCreateAggregateAccountLinkTransaction() {
@@ -698,7 +765,8 @@ public class TransactionMapperVertxTest {
             MapperUtils.fromHex(registerNamespaceTransaction.getId()),
             transaction.getNamespaceId().getId());
 
-        if (transaction.getNamespaceRegistrationType() == NamespaceRegistrationType.ROOT_NAMESPACE) {
+        if (transaction.getNamespaceRegistrationType()
+            == NamespaceRegistrationType.ROOT_NAMESPACE) {
             assertEquals(
                 registerNamespaceTransaction.getDuration(),
                 transaction.getDuration().get());
@@ -760,7 +828,8 @@ public class TransactionMapperVertxTest {
                 .toString());
         assertEquals(
             (int) modifyMultisigAccountTransaction.getModifications().get(0).getModificationAction()
-                .getValue(), transaction.getModifications().get(0).getModificationAction().getValue());
+                .getValue(),
+            transaction.getModifications().get(0).getModificationAction().getValue());
     }
 
     void validateLockFundsTx(HashLockTransaction transaction, TransactionInfoDTO transactionDTO) {

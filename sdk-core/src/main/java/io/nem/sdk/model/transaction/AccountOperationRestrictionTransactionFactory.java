@@ -21,24 +21,21 @@ import java.util.List;
 import org.apache.commons.lang3.Validate;
 
 /**
- * Factory of {@link AccountOperationRestrictionModificationTransaction}
+ * Factory of {@link AccountOperationRestrictionTransaction}
  */
-public class AccountOperationRestrictionModificationTransactionFactory extends
-    TransactionFactory<AccountOperationRestrictionModificationTransaction> {
+public class AccountOperationRestrictionTransactionFactory extends
+    TransactionFactory<AccountOperationRestrictionTransaction> {
 
     private final AccountRestrictionType restrictionType;
 
     private final List<AccountRestrictionModification<TransactionType>> modifications;
 
-    /**
-     * private constructor
-     */
     @SuppressWarnings("squid:S00107")
-    private AccountOperationRestrictionModificationTransactionFactory(
+    public AccountOperationRestrictionTransactionFactory(
         final NetworkType networkType,
         final AccountRestrictionType restrictionType,
         final List<AccountRestrictionModification<TransactionType>> modifications) {
-        super(TransactionType.ACCOUNT_PROPERTIES_ENTITY_TYPE, networkType);
+        super(TransactionType.ACCOUNT_OPERATION_RESTRICTION, networkType);
         Validate.notNull(restrictionType, "RestrictionType must not be null");
         Validate.notNull(modifications, "Modifications must not be null");
         this.restrictionType = restrictionType;
@@ -65,7 +62,7 @@ public class AccountOperationRestrictionModificationTransactionFactory extends
     }
 
     @Override
-    public AccountOperationRestrictionModificationTransaction build() {
-        return new AccountOperationRestrictionModificationTransaction(this);
+    public AccountOperationRestrictionTransaction build() {
+        return new AccountOperationRestrictionTransaction(this);
     }
 }

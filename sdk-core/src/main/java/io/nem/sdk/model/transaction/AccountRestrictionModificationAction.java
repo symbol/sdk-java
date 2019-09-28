@@ -20,7 +20,7 @@ import java.util.Arrays;
 /**
  * Enum containing account restriction modification type constants.
  */
-public enum AccountRestrictionModificationType {
+public enum AccountRestrictionModificationAction {
     /**
      * Add account restriction value.
      */
@@ -33,7 +33,7 @@ public enum AccountRestrictionModificationType {
 
     private byte value;
 
-    AccountRestrictionModificationType(final byte value) {
+    AccountRestrictionModificationAction(final byte value) {
         this.value = value;
     }
 
@@ -43,7 +43,7 @@ public enum AccountRestrictionModificationType {
      * @param value Raw value of the enum.
      * @return Enum value.
      */
-    public static AccountRestrictionModificationType rawValueOf(final byte value) {
+    public static AccountRestrictionModificationAction rawValueOf(final byte value) {
         return Arrays.stream(values()).filter(e -> e.value == value).findFirst()
             .orElseThrow(() -> new IllegalArgumentException(value + " is not a valid value"));
     }
