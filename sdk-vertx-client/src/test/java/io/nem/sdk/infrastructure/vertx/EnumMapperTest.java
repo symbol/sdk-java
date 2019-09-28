@@ -27,7 +27,7 @@ import io.nem.sdk.model.namespace.AliasAction;
 import io.nem.sdk.model.namespace.NamespaceRegistrationType;
 import io.nem.sdk.model.receipt.ReceiptType;
 import io.nem.sdk.model.transaction.AccountLinkAction;
-import io.nem.sdk.model.transaction.AccountRestrictionModificationType;
+import io.nem.sdk.model.transaction.AccountRestrictionModificationAction;
 import io.nem.sdk.model.transaction.AccountRestrictionType;
 import io.nem.sdk.model.transaction.CosignatoryModificationActionType;
 import io.nem.sdk.model.transaction.LockHashAlgorithmType;
@@ -188,7 +188,7 @@ public class EnumMapperTest {
     @Test
     void testAccountRestrictionModificationDTO() {
         Set<Byte> existingValues = new HashSet<>();
-        Arrays.stream(AccountRestrictionModificationType.values()).forEach(v -> {
+        Arrays.stream(AccountRestrictionModificationAction.values()).forEach(v -> {
             Assertions
                 .assertNotNull(AccountRestrictionModificationActionEnum.fromValue(
                     (int) v.getValue()), v.name());
@@ -203,7 +203,7 @@ public class EnumMapperTest {
         Arrays.stream(AccountRestrictionModificationActionEnum.values()).forEach(v -> {
             Assertions
                 .assertNotNull(
-                    AccountRestrictionModificationType.rawValueOf(v.getValue().byteValue()),
+                    AccountRestrictionModificationAction.rawValueOf(v.getValue().byteValue()),
                     v.name());
             Assertions
                 .assertTrue(existingValues.add(v.getValue()), v.getValue() + " is duplicated!!");
@@ -235,26 +235,22 @@ public class EnumMapperTest {
     }
 
     @Test
-    @Disabled
-        //TODO re-enable once Account Restriction PR is merged
     void testAccountRestrictionTypeDTO() {
-        Set<Byte> existingValues = new HashSet<>();
+        Set<Integer> existingValues = new HashSet<>();
         Arrays.stream(AccountRestrictionType.values()).forEach(v -> {
             Assertions
-                .assertNotNull(AccountRestrictionTypeEnum.fromValue((int) v.getValue()), v.name());
+                .assertNotNull(AccountRestrictionTypeEnum.fromValue(v.getValue()), v.name());
             Assertions
                 .assertTrue(existingValues.add(v.getValue()), v.getValue() + " is duplicated!!");
         });
     }
 
     @Test
-    @Disabled
-        //TODO re-enable once Account Restriction PR is merged
     void testAccountRestrictionTypeModel() {
         Set<Integer> existingValues = new HashSet<>();
         Arrays.stream(AccountRestrictionTypeEnum.values()).forEach(v -> {
             Assertions
-                .assertNotNull(AccountRestrictionType.rawValueOf(v.getValue().byteValue()),
+                .assertNotNull(AccountRestrictionType.rawValueOf(v.getValue()),
                     v.name());
             Assertions
                 .assertTrue(existingValues.add(v.getValue()), v.getValue() + " is duplicated!!");
