@@ -17,7 +17,6 @@
 package io.nem.sdk.model.account;
 
 import io.nem.core.crypto.RawAddress;
-import io.nem.core.crypto.SignSchema;
 import io.nem.sdk.model.blockchain.NetworkType;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
@@ -190,5 +189,12 @@ public class Address {
     @Override
     public int hashCode() {
         return Objects.hash(plainAddress, networkType);
+    }
+
+    @Override
+    public String toString() {
+        return "Address{" +
+            "plainAddress='" + plainAddress + '\'' +
+            '}';
     }
 }

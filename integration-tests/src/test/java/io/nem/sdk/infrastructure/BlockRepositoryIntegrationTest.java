@@ -18,6 +18,7 @@ package io.nem.sdk.infrastructure;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import io.nem.sdk.api.BlockRepository;
 import io.nem.sdk.api.QueryParams;
@@ -72,8 +73,8 @@ class BlockRepositoryIntegrationTest extends BaseIntegrationTest {
     @EnumSource(RepositoryType.class)
     void getBlockReceipts(RepositoryType type) {
         Statement statement = get(
-            getBlockRepository(type).getBlockReceipts(BigInteger.valueOf(6262)));
-        assertFalse(statement.getTransactionStatements().isEmpty());
+            getBlockRepository(type).getBlockReceipts(BigInteger.valueOf(1)));
+        assertTrue(statement.getTransactionStatements().isEmpty());
     }
 
     @ParameterizedTest

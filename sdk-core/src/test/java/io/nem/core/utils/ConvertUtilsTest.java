@@ -16,7 +16,6 @@
 
 package io.nem.core.utils;
 
-import org.apache.commons.codec.binary.Base32;
 import org.hamcrest.core.IsEqual;
 import org.junit.Assert;
 import org.junit.jupiter.api.Assertions;
@@ -120,15 +119,4 @@ public class ConvertUtilsTest {
         assertGetStringConversion(new byte[]{}, "");
     }
 
-    @Test
-    public void testingToByteArray() {
-        byte[] actual = ConvertUtils.toByteArray("This is the message");
-        System.out.println(actual.length);
-        System.out.println(new String(actual));
-        System.out.println(ConvertUtils.toHex(actual));
-        System.out.println(new Base32().encodeToString(actual));
-        System.out.println(new Base32().encodeAsString(actual));
-    }
-
-    // endregion
 }

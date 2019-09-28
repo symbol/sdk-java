@@ -41,23 +41,28 @@ import org.junit.jupiter.params.provider.EnumSource;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class AccountMetadataIntegrationTest extends BaseIntegrationTest {
 
+    private Account testAccount = config().getTestAccount();
 
     @ParameterizedTest
     @EnumSource(RepositoryType.class)
     public void addMetadataToAccount(RepositoryType type) {
 
-        Account testAccount = getTestAccount();
+        String message = "This is the message for this account!!! " + new Double(
+            Math.floor(Math.random() * 10000))
+            .intValue();
+        System.out.println(
+            "Storing message '" + message + "' in account metadata " + testAccount.getAddress());
 
-        String message = "This is the message for the account metadata";
         AccountMetadataTransaction transaction =
             new AccountMetadataTransactionFactory(
-                NetworkType.MIJIN_TEST, testAccount.getPublicAccount(), BigInteger.valueOf(0),
+                getNetworkType(), testAccount.getPublicAccount(), BigInteger.valueOf(60),
                 message
             ).build();
 
         AggregateTransaction aggregateTransaction = AggregateTransactionFactory
-            .createComplete(NetworkType.MIJIN_TEST,
-                Collections.singletonList(transaction.toAggregate(getTestPublicAccount()))).build();
+            .createComplete(getNetworkType(),
+                Collections.singletonList(transaction.toAggregate(testAccount.getPublicAccount())))
+            .build();
 
         SignedTransaction signedTransaction = testAccount
             .sign(aggregateTransaction, getGenerationHash());
@@ -73,8 +78,6 @@ public class AccountMetadataIntegrationTest extends BaseIntegrationTest {
             .validateTransactionAnnounceCorrectly(
                 testAccount.getAddress(), signedTransaction.getHash(), type);
 
-        System.out.println(jsonHelper().print(announceCorrectly));
-
         Assertions.assertEquals(aggregateTransaction.getType(), announceCorrectly.getType());
         Assertions
             .assertEquals(testAccount.getPublicAccount(), announceCorrectly.getSigner().get());
@@ -88,12 +91,7 @@ public class AccountMetadataIntegrationTest extends BaseIntegrationTest {
         Assertions.assertEquals(transaction.getValueSizeDelta(),
             processedTransaction.getValueSizeDelta());
         Assertions.assertEquals(transaction.getValueSize(), processedTransaction.getValueSize());
-        byte[] actual = processedTransaction.getValue().getBytes();
-        System.out.println(ConvertUtils.toHex(actual));
 
-        System.out.println(new Base32().encodeToString(actual));
-        System.out.println(new Base32().encodeAsString(actual));
-
-        Assertions.assertEquals("", processedTransaction.getValue());
+        Assertions.assertEquals(message, processedTransaction.getValue());
     }
 }

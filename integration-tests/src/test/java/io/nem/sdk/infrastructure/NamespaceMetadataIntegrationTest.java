@@ -18,7 +18,6 @@ package io.nem.sdk.infrastructure;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import io.nem.core.utils.ConvertUtils;
 import io.nem.sdk.model.account.Account;
 import io.nem.sdk.model.blockchain.NetworkType;
 import io.nem.sdk.model.mosaic.NetworkCurrencyMosaic;
@@ -27,11 +26,14 @@ import io.nem.sdk.model.transaction.AggregateTransaction;
 import io.nem.sdk.model.transaction.AggregateTransactionFactory;
 import io.nem.sdk.model.transaction.NamespaceMetadataTransaction;
 import io.nem.sdk.model.transaction.NamespaceMetadataTransactionFactory;
+import io.nem.sdk.model.transaction.NamespaceRegistrationTransaction;
+import io.nem.sdk.model.transaction.NamespaceRegistrationTransactionFactory;
 import io.nem.sdk.model.transaction.SignedTransaction;
+import io.nem.sdk.model.transaction.Transaction;
 import io.nem.sdk.model.transaction.TransactionAnnounceResponse;
+import io.nem.sdk.model.transaction.TransactionType;
 import java.math.BigInteger;
 import java.util.Collections;
-import org.apache.commons.codec.binary.Base32;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -43,25 +45,28 @@ import org.junit.jupiter.params.provider.EnumSource;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class NamespaceMetadataIntegrationTest extends BaseIntegrationTest {
 
+    //TODO use test account, not nemesis (getting Failure_Core_Insufficient_Balance errors when creating Namespace)
+    private Account testAccount = config().getNemesisAccount();
 
     @ParameterizedTest
     @EnumSource(RepositoryType.class)
     public void addMetadataToNamespace(RepositoryType type) {
 
-        Account testAccount = getTestAccount();
-        NamespaceId targetNamespaceId = NetworkCurrencyMosaic.NAMESPACEID;
-        System.out.println(targetNamespaceId);
+        NamespaceId targetNamespaceId = createNamespace(type);
+
+        System.out.println("Setting metadata to namespace " + targetNamespaceId.getId());
 
         String message = "This is the message in the Namespace!";
         NamespaceMetadataTransaction transaction =
             new NamespaceMetadataTransactionFactory(
-                NetworkType.MIJIN_TEST, testAccount.getPublicAccount(), targetNamespaceId,
+                getNetworkType(), testAccount.getPublicAccount(), targetNamespaceId,
                 BigInteger.TEN, message
             ).build();
 
         AggregateTransaction aggregateTransaction = AggregateTransactionFactory
-            .createComplete(NetworkType.MIJIN_TEST,
-                Collections.singletonList(transaction.toAggregate(getTestPublicAccount()))).build();
+            .createComplete(getNetworkType(),
+                Collections.singletonList(transaction.toAggregate(testAccount.getPublicAccount())))
+            .build();
 
         SignedTransaction signedTransaction = testAccount
             .sign(aggregateTransaction, getGenerationHash());
@@ -77,8 +82,6 @@ public class NamespaceMetadataIntegrationTest extends BaseIntegrationTest {
             .validateTransactionAnnounceCorrectly(
                 testAccount.getAddress(), signedTransaction.getHash(), type);
 
-        System.out.println(jsonHelper().print(announceCorrectly));
-
         Assertions.assertEquals(aggregateTransaction.getType(), announceCorrectly.getType());
         Assertions
             .assertEquals(testAccount.getPublicAccount(), announceCorrectly.getSigner().get());
@@ -90,16 +93,43 @@ public class NamespaceMetadataIntegrationTest extends BaseIntegrationTest {
             .getInnerTransactions()
             .get(0);
 
-        Assertions.assertEquals(transaction.getTargetNamespaceId(),
-            processedTransaction.getTargetNamespaceId());
+//        Assertions.assertEquals(transaction.getTargetNamespaceId(),
+//            processedTransaction.getTargetNamespaceId());
         Assertions.assertEquals(transaction.getValueSizeDelta(),
             processedTransaction.getValueSizeDelta());
         Assertions.assertEquals(transaction.getValueSize(), processedTransaction.getValueSize());
 
-        byte[] actual = processedTransaction.getValue().getBytes();
-        System.out.println(ConvertUtils.toHex(actual));
-        System.out.println(new Base32().encodeToString(actual));
-        System.out.println(new Base32().encodeAsString(actual));
-        Assertions.assertEquals("", processedTransaction.getValue());
+        System.out.println("Metadata '" + message + "' stored!");
+        Assertions.assertEquals(message, processedTransaction.getValue());
+    }
+
+    public NamespaceId createNamespace(RepositoryType type) {
+
+        String namespaceName =
+            "namespace-for-metadata-integration-test-" + new Double(
+                Math.floor(Math.random() * 10000))
+                .intValue();
+
+        System.out.println("Creating namespace " + namespaceName);
+        NamespaceRegistrationTransaction namespaceRegistrationTransaction = NamespaceRegistrationTransactionFactory
+            .createRootNamespace(
+                getNetworkType(), namespaceName, BigInteger.valueOf(10)).build();
+
+        SignedTransaction signedTransaction =
+            testAccount.sign(namespaceRegistrationTransaction, getGenerationHash());
+
+        TransactionAnnounceResponse transactionAnnounceResponse =
+            get(getRepositoryFactory(type).createTransactionRepository()
+                .announce(signedTransaction));
+
+        assertEquals(
+            "packet 9 was pushed to the network via /transaction",
+            transactionAnnounceResponse.getMessage());
+
+        Transaction transaction = this.validateTransactionAnnounceCorrectly(
+            testAccount.getAddress(), signedTransaction.getHash(), type);
+        Assertions.assertEquals(TransactionType.REGISTER_NAMESPACE, transaction.getType());
+        System.out.println("Namespace created");
+        return namespaceRegistrationTransaction.getNamespaceId();
     }
 }

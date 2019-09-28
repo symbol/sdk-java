@@ -51,7 +51,9 @@ import org.junit.jupiter.api.Assertions;
  */
 public class SetUpAccountsTool extends BaseIntegrationTest {
 
-    RepositoryType type = DEFAULT_REPOSITORY_TYPE;
+    public static final int AMOUNT_PER_TRANSFER = 10000;
+
+    private final RepositoryType type = DEFAULT_REPOSITORY_TYPE;
 
     public static void main(String[] args) {
         new SetUpAccountsTool().createAccounts();
@@ -64,6 +66,7 @@ public class SetUpAccountsTool extends BaseIntegrationTest {
         sendMosaicFromNemesis(config().getCosignatoryAccount());
         sendMosaicFromNemesis(config().getCosignatory2Account());
         sendMosaicFromNemesis(config().getMultisigAccount());
+        //TODO Failure_Core_Insufficient_Balance error!
         createMultisigAccount(config().getMultisigAccount(), config().getCosignatoryAccount(),
             config().getCosignatory2Account());
         tearDown();
@@ -73,13 +76,13 @@ public class SetUpAccountsTool extends BaseIntegrationTest {
 
         System.out.println("Creating multisg account");
         MultisigAccountModificationTransaction convertIntoMultisigTransaction = new MultisigAccountModificationTransactionFactory(
-            getNetworkType(), (byte) 1, (byte) 1, Arrays.stream(accounts)
+            getNetworkType(), (byte) 0, (byte) 0, Arrays.stream(accounts)
             .map(a -> new MultisigCosignatoryModification(CosignatoryModificationActionType.ADD,
                 a.getPublicAccount())).collect(Collectors.toList())).build();
 
         AggregateTransaction aggregateTransaction = AggregateTransactionFactory.createBonded(
-            NetworkType.MIJIN_TEST,
-            Arrays.asList(
+            getNetworkType(),
+            Collections.singletonList(
                 convertIntoMultisigTransaction.toAggregate(multisigAccount.getPublicAccount()))
         ).build();
 
@@ -87,7 +90,7 @@ public class SetUpAccountsTool extends BaseIntegrationTest {
             .sign(aggregateTransaction, getGenerationHash());
 
         HashLockTransaction hashLockTransaction = new HashLockTransactionFactory(
-            NetworkType.MIJIN_TEST,
+            getNetworkType(),
             NetworkCurrencyMosaic.createRelative(BigInteger.TEN),
             BigInteger.valueOf(480),
             signedTransaction).build();
@@ -119,13 +122,13 @@ public class SetUpAccountsTool extends BaseIntegrationTest {
 
         String generationHash = getGenerationHash();
         Account nemesisAccount = config().getNemesisAccount();
-        System.out.println("Sending Mosaic to: ");
+        System.out.println("Sending " + AMOUNT_PER_TRANSFER + " Mosaic to: ");
         printAccount(recipient);
 
-        BigInteger amount = BigInteger.valueOf(100);
+        BigInteger amount = BigInteger.valueOf(AMOUNT_PER_TRANSFER);
         TransferTransaction transferTransaction =
             TransferTransactionFactory.create(
-                NetworkType.MIJIN_TEST,
+                getNetworkType(),
                 recipient.getAddress(),
                 Collections
                     .singletonList(NetworkCurrencyMosaic.createAbsolute(amount)),

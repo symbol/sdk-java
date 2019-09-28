@@ -67,30 +67,6 @@ public class ConvertUtils {
     }
 
     /**
-     * Converts an hex string into a plain string.
-     *
-     * @param hex - Hex input
-     * @return a plain string
-     */
-    public static String decodeHex(String hex) {
-        try {
-            return Base32Encoder.getString(Hex.decodeHex(hex));
-        } catch (DecoderException e) {
-            throw new IllegalArgumentException(e.getMessage(), e);
-        }
-    }
-
-    /**
-     * Converts a plain text into the hex encoded representation
-     *
-     * @param plain the string to be converted
-     * @return an hex string
-     */
-    public static String toHex(String plain) {
-        return Hex.encodeHexString(toByteArray(plain));
-    }
-
-    /**
      * Converts a input into the byte[] representation using base 32
      *
      * @param plain the string to be converted

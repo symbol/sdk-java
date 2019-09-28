@@ -20,10 +20,15 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import io.nem.core.utils.ConvertUtils;
 import io.nem.sdk.model.account.Account;
+import io.nem.sdk.model.blockchain.BlockDuration;
 import io.nem.sdk.model.blockchain.NetworkType;
+import io.nem.sdk.model.mosaic.MosaicFlags;
 import io.nem.sdk.model.mosaic.MosaicId;
+import io.nem.sdk.model.mosaic.MosaicNonce;
 import io.nem.sdk.model.transaction.AggregateTransaction;
 import io.nem.sdk.model.transaction.AggregateTransactionFactory;
+import io.nem.sdk.model.transaction.MosaicDefinitionTransaction;
+import io.nem.sdk.model.transaction.MosaicDefinitionTransactionFactory;
 import io.nem.sdk.model.transaction.MosaicMetadataTransaction;
 import io.nem.sdk.model.transaction.MosaicMetadataTransactionFactory;
 import io.nem.sdk.model.transaction.SignedTransaction;
@@ -42,27 +47,27 @@ import org.junit.jupiter.params.provider.EnumSource;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class MosaicMetadataIntegrationTest extends BaseIntegrationTest {
 
+    //TODO use test account, not nemesis (getting Failure_Core_Insufficient_Balance errors when creating Mosaic)
+    private Account testAccount = config().getNemesisAccount();
 
     @ParameterizedTest
     @EnumSource(RepositoryType.class)
     public void addMetadataToMosaic(RepositoryType type) {
 
-        Account testAccount = getTestAccount();
-        MosaicId targetMosaicId = new MosaicId(
-            get(getRepositoryFactory(type).createAccountRepository()
-                .getAccountInfo(testAccount.getAddress())).getMosaics().get(0).getId().getId());
+        MosaicId targetMosaicId = createMosaic(type);
         System.out.println(targetMosaicId);
 
         String message = "This is the message in the mosaic!";
         MosaicMetadataTransaction transaction =
             new MosaicMetadataTransactionFactory(
-                NetworkType.MIJIN_TEST, testAccount.getPublicAccount(), targetMosaicId,
+                getNetworkType(), testAccount.getPublicAccount(), targetMosaicId,
                 BigInteger.TEN, message
             ).build();
 
         AggregateTransaction aggregateTransaction = AggregateTransactionFactory
-            .createComplete(NetworkType.MIJIN_TEST,
-                Collections.singletonList(transaction.toAggregate(getTestPublicAccount()))).build();
+            .createComplete(getNetworkType(),
+                Collections.singletonList(transaction.toAggregate(testAccount.getPublicAccount())))
+            .build();
 
         SignedTransaction signedTransaction = testAccount
             .sign(aggregateTransaction, getGenerationHash());
@@ -77,8 +82,6 @@ public class MosaicMetadataIntegrationTest extends BaseIntegrationTest {
         AggregateTransaction announceCorrectly = (AggregateTransaction) this
             .validateTransactionAnnounceCorrectly(
                 testAccount.getAddress(), signedTransaction.getHash(), type);
-
-        System.out.println(jsonHelper().print(announceCorrectly));
 
         Assertions.assertEquals(aggregateTransaction.getType(), announceCorrectly.getType());
         Assertions
@@ -97,10 +100,31 @@ public class MosaicMetadataIntegrationTest extends BaseIntegrationTest {
             processedTransaction.getValueSizeDelta());
         Assertions.assertEquals(transaction.getValueSize(), processedTransaction.getValueSize());
 
-        byte[] actual = processedTransaction.getValue().getBytes();
-        System.out.println(ConvertUtils.toHex(actual));
-        System.out.println(new Base32().encodeToString(actual));
-        System.out.println(new Base32().encodeAsString(actual));
-        Assertions.assertEquals("", processedTransaction.getValue());
+        Assertions.assertEquals(message, processedTransaction.getValue());
+    }
+
+
+    private MosaicId createMosaic(RepositoryType type) {
+        MosaicNonce nonce = MosaicNonce.createRandom();
+        MosaicId mosaicId = MosaicId.createFromNonce(nonce, testAccount.getPublicAccount());
+
+        MosaicDefinitionTransaction mosaicDefinitionTransaction =
+            new MosaicDefinitionTransactionFactory(getNetworkType(),
+                nonce,
+                mosaicId,
+                MosaicFlags.create(true, true, true),
+                4, new BlockDuration(100)).build();
+
+        SignedTransaction signedTransaction =
+            testAccount.sign(mosaicDefinitionTransaction, getGenerationHash());
+
+        TransactionAnnounceResponse transactionAnnounceResponse =
+            get(getRepositoryFactory(type).createTransactionRepository()
+                .announce(signedTransaction));
+        System.out.println(transactionAnnounceResponse.getMessage());
+
+        this.validateTransactionAnnounceCorrectly(testAccount.getAddress(),
+            signedTransaction.getHash(), type);
+        return mosaicId;
     }
 }

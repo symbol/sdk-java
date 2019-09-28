@@ -32,6 +32,7 @@ import io.nem.sdk.model.transaction.AggregateTransaction;
 import io.nem.sdk.model.transaction.CosignatureSignedTransaction;
 import io.nem.sdk.model.transaction.JsonHelper;
 import io.nem.sdk.model.transaction.Transaction;
+import io.nem.sdk.model.transaction.TransactionStatusError;
 import io.reactivex.Observable;
 import java.util.HashMap;
 import java.util.Map;
@@ -72,7 +73,6 @@ public abstract class BaseIntegrationTest {
         listenerMap.values().forEach(Listener::close);
         repositoryFactoryMap.values().forEach(RepositoryFactory::close);
     }
-
 
     private Listener createListener(RepositoryType type) {
         Listener listener = getRepositoryFactory(type).createListener();
@@ -189,16 +189,21 @@ public abstract class BaseIntegrationTest {
 
     Transaction validateTransactionAnnounceCorrectly(Address address, String transactionHash,
         RepositoryType type) {
-        Transaction transaction = get(
-            getListener(type).confirmed(address).take(1));
+        Listener listener = getListener(type);
+        Observable<Transaction> observable = listener.confirmed(address);
+        Transaction transaction = getTransactionOrFail(address, listener, observable);
         assertEquals(transactionHash, transaction.getTransactionInfo().get().getHash().get());
         return transaction;
     }
 
+
     AggregateTransaction validateAggregateBondedTransactionAnnounceCorrectly(Address address,
         String transactionHash, RepositoryType type) {
-        AggregateTransaction aggregateTransaction =
-            get(getListener(type).aggregateBondedAdded(address).take(1));
+        Listener listener = getListener(type);
+        Observable<AggregateTransaction> observable = listener
+            .aggregateBondedAdded(address);
+        AggregateTransaction aggregateTransaction = getTransactionOrFail(address, listener,
+            observable);
         assertEquals(transactionHash,
             aggregateTransaction.getTransactionInfo().get().getHash().get());
         return aggregateTransaction;
@@ -207,9 +212,25 @@ public abstract class BaseIntegrationTest {
     CosignatureSignedTransaction validateAggregateBondedCosignatureTransactionAnnounceCorrectly(
         Address address, String transactionHash,
         RepositoryType type) {
-        CosignatureSignedTransaction transaction = get(
-            getListener(type).cosignatureAdded(address).take(1));
+        Listener listener = getListener(type);
+        Observable<CosignatureSignedTransaction> observable = listener.cosignatureAdded(address);
+        CosignatureSignedTransaction transaction = getTransactionOrFail(address, listener,
+            observable);
         assertEquals(transactionHash, transaction.getParentHash());
         return transaction;
     }
+
+    private <T> T getTransactionOrFail(Address address, Listener listener,
+        Observable<T> observable) {
+        Observable<Object> errorOrTransactionObservable = Observable
+            .merge(observable, listener.status(address));
+        Object errorOrTransaction = get(errorOrTransactionObservable.take(1));
+        if (errorOrTransaction instanceof TransactionStatusError) {
+            throw new IllegalArgumentException(
+                "TransactionStatusError " + ((TransactionStatusError) errorOrTransaction)
+                    .getStatus());
+        }
+        return (T) errorOrTransaction;
+    }
+
 }

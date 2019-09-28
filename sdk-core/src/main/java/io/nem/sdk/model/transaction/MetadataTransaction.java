@@ -17,13 +17,10 @@
 
 package io.nem.sdk.model.transaction;
 
-import io.nem.core.utils.ConvertUtils;
 import io.nem.sdk.model.account.PublicAccount;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
-import org.apache.commons.codec.binary.Base32;
-import org.apache.commons.codec.binary.Hex;
 
 /**
  * Abstract transaction for all the metadata transactions.
@@ -107,6 +104,6 @@ public abstract class MetadataTransaction extends Transaction {
      * @return the array representation.
      */
     public static byte[] toByteArray(String value) {
-        return ConvertUtils.toByteArray(value);
+        return value.getBytes(StandardCharsets.UTF_8);
     }
 }

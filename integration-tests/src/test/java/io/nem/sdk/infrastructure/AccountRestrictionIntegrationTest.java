@@ -212,7 +212,7 @@ class AccountRestrictionIntegrationTest extends BaseIntegrationTest {
         modifications.add(modification);
         AccountOperationRestrictionTransaction transaction =
             new AccountOperationRestrictionTransactionFactory(
-                NetworkType.MIJIN_TEST,
+                getNetworkType(),
                 accountRestrictionType
                 , modifications
             ).build();
@@ -246,7 +246,7 @@ class AccountRestrictionIntegrationTest extends BaseIntegrationTest {
         modifications.add(modification);
         AccountMosaicRestrictionTransaction transaction =
             new AccountMosaicRestrictionTransactionFactory(
-                NetworkType.MIJIN_TEST,
+                getNetworkType(),
                 accountRestrictionType
                 , modifications
             ).build();
@@ -280,7 +280,7 @@ class AccountRestrictionIntegrationTest extends BaseIntegrationTest {
         modifications.add(modification);
         AccountAddressRestrictionTransaction transaction =
             new AccountAddressRestrictionTransactionFactory(
-                NetworkType.MIJIN_TEST,
+                getNetworkType(),
                 accountRestrictionType
                 , modifications
             ).build();
