@@ -19,9 +19,11 @@ package io.nem.sdk.infrastructure;
 import io.nem.sdk.model.account.Address;
 import io.nem.sdk.model.blockchain.BlockInfo;
 import io.nem.sdk.model.transaction.AggregateTransaction;
+import io.nem.sdk.model.transaction.CosignatoryModificationActionType;
 import io.nem.sdk.model.transaction.CosignatureSignedTransaction;
 import io.nem.sdk.model.transaction.Deadline;
 import io.nem.sdk.model.transaction.JsonHelper;
+import io.nem.sdk.model.transaction.MultisigAccountModificationTransaction;
 import io.nem.sdk.model.transaction.Transaction;
 import io.nem.sdk.model.transaction.TransactionStatusError;
 import io.nem.sdk.model.transaction.TransferTransaction;
@@ -75,16 +77,16 @@ public abstract class ListenerBase implements Listener {
                 new Deadline(
                     new BigInteger(jsonHelper.getString(message, "deadline"))));
             onNext(ListenerChannel.STATUS, messageObject);
-        } else if (jsonHelper.contains(message, "meta")) {
-            onNext(ListenerChannel.rawValueOf(
-                jsonHelper.getString(message, "meta", "channelName")),
-                jsonHelper.getString(message, "meta", "hash"));
         } else if (jsonHelper.contains(message, "parentHash")) {
             CosignatureSignedTransaction messageObject = new CosignatureSignedTransaction(
                 jsonHelper.getString(message, "parenthash"),
                 jsonHelper.getString(message, "signature"),
                 jsonHelper.getString(message, "signer"));
             onNext(ListenerChannel.COSIGNATURE, messageObject);
+        } else if (jsonHelper.contains(message, "meta")) {
+            onNext(ListenerChannel.rawValueOf(
+                jsonHelper.getString(message, "meta", "channelName")),
+                jsonHelper.getString(message, "meta", "hash"));
         }
     }
 
@@ -235,35 +237,36 @@ public abstract class ListenerBase implements Listener {
     }
 
 
-    private boolean transactionFromAddress(final Transaction transaction, final Address address) {
-        return transactionHasSignerOrReceptor(transaction, address)
-            || isAggregateTransactionSignerOrInnerTransaction(transaction, address);
-    }
+    public boolean transactionFromAddress(final Transaction transaction, final Address address) {
+        if (transaction.getSigner().filter(s -> s.getAddress().equals(address)).isPresent()) {
+            return true;
+        }
 
-    private boolean transactionHasSignerOrReceptor(final Transaction transaction,
-        final Address address) {
-        return transaction.getSigner().filter(s -> s.getAddress().equals(address)).isPresent()
-            || isTransferTransactionRecipient(transaction, address);
-    }
+        if (transaction instanceof TransferTransaction) {
+            return ((TransferTransaction) transaction)
+                .getRecipient().filter(r -> r.equals(address)).isPresent();
+        }
 
-    private boolean isTransferTransactionRecipient(final Transaction transaction,
-        final Address address) {
-        return transaction instanceof TransferTransaction && ((TransferTransaction) transaction)
-            .getRecipient().filter(r -> r.equals(address)).isPresent();
-    }
-
-    private boolean isAggregateTransactionSignerOrInnerTransaction(final Transaction transaction,
-        final Address address) {
+        if (transaction instanceof MultisigAccountModificationTransaction) {
+            return ((MultisigAccountModificationTransaction) transaction)
+                .getModifications().stream()
+                .anyMatch(
+                    m -> m.getModificationAction() == CosignatoryModificationActionType.ADD && m
+                        .getCosignatoryPublicAccount().getAddress().equals(address));
+        }
         if (transaction instanceof AggregateTransaction) {
             final AggregateTransaction aggregateTransaction = (AggregateTransaction) transaction;
-            return aggregateTransaction.getCosignatures()
-                .stream().anyMatch(c -> c.getSigner().getAddress().equals(address)) ||
-                aggregateTransaction.getInnerTransactions()
-                    .stream().anyMatch(t -> this.transactionHasSignerOrReceptor(t, address));
-        } else {
-            return false;
+            if (aggregateTransaction.getCosignatures()
+                .stream().anyMatch(c -> c.getSigner().getAddress().equals(address))) {
+                return true;
+            }
+            //Recursion...
+            return aggregateTransaction.getInnerTransactions()
+                .stream().anyMatch(t -> this.transactionFromAddress(t, address));
         }
+        return false;
     }
+
 
     protected void onNext(ListenerChannel channel, Object messageObject) {
         this.getMessageSubject().onNext(new ListenerMessage(channel, messageObject));
