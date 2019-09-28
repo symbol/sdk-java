@@ -39,11 +39,9 @@ public class NamespaceMetadataTransactionFactory extends
         PublicAccount targetAccount,
         NamespaceId targetNamespaceId,
         BigInteger scopedMetadataKey,
-        int valueSizeDelta,
-        int valueSize,
         String value) {
         super(TransactionType.NAMESPACE_METADATA_TRANSACTION, networkType, targetAccount,
-            scopedMetadataKey, valueSizeDelta, valueSize, value);
+            scopedMetadataKey, value);
         Validate.notNull(targetNamespaceId, "TargetNamespaceId must not be null");
         this.targetNamespaceId = targetNamespaceId;
     }

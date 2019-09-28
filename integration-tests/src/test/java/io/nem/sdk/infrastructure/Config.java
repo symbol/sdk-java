@@ -1,7 +1,6 @@
 package io.nem.sdk.infrastructure;
 
 import io.nem.sdk.model.account.Account;
-import io.nem.sdk.model.account.PublicAccount;
 import io.nem.sdk.model.blockchain.NetworkType;
 import io.vertx.core.json.JsonObject;
 import java.io.File;

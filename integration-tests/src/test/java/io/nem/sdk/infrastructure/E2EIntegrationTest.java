@@ -20,14 +20,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import io.nem.core.crypto.Hashes;
-import io.nem.core.utils.HexEncoder;
-import io.nem.sdk.api.RepositoryFactory;
 import io.nem.sdk.api.TransactionRepository;
 import io.nem.sdk.model.account.Account;
 import io.nem.sdk.model.account.AccountInfo;
 import io.nem.sdk.model.account.AccountNames;
 import io.nem.sdk.model.account.Address;
-import io.nem.sdk.model.account.PublicAccount;
 import io.nem.sdk.model.blockchain.BlockDuration;
 import io.nem.sdk.model.blockchain.NetworkType;
 import io.nem.sdk.model.mosaic.MosaicFlags;
@@ -39,8 +36,6 @@ import io.nem.sdk.model.mosaic.NetworkCurrencyMosaic;
 import io.nem.sdk.model.namespace.AliasAction;
 import io.nem.sdk.model.namespace.NamespaceId;
 import io.nem.sdk.model.namespace.NamespaceName;
-import io.nem.sdk.model.transaction.AccountMetadataTransaction;
-import io.nem.sdk.model.transaction.AccountMetadataTransactionFactory;
 import io.nem.sdk.model.transaction.AddressAliasTransaction;
 import io.nem.sdk.model.transaction.AddressAliasTransactionFactory;
 import io.nem.sdk.model.transaction.AggregateTransaction;
@@ -59,8 +54,6 @@ import io.nem.sdk.model.transaction.MosaicDefinitionTransaction;
 import io.nem.sdk.model.transaction.MosaicDefinitionTransactionFactory;
 import io.nem.sdk.model.transaction.MosaicGlobalRestrictionTransaction;
 import io.nem.sdk.model.transaction.MosaicGlobalRestrictionTransactionFactory;
-import io.nem.sdk.model.transaction.MosaicMetadataTransaction;
-import io.nem.sdk.model.transaction.MosaicMetadataTransactionFactory;
 import io.nem.sdk.model.transaction.MosaicRestrictionType;
 import io.nem.sdk.model.transaction.MosaicSupplyChangeTransaction;
 import io.nem.sdk.model.transaction.MosaicSupplyChangeTransactionFactory;
@@ -75,22 +68,16 @@ import io.nem.sdk.model.transaction.SecretLockTransactionFactory;
 import io.nem.sdk.model.transaction.SecretProofTransaction;
 import io.nem.sdk.model.transaction.SecretProofTransactionFactory;
 import io.nem.sdk.model.transaction.SignedTransaction;
-import io.nem.sdk.model.transaction.Transaction;
 import io.nem.sdk.model.transaction.TransactionAnnounceResponse;
 import io.nem.sdk.model.transaction.TransferTransaction;
 import io.nem.sdk.model.transaction.TransferTransactionFactory;
 import java.math.BigInteger;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import org.apache.commons.codec.binary.Hex;
-import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.junit.Assert;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -487,82 +474,6 @@ class E2EIntegrationTest extends BaseIntegrationTest {
         assertTrue(accountNames.get(0).getNames().contains(namespaceName));
     }
 
-
-    @ParameterizedTest
-    @EnumSource(RepositoryType.class)
-    void sendMosaicMetadata(RepositoryType type) {
-
-        Account account = this.getTestAccount();
-        AccountInfo accountInfo = get(getRepositoryFactory(type).createAccountRepository()
-            .getAccountInfo(account.getPublicAccount().getAddress()));
-
-        Assert.assertFalse(
-            accountInfo.getMosaics().isEmpty());
-
-        MosaicId mosaicId = createMosaic(type);
-        BigInteger scopedMetadataKey = BigInteger.valueOf(555L);
-        MosaicMetadataTransaction mosaicMetadataTransaction =
-            new MosaicMetadataTransactionFactory(
-                NetworkType.MIJIN_TEST,
-                account.getPublicAccount(),
-                mosaicId,
-                scopedMetadataKey,
-                0,
-                3,
-                "ABC").build();
-
-        AggregateTransaction aggregateTransaction =
-            AggregateTransactionFactory.createComplete(
-                NetworkType.MIJIN_TEST,
-                Collections.singletonList(
-                    mosaicMetadataTransaction.toAggregate(account.getPublicAccount()))
-            ).build();
-
-        SignedTransaction signedTransaction = account
-            .sign(aggregateTransaction, generationHash);
-
-        TransactionAnnounceResponse transactionAnnounceResponse =
-            get(getTransactionRepository(type).announce(signedTransaction));
-        System.out.println(transactionAnnounceResponse.getMessage());
-
-        this.validateTransactionAnnounceCorrectly(
-            account.getAddress(), signedTransaction.getHash(), type);
-
-    }
-
-    @ParameterizedTest
-    @EnumSource(RepositoryType.class)
-    void sendAccountMetadata(RepositoryType type) {
-
-        Account account = this.getTestAccount();
-        PublicAccount publicAccount = account.getPublicAccount();
-
-        BigInteger scopedMetadataKey = BigInteger.valueOf(1010L);
-        String value = "ABCDE";
-        int valueSize = HexEncoder.getBytes(value).length;
-        int valueSizeDelta = valueSize;
-        System.out.println("valueSize " + valueSize);
-        AccountMetadataTransaction accountMetadataTransaction =
-            new AccountMetadataTransactionFactory(
-                NetworkType.MIJIN_TEST,
-                publicAccount,
-                scopedMetadataKey,
-                valueSizeDelta,
-                valueSize,
-                value).build();
-
-        SignedTransaction signedTransaction = account
-            .sign(accountMetadataTransaction, generationHash);
-
-        TransactionAnnounceResponse transactionAnnounceResponse =
-            get(getTransactionRepository(type).announce(signedTransaction));
-        System.out.println(transactionAnnounceResponse.getMessage());
-
-        this.validateTransactionAnnounceCorrectly(
-            account.getAddress(), signedTransaction.getHash(), type);
-
-    }
-
     private MosaicId createMosaic(RepositoryType type) {
         MosaicNonce nonce = MosaicNonce.createRandom();
         MosaicId mosaicId = MosaicId.createFromNonce(nonce, this.account.getPublicAccount());
@@ -691,7 +602,8 @@ class E2EIntegrationTest extends BaseIntegrationTest {
             AggregateTransactionFactory.createComplete(
                 NetworkType.MIJIN_TEST,
                 Collections.singletonList(
-                    mosaicAddressRestrictionTransaction.toAggregate(this.account.getPublicAccount()))
+                    mosaicAddressRestrictionTransaction
+                        .toAggregate(this.account.getPublicAccount()))
             ).build();
 
         SignedTransaction signedTransaction = this.account

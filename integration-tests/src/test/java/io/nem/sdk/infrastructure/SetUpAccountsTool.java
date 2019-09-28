@@ -18,18 +18,32 @@ package io.nem.sdk.infrastructure;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import io.nem.sdk.api.RepositoryCallException;
 import io.nem.sdk.model.account.Account;
+import io.nem.sdk.model.account.AccountInfo;
 import io.nem.sdk.model.blockchain.NetworkType;
 import io.nem.sdk.model.mosaic.NetworkCurrencyMosaic;
+import io.nem.sdk.model.namespace.NamespaceId;
+import io.nem.sdk.model.transaction.AggregateTransaction;
+import io.nem.sdk.model.transaction.AggregateTransactionFactory;
+import io.nem.sdk.model.transaction.CosignatoryModificationActionType;
+import io.nem.sdk.model.transaction.HashLockTransaction;
+import io.nem.sdk.model.transaction.HashLockTransactionFactory;
+import io.nem.sdk.model.transaction.MultisigAccountModificationTransaction;
+import io.nem.sdk.model.transaction.MultisigAccountModificationTransactionFactory;
+import io.nem.sdk.model.transaction.MultisigCosignatoryModification;
 import io.nem.sdk.model.transaction.PlainMessage;
 import io.nem.sdk.model.transaction.SignedTransaction;
 import io.nem.sdk.model.transaction.TransactionAnnounceResponse;
 import io.nem.sdk.model.transaction.TransferTransaction;
 import io.nem.sdk.model.transaction.TransferTransactionFactory;
 import java.math.BigInteger;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
+import org.junit.jupiter.api.Assertions;
 
 /**
  * Utility main class that uses the nemesis address configured to generate new accounts necessary
@@ -37,26 +51,84 @@ import java.util.Map;
  */
 public class SetUpAccountsTool extends BaseIntegrationTest {
 
+    RepositoryType type = DEFAULT_REPOSITORY_TYPE;
+
     public static void main(String[] args) {
         new SetUpAccountsTool().createAccounts();
     }
 
     private void createAccounts() {
 
-        RepositoryType type = DEFAULT_REPOSITORY_TYPE;
+        sendMosaicFromNemesis(config().getTestAccount());
+        sendMosaicFromNemesis(config().getTestAccount2());
+        sendMosaicFromNemesis(config().getCosignatoryAccount());
+        sendMosaicFromNemesis(config().getCosignatory2Account());
+        sendMosaicFromNemesis(config().getMultisigAccount());
+        createMultisigAccount(config().getMultisigAccount(), config().getCosignatoryAccount(),
+            config().getCosignatory2Account());
+        tearDown();
+    }
+
+    private void createMultisigAccount(Account multisigAccount, Account... accounts) {
+
+        System.out.println("Creating multisg account");
+        MultisigAccountModificationTransaction convertIntoMultisigTransaction = new MultisigAccountModificationTransactionFactory(
+            getNetworkType(), (byte) 1, (byte) 1, Arrays.stream(accounts)
+            .map(a -> new MultisigCosignatoryModification(CosignatoryModificationActionType.ADD,
+                a.getPublicAccount())).collect(Collectors.toList())).build();
+
+        AggregateTransaction aggregateTransaction = AggregateTransactionFactory.createBonded(
+            NetworkType.MIJIN_TEST,
+            Arrays.asList(
+                convertIntoMultisigTransaction.toAggregate(multisigAccount.getPublicAccount()))
+        ).build();
+
+        SignedTransaction signedTransaction = multisigAccount
+            .sign(aggregateTransaction, getGenerationHash());
+
+        HashLockTransaction hashLockTransaction = new HashLockTransactionFactory(
+            NetworkType.MIJIN_TEST,
+            NetworkCurrencyMosaic.createRelative(BigInteger.TEN),
+            BigInteger.valueOf(480),
+            signedTransaction).build();
+
+        SignedTransaction hashLockTransactionSigned = multisigAccount
+            .sign(hashLockTransaction, getGenerationHash());
+
+        TransactionAnnounceResponse transactionAnnounceResponse =
+            get(getRepositoryFactory(type).createTransactionRepository()
+                .announce(hashLockTransactionSigned));
+        assertEquals(
+            "packet 9 was pushed to the network via /transaction",
+            transactionAnnounceResponse.getMessage());
+
+        HashLockTransaction processedTransaction = (HashLockTransaction) this
+            .validateTransactionAnnounceCorrectly(
+                multisigAccount.getAddress(), signedTransaction.getHash(), type);
+
+        Assertions.assertNotNull(processedTransaction);
+
+    }
+
+    private void sendMosaicFromNemesis(Account recipient) {
+        if (hasMosaic(recipient)) {
+            System.out.println("Ignoring recipient. It has the mosaic already: ");
+            printAccount(recipient);
+            return;
+        }
 
         String generationHash = getGenerationHash();
         Account nemesisAccount = config().getNemesisAccount();
-        Account recipient = config().getTestAccount();
-
+        System.out.println("Sending Mosaic to: ");
         printAccount(recipient);
 
+        BigInteger amount = BigInteger.valueOf(100);
         TransferTransaction transferTransaction =
             TransferTransactionFactory.create(
                 NetworkType.MIJIN_TEST,
                 recipient.getAddress(),
                 Collections
-                    .singletonList(NetworkCurrencyMosaic.createAbsolute(BigInteger.valueOf(100))),
+                    .singletonList(NetworkCurrencyMosaic.createAbsolute(amount)),
                 new PlainMessage("E2ETest:SetUpAccountsTool")
             ).build();
 
@@ -70,12 +142,25 @@ public class SetUpAccountsTool extends BaseIntegrationTest {
             "packet 9 was pushed to the network via /transaction",
             transactionAnnounceResponse.getMessage());
 
-        this.validateTransactionAnnounceCorrectly(
-            nemesisAccount.getAddress(), signedTransaction.getHash(), type);
+        TransferTransaction processedTransaction = (TransferTransaction) this
+            .validateTransactionAnnounceCorrectly(
+                nemesisAccount.getAddress(), signedTransaction.getHash(), type);
+        Assertions.assertEquals(amount, processedTransaction.getMosaics().get(0).getAmount());
+    }
+
+    private boolean hasMosaic(Account recipient) {
+        try {
+            AccountInfo accountInfo = get(getRepositoryFactory(type).createAccountRepository()
+                .getAccountInfo(recipient.getAddress()));
+            return accountInfo.getMosaics().stream().anyMatch(
+                m -> m.getAmount().longValue() >= 100);
+        } catch (RepositoryCallException e) {
+            return false;
+        }
     }
 
 
-    public void printAccount(Account account) {
+    void printAccount(Account account) {
         Map<String, String> map = new LinkedHashMap<>();
         map.put("privateKey", account.getPrivateKey());
         map.put("publicKey", account.getPublicKey());

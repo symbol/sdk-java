@@ -31,11 +31,9 @@ public class AccountMetadataTransactionFactory extends
         NetworkType networkType,
         PublicAccount targetAccount,
         BigInteger scopedMetadataKey,
-        int valueSizeDelta,
-        int valueSize,
         String value) {
         super(TransactionType.ACCOUNT_METADATA_TRANSACTION, networkType, targetAccount,
-            scopedMetadataKey, valueSizeDelta, valueSize, value);
+            scopedMetadataKey, value);
 
 
     }

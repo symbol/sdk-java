@@ -46,11 +46,12 @@ class AccountMetadataTransactionMapper extends
         BigInteger scopedMetaDataKey = new BigInteger(transaction.getScopedMetadataKey());
         Integer valueSize = transaction.getValueSize();
         String value = transaction.getValue();
-        return new AccountMetadataTransactionFactory(networkType,
+        AccountMetadataTransactionFactory factory = new AccountMetadataTransactionFactory(
+            networkType,
             targetAccount,
             scopedMetaDataKey,
-            valueSizeDelta,
-            valueSize,
             value);
+        factory.valueSizeDelta(valueSizeDelta).valueSize(valueSize);
+        return factory;
     }
 }

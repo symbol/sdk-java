@@ -16,18 +16,20 @@
 
 package io.nem.core.utils;
 
+import java.nio.charset.StandardCharsets;
 import org.apache.commons.codec.DecoderException;
+import org.apache.commons.codec.binary.Base32;
 import org.apache.commons.codec.binary.Hex;
 
 /**
  * Static class that contains utility functions for converting hex strings to and from bytes.
  */
-public class HexEncoder {
+public class ConvertUtils {
 
     /**
      * Private constructor of this utility class.
      */
-    private HexEncoder() {
+    private ConvertUtils() {
     }
 
     /**
@@ -44,20 +46,6 @@ public class HexEncoder {
         }
     }
 
-    /**
-     * Tries to convert a hex string to a byte array.
-     *
-     * @param hexString The input hex string.
-     * @return The output byte array or null if the input string is malformed.
-     */
-    @SuppressWarnings("squid:S1168")
-    public static byte[] tryGetBytes(final String hexString) {
-        try {
-            return getBytesInternal(hexString);
-        } catch (final DecoderException e) {
-            return null;
-        }
-    }
 
     private static byte[] getBytesInternal(final String hexString) throws DecoderException {
         final Hex codec = new Hex();
@@ -72,9 +60,45 @@ public class HexEncoder {
      * @param bytes The input byte array.
      * @return The output hex string.
      */
-    public static String getString(final byte[] bytes) {
+    public static String toHex(final byte[] bytes) {
         final Hex codec = new Hex();
         final byte[] decodedBytes = codec.encode(bytes);
         return StringEncoder.getString(decodedBytes);
     }
+
+    /**
+     * Converts an hex string into a plain string.
+     *
+     * @param hex - Hex input
+     * @return a plain string
+     */
+    public static String decodeHex(String hex) {
+        try {
+            return Base32Encoder.getString(Hex.decodeHex(hex));
+        } catch (DecoderException e) {
+            throw new IllegalArgumentException(e.getMessage(), e);
+        }
+    }
+
+    /**
+     * Converts a plain text into the hex encoded representation
+     *
+     * @param plain the string to be converted
+     * @return an hex string
+     */
+    public static String toHex(String plain) {
+        return Hex.encodeHexString(toByteArray(plain));
+    }
+
+    /**
+     * Converts a input into the byte[] representation using base 32
+     *
+     * @param plain the string to be converted
+     * @return an byte array.
+     */
+    public static byte[] toByteArray(String plain) {
+        return new Base32().decode(plain.getBytes(StandardCharsets.UTF_8));
+    }
+
+
 }

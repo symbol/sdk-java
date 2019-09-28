@@ -49,12 +49,13 @@ class NamespaceMetadataTransactionMapper extends
         Integer valueSize = transaction.getValueSize();
         String value = transaction.getValue();
         NamespaceId targetNamespace = MapperUtils.toNamespaceId(transaction.getTargetNamespaceId());
-        return new NamespaceMetadataTransactionFactory(networkType,
+        NamespaceMetadataTransactionFactory factory = new NamespaceMetadataTransactionFactory(
+            networkType,
             targetAccount,
             targetNamespace,
             scopedMetaDataKey,
-            valueSizeDelta,
-            valueSize,
             value);
+        factory.valueSizeDelta(valueSizeDelta).valueSize(valueSize);
+        return factory;
     }
 }

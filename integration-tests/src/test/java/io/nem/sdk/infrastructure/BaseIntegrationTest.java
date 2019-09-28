@@ -29,6 +29,7 @@ import io.nem.sdk.model.account.Address;
 import io.nem.sdk.model.account.PublicAccount;
 import io.nem.sdk.model.blockchain.NetworkType;
 import io.nem.sdk.model.transaction.AggregateTransaction;
+import io.nem.sdk.model.transaction.CosignatureSignedTransaction;
 import io.nem.sdk.model.transaction.JsonHelper;
 import io.nem.sdk.model.transaction.Transaction;
 import io.reactivex.Observable;
@@ -69,6 +70,7 @@ public abstract class BaseIntegrationTest {
     @AfterAll
     void tearDown() {
         listenerMap.values().forEach(Listener::close);
+        repositoryFactoryMap.values().forEach(RepositoryFactory::close);
     }
 
 
@@ -185,27 +187,29 @@ public abstract class BaseIntegrationTest {
     }
 
 
-    void validateTransactionAnnounceCorrectly(Address address, String transactionHash,
+    Transaction validateTransactionAnnounceCorrectly(Address address, String transactionHash,
         RepositoryType type) {
         Transaction transaction = get(
             getListener(type).confirmed(address).take(1));
         assertEquals(transactionHash, transaction.getTransactionInfo().get().getHash().get());
+        return transaction;
     }
 
-    void validateAggregateBondedTransactionAnnounceCorrectly(Address address,
+    AggregateTransaction validateAggregateBondedTransactionAnnounceCorrectly(Address address,
         String transactionHash, RepositoryType type) {
         AggregateTransaction aggregateTransaction =
             get(getListener(type).aggregateBondedAdded(address).take(1));
         assertEquals(transactionHash,
             aggregateTransaction.getTransactionInfo().get().getHash().get());
+        return aggregateTransaction;
     }
 
-    void validateAggregateBondedCosignatureTransactionAnnounceCorrectly(
+    CosignatureSignedTransaction validateAggregateBondedCosignatureTransactionAnnounceCorrectly(
         Address address, String transactionHash,
         RepositoryType type) {
-        String hash = get(
-            getListener(type).cosignatureAdded(address).take(getTimeoutSeconds(), TimeUnit.SECONDS))
-            .getParentHash();
-        assertEquals(transactionHash, hash);
+        CosignatureSignedTransaction transaction = get(
+            getListener(type).cosignatureAdded(address).take(1));
+        assertEquals(transactionHash, transaction.getParentHash());
+        return transaction;
     }
 }
