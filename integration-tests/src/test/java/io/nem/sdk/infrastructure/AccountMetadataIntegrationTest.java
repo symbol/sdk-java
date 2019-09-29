@@ -47,7 +47,7 @@ public class AccountMetadataIntegrationTest extends BaseIntegrationTest {
     @EnumSource(RepositoryType.class)
     public void addMetadataToAccount(RepositoryType type) {
 
-        String message = "This is the message for this account!!! " + new Double(
+        String message = "This is the message for this account! 汉字" + new Double(
             Math.floor(Math.random() * 10000))
             .intValue();
         System.out.println(
@@ -55,7 +55,7 @@ public class AccountMetadataIntegrationTest extends BaseIntegrationTest {
 
         AccountMetadataTransaction transaction =
             new AccountMetadataTransactionFactory(
-                getNetworkType(), testAccount.getPublicAccount(), BigInteger.valueOf(60),
+                getNetworkType(), testAccount.getPublicAccount(), BigInteger.valueOf(71),
                 message
             ).build();
 

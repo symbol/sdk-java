@@ -31,6 +31,7 @@ public class ListenerForTests extends BaseIntegrationTest {
     }
 
     private void run() throws ExecutionException, InterruptedException {
+        setUp();
         Listener listener = getRepositoryFactory(DEFAULT_REPOSITORY_TYPE).createListener();
         listener.open().get();
         listenToAccount("Test Account 1", config().getTestAccount(), listener);
@@ -46,13 +47,16 @@ public class ListenerForTests extends BaseIntegrationTest {
             + ". " + accountDescription);
 
         listener.unconfirmedAdded(account.getAddress())
-            .subscribe(c -> System.out.println(accountDescription + " received unconfirmedAdded transaction " + c));
+            .subscribe(c -> System.out
+                .println(accountDescription + " received unconfirmedAdded transaction " + c));
 
         listener.confirmed(account.getAddress())
-            .subscribe(c -> System.out.println(accountDescription + " received confirmed transaction " + c));
+            .subscribe(c -> System.out
+                .println(accountDescription + " received confirmed transaction " + c));
 
         listener.cosignatureAdded(account.getAddress())
-            .subscribe(c -> System.out.println(accountDescription + " Received cosignatureAdded transaction " + c));
+            .subscribe(c -> System.out
+                .println(accountDescription + " Received cosignatureAdded transaction " + c));
 
         listener.status(account.getAddress())
             .subscribe(c -> System.out.println(accountDescription + " Error: " + c.getStatus()));

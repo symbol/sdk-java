@@ -34,10 +34,14 @@ import io.nem.sdk.model.transaction.JsonHelper;
 import io.nem.sdk.model.transaction.Transaction;
 import io.nem.sdk.model.transaction.TransactionStatusError;
 import io.reactivex.Observable;
+import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 
 /**
  * Abstract class for all the repository integration tests.
@@ -61,12 +65,33 @@ public abstract class BaseIntegrationTest {
 
     private static final Config CONFIG = Config.getInstance();
     private final NetworkType networkType = this.config().getNetworkType();
-    private final String generationHash = this.config().getGenerationHash();
     private final Long timeoutSeconds = this.config().getTimeoutSeconds();
     private final Map<RepositoryType, RepositoryFactory> repositoryFactoryMap = new HashMap<>();
     private final Map<RepositoryType, Listener> listenerMap = new HashMap<>();
     private final JsonHelper jsonHelper = new JsonHelperJackson2(
         JsonHelperJackson2.configureMapper(new ObjectMapper()));
+    private String generationHash = this.config().getGenerationHash();
+
+    @BeforeAll
+    void setUp() {
+        System.out.println("Running tests against server: " + config().getApiUrl());
+        generationHash = resolveGenerationHash();
+        System.out.println("Generation Hash: " + generationHash);
+    }
+
+    @BeforeEach
+    void coolDown() throws InterruptedException {
+        //To avoid rate-limiting errors from server. (5 per seconds)
+        Thread.sleep(500);
+    }
+
+    private String resolveGenerationHash() {
+        return Optional.ofNullable(this.config().getGenerationHash()).orElseGet(
+            () -> get(getRepositoryFactory(DEFAULT_REPOSITORY_TYPE).createBlockRepository()
+                .getBlockByHeight(
+                    BigInteger.ONE)).getGenerationHash());
+
+    }
 
     @AfterAll
     void tearDown() {
@@ -220,6 +245,11 @@ public abstract class BaseIntegrationTest {
         return transaction;
     }
 
+    /**
+     * This method listens for the next object in observable but if a status error happens first it
+     * will raise an error. This speeds up the tests, if a transaction is not announced  correctly,
+     * the method will fail before timing out as it listens errors raised by the server.
+     */
     private <T> T getTransactionOrFail(Address address, Listener listener,
         Observable<T> observable) {
         Observable<Object> errorOrTransactionObservable = Observable
@@ -232,5 +262,6 @@ public abstract class BaseIntegrationTest {
         }
         return (T) errorOrTransaction;
     }
+
 
 }

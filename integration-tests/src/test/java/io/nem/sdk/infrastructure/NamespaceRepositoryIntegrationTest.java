@@ -42,12 +42,10 @@ import org.junit.jupiter.params.provider.EnumSource;
 //TODO Broken!!
 class NamespaceRepositoryIntegrationTest extends BaseIntegrationTest {
 
-    private PublicAccount publicAccount;
     private NamespaceId namespaceId;
 
     @BeforeAll
     void setup() {
-        publicAccount = config().getTestAccount().getPublicAccount();
         namespaceId = NetworkCurrencyMosaic.NAMESPACEID;
     }
 
@@ -95,9 +93,14 @@ class NamespaceRepositoryIntegrationTest extends BaseIntegrationTest {
             get(getNamespaceRepository(type)
                 .getNamespaceNames(Collections.singletonList(namespaceId)));
 
-        Assertions.assertTrue(namespaceNames.stream().anyMatch(n ->
-            Objects.equals(namespaceId.getIdAsHex(), n.getNamespaceId().getIdAsHex())
-        ));
+        Assertions.assertEquals(2, namespaceNames.size());
+        Assertions.assertEquals("currency", namespaceNames.get(0).getName());
+        Assertions.assertTrue(namespaceNames.get(0).getParentId().isPresent());
+
+        Assertions.assertEquals("cat", namespaceNames.get(1).getName());
+        Assertions.assertFalse(namespaceNames.get(1).getParentId().isPresent());
+
+
     }
 
     @ParameterizedTest

@@ -60,6 +60,7 @@ public class SetUpAccountsTool extends BaseIntegrationTest {
     }
 
     private void createAccounts() {
+        setUp();
 
         sendMosaicFromNemesis(config().getTestAccount());
         sendMosaicFromNemesis(config().getTestAccount2());

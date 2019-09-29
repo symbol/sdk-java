@@ -24,6 +24,7 @@ import io.nem.core.crypto.PublicKey;
 import io.nem.sdk.api.AccountRepository;
 import io.nem.sdk.api.QueryParams;
 import io.nem.sdk.api.RepositoryCallException;
+import io.nem.sdk.model.account.Account;
 import io.nem.sdk.model.account.AccountInfo;
 import io.nem.sdk.model.account.AccountNames;
 import io.nem.sdk.model.account.AccountType;
@@ -157,31 +158,26 @@ class AccountRepositoryIntegrationTest extends BaseIntegrationTest {
 
     @ParameterizedTest
     @EnumSource(RepositoryType.class)
-    void transactions(RepositoryType type) {
-        List<Transaction> transactions = get(
-            this.getAccountRepository(type).transactions(this.getTestPublicAccount()));
-        assertEquals(10, transactions.size());
-    }
-
-    @ParameterizedTest
-    @EnumSource(RepositoryType.class)
     void transactionsWithPagination(RepositoryType type) {
+        Account account = this.config().getTestAccount();
         List<Transaction> transactions = get(
-            this.getAccountRepository(type).transactions(this.getTestPublicAccount()));
+            this.getAccountRepository(type).transactions(account.getPublicAccount()));
 
-        assertEquals(10, transactions.size());
+        Assertions.assertTrue(transactions.size() > 1);
 
         List<Transaction> nextTransactions =
             get(this.getAccountRepository(type)
                 .transactions(
-                    this.getTestPublicAccount(),
-                    new QueryParams(11,
+                    account.getPublicAccount(),
+                    new QueryParams(transactions.size() - 1,
                         transactions.get(0).getTransactionInfo().get().getId().get())));
 
-        assertEquals(11, nextTransactions.size());
+        assertEquals(transactions.size() - 1, nextTransactions.size());
+
         assertEquals(
             transactions.get(1).getTransactionInfo().get().getHash(),
             nextTransactions.get(0).getTransactionInfo().get().getHash());
+
     }
 
     @ParameterizedTest

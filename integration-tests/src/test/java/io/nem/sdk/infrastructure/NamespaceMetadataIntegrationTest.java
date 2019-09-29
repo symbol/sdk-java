@@ -54,7 +54,7 @@ public class NamespaceMetadataIntegrationTest extends BaseIntegrationTest {
 
         NamespaceId targetNamespaceId = createNamespace(type);
 
-        System.out.println("Setting metadata to namespace " + targetNamespaceId.getId());
+        System.out.println("Setting metadata " + targetNamespaceId.getIdAsHex());
 
         String message = "This is the message in the Namespace!";
         NamespaceMetadataTransaction transaction =
@@ -93,8 +93,9 @@ public class NamespaceMetadataIntegrationTest extends BaseIntegrationTest {
             .getInnerTransactions()
             .get(0);
 
-//        Assertions.assertEquals(transaction.getTargetNamespaceId(),
-//            processedTransaction.getTargetNamespaceId());
+        //TODO problem comparing namespaces, sometime they are negative big integers
+        Assertions.assertEquals(transaction.getTargetNamespaceId().getIdAsHex(),
+            processedTransaction.getTargetNamespaceId().getIdAsHex());
         Assertions.assertEquals(transaction.getValueSizeDelta(),
             processedTransaction.getValueSizeDelta());
         Assertions.assertEquals(transaction.getValueSize(), processedTransaction.getValueSize());
@@ -126,9 +127,19 @@ public class NamespaceMetadataIntegrationTest extends BaseIntegrationTest {
             "packet 9 was pushed to the network via /transaction",
             transactionAnnounceResponse.getMessage());
 
-        Transaction transaction = this.validateTransactionAnnounceCorrectly(
-            testAccount.getAddress(), signedTransaction.getHash(), type);
-        Assertions.assertEquals(TransactionType.REGISTER_NAMESPACE, transaction.getType());
+        NamespaceRegistrationTransaction processedTransaction = (NamespaceRegistrationTransaction) this
+            .validateTransactionAnnounceCorrectly(
+                testAccount.getAddress(), signedTransaction.getHash(), type);
+        Assertions.assertEquals(TransactionType.REGISTER_NAMESPACE, processedTransaction.getType());
+        Assertions.assertEquals(namespaceRegistrationTransaction.getNamespaceId().getIdAsHex(),
+            processedTransaction.getNamespaceId().getIdAsHex());
+
+//TODO  https://nem.atlassian.net/browse/JS-52
+//        Assertions.assertEquals(namespaceRegistrationTransaction.getNamespaceId().getId(),
+//            processedTransaction.getNamespaceId().getId());
+
+        Assertions.assertEquals(namespaceRegistrationTransaction.getNamespaceName(),
+            processedTransaction.getNamespaceName());
         System.out.println("Namespace created");
         return namespaceRegistrationTransaction.getNamespaceId();
     }
