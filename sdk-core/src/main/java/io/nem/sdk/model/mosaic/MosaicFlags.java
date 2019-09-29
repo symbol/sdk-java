@@ -16,9 +16,6 @@
 
 package io.nem.sdk.model.mosaic;
 
-import java.math.BigInteger;
-import org.apache.commons.lang3.Validate;
-
 /**
  * The mosaic flags structure describes mosaic flags.
  *
