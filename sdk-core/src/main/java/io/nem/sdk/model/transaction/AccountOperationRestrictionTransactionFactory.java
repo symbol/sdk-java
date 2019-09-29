@@ -55,7 +55,7 @@ public class AccountOperationRestrictionTransactionFactory extends
     /**
      * Get account operation restriction modifications
      *
-     * @return {@link List<AccountRestrictionModification<TransactionType>>}
+     * @return list of {@link AccountRestrictionModification}
      */
     public List<AccountRestrictionModification<TransactionType>> getModifications() {
         return this.modifications;
