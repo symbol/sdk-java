@@ -4,11 +4,13 @@ buildscript {
     }
     dependencies {
         classpath 'org.ajoberstar:gradle-git:1.7.2'
+        classpath 'net.researchgate:gradle-release:2.6.0'
     }
 }
 
 plugins {
     id "org.openapi.generator" version "4.1.0"
+    id 'ch.netzwerg.release' version '1.2.5'
 }
 
 task clean(type: Delete) {
@@ -16,7 +18,7 @@ task clean(type: Delete) {
 }
 
 ext {
-    artifactVersion = '0.7.18-SNAPSHOT'
+    artifactVersion = rootProject.file('version.txt').text.trim()
 }
 
 //NOTE - For some reason the library field is ignored. I had to create a configFile per library.
@@ -159,3 +161,5 @@ subprojects {
         }
     }
 }
+
+release.dependsOn subprojects.install

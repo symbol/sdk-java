@@ -23,11 +23,13 @@ buildscript {
         classpath "org.kt3k.gradle.plugin:coveralls-gradle-plugin:2.8.2"
         classpath 'org.ajoberstar:gradle-git:1.7.2'
         classpath 'com.netflix.nebula:gradle-aggregate-javadocs-plugin:3.0.1'
+        classpath 'net.researchgate:gradle-release:2.6.0'
     }
 }
 
 plugins {
     id "org.sonarqube" version "2.7"
+    id 'ch.netzwerg.release' version '1.2.5'
 }
 
 apply plugin: 'org.ajoberstar.github-pages'
@@ -36,7 +38,7 @@ apply plugin: 'jacoco'
 apply plugin: 'nebula-aggregate-javadocs'
 
 
-def artifactVersion = '0.13.0-SNAPSHOT'
+def artifactVersion = rootProject.file('version.txt').text.trim()
 
 ext {
     vertxVersion = "3.5.0"
@@ -238,6 +240,8 @@ subprojects {
     }
 }
 
+release.dependsOn subprojects.build
+
 def publishedProjects = subprojects
 
 task jacocoMerge(type: JacocoMerge) {
@@ -320,7 +324,7 @@ def gitBranch() {
 
 sonarqube {
     properties {
- //       property "sonar.branch.name", sonarBranchName == null ? gitBranch() : sonarBranchName
+        //       property "sonar.branch.name", sonarBranchName == null ? gitBranch() : sonarBranchName
         property "sonar.projectKey", sonarProjectKey
         property "sonar.projectName", sonarProjectKey
         property "sonar.organization", sonarOrganization
