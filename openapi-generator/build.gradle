@@ -1,3 +1,12 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'org.ajoberstar:gradle-git:1.7.2'
+    }
+}
+
 plugins {
     id "org.openapi.generator" version "4.1.0"
 }
@@ -7,14 +16,14 @@ task clean(type: Delete) {
 }
 
 ext {
-    generateVersion = "0.7.18-SNAPSHOT"
+    artifactVersion = '0.7.18-SNAPSHOT'
 }
 
 //NOTE - For some reason the library field is ignored. I had to create a configFile per library.
 
 ["vertx", "okhttp-gson", "jersey2"].eachWithIndex { library, index ->
     task "generate_${library}"(type: org.openapitools.generator.gradle.plugin.tasks.GenerateTask) {
-        version = "${generateVersion}".toString()
+        version = "${artifactVersion}".toString()
         id = "api-${library}-client".toString()
         configFile = "$rootDir/${library}.json".toString()
         library = "${library}".toString()
@@ -48,15 +57,23 @@ def signingSecretKeyRingFile = getPropertyValue('signingSecretKeyRingFile')
 def signingKeyId = getPropertyValue('signingKeyId')
 def signingPassword = getPropertyValue('signingPassword')
 
+def githubToken = getPropertyValue('githubToken')
+def repoPath = getPropertyValue('TRAVIS_REPO_SLUG')
+
 allprojects {
     ext."signing.keyId" = signingKeyId
     ext."signing.secretKeyRingFile" = signingSecretKeyRingFile
     ext."signing.password" = signingPassword
 }
 
+task githubPages {
+    subprojects.each { dependsOn("${it.name}:githubPages") }
+}
+
 subprojects {
     apply plugin: 'java'
     apply plugin: 'maven'
+    apply plugin: 'org.ajoberstar.github-pages'
 
     javadoc {
         failOnError = false
@@ -70,6 +87,26 @@ subprojects {
     task javadocJar(type: Jar) {
         classifier = 'javadoc'
         from javadoc
+    }
+
+    githubPages {
+        System.out.println("$buildDir/docs/javadoc")
+        if (githubToken) {
+            repoUri = "https://github.com/${repoPath}.git".toString()
+            credentials {
+                username = githubToken
+                password = ''
+            }
+        } else {
+            repoUri = "git@github.com:${repoPath}.git".toString()
+        }
+        deleteExistingFiles = false
+        commitMessage = "Publishing Generated Client Javadocs for version ${artifactVersion}".toString()
+        pages {
+            from(file("$buildDir/docs/javadoc")) {
+                into "client/${project.name}/javadoc/${artifactVersion}".toString()
+            }
+        }
     }
 
     artifacts {
