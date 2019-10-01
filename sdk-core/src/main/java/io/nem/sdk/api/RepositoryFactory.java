@@ -78,6 +78,11 @@ public interface RepositoryFactory extends Closeable {
     MetadataRepository createMetadataRepository();
 
     /**
+     * @return a newly created {@link RestrictionRepository}
+     */
+    RestrictionRepository createRestrictionRepository();
+
+    /**
      * @return a newly created {@link Listener}
      */
     Listener createListener();

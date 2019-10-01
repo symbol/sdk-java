@@ -16,6 +16,7 @@
 
 package io.nem.sdk.model.metadata;
 
+import io.nem.core.utils.MapperUtils;
 import io.nem.sdk.model.mosaic.MosaicId;
 import io.nem.sdk.model.namespace.NamespaceId;
 import io.nem.sdk.model.transaction.UInt64Id;
@@ -90,14 +91,12 @@ public class MetadataEntry {
             return Optional.empty();
         }
         if (metadataType == MetadataType.NAMESPACE) {
-            return targetId.map(s -> NamespaceId.createFromId(new BigInteger(s)));
+            return targetId.map(MapperUtils::toNamespaceId);
         }
         if (metadataType == MetadataType.MOSAIC) {
-            return targetId.map(s -> new MosaicId(new BigInteger(s)));
+            return targetId.map(MapperUtils::toMosaicId);
         }
-        throw new IllegalArgumentException(
-            "Cannot resolve target id for metadata type " + metadataType + " and value "
-                + targetId);
+        return Optional.empty();
     }
 
     public String getCompositeHash() {

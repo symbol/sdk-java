@@ -22,6 +22,8 @@ import io.nem.core.utils.ConvertUtils;
 import io.nem.sdk.model.account.Account;
 import io.nem.sdk.model.blockchain.BlockDuration;
 import io.nem.sdk.model.blockchain.NetworkType;
+import io.nem.sdk.model.metadata.Metadata;
+import io.nem.sdk.model.metadata.MetadataType;
 import io.nem.sdk.model.mosaic.MosaicFlags;
 import io.nem.sdk.model.mosaic.MosaicId;
 import io.nem.sdk.model.mosaic.MosaicNonce;
@@ -31,10 +33,14 @@ import io.nem.sdk.model.transaction.MosaicDefinitionTransaction;
 import io.nem.sdk.model.transaction.MosaicDefinitionTransactionFactory;
 import io.nem.sdk.model.transaction.MosaicMetadataTransaction;
 import io.nem.sdk.model.transaction.MosaicMetadataTransactionFactory;
+import io.nem.sdk.model.transaction.NamespaceMetadataTransaction;
 import io.nem.sdk.model.transaction.SignedTransaction;
 import io.nem.sdk.model.transaction.TransactionAnnounceResponse;
 import java.math.BigInteger;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 import org.apache.commons.codec.binary.Base32;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.TestInstance;
@@ -52,16 +58,16 @@ public class MosaicMetadataIntegrationTest extends BaseIntegrationTest {
 
     @ParameterizedTest
     @EnumSource(RepositoryType.class)
-    public void addMetadataToMosaic(RepositoryType type) {
+    public void addMetadataToMosaic(RepositoryType type) throws InterruptedException {
 
         MosaicId targetMosaicId = createMosaic(type);
-        System.out.println(targetMosaicId);
 
         String message = "This is the message in the mosaic!";
+        BigInteger key = BigInteger.TEN;
         MosaicMetadataTransaction transaction =
             new MosaicMetadataTransactionFactory(
                 getNetworkType(), testAccount.getPublicAccount(), targetMosaicId,
-                BigInteger.TEN, message
+                key, message
             ).build();
 
         AggregateTransaction aggregateTransaction = AggregateTransactionFactory
@@ -69,19 +75,8 @@ public class MosaicMetadataIntegrationTest extends BaseIntegrationTest {
                 Collections.singletonList(transaction.toAggregate(testAccount.getPublicAccount())))
             .build();
 
-        SignedTransaction signedTransaction = testAccount
-            .sign(aggregateTransaction, getGenerationHash());
-
-        TransactionAnnounceResponse transactionAnnounceResponse =
-            get(getRepositoryFactory(type).createTransactionRepository()
-                .announce(signedTransaction));
-        assertEquals(
-            "packet 9 was pushed to the network via /transaction",
-            transactionAnnounceResponse.getMessage());
-
-        AggregateTransaction announceCorrectly = (AggregateTransaction) this
-            .validateTransactionAnnounceCorrectly(
-                testAccount.getAddress(), signedTransaction.getHash(), type);
+        AggregateTransaction announceCorrectly = announceAndValidate(type, testAccount,
+            aggregateTransaction);
 
         Assertions.assertEquals(aggregateTransaction.getType(), announceCorrectly.getType());
         Assertions
@@ -98,9 +93,54 @@ public class MosaicMetadataIntegrationTest extends BaseIntegrationTest {
             processedTransaction.getTargetMosaicId());
         Assertions.assertEquals(transaction.getValueSizeDelta(),
             processedTransaction.getValueSizeDelta());
+
+        Assertions.assertEquals(transaction.getScopedMetadataKey(),
+            processedTransaction.getScopedMetadataKey());
+
         Assertions.assertEquals(transaction.getValueSize(), processedTransaction.getValueSize());
 
+        Thread.sleep(2000);
+        List<Metadata> metadata = get(getRepositoryFactory(type).createMetadataRepository()
+            .getMosaicMetadata(targetMosaicId,
+                Optional.empty()));
+
+        assertMetadata(transaction, metadata);
+
+        assertMetadata(transaction, get(getRepositoryFactory(type).createMetadataRepository()
+            .getMosaicMetadataByKey(targetMosaicId, key)));
+
+        assertMetadata(transaction,
+            Collections.singletonList(get(getRepositoryFactory(type).createMetadataRepository()
+                .getMosaicMetadataByKeyAndSender(targetMosaicId, key,
+                    testAccount.getPublicKey()))));
+
+        assertMetadata(transaction, metadata);
         Assertions.assertEquals(message, processedTransaction.getValue());
+    }
+
+
+    private String assertMetadata(MosaicMetadataTransaction transaction,
+        List<Metadata> metadata) {
+
+        Optional<Metadata> endpointMetadata = metadata.stream().filter(
+            m -> m.getMetadataEntry().getScopedMetadataKey()
+                .equals(transaction.getScopedMetadataKey()) &&
+                m.getMetadataEntry().getValueSize()
+                    .equals(transaction.getValueSize()) &&
+                m.getMetadataEntry().getMetadataType()
+                    .equals(MetadataType.MOSAIC) &&
+                m.getMetadataEntry()
+                    .getTargetPublicKey().equals(testAccount.getPublicKey())).findFirst();
+
+        Assertions.assertTrue(endpointMetadata.isPresent());
+        System.out.println(endpointMetadata.get().getId());
+
+        Assertions.assertEquals(transaction.getTargetMosaicId().getIdAsHex(),
+            endpointMetadata.get().getMetadataEntry().getTargetId().get().getIdAsHex());
+
+        Assertions.assertEquals(transaction.getValue(),
+            endpointMetadata.get().getMetadataEntry().getValue());
+        return endpointMetadata.get().getId();
     }
 
 
@@ -115,16 +155,9 @@ public class MosaicMetadataIntegrationTest extends BaseIntegrationTest {
                 MosaicFlags.create(true, true, true),
                 4, new BlockDuration(100)).build();
 
-        SignedTransaction signedTransaction =
-            testAccount.sign(mosaicDefinitionTransaction, getGenerationHash());
-
-        TransactionAnnounceResponse transactionAnnounceResponse =
-            get(getRepositoryFactory(type).createTransactionRepository()
-                .announce(signedTransaction));
-        System.out.println(transactionAnnounceResponse.getMessage());
-
-        this.validateTransactionAnnounceCorrectly(testAccount.getAddress(),
-            signedTransaction.getHash(), type);
+        MosaicDefinitionTransaction validateTransaction = announceAndValidate(type,
+            testAccount, mosaicDefinitionTransaction);
+        Assertions.assertEquals(mosaicId, validateTransaction.getMosaicId());
         return mosaicId;
     }
 }

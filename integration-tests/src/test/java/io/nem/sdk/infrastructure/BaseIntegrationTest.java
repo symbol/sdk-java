@@ -29,17 +29,22 @@ import io.nem.sdk.model.account.Address;
 import io.nem.sdk.model.account.PublicAccount;
 import io.nem.sdk.model.blockchain.NetworkType;
 import io.nem.sdk.model.transaction.AggregateTransaction;
+import io.nem.sdk.model.transaction.AggregateTransactionFactory;
 import io.nem.sdk.model.transaction.CosignatureSignedTransaction;
 import io.nem.sdk.model.transaction.JsonHelper;
+import io.nem.sdk.model.transaction.SignedTransaction;
 import io.nem.sdk.model.transaction.Transaction;
+import io.nem.sdk.model.transaction.TransactionAnnounceResponse;
 import io.nem.sdk.model.transaction.TransactionStatusError;
 import io.reactivex.Observable;
 import java.math.BigInteger;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 
@@ -209,6 +214,27 @@ public abstract class BaseIntegrationTest {
      */
     public Listener getListener(RepositoryType type) {
         return listenerMap.computeIfAbsent(type, this::createListener);
+    }
+
+
+    <T extends Transaction> T announceAndValidate(RepositoryType type, Account testAccount,
+        T transaction) {
+
+        SignedTransaction signedTransaction = testAccount
+            .sign(transaction, getGenerationHash());
+
+        TransactionAnnounceResponse transactionAnnounceResponse =
+            get(getRepositoryFactory(type).createTransactionRepository()
+                .announce(signedTransaction));
+        assertEquals(
+            "packet 9 was pushed to the network via /transaction",
+            transactionAnnounceResponse.getMessage());
+
+        Transaction announceCorrectly = this
+            .validateTransactionAnnounceCorrectly(
+                testAccount.getAddress(), signedTransaction.getHash(), type);
+        Assertions.assertEquals(announceCorrectly.getType(), transaction.getType());
+        return (T) announceCorrectly;
     }
 
 

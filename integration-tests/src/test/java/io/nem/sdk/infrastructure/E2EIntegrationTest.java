@@ -99,7 +99,7 @@ class E2EIntegrationTest extends BaseIntegrationTest {
 
     @BeforeAll
     void setup() {
-        account = this.getTestAccount();
+        account = this.config().getNemesisAccount();
         recipient = this.getRecipient();
         multisigAccount = this.getTestMultisigAccount();
         cosignatoryAccount = this.getTestCosignatoryAccount();
@@ -121,19 +121,7 @@ class E2EIntegrationTest extends BaseIntegrationTest {
                 new PlainMessage("E2ETest:standaloneTransferTransaction:message")
             ).build();
 
-        SignedTransaction signedTransaction = this.account
-            .sign(transferTransaction, generationHash);
-        String payload = signedTransaction.getPayload();
-        assertEquals(420, payload.length());
-
-        TransactionAnnounceResponse transactionAnnounceResponse =
-            get(getTransactionRepository(type).announce(signedTransaction));
-        assertEquals(
-            "packet 9 was pushed to the network via /transaction",
-            transactionAnnounceResponse.getMessage());
-
-        this.validateTransactionAnnounceCorrectly(
-            this.account.getAddress(), signedTransaction.getHash(), type);
+        announceAndValidate(type, this.account, transferTransaction);
     }
 
     @ParameterizedTest
@@ -171,15 +159,7 @@ class E2EIntegrationTest extends BaseIntegrationTest {
                 Collections.singletonList(
                     transferTransaction.toAggregate(this.account.getPublicAccount()))).build();
 
-        SignedTransaction signedTransaction = this.account
-            .sign(aggregateTransaction, generationHash);
-
-        TransactionAnnounceResponse transactionAnnounceResponse =
-            get(getTransactionRepository(type).announce(signedTransaction));
-        System.out.println(transactionAnnounceResponse.getMessage());
-
-        this.validateTransactionAnnounceCorrectly(
-            this.account.getAddress(), signedTransaction.getHash(), type);
+        announceAndValidate(type, this.account, aggregateTransaction);
     }
 
     private TransactionRepository getTransactionRepository(
@@ -201,15 +181,7 @@ class E2EIntegrationTest extends BaseIntegrationTest {
 
         this.rootNamespaceId = namespaceRegistrationTransaction.getNamespaceId();
 
-        SignedTransaction signedTransaction =
-            this.account.sign(namespaceRegistrationTransaction, generationHash);
-
-        TransactionAnnounceResponse transactionAnnounceResponse =
-            get(getTransactionRepository(type).announce(signedTransaction));
-        System.out.println(transactionAnnounceResponse.getMessage());
-
-        this.validateTransactionAnnounceCorrectly(
-            this.account.getAddress(), signedTransaction.getHash(), type);
+        announceAndValidate(type, this.account, namespaceRegistrationTransaction);
     }
 
     @ParameterizedTest
@@ -232,15 +204,7 @@ class E2EIntegrationTest extends BaseIntegrationTest {
                     namespaceRegistrationTransaction.toAggregate(this.account.getPublicAccount()))
             ).build();
 
-        SignedTransaction signedTransaction = this.account
-            .sign(aggregateTransaction, generationHash);
-
-        TransactionAnnounceResponse transactionAnnounceResponse =
-            get(getTransactionRepository(type).announce(signedTransaction));
-        System.out.println(transactionAnnounceResponse.getMessage());
-
-        this.validateTransactionAnnounceCorrectly(
-            this.account.getAddress(), signedTransaction.getHash(), type);
+        announceAndValidate(type, this.account, aggregateTransaction);
     }
 
 
@@ -266,15 +230,7 @@ class E2EIntegrationTest extends BaseIntegrationTest {
                     namespaceRegistrationTransaction.toAggregate(this.account.getPublicAccount()))
             ).build();
 
-        SignedTransaction signedTransaction = this.account
-            .sign(aggregateTransaction, generationHash);
-
-        TransactionAnnounceResponse transactionAnnounceResponse =
-            get(getTransactionRepository(type).announce(signedTransaction));
-        System.out.println(transactionAnnounceResponse.getMessage());
-
-        this.validateTransactionAnnounceCorrectly(
-            this.account.getAddress(), signedTransaction.getHash(), type);
+        announceAndValidate(type, this.account, aggregateTransaction);
 
         this.rootNamespaceId = namespaceRegistrationTransaction.getNamespaceId();
 
@@ -292,15 +248,7 @@ class E2EIntegrationTest extends BaseIntegrationTest {
                     addressAliasTransaction.toAggregate(this.account.getPublicAccount()))
             ).build();
 
-        SignedTransaction signedTransaction2 = this.account
-            .sign(aggregateTransaction2, generationHash);
-
-        TransactionAnnounceResponse transactionAnnounceResponse2 =
-            get(getTransactionRepository(type).announce(signedTransaction2));
-        System.out.println(transactionAnnounceResponse2.getMessage());
-
-        this.validateTransactionAnnounceCorrectly(
-            this.account.getAddress(), signedTransaction2.getHash(), type);
+        announceAndValidate(type, this.account, aggregateTransaction2);
 
         List<AccountNames> accountNames = get(getRepositoryFactory(type).createAccountRepository()
             .getAccountsNamesFromAddresses(Collections.singletonList(this.account.getAddress())));
@@ -329,15 +277,7 @@ class E2EIntegrationTest extends BaseIntegrationTest {
                 namespaceName,
                 this.rootNamespaceId).build();
 
-        SignedTransaction signedTransaction =
-            this.account.sign(namespaceRegistrationTransaction, generationHash);
-
-        TransactionAnnounceResponse transactionAnnounceResponse =
-            get(getTransactionRepository(type).announce(signedTransaction));
-        System.out.println(transactionAnnounceResponse.getMessage());
-
-        this.validateTransactionAnnounceCorrectly(
-            this.account.getAddress(), signedTransaction.getHash(), type);
+        announceAndValidate(type, this.account, namespaceRegistrationTransaction);
     }
 
     @ParameterizedTest
@@ -362,15 +302,7 @@ class E2EIntegrationTest extends BaseIntegrationTest {
                     namespaceRegistrationTransaction.toAggregate(this.account.getPublicAccount()))
             ).build();
 
-        SignedTransaction signedTransaction = this.account
-            .sign(aggregateTransaction, generationHash);
-
-        TransactionAnnounceResponse transactionAnnounceResponse =
-            get(getTransactionRepository(type).announce(signedTransaction));
-        System.out.println(transactionAnnounceResponse.getMessage());
-
-        this.validateTransactionAnnounceCorrectly(
-            this.account.getAddress(), signedTransaction.getHash(), type);
+        announceAndValidate(type, this.account, aggregateTransaction);
     }
 
     @ParameterizedTest
@@ -387,15 +319,7 @@ class E2EIntegrationTest extends BaseIntegrationTest {
                 MosaicFlags.create(true, true, true),
                 4, new BlockDuration(100)).build();
 
-        SignedTransaction signedTransaction =
-            this.account.sign(mosaicDefinitionTransaction, generationHash);
-
-        TransactionAnnounceResponse transactionAnnounceResponse =
-            get(getTransactionRepository(type).announce(signedTransaction));
-        System.out.println(transactionAnnounceResponse.getMessage());
-
-        this.validateTransactionAnnounceCorrectly(
-            this.account.getAddress(), signedTransaction.getHash(), type);
+        announceAndValidate(type, this.account, mosaicDefinitionTransaction);
     }
 
     @ParameterizedTest
@@ -428,15 +352,7 @@ class E2EIntegrationTest extends BaseIntegrationTest {
                     namespaceRegistrationTransaction.toAggregate(this.account.getPublicAccount()))
             ).build();
 
-        SignedTransaction signedTransaction = this.account
-            .sign(aggregateTransaction, generationHash);
-
-        TransactionAnnounceResponse transactionAnnounceResponse =
-            get(getTransactionRepository(type).announce(signedTransaction));
-        System.out.println(transactionAnnounceResponse.getMessage());
-
-        this.validateTransactionAnnounceCorrectly(
-            this.account.getAddress(), signedTransaction.getHash(), type);
+        announceAndValidate(type, this.account, aggregateTransaction);
 
         this.rootNamespaceId = namespaceRegistrationTransaction.getNamespaceId();
 
@@ -571,15 +487,7 @@ class E2EIntegrationTest extends BaseIntegrationTest {
                     mosaicSupplyChangeTransaction.toAggregate(this.account.getPublicAccount()))
             ).build();
 
-        SignedTransaction signedTransaction = this.account
-            .sign(aggregateTransaction, generationHash);
-
-        TransactionAnnounceResponse transactionAnnounceResponse =
-            get(getTransactionRepository(type).announce(signedTransaction));
-        System.out.println(transactionAnnounceResponse.getMessage());
-
-        this.validateTransactionAnnounceCorrectly(
-            this.account.getAddress(), signedTransaction.getHash(), type);
+        announceAndValidate(type, this.account, aggregateTransaction);
     }
 
     @ParameterizedTest

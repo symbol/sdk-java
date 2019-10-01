@@ -19,21 +19,21 @@ package io.nem.sdk.infrastructure;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import io.nem.sdk.model.account.Account;
-import io.nem.sdk.model.blockchain.NetworkType;
-import io.nem.sdk.model.mosaic.NetworkCurrencyMosaic;
+import io.nem.sdk.model.metadata.Metadata;
+import io.nem.sdk.model.metadata.MetadataType;
 import io.nem.sdk.model.namespace.NamespaceId;
+import io.nem.sdk.model.transaction.AccountMetadataTransaction;
 import io.nem.sdk.model.transaction.AggregateTransaction;
 import io.nem.sdk.model.transaction.AggregateTransactionFactory;
 import io.nem.sdk.model.transaction.NamespaceMetadataTransaction;
 import io.nem.sdk.model.transaction.NamespaceMetadataTransactionFactory;
 import io.nem.sdk.model.transaction.NamespaceRegistrationTransaction;
 import io.nem.sdk.model.transaction.NamespaceRegistrationTransactionFactory;
-import io.nem.sdk.model.transaction.SignedTransaction;
-import io.nem.sdk.model.transaction.Transaction;
-import io.nem.sdk.model.transaction.TransactionAnnounceResponse;
-import io.nem.sdk.model.transaction.TransactionType;
 import java.math.BigInteger;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -50,17 +50,18 @@ public class NamespaceMetadataIntegrationTest extends BaseIntegrationTest {
 
     @ParameterizedTest
     @EnumSource(RepositoryType.class)
-    public void addMetadataToNamespace(RepositoryType type) {
+    public void addMetadataToNamespace(RepositoryType type) throws InterruptedException {
 
         NamespaceId targetNamespaceId = createNamespace(type);
 
         System.out.println("Setting metadata " + targetNamespaceId.getIdAsHex());
 
         String message = "This is the message in the Namespace!";
+        BigInteger key = BigInteger.TEN;
         NamespaceMetadataTransaction transaction =
             new NamespaceMetadataTransactionFactory(
                 getNetworkType(), testAccount.getPublicAccount(), targetNamespaceId,
-                BigInteger.TEN, message
+                key, message
             ).build();
 
         AggregateTransaction aggregateTransaction = AggregateTransactionFactory
@@ -68,21 +69,9 @@ public class NamespaceMetadataIntegrationTest extends BaseIntegrationTest {
                 Collections.singletonList(transaction.toAggregate(testAccount.getPublicAccount())))
             .build();
 
-        SignedTransaction signedTransaction = testAccount
-            .sign(aggregateTransaction, getGenerationHash());
+        AggregateTransaction announceCorrectly = announceAndValidate(type, testAccount,
+            aggregateTransaction);
 
-        TransactionAnnounceResponse transactionAnnounceResponse =
-            get(getRepositoryFactory(type).createTransactionRepository()
-                .announce(signedTransaction));
-        assertEquals(
-            "packet 9 was pushed to the network via /transaction",
-            transactionAnnounceResponse.getMessage());
-
-        AggregateTransaction announceCorrectly = (AggregateTransaction) this
-            .validateTransactionAnnounceCorrectly(
-                testAccount.getAddress(), signedTransaction.getHash(), type);
-
-        Assertions.assertEquals(aggregateTransaction.getType(), announceCorrectly.getType());
         Assertions
             .assertEquals(testAccount.getPublicAccount(), announceCorrectly.getSigner().get());
         Assertions.assertEquals(1, announceCorrectly.getInnerTransactions().size());
@@ -98,10 +87,56 @@ public class NamespaceMetadataIntegrationTest extends BaseIntegrationTest {
             processedTransaction.getTargetNamespaceId().getIdAsHex());
         Assertions.assertEquals(transaction.getValueSizeDelta(),
             processedTransaction.getValueSizeDelta());
+
+        Assertions.assertEquals(transaction.getScopedMetadataKey(),
+            processedTransaction.getScopedMetadataKey());
+
         Assertions.assertEquals(transaction.getValueSize(), processedTransaction.getValueSize());
 
         System.out.println("Metadata '" + message + "' stored!");
+
+        Thread.sleep(1000);
+
+        List<Metadata> metadata = get(getRepositoryFactory(type).createMetadataRepository()
+            .getNamespaceMetadata(targetNamespaceId,
+                Optional.empty()));
+
+        assertMetadata(transaction, metadata);
+
+        assertMetadata(transaction, get(getRepositoryFactory(type).createMetadataRepository()
+            .getNamespaceMetadataByKey(targetNamespaceId, key)));
+
+        assertMetadata(transaction,
+            Collections.singletonList(get(getRepositoryFactory(type).createMetadataRepository()
+                .getNamespaceMetadataByKeyAndSender(targetNamespaceId, key,
+                    testAccount.getPublicKey()))));
+
         Assertions.assertEquals(message, processedTransaction.getValue());
+
+    }
+
+    private String assertMetadata(NamespaceMetadataTransaction transaction,
+        List<Metadata> metadata) {
+        System.out.println(jsonHelper().print(metadata));
+
+        Optional<Metadata> endpointMetadata = metadata.stream().filter(
+            m -> m.getMetadataEntry().getScopedMetadataKey()
+                .equals(transaction.getScopedMetadataKey()) &&
+                m.getMetadataEntry().getValueSize()
+                    .equals(transaction.getValueSize()) &&
+                m.getMetadataEntry().getMetadataType()
+                    .equals(MetadataType.NAMESPACE) &&
+                m.getMetadataEntry()
+                    .getTargetPublicKey().equals(testAccount.getPublicKey())).findFirst();
+
+        Assertions.assertTrue(endpointMetadata.isPresent());
+
+        Assertions.assertEquals(transaction.getTargetNamespaceId().getIdAsHex(),
+            endpointMetadata.get().getMetadataEntry().getTargetId().get().getIdAsHex());
+
+        Assertions.assertEquals(transaction.getValue(),
+            endpointMetadata.get().getMetadataEntry().getValue());
+        return endpointMetadata.get().getId();
     }
 
     public NamespaceId createNamespace(RepositoryType type) {
@@ -116,27 +151,15 @@ public class NamespaceMetadataIntegrationTest extends BaseIntegrationTest {
             .createRootNamespace(
                 getNetworkType(), namespaceName, BigInteger.valueOf(10)).build();
 
-        SignedTransaction signedTransaction =
-            testAccount.sign(namespaceRegistrationTransaction, getGenerationHash());
+        NamespaceRegistrationTransaction processedTransaction = announceAndValidate(type,
+            testAccount, namespaceRegistrationTransaction);
 
-        TransactionAnnounceResponse transactionAnnounceResponse =
-            get(getRepositoryFactory(type).createTransactionRepository()
-                .announce(signedTransaction));
-
-        assertEquals(
-            "packet 9 was pushed to the network via /transaction",
-            transactionAnnounceResponse.getMessage());
-
-        NamespaceRegistrationTransaction processedTransaction = (NamespaceRegistrationTransaction) this
-            .validateTransactionAnnounceCorrectly(
-                testAccount.getAddress(), signedTransaction.getHash(), type);
-        Assertions.assertEquals(TransactionType.REGISTER_NAMESPACE, processedTransaction.getType());
         Assertions.assertEquals(namespaceRegistrationTransaction.getNamespaceId().getIdAsHex(),
             processedTransaction.getNamespaceId().getIdAsHex());
 
 //TODO  https://nem.atlassian.net/browse/JS-52
-//        Assertions.assertEquals(namespaceRegistrationTransaction.getNamespaceId().getId(),
-//            processedTransaction.getNamespaceId().getId());
+        Assertions.assertEquals(namespaceRegistrationTransaction.getNamespaceId().getIdAsHex(),
+            processedTransaction.getNamespaceId().getIdAsHex());
 
         Assertions.assertEquals(namespaceRegistrationTransaction.getNamespaceName(),
             processedTransaction.getNamespaceName());

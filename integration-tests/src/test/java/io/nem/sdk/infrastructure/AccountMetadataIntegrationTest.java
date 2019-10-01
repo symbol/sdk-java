@@ -18,18 +18,19 @@ package io.nem.sdk.infrastructure;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import io.nem.core.utils.ConvertUtils;
 import io.nem.sdk.model.account.Account;
-import io.nem.sdk.model.blockchain.NetworkType;
+import io.nem.sdk.model.metadata.Metadata;
+import io.nem.sdk.model.metadata.MetadataType;
 import io.nem.sdk.model.transaction.AccountMetadataTransaction;
 import io.nem.sdk.model.transaction.AccountMetadataTransactionFactory;
 import io.nem.sdk.model.transaction.AggregateTransaction;
 import io.nem.sdk.model.transaction.AggregateTransactionFactory;
-import io.nem.sdk.model.transaction.SignedTransaction;
-import io.nem.sdk.model.transaction.TransactionAnnounceResponse;
 import java.math.BigInteger;
+import java.util.Arrays;
 import java.util.Collections;
-import org.apache.commons.codec.binary.Base32;
+import java.util.List;
+import java.util.Optional;
+import java.util.Random;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -45,17 +46,17 @@ public class AccountMetadataIntegrationTest extends BaseIntegrationTest {
 
     @ParameterizedTest
     @EnumSource(RepositoryType.class)
-    public void addMetadataToAccount(RepositoryType type) {
+    public void addMetadataToAccount(RepositoryType type) throws InterruptedException {
+        BigInteger key = BigInteger.valueOf(new Random().nextInt(100000));
 
-        String message = "This is the message for this account! 汉字" + new Double(
-            Math.floor(Math.random() * 10000))
-            .intValue();
+        String message = "This is the message for this account! 汉字" + key;
         System.out.println(
             "Storing message '" + message + "' in account metadata " + testAccount.getAddress());
 
         AccountMetadataTransaction transaction =
             new AccountMetadataTransactionFactory(
-                getNetworkType(), testAccount.getPublicAccount(), BigInteger.valueOf(71),
+                getNetworkType(), testAccount.getPublicAccount(),
+                key,
                 message
             ).build();
 
@@ -64,19 +65,8 @@ public class AccountMetadataIntegrationTest extends BaseIntegrationTest {
                 Collections.singletonList(transaction.toAggregate(testAccount.getPublicAccount())))
             .build();
 
-        SignedTransaction signedTransaction = testAccount
-            .sign(aggregateTransaction, getGenerationHash());
-
-        TransactionAnnounceResponse transactionAnnounceResponse =
-            get(getRepositoryFactory(type).createTransactionRepository()
-                .announce(signedTransaction));
-        assertEquals(
-            "packet 9 was pushed to the network via /transaction",
-            transactionAnnounceResponse.getMessage());
-
-        AggregateTransaction announceCorrectly = (AggregateTransaction) this
-            .validateTransactionAnnounceCorrectly(
-                testAccount.getAddress(), signedTransaction.getHash(), type);
+        AggregateTransaction announceCorrectly = announceAndValidate(type,
+            testAccount, aggregateTransaction);
 
         Assertions.assertEquals(aggregateTransaction.getType(), announceCorrectly.getType());
         Assertions
@@ -90,8 +80,47 @@ public class AccountMetadataIntegrationTest extends BaseIntegrationTest {
             .get(0);
         Assertions.assertEquals(transaction.getValueSizeDelta(),
             processedTransaction.getValueSizeDelta());
+
+        Assertions.assertEquals(transaction.getScopedMetadataKey(),
+            processedTransaction.getScopedMetadataKey());
+
         Assertions.assertEquals(transaction.getValueSize(), processedTransaction.getValueSize());
 
+        Thread.sleep(2000L);
+
+        Metadata metadata = assertMetadata(transaction,
+            get(getRepositoryFactory(type).createMetadataRepository()
+                .getAccountMetadata(testAccount.getAddress(),
+                    Optional.empty())));
+
+        assertMetadata(transaction, get(getRepositoryFactory(type).createMetadataRepository()
+            .getAccountMetadataByKey(testAccount.getAddress(),
+                metadata.getMetadataEntry().getScopedMetadataKey())));
+
+        assertMetadata(transaction,
+            Collections.singletonList(get(getRepositoryFactory(type).createMetadataRepository()
+                .getAccountMetadataByKeyAndSender(testAccount.getAddress(), key,
+                    testAccount.getPublicKey()))));
+
         Assertions.assertEquals(message, processedTransaction.getValue());
+    }
+
+    private Metadata assertMetadata(AccountMetadataTransaction transaction,
+        List<Metadata> metadata) {
+
+        Optional<Metadata> endpointMetadata = metadata.stream().filter(
+            m -> m.getMetadataEntry().getScopedMetadataKey()
+                .equals(transaction.getScopedMetadataKey()) &&
+                m.getMetadataEntry().getValueSize()
+                    .equals(transaction.getValueSize()) &&
+                m.getMetadataEntry().getMetadataType()
+                    .equals(MetadataType.ACCOUNT) &&
+                m.getMetadataEntry()
+                    .getTargetPublicKey().equals(testAccount.getPublicKey())).findFirst();
+
+        Assertions.assertTrue(endpointMetadata.isPresent());
+        Assertions.assertEquals(transaction.getValue(),
+            endpointMetadata.get().getMetadataEntry().getValue());
+        return endpointMetadata.get();
     }
 }

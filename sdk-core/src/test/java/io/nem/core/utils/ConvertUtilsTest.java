@@ -16,6 +16,7 @@
 
 package io.nem.core.utils;
 
+import java.math.BigInteger;
 import org.hamcrest.core.IsEqual;
 import org.junit.Assert;
 import org.junit.jupiter.api.Assertions;
@@ -117,6 +118,24 @@ public class ConvertUtilsTest {
     public void getStringCanConvertEmptyBytesToHexString() {
         // Assert:
         assertGetStringConversion(new byte[]{}, "");
+    }
+
+    @Test
+    public void fromStringToHexToString() {
+        // Assert:
+        String message = "Some message 汉字";
+
+        Assertions.assertEquals(message,
+            ConvertUtils.fromHexString(ConvertUtils.fromStringToHex(message)));
+    }
+
+    @Test
+    public void toSize16Hex() {
+        Assertions.assertEquals("000000000000000a",
+            ConvertUtils.toSize16Hex(BigInteger.TEN));
+
+        Assertions.assertEquals("00000000000186a0",
+            ConvertUtils.toSize16Hex(BigInteger.valueOf(100000)));
     }
 
 }

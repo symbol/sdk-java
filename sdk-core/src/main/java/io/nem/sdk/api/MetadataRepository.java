@@ -21,6 +21,7 @@ import io.nem.sdk.model.metadata.Metadata;
 import io.nem.sdk.model.mosaic.MosaicId;
 import io.nem.sdk.model.namespace.NamespaceId;
 import io.reactivex.Observable;
+import java.math.BigInteger;
 import java.util.List;
 import java.util.Optional;
 
@@ -46,7 +47,7 @@ public interface MetadataRepository {
      * @param key - Metadata key
      * @return Observable of {@link Metadata} {@link List}
      */
-    Observable<List<Metadata>> getAccountMetadataByKey(Address address, String key);
+    Observable<List<Metadata>> getAccountMetadataByKey(Address address, BigInteger key);
 
     /**
      * Returns the account metadata given an account id and a key
@@ -56,7 +57,7 @@ public interface MetadataRepository {
      * @param publicKey - Sender public key
      * @return Observable of {@link Metadata}
      */
-    Observable<Metadata> getAccountMetadataByKeyAndSender(Address address, String key,
+    Observable<Metadata> getAccountMetadataByKeyAndSender(Address address, BigInteger key,
         String publicKey);
 
     /**
@@ -76,7 +77,7 @@ public interface MetadataRepository {
      * @param key - Metadata key.
      * @return Observable of {@link Metadata} {@link List}
      */
-    Observable<List<Metadata>> getMosaicMetadataByKey(MosaicId mosaicId, String key);
+    Observable<List<Metadata>> getMosaicMetadataByKey(MosaicId mosaicId, BigInteger key);
 
     /**
      * Returns the mosaic metadata given a mosaic id and metadata key.
@@ -86,7 +87,7 @@ public interface MetadataRepository {
      * @param publicKey - Sender public key
      * @return Observable of {@link Metadata} {@link List}
      */
-    Observable<Metadata> getMosaicMetadataByKeyAndSender(MosaicId mosaicId, String key,
+    Observable<Metadata> getMosaicMetadataByKeyAndSender(MosaicId mosaicId, BigInteger key,
         String publicKey);
 
     /**
@@ -106,7 +107,7 @@ public interface MetadataRepository {
      * @param key - Metadata key.
      * @return Observable of {@link Metadata} {@link List}
      */
-    Observable<List<Metadata>> getNamespaceMetadataByKey(NamespaceId namespaceId, String key);
+    Observable<List<Metadata>> getNamespaceMetadataByKey(NamespaceId namespaceId, BigInteger key);
 
     /**
      * Returns the namespace metadata given a mosaic id and metadata key.
@@ -117,6 +118,6 @@ public interface MetadataRepository {
      * @return Observable of {@link Metadata}
      */
     Observable<Metadata> getNamespaceMetadataByKeyAndSender(NamespaceId namespaceId,
-        String key, String publicKey);
+        BigInteger key, String publicKey);
 
 }

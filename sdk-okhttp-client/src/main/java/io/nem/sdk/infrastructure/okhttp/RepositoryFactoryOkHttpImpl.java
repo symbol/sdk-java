@@ -26,6 +26,7 @@ import io.nem.sdk.api.NamespaceRepository;
 import io.nem.sdk.api.NetworkRepository;
 import io.nem.sdk.api.NodeRepository;
 import io.nem.sdk.api.RepositoryFactory;
+import io.nem.sdk.api.RestrictionRepository;
 import io.nem.sdk.api.TransactionRepository;
 import io.nem.sdk.infrastructure.Listener;
 import io.nem.sdk.openapi.okhttp_gson.invoker.ApiClient;
@@ -127,6 +128,11 @@ public class RepositoryFactoryOkHttpImpl implements RepositoryFactory {
     @Override
     public MetadataRepository createMetadataRepository() {
         return new MetadataRepositoryOkHttpImpl(apiClient);
+    }
+
+    @Override
+    public RestrictionRepository createRestrictionRepository() {
+        return new RestrictionRepositoryOkHttpImpl(apiClient);
     }
 
     @Override

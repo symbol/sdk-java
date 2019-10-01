@@ -16,6 +16,7 @@
 
 package io.nem.sdk.infrastructure.okhttp;
 
+import io.nem.core.utils.ConvertUtils;
 import io.nem.core.utils.MapperUtils;
 import io.nem.sdk.api.MetadataRepository;
 import io.nem.sdk.model.account.Address;
@@ -64,7 +65,7 @@ public class MetadataRepositoryOkHttpImplTest extends AbstractOkHttpRespositoryT
         Address address = MapperUtils.toAddress("SBCPGZ3S2SCC3YHBBTYDCUZV4ZZEPHM2KGCP4QXX");
         MetadataEntriesDTO dto = getMetadataEntriesDTO();
         mockRemoteCall(dto);
-        List<Metadata> resultList = repository.getAccountMetadataByKey(address, "someKey")
+        List<Metadata> resultList = repository.getAccountMetadataByKey(address, BigInteger.TEN)
             .toFuture().get();
         assertMetadataList(dto, resultList);
     }
@@ -72,10 +73,11 @@ public class MetadataRepositoryOkHttpImplTest extends AbstractOkHttpRespositoryT
     @Test
     public void shouldGetAccountMetadataByKeyAndSender() throws Exception {
         Address address = MapperUtils.toAddress("SBCPGZ3S2SCC3YHBBTYDCUZV4ZZEPHM2KGCP4QXX");
-        MetadataDTO expected = createMetadataDto("MosaicMeta", MetadataTypeEnum.NUMBER_1, "11111");
+        MetadataDTO expected = createMetadataDto(ConvertUtils.toSize16Hex(BigInteger.TEN),
+            MetadataTypeEnum.NUMBER_1, "11111");
         mockRemoteCall(expected);
         Metadata result = repository
-            .getAccountMetadataByKeyAndSender(address, "MosaicMeta", "someSender")
+            .getAccountMetadataByKeyAndSender(address, BigInteger.TEN, "someSender")
             .toFuture().get();
         assertMetadata(expected, result);
     }
@@ -95,7 +97,7 @@ public class MetadataRepositoryOkHttpImplTest extends AbstractOkHttpRespositoryT
         MosaicId mosaicId = new MosaicId(BigInteger.valueOf(1234));
         MetadataEntriesDTO dto = getMetadataEntriesDTO();
         mockRemoteCall(dto);
-        List<Metadata> resultList = repository.getMosaicMetadataByKey(mosaicId, "SomeKey")
+        List<Metadata> resultList = repository.getMosaicMetadataByKey(mosaicId, BigInteger.TEN)
             .toFuture().get();
         assertMetadataList(dto, resultList);
     }
@@ -103,10 +105,11 @@ public class MetadataRepositoryOkHttpImplTest extends AbstractOkHttpRespositoryT
     @Test
     public void shouldGetMosaicMetadataByKeyAndSender() throws Exception {
         MosaicId mosaicId = new MosaicId(BigInteger.valueOf(1234));
-        MetadataDTO expected = createMetadataDto("MosaicMeta", MetadataTypeEnum.NUMBER_1, "11111");
+        MetadataDTO expected = createMetadataDto(ConvertUtils.toSize16Hex(BigInteger.valueOf(20)),
+            MetadataTypeEnum.NUMBER_1, "11111");
         mockRemoteCall(expected);
         Metadata result = repository
-            .getMosaicMetadataByKeyAndSender(mosaicId, "MosaicMeta", "someSender")
+            .getMosaicMetadataByKeyAndSender(mosaicId, BigInteger.TEN, "someSender")
             .toFuture().get();
         assertMetadata(expected, result);
     }
@@ -127,7 +130,8 @@ public class MetadataRepositoryOkHttpImplTest extends AbstractOkHttpRespositoryT
         NamespaceId namespaceId = NamespaceId.createFromName("mynamespace");
         MetadataEntriesDTO dto = getMetadataEntriesDTO();
         mockRemoteCall(dto);
-        List<Metadata> resultList = repository.getNamespaceMetadataByKey(namespaceId, "SomeKey")
+        List<Metadata> resultList = repository
+            .getNamespaceMetadataByKey(namespaceId, BigInteger.TEN)
             .toFuture().get();
         assertMetadataList(dto, resultList);
     }
@@ -135,11 +139,12 @@ public class MetadataRepositoryOkHttpImplTest extends AbstractOkHttpRespositoryT
     @Test
     public void shouldGetNamespaceMetadataByKeyAndSender() throws Exception {
         NamespaceId namespaceId = NamespaceId.createFromName("mynamespace");
-        MetadataDTO expected = createMetadataDto("NamespaceMeta", MetadataTypeEnum.NUMBER_1,
+        MetadataDTO expected = createMetadataDto(ConvertUtils.toSize16Hex(BigInteger.TEN),
+            MetadataTypeEnum.NUMBER_1,
             "11111");
         mockRemoteCall(expected);
         Metadata result = repository
-            .getNamespaceMetadataByKeyAndSender(namespaceId, "NamespaceMeta", "someSender")
+            .getNamespaceMetadataByKeyAndSender(namespaceId, BigInteger.TEN, "someSender")
             .toFuture().get();
         assertMetadata(expected, result);
     }
@@ -169,7 +174,7 @@ public class MetadataRepositoryOkHttpImplTest extends AbstractOkHttpRespositoryT
             MetadataTypeEnum
                 .fromValue(result.getMetadataEntry().getMetadataType().getValue()));
 
-        Assertions.assertEquals(expected.getMetadataEntry().getValue(),
+        Assertions.assertEquals(ConvertUtils.fromHexString(expected.getMetadataEntry().getValue()),
             result.getMetadataEntry().getValue());
 
         if (expected.getMetadataEntry().getTargetId() != null) {
@@ -177,7 +182,7 @@ public class MetadataRepositoryOkHttpImplTest extends AbstractOkHttpRespositoryT
                 .assertTrue(result.getMetadataEntry().getTargetId().isPresent());
             Assertions
                 .assertEquals(
-                    new BigInteger(expected.getMetadataEntry().getTargetId().toString()),
+                    new BigInteger(expected.getMetadataEntry().getTargetId().toString(), 16),
                     result.getMetadataEntry().getTargetId().get().getId());
         } else {
             Assertions
@@ -191,9 +196,15 @@ public class MetadataRepositoryOkHttpImplTest extends AbstractOkHttpRespositoryT
     private MetadataEntriesDTO getMetadataEntriesDTO() {
         MetadataEntriesDTO dto = new MetadataEntriesDTO();
         List<MetadataDTO> medataEntryDtos = new ArrayList<>();
-        medataEntryDtos.add(createMetadataDto("AddressMeta", MetadataTypeEnum.NUMBER_0, null));
-        medataEntryDtos.add(createMetadataDto("MosaicMeta", MetadataTypeEnum.NUMBER_1, "11111"));
-        medataEntryDtos.add(createMetadataDto("NamespaceMeta", MetadataTypeEnum.NUMBER_2, "22222"));
+        medataEntryDtos.add(
+            createMetadataDto(ConvertUtils.toSize16Hex(BigInteger.valueOf(10)), MetadataTypeEnum.NUMBER_0,
+                null));
+        medataEntryDtos.add(
+            createMetadataDto(ConvertUtils.toSize16Hex(BigInteger.valueOf(20)), MetadataTypeEnum.NUMBER_1,
+                "11111"));
+        medataEntryDtos.add(
+            createMetadataDto(ConvertUtils.toSize16Hex(BigInteger.valueOf(30)), MetadataTypeEnum.NUMBER_2,
+                "22222"));
         dto.setMetadataEntries(medataEntryDtos);
         return dto;
     }
@@ -209,7 +220,7 @@ public class MetadataRepositoryOkHttpImplTest extends AbstractOkHttpRespositoryT
         metadataEntry.setSenderPublicKey("senderPublicKey " + name);
         metadataEntry.setTargetId(targetId);
         metadataEntry.setTargetPublicKey("targetPublicKey " + name);
-        metadataEntry.setValue(name + " message");
+        metadataEntry.setValue(ConvertUtils.fromStringToHex(name + " message"));
         metadataEntry.setValueSize(10);
         dto.setMetadataEntry(metadataEntry);
         return dto;

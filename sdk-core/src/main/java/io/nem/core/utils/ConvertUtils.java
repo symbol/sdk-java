@@ -16,6 +16,7 @@
 
 package io.nem.core.utils;
 
+import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.binary.Base32;
@@ -64,6 +65,38 @@ public class ConvertUtils {
         final Hex codec = new Hex();
         final byte[] decodedBytes = codec.encode(bytes);
         return StringEncoder.getString(decodedBytes);
+    }
+
+    /**
+     * Converts hex string to a plain string
+     *
+     * @param hexString The input string.
+     * @return The output plain string.
+     */
+    public static String fromHexString(final String hexString) {
+        byte[] bytes = getBytes(hexString);
+        return new String(bytes, StandardCharsets.UTF_8);
+    }
+
+    /**
+     * Converts a number to hex padding zeros up to size 16.
+     *
+     * @param number The input string.
+     * @return the hex 16 characters
+     */
+    public static String toSize16Hex(final BigInteger number) {
+        return String.format("%016x", number);
+    }
+
+
+    /**
+     * Converts plain string to an hex string
+     *
+     * @param plainText The plain input string.
+     * @return The output hex string.
+     */
+    public static String fromStringToHex(final String plainText) {
+        return toHex(plainText.getBytes(StandardCharsets.UTF_8));
     }
 
     /**

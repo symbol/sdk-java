@@ -28,6 +28,7 @@ import io.nem.sdk.api.NetworkRepository;
 import io.nem.sdk.api.NodeRepository;
 import io.nem.sdk.api.RepositoryCallException;
 import io.nem.sdk.api.RepositoryFactory;
+import io.nem.sdk.api.RestrictionRepository;
 import io.nem.sdk.api.TransactionRepository;
 import io.nem.sdk.infrastructure.Listener;
 import io.nem.sdk.model.blockchain.NetworkType;
@@ -139,6 +140,11 @@ public class RepositoryFactoryVertxImpl implements RepositoryFactory {
     @Override
     public MetadataRepository createMetadataRepository() {
         return new MetadataRepositoryVertxImpl(apiClient, networkType);
+    }
+
+    @Override
+    public RestrictionRepository createRestrictionRepository() {
+        return new RestrictionRepositoryVertxImpl(apiClient, networkType);
     }
 
     @Override

@@ -96,19 +96,8 @@ public class SetUpAccountsTool extends BaseIntegrationTest {
             BigInteger.valueOf(480),
             signedTransaction).build();
 
-        SignedTransaction hashLockTransactionSigned = multisigAccount
-            .sign(hashLockTransaction, getGenerationHash());
-
-        TransactionAnnounceResponse transactionAnnounceResponse =
-            get(getRepositoryFactory(type).createTransactionRepository()
-                .announce(hashLockTransactionSigned));
-        assertEquals(
-            "packet 9 was pushed to the network via /transaction",
-            transactionAnnounceResponse.getMessage());
-
-        HashLockTransaction processedTransaction = (HashLockTransaction) this
-            .validateTransactionAnnounceCorrectly(
-                multisigAccount.getAddress(), signedTransaction.getHash(), type);
+        HashLockTransaction processedTransaction = announceAndValidate(type, multisigAccount,
+            hashLockTransaction);
 
         Assertions.assertNotNull(processedTransaction);
 
@@ -136,19 +125,8 @@ public class SetUpAccountsTool extends BaseIntegrationTest {
                 new PlainMessage("E2ETest:SetUpAccountsTool")
             ).build();
 
-        SignedTransaction signedTransaction = nemesisAccount
-            .sign(transferTransaction, generationHash);
-
-        TransactionAnnounceResponse transactionAnnounceResponse =
-            get(getRepositoryFactory(type).createTransactionRepository()
-                .announce(signedTransaction));
-        assertEquals(
-            "packet 9 was pushed to the network via /transaction",
-            transactionAnnounceResponse.getMessage());
-
-        TransferTransaction processedTransaction = (TransferTransaction) this
-            .validateTransactionAnnounceCorrectly(
-                nemesisAccount.getAddress(), signedTransaction.getHash(), type);
+        TransferTransaction processedTransaction = announceAndValidate(type, nemesisAccount,
+            transferTransaction);
         Assertions.assertEquals(amount, processedTransaction.getMosaics().get(0).getAmount());
     }
 

@@ -50,7 +50,6 @@ class BlockRepositoryIntegrationTest extends BaseIntegrationTest {
         assertEquals(getGenerationHash(), blockInfo.getGenerationHash());
     }
 
-    // TODO to fix after catbuffer integration
     @ParameterizedTest
     @EnumSource(RepositoryType.class)
     void getBlockTransactions(RepositoryType type) {

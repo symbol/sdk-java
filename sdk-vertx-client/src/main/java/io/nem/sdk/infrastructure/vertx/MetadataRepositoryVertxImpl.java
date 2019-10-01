@@ -16,6 +16,7 @@
 
 package io.nem.sdk.infrastructure.vertx;
 
+import io.nem.core.utils.ConvertUtils;
 import io.nem.sdk.api.MetadataRepository;
 import io.nem.sdk.api.QueryParams;
 import io.nem.sdk.model.account.Address;
@@ -60,7 +61,7 @@ public class MetadataRepositoryVertxImpl extends AbstractRepositoryVertxImpl imp
     public Observable<List<Metadata>> getAccountMetadata(Address address,
         Optional<QueryParams> queryParams) {
         Consumer<Handler<AsyncResult<MetadataEntriesDTO>>> callback = handler -> getClient()
-            .getAccountMetadata(address.encoded(), getPageSize(queryParams), getId(queryParams),
+            .getAccountMetadata(address.plain(), getPageSize(queryParams), getId(queryParams),
                 getOrder(queryParams),
                 handler);
         return handleList(callback);
@@ -68,9 +69,9 @@ public class MetadataRepositoryVertxImpl extends AbstractRepositoryVertxImpl imp
 
 
     @Override
-    public Observable<List<Metadata>> getAccountMetadataByKey(Address address, String key) {
+    public Observable<List<Metadata>> getAccountMetadataByKey(Address address, BigInteger key) {
         Consumer<Handler<AsyncResult<MetadataEntriesDTO>>> callback = handler -> getClient()
-            .getAccountMetadataByKey(address.encoded(), key, handler);
+            .getAccountMetadataByKey(address.plain(), toHex(key), handler);
         return handleList(callback);
     }
 
@@ -86,27 +87,27 @@ public class MetadataRepositoryVertxImpl extends AbstractRepositoryVertxImpl imp
     }
 
     @Override
-    public Observable<List<Metadata>> getMosaicMetadataByKey(MosaicId mosaicId, String key) {
+    public Observable<List<Metadata>> getMosaicMetadataByKey(MosaicId mosaicId, BigInteger key) {
         Consumer<Handler<AsyncResult<MetadataEntriesDTO>>> callback = handler -> getClient()
-            .getMosaicMetadataByKey(mosaicId.getIdAsHex(), key, handler);
+            .getMosaicMetadataByKey(mosaicId.getIdAsHex(), toHex(key), handler);
         return handleList(callback);
     }
 
     @Override
-    public Observable<Metadata> getAccountMetadataByKeyAndSender(Address address, String key,
+    public Observable<Metadata> getAccountMetadataByKeyAndSender(Address address, BigInteger key,
         String publicKey) {
         Consumer<Handler<AsyncResult<MetadataDTO>>> callback = handler -> getClient()
-            .getAccountMetadataByKeyAndSender(address.encoded(), key, publicKey,
+            .getAccountMetadataByKeyAndSender(address.plain(), toHex(key), publicKey,
                 handler);
         return handleOne(callback);
     }
 
 
     @Override
-    public Observable<Metadata> getMosaicMetadataByKeyAndSender(MosaicId mosaicId, String key,
+    public Observable<Metadata> getMosaicMetadataByKeyAndSender(MosaicId mosaicId, BigInteger key,
         String publicKey) {
         Consumer<Handler<AsyncResult<MetadataDTO>>> callback = handler -> getClient()
-            .getMosaicMetadataByKeyAndSender(mosaicId.getIdAsHex(), key, publicKey,
+            .getMosaicMetadataByKeyAndSender(mosaicId.getIdAsHex(), toHex(key), publicKey,
                 handler);
         return handleOne(callback);
     }
@@ -124,17 +125,17 @@ public class MetadataRepositoryVertxImpl extends AbstractRepositoryVertxImpl imp
 
     @Override
     public Observable<List<Metadata>> getNamespaceMetadataByKey(NamespaceId namespaceId,
-        String key) {
+        BigInteger key) {
         Consumer<Handler<AsyncResult<MetadataEntriesDTO>>> callback = handler -> getClient()
-            .getNamespaceMetadataByKey(namespaceId.getIdAsHex(), key, handler);
+            .getNamespaceMetadataByKey(namespaceId.getIdAsHex(), toHex(key), handler);
         return handleList(callback);
     }
 
     @Override
     public Observable<Metadata> getNamespaceMetadataByKeyAndSender(NamespaceId namespaceId,
-        String key, String publicKey) {
+        BigInteger key, String publicKey) {
         Consumer<Handler<AsyncResult<MetadataDTO>>> callback = handler -> getClient()
-            .getNamespaceMetadataByKeyAndSender(namespaceId.getIdAsHex(), key, publicKey,
+            .getNamespaceMetadataByKeyAndSender(namespaceId.getIdAsHex(), toHex(key), publicKey,
                 handler);
         return handleOne(callback);
     }
@@ -163,10 +164,15 @@ public class MetadataRepositoryVertxImpl extends AbstractRepositoryVertxImpl imp
         MetadataEntryDTO entryDto = dto.getMetadataEntry();
         MetadataEntry metadataEntry = new MetadataEntry(entryDto.getCompositeHash(),
             entryDto.getSenderPublicKey(), entryDto.getTargetPublicKey(),
-            new BigInteger(entryDto.getScopedMetadataKey()),
+            new BigInteger(entryDto.getScopedMetadataKey(), 16),
             MetadataType.rawValueOf(entryDto.getMetadataType().getValue()), entryDto.getValueSize(),
-            entryDto.getValue(),
+            ConvertUtils.fromHexString(entryDto.getValue()),
             Optional.ofNullable(Objects.toString(entryDto.getTargetId(), null)));
         return new Metadata(dto.getId(), metadataEntry);
+    }
+
+
+    private String toHex(BigInteger key) {
+        return ConvertUtils.toSize16Hex(key);
     }
 }
