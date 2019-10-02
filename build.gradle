@@ -219,6 +219,8 @@ subprojects {
                 pom.project {
                     packaging 'jar'
                     url 'https://github.com/nemtech/nem2-sdk-java'
+                    name "${project.name}"
+                    description "${project.name} lib for NEM2 sdk Java"
 
                     scm {
                         connection 'scm:git:https://github.com/nemtech/nem2-sdk-java.git'
@@ -230,6 +232,20 @@ subprojects {
                         license {
                             name 'The Apache License, Version 2.0'
                             url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                        }
+                    }
+                    developers {
+                        developer {
+                            id 'fullcircle23'
+                            name 'Ravi Shanker'
+                        }
+                        developer {
+                            id 'rg911'
+                            name 'Steven Liu'
+                        }
+                        developer {
+                            id 'fboucquez'
+                            name 'Fernando Boucquez'
                         }
                     }
                 }
