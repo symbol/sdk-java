@@ -19,7 +19,6 @@ package io.nem.core.utils;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import org.apache.commons.codec.DecoderException;
-import org.apache.commons.codec.binary.Base32;
 import org.apache.commons.codec.binary.Hex;
 
 /**
@@ -98,16 +97,5 @@ public class ConvertUtils {
     public static String fromStringToHex(final String plainText) {
         return toHex(plainText.getBytes(StandardCharsets.UTF_8));
     }
-
-    /**
-     * Converts a input into the byte[] representation using base 32
-     *
-     * @param plain the string to be converted
-     * @return an byte array.
-     */
-    public static byte[] toByteArray(String plain) {
-        return new Base32().decode(plain.getBytes(StandardCharsets.UTF_8));
-    }
-
 
 }
