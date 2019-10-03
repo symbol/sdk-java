@@ -16,9 +16,8 @@
 
 package io.nem.sdk.infrastructure;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import io.nem.sdk.api.RepositoryCallException;
+import io.nem.sdk.api.RestrictionRepository;
 import io.nem.sdk.model.account.Account;
 import io.nem.sdk.model.account.AccountRestrictions;
 import io.nem.sdk.model.account.Address;
@@ -35,6 +34,7 @@ import io.nem.sdk.model.transaction.AccountRestrictionModificationAction;
 import io.nem.sdk.model.transaction.AccountRestrictionType;
 import io.nem.sdk.model.transaction.TransactionType;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.TestInstance;
@@ -266,5 +266,35 @@ class AccountRestrictionIntegrationTest extends BaseIntegrationTest {
 
     }
 
+    @ParameterizedTest
+    @EnumSource(RepositoryType.class)
+    void getAccountsRestrictionsWhenAddressDoesNotExist(RepositoryType type) {
+        Address address = Address
+            .createFromPublicKey("67F69FA4BFCD158F6E1AF1ABC82F725F5C5C4710D6E29217B12BE66397435DFB",
+                getNetworkType());
+
+        RestrictionRepository repository = getRepositoryFactory(type).createRestrictionRepository();
+        Assertions.assertEquals(0, get(repository
+            .getAccountsRestrictions(
+                Collections.singletonList(address))).size());
+    }
+
+    @ParameterizedTest
+    @EnumSource(RepositoryType.class)
+    void getAccountRestrictionsWhenAccountDoesNotExist(RepositoryType type) {
+        RestrictionRepository repository = getRepositoryFactory(type).createRestrictionRepository();
+
+        Address address = Address
+            .createFromPublicKey("67F69FA4BFCD158F6E1AF1ABC82F725F5C5C4710D6E29217B12BE66397435DFB",
+                getNetworkType());
+
+        RepositoryCallException exception = Assertions
+            .assertThrows(RepositoryCallException.class,
+                () -> get(repository
+                    .getAccountRestrictions(address)));
+        Assertions.assertEquals(
+            "ApiException: Not Found - 404 - ResourceNotFound - no resource exists with id 'SCGEGBEHICF5PPOGIP2JSCQ5OYGZXOOJF7KUSUQJ'",
+            exception.getMessage());
+    }
 
 }

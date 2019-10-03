@@ -60,20 +60,12 @@ class ListenerIntegrationTest extends BaseIntegrationTest {
 
     private static final TimeUnit TIMEOUT_UNIT = TimeUnit.SECONDS;
 
-    private Account account;
-    private Account multisigAccount;
-    private Account cosignatoryAccount;
-    private Account cosignatoryAccount2;
-    private String generationHash;
+    private Account account = config().getTestAccount();
+    private Account multisigAccount = config().getMultisigAccount();
+    private Account cosignatoryAccount = config().getCosignatoryAccount();
+    private Account cosignatoryAccount2 = config().getCosignatory2Account();
+    private String generationHash = this.getGenerationHash();
 
-    @BeforeAll
-    void setup() {
-        account = this.getTestAccount();
-        multisigAccount = config().getMultisigAccount();
-        cosignatoryAccount = config().getCosignatoryAccount();
-        cosignatoryAccount2 = config().getCosignatory2Account();
-        generationHash = this.getGenerationHash();
-    }
 
     @ParameterizedTest
     @EnumSource(RepositoryType.class)

@@ -19,6 +19,9 @@ package io.nem.sdk.api;
 
 import io.nem.sdk.model.account.AccountRestrictions;
 import io.nem.sdk.model.account.Address;
+import io.nem.sdk.model.mosaic.MosaicId;
+import io.nem.sdk.model.restriction.MosaicAddressRestriction;
+import io.nem.sdk.model.restriction.MosaicGlobalRestriction;
 import io.reactivex.Observable;
 import java.util.List;
 
@@ -44,4 +47,40 @@ public interface RestrictionRepository {
      * @return Observable {@link List} of {@link AccountRestrictions}
      */
     Observable<List<AccountRestrictions>> getAccountsRestrictions(List<Address> addresses);
+
+    /**
+     * Get mosaic address restrictions for a given mosaic and account identifier.
+     *
+     * @param mosaicId Mosaic identifier.
+     * @param address address
+     * @return Observable of {@link MosaicAddressRestriction}
+     */
+    Observable<MosaicAddressRestriction> getMosaicAddressRestriction(MosaicId mosaicId,
+        Address address);
+
+    /**
+     * Get mosaic address restrictions for a given mosaic and account identifiers array
+     *
+     * @param mosaicId Mosaic identifier.
+     * @param addresses list of addresses
+     * @return Observable {@link List} of {@link MosaicAddressRestriction}.
+     */
+    Observable<List<MosaicAddressRestriction>> getMosaicAddressRestrictions(MosaicId mosaicId,
+        List<Address> addresses);
+
+    /**
+     * Get mosaic global restrictions for a given mosaic identifier.
+     *
+     * @param mosaicId Mosaic identifier.
+     * @return Observable of {@link MosaicGlobalRestriction}
+     */
+    Observable<MosaicGlobalRestriction> getMosaicGlobalRestriction(MosaicId mosaicId);
+
+    /**
+     * Get mosaic global restrictions for a given list of mosaics.
+     *
+     * @param mosaicIds List of mosaic identifier.
+     * @return Observable {@link List} of {@link MosaicGlobalRestriction}.
+     */
+    Observable<List<MosaicGlobalRestriction>> getMosaicGlobalRestrictions(List<MosaicId> mosaicIds);
 }

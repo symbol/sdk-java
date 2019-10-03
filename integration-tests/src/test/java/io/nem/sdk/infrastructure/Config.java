@@ -102,6 +102,10 @@ public class Config {
         return getAccount("testAccount2");
     }
 
+    public Account getCosignatory3Account() {
+        return getAccount("cosignatory3Account");
+    }
+
     private Account getAccount(String accountName) {
         return accountCache.computeIfAbsent(accountName, key -> Account.createFromPrivateKey(
             this.config.getJsonObject(accountName).getString("privateKey"), getNetworkType()));

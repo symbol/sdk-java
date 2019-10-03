@@ -16,26 +16,17 @@
 
 package io.nem.sdk.infrastructure.okhttp;
 
-import io.nem.core.crypto.PublicKey;
 import io.nem.core.utils.ExceptionUtils;
-import io.nem.core.utils.MapperUtils;
 import io.nem.sdk.api.RepositoryCallException;
 import io.nem.sdk.model.account.AccountInfo;
 import io.nem.sdk.model.account.AccountNames;
-import io.nem.sdk.model.account.AccountRestrictions;
 import io.nem.sdk.model.account.AccountType;
 import io.nem.sdk.model.account.Address;
-import io.nem.sdk.model.transaction.AccountRestrictionType;
 import io.nem.sdk.openapi.okhttp_gson.model.AccountDTO;
 import io.nem.sdk.openapi.okhttp_gson.model.AccountInfoDTO;
 import io.nem.sdk.openapi.okhttp_gson.model.AccountNamesDTO;
-import io.nem.sdk.openapi.okhttp_gson.model.AccountRestrictionDTO;
-import io.nem.sdk.openapi.okhttp_gson.model.AccountRestrictionTypeEnum;
-import io.nem.sdk.openapi.okhttp_gson.model.AccountRestrictionsDTO;
-import io.nem.sdk.openapi.okhttp_gson.model.AccountRestrictionsInfoDTO;
 import io.nem.sdk.openapi.okhttp_gson.model.AccountTypeEnum;
 import io.nem.sdk.openapi.okhttp_gson.model.AccountsNamesDTO;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import org.junit.jupiter.api.Assertions;
@@ -93,7 +84,7 @@ public class AccountRepositoryOkHttpImplTest extends AbstractOkHttpRespositoryTe
         mockRemoteCall(Collections.singletonList(accountInfoDTO));
 
         List<AccountInfo> resolvedAccountInfos = repository
-            .getAccountsInfoFromAddresses(Collections.singletonList(address)).toFuture().get();
+            .getAccountsInfo(Collections.singletonList(address)).toFuture().get();
 
         Assertions.assertEquals(1, resolvedAccountInfos.size());
 
@@ -103,33 +94,7 @@ public class AccountRepositoryOkHttpImplTest extends AbstractOkHttpRespositoryTe
         Assertions.assertEquals(AccountType.MAIN, resolvedAccountInfo.getAccountType());
     }
 
-    @Test
-    public void shouldGetAccountsInfoFromPublicKeys() throws Exception {
-        Address address =
-            Address.createFromRawAddress(
-                "SBCPGZ3S2SCC3YHBBTYDCUZV4ZZEPHM2KGCP4QXX");
 
-        AccountDTO accountDTO = new AccountDTO();
-        accountDTO.setAccountType(AccountTypeEnum.NUMBER_1);
-        accountDTO.setAddress(encodeAddress(address));
-
-        AccountInfoDTO accountInfoDTO = new AccountInfoDTO();
-        accountInfoDTO.setAccount(accountDTO);
-
-        final PublicKey key = PublicKey.fromHexString("227F");
-
-        mockRemoteCall(Collections.singletonList(accountInfoDTO));
-
-        List<AccountInfo> resolvedAccountInfos = repository
-            .getAccountsInfoFromPublicKeys(Collections.singletonList(key)).toFuture().get();
-
-        Assertions.assertEquals(1, resolvedAccountInfos.size());
-
-        AccountInfo resolvedAccountInfo = resolvedAccountInfos.get(0);
-
-        Assertions.assertEquals(address, resolvedAccountInfo.getAddress());
-        Assertions.assertEquals(AccountType.MAIN, resolvedAccountInfo.getAccountType());
-    }
 
     @Test
     public void shouldProcessExceptionWhenNotFound() throws Exception {
@@ -194,35 +159,7 @@ public class AccountRepositoryOkHttpImplTest extends AbstractOkHttpRespositoryTe
         mockRemoteCall(accountsNamesDTO);
 
         List<AccountNames> resolvedList = repository
-            .getAccountsNamesFromAddresses(Collections.singletonList(address)).toFuture().get();
-
-        Assertions.assertEquals(1, resolvedList.size());
-
-        AccountNames accountNames = resolvedList.get(0);
-
-        Assertions.assertEquals(address, accountNames.getAddress());
-        Assertions.assertEquals("accountalias", accountNames.getNames().get(0).getName());
-    }
-
-    @Test
-    public void shouldGetAccountsNamesFromPublicKeys() throws Exception {
-        Address address =
-            Address.createFromRawAddress(
-                "SBCPGZ3S2SCC3YHBBTYDCUZV4ZZEPHM2KGCP4QXX");
-
-        AccountNamesDTO dto = new AccountNamesDTO();
-        dto.setAddress(encodeAddress(address));
-        dto.setNames(Collections.singletonList("accountalias"));
-
-        AccountsNamesDTO accountsNamesDTO = new AccountsNamesDTO();
-        accountsNamesDTO.setAccountNames(Collections.singletonList(dto));
-
-        final PublicKey key = PublicKey.fromHexString("227F");
-
-        mockRemoteCall(accountsNamesDTO);
-
-        List<AccountNames> resolvedList = repository
-            .getAccountsNamesFromPublicKeys(Collections.singletonList(key)).toFuture().get();
+            .getAccountsNames(Collections.singletonList(address)).toFuture().get();
 
         Assertions.assertEquals(1, resolvedList.size());
 

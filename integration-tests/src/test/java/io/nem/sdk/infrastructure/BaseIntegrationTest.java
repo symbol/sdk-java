@@ -35,7 +35,9 @@ import io.nem.sdk.model.transaction.JsonHelper;
 import io.nem.sdk.model.transaction.SignedTransaction;
 import io.nem.sdk.model.transaction.Transaction;
 import io.nem.sdk.model.transaction.TransactionAnnounceResponse;
+import io.nem.sdk.model.transaction.TransactionInfo;
 import io.nem.sdk.model.transaction.TransactionStatusError;
+import io.nem.sdk.model.transaction.TransactionType;
 import io.reactivex.Observable;
 import java.math.BigInteger;
 import java.util.Collections;
@@ -217,9 +219,34 @@ public abstract class BaseIntegrationTest {
     }
 
 
+    <T extends Transaction> T announceAggregateAndValidate(RepositoryType type, Account testAccount,
+        T transaction) {
+
+        System.out.println(
+            "Announcing Aggregate Transaction address: " + testAccount.getAddress().pretty()
+                + " Transaction: " + transaction.getType());
+        AggregateTransaction aggregateTransaction =
+            AggregateTransactionFactory.createComplete(
+                getNetworkType(),
+                Collections.singletonList(
+                    transaction.toAggregate(testAccount.getPublicAccount()))
+            ).build();
+
+        T announcedCorrectly = (T) announceAndValidate(
+            type, testAccount, aggregateTransaction).getInnerTransactions().get(0);
+        System.out.println("Transaction completed");
+        return announcedCorrectly;
+    }
+
+
     <T extends Transaction> T announceAndValidate(RepositoryType type, Account testAccount,
         T transaction) {
 
+        if (transaction.getType() != TransactionType.AGGREGATE_COMPLETE) {
+            System.out
+                .println("Announcing Transaction address: " + testAccount.getAddress().pretty()
+                    + " Transaction: " + transaction.getType());
+        }
         SignedTransaction signedTransaction = testAccount
             .sign(transaction, getGenerationHash());
 
@@ -234,6 +261,9 @@ public abstract class BaseIntegrationTest {
             .validateTransactionAnnounceCorrectly(
                 testAccount.getAddress(), signedTransaction.getHash(), type);
         Assertions.assertEquals(announceCorrectly.getType(), transaction.getType());
+        if (transaction.getType() != TransactionType.AGGREGATE_COMPLETE) {
+            System.out.println("Transaction completed");
+        }
         return (T) announceCorrectly;
     }
 
@@ -241,7 +271,9 @@ public abstract class BaseIntegrationTest {
     Transaction validateTransactionAnnounceCorrectly(Address address, String transactionHash,
         RepositoryType type) {
         Listener listener = getListener(type);
-        Observable<Transaction> observable = listener.confirmed(address);
+        Observable<Transaction> observable = listener.confirmed(address)
+            .filter(t -> t.getTransactionInfo().flatMap(TransactionInfo::getHash)
+                .filter(s -> s.equals(transactionHash)).isPresent());
         Transaction transaction = getTransactionOrFail(address, listener, observable);
         assertEquals(transactionHash, transaction.getTransactionInfo().get().getHash().get());
         return transaction;
@@ -251,8 +283,9 @@ public abstract class BaseIntegrationTest {
     AggregateTransaction validateAggregateBondedTransactionAnnounceCorrectly(Address address,
         String transactionHash, RepositoryType type) {
         Listener listener = getListener(type);
-        Observable<AggregateTransaction> observable = listener
-            .aggregateBondedAdded(address);
+        Observable<AggregateTransaction> observable = listener.aggregateBondedAdded(address)
+            .filter(t -> t.getTransactionInfo().flatMap(TransactionInfo::getHash)
+                .filter(s -> s.equals(transactionHash)).isPresent());
         AggregateTransaction aggregateTransaction = getTransactionOrFail(address, listener,
             observable);
         assertEquals(transactionHash,
@@ -264,7 +297,8 @@ public abstract class BaseIntegrationTest {
         Address address, String transactionHash,
         RepositoryType type) {
         Listener listener = getListener(type);
-        Observable<CosignatureSignedTransaction> observable = listener.cosignatureAdded(address);
+        Observable<CosignatureSignedTransaction> observable = listener.cosignatureAdded(address)
+            .filter(t -> t.getParentHash().equals(transactionHash));
         CosignatureSignedTransaction transaction = getTransactionOrFail(address, listener,
             observable);
         assertEquals(transactionHash, transaction.getParentHash());

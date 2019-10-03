@@ -20,7 +20,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import io.nem.core.crypto.PublicKey;
 import io.nem.sdk.api.AccountRepository;
 import io.nem.sdk.api.QueryParams;
 import io.nem.sdk.api.RepositoryCallException;
@@ -31,7 +30,6 @@ import io.nem.sdk.model.account.AccountType;
 import io.nem.sdk.model.account.Address;
 import io.nem.sdk.model.account.MultisigAccountGraphInfo;
 import io.nem.sdk.model.account.MultisigAccountInfo;
-import io.nem.sdk.model.blockchain.NetworkType;
 import io.nem.sdk.model.transaction.AggregateTransaction;
 import io.nem.sdk.model.transaction.Transaction;
 import java.util.Arrays;
@@ -69,7 +67,7 @@ class AccountRepositoryIntegrationTest extends BaseIntegrationTest {
     void getAccountsInfoFromAddresses(RepositoryType type) {
         List<AccountInfo> accountInfos =
             get(this.getAccountRepository(type)
-                .getAccountsInfoFromAddresses(
+                .getAccountsInfo(
                     Collections.singletonList(this.getTestAccountAddress())));
 
         assertEquals(1, accountInfos.size());
@@ -81,7 +79,7 @@ class AccountRepositoryIntegrationTest extends BaseIntegrationTest {
     @EnumSource(RepositoryType.class)
     void getAccountsNamesFromAddresses(RepositoryType type) {
         List<AccountNames> accountNames = get(
-            this.getAccountRepository(type).getAccountsNamesFromAddresses(
+            this.getAccountRepository(type).getAccountsNames(
                 Collections.singletonList(this.getTestAccountAddress())));
 
         assertEquals(1, accountNames.size());
@@ -90,30 +88,6 @@ class AccountRepositoryIntegrationTest extends BaseIntegrationTest {
         assertNotNull(accountNames.get(0).getNames());
     }
 
-    @ParameterizedTest
-    @EnumSource(RepositoryType.class)
-    void getAccountsInfoFromPublicKeys(RepositoryType type) {
-        List<AccountInfo> accountInfos = get(this.getAccountRepository(type)
-            .getAccountsInfoFromPublicKeys(Collections.singletonList(
-                PublicKey.fromHexString(this.config().getTestAccount().getPublicKey()))));
-
-        assertEquals(1, accountInfos.size());
-        assertEquals(this.getTestAccount().getPublicKey(), accountInfos.get(0).getPublicKey());
-    }
-
-    @ParameterizedTest
-    @EnumSource(RepositoryType.class)
-    void getAccountsNamesFromPublicKeys(RepositoryType type) {
-        List<AccountNames> accountNames = get(this.getAccountRepository(type)
-            .getAccountsNamesFromPublicKeys(Collections.singletonList(
-                PublicKey.fromHexString(this.getTestAccount().getPublicKey())))
-        );
-
-        assertEquals(1, accountNames.size());
-        assertEquals(this.config().getTestAccountAddress(),
-            accountNames.get(0).getAddress().plain());
-        assertEquals(0, accountNames.get(0).getNames().size());
-    }
 
     @ParameterizedTest
     @EnumSource(RepositoryType.class)
