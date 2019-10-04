@@ -3156,15 +3156,15 @@ components:
         mosaicId:
           $ref: "#/components/schemas/UnresolvedMosaicId"
         restrictionKey:
-          type: string
+          type: x-number-string
           description: Restriction key relative to the reference mosaic identifier.
         targetAddress:
           $ref: "#/components/schemas/UnresolvedAddress"
         previousRestrictionValue:
-          type: string
+          type: x-number-string
           description: Previous restriction value.
         newRestrictionValue:
-          type: string
+          type: x-number-string
           description: New restriction value.
     MosaicAddressRestrictionTransactionDTO:
       type: object
@@ -3193,15 +3193,15 @@ components:
         referenceMosaicId:
           $ref: "#/components/schemas/UnresolvedMosaicId"
         restrictionKey:
-          type: string
+          type: x-number-string
           description: Restriction key relative to the reference mosaic identifier.
         previousRestrictionValue:
-          type: string
+          type: x-number-string
           description: Previous restriction value.
         previousRestrictionType:
           $ref: "#/components/schemas/MosaicRestrictionTypeEnum"
         newRestrictionValue:
-          type: string
+          type: x-number-string
           description: New restriction value.
         newRestrictionType:
           $ref: "#/components/schemas/MosaicRestrictionTypeEnum"

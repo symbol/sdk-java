@@ -58,4 +58,16 @@ class NamespaceMetadataTransactionMapper extends
         factory.valueSizeDelta(valueSizeDelta).valueSize(valueSize);
         return factory;
     }
+
+    @Override
+    protected void copyToDto(NamespaceMetadataTransaction transaction,
+        NamespaceMetadataTransactionDTO dto) {
+        dto.setTargetPublicKey(transaction.getTargetAccount().getPublicKey().toString());
+        dto.setTargetNamespaceId(MapperUtils.getIdAsHex(transaction.getTargetNamespaceId()));
+        dto.setScopedMetadataKey(transaction.getScopedMetadataKey().toString());
+        dto.setValueSizeDelta(transaction.getValueSizeDelta());
+        dto.setValueSize(transaction.getValueSize());
+        dto.setValue(transaction.getValue());
+
+    }
 }

@@ -54,4 +54,16 @@ class AccountMetadataTransactionMapper extends
         factory.valueSizeDelta(valueSizeDelta).valueSize(valueSize);
         return factory;
     }
+
+    @Override
+    protected void copyToDto(AccountMetadataTransaction transaction,
+        AccountMetadataTransactionDTO dto) {
+
+        dto.setTargetPublicKey(transaction.getTargetAccount().getPublicKey().toString());
+        dto.setValueSizeDelta(transaction.getValueSizeDelta());
+        dto.setValueSize(transaction.getValueSize());
+        dto.setScopedMetadataKey(transaction.getScopedMetadataKey().toString(16));
+        dto.setValue(transaction.getValue());
+
+    }
 }

@@ -72,7 +72,7 @@ import org.junit.jupiter.api.Test;
 
 public class TransactionMapperOkHttpTest {
 
-    private final JsonHelper jsonHelper = new JsonHelperGson(new JSON().getGson());
+    private final JsonHelper jsonHelper = new JsonHelperGson();
 
     @Test
     void shouldCreateStandaloneTransferTransaction() {
@@ -204,9 +204,11 @@ public class TransactionMapperOkHttpTest {
         TransactionInfoDTO mosaicAddressRestrictionTransactionDTO = loadTransactionInfoDTO(
             "shouldCreateStandaloneMosaicAddressRestrictionTransaction.json");
 
-        Transaction mosaicAddressRestrictionTransaction = map(mosaicAddressRestrictionTransactionDTO);
+        Transaction mosaicAddressRestrictionTransaction = map(
+            mosaicAddressRestrictionTransactionDTO);
 
-        validateStandaloneTransaction(mosaicAddressRestrictionTransaction, mosaicAddressRestrictionTransactionDTO);
+        validateStandaloneTransaction(mosaicAddressRestrictionTransaction,
+            mosaicAddressRestrictionTransactionDTO);
     }
 
     @Test
@@ -230,7 +232,8 @@ public class TransactionMapperOkHttpTest {
 
         Transaction mosaicGlobalRestrictionTransaction = map(mosaicGlobalRestrictionTransactionDTO);
 
-        validateStandaloneTransaction(mosaicGlobalRestrictionTransaction, mosaicGlobalRestrictionTransactionDTO);
+        validateStandaloneTransaction(mosaicGlobalRestrictionTransaction,
+            mosaicGlobalRestrictionTransactionDTO);
     }
 
     @Test
@@ -474,7 +477,7 @@ public class TransactionMapperOkHttpTest {
 
         Assert
             .assertEquals(new BigInteger("884562898459306"), transaction.getMosaicId().getId());
-        Assertions.assertEquals(AliasAction.LINK, transaction.getAliasAction());
+        Assertions.assertEquals(AliasAction.UNLINK, transaction.getAliasAction());
         Assertions.assertEquals(new BigInteger("307262000798378"),
             transaction.getNamespaceId().getId());
     }
@@ -581,7 +584,8 @@ public class TransactionMapperOkHttpTest {
 
         validateStandaloneTransaction(transaction, transactionInfoDTO);
 
-        Assertions.assertEquals(AccountRestrictionType.ALLOW_INCOMING_ADDRESS, transaction.getRestrictionType());
+        Assertions.assertEquals(AccountRestrictionType.ALLOW_INCOMING_ADDRESS,
+            transaction.getRestrictionType());
         Assertions.assertEquals(1, transaction.getModifications().size());
         Assertions.assertEquals("SBILTA367K2LX2FEXG5TFWAS7GEFYAGY7QLFBYKC",
             transaction.getModifications().get(0).getValue().plain());
@@ -601,7 +605,8 @@ public class TransactionMapperOkHttpTest {
 
         validateStandaloneTransaction(transaction, transactionInfoDTO);
 
-        Assertions.assertEquals(AccountRestrictionType.ALLOW_INCOMING_MOSAIC, transaction.getRestrictionType());
+        Assertions.assertEquals(AccountRestrictionType.ALLOW_INCOMING_MOSAIC,
+            transaction.getRestrictionType());
         Assertions.assertEquals(1, transaction.getModifications().size());
         Assertions.assertEquals("00003646934825aa",
             transaction.getModifications().get(0).getValue().getIdAsHex());

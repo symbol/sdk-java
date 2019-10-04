@@ -58,4 +58,15 @@ class MosaicMetadataTransactionMapper extends
         factory.valueSizeDelta(valueSizeDelta).valueSize(valueSize);
         return factory;
     }
+
+    @Override
+    protected void copyToDto(MosaicMetadataTransaction transaction,
+        MosaicMetadataTransactionDTO dto) {
+        dto.setTargetPublicKey(transaction.getTargetAccount().getPublicKey().toString());
+        dto.setTargetMosaicId(MapperUtils.getIdAsHex(transaction.getTargetMosaicId()));
+        dto.setScopedMetadataKey(transaction.getScopedMetadataKey().toString());
+        dto.setValue(transaction.getValue());
+        dto.setValueSize(transaction.getValueSize());
+        dto.setValueSizeDelta(transaction.getValueSizeDelta());
+    }
 }

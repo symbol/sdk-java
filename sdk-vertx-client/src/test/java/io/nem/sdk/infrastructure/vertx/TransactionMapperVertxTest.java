@@ -489,7 +489,7 @@ public class TransactionMapperVertxTest {
 
         Assert
             .assertEquals(new BigInteger("884562898459306"), transaction.getMosaicId().getId());
-        Assertions.assertEquals(AliasAction.LINK, transaction.getAliasAction());
+        Assertions.assertEquals(AliasAction.UNLINK, transaction.getAliasAction());
         Assertions.assertEquals(new BigInteger("307262000798378"),
             transaction.getNamespaceId().getId());
     }
