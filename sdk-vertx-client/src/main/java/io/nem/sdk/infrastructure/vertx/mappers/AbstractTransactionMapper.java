@@ -58,16 +58,16 @@ public abstract class AbstractTransactionMapper<D, T extends Transaction> implem
     @Override
     public Transaction map(EmbeddedTransactionInfoDTO transactionInfoDTO) {
         TransactionInfo transactionInfo = createTransactionInfo(transactionInfoDTO.getMeta());
-        return copyToDto(transactionInfo, transactionInfoDTO.getTransaction());
+        return createModel(transactionInfo, transactionInfoDTO.getTransaction());
     }
 
     @Override
     public Transaction map(TransactionInfoDTO transactionInfoDTO) {
         TransactionInfo transactionInfo = createTransactionInfo(transactionInfoDTO.getMeta());
-        return copyToDto(transactionInfo, transactionInfoDTO.getTransaction());
+        return createModel(transactionInfo, transactionInfoDTO.getTransaction());
     }
 
-    protected final T copyToDto(TransactionInfo transactionInfo, Object transactionDto) {
+    protected final T createModel(TransactionInfo transactionInfo, Object transactionDto) {
         D transaction = getJsonHelper().convert(transactionDto, transactionDtoClass);
         TransactionDTO transactionDTO = getJsonHelper()
             .convert(transactionDto, TransactionDTO.class);
