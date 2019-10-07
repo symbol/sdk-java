@@ -59,7 +59,7 @@ public class AccountMetadataTransactionTest {
         assertEquals(BigInteger.TEN, transaction.getScopedMetadataKey());
 
         assertEquals(account.getPublicKey(),
-            transaction.getTargetAccount().getPublicKey().toString());
+            transaction.getTargetAccount().getPublicKey().toHex());
 
     }
 

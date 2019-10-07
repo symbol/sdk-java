@@ -53,7 +53,7 @@ public class MosaicAliasTransactionIntegrationTest extends BaseIntegrationTest {
             "test-root-namespace-for-mosaic-alias-" + new Double(Math.floor(Math.random() * 10000))
                 .intValue();
 
-        Account account = this.config().getNemesisAccount();
+        Account account = this.config().getDefaultAccount();
         AccountInfo accountInfo = get(getRepositoryFactory(type).createAccountRepository()
             .getAccountInfo(account.getPublicAccount().getAddress()));
 

@@ -75,7 +75,7 @@ public class Account {
      */
     public static Account generateNewAccount(NetworkType networkType) {
         KeyPair keyPair = KeyPair.random(networkType.resolveSignSchema());
-        return new Account(keyPair.getPrivateKey().toString(), networkType);
+        return new Account(keyPair.getPrivateKey().toHex(), networkType);
     }
 
     /**
@@ -84,7 +84,7 @@ public class Account {
      * @return {@link String}
      */
     public String getPublicKey() {
-        return this.keyPair.getPublicKey().toString();
+        return this.keyPair.getPublicKey().toHex();
     }
 
     /**
@@ -93,7 +93,7 @@ public class Account {
      * @return {@link String}
      */
     public String getPrivateKey() {
-        return this.keyPair.getPrivateKey().toString().toUpperCase();
+        return this.keyPair.getPrivateKey().toHex().toUpperCase();
     }
 
     /**

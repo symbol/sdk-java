@@ -391,7 +391,7 @@ public class TransactionMapperOkHttpTest {
             transaction.getSignature().get());
         assertEquals(
             jsonHelper.getString(transactionDTO.getTransaction(), "signerPublicKey"),
-            transaction.getSigner().get().getPublicKey().toString());
+            transaction.getSigner().get().getPublicKey().toHex());
         assertEquals(transaction.getType().getValue(),
             (int) jsonHelper.getInteger(transactionDTO.getTransaction(), "type"));
         int version =
@@ -666,7 +666,7 @@ public class TransactionMapperOkHttpTest {
             aggregateTransaction.getSignature().get());
         assertEquals(
             jsonHelper.getString(transactionDto.getTransaction(), "signerPublicKey"),
-            aggregateTransaction.getSigner().get().getPublicKey().toString());
+            aggregateTransaction.getSigner().get().getPublicKey().toHex());
         int version =
             (int)
                 Long.parseLong(
@@ -695,7 +695,7 @@ public class TransactionMapperOkHttpTest {
             aggregateTransaction.getCosignatures().get(0).getSignature());
         assertEquals(
             aggregateTransactionBodyDTO.getCosignatures().get(0).getSignerPublicKey(),
-            aggregateTransaction.getCosignatures().get(0).getSigner().getPublicKey().toString());
+            aggregateTransaction.getCosignatures().get(0).getSigner().getPublicKey().toHex());
 
         Transaction innerTransaction = aggregateTransaction.getInnerTransactions().get(0);
         validateStandaloneTransaction(
@@ -809,7 +809,7 @@ public class TransactionMapperOkHttpTest {
                 .get(0)
                 .getCosignatoryPublicAccount()
                 .getPublicKey()
-                .toString());
+                .toHex());
         assertEquals(
             (int) modifyMultisigAccountTransaction.getModifications().get(0).getModificationAction()
                 .getValue(),

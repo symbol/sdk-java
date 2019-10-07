@@ -19,6 +19,7 @@ package io.nem.sdk.infrastructure.okhttp.mappers;
 
 import static io.nem.core.utils.MapperUtils.toMosaicId;
 
+import io.nem.core.utils.MapperUtils;
 import io.nem.sdk.model.account.Address;
 import io.nem.sdk.model.blockchain.NetworkType;
 import io.nem.sdk.model.transaction.JsonHelper;
@@ -47,7 +48,7 @@ class MosaicAddressRestrictionTransactionMapper extends
         return new MosaicAddressRestrictionTransactionFactory(networkType,
             toMosaicId(transaction.getMosaicId()),
             new BigInteger(transaction.getRestrictionKey()),
-            new Address(transaction.getTargetAddress(), networkType),
+            MapperUtils.toAddressFromUnresolved(transaction.getTargetAddress()),
             new BigInteger(transaction.getNewRestrictionValue()))
             .previousRestrictionValue(new BigInteger(transaction.getPreviousRestrictionValue()));
     }

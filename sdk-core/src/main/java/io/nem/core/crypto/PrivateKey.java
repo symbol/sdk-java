@@ -91,8 +91,10 @@ public class PrivateKey {
         return this.value.equals(rhs.value);
     }
 
-    @Override
-    public String toString() {
+    /**
+     * @return the hex representation of the private key.
+     */
+    public String toHex() {
         return ConvertUtils.toHex(this.value.toByteArray());
     }
 }
