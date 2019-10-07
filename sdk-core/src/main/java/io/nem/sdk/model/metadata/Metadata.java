@@ -35,6 +35,12 @@ public class Metadata {
     private final MetadataEntry metadataEntry;
 
 
+    /**
+     * The constructor.
+     *
+     * @param id the metadata id.
+     * @param metadataEntry the metadata entry with the information.
+     */
     public Metadata(String id, MetadataEntry metadataEntry) {
         this.id = id;
         this.metadataEntry = metadataEntry;
