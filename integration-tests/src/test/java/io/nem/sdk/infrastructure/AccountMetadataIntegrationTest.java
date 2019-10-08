@@ -16,8 +16,6 @@
 
 package io.nem.sdk.infrastructure;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import io.nem.sdk.model.account.Account;
 import io.nem.sdk.model.metadata.Metadata;
 import io.nem.sdk.model.metadata.MetadataType;
@@ -26,7 +24,6 @@ import io.nem.sdk.model.transaction.AccountMetadataTransactionFactory;
 import io.nem.sdk.model.transaction.AggregateTransaction;
 import io.nem.sdk.model.transaction.AggregateTransactionFactory;
 import java.math.BigInteger;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;

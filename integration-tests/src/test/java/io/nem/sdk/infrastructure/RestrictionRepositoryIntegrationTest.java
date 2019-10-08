@@ -16,28 +16,8 @@
 
 package io.nem.sdk.infrastructure;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
-import io.nem.sdk.api.RepositoryCallException;
 import io.nem.sdk.api.RestrictionRepository;
-import io.nem.sdk.model.account.Account;
 import io.nem.sdk.model.account.AccountRestrictions;
-import io.nem.sdk.model.account.Address;
-import io.nem.sdk.model.mosaic.MosaicId;
-import io.nem.sdk.model.mosaic.MosaicNonce;
-import io.nem.sdk.model.transaction.AccountAddressRestrictionTransaction;
-import io.nem.sdk.model.transaction.AccountAddressRestrictionTransactionFactory;
-import io.nem.sdk.model.transaction.AccountMosaicRestrictionTransaction;
-import io.nem.sdk.model.transaction.AccountMosaicRestrictionTransactionFactory;
-import io.nem.sdk.model.transaction.AccountOperationRestrictionTransaction;
-import io.nem.sdk.model.transaction.AccountOperationRestrictionTransactionFactory;
-import io.nem.sdk.model.transaction.AccountRestrictionModification;
-import io.nem.sdk.model.transaction.AccountRestrictionModificationAction;
-import io.nem.sdk.model.transaction.AccountRestrictionType;
-import io.nem.sdk.model.transaction.SignedTransaction;
-import io.nem.sdk.model.transaction.TransactionAnnounceResponse;
-import io.nem.sdk.model.transaction.TransactionType;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import org.junit.jupiter.api.Assertions;

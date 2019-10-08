@@ -26,7 +26,6 @@ import io.nem.sdk.model.account.AccountInfo;
 import io.nem.sdk.model.account.AccountNames;
 import io.nem.sdk.model.account.Address;
 import io.nem.sdk.model.blockchain.BlockDuration;
-import io.nem.sdk.model.blockchain.NetworkType;
 import io.nem.sdk.model.mosaic.MosaicFlags;
 import io.nem.sdk.model.mosaic.MosaicId;
 import io.nem.sdk.model.mosaic.MosaicNames;
@@ -210,60 +209,6 @@ class E2EIntegrationTest extends BaseIntegrationTest {
 
     @ParameterizedTest
     @EnumSource(RepositoryType.class)
-    void sendAddressAliasTransaction(RepositoryType type) {
-        String namespaceName =
-            "test-root-namespace-for-address-alias-" + new Double(Math.floor(Math.random() * 10000))
-                .intValue();
-
-        NamespaceRegistrationTransaction namespaceRegistrationTransaction =
-            NamespaceRegistrationTransactionFactory.createRootNamespace(
-                getNetworkType(),
-                namespaceName,
-                BigInteger.valueOf(100)).build();
-
-        this.rootNamespaceId = namespaceRegistrationTransaction.getNamespaceId();
-
-        AggregateTransaction aggregateTransaction =
-            AggregateTransactionFactory.createComplete(
-                getNetworkType(),
-                Collections.singletonList(
-                    namespaceRegistrationTransaction.toAggregate(this.account.getPublicAccount()))
-            ).build();
-
-        announceAndValidate(type, this.account, aggregateTransaction);
-
-        this.rootNamespaceId = namespaceRegistrationTransaction.getNamespaceId();
-
-        AddressAliasTransaction addressAliasTransaction =
-            new AddressAliasTransactionFactory(getNetworkType(),
-                AliasAction.LINK,
-                this.rootNamespaceId,
-                this.account.getAddress()
-            ).build();
-
-        AggregateTransaction aggregateTransaction2 =
-            AggregateTransactionFactory.createComplete(
-                getNetworkType(),
-                Collections.singletonList(
-                    addressAliasTransaction.toAggregate(this.account.getPublicAccount()))
-            ).build();
-
-        announceAndValidate(type, this.account, aggregateTransaction2);
-
-        List<AccountNames> accountNames = get(getRepositoryFactory(type).createAccountRepository()
-            .getAccountsNamesFromAddresses(Collections.singletonList(this.account.getAddress())));
-
-        Assert.assertEquals(1, accountNames.size());
-
-        assertEquals(1, accountNames.size());
-        assertEquals(this.getTestAccountAddress(), accountNames.get(0).getAddress());
-        assertTrue(accountNames.get(0).getNames().stream().map(NamespaceName::getName).collect(
-            Collectors.toList()).contains(namespaceName));
-    }
-
-
-    @ParameterizedTest
-    @EnumSource(RepositoryType.class)
     void standaloneSubNamespaceRegisterNamespaceTransaction(RepositoryType type) {
 
         this.standaloneRootRegisterNamespaceTransaction(type);
@@ -322,73 +267,6 @@ class E2EIntegrationTest extends BaseIntegrationTest {
         announceAndValidate(type, this.account, mosaicDefinitionTransaction);
     }
 
-    @ParameterizedTest
-    @EnumSource(RepositoryType.class)
-    void sendMosaicAliasTransaction(RepositoryType type) {
-        String namespaceName =
-            "test-root-namespace-for-mosaic-alias-" + new Double(Math.floor(Math.random() * 10000))
-                .intValue();
-
-        AccountInfo accountInfo = get(getRepositoryFactory(type).createAccountRepository()
-            .getAccountInfo(this.account.getPublicAccount().getAddress()));
-
-        Assert.assertFalse(
-            accountInfo.getMosaics().isEmpty());
-
-        MosaicId mosaicId = createMosaic(type);
-
-        NamespaceRegistrationTransaction namespaceRegistrationTransaction =
-            NamespaceRegistrationTransactionFactory.createRootNamespace(
-                getNetworkType(),
-                namespaceName,
-                BigInteger.valueOf(100)).build();
-
-        this.rootNamespaceId = namespaceRegistrationTransaction.getNamespaceId();
-
-        AggregateTransaction aggregateTransaction =
-            AggregateTransactionFactory.createComplete(
-                getNetworkType(),
-                Collections.singletonList(
-                    namespaceRegistrationTransaction.toAggregate(this.account.getPublicAccount()))
-            ).build();
-
-        announceAndValidate(type, this.account, aggregateTransaction);
-
-        this.rootNamespaceId = namespaceRegistrationTransaction.getNamespaceId();
-
-        MosaicAliasTransaction addressAliasTransaction =
-            new MosaicAliasTransactionFactory(
-                getNetworkType(),
-                AliasAction.LINK,
-                this.rootNamespaceId,
-                mosaicId).build();
-
-        AggregateTransaction aggregateTransaction2 =
-            AggregateTransactionFactory.createComplete(
-                getNetworkType(),
-                Collections.singletonList(
-                    addressAliasTransaction.toAggregate(this.account.getPublicAccount()))
-            ).build();
-
-        SignedTransaction signedTransaction2 = this.account
-            .sign(aggregateTransaction2, generationHash);
-
-        TransactionAnnounceResponse transactionAnnounceResponse2 =
-            get(getTransactionRepository(type).announce(signedTransaction2));
-        System.out.println(transactionAnnounceResponse2.getMessage());
-
-        this.validateTransactionAnnounceCorrectly(
-            this.account.getAddress(), signedTransaction2.getHash(), type);
-
-        List<MosaicNames> accountNames = get(getRepositoryFactory(type).createMosaicRepository()
-            .getMosaicsNames(Collections.singletonList(mosaicId)));
-
-        Assert.assertEquals(1, accountNames.size());
-
-        assertEquals(1, accountNames.size());
-        assertEquals(mosaicId, accountNames.get(0).getMosaicId());
-        assertTrue(accountNames.get(0).getNames().contains(namespaceName));
-    }
 
     private MosaicId createMosaic(RepositoryType type) {
         MosaicNonce nonce = MosaicNonce.createRandom();
@@ -401,16 +279,7 @@ class E2EIntegrationTest extends BaseIntegrationTest {
                 MosaicFlags.create(true, true, true),
                 4, new BlockDuration(100)).build();
 
-        SignedTransaction signedTransaction =
-            this.account.sign(mosaicDefinitionTransaction, generationHash);
-
-        TransactionAnnounceResponse transactionAnnounceResponse =
-            get(getTransactionRepository(type).announce(signedTransaction));
-        System.out.println(transactionAnnounceResponse.getMessage());
-
-        this.validateTransactionAnnounceCorrectly(this.account.getAddress(),
-            signedTransaction.getHash(), type);
-        return mosaicId;
+        return announceAndValidate(type, account, mosaicDefinitionTransaction).getMosaicId();
     }
 
     @ParameterizedTest
@@ -502,9 +371,9 @@ class E2EIntegrationTest extends BaseIntegrationTest {
                 this.mosaicId, // restricted MosaicId
                 BigInteger.valueOf(1), // restrictionKey
                 this.account.getAddress(),  // targetAddress
-                BigInteger.valueOf(9), // previousRestrictionValue
+                // previousRestrictionValue
                 BigInteger.valueOf(8)  // newRestrictionValue
-            ).build();
+            ).previousRestrictionValue(BigInteger.valueOf(9)).build();
 
         AggregateTransaction aggregateTransaction =
             AggregateTransactionFactory.createComplete(
@@ -535,13 +404,11 @@ class E2EIntegrationTest extends BaseIntegrationTest {
             new MosaicGlobalRestrictionTransactionFactory(
                 getNetworkType(),
                 this.mosaicId, // restrictedMosaicId
-                new MosaicId(new BigInteger("0")), // referenceMosaicId
                 BigInteger.valueOf(1),    // restrictionKey
-                BigInteger.valueOf(9),    // previousRestrictionValue
-                MosaicRestrictionType.EQ, // previousRestrictionType
                 BigInteger.valueOf(8),    // newRestrictionValue
                 MosaicRestrictionType.GE  // newRestrictionType
-            ).build();
+            ).previousRestrictionValue(BigInteger.valueOf(9))
+                .previousRestrictionType(MosaicRestrictionType.EQ).build();
 
         SignedTransaction signedTransaction =
             this.account.sign(mosaicGlobalRestrictionTransaction, generationHash);
@@ -564,13 +431,11 @@ class E2EIntegrationTest extends BaseIntegrationTest {
             new MosaicGlobalRestrictionTransactionFactory(
                 getNetworkType(),
                 this.mosaicId, // restrictedMosaicId
-                new MosaicId(new BigInteger("0")), // referenceMosaicId
                 BigInteger.valueOf(1),    // restrictionKey
-                BigInteger.valueOf(9),    // previousRestrictionValue
-                MosaicRestrictionType.EQ, // previousRestrictionType
                 BigInteger.valueOf(8),    // newRestrictionValue
                 MosaicRestrictionType.GE  // newRestrictionType
-            ).build();
+            ).previousRestrictionValue(BigInteger.valueOf(9))
+                .previousRestrictionType(MosaicRestrictionType.EQ).build();
 
         AggregateTransaction aggregateTransaction =
             AggregateTransactionFactory.createComplete(

@@ -16,13 +16,10 @@
 
 package io.nem.sdk.infrastructure;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import io.nem.sdk.model.account.Account;
 import io.nem.sdk.model.metadata.Metadata;
 import io.nem.sdk.model.metadata.MetadataType;
 import io.nem.sdk.model.namespace.NamespaceId;
-import io.nem.sdk.model.transaction.AccountMetadataTransaction;
 import io.nem.sdk.model.transaction.AggregateTransaction;
 import io.nem.sdk.model.transaction.AggregateTransactionFactory;
 import io.nem.sdk.model.transaction.NamespaceMetadataTransaction;
@@ -30,7 +27,6 @@ import io.nem.sdk.model.transaction.NamespaceMetadataTransactionFactory;
 import io.nem.sdk.model.transaction.NamespaceRegistrationTransaction;
 import io.nem.sdk.model.transaction.NamespaceRegistrationTransactionFactory;
 import java.math.BigInteger;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -43,7 +39,7 @@ import org.junit.jupiter.params.provider.EnumSource;
  * Integration tests around account metadata.
  */
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class NamespaceMetadataIntegrationTest extends BaseIntegrationTest {
+public class    NamespaceMetadataIntegrationTest extends BaseIntegrationTest {
 
     //TODO use test account, not nemesis (getting Failure_Core_Insufficient_Balance errors when creating Namespace)
     private Account testAccount = config().getNemesisAccount();
@@ -117,7 +113,6 @@ public class NamespaceMetadataIntegrationTest extends BaseIntegrationTest {
 
     private String assertMetadata(NamespaceMetadataTransaction transaction,
         List<Metadata> metadata) {
-        System.out.println(jsonHelper().print(metadata));
 
         Optional<Metadata> endpointMetadata = metadata.stream().filter(
             m -> m.getMetadataEntry().getScopedMetadataKey()
@@ -163,7 +158,6 @@ public class NamespaceMetadataIntegrationTest extends BaseIntegrationTest {
 
         Assertions.assertEquals(namespaceRegistrationTransaction.getNamespaceName(),
             processedTransaction.getNamespaceName());
-        System.out.println("Namespace created");
         return namespaceRegistrationTransaction.getNamespaceId();
     }
 }

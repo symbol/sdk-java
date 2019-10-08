@@ -16,12 +16,8 @@
 
 package io.nem.sdk.infrastructure;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
-import io.nem.core.utils.ConvertUtils;
 import io.nem.sdk.model.account.Account;
 import io.nem.sdk.model.blockchain.BlockDuration;
-import io.nem.sdk.model.blockchain.NetworkType;
 import io.nem.sdk.model.metadata.Metadata;
 import io.nem.sdk.model.metadata.MetadataType;
 import io.nem.sdk.model.mosaic.MosaicFlags;
@@ -33,15 +29,10 @@ import io.nem.sdk.model.transaction.MosaicDefinitionTransaction;
 import io.nem.sdk.model.transaction.MosaicDefinitionTransactionFactory;
 import io.nem.sdk.model.transaction.MosaicMetadataTransaction;
 import io.nem.sdk.model.transaction.MosaicMetadataTransactionFactory;
-import io.nem.sdk.model.transaction.NamespaceMetadataTransaction;
-import io.nem.sdk.model.transaction.SignedTransaction;
-import io.nem.sdk.model.transaction.TransactionAnnounceResponse;
 import java.math.BigInteger;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import org.apache.commons.codec.binary.Base32;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.params.ParameterizedTest;

@@ -19,16 +19,12 @@ package io.nem.sdk.infrastructure.vertx;
 import static io.nem.core.utils.MapperUtils.toAddressFromUnresolved;
 import static io.nem.core.utils.MapperUtils.toMosaicId;
 
-import io.nem.core.crypto.PublicKey;
-import io.nem.core.utils.MapperUtils;
 import io.nem.sdk.api.AccountRepository;
 import io.nem.sdk.api.QueryParams;
 import io.nem.sdk.infrastructure.vertx.mappers.GeneralTransactionMapper;
 import io.nem.sdk.infrastructure.vertx.mappers.TransactionMapper;
 import io.nem.sdk.model.account.AccountInfo;
 import io.nem.sdk.model.account.AccountNames;
-import io.nem.sdk.model.account.AccountRestriction;
-import io.nem.sdk.model.account.AccountRestrictions;
 import io.nem.sdk.model.account.AccountType;
 import io.nem.sdk.model.account.Address;
 import io.nem.sdk.model.account.MultisigAccountGraphInfo;
@@ -37,7 +33,6 @@ import io.nem.sdk.model.account.PublicAccount;
 import io.nem.sdk.model.blockchain.NetworkType;
 import io.nem.sdk.model.mosaic.Mosaic;
 import io.nem.sdk.model.namespace.NamespaceName;
-import io.nem.sdk.model.transaction.AccountRestrictionType;
 import io.nem.sdk.model.transaction.AggregateTransaction;
 import io.nem.sdk.model.transaction.Transaction;
 import io.nem.sdk.openapi.vertx.api.AccountRoutesApi;
@@ -47,9 +42,6 @@ import io.nem.sdk.openapi.vertx.model.AccountDTO;
 import io.nem.sdk.openapi.vertx.model.AccountIds;
 import io.nem.sdk.openapi.vertx.model.AccountInfoDTO;
 import io.nem.sdk.openapi.vertx.model.AccountNamesDTO;
-import io.nem.sdk.openapi.vertx.model.AccountRestrictionDTO;
-import io.nem.sdk.openapi.vertx.model.AccountRestrictionsDTO;
-import io.nem.sdk.openapi.vertx.model.AccountRestrictionsInfoDTO;
 import io.nem.sdk.openapi.vertx.model.AccountsNamesDTO;
 import io.nem.sdk.openapi.vertx.model.MultisigAccountGraphInfoDTO;
 import io.nem.sdk.openapi.vertx.model.MultisigAccountInfoDTO;
@@ -61,7 +53,6 @@ import io.vertx.core.Handler;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -99,17 +90,9 @@ public class AccountRepositoryVertxImpl extends AbstractRepositoryVertxImpl impl
     }
 
     @Override
-    public Observable<List<AccountNames>> getAccountsNamesFromAddresses(List<Address> addresses) {
+    public Observable<List<AccountNames>> getAccountsNames(List<Address> addresses) {
         AccountIds accountIds = new AccountIds()
             .addresses(addresses.stream().map(Address::plain).collect(Collectors.toList()));
-        return getAccountsNames(accountIds);
-    }
-
-    @Override
-    public Observable<List<AccountNames>> getAccountsNamesFromPublicKeys(
-        List<PublicKey> publicKeys) {
-        AccountIds accountIds = new AccountIds()
-            .publicKeys(publicKeys.stream().map(PublicKey::toString).collect(Collectors.toList()));
         return getAccountsNames(accountIds);
     }
 
@@ -135,16 +118,9 @@ public class AccountRepositoryVertxImpl extends AbstractRepositoryVertxImpl impl
     }
 
     @Override
-    public Observable<List<AccountInfo>> getAccountsInfoFromAddresses(List<Address> addresses) {
+    public Observable<List<AccountInfo>> getAccountsInfo(List<Address> addresses) {
         AccountIds accountIds = new AccountIds()
             .addresses(addresses.stream().map(Address::plain).collect(Collectors.toList()));
-        return getAccountsinfo(accountIds);
-    }
-
-    @Override
-    public Observable<List<AccountInfo>> getAccountsInfoFromPublicKeys(List<PublicKey> publicKeys) {
-        AccountIds accountIds = new AccountIds()
-            .addresses(publicKeys.stream().map(PublicKey::toString).collect(Collectors.toList()));
         return getAccountsinfo(accountIds);
     }
 

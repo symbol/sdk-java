@@ -45,7 +45,6 @@ public class RepositoryFactoryOkHttpImplTest {
         Assertions.assertNotNull(factory.createTransactionRepository());
         Assertions.assertNotNull(factory.createMetadataRepository());
         Assertions.assertNotNull(factory.createRestrictionRepository());
-        Assertions.assertNotNull(factory.createRestrictionRepository());
         factory.close();
         factory.close();
         factory.close();

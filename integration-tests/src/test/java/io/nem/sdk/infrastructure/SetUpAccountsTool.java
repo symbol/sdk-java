@@ -21,14 +21,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import io.nem.sdk.api.RepositoryCallException;
 import io.nem.sdk.model.account.Account;
 import io.nem.sdk.model.account.AccountInfo;
-import io.nem.sdk.model.blockchain.NetworkType;
 import io.nem.sdk.model.mosaic.NetworkCurrencyMosaic;
-import io.nem.sdk.model.namespace.NamespaceId;
 import io.nem.sdk.model.transaction.AggregateTransaction;
 import io.nem.sdk.model.transaction.AggregateTransactionFactory;
 import io.nem.sdk.model.transaction.CosignatoryModificationActionType;
-import io.nem.sdk.model.transaction.HashLockTransaction;
-import io.nem.sdk.model.transaction.HashLockTransactionFactory;
 import io.nem.sdk.model.transaction.MultisigAccountModificationTransaction;
 import io.nem.sdk.model.transaction.MultisigAccountModificationTransactionFactory;
 import io.nem.sdk.model.transaction.MultisigCosignatoryModification;
@@ -66,6 +62,7 @@ public class SetUpAccountsTool extends BaseIntegrationTest {
         sendMosaicFromNemesis(config().getTestAccount2());
         sendMosaicFromNemesis(config().getCosignatoryAccount());
         sendMosaicFromNemesis(config().getCosignatory2Account());
+        sendMosaicFromNemesis(config().getCosignatory3Account());
         sendMosaicFromNemesis(config().getMultisigAccount());
         //TODO Failure_Core_Insufficient_Balance error!
         createMultisigAccount(config().getMultisigAccount(), config().getCosignatoryAccount(),
@@ -77,7 +74,7 @@ public class SetUpAccountsTool extends BaseIntegrationTest {
 
         System.out.println("Creating multisg account");
         MultisigAccountModificationTransaction convertIntoMultisigTransaction = new MultisigAccountModificationTransactionFactory(
-            getNetworkType(), (byte) 0, (byte) 0, Arrays.stream(accounts)
+            getNetworkType(), (byte) 2, (byte) 1, Arrays.stream(accounts)
             .map(a -> new MultisigCosignatoryModification(CosignatoryModificationActionType.ADD,
                 a.getPublicAccount())).collect(Collectors.toList())).build();
 
@@ -88,18 +85,17 @@ public class SetUpAccountsTool extends BaseIntegrationTest {
         ).build();
 
         SignedTransaction signedTransaction = multisigAccount
-            .sign(aggregateTransaction, getGenerationHash());
+            .signTransactionWithCosignatories(aggregateTransaction, Arrays.asList(accounts),
+                getGenerationHash());
 
-        HashLockTransaction hashLockTransaction = new HashLockTransactionFactory(
-            getNetworkType(),
-            NetworkCurrencyMosaic.createRelative(BigInteger.TEN),
-            BigInteger.valueOf(480),
-            signedTransaction).build();
+        TransactionAnnounceResponse transactionAnnounceResponse =
+            get(getRepositoryFactory(type).createTransactionRepository()
+                .announce(signedTransaction));
+        assertEquals(
+            "packet 9 was pushed to the network via /transaction",
+            transactionAnnounceResponse.getMessage());
 
-        HashLockTransaction processedTransaction = announceAndValidate(type, multisigAccount,
-            hashLockTransaction);
-
-        Assertions.assertNotNull(processedTransaction);
+        validateTransactionAnnounceCorrectly(multisigAccount.getAddress(), signedTransaction.getHash(), type);
 
     }
 
@@ -110,7 +106,6 @@ public class SetUpAccountsTool extends BaseIntegrationTest {
             return;
         }
 
-        String generationHash = getGenerationHash();
         Account nemesisAccount = config().getNemesisAccount();
         System.out.println("Sending " + AMOUNT_PER_TRANSFER + " Mosaic to: ");
         printAccount(recipient);
