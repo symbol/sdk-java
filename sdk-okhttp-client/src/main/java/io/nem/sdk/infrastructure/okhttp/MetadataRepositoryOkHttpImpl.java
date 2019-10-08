@@ -135,6 +135,13 @@ public class MetadataRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl i
         return client;
     }
 
+    /**
+     * It handles the callback that returns a list of {@link MetadataEntriesDTO} converting it into
+     * a {@link Observable} list of {@link Metadata}.
+     *
+     * @param callback the callback
+     * @return the {@link Observable} list of {@link Metadata}.
+     */
     private Observable<List<Metadata>> handleList(
         Callable<MetadataEntriesDTO> callback) {
         return exceptionHandling(
@@ -143,12 +150,25 @@ public class MetadataRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl i
                 .toObservable());
     }
 
+    /**
+     * It handles the callback that returns one {@link MetadataEntriesDTO} converting it into a
+     * {@link Observable} of {@link Metadata}.
+     *
+     * @param callback the callback
+     * @return the {@link Observable} of {@link Metadata}.
+     */
     private Observable<Metadata> handleOne(
         Callable<MetadataDTO> callback) {
         return exceptionHandling(call(callback)
             .map(this::toMetadata));
     }
 
+    /**
+     * It converts the {@link MetadataDTO} into a model {@link Metadata}.
+     *
+     * @param dto the {@link MetadataDTO}
+     * @return the {@link Metadata}
+     */
     private Metadata toMetadata(MetadataDTO dto) {
         MetadataEntryDTO entryDto = dto.getMetadataEntry();
         MetadataEntry metadataEntry = new MetadataEntry(entryDto.getCompositeHash(),

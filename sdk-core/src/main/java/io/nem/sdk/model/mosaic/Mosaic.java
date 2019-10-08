@@ -63,8 +63,4 @@ public class Mosaic {
         return amount;
     }
 
-    @Override
-    public String toString() {
-        return "Mosaic{" + "id=" + id + ", amount=" + amount + '}';
-    }
 }

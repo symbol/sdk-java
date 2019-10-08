@@ -90,11 +90,25 @@ public abstract class MetadataTransactionFactory<T extends MetadataTransaction> 
         return valueSize;
     }
 
+    /**
+     * This builder method set the value sizeof the transaction. It's mostly used by the internal
+     * transaction mapper when processing a Metadata Transaction JSON payload.
+     *
+     * @param valueSize the new value size, mostly provided by JSON rest payload.
+     * @return this factory.
+     */
     public MetadataTransactionFactory<T> valueSize(int valueSize) {
         this.valueSize = valueSize;
         return this;
     }
 
+    /**
+     * Use this method when you want to update/modify a metadata. The value size delta needs to be
+     * provided in order to update the existing metadata correctly.
+     *
+     * @param valueSizeDelta the new value size delta
+     * @return this factory.
+     */
     public MetadataTransactionFactory<T> valueSizeDelta(int valueSizeDelta) {
         this.valueSizeDelta = valueSizeDelta;
         return this;
