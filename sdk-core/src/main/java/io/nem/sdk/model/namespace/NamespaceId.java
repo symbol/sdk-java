@@ -126,11 +126,4 @@ public class NamespaceId implements UInt64Id {
         return Objects.hash(id);
     }
 
-    @Override
-    public String toString() {
-        return "NamespaceId{" +
-            "id=" + id +
-            ", fullName=" + fullName +
-            '}';
-    }
 }
