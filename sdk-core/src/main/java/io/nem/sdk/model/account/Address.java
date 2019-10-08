@@ -191,10 +191,4 @@ public class Address {
         return Objects.hash(plainAddress, networkType);
     }
 
-    @Override
-    public String toString() {
-        return "Address{" +
-            "plainAddress='" + plainAddress + '\'' +
-            '}';
-    }
 }
