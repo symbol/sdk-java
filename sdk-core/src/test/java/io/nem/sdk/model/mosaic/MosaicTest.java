@@ -29,8 +29,5 @@ class MosaicTest {
         Mosaic mosaic = new Mosaic(mosaicId, BigInteger.valueOf(24));
         assertEquals(mosaicId, mosaic.getId());
         assertEquals(BigInteger.valueOf(24), mosaic.getAmount());
-        assertEquals(
-            "Mosaic{id=MosaicId{id=-3087871471161192663, fullName=Optional.empty}, amount=24}",
-            mosaic.toString());
     }
 }
