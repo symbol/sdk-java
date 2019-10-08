@@ -46,9 +46,9 @@ class MosaicAddressRestrictionTransactionMapper extends
         MosaicAddressRestrictionTransactionDTO transaction) {
         return new MosaicAddressRestrictionTransactionFactory(networkType,
             toMosaicId(transaction.getMosaicId()),
-            new BigInteger(transaction.getRestrictionKey()),
+            MapperUtils.fromHex(transaction.getRestrictionKey()),
             MapperUtils.toAddressFromUnresolved(transaction.getTargetAddress()),
-            new BigInteger(transaction.getNewRestrictionValue())).previousRestrictionValue(
-            new BigInteger(transaction.getPreviousRestrictionValue()));
+            transaction.getNewRestrictionValue()).previousRestrictionValue(
+            transaction.getPreviousRestrictionValue());
     }
 }

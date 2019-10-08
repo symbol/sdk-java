@@ -16,6 +16,7 @@
 
 package io.nem.sdk.infrastructure.vertx;
 
+import io.nem.core.utils.ConvertUtils;
 import io.nem.core.utils.MapperUtils;
 import io.nem.sdk.model.account.AccountRestrictions;
 import io.nem.sdk.model.account.Address;
@@ -139,7 +140,7 @@ public class RestrictionRepositoryVertxImplTest extends AbstractVertxRespository
         dto.setMosaicRestrictionEntry(wrapperDTO);
 
         MosaicAddressRestrictionEntryDTO entryDTO = new MosaicAddressRestrictionEntryDTO();
-        entryDTO.setKey("1111");
+        entryDTO.setKey(ConvertUtils.toSize16Hex(BigInteger.valueOf(1111)));
         entryDTO.setValue("2222");
         List<MosaicAddressRestrictionEntryDTO> restrictions = new ArrayList<>();
         restrictions.add(entryDTO);
@@ -187,7 +188,7 @@ public class RestrictionRepositoryVertxImplTest extends AbstractVertxRespository
         dto.setMosaicRestrictionEntry(wrapperDTO);
 
         MosaicGlobalRestrictionEntryDTO entryDTO = new MosaicGlobalRestrictionEntryDTO();
-        entryDTO.setKey("1111");
+        entryDTO.setKey(ConvertUtils.toSize16Hex(BigInteger.valueOf(1111)));
         MosaicGlobalRestrictionEntryRestrictionDTO entryRestrictionDto = new MosaicGlobalRestrictionEntryRestrictionDTO();
         entryRestrictionDto.setRestrictionType(MosaicRestrictionTypeEnum.NUMBER_5);
         entryRestrictionDto.setReferenceMosaicId("456");
@@ -247,7 +248,7 @@ public class RestrictionRepositoryVertxImplTest extends AbstractVertxRespository
         dto.setMosaicRestrictionEntry(wrapperDTO);
 
         MosaicGlobalRestrictionEntryDTO entryDTO = new MosaicGlobalRestrictionEntryDTO();
-        entryDTO.setKey("1111");
+        entryDTO.setKey(ConvertUtils.toSize16Hex(BigInteger.valueOf(1111)));
         MosaicGlobalRestrictionEntryRestrictionDTO entryRestrictionDto = new MosaicGlobalRestrictionEntryRestrictionDTO();
         entryRestrictionDto.setRestrictionType(MosaicRestrictionTypeEnum.NUMBER_5);
         entryRestrictionDto.setReferenceMosaicId("456");
@@ -305,7 +306,7 @@ public class RestrictionRepositoryVertxImplTest extends AbstractVertxRespository
         dto.setMosaicRestrictionEntry(wrapperDTO);
 
         MosaicAddressRestrictionEntryDTO entryDTO = new MosaicAddressRestrictionEntryDTO();
-        entryDTO.setKey("1111");
+        entryDTO.setKey(ConvertUtils.toSize16Hex(BigInteger.valueOf(1111)));
         entryDTO.setValue("2222");
         List<MosaicAddressRestrictionEntryDTO> restrictions = new ArrayList<>();
         restrictions.add(entryDTO);

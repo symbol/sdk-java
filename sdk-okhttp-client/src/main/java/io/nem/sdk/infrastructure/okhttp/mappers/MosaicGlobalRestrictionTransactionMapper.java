@@ -19,6 +19,7 @@ package io.nem.sdk.infrastructure.okhttp.mappers;
 
 import static io.nem.core.utils.MapperUtils.toMosaicId;
 
+import io.nem.core.utils.MapperUtils;
 import io.nem.sdk.model.blockchain.NetworkType;
 import io.nem.sdk.model.transaction.JsonHelper;
 import io.nem.sdk.model.transaction.MosaicGlobalRestrictionTransaction;
@@ -50,11 +51,11 @@ class MosaicGlobalRestrictionTransactionMapper extends
 
         return new MosaicGlobalRestrictionTransactionFactory(networkType,
             toMosaicId(transaction.getMosaicId()),
-            new BigInteger(transaction.getRestrictionKey()),
-            new BigInteger(transaction.getNewRestrictionValue()),
+            MapperUtils.fromHex(transaction.getRestrictionKey()),
+            transaction.getNewRestrictionValue(),
             MosaicRestrictionType.rawValueOf(newRestrictionType)
         ).referenceMosaicId(toMosaicId(transaction.getReferenceMosaicId()))
-            .previousRestrictionValue(new BigInteger(transaction.getPreviousRestrictionValue()))
+            .previousRestrictionValue(transaction.getPreviousRestrictionValue())
             .previousRestrictionType(MosaicRestrictionType.rawValueOf(prevRestrictionType));
     }
 }
