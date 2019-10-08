@@ -199,14 +199,6 @@ class AddressTest {
         assertNotEquals("notAndAddress", address2);
     }
 
-    @Test
-    void shouldToString() {
-        Address address1 =
-            new Address("SRRRRR-TTTTTT-555555-GIMIHP-NSRYRJ-RT7DOB-GWZY", NetworkType.MIJIN_TEST);
-        assertEquals("Address{plainAddress='SRRRRRTTTTTT555555GIMIHPNSRYRJRT7DOBGWZY'}",
-            address1.toString());
-    }
-
     @ParameterizedTest
     @MethodSource("assertExceptionProvider")
     @DisplayName("NetworkType")

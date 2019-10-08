@@ -138,11 +138,4 @@ class NamespaceIdTest {
         Assertions.assertNotEquals(test.hashCode(), test3.hashCode());
 
     }
-
-    @Test
-    public void shouldToString() {
-        Assertions.assertEquals("NamespaceId{id=-4457087767077112308, fullName=Optional[subnem]}",
-            NamespaceId.createFromName("subnem").toString());
-
-    }
 }
