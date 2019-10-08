@@ -39,8 +39,8 @@ class HashLockTransactionMapper extends
         super(jsonHelper, TransactionType.LOCK, HashLockTransactionDTO.class);
     }
 
-    private Mosaic getMosaic(io.nem.sdk.openapi.okhttp_gson.model.Mosaic mosaic) {
-        return new Mosaic(toMosaicId(mosaic.getId()),
+    private Mosaic getMosaic(HashLockTransactionDTO mosaic) {
+        return new Mosaic(toMosaicId(mosaic.getMosaicId()),
             mosaic.getAmount());
     }
 
@@ -49,17 +49,15 @@ class HashLockTransactionMapper extends
         HashLockTransactionDTO transaction) {
         SignedTransaction signedTransaction = new SignedTransaction("", transaction.getHash(),
             TransactionType.AGGREGATE_BONDED);
-        return new HashLockTransactionFactory(networkType, getMosaic(transaction.getMosaic()),
+        return new HashLockTransactionFactory(networkType, getMosaic(transaction),
             transaction.getDuration(),
             signedTransaction);
     }
 
     @Override
     protected void copyToDto(HashLockTransaction transaction, HashLockTransactionDTO dto) {
-        io.nem.sdk.openapi.okhttp_gson.model.Mosaic mosaicDto = new io.nem.sdk.openapi.okhttp_gson.model.Mosaic();
-        mosaicDto.setId(MapperUtils.getIdAsHex(transaction.getMosaic().getId()));
-        mosaicDto.setAmount(transaction.getMosaic().getAmount());
-        dto.setMosaic(mosaicDto);
+        dto.setMosaicId(MapperUtils.getIdAsHex(transaction.getMosaic().getId()));
+        dto.setAmount(transaction.getMosaic().getAmount());
         dto.setDuration(transaction.getDuration());
         dto.setHash(transaction.getSignedTransaction().getHash());
     }

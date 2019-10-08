@@ -83,7 +83,7 @@ class MultisigAccountModificationTransactionMapper extends
         CosignatoryModificationDTO dto = new CosignatoryModificationDTO();
         dto.setModificationAction(
             CosignatoryModificationActionEnum.fromValue(model.getModificationAction().getValue()));
-        dto.setCosignatoryPublicKey(model.getCosignatoryPublicAccount().getPublicKey().toString());
+        dto.setCosignatoryPublicKey(model.getCosignatoryPublicAccount().getPublicKey().toHex());
         return dto;
     }
 

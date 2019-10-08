@@ -107,7 +107,7 @@ class AggregateTransactionMapper extends
         AggregateTransactionCosignature aggregateCosignature) {
         CosignatureDTO cosignatureDTO = new CosignatureDTO();
         cosignatureDTO
-            .setSignerPublicKey(aggregateCosignature.getSigner().getPublicKey().toString());
+            .setSignerPublicKey(aggregateCosignature.getSigner().getPublicKey().toHex());
         cosignatureDTO.setSignature(aggregateCosignature.getSignature());
         return cosignatureDTO;
     }

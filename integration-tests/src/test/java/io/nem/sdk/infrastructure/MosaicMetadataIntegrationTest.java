@@ -44,8 +44,7 @@ import org.junit.jupiter.params.provider.EnumSource;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class MosaicMetadataIntegrationTest extends BaseIntegrationTest {
 
-    //TODO use test account, not nemesis (getting Failure_Core_Insufficient_Balance errors when creating Mosaic)
-    private Account testAccount = config().getNemesisAccount();
+    private Account testAccount = config().getDefaultAccount();
 
     @ParameterizedTest
     @EnumSource(RepositoryType.class)

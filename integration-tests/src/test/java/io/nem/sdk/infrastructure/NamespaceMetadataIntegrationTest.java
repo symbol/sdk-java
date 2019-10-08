@@ -39,10 +39,9 @@ import org.junit.jupiter.params.provider.EnumSource;
  * Integration tests around account metadata.
  */
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class    NamespaceMetadataIntegrationTest extends BaseIntegrationTest {
+public class NamespaceMetadataIntegrationTest extends BaseIntegrationTest {
 
-    //TODO use test account, not nemesis (getting Failure_Core_Insufficient_Balance errors when creating Namespace)
-    private Account testAccount = config().getNemesisAccount();
+    private Account testAccount = config().getDefaultAccount();
 
     @ParameterizedTest
     @EnumSource(RepositoryType.class)

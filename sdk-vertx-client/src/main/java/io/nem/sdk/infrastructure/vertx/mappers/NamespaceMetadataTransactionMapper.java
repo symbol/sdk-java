@@ -17,6 +17,7 @@
 
 package io.nem.sdk.infrastructure.vertx.mappers;
 
+import io.nem.core.utils.ConvertUtils;
 import io.nem.core.utils.MapperUtils;
 import io.nem.sdk.model.account.PublicAccount;
 import io.nem.sdk.model.blockchain.NetworkType;
@@ -47,7 +48,7 @@ class NamespaceMetadataTransactionMapper extends
         Integer valueSizeDelta = transaction.getValueSizeDelta();
         BigInteger scopedMetaDataKey = new BigInteger(transaction.getScopedMetadataKey(), 16);
         Integer valueSize = transaction.getValueSize();
-        String value = transaction.getValue();
+        String value = ConvertUtils.fromHexToString(transaction.getValue());
         NamespaceId targetNamespace = MapperUtils.toNamespaceId(transaction.getTargetNamespaceId());
         NamespaceMetadataTransactionFactory factory = new NamespaceMetadataTransactionFactory(
             networkType,
@@ -55,19 +56,22 @@ class NamespaceMetadataTransactionMapper extends
             targetNamespace,
             scopedMetaDataKey,
             value);
-        factory.valueSizeDelta(valueSizeDelta).valueSize(valueSize);
+        factory.valueSizeDelta(valueSizeDelta);
+        if (valueSize != null) {
+            factory.valueSize(valueSize);
+        }
         return factory;
     }
 
     @Override
     protected void copyToDto(NamespaceMetadataTransaction transaction,
         NamespaceMetadataTransactionDTO dto) {
-        dto.setTargetPublicKey(transaction.getTargetAccount().getPublicKey().toString());
+        dto.setTargetPublicKey(transaction.getTargetAccount().getPublicKey().toHex());
         dto.setTargetNamespaceId(MapperUtils.getIdAsHex(transaction.getTargetNamespaceId()));
         dto.setScopedMetadataKey(transaction.getScopedMetadataKey().toString());
-        dto.setValueSizeDelta(transaction.getValueSizeDelta());
+        dto.setValue(ConvertUtils.fromStringToHex(transaction.getValue()));
         dto.setValueSize(transaction.getValueSize());
-        dto.setValue(transaction.getValue());
+        dto.setValueSizeDelta(transaction.getValueSizeDelta());
 
     }
 }

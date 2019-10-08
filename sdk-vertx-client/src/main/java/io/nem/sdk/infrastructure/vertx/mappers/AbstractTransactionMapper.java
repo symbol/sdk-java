@@ -163,7 +163,7 @@ public abstract class AbstractTransactionMapper<D, T extends Transaction> implem
 
         TransactionDTO dto = new TransactionDTO();
         dto.setSignerPublicKey(
-            transaction.getSigner().map(PublicAccount::getPublicKey).map(PublicKey::toString)
+            transaction.getSigner().map(PublicAccount::getPublicKey).map(PublicKey::toHex)
                 .orElse(null));
 
         dto.setVersion(transaction.getTransactionVersion());

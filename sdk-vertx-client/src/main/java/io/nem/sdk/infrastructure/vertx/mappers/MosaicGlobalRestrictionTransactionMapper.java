@@ -20,6 +20,7 @@ package io.nem.sdk.infrastructure.vertx.mappers;
 import static io.nem.core.utils.MapperUtils.getIdAsHex;
 import static io.nem.core.utils.MapperUtils.toMosaicId;
 
+import io.nem.core.utils.MapperUtils;
 import io.nem.sdk.model.blockchain.NetworkType;
 import io.nem.sdk.model.transaction.JsonHelper;
 import io.nem.sdk.model.transaction.MosaicGlobalRestrictionTransaction;
@@ -51,7 +52,7 @@ class MosaicGlobalRestrictionTransactionMapper extends
 
         return new MosaicGlobalRestrictionTransactionFactory(networkType,
             toMosaicId(transaction.getMosaicId()),
-            transaction.getRestrictionKey(),
+            MapperUtils.fromHex(transaction.getRestrictionKey()),
             transaction.getNewRestrictionValue(),
             MosaicRestrictionType.rawValueOf(newRestrictionType)
         ).referenceMosaicId(toMosaicId(transaction.getReferenceMosaicId()))
@@ -64,7 +65,7 @@ class MosaicGlobalRestrictionTransactionMapper extends
         MosaicGlobalRestrictionTransactionDTO dto) {
 
         dto.setMosaicId(getIdAsHex(transaction.getMosaicId()));
-        dto.setRestrictionKey(transaction.getRestrictionKey());
+        dto.setRestrictionKey(transaction.getRestrictionKey().toString(16));
         dto.setNewRestrictionValue(transaction.getNewRestrictionValue());
         dto.setPreviousRestrictionValue(transaction.getPreviousRestrictionValue());
         dto.setPreviousRestrictionType(MosaicRestrictionTypeEnum.fromValue(

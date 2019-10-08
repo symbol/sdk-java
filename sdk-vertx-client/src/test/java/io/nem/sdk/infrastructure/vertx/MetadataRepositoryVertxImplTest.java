@@ -173,7 +173,7 @@ public class MetadataRepositoryVertxImplTest extends AbstractVertxRespositoryTes
             MetadataTypeEnum
                 .fromValue(result.getMetadataEntry().getMetadataType().getValue()));
 
-        Assertions.assertEquals(ConvertUtils.fromHexString(expected.getMetadataEntry().getValue()),
+        Assertions.assertEquals(ConvertUtils.fromHexToString(expected.getMetadataEntry().getValue()),
             result.getMetadataEntry().getValue());
 
         if (expected.getMetadataEntry().getTargetId() != null) {

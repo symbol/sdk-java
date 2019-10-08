@@ -48,7 +48,8 @@ public class AccountMetadataIntegrationTest extends BaseIntegrationTest {
 
         String message = "This is the message for this account! 汉字" + key;
         System.out.println(
-            "Storing message '" + message + "' in account metadata " + testAccount.getAddress());
+            "Storing message '" + message + "' in account metadata " + testAccount.getAddress()
+                .plain());
 
         AccountMetadataTransaction transaction =
             new AccountMetadataTransactionFactory(

@@ -48,7 +48,7 @@ class AccountLinkTransactionMapper extends
 
     @Override
     protected void copyToDto(AccountLinkTransaction transaction, AccountLinkTransactionDTO dto) {
-        dto.setRemotePublicKey(transaction.getRemoteAccount().getPublicKey().toString());
+        dto.setRemotePublicKey(transaction.getRemoteAccount().getPublicKey().toHex());
         dto.setLinkAction(
             AccountLinkActionEnum.fromValue((int) transaction.getLinkAction().getValue()));
     }

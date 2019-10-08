@@ -62,7 +62,6 @@ public class TestHelperOkHttp {
         String resName = "json/" + resourceName;
         try (InputStream resourceAsStream = TestHelperOkHttp.class.getClassLoader()
             .getResourceAsStream(resName)) {
-            System.out.println("/src/test/resources/" + resName + ":0");
             return IOUtils.toString(resourceAsStream, StandardCharsets.UTF_8);
         } catch (Exception e) {
             throw new IllegalStateException(
