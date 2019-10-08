@@ -39,11 +39,9 @@ public class MosaicMetadataTransactionFactory extends
         PublicAccount targetAccount,
         MosaicId targetMosaicId,
         BigInteger scopedMetadataKey,
-        int valueSizeDelta,
-        int valueSize,
         String value) {
         super(TransactionType.MOSAIC_METADATA_TRANSACTION, networkType, targetAccount,
-            scopedMetadataKey, valueSizeDelta, valueSize, value);
+            scopedMetadataKey, value);
         Validate.notNull(targetMosaicId, "TargetMosaicId must not be null");
         this.targetMosaicId = targetMosaicId;
     }

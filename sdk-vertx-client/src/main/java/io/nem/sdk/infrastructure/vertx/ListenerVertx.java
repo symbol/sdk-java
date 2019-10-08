@@ -75,17 +75,6 @@ public class ListenerVertx extends ListenerBase implements Listener {
     }
 
     /**
-     * @param url of the host
-     */
-    public ListenerVertx(String url) {
-        this(createHttpClient(), url);
-    }
-
-    private static HttpClient createHttpClient() {
-        return Vertx.vertx().createHttpClient();
-    }
-
-    /**
      * @return a {@link CompletableFuture} that resolves when the websocket connection is opened
      */
     @Override

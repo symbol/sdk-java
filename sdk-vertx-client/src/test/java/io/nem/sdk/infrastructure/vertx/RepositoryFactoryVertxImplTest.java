@@ -50,6 +50,11 @@ public class RepositoryFactoryVertxImplTest {
         Assertions.assertNotNull(factory.createNetworkRepository());
         Assertions.assertNotNull(factory.createNodeRepository());
         Assertions.assertNotNull(factory.createTransactionRepository());
+        Assertions.assertNotNull(factory.createMetadataRepository());
+
+        factory.close();
+        factory.close();
+        factory.close();
     }
 
     @Test

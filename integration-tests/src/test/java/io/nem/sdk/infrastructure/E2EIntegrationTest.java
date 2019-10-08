@@ -20,14 +20,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import io.nem.core.crypto.Hashes;
-import io.nem.core.utils.HexEncoder;
-import io.nem.sdk.api.RepositoryFactory;
 import io.nem.sdk.api.TransactionRepository;
 import io.nem.sdk.model.account.Account;
 import io.nem.sdk.model.account.AccountInfo;
 import io.nem.sdk.model.account.AccountNames;
 import io.nem.sdk.model.account.Address;
-import io.nem.sdk.model.account.PublicAccount;
 import io.nem.sdk.model.blockchain.BlockDuration;
 import io.nem.sdk.model.blockchain.NetworkType;
 import io.nem.sdk.model.mosaic.MosaicFlags;
@@ -39,8 +36,6 @@ import io.nem.sdk.model.mosaic.NetworkCurrencyMosaic;
 import io.nem.sdk.model.namespace.AliasAction;
 import io.nem.sdk.model.namespace.NamespaceId;
 import io.nem.sdk.model.namespace.NamespaceName;
-import io.nem.sdk.model.transaction.AccountMetadataTransaction;
-import io.nem.sdk.model.transaction.AccountMetadataTransactionFactory;
 import io.nem.sdk.model.transaction.AddressAliasTransaction;
 import io.nem.sdk.model.transaction.AddressAliasTransactionFactory;
 import io.nem.sdk.model.transaction.AggregateTransaction;
@@ -59,8 +54,6 @@ import io.nem.sdk.model.transaction.MosaicDefinitionTransaction;
 import io.nem.sdk.model.transaction.MosaicDefinitionTransactionFactory;
 import io.nem.sdk.model.transaction.MosaicGlobalRestrictionTransaction;
 import io.nem.sdk.model.transaction.MosaicGlobalRestrictionTransactionFactory;
-import io.nem.sdk.model.transaction.MosaicMetadataTransaction;
-import io.nem.sdk.model.transaction.MosaicMetadataTransactionFactory;
 import io.nem.sdk.model.transaction.MosaicRestrictionType;
 import io.nem.sdk.model.transaction.MosaicSupplyChangeTransaction;
 import io.nem.sdk.model.transaction.MosaicSupplyChangeTransactionFactory;
@@ -75,22 +68,16 @@ import io.nem.sdk.model.transaction.SecretLockTransactionFactory;
 import io.nem.sdk.model.transaction.SecretProofTransaction;
 import io.nem.sdk.model.transaction.SecretProofTransactionFactory;
 import io.nem.sdk.model.transaction.SignedTransaction;
-import io.nem.sdk.model.transaction.Transaction;
 import io.nem.sdk.model.transaction.TransactionAnnounceResponse;
 import io.nem.sdk.model.transaction.TransferTransaction;
 import io.nem.sdk.model.transaction.TransferTransactionFactory;
 import java.math.BigInteger;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import org.apache.commons.codec.binary.Hex;
-import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.junit.Assert;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -112,7 +99,7 @@ class E2EIntegrationTest extends BaseIntegrationTest {
 
     @BeforeAll
     void setup() {
-        account = this.getTestAccount();
+        account = this.config().getNemesisAccount();
         recipient = this.getRecipient();
         multisigAccount = this.getTestMultisigAccount();
         cosignatoryAccount = this.getTestCosignatoryAccount();
@@ -127,26 +114,14 @@ class E2EIntegrationTest extends BaseIntegrationTest {
     public void standaloneTransferTransaction(RepositoryType type) {
         TransferTransaction transferTransaction =
             TransferTransactionFactory.create(
-                NetworkType.MIJIN_TEST,
+                getNetworkType(),
                 this.recipient,
                 Collections
                     .singletonList(NetworkCurrencyMosaic.createAbsolute(BigInteger.valueOf(1))),
                 new PlainMessage("E2ETest:standaloneTransferTransaction:message")
             ).build();
 
-        SignedTransaction signedTransaction = this.account
-            .sign(transferTransaction, generationHash);
-        String payload = signedTransaction.getPayload();
-        assertEquals(420, payload.length());
-
-        TransactionAnnounceResponse transactionAnnounceResponse =
-            get(getTransactionRepository(type).announce(signedTransaction));
-        assertEquals(
-            "packet 9 was pushed to the network via /transaction",
-            transactionAnnounceResponse.getMessage());
-
-        this.validateTransactionAnnounceCorrectly(
-            this.account.getAddress(), signedTransaction.getHash(), type);
+        announceAndValidate(type, this.account, transferTransaction);
     }
 
     @ParameterizedTest
@@ -154,7 +129,7 @@ class E2EIntegrationTest extends BaseIntegrationTest {
     void aggregateTransferTransaction(RepositoryType type) {
         TransferTransaction transferTransaction =
             TransferTransactionFactory.create(
-                NetworkType.MIJIN_TEST,
+                getNetworkType(),
                 this.recipient,
                 Collections
                     .singletonList(NetworkCurrencyMosaic.createAbsolute(BigInteger.valueOf(1))),
@@ -180,19 +155,11 @@ class E2EIntegrationTest extends BaseIntegrationTest {
 
         AggregateTransaction aggregateTransaction =
             AggregateTransactionFactory.createComplete(
-                NetworkType.MIJIN_TEST,
+                getNetworkType(),
                 Collections.singletonList(
                     transferTransaction.toAggregate(this.account.getPublicAccount()))).build();
 
-        SignedTransaction signedTransaction = this.account
-            .sign(aggregateTransaction, generationHash);
-
-        TransactionAnnounceResponse transactionAnnounceResponse =
-            get(getTransactionRepository(type).announce(signedTransaction));
-        System.out.println(transactionAnnounceResponse.getMessage());
-
-        this.validateTransactionAnnounceCorrectly(
-            this.account.getAddress(), signedTransaction.getHash(), type);
+        announceAndValidate(type, this.account, aggregateTransaction);
     }
 
     private TransactionRepository getTransactionRepository(
@@ -208,21 +175,13 @@ class E2EIntegrationTest extends BaseIntegrationTest {
 
         NamespaceRegistrationTransaction namespaceRegistrationTransaction =
             NamespaceRegistrationTransactionFactory.createRootNamespace(
-                NetworkType.MIJIN_TEST,
+                getNetworkType(),
                 namespaceName,
                 BigInteger.valueOf(100)).build();
 
         this.rootNamespaceId = namespaceRegistrationTransaction.getNamespaceId();
 
-        SignedTransaction signedTransaction =
-            this.account.sign(namespaceRegistrationTransaction, generationHash);
-
-        TransactionAnnounceResponse transactionAnnounceResponse =
-            get(getTransactionRepository(type).announce(signedTransaction));
-        System.out.println(transactionAnnounceResponse.getMessage());
-
-        this.validateTransactionAnnounceCorrectly(
-            this.account.getAddress(), signedTransaction.getHash(), type);
+        announceAndValidate(type, this.account, namespaceRegistrationTransaction);
     }
 
     @ParameterizedTest
@@ -233,27 +192,19 @@ class E2EIntegrationTest extends BaseIntegrationTest {
 
         NamespaceRegistrationTransaction namespaceRegistrationTransaction =
             NamespaceRegistrationTransactionFactory.createRootNamespace(
-                NetworkType.MIJIN_TEST,
+                getNetworkType(),
                 namespaceName,
                 BigInteger.valueOf(100)).build();
 
         this.rootNamespaceId = namespaceRegistrationTransaction.getNamespaceId();
 
         AggregateTransaction aggregateTransaction =
-            AggregateTransactionFactory.createComplete(NetworkType.MIJIN_TEST,
+            AggregateTransactionFactory.createComplete(getNetworkType(),
                 Collections.singletonList(
                     namespaceRegistrationTransaction.toAggregate(this.account.getPublicAccount()))
             ).build();
 
-        SignedTransaction signedTransaction = this.account
-            .sign(aggregateTransaction, generationHash);
-
-        TransactionAnnounceResponse transactionAnnounceResponse =
-            get(getTransactionRepository(type).announce(signedTransaction));
-        System.out.println(transactionAnnounceResponse.getMessage());
-
-        this.validateTransactionAnnounceCorrectly(
-            this.account.getAddress(), signedTransaction.getHash(), type);
+        announceAndValidate(type, this.account, aggregateTransaction);
     }
 
 
@@ -266,7 +217,7 @@ class E2EIntegrationTest extends BaseIntegrationTest {
 
         NamespaceRegistrationTransaction namespaceRegistrationTransaction =
             NamespaceRegistrationTransactionFactory.createRootNamespace(
-                NetworkType.MIJIN_TEST,
+                getNetworkType(),
                 namespaceName,
                 BigInteger.valueOf(100)).build();
 
@@ -274,25 +225,17 @@ class E2EIntegrationTest extends BaseIntegrationTest {
 
         AggregateTransaction aggregateTransaction =
             AggregateTransactionFactory.createComplete(
-                NetworkType.MIJIN_TEST,
+                getNetworkType(),
                 Collections.singletonList(
                     namespaceRegistrationTransaction.toAggregate(this.account.getPublicAccount()))
             ).build();
 
-        SignedTransaction signedTransaction = this.account
-            .sign(aggregateTransaction, generationHash);
-
-        TransactionAnnounceResponse transactionAnnounceResponse =
-            get(getTransactionRepository(type).announce(signedTransaction));
-        System.out.println(transactionAnnounceResponse.getMessage());
-
-        this.validateTransactionAnnounceCorrectly(
-            this.account.getAddress(), signedTransaction.getHash(), type);
+        announceAndValidate(type, this.account, aggregateTransaction);
 
         this.rootNamespaceId = namespaceRegistrationTransaction.getNamespaceId();
 
         AddressAliasTransaction addressAliasTransaction =
-            new AddressAliasTransactionFactory(NetworkType.MIJIN_TEST,
+            new AddressAliasTransactionFactory(getNetworkType(),
                 AliasAction.LINK,
                 this.rootNamespaceId,
                 this.account.getAddress()
@@ -300,20 +243,12 @@ class E2EIntegrationTest extends BaseIntegrationTest {
 
         AggregateTransaction aggregateTransaction2 =
             AggregateTransactionFactory.createComplete(
-                NetworkType.MIJIN_TEST,
+                getNetworkType(),
                 Collections.singletonList(
                     addressAliasTransaction.toAggregate(this.account.getPublicAccount()))
             ).build();
 
-        SignedTransaction signedTransaction2 = this.account
-            .sign(aggregateTransaction2, generationHash);
-
-        TransactionAnnounceResponse transactionAnnounceResponse2 =
-            get(getTransactionRepository(type).announce(signedTransaction2));
-        System.out.println(transactionAnnounceResponse2.getMessage());
-
-        this.validateTransactionAnnounceCorrectly(
-            this.account.getAddress(), signedTransaction2.getHash(), type);
+        announceAndValidate(type, this.account, aggregateTransaction2);
 
         List<AccountNames> accountNames = get(getRepositoryFactory(type).createAccountRepository()
             .getAccountsNamesFromAddresses(Collections.singletonList(this.account.getAddress())));
@@ -338,19 +273,11 @@ class E2EIntegrationTest extends BaseIntegrationTest {
 
         NamespaceRegistrationTransaction namespaceRegistrationTransaction =
             NamespaceRegistrationTransactionFactory.createSubNamespace(
-                NetworkType.MIJIN_TEST,
+                getNetworkType(),
                 namespaceName,
                 this.rootNamespaceId).build();
 
-        SignedTransaction signedTransaction =
-            this.account.sign(namespaceRegistrationTransaction, generationHash);
-
-        TransactionAnnounceResponse transactionAnnounceResponse =
-            get(getTransactionRepository(type).announce(signedTransaction));
-        System.out.println(transactionAnnounceResponse.getMessage());
-
-        this.validateTransactionAnnounceCorrectly(
-            this.account.getAddress(), signedTransaction.getHash(), type);
+        announceAndValidate(type, this.account, namespaceRegistrationTransaction);
     }
 
     @ParameterizedTest
@@ -364,26 +291,18 @@ class E2EIntegrationTest extends BaseIntegrationTest {
 
         NamespaceRegistrationTransaction namespaceRegistrationTransaction =
             NamespaceRegistrationTransactionFactory.createSubNamespace(
-                NetworkType.MIJIN_TEST,
+                getNetworkType(),
                 namespaceName,
                 this.rootNamespaceId).build();
 
         AggregateTransaction aggregateTransaction =
             AggregateTransactionFactory.createComplete(
-                NetworkType.MIJIN_TEST,
+                getNetworkType(),
                 Collections.singletonList(
                     namespaceRegistrationTransaction.toAggregate(this.account.getPublicAccount()))
             ).build();
 
-        SignedTransaction signedTransaction = this.account
-            .sign(aggregateTransaction, generationHash);
-
-        TransactionAnnounceResponse transactionAnnounceResponse =
-            get(getTransactionRepository(type).announce(signedTransaction));
-        System.out.println(transactionAnnounceResponse.getMessage());
-
-        this.validateTransactionAnnounceCorrectly(
-            this.account.getAddress(), signedTransaction.getHash(), type);
+        announceAndValidate(type, this.account, aggregateTransaction);
     }
 
     @ParameterizedTest
@@ -394,21 +313,13 @@ class E2EIntegrationTest extends BaseIntegrationTest {
 
         MosaicDefinitionTransaction mosaicDefinitionTransaction =
             new MosaicDefinitionTransactionFactory(
-                NetworkType.MIJIN_TEST,
+                getNetworkType(),
                 nonce,
                 this.mosaicId,
                 MosaicFlags.create(true, true, true),
                 4, new BlockDuration(100)).build();
 
-        SignedTransaction signedTransaction =
-            this.account.sign(mosaicDefinitionTransaction, generationHash);
-
-        TransactionAnnounceResponse transactionAnnounceResponse =
-            get(getTransactionRepository(type).announce(signedTransaction));
-        System.out.println(transactionAnnounceResponse.getMessage());
-
-        this.validateTransactionAnnounceCorrectly(
-            this.account.getAddress(), signedTransaction.getHash(), type);
+        announceAndValidate(type, this.account, mosaicDefinitionTransaction);
     }
 
     @ParameterizedTest
@@ -428,7 +339,7 @@ class E2EIntegrationTest extends BaseIntegrationTest {
 
         NamespaceRegistrationTransaction namespaceRegistrationTransaction =
             NamespaceRegistrationTransactionFactory.createRootNamespace(
-                NetworkType.MIJIN_TEST,
+                getNetworkType(),
                 namespaceName,
                 BigInteger.valueOf(100)).build();
 
@@ -436,33 +347,25 @@ class E2EIntegrationTest extends BaseIntegrationTest {
 
         AggregateTransaction aggregateTransaction =
             AggregateTransactionFactory.createComplete(
-                NetworkType.MIJIN_TEST,
+                getNetworkType(),
                 Collections.singletonList(
                     namespaceRegistrationTransaction.toAggregate(this.account.getPublicAccount()))
             ).build();
 
-        SignedTransaction signedTransaction = this.account
-            .sign(aggregateTransaction, generationHash);
-
-        TransactionAnnounceResponse transactionAnnounceResponse =
-            get(getTransactionRepository(type).announce(signedTransaction));
-        System.out.println(transactionAnnounceResponse.getMessage());
-
-        this.validateTransactionAnnounceCorrectly(
-            this.account.getAddress(), signedTransaction.getHash(), type);
+        announceAndValidate(type, this.account, aggregateTransaction);
 
         this.rootNamespaceId = namespaceRegistrationTransaction.getNamespaceId();
 
         MosaicAliasTransaction addressAliasTransaction =
             new MosaicAliasTransactionFactory(
-                NetworkType.MIJIN_TEST,
+                getNetworkType(),
                 AliasAction.LINK,
                 this.rootNamespaceId,
                 mosaicId).build();
 
         AggregateTransaction aggregateTransaction2 =
             AggregateTransactionFactory.createComplete(
-                NetworkType.MIJIN_TEST,
+                getNetworkType(),
                 Collections.singletonList(
                     addressAliasTransaction.toAggregate(this.account.getPublicAccount()))
             ).build();
@@ -487,88 +390,12 @@ class E2EIntegrationTest extends BaseIntegrationTest {
         assertTrue(accountNames.get(0).getNames().contains(namespaceName));
     }
 
-
-    @ParameterizedTest
-    @EnumSource(RepositoryType.class)
-    void sendMosaicMetadata(RepositoryType type) {
-
-        Account account = this.getTestAccount();
-        AccountInfo accountInfo = get(getRepositoryFactory(type).createAccountRepository()
-            .getAccountInfo(account.getPublicAccount().getAddress()));
-
-        Assert.assertFalse(
-            accountInfo.getMosaics().isEmpty());
-
-        MosaicId mosaicId = createMosaic(type);
-        BigInteger scopedMetadataKey = BigInteger.valueOf(555L);
-        MosaicMetadataTransaction mosaicMetadataTransaction =
-            new MosaicMetadataTransactionFactory(
-                NetworkType.MIJIN_TEST,
-                account.getPublicAccount(),
-                mosaicId,
-                scopedMetadataKey,
-                0,
-                3,
-                "ABC").build();
-
-        AggregateTransaction aggregateTransaction =
-            AggregateTransactionFactory.createComplete(
-                NetworkType.MIJIN_TEST,
-                Collections.singletonList(
-                    mosaicMetadataTransaction.toAggregate(account.getPublicAccount()))
-            ).build();
-
-        SignedTransaction signedTransaction = account
-            .sign(aggregateTransaction, generationHash);
-
-        TransactionAnnounceResponse transactionAnnounceResponse =
-            get(getTransactionRepository(type).announce(signedTransaction));
-        System.out.println(transactionAnnounceResponse.getMessage());
-
-        this.validateTransactionAnnounceCorrectly(
-            account.getAddress(), signedTransaction.getHash(), type);
-
-    }
-
-    @ParameterizedTest
-    @EnumSource(RepositoryType.class)
-    void sendAccountMetadata(RepositoryType type) {
-
-        Account account = this.getTestAccount();
-        PublicAccount publicAccount = account.getPublicAccount();
-
-        BigInteger scopedMetadataKey = BigInteger.valueOf(1010L);
-        String value = "ABCDE";
-        int valueSize = HexEncoder.getBytes(value).length;
-        int valueSizeDelta = valueSize;
-        System.out.println("valueSize " + valueSize);
-        AccountMetadataTransaction accountMetadataTransaction =
-            new AccountMetadataTransactionFactory(
-                NetworkType.MIJIN_TEST,
-                publicAccount,
-                scopedMetadataKey,
-                valueSizeDelta,
-                valueSize,
-                value).build();
-
-        SignedTransaction signedTransaction = account
-            .sign(accountMetadataTransaction, generationHash);
-
-        TransactionAnnounceResponse transactionAnnounceResponse =
-            get(getTransactionRepository(type).announce(signedTransaction));
-        System.out.println(transactionAnnounceResponse.getMessage());
-
-        this.validateTransactionAnnounceCorrectly(
-            account.getAddress(), signedTransaction.getHash(), type);
-
-    }
-
     private MosaicId createMosaic(RepositoryType type) {
         MosaicNonce nonce = MosaicNonce.createRandom();
         MosaicId mosaicId = MosaicId.createFromNonce(nonce, this.account.getPublicAccount());
 
         MosaicDefinitionTransaction mosaicDefinitionTransaction =
-            new MosaicDefinitionTransactionFactory(NetworkType.MIJIN_TEST,
+            new MosaicDefinitionTransactionFactory(getNetworkType(),
                 nonce,
                 mosaicId,
                 MosaicFlags.create(true, true, true),
@@ -594,7 +421,7 @@ class E2EIntegrationTest extends BaseIntegrationTest {
 
         MosaicDefinitionTransaction mosaicDefinitionTransaction =
             new MosaicDefinitionTransactionFactory(
-                NetworkType.MIJIN_TEST,
+                getNetworkType(),
                 nonce,
                 this.mosaicId,
                 MosaicFlags.create(true, false, true),
@@ -602,7 +429,7 @@ class E2EIntegrationTest extends BaseIntegrationTest {
 
         AggregateTransaction aggregateTransaction =
             AggregateTransactionFactory.createComplete(
-                NetworkType.MIJIN_TEST,
+                getNetworkType(),
                 Collections.singletonList(
                     mosaicDefinitionTransaction.toAggregate(this.account.getPublicAccount()))
             ).build();
@@ -624,7 +451,7 @@ class E2EIntegrationTest extends BaseIntegrationTest {
         this.standaloneMosaicDefinitionTransaction(type);
 
         MosaicSupplyChangeTransaction mosaicSupplyChangeTransaction =
-            new MosaicSupplyChangeTransactionFactory(NetworkType.MIJIN_TEST,
+            new MosaicSupplyChangeTransactionFactory(getNetworkType(),
                 this.mosaicId,
                 MosaicSupplyChangeActionType.INCREASE,
                 BigInteger.valueOf(11)
@@ -648,27 +475,19 @@ class E2EIntegrationTest extends BaseIntegrationTest {
 
         MosaicSupplyChangeTransaction mosaicSupplyChangeTransaction =
             new MosaicSupplyChangeTransactionFactory(
-                NetworkType.MIJIN_TEST,
+                getNetworkType(),
                 this.mosaicId,
                 MosaicSupplyChangeActionType.INCREASE,
                 BigInteger.valueOf(12)).build();
 
         AggregateTransaction aggregateTransaction =
             AggregateTransactionFactory.createComplete(
-                NetworkType.MIJIN_TEST,
+                getNetworkType(),
                 Collections.singletonList(
                     mosaicSupplyChangeTransaction.toAggregate(this.account.getPublicAccount()))
             ).build();
 
-        SignedTransaction signedTransaction = this.account
-            .sign(aggregateTransaction, generationHash);
-
-        TransactionAnnounceResponse transactionAnnounceResponse =
-            get(getTransactionRepository(type).announce(signedTransaction));
-        System.out.println(transactionAnnounceResponse.getMessage());
-
-        this.validateTransactionAnnounceCorrectly(
-            this.account.getAddress(), signedTransaction.getHash(), type);
+        announceAndValidate(type, this.account, aggregateTransaction);
     }
 
     @ParameterizedTest
@@ -679,7 +498,7 @@ class E2EIntegrationTest extends BaseIntegrationTest {
 
         MosaicAddressRestrictionTransaction mosaicAddressRestrictionTransaction =
             new MosaicAddressRestrictionTransactionFactory(
-                NetworkType.MIJIN_TEST,
+                getNetworkType(),
                 this.mosaicId, // restricted MosaicId
                 BigInteger.valueOf(1), // restrictionKey
                 this.account.getAddress(),  // targetAddress
@@ -689,9 +508,10 @@ class E2EIntegrationTest extends BaseIntegrationTest {
 
         AggregateTransaction aggregateTransaction =
             AggregateTransactionFactory.createComplete(
-                NetworkType.MIJIN_TEST,
+                getNetworkType(),
                 Collections.singletonList(
-                    mosaicAddressRestrictionTransaction.toAggregate(this.account.getPublicAccount()))
+                    mosaicAddressRestrictionTransaction
+                        .toAggregate(this.account.getPublicAccount()))
             ).build();
 
         SignedTransaction signedTransaction = this.account
@@ -713,7 +533,7 @@ class E2EIntegrationTest extends BaseIntegrationTest {
 
         MosaicGlobalRestrictionTransaction mosaicGlobalRestrictionTransaction =
             new MosaicGlobalRestrictionTransactionFactory(
-                NetworkType.MIJIN_TEST,
+                getNetworkType(),
                 this.mosaicId, // restrictedMosaicId
                 new MosaicId(new BigInteger("0")), // referenceMosaicId
                 BigInteger.valueOf(1),    // restrictionKey
@@ -742,7 +562,7 @@ class E2EIntegrationTest extends BaseIntegrationTest {
 
         MosaicGlobalRestrictionTransaction mosaicGlobalRestrictionTransaction =
             new MosaicGlobalRestrictionTransactionFactory(
-                NetworkType.MIJIN_TEST,
+                getNetworkType(),
                 this.mosaicId, // restrictedMosaicId
                 new MosaicId(new BigInteger("0")), // referenceMosaicId
                 BigInteger.valueOf(1),    // restrictionKey
@@ -754,7 +574,7 @@ class E2EIntegrationTest extends BaseIntegrationTest {
 
         AggregateTransaction aggregateTransaction =
             AggregateTransactionFactory.createComplete(
-                NetworkType.MIJIN_TEST,
+                getNetworkType(),
                 Collections.singletonList(
                     mosaicGlobalRestrictionTransaction.toAggregate(this.account.getPublicAccount()))
             ).build();
@@ -775,12 +595,12 @@ class E2EIntegrationTest extends BaseIntegrationTest {
     void standaloneLockFundsTransaction(RepositoryType type) {
         AggregateTransaction aggregateTransaction =
             AggregateTransactionFactory.createBonded(
-                NetworkType.MIJIN_TEST,
+                getNetworkType(),
                 Collections.emptyList()).build();
         SignedTransaction signedTransaction = this.account
             .sign(aggregateTransaction, generationHash);
         HashLockTransaction lockFundstx =
-            new HashLockTransactionFactory(NetworkType.MIJIN_TEST,
+            new HashLockTransactionFactory(getNetworkType(),
                 NetworkCurrencyMosaic.createRelative(BigInteger.valueOf(10)),
                 BigInteger.valueOf(100),
                 signedTransaction
@@ -799,20 +619,20 @@ class E2EIntegrationTest extends BaseIntegrationTest {
     void aggregateLockFundsTransaction(RepositoryType type) {
         AggregateTransaction aggregateTransaction =
             AggregateTransactionFactory.createBonded(
-                NetworkType.MIJIN_TEST,
+                getNetworkType(),
                 Collections.emptyList()).build();
         SignedTransaction signedTransaction = this.account
             .sign(aggregateTransaction, generationHash);
         HashLockTransaction lockFundstx =
             new HashLockTransactionFactory(
-                NetworkType.MIJIN_TEST,
+                getNetworkType(),
                 NetworkCurrencyMosaic.createRelative(BigInteger.valueOf(10)),
                 BigInteger.valueOf(100),
                 signedTransaction).build();
 
         AggregateTransaction lockFundsAggregatetx =
             AggregateTransactionFactory.createComplete(
-                NetworkType.MIJIN_TEST,
+                getNetworkType(),
                 Collections.singletonList(lockFundstx.toAggregate(this.account.getPublicAccount()))
             ).build();
 
@@ -833,7 +653,7 @@ class E2EIntegrationTest extends BaseIntegrationTest {
         byte[] result = Hashes.sha3_256(secretBytes);
         String secret = Hex.encodeHexString(result);
         SecretLockTransaction secretLocktx =
-            new SecretLockTransactionFactory(NetworkType.MIJIN_TEST,
+            new SecretLockTransactionFactory(getNetworkType(),
                 NetworkCurrencyMosaic.createRelative(BigInteger.valueOf(10)),
                 BigInteger.valueOf(100),
                 LockHashAlgorithmType.SHA3_256,
@@ -859,7 +679,7 @@ class E2EIntegrationTest extends BaseIntegrationTest {
         String secret = Hex.encodeHexString(result);
         SecretLockTransaction secretLocktx =
             new SecretLockTransactionFactory(
-                NetworkType.MIJIN_TEST,
+                getNetworkType(),
                 NetworkCurrencyMosaic.createRelative(BigInteger.valueOf(10)),
                 BigInteger.valueOf(100),
                 LockHashAlgorithmType.SHA3_256,
@@ -868,7 +688,7 @@ class E2EIntegrationTest extends BaseIntegrationTest {
             ).build();
 
         AggregateTransaction secretLockAggregatetx =
-            AggregateTransactionFactory.createComplete(NetworkType.MIJIN_TEST,
+            AggregateTransactionFactory.createComplete(getNetworkType(),
                 Collections.singletonList(secretLocktx.toAggregate(this.account.getPublicAccount()))
             ).build();
 
@@ -891,7 +711,7 @@ class E2EIntegrationTest extends BaseIntegrationTest {
         String proof = Hex.encodeHexString(secretBytes);
         SecretLockTransaction secretLocktx =
             new SecretLockTransactionFactory(
-                NetworkType.MIJIN_TEST,
+                getNetworkType(),
                 NetworkCurrencyMosaic.createRelative(BigInteger.valueOf(10)),
                 BigInteger.valueOf(100),
                 LockHashAlgorithmType.SHA3_256,
@@ -909,7 +729,7 @@ class E2EIntegrationTest extends BaseIntegrationTest {
 
         SecretProofTransaction secretProoftx =
             new SecretProofTransactionFactory(
-                NetworkType.MIJIN_TEST,
+                getNetworkType(),
                 LockHashAlgorithmType.SHA3_256,
                 Address.createFromRawAddress("SDUP5PLHDXKBX3UU5Q52LAY4WYEKGEWC6IB3VBFM"),
                 secret,
@@ -934,7 +754,7 @@ class E2EIntegrationTest extends BaseIntegrationTest {
         String proof = Hex.encodeHexString(secretBytes);
         SecretLockTransaction secretLocktx =
             new SecretLockTransactionFactory(
-                NetworkType.MIJIN_TEST,
+                getNetworkType(),
                 NetworkCurrencyMosaic.createRelative(BigInteger.valueOf(10)),
                 BigInteger.valueOf(100),
                 LockHashAlgorithmType.SHA3_256,
@@ -950,7 +770,7 @@ class E2EIntegrationTest extends BaseIntegrationTest {
             this.account.getAddress(), lockFundsTransactionSigned.getHash(), type);
 
         SecretProofTransaction secretProoftx =
-            new SecretProofTransactionFactory(NetworkType.MIJIN_TEST,
+            new SecretProofTransactionFactory(getNetworkType(),
                 LockHashAlgorithmType.SHA3_256,
                 Address.createFromRawAddress("SDUP5PLHDXKBX3UU5Q52LAY4WYEKGEWC6IB3VBFM"),
                 secret,
@@ -958,7 +778,7 @@ class E2EIntegrationTest extends BaseIntegrationTest {
             ).build();
 
         AggregateTransaction secretProofAggregatetx =
-            AggregateTransactionFactory.createComplete(NetworkType.MIJIN_TEST,
+            AggregateTransactionFactory.createComplete(getNetworkType(),
                 Collections
                     .singletonList(secretProoftx.toAggregate(this.account.getPublicAccount()))
             ).build();
@@ -977,7 +797,7 @@ class E2EIntegrationTest extends BaseIntegrationTest {
     void shouldSignModifyMultisigAccountTransactionWithCosignatories(RepositoryType type) {
         MultisigAccountModificationTransaction multisigAccountModificationTransaction =
             new MultisigAccountModificationTransactionFactory(
-                NetworkType.MIJIN_TEST,
+                getNetworkType(),
                 (byte) 0,
                 (byte) 0,
                 Collections.singletonList(
@@ -986,7 +806,7 @@ class E2EIntegrationTest extends BaseIntegrationTest {
                         this.cosignatoryAccount2.getPublicAccount()))).build();
         AggregateTransaction aggregateTransaction =
             AggregateTransactionFactory.createComplete(
-                NetworkType.MIJIN_TEST,
+                getNetworkType(),
                 Collections.singletonList(
                     multisigAccountModificationTransaction.toAggregate(
                         this.multisigAccount.getPublicAccount()))
@@ -1000,7 +820,7 @@ class E2EIntegrationTest extends BaseIntegrationTest {
 
         HashLockTransaction hashLockTransaction =
             new HashLockTransactionFactory(
-                NetworkType.MIJIN_TEST,
+                getNetworkType(),
                 NetworkCurrencyMosaic.createRelative(BigInteger.valueOf(10)),
                 BigInteger.valueOf(100),
                 signedTransaction).build();
@@ -1023,8 +843,8 @@ class E2EIntegrationTest extends BaseIntegrationTest {
     void cosignatureTransaction(RepositoryType type) {
         TransferTransaction transferTransaction =
             TransferTransactionFactory.create(
-                NetworkType.MIJIN_TEST,
-                new Address("SDRDGFTDLLCB67D4HPGIMIHPNSRYRJRT7DOBGWZY", NetworkType.MIJIN_TEST),
+                getNetworkType(),
+                new Address("SDRDGFTDLLCB67D4HPGIMIHPNSRYRJRT7DOBGWZY", getNetworkType()),
                 Collections
                     .singletonList(NetworkCurrencyMosaic.createAbsolute(BigInteger.valueOf(1))),
                 PlainMessage.create("test-message")
@@ -1032,7 +852,7 @@ class E2EIntegrationTest extends BaseIntegrationTest {
 
         AggregateTransaction aggregateTransaction =
             AggregateTransactionFactory.createComplete(
-                NetworkType.MIJIN_TEST,
+                getNetworkType(),
                 Collections.singletonList(
                     transferTransaction.toAggregate(this.multisigAccount.getPublicAccount())))
                 .build();
@@ -1040,7 +860,7 @@ class E2EIntegrationTest extends BaseIntegrationTest {
             this.cosignatoryAccount.sign(aggregateTransaction, generationHash);
 
         HashLockTransaction hashLockTransaction =
-            new HashLockTransactionFactory(NetworkType.MIJIN_TEST,
+            new HashLockTransactionFactory(getNetworkType(),
                 NetworkCurrencyMosaic.createRelative(BigInteger.valueOf(10)),
                 BigInteger.valueOf(100),
                 signedTransaction).build();

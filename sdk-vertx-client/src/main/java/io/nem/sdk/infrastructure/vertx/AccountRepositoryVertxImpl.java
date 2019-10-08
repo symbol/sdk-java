@@ -187,49 +187,6 @@ public class AccountRepositoryVertxImpl extends AbstractRepositoryVertxImpl impl
                 }));
     }
 
-    @Override
-    public Observable<AccountRestrictions> getAccountRestrictions(Address address) {
-
-        return exceptionHandling(call(
-            (Handler<AsyncResult<AccountRestrictionsInfoDTO>> handler) -> getClient()
-                .getAccountRestrictions(address.plain(), handler))
-            .map(AccountRestrictionsInfoDTO::getAccountRestrictions)
-            .map(this::toAccountRestrictions));
-    }
-
-    @Override
-    public Observable<List<AccountRestrictions>> getAccountsRestrictions(
-        List<Address> addresses) {
-        AccountIds accountIds = new AccountIds()
-            .addresses(addresses.stream().map(Address::plain).collect(Collectors.toList()));
-        return getAccountsRestrictions(accountIds);
-    }
-
-    private Observable<List<AccountRestrictions>> getAccountsRestrictions(AccountIds accountIds) {
-        return exceptionHandling(call(
-            (Handler<AsyncResult<List<AccountRestrictionsInfoDTO>>> handler) -> getClient()
-                .getAccountRestrictionsFromAccounts(accountIds, handler))
-            .flatMapIterable(item -> item)
-            .map(AccountRestrictionsInfoDTO::getAccountRestrictions)
-            .map(this::toAccountRestrictions)).toList().toObservable();
-    }
-
-
-    private AccountRestrictions toAccountRestrictions(AccountRestrictionsDTO dto) {
-        return new AccountRestrictions(MapperUtils.toAddressFromUnresolved(dto.getAddress()),
-            dto.getRestrictions().stream().map(this::toAccountRestriction).collect(
-                Collectors.toList()));
-    }
-
-    private AccountRestriction toAccountRestriction(AccountRestrictionDTO dto) {
-        AccountRestrictionType restrictionType = AccountRestrictionType
-            .rawValueOf(dto.getRestrictionType().getValue());
-        return new AccountRestriction(
-            restrictionType,
-            dto.getValues().stream().filter(Objects::nonNull).map(Object::toString)
-                .map(restrictionType.getTargetType()::fromString).collect(
-                Collectors.toList()));
-    }
 
     private List<MultisigAccountInfo> toMultisigAccountInfo(MultisigAccountGraphInfoDTO item) {
         return item.getMultisigEntries().stream()

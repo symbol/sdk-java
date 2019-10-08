@@ -95,22 +95,6 @@ public interface AccountRepository {
     Observable<MultisigAccountGraphInfo> getMultisigAccountGraphInfo(Address address);
 
     /**
-     * Returns the account restrictions for a given account.
-     *
-     * @param address the address
-     * @return Observable of {@link AccountRestrictions}
-     */
-    Observable<AccountRestrictions> getAccountRestrictions(Address address);
-
-    /**
-     * Returns the account restrictions for a given array of addresses.
-     *
-     * @param addresses {@link List} of {@link Address}
-     * @return Observable {@link List} of {@link AccountRestrictions}
-     */
-    Observable<List<AccountRestrictions>> getAccountsRestrictions(List<Address> addresses);
-
-    /**
      * Gets an list of confirmed transactions for which an account is signer or receiver.
      *
      * @param publicAccount PublicAccount
