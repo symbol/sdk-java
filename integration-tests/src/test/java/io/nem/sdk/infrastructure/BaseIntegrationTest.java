@@ -92,7 +92,7 @@ public abstract class BaseIntegrationTest {
     @BeforeEach
     void coolDown() throws InterruptedException {
         //To avoid rate-limiting errors from server. (5 per seconds)
-        Thread.sleep(500);
+        sleep(500);
     }
 
     private String resolveGenerationHash() {
@@ -272,7 +272,6 @@ public abstract class BaseIntegrationTest {
     }
 
 
-
     protected void hashLock(RepositoryType type, Account account,
         SignedTransaction signedTransaction) {
         HashLockTransaction hashLockTransaction =
@@ -302,4 +301,8 @@ public abstract class BaseIntegrationTest {
     }
 
 
+    @SuppressWarnings("squid:S2925")
+    protected void sleep(long time) throws InterruptedException {
+        Thread.sleep(time);
+    }
 }

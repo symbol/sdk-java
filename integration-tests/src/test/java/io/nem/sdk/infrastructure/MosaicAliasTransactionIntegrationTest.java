@@ -71,7 +71,7 @@ public class MosaicAliasTransactionIntegrationTest extends BaseIntegrationTest {
         NamespaceId rootNamespaceId = announceAggregateAndValidate(type, account,
             namespaceRegistrationTransaction).getNamespaceId();
 
-        Thread.sleep(1000);
+        sleep(1000);
 
         MosaicAliasTransaction addressAliasTransaction =
             new MosaicAliasTransactionFactory(
@@ -82,7 +82,7 @@ public class MosaicAliasTransactionIntegrationTest extends BaseIntegrationTest {
 
         announceAggregateAndValidate(type, account, addressAliasTransaction);
 
-        Thread.sleep(2000);
+        sleep(2000);
 
         List<MosaicNames> accountNames = get(getRepositoryFactory(type).createMosaicRepository()
             .getMosaicsNames(Collections.singletonList(mosaicId)));

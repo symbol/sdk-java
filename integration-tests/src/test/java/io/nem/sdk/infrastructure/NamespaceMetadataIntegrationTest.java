@@ -90,7 +90,7 @@ public class NamespaceMetadataIntegrationTest extends BaseIntegrationTest {
 
         System.out.println("Metadata '" + message + "' stored!");
 
-        Thread.sleep(1000);
+        sleep(1000);
 
         List<Metadata> metadata = get(getRepositoryFactory(type).createMetadataRepository()
             .getNamespaceMetadata(targetNamespaceId,

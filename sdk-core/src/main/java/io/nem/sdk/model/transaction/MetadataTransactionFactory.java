@@ -17,7 +17,6 @@
 
 package io.nem.sdk.model.transaction;
 
-import io.nem.core.utils.ConvertUtils;
 import io.nem.sdk.model.account.PublicAccount;
 import io.nem.sdk.model.blockchain.NetworkType;
 import java.math.BigInteger;

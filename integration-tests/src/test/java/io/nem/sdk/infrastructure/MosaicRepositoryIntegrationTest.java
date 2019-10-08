@@ -53,7 +53,7 @@ class MosaicRepositoryIntegrationTest extends BaseIntegrationTest {
     void setup() throws InterruptedException {
         mosaicId = createMosaic(DEFAULT_REPOSITORY_TYPE, testAccount);
         mosaicIds.add(mosaicId);
-        Thread.sleep(1000);
+        sleep(1000);
     }
 
     @ParameterizedTest

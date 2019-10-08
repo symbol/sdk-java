@@ -31,7 +31,6 @@ import io.nem.sdk.api.RestrictionRepository;
 import io.nem.sdk.api.TransactionRepository;
 import io.nem.sdk.infrastructure.Listener;
 import io.nem.sdk.openapi.okhttp_gson.invoker.ApiClient;
-import io.nem.sdk.openapi.okhttp_gson.invoker.JSON;
 import okhttp3.OkHttpClient;
 import org.apache.commons.io.IOUtils;
 

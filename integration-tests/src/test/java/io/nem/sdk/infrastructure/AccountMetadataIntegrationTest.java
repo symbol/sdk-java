@@ -84,7 +84,7 @@ public class AccountMetadataIntegrationTest extends BaseIntegrationTest {
 
         Assertions.assertEquals(transaction.getValueSize(), processedTransaction.getValueSize());
 
-        Thread.sleep(2000L);
+        sleep(2000);
 
         Metadata metadata = assertMetadata(transaction,
             get(getRepositoryFactory(type).createMetadataRepository()
@@ -102,6 +102,7 @@ public class AccountMetadataIntegrationTest extends BaseIntegrationTest {
 
         Assertions.assertEquals(message, processedTransaction.getValue());
     }
+
 
     private Metadata assertMetadata(AccountMetadataTransaction transaction,
         List<Metadata> metadata) {

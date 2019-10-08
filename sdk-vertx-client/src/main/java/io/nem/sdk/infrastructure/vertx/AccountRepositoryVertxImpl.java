@@ -121,10 +121,6 @@ public class AccountRepositoryVertxImpl extends AbstractRepositoryVertxImpl impl
     public Observable<List<AccountInfo>> getAccountsInfo(List<Address> addresses) {
         AccountIds accountIds = new AccountIds()
             .addresses(addresses.stream().map(Address::plain).collect(Collectors.toList()));
-        return getAccountsinfo(accountIds);
-    }
-
-    private Observable<List<AccountInfo>> getAccountsinfo(AccountIds accountIds) {
         Consumer<Handler<AsyncResult<List<AccountInfoDTO>>>> callback = handler -> getClient()
             .getAccountsInfo(accountIds, handler);
         return exceptionHandling(

@@ -59,7 +59,7 @@ public class AddressAliasTransactionIntegrationTest extends BaseIntegrationTest 
 
         NamespaceId rootNamespaceId = announceAggregateAndValidate(type, account,
             namespaceRegistrationTransaction).getNamespaceId();
-        Thread.sleep(1000);
+        sleep(1000);
 
         AddressAliasTransaction addressAliasTransaction =
             new AddressAliasTransactionFactory(getNetworkType(),
@@ -77,7 +77,7 @@ public class AddressAliasTransactionIntegrationTest extends BaseIntegrationTest 
 
         announceAndValidate(type, account, aggregateTransaction2);
 
-        Thread.sleep(1000);
+        sleep(1000);
 
         List<AccountNames> accountNames = get(getRepositoryFactory(type).createAccountRepository()
             .getAccountsNames(Collections.singletonList(account.getAddress())));
