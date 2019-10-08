@@ -170,7 +170,7 @@ public class RestrictionRepositoryVertxImpl extends AbstractRepositoryVertxImpl 
         MosaicGlobalRestrictionEntryRestrictionDTO dto) {
         return new MosaicGlobalRestrictionItem(MapperUtils.toMosaicId(dto.getReferenceMosaicId()),
             toBigInteger(dto.getRestrictionValue()),
-            MosaicRestrictionType.rawValueOf(dto.getRestrictionType().byteValue()));
+            MosaicRestrictionType.rawValueOf(dto.getRestrictionType().getValue().byteValue()));
     }
 
     private MosaicAddressRestriction toMosaicAddressRestriction(
@@ -182,7 +182,7 @@ public class RestrictionRepositoryVertxImpl extends AbstractRepositoryVertxImpl 
                 e -> toBigInteger(e.getValue())));
 
         return new MosaicAddressRestriction(dto.getCompositeHash(),
-            MosaicRestrictionEntryType.rawValueOf(dto.getEntryType()),
+            MosaicRestrictionEntryType.rawValueOf(dto.getEntryType().getValue()),
             MapperUtils.toMosaicId(dto.getMosaicId()), MapperUtils
             .toAddressFromUnresolved(dto.getTargetAddress()),
             restrictions);

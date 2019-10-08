@@ -19,8 +19,6 @@ package io.nem.sdk.model.metadata;
 /**
  * A mosaic describes an instance of a mosaic definition. Mosaics can be transferred by means of a
  * transfer transaction.
- *
- * @param <ID> the type of the target.
  */
 public class Metadata {
 
