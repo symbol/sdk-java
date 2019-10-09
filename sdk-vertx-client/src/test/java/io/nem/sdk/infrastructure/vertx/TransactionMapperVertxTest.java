@@ -515,7 +515,6 @@ public class TransactionMapperVertxTest {
             transaction.getTargetAccount().getAddress().plain());
 
         Assertions.assertEquals(1, transaction.getValueSizeDelta());
-        Assertions.assertEquals(2, transaction.getValueSize());
         Assertions.assertEquals(BigInteger.valueOf(3), transaction.getScopedMetadataKey());
         Assertions.assertEquals("This is the message for this account! 汉字89664", transaction.getValue());
         Assertions.assertEquals("0003070467832aaa", transaction.getTargetMosaicId().getIdAsHex());
@@ -539,7 +538,6 @@ public class TransactionMapperVertxTest {
             transaction.getTargetAccount().getAddress().plain());
 
         Assertions.assertEquals(1, transaction.getValueSizeDelta());
-        Assertions.assertEquals(2, transaction.getValueSize());
         Assertions.assertEquals(BigInteger.valueOf(3), transaction.getScopedMetadataKey());
         Assertions.assertEquals("This is the message for this account! 汉字89664", transaction.getValue());
         Assertions
@@ -564,7 +562,6 @@ public class TransactionMapperVertxTest {
             transaction.getTargetAccount().getAddress().plain());
 
         Assertions.assertEquals(1, transaction.getValueSizeDelta());
-        Assertions.assertEquals(2, transaction.getValueSize());
         Assertions.assertEquals(BigInteger.valueOf(3), transaction.getScopedMetadataKey());
         Assertions.assertEquals("This is the message for this account! 汉字89664", transaction.getValue());
     }

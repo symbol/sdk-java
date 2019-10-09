@@ -44,7 +44,6 @@ class AccountMetadataTransactionMapper extends
             .createFromPublicKey(transaction.getTargetPublicKey(), networkType);
         Integer valueSizeDelta = transaction.getValueSizeDelta();
         BigInteger scopedMetaDataKey = new BigInteger(transaction.getScopedMetadataKey(), 16);
-        Integer valueSize = transaction.getValueSize();
         String value = ConvertUtils.fromHexToString(transaction.getValue());
         AccountMetadataTransactionFactory factory = new AccountMetadataTransactionFactory(
             networkType,
@@ -52,9 +51,6 @@ class AccountMetadataTransactionMapper extends
             scopedMetaDataKey,
             value);
         factory.valueSizeDelta(valueSizeDelta);
-        if (valueSize != null) {
-            factory.valueSize(valueSize);
-        }
         return factory;
     }
 
@@ -64,7 +60,6 @@ class AccountMetadataTransactionMapper extends
 
         dto.setTargetPublicKey(transaction.getTargetAccount().getPublicKey().toHex());
         dto.setValueSizeDelta(transaction.getValueSizeDelta());
-        dto.setValueSize(transaction.getValueSize());
         dto.setScopedMetadataKey(transaction.getScopedMetadataKey().toString(16));
         dto.setValue(ConvertUtils.fromStringToHex(transaction.getValue()));
 

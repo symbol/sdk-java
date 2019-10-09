@@ -87,8 +87,6 @@ public class MosaicMetadataIntegrationTest extends BaseIntegrationTest {
         Assertions.assertEquals(transaction.getScopedMetadataKey(),
             processedTransaction.getScopedMetadataKey());
 
-        Assertions.assertEquals(transaction.getValueSize(), processedTransaction.getValueSize());
-
         sleep(2000);
         List<Metadata> metadata = get(getRepositoryFactory(type).createMetadataRepository()
             .getMosaicMetadata(targetMosaicId,
@@ -115,8 +113,6 @@ public class MosaicMetadataIntegrationTest extends BaseIntegrationTest {
         Optional<Metadata> endpointMetadata = metadata.stream().filter(
             m -> m.getMetadataEntry().getScopedMetadataKey()
                 .equals(transaction.getScopedMetadataKey()) &&
-                m.getMetadataEntry().getValueSize()
-                    .equals(transaction.getValueSize()) &&
                 m.getMetadataEntry().getMetadataType()
                     .equals(MetadataType.MOSAIC) &&
                 m.getMetadataEntry()

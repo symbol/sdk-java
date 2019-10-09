@@ -47,7 +47,6 @@ class MosaicMetadataTransactionMapper extends
             .createFromPublicKey(transaction.getTargetPublicKey(), networkType);
         Integer valueSizeDelta = transaction.getValueSizeDelta();
         BigInteger scopedMetaDataKey = new BigInteger(transaction.getScopedMetadataKey(), 16);
-        Integer valueSize = transaction.getValueSize();
         String value = ConvertUtils.fromHexToString(transaction.getValue());
         MosaicId targetMosaic = MapperUtils.toMosaicId(transaction.getTargetMosaicId());
         MosaicMetadataTransactionFactory factory = new MosaicMetadataTransactionFactory(
@@ -57,9 +56,6 @@ class MosaicMetadataTransactionMapper extends
             scopedMetaDataKey,
             value);
         factory.valueSizeDelta(valueSizeDelta);
-        if (valueSize != null) {
-            factory.valueSize(valueSize);
-        }
         return factory;
     }
 
@@ -70,7 +66,6 @@ class MosaicMetadataTransactionMapper extends
         dto.setTargetMosaicId(MapperUtils.getIdAsHex(transaction.getTargetMosaicId()));
         dto.setScopedMetadataKey(transaction.getScopedMetadataKey().toString());
         dto.setValue(ConvertUtils.fromStringToHex(transaction.getValue()));
-        dto.setValueSize(transaction.getValueSize());
         dto.setValueSizeDelta(transaction.getValueSizeDelta());
     }
 }

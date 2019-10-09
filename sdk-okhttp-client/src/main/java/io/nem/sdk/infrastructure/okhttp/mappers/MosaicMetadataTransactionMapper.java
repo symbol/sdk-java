@@ -56,9 +56,6 @@ class MosaicMetadataTransactionMapper extends
             scopedMetaDataKey,
             value);
         factory.valueSizeDelta(valueSizeDelta);
-        if (valueSize != null) {
-            factory.valueSize(valueSize);
-        }
         return factory;
     }
 
@@ -69,7 +66,6 @@ class MosaicMetadataTransactionMapper extends
         dto.setTargetMosaicId(MapperUtils.getIdAsHex(transaction.getTargetMosaicId()));
         dto.setScopedMetadataKey(transaction.getScopedMetadataKey().toString());
         dto.setValue(ConvertUtils.fromStringToHex(transaction.getValue()));
-        dto.setValueSize(transaction.getValueSize());
         dto.setValueSizeDelta(transaction.getValueSizeDelta());
     }
 }

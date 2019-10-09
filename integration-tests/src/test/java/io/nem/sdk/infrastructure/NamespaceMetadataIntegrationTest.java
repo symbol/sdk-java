@@ -86,8 +86,6 @@ public class NamespaceMetadataIntegrationTest extends BaseIntegrationTest {
         Assertions.assertEquals(transaction.getScopedMetadataKey(),
             processedTransaction.getScopedMetadataKey());
 
-        Assertions.assertEquals(transaction.getValueSize(), processedTransaction.getValueSize());
-
         System.out.println("Metadata '" + message + "' stored!");
 
         sleep(1000);
@@ -116,8 +114,6 @@ public class NamespaceMetadataIntegrationTest extends BaseIntegrationTest {
         Optional<Metadata> endpointMetadata = metadata.stream().filter(
             m -> m.getMetadataEntry().getScopedMetadataKey()
                 .equals(transaction.getScopedMetadataKey()) &&
-                m.getMetadataEntry().getValueSize()
-                    .equals(transaction.getValueSize()) &&
                 m.getMetadataEntry().getMetadataType()
                     .equals(MetadataType.NAMESPACE) &&
                 m.getMetadataEntry()

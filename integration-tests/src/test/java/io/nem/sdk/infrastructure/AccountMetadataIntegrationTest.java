@@ -82,8 +82,6 @@ public class AccountMetadataIntegrationTest extends BaseIntegrationTest {
         Assertions.assertEquals(transaction.getScopedMetadataKey(),
             processedTransaction.getScopedMetadataKey());
 
-        Assertions.assertEquals(transaction.getValueSize(), processedTransaction.getValueSize());
-
         sleep(2000);
 
         Metadata metadata = assertMetadata(transaction,
@@ -110,8 +108,6 @@ public class AccountMetadataIntegrationTest extends BaseIntegrationTest {
         Optional<Metadata> endpointMetadata = metadata.stream().filter(
             m -> m.getMetadataEntry().getScopedMetadataKey()
                 .equals(transaction.getScopedMetadataKey()) &&
-                m.getMetadataEntry().getValueSize()
-                    .equals(transaction.getValueSize()) &&
                 m.getMetadataEntry().getMetadataType()
                     .equals(MetadataType.ACCOUNT) &&
                 m.getMetadataEntry()
