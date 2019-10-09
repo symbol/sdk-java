@@ -272,8 +272,17 @@ public abstract class Transaction {
      *
      * @return Version of the transaction
      */
-    protected short getNetworkVersion() {
-        return (short)
+    public short getNetworkVersion() {
+        return (short) getTransactionVersion();
+    }
+
+    /**
+     * Gets the version of the transaction using the open api format.
+     *
+     * @return Version of the transaction
+     */
+    public int getTransactionVersion() {
+        return (int)
             Long.parseLong(
                 Integer.toHexString(getNetworkType().getValue())
                     + "0"

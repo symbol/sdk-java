@@ -35,7 +35,6 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.TestInstance;
@@ -46,7 +45,7 @@ import org.junit.jupiter.params.provider.EnumSource;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class MosaicRepositoryIntegrationTest extends BaseIntegrationTest {
 
-    private Account testAccount = config().getNemesisAccount();
+    private Account testAccount = config().getDefaultAccount();
     private List<UInt64Id> mosaicIds = new ArrayList<>();
     private MosaicId mosaicId;
 
@@ -54,14 +53,13 @@ class MosaicRepositoryIntegrationTest extends BaseIntegrationTest {
     void setup() throws InterruptedException {
         mosaicId = createMosaic(DEFAULT_REPOSITORY_TYPE, testAccount);
         mosaicIds.add(mosaicId);
-        Thread.sleep(1000);
+        sleep(1000);
     }
 
     @ParameterizedTest
     @EnumSource(RepositoryType.class)
     void getMosaicViaMosaicId(RepositoryType type) {
         MosaicInfo mosaicInfo = get(getMosaicRepository(type).getMosaic(mosaicId));
-        assertEquals(new BigInteger("1"), mosaicInfo.getStartHeight());
         assertEquals(mosaicId, mosaicInfo.getMosaicId());
     }
 

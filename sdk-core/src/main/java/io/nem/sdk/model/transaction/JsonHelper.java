@@ -41,6 +41,14 @@ public interface JsonHelper {
     String print(Object object);
 
     /**
+     * It serializes an object into pretty json string.
+     *
+     * @param object the object (json native object, MAP or DTO)
+     * @return the string or null if the object is null.
+     */
+    String prettyPrint(Object object);
+
+    /**
      * It parse a json string into a an object of the underlying implementation (e.g. gson
      * JsonObject or jackson ObjectNode)
      *
