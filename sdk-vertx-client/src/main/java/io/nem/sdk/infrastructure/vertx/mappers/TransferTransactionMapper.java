@@ -37,7 +37,6 @@ import io.nem.sdk.openapi.vertx.model.TransferTransactionDTO;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import org.bouncycastle.util.encoders.Hex;
 
@@ -75,9 +74,8 @@ class TransferTransactionMapper extends
                         StandardCharsets.UTF_8));
         }
 
-        return new TransferTransactionFactory(networkType,
-            Optional.of(toAddressFromUnresolved(transaction.getRecipientAddress())),
-            Optional.empty(),
+        return TransferTransactionFactory.create(networkType,
+            toAddressFromUnresolved(transaction.getRecipientAddress()),
             mosaics,
             message);
     }
