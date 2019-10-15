@@ -16,6 +16,7 @@
 
 package io.nem.sdk.infrastructure.okhttp;
 
+import io.nem.core.utils.MapperUtils;
 import io.nem.sdk.api.QueryParams;
 import io.nem.sdk.model.blockchain.BlockInfo;
 import io.nem.sdk.model.blockchain.MerkelProofInfo;
@@ -88,10 +89,10 @@ public class BlockRepositoryOkHttpImplTest extends AbstractOkHttpRespositoryTest
         Assertions.assertNotNull(info);
 
         Assertions.assertEquals(blockDto.getBeneficiaryPublicKey(),
-            info.getBeneficiaryPublicAccount().getPublicKey().toString());
+            info.getBeneficiaryPublicAccount().getPublicKey().toHex());
 
         Assertions.assertEquals(blockDto.getSignerPublicKey(),
-            info.getSignerPublicAccount().getPublicKey().toString());
+            info.getSignerPublicAccount().getPublicKey().toHex());
 
         Assertions.assertEquals(16716, info.getType());
         Assertions.assertEquals(3, info.getVersion().intValue());
@@ -139,16 +140,16 @@ public class BlockRepositoryOkHttpImplTest extends AbstractOkHttpRespositoryTest
 
         BigInteger height = BigInteger.valueOf(10L);
         BlockInfo info = repository
-            .getBlocksByHeightWithLimit(height, 1, Optional.of(new QueryParams(10, "someId")))
+            .getBlocksByHeightWithLimit(height, 1, Optional.of(new QueryParams(10, "someId", "id")))
             .toFuture().get().get(0);
 
         Assertions.assertNotNull(info);
 
         Assertions.assertEquals(blockDto.getBeneficiaryPublicKey(),
-            info.getBeneficiaryPublicAccount().getPublicKey().toString());
+            info.getBeneficiaryPublicAccount().getPublicKey().toHex());
 
         Assertions.assertEquals(blockDto.getSignerPublicKey(),
-            info.getSignerPublicAccount().getPublicKey().toString());
+            info.getSignerPublicAccount().getPublicKey().toHex());
 
         Assertions.assertEquals(16716, info.getType());
         Assertions.assertEquals(3, info.getVersion().intValue());
@@ -216,7 +217,7 @@ public class BlockRepositoryOkHttpImplTest extends AbstractOkHttpRespositoryTest
 
         ResolutionStatementBodyDTO statement1 = new ResolutionStatementBodyDTO();
         addressResolutionStatement.setStatement(statement1);
-        statement1.setUnresolved("9050B9837EFAB4BBE8A4B9BB32D812F9885C00D8FC1650E142");
+        statement1.setUnresolved("9050b9837efab4bbe8a4b9bb32d812f9885c00d8fc1650e142");
         statement1.setHeight(BigInteger.valueOf(6L));
         dto.setAddressResolutionStatements(Collections.singletonList(addressResolutionStatement));
 
@@ -237,8 +238,8 @@ public class BlockRepositoryOkHttpImplTest extends AbstractOkHttpRespositoryTest
         Assertions.assertEquals(1, info.getAddressResolutionStatements().size());
         Assertions.assertEquals(BigInteger.valueOf(6L),
             info.getAddressResolutionStatements().get(0).getHeight());
-        Assertions.assertEquals("SBILTA367K2LX2FEXG5TFWAS7GEFYAGY7QLFBYKC",
-            info.getAddressResolutionStatements().get(0).getUnresolved().plain());
+        Assertions.assertEquals(MapperUtils.toAddressFromRawAddress("SBILTA367K2LX2FEXG5TFWAS7GEFYAGY7QLFBYKC"),
+            info.getAddressResolutionStatements().get(0).getUnresolved());
 
         Assertions.assertEquals(1, info.getMosaicResolutionStatement().size());
         Assertions.assertEquals(BigInteger.valueOf(7L),

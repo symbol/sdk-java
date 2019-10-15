@@ -18,8 +18,9 @@
 package io.nem.sdk.model.transaction;
 
 import io.nem.sdk.model.account.Address;
+import io.nem.sdk.model.account.UnresolvedAddress;
 import io.nem.sdk.model.blockchain.NetworkType;
-import io.nem.sdk.model.mosaic.MosaicId;
+import io.nem.sdk.model.mosaic.UnresolvedMosaicId;
 import java.math.BigInteger;
 import org.apache.commons.lang3.Validate;
 
@@ -29,40 +30,55 @@ import org.apache.commons.lang3.Validate;
 public class MosaicAddressRestrictionTransactionFactory
     extends TransactionFactory<MosaicAddressRestrictionTransaction> {
 
-    private final MosaicId mosaicId;
+    private final UnresolvedMosaicId mosaicId;
     private final BigInteger restrictionKey;
-    private final Address targetAddress;
-    private final BigInteger previousRestrictionValue;
+    private final UnresolvedAddress targetAddress;
+    private BigInteger previousRestrictionValue = new BigInteger("FFFFFFFFFFFFFFFF", 16);
     private final BigInteger newRestrictionValue;
 
     /**
-     * Create a mosaic address restriction transaction object with factory build and modifier methods.
+     * Create a mosaic address restriction transaction object with factory build and modifier
+     * methods.
      *
      * @param networkType {@link NetworkType}
-     * @param mosaicId {@link MosaicId}
+     * @param mosaicId {@link UnresolvedMosaicId}
      * @param restrictionKey BigInteger
-     * @param targetAddress {@link Address}
-     * @param previousRestrictionValue BigInteger
+     * @param targetAddress {@link UnresolvedAddress}
      * @param newRestrictionValue BigInteger
      */
-    public MosaicAddressRestrictionTransactionFactory(
+    private MosaicAddressRestrictionTransactionFactory(
         NetworkType networkType,
-        MosaicId mosaicId,
+        UnresolvedMosaicId mosaicId,
         BigInteger restrictionKey,
-        Address targetAddress,
-        BigInteger previousRestrictionValue,
+        UnresolvedAddress targetAddress,
         BigInteger newRestrictionValue) {
         super(TransactionType.MOSAIC_ADDRESS_RESTRICTION, networkType);
         Validate.notNull(mosaicId, "UnresolvedMosaicId must not be null");
         Validate.notNull(restrictionKey, "RestrictionKey must not be null");
         Validate.notNull(targetAddress, "TargetAddress must not be null");
-        Validate.notNull(previousRestrictionValue, "PreviousRestrictionValue must not be null");
         Validate.notNull(newRestrictionValue, "NewRestrictionValue must not be null");
         this.mosaicId = mosaicId;
         this.restrictionKey = restrictionKey;
         this.targetAddress = targetAddress;
-        this.previousRestrictionValue = previousRestrictionValue;
         this.newRestrictionValue = newRestrictionValue;
+    }
+
+    /**
+     * Static create method for factory.
+     *
+     * @param networkType {@link NetworkType}
+     * @param mosaicId {@link UnresolvedMosaicId}
+     * @param restrictionKey Restriction key.
+     * @param targetAddress {@link UnresolvedAddress}
+     * @param newRestrictionValue New restriction value.
+     * @return Mosaic address restriction transaction.
+     */
+    public static MosaicAddressRestrictionTransactionFactory create(NetworkType networkType,
+        UnresolvedMosaicId mosaicId,
+        BigInteger restrictionKey,
+        UnresolvedAddress targetAddress,
+        BigInteger newRestrictionValue) {
+        return new MosaicAddressRestrictionTransactionFactory(networkType, mosaicId, restrictionKey, targetAddress, newRestrictionValue);
     }
 
     @Override
@@ -73,9 +89,9 @@ public class MosaicAddressRestrictionTransactionFactory
     /**
      * Returns the mosaic id.
      *
-     * @return {@link MosaicId}
+     * @return {@link UnresolvedMosaicId}
      */
-    public MosaicId getMosaicId() {
+    public UnresolvedMosaicId getMosaicId() {
         return mosaicId;
     }
 
@@ -91,14 +107,31 @@ public class MosaicAddressRestrictionTransactionFactory
     /**
      * Returns the target address.
      *
-     * @return {@link Address}
+     * @return {@link UnresolvedAddress}
      */
-    public Address getTargetAddress() {
+    public UnresolvedAddress getTargetAddress() {
         return targetAddress;
     }
 
+    /**
+     * Returns previous restriction value.
+     *
+     * @return {@link BigInteger}
+     */
     public BigInteger getPreviousRestrictionValue() {
         return previousRestrictionValue;
+    }
+
+    /**
+     * It sets the previoudRestrictionValue when necessary.
+     * @param previousRestrictionValue
+     * @return
+     */
+    public MosaicAddressRestrictionTransactionFactory previousRestrictionValue(
+        BigInteger previousRestrictionValue) {
+        this.previousRestrictionValue = previousRestrictionValue;
+        Validate.notNull(previousRestrictionValue, "PreviousRestrictionValue must not be null");
+        return this;
     }
 
     /**

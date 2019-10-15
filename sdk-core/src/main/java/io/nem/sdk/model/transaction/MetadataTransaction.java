@@ -17,10 +17,11 @@
 
 package io.nem.sdk.model.transaction;
 
-import io.nem.core.utils.HexEncoder;
+import io.nem.core.utils.StringEncoder;
 import io.nem.sdk.model.account.PublicAccount;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
 
 /**
  * Abstract transaction for all the metadata transactions.
@@ -41,15 +42,11 @@ public abstract class MetadataTransaction extends Transaction {
      */
     private final int valueSizeDelta;
 
-    /**
-     * Value size in bytes.
-     */
-    private final int valueSize;
 
     /**
      * When there is an existing value, the new value is calculated as xor(previous-value, value).
-     * The value is an hex string as it comes from the rest objects. Value is converted to byte array
-     * when serialized to Catbuffer.
+     * The value is an hex string as it comes from the rest objects. Value is converted to byte
+     * array when serialized to Catbuffer.
      */
     private final String value;
 
@@ -63,7 +60,6 @@ public abstract class MetadataTransaction extends Transaction {
         this.targetAccount = factory.getTargetAccount();
         this.scopedMetadataKey = factory.getScopedMetadataKey();
         this.valueSizeDelta = factory.getValueSizeDelta();
-        this.valueSize = factory.getValueSize();
         this.value = factory.getValue();
     }
 
@@ -80,10 +76,6 @@ public abstract class MetadataTransaction extends Transaction {
         return valueSizeDelta;
     }
 
-    public int getValueSize() {
-        return valueSize;
-    }
-
     public String getValue() {
         return value;
     }
@@ -94,6 +86,16 @@ public abstract class MetadataTransaction extends Transaction {
      * @return Value buffer.
      */
     protected ByteBuffer getValueBuffer() {
-        return ByteBuffer.wrap(HexEncoder.getBytes(value));
+        return ByteBuffer.wrap(toByteArray(value));
+    }
+
+    /**
+     * Converts a metadata value to the byte array representation.
+     *
+     * @param value the plain text
+     * @return the array representation.
+     */
+    public static byte[] toByteArray(String value) {
+        return StringEncoder.getBytes(value);
     }
 }

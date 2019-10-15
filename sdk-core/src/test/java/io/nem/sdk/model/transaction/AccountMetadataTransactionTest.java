@@ -19,11 +19,9 @@ package io.nem.sdk.model.transaction;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import io.nem.core.utils.HexEncoder;
 import io.nem.sdk.model.account.Account;
 import io.nem.sdk.model.blockchain.NetworkType;
 import java.math.BigInteger;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -31,7 +29,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Tests for the {@link AccountMetadataTransaction} and the factory.
  **/
-public class AccountMetadataTransactionTest {
+public class AccountMetadataTransactionTest extends AbstractTransactionTester {
 
     static Account account;
 
@@ -46,36 +44,37 @@ public class AccountMetadataTransactionTest {
     @Test
     void shouldBuild() {
         AccountMetadataTransaction transaction =
-            new AccountMetadataTransactionFactory(
+            AccountMetadataTransactionFactory.create(
                 NetworkType.MIJIN_TEST,
                 account.getPublicAccount(),
-                BigInteger.TEN, 10, 20, "123BAC").deadline(new FakeDeadline()).build();
+                BigInteger.TEN, "123BAC").valueSizeDelta(10)
+                .deadline(new FakeDeadline()).build();
 
         assertEquals("123BAC", transaction.getValue());
         assertEquals(NetworkType.MIJIN_TEST, transaction.getNetworkType());
         assertEquals(10, transaction.getValueSizeDelta());
-        assertEquals(20, transaction.getValueSize());
         assertEquals(BigInteger.TEN, transaction.getScopedMetadataKey());
 
         assertEquals(account.getPublicKey(),
-            transaction.getTargetAccount().getPublicKey().toString());
+            transaction.getTargetAccount().getPublicKey().toHex());
 
     }
 
     @Test
     void shouldGenerateBytes() {
         AccountMetadataTransaction transaction =
-            new AccountMetadataTransactionFactory(
+            AccountMetadataTransactionFactory.create(
                 NetworkType.MIJIN_TEST,
                 account.getPublicAccount(),
-                BigInteger.TEN, 10, 20, "123BAC").signer(account.getPublicAccount())
+                BigInteger.TEN, "123BAC").valueSizeDelta(10)
+                .signer(account.getPublicAccount())
                 .deadline(new FakeDeadline()).build();
 
-        String expected = "a700000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001904441000000000000000001000000000000009a49366406aca952b88badf5f1e9be6ce4968141035a60be503273ea65456b240a000000000000000a000300123bac";
-        Assertions.assertEquals(expected, HexEncoder.getString(transaction.generateBytes()));
+        String expected = "aa00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001904441000000000000000001000000000000009a49366406aca952b88badf5f1e9be6ce4968141035a60be503273ea65456b240a000000000000000a000600313233424143";
 
-        String expectedEmbeddedHash = "570000009a49366406aca952b88badf5f1e9be6ce4968141035a60be503273ea65456b24019044419a49366406aca952b88badf5f1e9be6ce4968141035a60be503273ea65456b240a000000000000000a000300123bac";
-        Assertions.assertEquals(expectedEmbeddedHash,
-            HexEncoder.getString(transaction.generateEmbeddedBytes()));
+        assertSerialization(expected, transaction);
+
+        String expectedEmbeddedHash = "5a0000009a49366406aca952b88badf5f1e9be6ce4968141035a60be503273ea65456b24019044419a49366406aca952b88badf5f1e9be6ce4968141035a60be503273ea65456b240a000000000000000a000600313233424143";
+        assertEmbeddedSerialization(expectedEmbeddedHash, transaction);
     }
 }

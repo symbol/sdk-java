@@ -31,12 +31,13 @@ import io.nem.sdk.model.transaction.AggregateTransaction;
 import io.nem.sdk.model.transaction.AggregateTransactionFactory;
 import io.nem.sdk.model.transaction.CosignatureSignedTransaction;
 import io.nem.sdk.model.transaction.CosignatureTransaction;
-import io.nem.sdk.model.transaction.PlainMessage;
+import io.nem.sdk.model.message.PlainMessage;
 import io.nem.sdk.model.transaction.SignedTransaction;
 import io.nem.sdk.model.transaction.Transaction;
 import io.nem.sdk.model.transaction.TransactionStatusError;
 import io.nem.sdk.model.transaction.TransferTransaction;
 import io.nem.sdk.model.transaction.TransferTransactionFactory;
+import io.reactivex.Observable;
 import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.Collections;
@@ -45,7 +46,6 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -60,29 +60,12 @@ class ListenerIntegrationTest extends BaseIntegrationTest {
 
     private static final TimeUnit TIMEOUT_UNIT = TimeUnit.SECONDS;
 
-    private Account account;
-    private Account multisigAccount;
-    private Account cosignatoryAccount;
-    private Account cosignatoryAccount2;
-    private String generationHash;
+    private Account account = config().getTestAccount();
+    private Account multisigAccount = config().getMultisigAccount();
+    private Account cosignatoryAccount = config().getCosignatoryAccount();
+    private Account cosignatoryAccount2 = config().getCosignatory2Account();
+    private String generationHash = this.getGenerationHash();
 
-    @BeforeAll
-    void setup() {
-        account = this.getTestAccount();
-        multisigAccount =
-            new Account(
-                "5edebfdbeb32e9146d05ffd232c8af2cf9f396caf9954289daa0362d097fff3b",
-                NetworkType.MIJIN_TEST);
-        cosignatoryAccount =
-            new Account(
-                "2a2b1f5d366a5dd5dc56c3c757cf4fe6c66e2787087692cf329d7a49a594658b",
-                NetworkType.MIJIN_TEST);
-        cosignatoryAccount2 =
-            new Account(
-                "b8afae6f4ad13a1b8aad047b488e0738a437c7389d4ff30c359ac068910c1d59",
-                NetworkType.MIJIN);
-        generationHash = this.getGenerationHash();
-    }
 
     @ParameterizedTest
     @EnumSource(RepositoryType.class)
@@ -132,13 +115,13 @@ class ListenerIntegrationTest extends BaseIntegrationTest {
         throws ExecutionException, InterruptedException, TimeoutException {
         Listener listener = getRepositoryFactory(type).createListener();
         listener.open().get();
+        Address recipient = this.getRecipient();
+        Observable<Transaction> recipientConfirmedListener = listener.confirmed(recipient);
 
         SignedTransaction signedTransaction = this.announceStandaloneTransferTransaction(type);
 
         Transaction transaction =
-            listener
-                .confirmed(Address.createFromRawAddress("SBILTA367K2LX2FEXG5TFWAS7GEFYAGY7QLFBYKC"))
-                .take(1).toFuture().get(TIMEOUT, TIMEOUT_UNIT);
+            recipientConfirmedListener.take(1).toFuture().get(TIMEOUT, TIMEOUT_UNIT);
         assertEquals(
             signedTransaction.getHash(), transaction.getTransactionInfo().get().getHash().get());
     }
@@ -263,8 +246,7 @@ class ListenerIntegrationTest extends BaseIntegrationTest {
         assertEquals(signedTransaction.getHash(), transactionHash.getHash());
     }
 
-    private SignedTransaction announceStandaloneTransferTransaction(RepositoryType type)
-        throws ExecutionException, InterruptedException, TimeoutException {
+    private SignedTransaction announceStandaloneTransferTransaction(RepositoryType type) {
         TransferTransaction transferTransaction =
             TransferTransactionFactory.create(
                 NetworkType.MIJIN_TEST,
@@ -274,9 +256,8 @@ class ListenerIntegrationTest extends BaseIntegrationTest {
             ).build();
 
         SignedTransaction signedTransaction = this.account
-            .sign(transferTransaction, generationHash);
-        getTransactionRepository(type).announce(signedTransaction).toFuture()
-            .get(TIMEOUT, TIMEOUT_UNIT);
+            .sign(transferTransaction, getGenerationHash());
+        get(getTransactionRepository(type).announce(signedTransaction));
         return signedTransaction;
     }
 
@@ -297,7 +278,7 @@ class ListenerIntegrationTest extends BaseIntegrationTest {
             ).build();
 
         SignedTransaction signedTransaction = this.account
-            .sign(transferTransaction, generationHash);
+            .sign(transferTransaction, getGenerationHash());
         getTransactionRepository(type).announce(signedTransaction).toFuture()
             .get(TIMEOUT, TIMEOUT_UNIT);
         return signedTransaction;
@@ -321,7 +302,7 @@ class ListenerIntegrationTest extends BaseIntegrationTest {
                 .build();
 
         SignedTransaction signedTransaction =
-            this.cosignatoryAccount.sign(aggregateTransaction, generationHash);
+            this.cosignatoryAccount.sign(aggregateTransaction, getGenerationHash());
 
         getTransactionRepository(type).announceAggregateBonded(signedTransaction).toFuture()
             .get(TIMEOUT, TIMEOUT_UNIT);

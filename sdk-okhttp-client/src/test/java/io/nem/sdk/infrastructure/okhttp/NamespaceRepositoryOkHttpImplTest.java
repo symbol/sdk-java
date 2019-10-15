@@ -103,7 +103,7 @@ public class NamespaceRepositoryOkHttpImplTest extends AbstractOkHttpRespository
 
         resolveNetworkType();
 
-        Address address = MapperUtils.toAddress("SBCPGZ3S2SCC3YHBBTYDCUZV4ZZEPHM2KGCP4QXX");
+        Address address = MapperUtils.toAddressFromRawAddress("SBCPGZ3S2SCC3YHBBTYDCUZV4ZZEPHM2KGCP4QXX");
 
         NamespaceInfoDTO dto = new NamespaceInfoDTO();
         NamespaceMetaDTO meta = new NamespaceMetaDTO();
@@ -197,12 +197,12 @@ public class NamespaceRepositoryOkHttpImplTest extends AbstractOkHttpRespository
         NamespaceId namespaceId = NamespaceId.createFromName("accountalias");
         NamespaceNameDTO dto1 = new NamespaceNameDTO();
         dto1.setName("someName1");
-        dto1.setNamespaceId("1");
+        dto1.setId("1");
         dto1.setParentId("2");
 
         NamespaceNameDTO dto2 = new NamespaceNameDTO();
         dto2.setName("someName2");
-        dto2.setNamespaceId("3");
+        dto2.setId("3");
 
         mockRemoteCall(Arrays.asList(dto1, dto2));
 
@@ -292,7 +292,7 @@ public class NamespaceRepositoryOkHttpImplTest extends AbstractOkHttpRespository
 
         Assertions.assertNotNull(linkedMosaicId);
 
-        Assertions.assertEquals(MapperUtils.fromHex("528280977531AAA"), linkedMosaicId.getId());
+        Assertions.assertEquals(MapperUtils.fromHexToBigInteger("528280977531AAA"), linkedMosaicId.getId());
     }
 
 

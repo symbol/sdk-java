@@ -31,17 +31,15 @@ import io.nem.sdk.model.mosaic.NetworkCurrencyMosaic;
 import io.nem.sdk.model.transaction.AggregateTransaction;
 import io.nem.sdk.model.transaction.AggregateTransactionFactory;
 import io.nem.sdk.model.transaction.JsonHelper;
-import io.nem.sdk.model.transaction.PlainMessage;
+import io.nem.sdk.model.message.PlainMessage;
 import io.nem.sdk.model.transaction.SignedTransaction;
 import io.nem.sdk.model.transaction.TransferTransaction;
 import io.nem.sdk.model.transaction.TransferTransactionFactory;
-import io.nem.sdk.openapi.okhttp_gson.invoker.JSON;
 import io.nem.sdk.openapi.okhttp_gson.model.TransactionInfoDTO;
 import java.math.BigInteger;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Optional;
 import org.bouncycastle.util.encoders.Hex;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -51,17 +49,15 @@ public class OkHttpAggregateTransactionTest {
     private final String generationHash =
         "57F7DA205008026C776CB6AED843393F04CD458E0AA2D9F1D5F31A402072B2D6";
 
-    private final JsonHelper jsonHelper = new JsonHelperGson(new JSON().getGson());
+    private final JsonHelper jsonHelper = new JsonHelperGson();
 
     @Test
     void createAAggregateTransactionViaStaticConstructor() {
 
         TransferTransaction transferTx =
-            new TransferTransactionFactory(
+            TransferTransactionFactory.create(
                 NetworkType.MIJIN_TEST,
-                Optional.of(new Address("SDGLFW-DSHILT-IUHGIB-H5UGX2-VYF5VN-JEKCCD-BR26",
-                    NetworkType.MIJIN_TEST)),
-                Optional.empty(),
+                new Address("SDGLFW-DSHILT-IUHGIB-H5UGX2-VYF5VN-JEKCCD-BR26", NetworkType.MIJIN_TEST),
                 Collections.emptyList(),
                 PlainMessage.Empty).build();
 
@@ -144,7 +140,7 @@ public class OkHttpAggregateTransactionTest {
 
         assertEquals("2d010000", signedTransaction.getPayload().substring(0, 8));
         assertEquals("5100000051000000", signedTransaction.getPayload().substring(240, 256));
-        // assertEquals("039054419050B9837EFAB4BBE8A4B9BB32D812F9885C00D8FC1650E1420D000000746573742D6D65737361676568B3FBB18729C1FDE225C57F8CE080FA828F0067E451A3FD81FA628842B0B763", signedTransaction.getPayload().substring(320, 474));
+        // assertEquals("039054419050b9837efab4bbe8a4b9bb32d812f9885c00d8fc1650e1420D000000746573742D6D65737361676568B3FBB18729C1FDE225C57F8CE080FA828F0067E451A3FD81FA628842B0B763", signedTransaction.getPayload().substring(320, 474));
 
     }
 

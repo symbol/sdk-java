@@ -18,7 +18,7 @@
 package io.nem.sdk.model.transaction;
 
 import io.nem.sdk.model.blockchain.NetworkType;
-import io.nem.sdk.model.mosaic.MosaicId;
+import io.nem.sdk.model.mosaic.UnresolvedMosaicId;
 import io.nem.sdk.model.mosaic.MosaicSupplyChangeActionType;
 import java.math.BigInteger;
 import org.apache.commons.lang3.Validate;
@@ -29,16 +29,16 @@ import org.apache.commons.lang3.Validate;
 public class MosaicSupplyChangeTransactionFactory extends
     TransactionFactory<MosaicSupplyChangeTransaction> {
 
-    private final MosaicId mosaicId;
+    private final UnresolvedMosaicId mosaicId;
     private final MosaicSupplyChangeActionType action;
     private final BigInteger delta;
 
-    public MosaicSupplyChangeTransactionFactory(
-        NetworkType networkType, MosaicId mosaicId,
+    private MosaicSupplyChangeTransactionFactory(
+        NetworkType networkType, UnresolvedMosaicId mosaicId,
         MosaicSupplyChangeActionType action,
         BigInteger delta) {
         super(TransactionType.MOSAIC_SUPPLY_CHANGE, networkType);
-        Validate.notNull(mosaicId, "MosaicId must not be null");
+        Validate.notNull(mosaicId, "UnresolvedMosaicId must not be null");
         Validate.notNull(action, "Action must not be null");
         Validate.notNull(delta, "Delta must not be null");
         this.mosaicId = mosaicId;
@@ -47,11 +47,25 @@ public class MosaicSupplyChangeTransactionFactory extends
     }
 
     /**
+     * Static create method for factory.
+     *
+     * @param networkType Network type.
+     * @param mosaicId Mosaic id.
+     * @param action Action.
+     * @param delta Delta.
+     * @return Mosaic supply change transaction.
+     */
+    public static MosaicSupplyChangeTransactionFactory create(NetworkType networkType, UnresolvedMosaicId mosaicId,
+        MosaicSupplyChangeActionType action, BigInteger delta) {
+        return new MosaicSupplyChangeTransactionFactory(networkType, mosaicId, action, delta);
+    }
+
+    /**
      * Returns mosaic id.
      *
      * @return BigInteger
      */
-    public MosaicId getMosaicId() {
+    public UnresolvedMosaicId getMosaicId() {
         return mosaicId;
     }
 

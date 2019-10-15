@@ -28,7 +28,8 @@ import io.nem.catapult.builders.TimestampDto;
 import io.nem.catapult.builders.UnresolvedAddressDto;
 import io.nem.catapult.builders.UnresolvedMosaicBuilder;
 import io.nem.catapult.builders.UnresolvedMosaicIdDto;
-import io.nem.sdk.model.account.Address;
+import io.nem.sdk.infrastructure.SerializationUtils;
+import io.nem.sdk.model.account.UnresolvedAddress;
 import io.nem.sdk.model.mosaic.Mosaic;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
@@ -40,7 +41,7 @@ public class SecretLockTransaction extends Transaction {
     private final BigInteger duration;
     private final LockHashAlgorithmType hashAlgorithm;
     private final String secret;
-    private final Address recipient;
+    private final UnresolvedAddress recipient;
 
     /**
      * Contructor of this transaction using the factory.
@@ -98,7 +99,7 @@ public class SecretLockTransaction extends Transaction {
      *
      * @return the recipient of the funds.
      */
-    public Address getRecipient() {
+    public UnresolvedAddress getRecipient() {
         return recipient;
     }
 
@@ -122,12 +123,13 @@ public class SecretLockTransaction extends Transaction {
                 new AmountDto(getMaxFee().longValue()),
                 new TimestampDto(getDeadline().getInstant()),
                 UnresolvedMosaicBuilder.create(
-                    new UnresolvedMosaicIdDto(mosaic.getId().getId().longValue()),
+                    new UnresolvedMosaicIdDto(mosaic.getId().getIdAsLong()),
                     new AmountDto(mosaic.getAmount().longValue())),
                 new BlockDurationDto(duration.longValue()),
                 LockHashAlgorithmDto.rawValueOf((byte) hashAlgorithm.getValue()),
                 new Hash256Dto(getSecretBuffer()),
-                new UnresolvedAddressDto(getRecipient().getByteBuffer()));
+                new UnresolvedAddressDto(
+                    SerializationUtils.fromUnresolvedAddressToByteBuffer(getRecipient())));
         return txBuilder.serialize();
     }
 
@@ -144,12 +146,13 @@ public class SecretLockTransaction extends Transaction {
                 getNetworkVersion(),
                 getEntityTypeDto(),
                 UnresolvedMosaicBuilder.create(
-                    new UnresolvedMosaicIdDto(mosaic.getId().getId().longValue()),
+                    new UnresolvedMosaicIdDto(mosaic.getId().getIdAsLong()),
                     new AmountDto(mosaic.getAmount().longValue())),
                 new BlockDurationDto(duration.longValue()),
                 LockHashAlgorithmDto.rawValueOf((byte) hashAlgorithm.getValue()),
                 new Hash256Dto(getSecretBuffer()),
-                new UnresolvedAddressDto(getRecipient().getByteBuffer()));
+                new UnresolvedAddressDto(
+                    SerializationUtils.fromUnresolvedAddressToByteBuffer(getRecipient())));
         return txBuilder.serialize();
     }
 

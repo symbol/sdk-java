@@ -16,8 +16,13 @@
 
 package io.nem.sdk.model.namespace;
 
+import io.nem.core.utils.ByteUtils;
+import io.nem.core.utils.ConvertUtils;
+import io.nem.sdk.infrastructure.SerializationUtils;
+import io.nem.sdk.model.account.UnresolvedAddress;
+import io.nem.sdk.model.mosaic.IllegalIdentifierException;
+import io.nem.sdk.model.mosaic.UnresolvedMosaicId;
 import io.nem.sdk.model.transaction.IdGenerator;
-import io.nem.sdk.model.transaction.UInt64Id;
 import java.math.BigInteger;
 import java.util.List;
 import java.util.Objects;
@@ -28,11 +33,22 @@ import java.util.Optional;
  *
  * @since 1.0
  */
-public class NamespaceId implements UInt64Id {
+public class NamespaceId implements UnresolvedMosaicId, UnresolvedAddress {
 
     private final BigInteger id;
 
     private final Optional<String> fullName;
+
+    /**
+     * Create NamespaceId from namespace Hex string
+     *
+     * @throws IllegalIdentifierException NamespaceId identifier
+     */
+    public NamespaceId(String hex) {
+        ConvertUtils.validateIsHexString(hex, 16);
+        this.id = new BigInteger(hex, 16);
+        this.fullName = Optional.empty();
+    }
 
     private NamespaceId(BigInteger id, Optional<String> fullName) {
         this.id = id;
@@ -86,7 +102,6 @@ public class NamespaceId implements UInt64Id {
      * @return namespace BigInteger id
      */
     public BigInteger getId() {
-
         return id;
     }
 
@@ -99,13 +114,13 @@ public class NamespaceId implements UInt64Id {
         return this.id.longValue();
     }
 
+
     /**
      * Returns optional namespace full name, with subnamespaces if it's the case.
      *
      * @return namespace full name
      */
     public Optional<String> getFullName() {
-
         return fullName;
     }
 
@@ -124,5 +139,23 @@ public class NamespaceId implements UInt64Id {
     @Override
     public int hashCode() {
         return Objects.hash(id);
+    }
+
+
+    @Override
+    public String encoded() {
+        return ConvertUtils
+            .toHex(SerializationUtils.fromUnresolvedAddressToByteBuffer(this).array());
+    }
+
+    /**
+     * Gets the id as a hexadecimal string.
+     *
+     * @return Hex id.
+     */
+    @Override
+    public String getIdAsHex() {
+        byte[] bytes = ByteUtils.bigIntToBytes(getId());
+        return ConvertUtils.toHex(bytes);
     }
 }

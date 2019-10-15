@@ -44,7 +44,7 @@ ext {
     vertxVersion = "3.5.0"
     rxjavaVersion = "2.1.7"
     junitVersion = "5.0.2"
-    restApiVersion = "0.7.18-SNAPSHOT"
+    restApiVersion = "0.7.19-SNAPSHOT"
     jackson_version = "2.9.9"
     jackson_databind_version = "2.9.9"
 }
@@ -221,6 +221,8 @@ subprojects {
                 pom.project {
                     packaging 'jar'
                     url 'https://github.com/nemtech/nem2-sdk-java'
+                    name "${project.name}"
+                    description "${project.name} lib for NEM2 sdk Java"
 
                     scm {
                         connection 'scm:git:https://github.com/nemtech/nem2-sdk-java.git'
@@ -232,6 +234,20 @@ subprojects {
                         license {
                             name 'The Apache License, Version 2.0'
                             url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                        }
+                    }
+                    developers {
+                        developer {
+                            id 'fullcircle23'
+                            name 'Ravi Shanker'
+                        }
+                        developer {
+                            id 'rg911'
+                            name 'Steven Liu'
+                        }
+                        developer {
+                            id 'fboucquez'
+                            name 'Fernando Boucquez'
                         }
                     }
                 }

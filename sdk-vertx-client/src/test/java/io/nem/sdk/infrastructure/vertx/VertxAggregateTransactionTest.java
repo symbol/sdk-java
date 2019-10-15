@@ -32,7 +32,7 @@ import io.nem.sdk.model.mosaic.NetworkCurrencyMosaic;
 import io.nem.sdk.model.transaction.AggregateTransaction;
 import io.nem.sdk.model.transaction.AggregateTransactionFactory;
 import io.nem.sdk.model.transaction.JsonHelper;
-import io.nem.sdk.model.transaction.PlainMessage;
+import io.nem.sdk.model.message.PlainMessage;
 import io.nem.sdk.model.transaction.SignedTransaction;
 import io.nem.sdk.model.transaction.TransferTransaction;
 import io.nem.sdk.model.transaction.TransferTransactionFactory;
@@ -51,7 +51,8 @@ public class VertxAggregateTransactionTest {
     private final String generationHash =
         "57F7DA205008026C776CB6AED843393F04CD458E0AA2D9F1D5F31A402072B2D6";
 
-    private final JsonHelper jsonHelper = new JsonHelperJackson2(Json.mapper);
+    private final JsonHelper jsonHelper = new JsonHelperJackson2(
+        JsonHelperJackson2.configureMapper(Json.mapper));
 
     @Test
     void createAAggregateTransactionViaStaticConstructor() {

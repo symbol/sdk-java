@@ -17,8 +17,10 @@
 
 package io.nem.sdk.infrastructure.vertx.mappers;
 
+import static io.nem.core.utils.MapperUtils.getIdAsHex;
 import static io.nem.core.utils.MapperUtils.toMosaicId;
 
+import io.nem.core.utils.MapperUtils;
 import io.nem.sdk.model.blockchain.NetworkType;
 import io.nem.sdk.model.transaction.JsonHelper;
 import io.nem.sdk.model.transaction.MosaicGlobalRestrictionTransaction;
@@ -27,7 +29,7 @@ import io.nem.sdk.model.transaction.MosaicRestrictionType;
 import io.nem.sdk.model.transaction.TransactionFactory;
 import io.nem.sdk.model.transaction.TransactionType;
 import io.nem.sdk.openapi.vertx.model.MosaicGlobalRestrictionTransactionDTO;
-import java.math.BigInteger;
+import io.nem.sdk.openapi.vertx.model.MosaicRestrictionTypeEnum;
 
 /**
  * Mosaic global restriction transaction mapper.
@@ -36,24 +38,42 @@ class MosaicGlobalRestrictionTransactionMapper extends
     AbstractTransactionMapper<MosaicGlobalRestrictionTransactionDTO, MosaicGlobalRestrictionTransaction> {
 
     public MosaicGlobalRestrictionTransactionMapper(JsonHelper jsonHelper) {
-        super(jsonHelper, TransactionType.MOSAIC_GLOBAL_RESTRICTION, MosaicGlobalRestrictionTransactionDTO.class);
+        super(jsonHelper, TransactionType.MOSAIC_GLOBAL_RESTRICTION,
+            MosaicGlobalRestrictionTransactionDTO.class);
     }
 
     @Override
-    protected TransactionFactory<MosaicGlobalRestrictionTransaction> createFactory(NetworkType networkType,
+    protected TransactionFactory<MosaicGlobalRestrictionTransaction> createFactory(
+        NetworkType networkType,
         MosaicGlobalRestrictionTransactionDTO transaction) {
 
         byte prevRestrictionType = transaction.getPreviousRestrictionType().getValue().byteValue();
         byte newRestrictionType = transaction.getNewRestrictionType().getValue().byteValue();
 
-        return new MosaicGlobalRestrictionTransactionFactory(networkType,
+        return MosaicGlobalRestrictionTransactionFactory.create(networkType,
             toMosaicId(transaction.getMosaicId()),
-            toMosaicId(transaction.getReferenceMosaicId()),
-            new BigInteger(transaction.getRestrictionKey()),
-            new BigInteger(transaction.getPreviousRestrictionValue()),
-            MosaicRestrictionType.rawValueOf(prevRestrictionType),
-            new BigInteger(transaction.getNewRestrictionValue()),
+            MapperUtils.fromHexToBigInteger(transaction.getRestrictionKey()),
+            transaction.getNewRestrictionValue(),
             MosaicRestrictionType.rawValueOf(newRestrictionType)
-        );
+        ).referenceMosaicId(toMosaicId(transaction.getReferenceMosaicId()))
+            .previousRestrictionValue(transaction.getPreviousRestrictionValue())
+            .previousRestrictionType(MosaicRestrictionType.rawValueOf(prevRestrictionType));
     }
+
+    @Override
+    protected void copyToDto(MosaicGlobalRestrictionTransaction transaction,
+        MosaicGlobalRestrictionTransactionDTO dto) {
+
+        dto.setMosaicId(getIdAsHex(transaction.getMosaicId()));
+        dto.setRestrictionKey(transaction.getRestrictionKey().toString(16));
+        dto.setNewRestrictionValue(transaction.getNewRestrictionValue());
+        dto.setPreviousRestrictionValue(transaction.getPreviousRestrictionValue());
+        dto.setPreviousRestrictionType(MosaicRestrictionTypeEnum.fromValue(
+            (int) transaction.getPreviousRestrictionType().getValue()));
+        dto.setNewRestrictionType(MosaicRestrictionTypeEnum.fromValue(
+            (int) transaction.getNewRestrictionType().getValue()));
+        dto.setReferenceMosaicId(getIdAsHex(transaction.getReferenceMosaicId()));
+
+    }
+
 }

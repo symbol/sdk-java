@@ -20,9 +20,9 @@ import io.nem.catapult.builders.EntityTypeDto;
 import io.nem.core.crypto.CryptoEngines;
 import io.nem.core.crypto.DsaSigner;
 import io.nem.core.crypto.Hashes;
-import io.nem.core.crypto.SignSchema;
 import io.nem.core.crypto.Signature;
-import io.nem.core.utils.HexEncoder;
+import io.nem.core.utils.ConvertUtils;
+import io.nem.core.utils.MapperUtils;
 import io.nem.sdk.model.account.Account;
 import io.nem.sdk.model.account.PublicAccount;
 import io.nem.sdk.model.blockchain.NetworkType;
@@ -60,7 +60,6 @@ public abstract class Transaction {
         this.signer = factory.getSigner();
         this.transactionInfo = factory.getTransactionInfo();
     }
-
 
     /**
      * Generates hash for a serialized transaction payload.
@@ -157,14 +156,26 @@ public abstract class Transaction {
     }
 
     /**
-     *
+     * Generate bytes for a specific transaction.
      */
     abstract byte[] generateBytes();
 
     /**
-     * Geneterate the
+     * Generate bytes for a specific inner transaction.
+     *
+     * @return bytes of the transaction
      */
     abstract byte[] generateEmbeddedBytes();
+
+    /**
+     * Serialises a transaction model into binary (unsigned payload). Gets the serialised bytes for
+     * a transaction.
+     *
+     * @return bytes of the transaction
+     */
+    public byte[] serialize() {
+        return this.generateBytes();
+    }
 
     /**
      * Serialize and sign transaction creating a new SignedTransaction.
@@ -178,7 +189,7 @@ public abstract class Transaction {
         final DsaSigner theSigner = CryptoEngines.defaultEngine()
             .createDsaSigner(account.getKeyPair(), getNetworkType().resolveSignSchema());
         final byte[] bytes = this.generateBytes();
-        final byte[] generationHashBytes = HexEncoder.getBytes(generationHash);
+        final byte[] generationHashBytes = ConvertUtils.getBytes(generationHash);
         final byte[] signingBytes = new byte[bytes.length + generationHashBytes.length - 100];
         System.arraycopy(generationHashBytes, 0, signingBytes, 0, generationHashBytes.length);
         System.arraycopy(bytes, 100, signingBytes, generationHashBytes.length, bytes.length - 100);
@@ -274,21 +285,16 @@ public abstract class Transaction {
      * @return Version of the transaction
      */
     protected short getNetworkVersion() {
-        return (short)
-            Long.parseLong(
-                Integer.toHexString(getNetworkType().getValue())
-                    + "0"
-                    + Integer.toHexString(getVersion()),
-                16);
+        return (short) getTransactionVersion();
     }
 
     /**
-     * Returns the transaction signature (missing if part of an aggregate transaction).
+     * Gets the version of the transaction using the open api format.
      *
-     * @return transaction signature
+     * @return Version of the transaction
      */
-    public Optional<String> getSignatureBytes() {
-        return getSignature();
+    public int getTransactionVersion() {
+        return MapperUtils.toNetworkVersion(getNetworkType(), getVersion());
     }
 
     /**

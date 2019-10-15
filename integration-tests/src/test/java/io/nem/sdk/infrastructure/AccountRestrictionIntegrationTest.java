@@ -16,18 +16,15 @@
 
 package io.nem.sdk.infrastructure;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import io.nem.sdk.api.RepositoryCallException;
+import io.nem.sdk.api.RestrictionRepository;
 import io.nem.sdk.model.account.Account;
 import io.nem.sdk.model.account.AccountRestrictions;
 import io.nem.sdk.model.account.Address;
-import io.nem.sdk.model.blockchain.NetworkType;
-import io.nem.sdk.model.mosaic.Mosaic;
+import io.nem.sdk.model.account.UnresolvedAddress;
 import io.nem.sdk.model.mosaic.MosaicId;
 import io.nem.sdk.model.mosaic.MosaicNonce;
-import io.nem.sdk.model.mosaic.NetworkCurrencyMosaic;
+import io.nem.sdk.model.mosaic.UnresolvedMosaicId;
 import io.nem.sdk.model.transaction.AccountAddressRestrictionTransaction;
 import io.nem.sdk.model.transaction.AccountAddressRestrictionTransactionFactory;
 import io.nem.sdk.model.transaction.AccountMosaicRestrictionTransaction;
@@ -37,16 +34,14 @@ import io.nem.sdk.model.transaction.AccountOperationRestrictionTransactionFactor
 import io.nem.sdk.model.transaction.AccountRestrictionModification;
 import io.nem.sdk.model.transaction.AccountRestrictionModificationAction;
 import io.nem.sdk.model.transaction.AccountRestrictionType;
-import io.nem.sdk.model.transaction.SignedTransaction;
-import io.nem.sdk.model.transaction.TransactionAnnounceResponse;
 import io.nem.sdk.model.transaction.TransactionType;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
-import org.junit.jupiter.params.provider.ValueSource;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class AccountRestrictionIntegrationTest extends BaseIntegrationTest {
@@ -70,8 +65,9 @@ class AccountRestrictionIntegrationTest extends BaseIntegrationTest {
                     .createForTransactionType(AccountRestrictionModificationAction.REMOVE,
                         transactionType),
                 restrictionType);
+            Assertions
+                .assertFalse(hasRestriction(type, testAccount, restrictionType, transactionType));
         }
-        ;
 
         System.out.println("Adding transaction restriction");
         sendAccountRestrictionTransaction(type, AccountRestrictionModification
@@ -79,8 +75,7 @@ class AccountRestrictionIntegrationTest extends BaseIntegrationTest {
                     transactionType),
             restrictionType);
 
-        Assertions.assertEquals(true, hasRestriction(type, testAccount, restrictionType,
-            transactionType));
+        Assertions.assertTrue(hasRestriction(type, testAccount, restrictionType, transactionType));
 
         System.out.println("Removing transaction restriction");
         sendAccountRestrictionTransaction(type, AccountRestrictionModification
@@ -88,8 +83,7 @@ class AccountRestrictionIntegrationTest extends BaseIntegrationTest {
                     transactionType),
             restrictionType);
 
-        Assertions.assertEquals(false, hasRestriction(type, testAccount, restrictionType,
-            transactionType));
+        Assertions.assertFalse(hasRestriction(type, testAccount, restrictionType, transactionType));
 
     }
 
@@ -114,6 +108,7 @@ class AccountRestrictionIntegrationTest extends BaseIntegrationTest {
                     .createForMosaic(AccountRestrictionModificationAction.REMOVE,
                         mosaicId),
                 restrictionType);
+            Assertions.assertFalse(hasRestriction(type, testAccount, restrictionType, mosaicId));
         }
 
         System.out.println("Adding mosaic restriction");
@@ -122,8 +117,7 @@ class AccountRestrictionIntegrationTest extends BaseIntegrationTest {
                     mosaicId),
             restrictionType);
 
-        Assertions.assertEquals(true, hasRestriction(type, testAccount, restrictionType,
-            mosaicId));
+        Assertions.assertTrue(hasRestriction(type, testAccount, restrictionType, mosaicId));
 
         System.out.println("Removing mosaic restriction");
         sendAccountRestrictionMosaic(type, AccountRestrictionModification
@@ -131,8 +125,7 @@ class AccountRestrictionIntegrationTest extends BaseIntegrationTest {
                     mosaicId),
             restrictionType);
 
-        Assertions.assertEquals(false, hasRestriction(type, testAccount, restrictionType,
-            mosaicId));
+        Assertions.assertFalse(hasRestriction(type, testAccount, restrictionType, mosaicId));
 
     }
 
@@ -154,6 +147,7 @@ class AccountRestrictionIntegrationTest extends BaseIntegrationTest {
                     .createForAddress(AccountRestrictionModificationAction.REMOVE,
                         address),
                 restrictionType);
+            Assertions.assertFalse(hasRestriction(type, testAccount, restrictionType, address));
         }
 
         System.out.println("Adding address restriction");
@@ -162,7 +156,7 @@ class AccountRestrictionIntegrationTest extends BaseIntegrationTest {
                     address),
             restrictionType);
 
-        Assertions.assertEquals(true, hasRestriction(type, testAccount, restrictionType,
+        Assertions.assertTrue(hasRestriction(type, testAccount, restrictionType,
             address));
 
         System.out.println("Removing address restriction");
@@ -171,22 +165,33 @@ class AccountRestrictionIntegrationTest extends BaseIntegrationTest {
                     address),
             restrictionType);
 
-        Assertions.assertEquals(false, hasRestriction(type, testAccount, restrictionType,
-            address));
+        Assertions.assertFalse(hasRestriction(type, testAccount, restrictionType, address));
 
     }
 
 
     private boolean hasRestriction(RepositoryType type, Account testAccount,
         AccountRestrictionType restrictionType, Object value) {
-        AccountRestrictions restrictions = get(
-            getRepositoryFactory(type).createAccountRepository()
-                .getAccountRestrictions(testAccount.getAddress()));
-        Assertions.assertEquals(testAccount.getAddress(), restrictions.getAddress());
-        return restrictions.getRestrictions().stream().anyMatch(
-            r -> r.getRestrictionType()
-                .equals(restrictionType) && r.getValues()
-                .contains(value));
+        try {
+            sleep(2000);//Need to wait?
+            AccountRestrictions restrictions = get(
+                getRepositoryFactory(type).createRestrictionRepository()
+                    .getAccountRestrictions(testAccount.getAddress()));
+            Assertions.assertEquals(testAccount.getAddress(), restrictions.getAddress());
+
+            System.out.println("Current Restrictions: " + jsonHelper().print(restrictions));
+            return restrictions.getRestrictions().stream().anyMatch(
+                r -> r.getRestrictionType()
+                    .equals(restrictionType) && r.getValues()
+                    .contains(value));
+        } catch (RepositoryCallException | InterruptedException e) {
+            //If it fails, it's because is a new account.
+            Assertions.assertEquals(
+                "ApiException: Not Found - 404 - ResourceNotFound - no resource exists with id '"
+                    + testAccount.getAddress().plain() + "'", e.getMessage());
+            return false;
+        }
+
 
     }
 
@@ -198,78 +203,100 @@ class AccountRestrictionIntegrationTest extends BaseIntegrationTest {
         List<AccountRestrictionModification<TransactionType>> modifications = new ArrayList<>();
         modifications.add(modification);
         AccountOperationRestrictionTransaction transaction =
-            new AccountOperationRestrictionTransactionFactory(
-                NetworkType.MIJIN_TEST,
+            AccountOperationRestrictionTransactionFactory.create(
+               getNetworkType(),
                 accountRestrictionType
                 , modifications
             ).build();
 
-        SignedTransaction signedTransaction = testAccount.sign(transaction, getGenerationHash());
+        AccountOperationRestrictionTransaction processedTransaction = announceAndValidate(type,
+            testAccount, transaction);
 
-        TransactionAnnounceResponse transactionAnnounceResponse =
-            get(getRepositoryFactory(type).createTransactionRepository()
-                .announce(signedTransaction));
-        assertEquals(
-            "packet 9 was pushed to the network via /transaction",
-            transactionAnnounceResponse.getMessage());
-
-        this.validateTransactionAnnounceCorrectly(
-            testAccount.getAddress(), signedTransaction.getHash(), type);
+        Assertions.assertEquals(accountRestrictionType, processedTransaction.getRestrictionType());
+        Assertions.assertEquals(modification.getModificationAction(),
+            processedTransaction.getModifications().get(0).getModificationAction());
+        Assertions.assertEquals(modification.getValue(),
+            processedTransaction.getModifications().get(0).getValue());
     }
 
     private void sendAccountRestrictionMosaic(RepositoryType type,
-        AccountRestrictionModification<MosaicId> modification,
+        AccountRestrictionModification<UnresolvedMosaicId> modification,
         AccountRestrictionType accountRestrictionType) {
 
         Account testAccount = getTestAccount();
-        List<AccountRestrictionModification<MosaicId>> modifications = new ArrayList<>();
+        List<AccountRestrictionModification<UnresolvedMosaicId>> modifications = new ArrayList<>();
         modifications.add(modification);
         AccountMosaicRestrictionTransaction transaction =
-            new AccountMosaicRestrictionTransactionFactory(
-                NetworkType.MIJIN_TEST,
+            AccountMosaicRestrictionTransactionFactory.create(
+                getNetworkType(),
                 accountRestrictionType
                 , modifications
             ).build();
 
-        SignedTransaction signedTransaction = testAccount.sign(transaction, getGenerationHash());
+        AccountMosaicRestrictionTransaction processedTransaction = announceAndValidate(type,
+            testAccount, transaction);
 
-        TransactionAnnounceResponse transactionAnnounceResponse =
-            get(getRepositoryFactory(type).createTransactionRepository()
-                .announce(signedTransaction));
-        assertEquals(
-            "packet 9 was pushed to the network via /transaction",
-            transactionAnnounceResponse.getMessage());
-
-        this.validateTransactionAnnounceCorrectly(
-            testAccount.getAddress(), signedTransaction.getHash(), type);
+        Assertions.assertEquals(accountRestrictionType, processedTransaction.getRestrictionType());
+        Assertions.assertEquals(modification.getModificationAction(),
+            processedTransaction.getModifications().get(0).getModificationAction());
+        Assertions.assertEquals(modification.getValue(),
+            processedTransaction.getModifications().get(0).getValue());
     }
 
     private void sendAccountRestrictionAddress(RepositoryType type,
-        AccountRestrictionModification<Address> modification,
+        AccountRestrictionModification<UnresolvedAddress> modification,
         AccountRestrictionType accountRestrictionType) {
 
         Account testAccount = getTestAccount();
-        List<AccountRestrictionModification<Address>> modifications = new ArrayList<>();
+        List<AccountRestrictionModification<UnresolvedAddress>> modifications = new ArrayList<>();
         modifications.add(modification);
         AccountAddressRestrictionTransaction transaction =
-            new AccountAddressRestrictionTransactionFactory(
-                NetworkType.MIJIN_TEST,
+            AccountAddressRestrictionTransactionFactory.create(
+                getNetworkType(),
                 accountRestrictionType
                 , modifications
             ).build();
 
-        SignedTransaction signedTransaction = testAccount.sign(transaction, getGenerationHash());
+        AccountAddressRestrictionTransaction processedTransaction = announceAndValidate(type,
+            testAccount, transaction);
 
-        TransactionAnnounceResponse transactionAnnounceResponse =
-            get(getRepositoryFactory(type).createTransactionRepository()
-                .announce(signedTransaction));
-        assertEquals(
-            "packet 9 was pushed to the network via /transaction",
-            transactionAnnounceResponse.getMessage());
+        Assertions.assertEquals(accountRestrictionType, processedTransaction.getRestrictionType());
+        Assertions.assertEquals(modification.getModificationAction(),
+            processedTransaction.getModifications().get(0).getModificationAction());
+        Assertions.assertEquals(modification.getValue(),
+            processedTransaction.getModifications().get(0).getValue());
 
-        this.validateTransactionAnnounceCorrectly(
-            testAccount.getAddress(), signedTransaction.getHash(), type);
     }
 
+    @ParameterizedTest
+    @EnumSource(RepositoryType.class)
+    void getAccountsRestrictionsWhenAddressDoesNotExist(RepositoryType type) {
+        Address address = Address
+            .createFromPublicKey("67F69FA4BFCD158F6E1AF1ABC82F725F5C5C4710D6E29217B12BE66397435DFB",
+                getNetworkType());
+
+        RestrictionRepository repository = getRepositoryFactory(type).createRestrictionRepository();
+        Assertions.assertEquals(0, get(repository
+            .getAccountsRestrictions(
+                Collections.singletonList(address))).size());
+    }
+
+    @ParameterizedTest
+    @EnumSource(RepositoryType.class)
+    void getAccountRestrictionsWhenAccountDoesNotExist(RepositoryType type) {
+        RestrictionRepository repository = getRepositoryFactory(type).createRestrictionRepository();
+
+        Address address = Address
+            .createFromPublicKey("67F69FA4BFCD158F6E1AF1ABC82F725F5C5C4710D6E29217B12BE66397435DFB",
+                getNetworkType());
+
+        RepositoryCallException exception = Assertions
+            .assertThrows(RepositoryCallException.class,
+                () -> get(repository
+                    .getAccountRestrictions(address)));
+        Assertions.assertEquals(
+            "ApiException: Not Found - 404 - ResourceNotFound - no resource exists with id 'SCGEGBEHICF5PPOGIP2JSCQ5OYGZXOOJF7KUSUQJ'",
+            exception.getMessage());
+    }
 
 }

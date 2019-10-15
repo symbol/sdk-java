@@ -96,8 +96,8 @@ public class MultisigAccountModificationTransaction extends Transaction {
                 getEntityTypeDto(),
                 new AmountDto(getMaxFee().longValue()),
                 new TimestampDto(getDeadline().getInstant()),
-                getMinRemovalDelta(),
-                getMinApprovalDelta(),
+                (byte) getMinRemovalDelta(),
+                (byte) getMinApprovalDelta(),
                 getModificationBuilder());
         return txBuilder.serialize();
     }
@@ -113,8 +113,8 @@ public class MultisigAccountModificationTransaction extends Transaction {
                 new KeyDto(getRequiredSignerBytes()),
                 getNetworkVersion(),
                 getEntityTypeDto(),
-                getMinRemovalDelta(),
-                getMinApprovalDelta(),
+                (byte) getMinRemovalDelta(),
+                (byte) getMinApprovalDelta(),
                 getModificationBuilder());
         return txBuilder.serialize();
     }

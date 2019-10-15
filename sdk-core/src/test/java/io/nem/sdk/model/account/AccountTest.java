@@ -20,13 +20,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 import io.nem.core.crypto.KeyPair;
-import io.nem.core.crypto.SignSchema;
 import io.nem.core.crypto.ed25519.Ed25519CryptoEngine;
 import io.nem.sdk.model.blockchain.NetworkType;
 import io.nem.sdk.model.mosaic.Mosaic;
 import io.nem.sdk.model.mosaic.MosaicId;
 import io.nem.sdk.model.transaction.FakeDeadline;
-import io.nem.sdk.model.transaction.PlainMessage;
+import io.nem.sdk.model.message.PlainMessage;
 import io.nem.sdk.model.transaction.SignedTransaction;
 import io.nem.sdk.model.transaction.TransferTransaction;
 import io.nem.sdk.model.transaction.TransferTransactionFactory;
@@ -142,7 +141,7 @@ class AccountTest {
         KeyPair random = KeyPair
             .random(new Ed25519CryptoEngine(), networkType.resolveSignSchema());
         Account account = new Account(random, networkType);
-        assertEquals(random.getPrivateKey().toString().toUpperCase(), account.getPrivateKey());
+        assertEquals(random.getPrivateKey().toHex().toUpperCase(), account.getPrivateKey());
         assertEquals(networkType, account.getAddress().getNetworkType());
     }
 
@@ -167,7 +166,7 @@ class AccountTest {
             account1.getAddress().pretty());
         Assertions.assertEquals(
             "A5F82EC8EBB341427B6785C8111906CD0DF18838FB11B51CE0E18B5E79DFF630",
-            account1.getPublicKey().toString());
+            account1.getPublicKey().toHex());
     }
 
 

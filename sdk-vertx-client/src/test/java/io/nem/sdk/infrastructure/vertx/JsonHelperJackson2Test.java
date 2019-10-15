@@ -32,7 +32,6 @@ import org.junit.jupiter.api.Test;
  */
 public class JsonHelperJackson2Test {
 
-
     private JsonHelper jsonHelper;
 
     @BeforeEach
@@ -42,26 +41,37 @@ public class JsonHelperJackson2Test {
     }
 
     @Test
-    public void shouldFailtWhenParsingInvalid() {
+    public void shouldFailWhenParsingInvalid() {
         Assertions.assertEquals(
             "Unexpected end-of-input: expected close marker for Object (start marker at [Source: (String)\"{\"; line: 1, column: 1])\n"
                 + " at [Source: (String)\"{\"; line: 1, column: 3]",
             Assertions.assertThrows(IllegalArgumentException.class,
                 () -> jsonHelper.parse("{", Car.class)).getMessage());
-
     }
 
     @Test
     public void shouldParseNull() {
         Assertions.assertNull(jsonHelper.parse(null));
         Assertions.assertNull(jsonHelper.parse(null, Car.class));
-
     }
 
     @Test
     public void shouldParsePrintedObject() {
         Car car = new Car("Renault", "Scenic", 2005);
         String json = jsonHelper.print(car);
+
+        Assertions.assertNotNull(json);
+        Assertions.assertTrue(json.contains("Renault"));
+
+        Car parsedCar = jsonHelper.parse(json, Car.class);
+        Assertions.assertEquals(car, parsedCar);
+        Assertions.assertEquals(BigInteger.valueOf(2005), parsedCar.getYear());
+    }
+
+    @Test
+    public void shouldParsePrettyPrintedObject() {
+        Car car = new Car("Renault", "Scenic", 2005);
+        String json = jsonHelper.prettyPrint(car);
 
         Assertions.assertNotNull(json);
         Assertions.assertTrue(json.contains("Renault"));
@@ -86,7 +96,6 @@ public class JsonHelperJackson2Test {
 
         Assertions.assertEquals(car, convertedType);
         Assertions.assertEquals(BigInteger.valueOf(2005), convertedType.getYear());
-
     }
 
 
@@ -102,7 +111,6 @@ public class JsonHelperJackson2Test {
         Assertions.assertEquals(ObjectNode.class, parsedCar.getClass());
 
         Assertions.assertEquals(json, jsonHelper.print(parsedCar));
-
     }
 
     @Test

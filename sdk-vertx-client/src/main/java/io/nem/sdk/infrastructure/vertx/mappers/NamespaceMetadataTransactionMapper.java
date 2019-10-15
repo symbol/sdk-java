@@ -17,6 +17,7 @@
 
 package io.nem.sdk.infrastructure.vertx.mappers;
 
+import io.nem.core.utils.ConvertUtils;
 import io.nem.core.utils.MapperUtils;
 import io.nem.sdk.model.account.PublicAccount;
 import io.nem.sdk.model.blockchain.NetworkType;
@@ -45,16 +46,27 @@ class NamespaceMetadataTransactionMapper extends
         PublicAccount targetAccount = PublicAccount
             .createFromPublicKey(transaction.getTargetPublicKey(), networkType);
         Integer valueSizeDelta = transaction.getValueSizeDelta();
-        BigInteger scopedMetaDataKey = new BigInteger(transaction.getScopedMetadataKey());
-        Integer valueSize = transaction.getValueSize();
-        String value = transaction.getValue();
+        BigInteger scopedMetaDataKey = new BigInteger(transaction.getScopedMetadataKey(), 16);
+        String value = ConvertUtils.fromHexToString(transaction.getValue());
         NamespaceId targetNamespace = MapperUtils.toNamespaceId(transaction.getTargetNamespaceId());
-        return new NamespaceMetadataTransactionFactory(networkType,
+        NamespaceMetadataTransactionFactory factory = NamespaceMetadataTransactionFactory.create(
+            networkType,
             targetAccount,
             targetNamespace,
             scopedMetaDataKey,
-            valueSizeDelta,
-            valueSize,
             value);
+        factory.valueSizeDelta(valueSizeDelta);
+        return factory;
+    }
+
+    @Override
+    protected void copyToDto(NamespaceMetadataTransaction transaction,
+        NamespaceMetadataTransactionDTO dto) {
+        dto.setTargetPublicKey(transaction.getTargetAccount().getPublicKey().toHex());
+        dto.setTargetNamespaceId(MapperUtils.getIdAsHex(transaction.getTargetNamespaceId()));
+        dto.setScopedMetadataKey(transaction.getScopedMetadataKey().toString());
+        dto.setValue(ConvertUtils.fromStringToHex(transaction.getValue()));
+        dto.setValueSizeDelta(transaction.getValueSizeDelta());
+
     }
 }

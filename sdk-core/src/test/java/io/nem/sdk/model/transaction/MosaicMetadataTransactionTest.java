@@ -19,19 +19,17 @@ package io.nem.sdk.model.transaction;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import io.nem.core.utils.HexEncoder;
 import io.nem.sdk.model.account.Account;
 import io.nem.sdk.model.blockchain.NetworkType;
 import io.nem.sdk.model.mosaic.MosaicId;
 import java.math.BigInteger;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 /**
  * Tests for the {@link MosaicMetadataTransaction} and the factory.
  **/
-public class MosaicMetadataTransactionTest {
+public class MosaicMetadataTransactionTest extends AbstractTransactionTester {
 
     private static Account account;
 
@@ -47,36 +45,36 @@ public class MosaicMetadataTransactionTest {
     void shouldBuild() {
         MosaicId mosaicId = new MosaicId(BigInteger.valueOf(1000));
         MosaicMetadataTransaction transaction =
-            new MosaicMetadataTransactionFactory(
+            MosaicMetadataTransactionFactory.create(
                 NetworkType.MIJIN_TEST,
                 account.getPublicAccount(),
-                mosaicId, BigInteger.TEN, 10, 20, "123ABC").deadline(new FakeDeadline()).build();
+                mosaicId, BigInteger.TEN, "123ABC").valueSizeDelta(10)
+                .deadline(new FakeDeadline()).build();
         assertEquals("123ABC", transaction.getValue());
         assertEquals(mosaicId, transaction.getTargetMosaicId());
         assertEquals(NetworkType.MIJIN_TEST, transaction.getNetworkType());
         assertEquals(10, transaction.getValueSizeDelta());
-        assertEquals(20, transaction.getValueSize());
         assertEquals(BigInteger.TEN, transaction.getScopedMetadataKey());
 
         assertEquals(account.getPublicKey(),
-            transaction.getTargetAccount().getPublicKey().toString());
+            transaction.getTargetAccount().getPublicKey().toHex());
     }
 
     @Test
     void shouldGenerateBytes() {
         MosaicId mosaicId = new MosaicId(BigInteger.valueOf(1000));
         MosaicMetadataTransaction transaction =
-            new MosaicMetadataTransactionFactory(
+            MosaicMetadataTransactionFactory.create(
                 NetworkType.MIJIN_TEST,
                 account.getPublicAccount(),
-                mosaicId, BigInteger.TEN, 10, 20, "123ABC").signer(account.getPublicAccount())
+                mosaicId, BigInteger.TEN, "123ABC").valueSizeDelta(10)
+                .signer(account.getPublicAccount())
                 .deadline(new FakeDeadline()).build();
 
-        String expectedHash = "af00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001904442000000000000000001000000000000009a49366406aca952b88badf5f1e9be6ce4968141035a60be503273ea65456b240a00000000000000e8030000000000000a000300123abc";
-        Assertions.assertEquals(expectedHash, HexEncoder.getString(transaction.generateBytes()));
+        String expectedHash = "b200000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001904442000000000000000001000000000000009a49366406aca952b88badf5f1e9be6ce4968141035a60be503273ea65456b240a00000000000000e8030000000000000a000600313233414243";
+        assertSerialization(expectedHash, transaction);
 
-        String expectedEmbeddedHash = "5f0000009a49366406aca952b88badf5f1e9be6ce4968141035a60be503273ea65456b24019044429a49366406aca952b88badf5f1e9be6ce4968141035a60be503273ea65456b240a00000000000000e8030000000000000a000300123abc";
-        Assertions.assertEquals(expectedEmbeddedHash,
-            HexEncoder.getString(transaction.generateEmbeddedBytes()));
+        String expectedEmbeddedHash = "620000009a49366406aca952b88badf5f1e9be6ce4968141035a60be503273ea65456b24019044429a49366406aca952b88badf5f1e9be6ce4968141035a60be503273ea65456b240a00000000000000e8030000000000000a000600313233414243";
+        assertEmbeddedSerialization(expectedEmbeddedHash, transaction);
     }
 }

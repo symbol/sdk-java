@@ -17,6 +17,8 @@
 
 package io.nem.sdk.infrastructure.vertx.mappers;
 
+import static io.nem.core.utils.MapperUtils.getIdAsHex;
+
 import io.nem.core.utils.MapperUtils;
 import io.nem.sdk.model.blockchain.NetworkType;
 import io.nem.sdk.model.namespace.AliasAction;
@@ -26,6 +28,7 @@ import io.nem.sdk.model.transaction.MosaicAliasTransaction;
 import io.nem.sdk.model.transaction.MosaicAliasTransactionFactory;
 import io.nem.sdk.model.transaction.TransactionFactory;
 import io.nem.sdk.model.transaction.TransactionType;
+import io.nem.sdk.openapi.vertx.model.AliasActionEnum;
 import io.nem.sdk.openapi.vertx.model.MosaicAliasTransactionDTO;
 
 /**
@@ -44,10 +47,18 @@ class MosaicAliasTransactionMapper extends
         NamespaceId namespaceId = MapperUtils.toNamespaceId(transaction.getNamespaceId());
         AliasAction aliasAction = AliasAction
             .rawValueOf(transaction.getAliasAction().getValue().byteValue());
-        return new MosaicAliasTransactionFactory(
+        return MosaicAliasTransactionFactory.create(
             networkType,
             aliasAction,
             namespaceId,
             MapperUtils.toMosaicId(transaction.getMosaicId()));
+    }
+
+    @Override
+    protected void copyToDto(MosaicAliasTransaction transaction, MosaicAliasTransactionDTO dto) {
+        dto.setAliasAction(
+            AliasActionEnum.fromValue((int) transaction.getAliasAction().getValue()));
+        dto.setNamespaceId(getIdAsHex(transaction.getNamespaceId()));
+        dto.setMosaicId(getIdAsHex(transaction.getMosaicId()));
     }
 }

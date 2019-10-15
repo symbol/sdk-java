@@ -1,7 +1,6 @@
 package io.nem.sdk.infrastructure;
 
 import io.nem.sdk.model.account.Account;
-import io.nem.sdk.model.account.PublicAccount;
 import io.nem.sdk.model.blockchain.NetworkType;
 import io.vertx.core.json.JsonObject;
 import java.io.File;
@@ -68,16 +67,9 @@ public class Config {
         return this.config.getLong("timeoutSeconds");
     }
 
-
-    public String getTestAccountAddress() {
-        return this.config.getJsonObject("testAccount").getString("address");
-    }
-
-
     public Account getMultisigAccount() {
         return getAccount("multisigAccount");
     }
-
 
     public Account getCosignatoryAccount() {
         return getAccount("cosignatoryAccount");
@@ -91,6 +83,11 @@ public class Config {
         return getAccount("harvestingAccount");
     }
 
+    public Account getDefaultAccount() {
+        //TODO - Replace with getTestAccount once it doesn't run out of currency.
+        return getNemesisAccount();
+    }
+
     public Account getNemesisAccount() {
         return getAccount("nemesisAccount");
     }
@@ -101,6 +98,10 @@ public class Config {
 
     public Account getTestAccount2() {
         return getAccount("testAccount2");
+    }
+
+    public Account getCosignatory3Account() {
+        return getAccount("cosignatory3Account");
     }
 
     private Account getAccount(String accountName) {

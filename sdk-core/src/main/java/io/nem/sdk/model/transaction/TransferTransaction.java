@@ -25,15 +25,16 @@ import io.nem.catapult.builders.TransferTransactionBuilder;
 import io.nem.catapult.builders.UnresolvedAddressDto;
 import io.nem.catapult.builders.UnresolvedMosaicBuilder;
 import io.nem.catapult.builders.UnresolvedMosaicIdDto;
-import io.nem.sdk.model.account.Address;
+import io.nem.sdk.infrastructure.SerializationUtils;
+import io.nem.sdk.model.account.UnresolvedAddress;
+import io.nem.sdk.model.message.Message;
 import io.nem.sdk.model.mosaic.Mosaic;
-import io.nem.sdk.model.namespace.NamespaceId;
 import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * The transfer transactions object contain data about transfers of mosaics and message to another
@@ -41,10 +42,9 @@ import java.util.Optional;
  */
 public class TransferTransaction extends Transaction {
 
-    private final Optional<Address> recipient;
+    private final UnresolvedAddress recipient;
     private final List<Mosaic> mosaics;
     private final Message message;
-    private final Optional<NamespaceId> namespaceId;
 
     /**
      * Constructor of the transfer transaction using the factory.
@@ -56,7 +56,6 @@ public class TransferTransaction extends Transaction {
         this.recipient = factory.getRecipient();
         this.mosaics = factory.getMosaics();
         this.message = factory.getMessage();
-        this.namespaceId = factory.getNamespaceId();
     }
 
     /**
@@ -64,18 +63,10 @@ public class TransferTransaction extends Transaction {
      *
      * @return recipient address
      */
-    public Optional<Address> getRecipient() {
+    public UnresolvedAddress getRecipient() {
         return recipient;
     }
 
-    /**
-     * Gets namespace id alias for the address of the recipient.
-     *
-     * @return Namespace id.
-     */
-    public Optional<NamespaceId> getNamespaceId() {
-        return namespaceId;
-    }
 
     /**
      * Returns list of mosaic objects.
@@ -114,7 +105,8 @@ public class TransferTransaction extends Transaction {
                 getEntityTypeDto(),
                 new AmountDto(getMaxFee().longValue()),
                 new TimestampDto(getDeadline().getInstant()),
-                new UnresolvedAddressDto(getUnresolveAddressBuffer()),
+                new UnresolvedAddressDto(
+                    SerializationUtils.fromUnresolvedAddressToByteBuffer(getRecipient())),
                 getMessageBuffer(),
                 getUnresolvedMosaicArray());
         return txBuilder.serialize();
@@ -132,7 +124,8 @@ public class TransferTransaction extends Transaction {
                 new KeyDto(getRequiredSignerBytes()),
                 getNetworkVersion(),
                 getEntityTypeDto(),
-                new UnresolvedAddressDto(getUnresolveAddressBuffer()),
+                new UnresolvedAddressDto(
+                    SerializationUtils.fromUnresolvedAddressToByteBuffer(getRecipient())),
                 getMessageBuffer(),
                 getUnresolvedMosaicArray());
         return txBuilder.serialize();
@@ -147,11 +140,15 @@ public class TransferTransaction extends Transaction {
         // Create Mosaics
         final ArrayList<UnresolvedMosaicBuilder> unresolvedMosaicArrayList =
             new ArrayList<>(mosaics.size());
-        for (int i = 0; i < mosaics.size(); ++i) {
-            final Mosaic mosaic = mosaics.get(i);
+        //Sort mosaics first
+        final List<Mosaic> sortedMosaics = mosaics.stream()
+            .sorted(Comparator.comparing(m -> m.getId().getId()))
+            .collect(Collectors.toList());
+
+        for (final Mosaic mosaic : sortedMosaics) {
             final UnresolvedMosaicBuilder mosaicBuilder =
                 UnresolvedMosaicBuilder.create(
-                    new UnresolvedMosaicIdDto(mosaic.getId().getId().longValue()),
+                    new UnresolvedMosaicIdDto(mosaic.getId().getIdAsLong()),
                     new AmountDto(mosaic.getAmount().longValue()));
             unresolvedMosaicArrayList.add(mosaicBuilder);
         }
@@ -164,7 +161,7 @@ public class TransferTransaction extends Transaction {
      * @return Message buffer.
      */
     private ByteBuffer getMessageBuffer() {
-        final byte byteMessageType = (byte) message.getType();
+        final byte byteMessageType = (byte) message.getType().getValue();
         final byte[] bytePayload = message.getPayload().getBytes(StandardCharsets.UTF_8);
         final ByteBuffer messageBuffer =
             ByteBuffer.allocate(bytePayload.length + 1 /* for the message type */);
@@ -173,42 +170,4 @@ public class TransferTransaction extends Transaction {
         return messageBuffer;
     }
 
-    /**
-     * Gets unresolve address buffer.
-     *
-     * @return Unresolve address buffer
-     */
-    private ByteBuffer getUnresolveAddressBuffer() {
-
-        return getRecipient().map(Address::getByteBuffer).orElseGet(
-            () -> getNamespaceId()
-                .map(this::getNamespaceIdAsUnresolveAddressBuffer).orElseThrow(
-                    () -> new IllegalStateException("Address or namespace alias must be set."))
-        );
-    }
-
-    /**
-     * Gets the namespace id as unresolve address.
-     *
-     * @param namespaceId the namespace id.
-     * @return Unresolve address buffer.
-     */
-    private ByteBuffer getNamespaceIdAsUnresolveAddressBuffer(NamespaceId namespaceId) {
-        final ByteBuffer namespaceIdAlias = ByteBuffer.allocate(25);
-        final byte firstByte = 0x01;
-        namespaceIdAlias.order(ByteOrder.LITTLE_ENDIAN);
-        namespaceIdAlias.put(firstByte);
-        namespaceIdAlias.putLong(namespaceId.getIdAsLong());
-        return namespaceIdAlias;
-    }
-
-    @Override
-    public String toString() {
-        return "TransferTransaction{" +
-            "recipient=" + recipient +
-            ", mosaics=" + mosaics +
-            ", message=" + message +
-            ", namespaceId=" + namespaceId +
-            '}';
-    }
 }

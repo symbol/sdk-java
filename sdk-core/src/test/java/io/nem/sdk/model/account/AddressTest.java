@@ -19,6 +19,7 @@ package io.nem.sdk.model.account;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import io.nem.core.crypto.SignSchema;
 import io.nem.sdk.model.blockchain.NetworkType;
@@ -165,8 +166,10 @@ class AddressTest {
 
     @Test
     void shouldCreateFromEncodedFailWhenInvalid() {
-        Assertions.assertEquals("invalid! could not be decoded. DecoderException: Illegal hexadecimal character i at index 0", Assertions.assertThrows(IllegalArgumentException.class,
-            () -> Address.createFromEncoded("invalid!")).getMessage());
+        Assertions.assertEquals(
+            "invalid! could not be decoded. DecoderException: Illegal hexadecimal character i at index 0",
+            Assertions.assertThrows(IllegalArgumentException.class,
+                () -> Address.createFromEncoded("invalid!")).getMessage());
     }
 
 
@@ -193,6 +196,7 @@ class AddressTest {
         Address address2 =
             new Address("SDRDGF-TDLLCB-67D4HP-GIMIHP-NSRYRJ-RT7DOB-GWZY", NetworkType.MIJIN_TEST);
         assertNotEquals(address1, address2);
+        assertNotEquals("notAndAddress", address2);
     }
 
     @ParameterizedTest
@@ -217,11 +221,20 @@ class AddressTest {
     }
 
     @Test
-    void createFromRawAddressShouldFailWhenInvalidSuffix() {
-        Assertions.assertEquals("X is an invalid address.", assertThrows(
+    void createFromRawAddressShouldFailWhenInvalidSize() {
+        Assertions.assertEquals("Address X has to be 40 characters long.", assertThrows(
             IllegalArgumentException.class,
             () -> {
                 Address.createFromRawAddress("X");
+            }).getMessage());
+    }
+
+    @Test
+    void createFromRawAddressShouldFailWhenInvalidSuffix() {
+        Assertions.assertEquals("ADRDGFTDLLCB67D4HPGIMIHPNSRYRJRT7DOBGWZY is an invalid address.", assertThrows(
+            IllegalArgumentException.class,
+            () -> {
+                Address.createFromRawAddress("ADRDGF-TDLLCB-67D4HP-GIMIHP-NSRYRJ-RT7DOB-GWZY");
             }).getMessage());
     }
 

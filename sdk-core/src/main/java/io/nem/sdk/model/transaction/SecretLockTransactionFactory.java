@@ -17,7 +17,7 @@
 
 package io.nem.sdk.model.transaction;
 
-import io.nem.sdk.model.account.Address;
+import io.nem.sdk.model.account.UnresolvedAddress;
 import io.nem.sdk.model.blockchain.NetworkType;
 import io.nem.sdk.model.mosaic.Mosaic;
 import java.math.BigInteger;
@@ -32,15 +32,15 @@ public class SecretLockTransactionFactory extends TransactionFactory<SecretLockT
     private final BigInteger duration;
     private final LockHashAlgorithmType hashAlgorithm;
     private final String secret;
-    private final Address recipient;
+    private final UnresolvedAddress recipient;
 
-    public SecretLockTransactionFactory(
+    private SecretLockTransactionFactory(
         NetworkType networkType,
         Mosaic mosaic,
         BigInteger duration,
         LockHashAlgorithmType hashAlgorithm,
         String secret,
-        Address recipient) {
+        UnresolvedAddress recipient) {
         super(TransactionType.SECRET_LOCK, networkType);
         Validate.notNull(mosaic, "Mosaic must not be null");
         Validate.notNull(duration, "Duration must not be null");
@@ -55,6 +55,22 @@ public class SecretLockTransactionFactory extends TransactionFactory<SecretLockT
         this.hashAlgorithm = hashAlgorithm;
         this.secret = secret;
         this.recipient = recipient;
+    }
+
+    /**
+     * Static create method for factory.
+     *
+     * @param networkType Network type.
+     * @param mosaic Mosaic.
+     * @param duration Duration.
+     * @param hashAlgorithm Hash algorithm.
+     * @param secret Secret.
+     * @param recipient Recipient.
+     * @return Secret lock transaction.
+     */
+    public static SecretLockTransactionFactory create(NetworkType networkType, Mosaic mosaic,
+        BigInteger duration, LockHashAlgorithmType hashAlgorithm, String secret, UnresolvedAddress recipient) {
+        return new SecretLockTransactionFactory(networkType, mosaic, duration, hashAlgorithm, secret, recipient);
     }
 
     /**
@@ -98,7 +114,7 @@ public class SecretLockTransactionFactory extends TransactionFactory<SecretLockT
      *
      * @return the recipient of the funds.
      */
-    public Address getRecipient() {
+    public UnresolvedAddress getRecipient() {
         return recipient;
     }
 

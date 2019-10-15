@@ -23,7 +23,7 @@ import io.nem.sdk.model.account.Account;
 import io.nem.sdk.model.account.Address;
 import io.nem.sdk.model.blockchain.NetworkType;
 import io.nem.sdk.model.mosaic.NetworkCurrencyMosaic;
-import io.nem.sdk.model.transaction.PlainMessage;
+import io.nem.sdk.model.message.PlainMessage;
 import io.nem.sdk.model.transaction.SignedTransaction;
 import io.nem.sdk.model.transaction.Transaction;
 import io.nem.sdk.model.transaction.TransactionAnnounceResponse;
@@ -36,7 +36,6 @@ import io.nem.sdk.openapi.okhttp_gson.model.TransactionInfoDTO;
 import io.nem.sdk.openapi.okhttp_gson.model.TransactionStatusDTO;
 import java.math.BigInteger;
 import java.util.Collections;
-import java.util.Optional;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -187,9 +186,8 @@ public class TransactionRepositoryOkHttpImplTest extends AbstractOkHttpResposito
                 "SBCPGZ3S2SCC3YHBBTYDCUZV4ZZEPHM2KGCP4QXX");
 
         TransferTransaction transferTransaction =
-            new TransferTransactionFactory(NetworkType.MIJIN_TEST,
-                Optional.of(address),
-                Optional.empty(),
+            TransferTransactionFactory.create(NetworkType.MIJIN_TEST,
+                address,
                 Collections
                     .singletonList(NetworkCurrencyMosaic.createAbsolute(BigInteger.valueOf(1))),
                 new PlainMessage("E2ETest:standaloneTransferTransaction:message")

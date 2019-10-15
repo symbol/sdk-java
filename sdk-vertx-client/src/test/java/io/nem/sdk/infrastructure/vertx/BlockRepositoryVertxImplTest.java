@@ -17,6 +17,7 @@
 package io.nem.sdk.infrastructure.vertx;
 
 import io.nem.sdk.api.QueryParams;
+import io.nem.sdk.model.account.Address;
 import io.nem.sdk.model.blockchain.BlockInfo;
 import io.nem.sdk.model.blockchain.MerkelProofInfo;
 import io.nem.sdk.model.blockchain.NetworkType;
@@ -41,7 +42,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 /**
- * Unit Tests for {@link NetworkRepositoryVertxImpl}
+ * Unit Tests for {@link BlockRepositoryVertxImpl}
  *
  * @author Fernando Boucquez
  */
@@ -88,10 +89,10 @@ public class BlockRepositoryVertxImplTest extends AbstractVertxRespositoryTest {
         Assertions.assertNotNull(info);
 
         Assertions.assertEquals(blockDto.getBeneficiaryPublicKey(),
-            info.getBeneficiaryPublicAccount().getPublicKey().toString());
+            info.getBeneficiaryPublicAccount().getPublicKey().toHex());
 
         Assertions.assertEquals(blockDto.getSignerPublicKey(),
-            info.getSignerPublicAccount().getPublicKey().toString());
+            info.getSignerPublicAccount().getPublicKey().toHex());
 
         Assertions.assertEquals(16716, info.getType());
         Assertions.assertEquals(3, info.getVersion().intValue());
@@ -139,16 +140,17 @@ public class BlockRepositoryVertxImplTest extends AbstractVertxRespositoryTest {
 
         BigInteger height = BigInteger.valueOf(10L);
         BlockInfo info = repository
-            .getBlocksByHeightWithLimit(height, 1, Optional.of(new QueryParams(10, "someId")))
+            .getBlocksByHeightWithLimit(height, 1,
+                Optional.of(new QueryParams(10, "someId", "someOrder")))
             .toFuture().get().get(0);
 
         Assertions.assertNotNull(info);
 
         Assertions.assertEquals(blockDto.getBeneficiaryPublicKey(),
-            info.getBeneficiaryPublicAccount().getPublicKey().toString());
+            info.getBeneficiaryPublicAccount().getPublicKey().toHex());
 
         Assertions.assertEquals(blockDto.getSignerPublicKey(),
-            info.getSignerPublicAccount().getPublicKey().toString());
+            info.getSignerPublicAccount().getPublicKey().toHex());
 
         Assertions.assertEquals(16716, info.getType());
         Assertions.assertEquals(3, info.getVersion().intValue());
@@ -234,8 +236,9 @@ public class BlockRepositoryVertxImplTest extends AbstractVertxRespositoryTest {
         Assertions.assertEquals(1, info.getAddressResolutionStatements().size());
         Assertions.assertEquals(BigInteger.valueOf(6L),
             info.getAddressResolutionStatements().get(0).getHeight());
-        Assertions.assertEquals("SBILTA367K2LX2FEXG5TFWAS7GEFYAGY7QLFBYKC",
-            info.getAddressResolutionStatements().get(0).getUnresolved().plain());
+        Assertions
+            .assertEquals(Address.createFromRawAddress("SBILTA367K2LX2FEXG5TFWAS7GEFYAGY7QLFBYKC"),
+                info.getAddressResolutionStatements().get(0).getUnresolved());
 
         Assertions.assertEquals(1, info.getMosaicResolutionStatement().size());
         Assertions.assertEquals(BigInteger.valueOf(7L),

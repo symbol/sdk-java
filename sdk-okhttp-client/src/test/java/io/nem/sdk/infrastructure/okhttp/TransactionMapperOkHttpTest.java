@@ -50,7 +50,6 @@ import io.nem.sdk.model.transaction.SecretProofTransaction;
 import io.nem.sdk.model.transaction.Transaction;
 import io.nem.sdk.model.transaction.TransactionType;
 import io.nem.sdk.model.transaction.TransferTransaction;
-import io.nem.sdk.openapi.okhttp_gson.invoker.JSON;
 import io.nem.sdk.openapi.okhttp_gson.model.AggregateTransactionBodyDTO;
 import io.nem.sdk.openapi.okhttp_gson.model.HashLockTransactionDTO;
 import io.nem.sdk.openapi.okhttp_gson.model.Mosaic;
@@ -72,7 +71,7 @@ import org.junit.jupiter.api.Test;
 
 public class TransactionMapperOkHttpTest {
 
-    private final JsonHelper jsonHelper = new JsonHelperGson(new JSON().getGson());
+    private final JsonHelper jsonHelper = new JsonHelperGson();
 
     @Test
     void shouldCreateStandaloneTransferTransaction() {
@@ -88,6 +87,17 @@ public class TransactionMapperOkHttpTest {
     void shouldCreateAggregateTransferTransaction() {
         TransactionInfoDTO aggregateTransferTransactionDTO = loadTransactionInfoDTO(
             "shouldCreateAggregateTransferTransaction.json"
+        );
+
+        Transaction aggregateTransferTransaction = map(aggregateTransferTransactionDTO);
+        validateAggregateTransaction((AggregateTransaction) aggregateTransferTransaction,
+            aggregateTransferTransactionDTO);
+    }
+
+    @Test
+    void shouldCreateAggregateTransferTransactionUsingAlias() {
+        TransactionInfoDTO aggregateTransferTransactionDTO = loadTransactionInfoDTO(
+            "shouldCreateAggregateTransferTransactionUsingAlias.json"
         );
 
         Transaction aggregateTransferTransaction = map(aggregateTransferTransactionDTO);
@@ -204,9 +214,11 @@ public class TransactionMapperOkHttpTest {
         TransactionInfoDTO mosaicAddressRestrictionTransactionDTO = loadTransactionInfoDTO(
             "shouldCreateStandaloneMosaicAddressRestrictionTransaction.json");
 
-        Transaction mosaicAddressRestrictionTransaction = map(mosaicAddressRestrictionTransactionDTO);
+        Transaction mosaicAddressRestrictionTransaction = map(
+            mosaicAddressRestrictionTransactionDTO);
 
-        validateStandaloneTransaction(mosaicAddressRestrictionTransaction, mosaicAddressRestrictionTransactionDTO);
+        validateStandaloneTransaction(mosaicAddressRestrictionTransaction,
+            mosaicAddressRestrictionTransactionDTO);
     }
 
     @Test
@@ -230,7 +242,8 @@ public class TransactionMapperOkHttpTest {
 
         Transaction mosaicGlobalRestrictionTransaction = map(mosaicGlobalRestrictionTransactionDTO);
 
-        validateStandaloneTransaction(mosaicGlobalRestrictionTransaction, mosaicGlobalRestrictionTransactionDTO);
+        validateStandaloneTransaction(mosaicGlobalRestrictionTransaction,
+            mosaicGlobalRestrictionTransactionDTO);
     }
 
     @Test
@@ -391,7 +404,7 @@ public class TransactionMapperOkHttpTest {
             transaction.getSignature().get());
         assertEquals(
             jsonHelper.getString(transactionDTO.getTransaction(), "signerPublicKey"),
-            transaction.getSigner().get().getPublicKey().toString());
+            transaction.getSigner().get().getPublicKey().toHex());
         assertEquals(transaction.getType().getValue(),
             (int) jsonHelper.getInteger(transactionDTO.getTransaction(), "type"));
         int version =
@@ -474,7 +487,7 @@ public class TransactionMapperOkHttpTest {
 
         Assert
             .assertEquals(new BigInteger("884562898459306"), transaction.getMosaicId().getId());
-        Assertions.assertEquals(AliasAction.LINK, transaction.getAliasAction());
+        Assertions.assertEquals(AliasAction.UNLINK, transaction.getAliasAction());
         Assertions.assertEquals(new BigInteger("307262000798378"),
             transaction.getNamespaceId().getId());
     }
@@ -516,9 +529,9 @@ public class TransactionMapperOkHttpTest {
             transaction.getTargetAccount().getAddress().plain());
 
         Assertions.assertEquals(1, transaction.getValueSizeDelta());
-        Assertions.assertEquals(2, transaction.getValueSize());
         Assertions.assertEquals(BigInteger.valueOf(3), transaction.getScopedMetadataKey());
-        Assertions.assertEquals("ABC", transaction.getValue());
+        Assertions
+            .assertEquals("This is the message for this account! 汉字89664", transaction.getValue());
         Assertions.assertEquals("0003070467832aaa", transaction.getTargetMosaicId().getIdAsHex());
     }
 
@@ -540,9 +553,9 @@ public class TransactionMapperOkHttpTest {
             transaction.getTargetAccount().getAddress().plain());
 
         Assertions.assertEquals(1, transaction.getValueSizeDelta());
-        Assertions.assertEquals(2, transaction.getValueSize());
         Assertions.assertEquals(BigInteger.valueOf(3), transaction.getScopedMetadataKey());
-        Assertions.assertEquals("ABC", transaction.getValue());
+        Assertions
+            .assertEquals("This is the message for this account! 汉字89664", transaction.getValue());
         Assertions
             .assertEquals("0003070467832aaa", transaction.getTargetNamespaceId().getIdAsHex());
     }
@@ -565,9 +578,9 @@ public class TransactionMapperOkHttpTest {
             transaction.getTargetAccount().getAddress().plain());
 
         Assertions.assertEquals(1, transaction.getValueSizeDelta());
-        Assertions.assertEquals(2, transaction.getValueSize());
         Assertions.assertEquals(BigInteger.valueOf(3), transaction.getScopedMetadataKey());
-        Assertions.assertEquals("ABC", transaction.getValue());
+        Assertions
+            .assertEquals("This is the message for this account! 汉字89664", transaction.getValue());
     }
 
     @Test
@@ -581,10 +594,12 @@ public class TransactionMapperOkHttpTest {
 
         validateStandaloneTransaction(transaction, transactionInfoDTO);
 
-        Assertions.assertEquals(AccountRestrictionType.ALLOW_INCOMING_ADDRESS, transaction.getRestrictionType());
+        Assertions.assertEquals(AccountRestrictionType.ALLOW_INCOMING_ADDRESS,
+            transaction.getRestrictionType());
         Assertions.assertEquals(1, transaction.getModifications().size());
-        Assertions.assertEquals("SBILTA367K2LX2FEXG5TFWAS7GEFYAGY7QLFBYKC",
-            transaction.getModifications().get(0).getValue().plain());
+        Assertions.assertEquals(
+            MapperUtils.toAddressFromRawAddress("SBILTA367K2LX2FEXG5TFWAS7GEFYAGY7QLFBYKC"),
+            transaction.getModifications().get(0).getValue());
         Assertions.assertEquals(
             AccountRestrictionModificationAction.ADD,
             transaction.getModifications().get(0).getModificationAction());
@@ -601,7 +616,8 @@ public class TransactionMapperOkHttpTest {
 
         validateStandaloneTransaction(transaction, transactionInfoDTO);
 
-        Assertions.assertEquals(AccountRestrictionType.ALLOW_INCOMING_MOSAIC, transaction.getRestrictionType());
+        Assertions.assertEquals(AccountRestrictionType.ALLOW_INCOMING_MOSAIC,
+            transaction.getRestrictionType());
         Assertions.assertEquals(1, transaction.getModifications().size());
         Assertions.assertEquals("00003646934825aa",
             transaction.getModifications().get(0).getValue().getIdAsHex());
@@ -666,7 +682,7 @@ public class TransactionMapperOkHttpTest {
             aggregateTransaction.getSignature().get());
         assertEquals(
             jsonHelper.getString(transactionDto.getTransaction(), "signerPublicKey"),
-            aggregateTransaction.getSigner().get().getPublicKey().toString());
+            aggregateTransaction.getSigner().get().getPublicKey().toHex());
         int version =
             (int)
                 Long.parseLong(
@@ -695,7 +711,7 @@ public class TransactionMapperOkHttpTest {
             aggregateTransaction.getCosignatures().get(0).getSignature());
         assertEquals(
             aggregateTransactionBodyDTO.getCosignatures().get(0).getSignerPublicKey(),
-            aggregateTransaction.getCosignatures().get(0).getSigner().getPublicKey().toString());
+            aggregateTransaction.getCosignatures().get(0).getSigner().getPublicKey().toHex());
 
         Transaction innerTransaction = aggregateTransaction.getInnerTransactions().get(0);
         validateStandaloneTransaction(
@@ -708,15 +724,14 @@ public class TransactionMapperOkHttpTest {
         TransferTransactionDTO transferTransaction = jsonHelper
             .convert(transactionDTO.getTransaction(), TransferTransactionDTO.class);
 
-        assertEquals(
-            Address.createFromEncoded(
+        assertEquals(MapperUtils.toUnresolvedAddress(
                 transferTransaction.getRecipientAddress()),
-            transaction.getRecipient().get());
+            transaction.getRecipient());
 
         List<Mosaic> mosaicsDTO = transferTransaction.getMosaics();
         if (mosaicsDTO != null && mosaicsDTO.size() > 0) {
             assertEquals(
-                MapperUtils.fromHex(mosaicsDTO.get(0).getId()),
+                MapperUtils.fromHexToBigInteger(mosaicsDTO.get(0).getId()),
                 transaction.getMosaics().get(0).getId().getId());
             assertEquals(
                 mosaicsDTO.get(0).getAmount(),
@@ -731,7 +746,7 @@ public class TransactionMapperOkHttpTest {
             transaction.getMessage().getPayload());
 
         assertEquals((int) transferTransaction.getMessage().getType().getValue(),
-            transaction.getMessage().getType());
+            transaction.getMessage().getType().getValue());
     }
 
     void validateNamespaceCreationTx(
@@ -746,7 +761,7 @@ public class TransactionMapperOkHttpTest {
             registerNamespaceTransaction.getName(),
             transaction.getNamespaceName());
         assertEquals(
-            MapperUtils.fromHex(registerNamespaceTransaction.getId()),
+            MapperUtils.fromHexToBigInteger(registerNamespaceTransaction.getId()),
             transaction.getNamespaceId().getId());
 
         if (transaction.getNamespaceRegistrationType()
@@ -756,7 +771,7 @@ public class TransactionMapperOkHttpTest {
                 transaction.getDuration().get());
         } else {
             assertEquals(
-                MapperUtils.fromHex(registerNamespaceTransaction.getParentId()),
+                MapperUtils.fromHexToBigInteger(registerNamespaceTransaction.getParentId()),
                 transaction.getParentId().get().getId());
         }
     }
@@ -785,7 +800,7 @@ public class TransactionMapperOkHttpTest {
         MosaicSupplyChangeTransaction transaction, TransactionInfoDTO transactionDTO) {
         MosaicSupplyChangeTransactionDTO mosaicSupplyChangeTransaction = jsonHelper
             .convert(transactionDTO.getTransaction(), MosaicSupplyChangeTransactionDTO.class);
-        assertEquals(MapperUtils.fromHex(mosaicSupplyChangeTransaction.getMosaicId()),
+        assertEquals(MapperUtils.fromHexToBigInteger(mosaicSupplyChangeTransaction.getMosaicId()),
             transaction.getMosaicId().getId());
         assertEquals(mosaicSupplyChangeTransaction.getDelta(), transaction.getDelta());
         assertEquals(transaction.getAction().getValue(),
@@ -809,7 +824,7 @@ public class TransactionMapperOkHttpTest {
                 .get(0)
                 .getCosignatoryPublicAccount()
                 .getPublicKey()
-                .toString());
+                .toHex());
         assertEquals(
             (int) modifyMultisigAccountTransaction.getModifications().get(0).getModificationAction()
                 .getValue(),
@@ -822,10 +837,10 @@ public class TransactionMapperOkHttpTest {
             .convert(transactionDTO.getTransaction(), HashLockTransactionDTO.class);
 
         assertEquals(
-            MapperUtils.fromHex(hashLockTransactionDTO.getMosaic().getId()),
+            MapperUtils.fromHexToBigInteger(hashLockTransactionDTO.getMosaicId()),
             transaction.getMosaic().getId().getId());
         assertEquals(
-            hashLockTransactionDTO.getMosaic().getAmount(),
+            hashLockTransactionDTO.getAmount(),
             transaction.getMosaic().getAmount());
         assertEquals(
             hashLockTransactionDTO.getDuration(),
@@ -840,7 +855,7 @@ public class TransactionMapperOkHttpTest {
         SecretLockTransactionDTO secretLockTransaction = jsonHelper
             .convert(transactionDTO.getTransaction(), SecretLockTransactionDTO.class);
         assertEquals(
-            MapperUtils.fromHex(secretLockTransaction.getMosaicId()),
+            MapperUtils.fromHexToBigInteger(secretLockTransaction.getMosaicId()),
             transaction.getMosaic().getId().getId());
         assertEquals(
             secretLockTransaction.getAmount(),

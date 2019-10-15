@@ -28,6 +28,7 @@ import io.nem.sdk.model.transaction.NamespaceRegistrationTransactionFactory;
 import io.nem.sdk.model.transaction.TransactionFactory;
 import io.nem.sdk.model.transaction.TransactionType;
 import io.nem.sdk.openapi.vertx.model.NamespaceRegistrationTransactionDTO;
+import io.nem.sdk.openapi.vertx.model.NamespaceRegistrationTypeEnum;
 import java.util.Optional;
 
 /**
@@ -48,7 +49,7 @@ class NamespaceRegistrationTransactionMapper extends
         NamespaceRegistrationType namespaceRegistrationType = NamespaceRegistrationType
             .rawValueOf(transaction.getRegistrationType().getValue());
 
-        return new NamespaceRegistrationTransactionFactory(networkType,
+        return NamespaceRegistrationTransactionFactory.create(networkType,
             transaction.getName(),
             toNamespaceId(transaction.getId()),
             namespaceRegistrationType,
@@ -59,6 +60,17 @@ class NamespaceRegistrationTransactionMapper extends
                 ? Optional
                 .of(MapperUtils.toNamespaceId(transaction.getParentId()))
                 : Optional.empty());
+    }
+
+    @Override
+    protected void copyToDto(NamespaceRegistrationTransaction transaction,
+        NamespaceRegistrationTransactionDTO dto) {
+        dto.setName(transaction.getNamespaceName());
+        dto.setId(MapperUtils.getIdAsHex(transaction.getNamespaceId()));
+        dto.setRegistrationType(NamespaceRegistrationTypeEnum
+            .fromValue(transaction.getNamespaceRegistrationType().getValue()));
+        dto.setDuration(transaction.getDuration().orElse(null));
+        dto.setParentId(MapperUtils.getIdAsHex(transaction.getParentId().orElse(null)));
     }
 
 }

@@ -26,7 +26,7 @@ import io.nem.catapult.builders.TimestampDto;
 import io.nem.core.crypto.CryptoEngines;
 import io.nem.core.crypto.DsaSigner;
 import io.nem.core.utils.ExceptionUtils;
-import io.nem.core.utils.HexEncoder;
+import io.nem.core.utils.ConvertUtils;
 import io.nem.sdk.model.account.Account;
 import io.nem.sdk.model.account.PublicAccount;
 import java.math.BigInteger;
@@ -93,15 +93,15 @@ public class AggregateTransaction extends Transaction {
                 byte[] cosignaturesBytes = new byte[0];
                 for (AggregateTransactionCosignature cosignature : cosignatures) {
                     final byte[] signerBytes = cosignature.getSigner().getPublicKey().getBytes();
-                    final byte[] signatureBytes = HexEncoder.getBytes(cosignature.getSignature());
+                    final byte[] signatureBytes = ConvertUtils.getBytes(cosignature.getSignature());
                     final ByteBuffer signerBuffer = ByteBuffer.wrap(signerBytes);
                     final ByteBuffer signatureBuffer = ByteBuffer.wrap(signatureBytes);
-
                     final CosignatureBuilder cosignatureBuilder = CosignatureBuilder
                         .create(new KeyDto(signerBuffer),
                             new SignatureDto(signatureBuffer));
+                    byte[] consignaturePayload = cosignatureBuilder.serialize();
                     cosignaturesBytes = ArrayUtils
-                        .addAll(transactionsBytes, cosignatureBuilder.serialize());
+                        .addAll(cosignaturesBytes, consignaturePayload);
                 }
                 final ByteBuffer cosignaturesBuffer = ByteBuffer.wrap(cosignaturesBytes);
 

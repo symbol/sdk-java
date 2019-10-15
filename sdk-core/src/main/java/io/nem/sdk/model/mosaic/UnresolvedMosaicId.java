@@ -14,36 +14,33 @@
  * limitations under the License.
  */
 
-package io.nem.sdk.model.transaction;
+package io.nem.sdk.model.mosaic;
+
+import java.math.BigInteger;
 
 /**
- * An abstract message class that serves as the base class of all message types.
+ * This interface is used when a NamespaceId can be provided as an alias of a Mosaic Id.
  */
-public abstract class Message {
-
-    private final int type;
-    private final String payload;
-
-    public Message(int type, String payload) {
-        this.type = type;
-        this.payload = payload;
-    }
+public interface UnresolvedMosaicId {
 
     /**
-     * Returns message type.
+     * Gets the MosaicId/NamespaceId as a long number. It may be negative is it's overflowed.
      *
-     * @return int
+     * @return Long id.
      */
-    public int getType() {
-        return type;
-    }
+    long getIdAsLong();
 
     /**
-     * Returns message payload.
+     * Gets the MosaicId/NamespaceId as an hex string.
      *
-     * @return String
+     * @return the  hex string.
      */
-    public String getPayload() {
-        return payload;
-    }
+    String getIdAsHex();
+
+    /**
+     * Gets the MosaicId/NamespaceId as a {@link BigInteger}.
+     *
+     * @return Long id.
+     */
+    BigInteger getId();
 }

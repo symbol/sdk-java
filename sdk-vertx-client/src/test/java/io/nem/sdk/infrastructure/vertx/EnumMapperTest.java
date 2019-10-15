@@ -26,11 +26,13 @@ import io.nem.sdk.model.mosaic.MosaicSupplyChangeActionType;
 import io.nem.sdk.model.namespace.AliasAction;
 import io.nem.sdk.model.namespace.NamespaceRegistrationType;
 import io.nem.sdk.model.receipt.ReceiptType;
+import io.nem.sdk.model.restriction.MosaicRestrictionEntryType;
 import io.nem.sdk.model.transaction.AccountLinkAction;
 import io.nem.sdk.model.transaction.AccountRestrictionModificationAction;
 import io.nem.sdk.model.transaction.AccountRestrictionType;
 import io.nem.sdk.model.transaction.CosignatoryModificationActionType;
 import io.nem.sdk.model.transaction.LockHashAlgorithmType;
+import io.nem.sdk.model.message.MessageType;
 import io.nem.sdk.model.transaction.MosaicRestrictionType;
 import io.nem.sdk.model.transaction.TransactionType;
 import io.nem.sdk.openapi.vertx.model.AccountLinkActionEnum;
@@ -40,6 +42,8 @@ import io.nem.sdk.openapi.vertx.model.AccountTypeEnum;
 import io.nem.sdk.openapi.vertx.model.AliasActionEnum;
 import io.nem.sdk.openapi.vertx.model.CosignatoryModificationActionEnum;
 import io.nem.sdk.openapi.vertx.model.LockHashAlgorithmEnum;
+import io.nem.sdk.openapi.vertx.model.MessageTypeEnum;
+import io.nem.sdk.openapi.vertx.model.MosaicRestrictionEntryTypeEnum;
 import io.nem.sdk.openapi.vertx.model.MosaicRestrictionTypeEnum;
 import io.nem.sdk.openapi.vertx.model.MosaicSupplyChangeActionEnum;
 import io.nem.sdk.openapi.vertx.model.NamespaceRegistrationTypeEnum;
@@ -49,7 +53,6 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -85,6 +88,20 @@ public class EnumMapperTest {
             Assertions
                 .assertTrue(existingValues.add(v.getValue()), v.getValue() + " is duplicated!!");
         });
+    }
+
+    @Test
+    public void shouldAccountRestrictionTypeEnumMapToAccountRestrictionType() {
+        Arrays.stream(AccountRestrictionTypeEnum.values()).forEach(
+            v -> Assertions.assertNotNull(AccountRestrictionType.rawValueOf(v.getValue())));
+    }
+
+    @Test
+    public void shouldAccountRestrictionTypeMapToAccountRestrictionType() {
+        Arrays.stream(AccountRestrictionType.values()).forEach(
+            v -> Assertions
+                .assertNotNull(AccountRestrictionTypeEnum.fromValue((int) v.getValue())));
+
     }
 
     @Test
@@ -380,5 +397,80 @@ public class EnumMapperTest {
                 .assertTrue(existingValues.add(v.getValue()), v.getValue() + " is duplicated!!");
         });
     }
+
+
+    @Test
+    void testMosaicRestrictionTypeEnumToMosaicRestrictionType() {
+        Set<Integer> existingValues = new HashSet<>();
+        Arrays.stream(MosaicRestrictionTypeEnum.values()).forEach(v -> {
+            Assertions
+                .assertNotNull(MosaicRestrictionType.rawValueOf(v.getValue().byteValue()),
+                    v.name());
+            Assertions
+                .assertTrue(existingValues.add(v.getValue()), v.getValue() + " is duplicated!!");
+        });
+    }
+
+    @Test
+    void testMosaicRestrictionTypeToMosaicRestrictionTypeEnum() {
+        Set<Byte> existingValues = new HashSet<>();
+        Arrays.stream(MosaicRestrictionType.values()).forEach(v -> {
+            Assertions
+                .assertNotNull(MosaicRestrictionTypeEnum.fromValue((int) v.getValue()),
+                    v.name());
+            Assertions
+                .assertTrue(existingValues.add(v.getValue()), v.getValue() + " is duplicated!!");
+        });
+    }
+
+    @Test
+    void testMosaicRestrictionEntryTypeEnumToMosaicRestrictionEntryType() {
+        Set<Integer> existingValues = new HashSet<>();
+        Arrays.stream(MosaicRestrictionEntryTypeEnum.values()).forEach(v -> {
+            Assertions
+                .assertNotNull(MosaicRestrictionType.rawValueOf(v.getValue().byteValue()),
+                    v.name());
+            Assertions
+                .assertTrue(existingValues.add(v.getValue()), v.getValue() + " is duplicated!!");
+        });
+    }
+
+    @Test
+    void testMosaicRestrictionEntryTypeToMosaicRestrictionEntryTypeEnum() {
+        Set<Integer> existingValues = new HashSet<>();
+        Arrays.stream(MosaicRestrictionEntryType.values()).forEach(v -> {
+            Assertions
+                .assertNotNull(MosaicRestrictionEntryTypeEnum.fromValue(v.getValue()),
+                    v.name());
+            Assertions
+                .assertTrue(existingValues.add(v.getValue()), v.getValue() + " is duplicated!!");
+        });
+    }
+
+
+    @Test
+    void testMessageTypeEnumToMessageType() {
+        Set<Integer> existingValues = new HashSet<>();
+        Arrays.stream(MessageTypeEnum.values()).forEach(v -> {
+            Assertions
+                .assertNotNull(MessageType.rawValueOf(v.getValue()),
+                    v.name());
+            Assertions
+                .assertTrue(existingValues.add(v.getValue()), v.getValue() + " is duplicated!!");
+        });
+    }
+
+    @Test
+    void testMessageTypeToMessageTypeEnum() {
+        Set<Integer> existingValues = new HashSet<>();
+        Arrays.stream(MessageType.values()).forEach(v -> {
+            Assertions
+                .assertNotNull(MessageTypeEnum.fromValue(v.getValue()),
+                    v.name());
+            Assertions
+                .assertTrue(existingValues.add(v.getValue()), v.getValue() + " is duplicated!!");
+        });
+    }
+
 
 }

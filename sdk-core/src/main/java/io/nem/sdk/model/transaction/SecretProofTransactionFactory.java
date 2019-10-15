@@ -17,7 +17,7 @@
 
 package io.nem.sdk.model.transaction;
 
-import io.nem.sdk.model.account.Address;
+import io.nem.sdk.model.account.UnresolvedAddress;
 import io.nem.sdk.model.blockchain.NetworkType;
 import org.apache.commons.lang3.Validate;
 
@@ -29,22 +29,12 @@ public class SecretProofTransactionFactory extends TransactionFactory<SecretProo
     private final LockHashAlgorithmType hashType;
     private final String secret;
     private final String proof;
-    private final Address recipient;
+    private final UnresolvedAddress recipient;
 
-    /**
-     * Constructor.
-     *
-     * @param networkType Network type.
-     * @param hashType Hash algorithm secret is generated with.
-     * @param recipient Address of recipient.
-     * @param secret Seed proof hashed.
-     * @param proof Seed proof
-     */
-
-    public SecretProofTransactionFactory(
+    private SecretProofTransactionFactory(
         final NetworkType networkType,
         final LockHashAlgorithmType hashType,
-        final Address recipient,
+        final UnresolvedAddress recipient,
         final String secret,
         final String proof) {
         super(TransactionType.SECRET_PROOF, networkType);
@@ -61,6 +51,20 @@ public class SecretProofTransactionFactory extends TransactionFactory<SecretProo
         this.recipient = recipient;
     }
 
+    /**
+     * Static create method for factory.
+     *
+     * @param networkType Network type.
+     * @param hashType Hash algorithm secret is generated with.
+     * @param recipient Recipient address.
+     * @param secret Seed proof hashed.
+     * @param proof Seed proof
+     * @return Secret proof transaction.
+     */
+    public static SecretProofTransactionFactory create(NetworkType networkType,
+        LockHashAlgorithmType hashType, UnresolvedAddress recipient, String secret, String proof) {
+        return new SecretProofTransactionFactory(networkType, hashType, recipient, secret, proof);
+    }
 
     /**
      * Returns the hash algorithm secret is generated with.
@@ -92,7 +96,7 @@ public class SecretProofTransactionFactory extends TransactionFactory<SecretProo
     /**
      * @return the recipient
      */
-    public Address getRecipient() {
+    public UnresolvedAddress getRecipient() {
         return recipient;
     }
 

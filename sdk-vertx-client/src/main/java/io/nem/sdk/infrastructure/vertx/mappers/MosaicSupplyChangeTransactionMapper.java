@@ -17,6 +17,7 @@
 
 package io.nem.sdk.infrastructure.vertx.mappers;
 
+import static io.nem.core.utils.MapperUtils.getIdAsHex;
 import static io.nem.core.utils.MapperUtils.toMosaicId;
 
 import io.nem.sdk.model.blockchain.NetworkType;
@@ -26,6 +27,7 @@ import io.nem.sdk.model.transaction.MosaicSupplyChangeTransaction;
 import io.nem.sdk.model.transaction.MosaicSupplyChangeTransactionFactory;
 import io.nem.sdk.model.transaction.TransactionFactory;
 import io.nem.sdk.model.transaction.TransactionType;
+import io.nem.sdk.openapi.vertx.model.MosaicSupplyChangeActionEnum;
 import io.nem.sdk.openapi.vertx.model.MosaicSupplyChangeTransactionDTO;
 
 /**
@@ -42,9 +44,17 @@ class MosaicSupplyChangeTransactionMapper extends
     @Override
     protected TransactionFactory<MosaicSupplyChangeTransaction> createFactory(
         NetworkType networkType, MosaicSupplyChangeTransactionDTO transaction) {
-        return new MosaicSupplyChangeTransactionFactory(networkType,
+        return MosaicSupplyChangeTransactionFactory.create(networkType,
             toMosaicId(transaction.getMosaicId()),
             MosaicSupplyChangeActionType.rawValueOf(transaction.getAction().getValue()),
             transaction.getDelta());
+    }
+
+    @Override
+    protected void copyToDto(MosaicSupplyChangeTransaction transaction,
+        MosaicSupplyChangeTransactionDTO dto) {
+        dto.setDelta(transaction.getDelta());
+        dto.setMosaicId(getIdAsHex(transaction.getMosaicId()));
+        dto.setAction(MosaicSupplyChangeActionEnum.fromValue(transaction.getAction().getValue()));
     }
 }
