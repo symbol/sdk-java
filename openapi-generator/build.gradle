@@ -4,7 +4,6 @@ buildscript {
     }
     dependencies {
         classpath 'org.ajoberstar:gradle-git:1.7.2'
-        classpath 'net.researchgate:gradle-release:2.6.0'
     }
 }
 
@@ -175,6 +174,10 @@ subprojects {
             }
         }
     }
+}
+
+release {
+    tagPrefix = 'open-api-spec-'
 }
 
 release.dependsOn subprojects.install

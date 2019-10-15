@@ -23,7 +23,6 @@ buildscript {
         classpath "org.kt3k.gradle.plugin:coveralls-gradle-plugin:2.8.2"
         classpath 'org.ajoberstar:gradle-git:1.7.2'
         classpath 'com.netflix.nebula:gradle-aggregate-javadocs-plugin:3.0.1'
-        classpath 'net.researchgate:gradle-release:2.6.0'
     }
 }
 
@@ -44,7 +43,7 @@ ext {
     vertxVersion = "3.5.0"
     rxjavaVersion = "2.1.7"
     junitVersion = "5.0.2"
-    restApiVersion = "0.7.19-SNAPSHOT"
+    restApiVersion = "0.7.19"
     jackson_version = "2.9.9"
     jackson_databind_version = "2.9.9"
 }
@@ -52,9 +51,6 @@ ext {
 repositories {
     mavenLocal()
     mavenCentral()
-    maven {
-        url "https://oss.sonatype.org/content/repositories/snapshots"
-    }
 }
 
 def getPropertyValue(key) {
@@ -101,9 +97,6 @@ subprojects {
     repositories {
         mavenLocal()
         mavenCentral()
-        maven {
-            url "https://oss.sonatype.org/content/repositories/snapshots"
-        }
     }
 
     javadoc {
@@ -203,7 +196,7 @@ subprojects {
         }
     }
     uploadArchives {
-
+        
         repositories {
             mavenDeployer {
                 if (signingKeyId != null) {
@@ -256,7 +249,9 @@ subprojects {
     }
 }
 
-release.dependsOn subprojects.build
+project("integration-tests") {
+    uploadArchives.enabled = false
+}
 
 def publishedProjects = subprojects
 
@@ -337,6 +332,8 @@ def gitBranch() {
     proc.waitFor()
     branch
 }
+
+release.dependsOn subprojects.install
 
 sonarqube {
     properties {
