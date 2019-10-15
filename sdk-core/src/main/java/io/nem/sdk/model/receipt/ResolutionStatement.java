@@ -17,7 +17,9 @@
 package io.nem.sdk.model.receipt;
 
 import io.nem.sdk.model.account.Address;
+import io.nem.sdk.model.account.UnresolvedAddress;
 import io.nem.sdk.model.mosaic.MosaicId;
+import io.nem.sdk.model.mosaic.UnresolvedMosaicId;
 import java.math.BigInteger;
 import java.util.List;
 
@@ -31,7 +33,7 @@ public class ResolutionStatement<T> {
      * Constructor
      *
      * @param height Height
-     * @param unresolved An unresolved address or unresolved mosaicId (Address | MosaicId).
+     * @param unresolved An unresolved address or unresolved mosaicId (UnresolvedAddress | UnresolvedMosaic).
      * @param resolutionEntries Array of resolution entries.
      */
     public ResolutionStatement(
@@ -43,9 +45,9 @@ public class ResolutionStatement<T> {
     }
 
     /**
-     * Returns An unresolved address or unresolved mosaicId (Address | MosaicId).
+     * Returns An unresolved address or unresolved mosaicId (UnresolvedAddress | UnresolvedMosaic).
      *
-     * @return An unresolved address or unresolved mosaicId (Address | MosaicId).
+     * @return An unresolved address or unresolved mosaicId (UnresolvedAddress | UnresolvedMosaic).
      */
     public T getUnresolved() {
         return this.unresolved;
@@ -76,8 +78,8 @@ public class ResolutionStatement<T> {
      */
     private void validateType() {
         Class unresolvedClass = this.unresolved.getClass();
-        if (!Address.class.isAssignableFrom(unresolvedClass)
-            && !MosaicId.class.isAssignableFrom(unresolvedClass)) {
+        if (!UnresolvedAddress.class.isAssignableFrom(unresolvedClass)
+            && !UnresolvedMosaicId.class.isAssignableFrom(unresolvedClass)) {
             throw new IllegalArgumentException(
                 "Unresolved type: ["
                     + unresolvedClass.getName()
@@ -85,9 +87,9 @@ public class ResolutionStatement<T> {
         }
         this.resolutionEntries.forEach(
             entry -> {
-                if ((Address.class.isAssignableFrom(unresolvedClass)
+                if ((UnresolvedAddress.class.isAssignableFrom(unresolvedClass)
                     && entry.getType() != ReceiptType.ADDRESS_ALIAS_RESOLUTION)
-                    || (MosaicId.class.isAssignableFrom(unresolvedClass)
+                    || (UnresolvedMosaicId.class.isAssignableFrom(unresolvedClass)
                     && entry.getType() != ReceiptType.MOSAIC_ALIAS_RESOLUTION)) {
                     throw new IllegalArgumentException(
                         "Unresolved type: ["

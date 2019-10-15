@@ -141,6 +141,7 @@ public class ReceiptMappingVertx {
                     jsonHelper.convert(receiptDto, BalanceTransferReceiptDTO.class), networkType);
             case MOSAIC_EXPIRED:
             case NAMESPACE_EXPIRED:
+            case NAMESPACE_DELETED:
                 return createArtifactExpiryReceipt(
                     jsonHelper.convert(receiptDto, ArtifactExpiryReceiptDTO.class), type);
             case INFLATION:

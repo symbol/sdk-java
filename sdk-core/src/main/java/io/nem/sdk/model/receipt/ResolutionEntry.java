@@ -1,7 +1,7 @@
 package io.nem.sdk.model.receipt;
 
-import io.nem.sdk.model.namespace.AddressAlias;
-import io.nem.sdk.model.namespace.MosaicAlias;
+import io.nem.sdk.model.account.Address;
+import io.nem.sdk.model.mosaic.MosaicId;
 
 public class ResolutionEntry<T> {
 
@@ -12,7 +12,7 @@ public class ResolutionEntry<T> {
     /**
      * Constructor
      *
-     * @param resolved A resolved address or resolved mosaicId alias (MosaicAlias| AddressAlias).
+     * @param resolved A resolved address or resolved mosaicId alias (MosaicId| Address).
      * @param receiptSource The receipt source.
      */
     public ResolutionEntry(T resolved, ReceiptSource receiptSource, ReceiptType type) {
@@ -26,7 +26,7 @@ public class ResolutionEntry<T> {
     /**
      * Returns the resolution
      *
-     * @return resolution (MosaicAlias| AddressAlias)
+     * @return resolution (MosaicId| Address)
      */
     public T getResolved() {
         return this.resolved;
@@ -62,14 +62,14 @@ public class ResolutionEntry<T> {
     }
 
     /**
-     * Validate resolved type (MosaicId | NamespaceId)
+     * Validate resolved type (MosaicId | Address)
      *
      * @return void
      */
     private void validateResolvedType() {
         Class resolutionClass = this.resolved.getClass();
-        if (!AddressAlias.class.isAssignableFrom(resolutionClass)
-            && !MosaicAlias.class.isAssignableFrom(resolutionClass)) {
+        if (!Address.class.isAssignableFrom(resolutionClass)
+            && !MosaicId.class.isAssignableFrom(resolutionClass)) {
             throw new IllegalArgumentException(
                 "Resolved type: ["
                     + resolutionClass.getName()

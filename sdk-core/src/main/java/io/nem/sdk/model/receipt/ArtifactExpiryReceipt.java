@@ -16,8 +16,11 @@
 
 package io.nem.sdk.model.receipt;
 
+import io.nem.core.utils.ConvertUtils;
 import io.nem.sdk.model.mosaic.MosaicId;
 import io.nem.sdk.model.namespace.NamespaceId;
+import java.math.BigInteger;
+import java.nio.ByteBuffer;
 import java.util.Optional;
 
 public class ArtifactExpiryReceipt<T> extends Receipt {
@@ -80,6 +83,19 @@ public class ArtifactExpiryReceipt<T> extends Receipt {
     }
 
     /**
+     * Serialize receipt and returns receipt bytes
+     *
+     * @return receipt bytes
+     */
+    public byte[] serialize() {
+        final ByteBuffer buffer = ByteBuffer.allocate(12);
+        buffer.putShort(Short.reverseBytes((short)getVersion().getValue()));
+        buffer.putShort(Short.reverseBytes((short)getType().getValue()));
+        buffer.putLong(Long.reverseBytes(getArtifactIdValue().longValue()));
+        return buffer.array();
+    }
+
+    /**
      * Validate receipt type
      *
      * @return void
@@ -88,5 +104,17 @@ public class ArtifactExpiryReceipt<T> extends Receipt {
         if (!ReceiptType.ARTIFACT_EXPIRY.contains(type)) {
             throw new IllegalArgumentException("Receipt type: [" + type.name() + "] is not valid.");
         }
+    }
+
+    /**
+     * Return typed artifact Id value
+     * @return typed artifact Id value
+     */
+    private BigInteger getArtifactIdValue() {
+        Class artifactClass = this.artifactId.getClass();
+        if (MosaicId.class.isAssignableFrom(artifactClass)) {
+            return ((MosaicId)this.artifactId).getId();
+        }
+        return ((NamespaceId)this.artifactId).getId();
     }
 }
