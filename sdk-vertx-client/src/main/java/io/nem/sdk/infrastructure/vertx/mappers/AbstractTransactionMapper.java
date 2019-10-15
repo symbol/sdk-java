@@ -18,6 +18,7 @@
 package io.nem.sdk.infrastructure.vertx.mappers;
 
 import io.nem.core.crypto.PublicKey;
+import io.nem.core.utils.MapperUtils;
 import io.nem.sdk.model.account.PublicAccount;
 import io.nem.sdk.model.blockchain.NetworkType;
 import io.nem.sdk.model.transaction.Deadline;
@@ -71,9 +72,9 @@ public abstract class AbstractTransactionMapper<D, T extends Transaction> implem
         D transaction = getJsonHelper().convert(transactionDto, transactionDtoClass);
         TransactionDTO transactionDTO = getJsonHelper()
             .convert(transactionDto, TransactionDTO.class);
-        NetworkType networkType = extractNetworkType(transactionDTO.getVersion());
+        NetworkType networkType = MapperUtils.extractNetworkType(transactionDTO.getVersion());
         TransactionFactory<T> factory = createFactory(networkType, transaction);
-        factory.version(extractTransactionVersion(transactionDTO.getVersion()));
+        factory.version(MapperUtils.extractTransactionVersion(transactionDTO.getVersion()));
         factory.deadline(new Deadline(transactionDTO.getDeadline()));
         if (transactionDTO.getSignerPublicKey() != null) {
             factory.signer(
@@ -180,17 +181,15 @@ public abstract class AbstractTransactionMapper<D, T extends Transaction> implem
         return specificDto;
     }
 
-
+    /**
+     * Subclasses need to map the values from the transaction model to the transaction dto. Only the
+     * specific fields need to be mapped, not the common like maxFee or deadline as they are done in
+     * this abstract class.
+     *
+     * @param transaction the transaction model
+     * @param dto the transaction dto.
+     */
     protected abstract void copyToDto(T transaction, D dto);
-
-    protected Integer extractTransactionVersion(int version) {
-        return (int) Long.parseLong(Integer.toHexString(version).substring(2, 4), 16);
-    }
-
-    protected NetworkType extractNetworkType(int version) {
-        int networkType = (int) Long.parseLong(Integer.toHexString(version).substring(0, 2), 16);
-        return NetworkType.rawValueOf(networkType);
-    }
 
 
     public JsonHelper getJsonHelper() {

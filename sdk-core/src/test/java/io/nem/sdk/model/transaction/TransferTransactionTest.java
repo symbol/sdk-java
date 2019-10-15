@@ -22,6 +22,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import io.nem.core.crypto.KeyPair;
 import io.nem.core.crypto.PrivateKey;
+import io.nem.sdk.api.BinarySerialization;
+import io.nem.sdk.infrastructure.BinarySerializationImpl;
 import io.nem.core.utils.ByteUtils;
 import io.nem.core.utils.ConvertUtils;
 import io.nem.sdk.model.account.Account;
@@ -45,7 +47,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-class TransferTransactionTest {
+class TransferTransactionTest extends AbstractTransactionTester {
 
     static Account account;
     static String generationHash;
@@ -96,8 +98,7 @@ class TransferTransactionTest {
                     new Mosaic(
                         new MosaicId(new BigInteger("95442763262823")), BigInteger.valueOf(100))),
                 PlainMessage.Empty).deadline(new FakeDeadline()).build();
-        byte[] actual = transaction.generateBytes();
-        assertEquals(expected, Hex.toHexString(actual));
+        assertSerialization(expected, transaction);
 
     }
 
@@ -106,7 +107,7 @@ class TransferTransactionTest {
     void serialization() {
         // Generated at nem2-library-js/test/transactions/TransferTransaction.spec.js
         String expected =
-            "a5000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000019054410000000000000000010000000000000090e8febd671dd41bee94ec3ba5831cb608a312c2f203ba84ac01000100672b0000ce5600006400000000000000";
+            "b8000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000019054410000000000000000010000000000000090e8febd671dd41bee94ec3ba5831cb608a312c2f203ba84ac14000100536f6d65204d65737361676520e6bca2e5ad97672b0000ce5600006400000000000000";
         TransferTransaction transaction =
             TransferTransactionFactory.create(
                 NetworkType.MIJIN_TEST,
@@ -114,9 +115,14 @@ class TransferTransactionTest {
                 Collections.singletonList(
                     new Mosaic(
                         new MosaicId(new BigInteger("95442763262823")), BigInteger.valueOf(100))),
-                PlainMessage.Empty).deadline(new FakeDeadline()).build();
-        byte[] actual = transaction.serialize();
-        assertEquals(expected, Hex.toHexString(actual));
+                new PlainMessage("Some Message 漢字")).signer(account.getPublicAccount())
+                .deadline(new FakeDeadline()).build();
+
+        assertSerialization(expected, transaction);
+
+        String embeddedExpected = "680000001026d70e1954775749c6811084d6450a3184d977383f0e4282cd47118af377550190544190e8febd671dd41bee94ec3ba5831cb608a312c2f203ba84ac14000100536f6d65204d65737361676520e6bca2e5ad97672b0000ce5600006400000000000000";
+
+        assertEmbeddedSerialization(embeddedExpected, transaction);
 
     }
 
@@ -141,9 +147,8 @@ class TransferTransactionTest {
                     "9A49366406ACA952B88BADF5F1E9BE6CE4968141035A60BE503273EA65456B24",
                     NetworkType.MIJIN_TEST));
 
-        byte[] actual = aggregateTransaction.serialize();
+        assertEmbeddedSerialization(expected, aggregateTransaction);
 
-        assertEquals(expected, Hex.toHexString(actual));
     }
 
     @Test
@@ -165,6 +170,7 @@ class TransferTransactionTest {
         assertEquals(
             "B54321C382FA3CC53EB6559FDDE03832898E7E89C8F90C10DF8567AD41A926A2",
             signedTransaction.getHash());
+
 
     }
 
@@ -210,11 +216,25 @@ class TransferTransactionTest {
         Assertions.assertEquals(remoteProxy.getPrivateKey().toHex().toUpperCase(),
             message.decryptPayload(sender.getPublicKey(), recipient.getPrivateKey(), networkType));
 
+        byte[] actual = transferTransaction.serialize();
+
+        BinarySerialization serialization = new BinarySerializationImpl();
+
+        TransferTransaction deserialized = (TransferTransaction) serialization.deserialize(actual);
+
+        assertEquals(MessageType.PERSISTENT_HARVESTING_DELEGATION_MESSAGE,
+            deserialized.getMessage().getType());
+        PersistentHarvestingDelegationMessage deserializedMessage = (PersistentHarvestingDelegationMessage) deserialized
+            .getMessage();
+        Assertions.assertEquals(remoteProxy.getPrivateKey().toHex().toUpperCase(),
+            deserializedMessage
+                .decryptPayload(sender.getPublicKey(), recipient.getPrivateKey(), networkType));
+
     }
 
     @Test
     void mosaicArrayToBeSorted() {
-        ArrayList<Mosaic> mosaics = new ArrayList();
+        ArrayList<Mosaic> mosaics = new ArrayList<>();
         mosaics.add(new Mosaic(
             new MosaicId(new BigInteger("200")), BigInteger.valueOf(1)));
         mosaics.add(new Mosaic(
@@ -240,7 +260,7 @@ class TransferTransactionTest {
 
     @Test
     void mosaicArrayToBeSortedHex() {
-        ArrayList<Mosaic> mosaics = new ArrayList();
+        ArrayList<Mosaic> mosaics = new ArrayList<>();
         mosaics.add(new Mosaic(
             new MosaicId("D525AD41D95FCF29"), BigInteger.valueOf(1)));
         mosaics.add(new Mosaic(

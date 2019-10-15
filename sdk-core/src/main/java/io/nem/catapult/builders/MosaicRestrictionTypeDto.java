@@ -100,4 +100,11 @@ public enum MosaicRestrictionTypeDto {
             dataOutputStream.writeByte(this.value);
         });
     }
+
+    /**
+     * @return the catbuffer byte value.
+     */
+    public byte getValue() {
+        return value;
+    }
 }

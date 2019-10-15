@@ -17,27 +17,18 @@
 
 package io.nem.sdk.model.transaction;
 
-import io.nem.core.utils.ConvertUtils;
 import io.nem.sdk.model.account.Account;
 import io.nem.sdk.model.blockchain.NetworkType;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-public class AccountOperationRestrictionTransactionTest {
+public class AccountOperationRestrictionTransactionTest extends AbstractTransactionTester {
 
-    static Account account;
-
-
-    @BeforeAll
-    public static void setup() {
-        account =
-            new Account(
-                "041e2ce90c31cd65620ed16ab7a5a485e5b335d7e61c75cd9b3a2fed3e091728",
-                NetworkType.MIJIN_TEST);
-    }
+    static Account account = new Account(
+        "041e2ce90c31cd65620ed16ab7a5a485e5b335d7e61c75cd9b3a2fed3e091728",
+        NetworkType.MIJIN_TEST);
 
     @Test
     void create() {
@@ -76,10 +67,9 @@ public class AccountOperationRestrictionTransactionTest {
                 .build();
 
         String expected = "7d00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001905043000000000000000001000000000000000201015242";
-        Assertions.assertEquals(expected, ConvertUtils.toHex(transaction.generateBytes()));
+        assertSerialization(expected, transaction);
 
         String expectedEmbeddedHash = "2d0000009a49366406aca952b88badf5f1e9be6ce4968141035a60be503273ea65456b24019050430201015242";
-        Assertions.assertEquals(expectedEmbeddedHash,
-            ConvertUtils.toHex(transaction.generateEmbeddedBytes()));
+        assertEmbeddedSerialization(expectedEmbeddedHash, transaction);
     }
 }

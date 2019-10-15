@@ -18,14 +18,12 @@ package io.nem.sdk.model.transaction;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import io.nem.core.utils.ConvertUtils;
 import io.nem.sdk.model.account.Account;
 import io.nem.sdk.model.blockchain.NetworkType;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-public class AccountLinkTransactionTest {
+public class AccountLinkTransactionTest extends AbstractTransactionTester {
 
     static Account account;
 
@@ -53,7 +51,6 @@ public class AccountLinkTransactionTest {
     @Test
     void shouldGenerateBytes() {
 
-
         AccountLinkTransaction transaction =
             AccountLinkTransactionFactory.create(
                 NetworkType.MIJIN_TEST,
@@ -62,10 +59,9 @@ public class AccountLinkTransactionTest {
                 .deadline(new FakeDeadline()).build();
 
         String expected = "9900000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001904c41000000000000000001000000000000009a49366406aca952b88badf5f1e9be6ce4968141035a60be503273ea65456b2401";
-        Assertions.assertEquals(expected, ConvertUtils.toHex(transaction.generateBytes()));
+        assertSerialization(expected, transaction);
 
         String expectedEmbeddedHash = "490000009a49366406aca952b88badf5f1e9be6ce4968141035a60be503273ea65456b2401904c419a49366406aca952b88badf5f1e9be6ce4968141035a60be503273ea65456b2401";
-        Assertions.assertEquals(expectedEmbeddedHash,
-            ConvertUtils.toHex(transaction.generateEmbeddedBytes()));
+        assertEmbeddedSerialization(expectedEmbeddedHash, transaction);
     }
 }

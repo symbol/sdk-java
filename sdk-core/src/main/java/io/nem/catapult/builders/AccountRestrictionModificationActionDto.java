@@ -90,4 +90,11 @@ public enum AccountRestrictionModificationActionDto {
             dataOutputStream.writeByte(this.value);
         });
     }
+
+    /**
+     * @return the catbuffer byte value.
+     */
+    public byte getValue() {
+        return value;
+    }
 }

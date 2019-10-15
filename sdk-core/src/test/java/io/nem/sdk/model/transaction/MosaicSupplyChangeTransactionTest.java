@@ -28,7 +28,7 @@ import org.bouncycastle.util.encoders.Hex;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-class MosaicSupplyChangeTransactionTest {
+class MosaicSupplyChangeTransactionTest extends AbstractTransactionTester {
 
     @Test
     void createAMosaicSupplyChangeTransactionViaConstructor() {
@@ -59,7 +59,7 @@ class MosaicSupplyChangeTransactionTest {
         String expected =
             "8900000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001904d42000000000000000001000000000000008869746e9b1a7057010a00000000000000";
 
-        MosaicSupplyChangeTransaction mosaicSupplyChangeTransaction =
+        MosaicSupplyChangeTransaction transaction =
             MosaicSupplyChangeTransactionFactory.create(
                 NetworkType.MIJIN_TEST,
                 new MosaicId(new BigInteger("6300565133566699912")),
@@ -67,7 +67,9 @@ class MosaicSupplyChangeTransactionTest {
                 BigInteger.valueOf(10)
             ).deadline(new FakeDeadline()).build();
 
-        byte[] actual = mosaicSupplyChangeTransaction.generateBytes();
+        byte[] actual = transaction.generateBytes();
         assertEquals(expected, Hex.toHexString(actual));
+
+        assertSerialization(expected, transaction);
     }
 }
