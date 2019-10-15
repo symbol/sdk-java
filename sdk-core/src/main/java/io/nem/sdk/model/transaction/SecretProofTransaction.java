@@ -25,7 +25,8 @@ import io.nem.catapult.builders.SecretProofTransactionBuilder;
 import io.nem.catapult.builders.SignatureDto;
 import io.nem.catapult.builders.TimestampDto;
 import io.nem.catapult.builders.UnresolvedAddressDto;
-import io.nem.sdk.model.account.Address;
+import io.nem.sdk.infrastructure.SerializationUtils;
+import io.nem.sdk.model.account.UnresolvedAddress;
 import java.nio.ByteBuffer;
 import org.bouncycastle.util.encoders.Hex;
 
@@ -37,7 +38,7 @@ public class SecretProofTransaction extends Transaction {
     private final LockHashAlgorithmType hashType;
     private final String secret;
     private final String proof;
-    private final Address recipient;
+    private final UnresolvedAddress recipient;
 
 
     /**
@@ -102,7 +103,8 @@ public class SecretProofTransaction extends Transaction {
                 new TimestampDto(getDeadline().getInstant()),
                 LockHashAlgorithmDto.rawValueOf((byte) hashType.getValue()),
                 new Hash256Dto(getSecretBuffer()),
-                new UnresolvedAddressDto(this.recipient.getByteBuffer()),
+                new UnresolvedAddressDto(
+                    SerializationUtils.fromUnresolvedAddressToByteBuffer(this.getRecipient())),
                 getProofBuffer());
         return txBuilder.serialize();
     }
@@ -110,7 +112,7 @@ public class SecretProofTransaction extends Transaction {
     /**
      * @return the recipient
      */
-    public Address getRecipient() {
+    public UnresolvedAddress getRecipient() {
         return recipient;
     }
 
@@ -128,7 +130,8 @@ public class SecretProofTransaction extends Transaction {
                 getEntityTypeDto(),
                 LockHashAlgorithmDto.rawValueOf((byte) hashType.getValue()),
                 new Hash256Dto(getSecretBuffer()),
-                new UnresolvedAddressDto(this.recipient.getByteBuffer()),
+                new UnresolvedAddressDto(
+                    SerializationUtils.fromUnresolvedAddressToByteBuffer(this.getRecipient())),
                 getProofBuffer());
         return txBuilder.serialize();
     }

@@ -51,7 +51,9 @@ import io.nem.core.utils.MapperUtils;
 import io.nem.core.utils.StringEncoder;
 import io.nem.sdk.api.BinarySerialization;
 import io.nem.sdk.model.account.Address;
+import io.nem.sdk.model.account.UnresolvedAddress;
 import io.nem.sdk.model.account.PublicAccount;
+import io.nem.sdk.model.account.UnresolvedAddress;
 import io.nem.sdk.model.blockchain.BlockDuration;
 import io.nem.sdk.model.blockchain.NetworkType;
 import io.nem.sdk.model.message.Message;
@@ -61,6 +63,7 @@ import io.nem.sdk.model.mosaic.MosaicFlags;
 import io.nem.sdk.model.mosaic.MosaicId;
 import io.nem.sdk.model.mosaic.MosaicNonce;
 import io.nem.sdk.model.mosaic.MosaicSupplyChangeActionType;
+import io.nem.sdk.model.mosaic.UnresolvedMosaicId;
 import io.nem.sdk.model.namespace.AliasAction;
 import io.nem.sdk.model.namespace.NamespaceId;
 import io.nem.sdk.model.namespace.NamespaceRegistrationType;
@@ -220,23 +223,45 @@ public class BinarySerializationImpl implements BinarySerialization {
         return true;
     }
 
+    /**
+     * It deserializes a payload of a embedded transaction into a transact model.
+     *
+     * @param payload the payload as byte array.
+     * @return the {@link Transaction} model.
+     */
     public Transaction deserializeEmbedded(byte[] payload) {
+        Validate.notNull(payload, "Payload must not be null");
         return deserializeEmbedded(SerializationUtils.toDataInput(payload));
     }
 
+    /**
+     * It deserializes a payload of a embedded transaction into a transact model.
+     *
+     * @param payload the payload as {@link ByteBuffer}. This buffer is the continuation of the top
+     * level payload.
+     * @return the {@link Transaction} model.
+     */
     public Transaction deserializeEmbedded(ByteBuffer payload) {
+        Validate.notNull(payload, "Payload must not be null");
         return deserializeEmbedded(new DataInputStream(new ByteBufferBackedInputStream(payload)));
     }
 
-    public Transaction deserializeEmbedded(DataInput stream) {
-        EmbeddedTransactionBuilder builder = EmbeddedTransactionBuilder.loadFromBinary(stream);
+    /**
+     * It deserializes a payload of a embedded transaction into a transact model.
+     *
+     * @param payload the payload as {@link DataInput}
+     * @return the {@link Transaction} model.
+     */
+    private Transaction deserializeEmbedded(DataInput payload) {
+        Validate.notNull(payload, "Payload must not be null");
+        EmbeddedTransactionBuilder builder = EmbeddedTransactionBuilder.loadFromBinary(payload);
         TransactionType transactionType = TransactionType
             .rawValueOf(SerializationUtils.shortToUnsignedInt(builder.getType().getValue()));
         int networkVersion = SerializationUtils.shortToUnsignedInt(builder.getVersion());
         NetworkType networkType = MapperUtils.extractNetworkType(networkVersion);
         int version = MapperUtils.extractTransactionVersion(networkVersion);
         TransactionFactory<?> factory = resolveMapper(transactionType)
-            .fromStream(networkType, stream, null);
+            .fromStream(networkType, payload, null);
         factory.signer(SerializationUtils.toPublicAccount(builder.getSigner(), networkType));
         factory.version(version);
         return factory.build();
@@ -288,8 +313,8 @@ public class BinarySerializationImpl implements BinarySerialization {
             MessageType messageType = MessageType
                 .rawValueOf(SerializationUtils.byteToUnsignedInt(messageArray[0]));
             String messageHex = ConvertUtils.toHex(messageArray).substring(2);
-            Address recipient = MapperUtils
-                .toAddressFromUnresolved(
+            UnresolvedAddress recipient = MapperUtils
+                .toUnresolvedAddress(
                     ConvertUtils.toHex(builder.getRecipient().getUnresolvedAddress().array()));
             List<Mosaic> mosaics = builder.getMosaics().stream()
                 .map(SerializationUtils::toMosaic)
@@ -315,7 +340,7 @@ public class BinarySerializationImpl implements BinarySerialization {
             byte[] originalPayload) {
             MosaicSupplyChangeTransactionBodyBuilder builder = MosaicSupplyChangeTransactionBodyBuilder
                 .loadFromBinary(stream);
-            MosaicId mosaicId = SerializationUtils.toMosaicId(builder.getMosaicId());
+            UnresolvedMosaicId mosaicId = SerializationUtils.toMosaicId(builder.getMosaicId());
             MosaicSupplyChangeActionType action = MosaicSupplyChangeActionType
                 .rawValueOf(builder.getAction().getValue());
             BigInteger delta = SerializationUtils.toUnsignedBigInteger(builder.getDelta());
@@ -414,7 +439,8 @@ public class BinarySerializationImpl implements BinarySerialization {
             BigInteger scopedMetadataKey = SerializationUtils
                 .toUnsignedBigInteger(builder.getScopedMetadataKey());
             String value = StringEncoder.getString(builder.getValue().array());
-            MosaicId targetMosaicId = SerializationUtils.toMosaicId(builder.getTargetMosaicId());
+            UnresolvedMosaicId targetMosaicId = SerializationUtils
+                .toMosaicId(builder.getTargetMosaicId());
             return MosaicMetadataTransactionFactory
                 .create(networkType, targetAccount, targetMosaicId, scopedMetadataKey, value)
                 .valueSizeDelta(SerializationUtils.shortToUnsignedInt(builder.getValueSizeDelta()));
@@ -507,7 +533,7 @@ public class BinarySerializationImpl implements BinarySerialization {
             LockHashAlgorithmType hashAlgorithm = LockHashAlgorithmType.rawValueOf(
                 SerializationUtils.byteToUnsignedInt(builder.getHashAlgorithm().getValue()));
             String secret = SerializationUtils.toHexString(builder.getSecret());
-            Address recipient = SerializationUtils.toAddress(builder.getRecipient());
+            UnresolvedAddress recipient = SerializationUtils.toAddress(builder.getRecipient());
             return SecretLockTransactionFactory
                 .create(networkType, mosaic, duration, hashAlgorithm, secret, recipient);
         }
@@ -530,7 +556,7 @@ public class BinarySerializationImpl implements BinarySerialization {
 
             LockHashAlgorithmType hashType = LockHashAlgorithmType.rawValueOf(
                 SerializationUtils.byteToUnsignedInt(builder.getHashAlgorithm().getValue()));
-            Address recipient = SerializationUtils.toAddress(builder.getRecipient());
+            UnresolvedAddress recipient = SerializationUtils.toAddress(builder.getRecipient());
             String secret = SerializationUtils.toHexString(builder.getSecret());
             String proof = ConvertUtils.toHex(builder.getProof().array());
 
@@ -630,18 +656,19 @@ public class BinarySerializationImpl implements BinarySerialization {
 
             AccountRestrictionType restrictionType = AccountRestrictionType.rawValueOf(
                 SerializationUtils.byteToUnsignedInt(builder.getRestrictionType().getValue()));
-            List<AccountRestrictionModification<Address>> modifications = builder.getModifications()
+            List<AccountRestrictionModification<UnresolvedAddress>> modifications = builder
+                .getModifications()
                 .stream().map(this::toAccountRestrictionModificationAddress)
                 .collect(Collectors.toList());
             return AccountAddressRestrictionTransactionFactory
                 .create(networkType, restrictionType, modifications);
         }
 
-        private AccountRestrictionModification<Address> toAccountRestrictionModificationAddress(
+        private AccountRestrictionModification<UnresolvedAddress> toAccountRestrictionModificationAddress(
             AccountAddressRestrictionModificationBuilder builder) {
             AccountRestrictionModificationAction modificationType = AccountRestrictionModificationAction
                 .rawValueOf(builder.getModificationAction().getValue());
-            Address address = SerializationUtils.toAddress(builder.getValue());
+            UnresolvedAddress address = SerializationUtils.toAddress(builder.getValue());
             return AccountRestrictionModification.createForAddress(modificationType, address);
         }
     }
@@ -663,7 +690,7 @@ public class BinarySerializationImpl implements BinarySerialization {
 
             AccountRestrictionType restrictionType = AccountRestrictionType.rawValueOf(
                 SerializationUtils.byteToUnsignedInt(builder.getRestrictionType().getValue()));
-            List<AccountRestrictionModification<MosaicId>> modifications = builder
+            List<AccountRestrictionModification<UnresolvedMosaicId>> modifications = builder
                 .getModifications()
                 .stream().map(this::toAccountRestrictionModificationMosaic)
                 .collect(Collectors.toList());
@@ -671,11 +698,11 @@ public class BinarySerializationImpl implements BinarySerialization {
                 .create(networkType, restrictionType, modifications);
         }
 
-        private AccountRestrictionModification<MosaicId> toAccountRestrictionModificationMosaic(
+        private AccountRestrictionModification<UnresolvedMosaicId> toAccountRestrictionModificationMosaic(
             AccountMosaicRestrictionModificationBuilder builder) {
             AccountRestrictionModificationAction modificationType = AccountRestrictionModificationAction
                 .rawValueOf(builder.getModificationAction().getValue());
-            MosaicId mosaicId = SerializationUtils.toMosaicId(builder.getValue());
+            UnresolvedMosaicId mosaicId = SerializationUtils.toMosaicId(builder.getValue());
             return AccountRestrictionModification.createForMosaic(modificationType, mosaicId);
         }
     }
@@ -731,10 +758,11 @@ public class BinarySerializationImpl implements BinarySerialization {
             MosaicAddressRestrictionTransactionBodyBuilder builder = MosaicAddressRestrictionTransactionBodyBuilder
                 .loadFromBinary(stream);
 
-            MosaicId mosaicId = SerializationUtils.toMosaicId(builder.getMosaicId());
+            UnresolvedMosaicId mosaicId = SerializationUtils.toMosaicId(builder.getMosaicId());
             BigInteger restrictionKey = SerializationUtils
                 .toUnsignedBigInteger(builder.getRestrictionKey());
-            Address targetAddress = SerializationUtils.toAddress(builder.getTargetAddress());
+            UnresolvedAddress targetAddress = SerializationUtils
+                .toAddress(builder.getTargetAddress());
             BigInteger newRestrictionValue = SerializationUtils
                 .toUnsignedBigInteger(builder.getNewRestrictionValue());
             BigInteger previousRestrictionValue = SerializationUtils
@@ -760,7 +788,7 @@ public class BinarySerializationImpl implements BinarySerialization {
 
             MosaicGlobalRestrictionTransactionBodyBuilder builder = MosaicGlobalRestrictionTransactionBodyBuilder
                 .loadFromBinary(stream);
-            MosaicId mosaicId = SerializationUtils.toMosaicId(builder.getMosaicId());
+            UnresolvedMosaicId mosaicId = SerializationUtils.toMosaicId(builder.getMosaicId());
             BigInteger restrictionKey = SerializationUtils
                 .toUnsignedBigInteger(builder.getRestrictionKey());
             BigInteger newRestrictionValue = SerializationUtils

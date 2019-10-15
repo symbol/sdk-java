@@ -25,19 +25,21 @@ import io.nem.catapult.builders.SignatureDto;
 import io.nem.catapult.builders.TimestampDto;
 import io.nem.catapult.builders.UnresolvedAddressDto;
 import io.nem.catapult.builders.UnresolvedMosaicIdDto;
+import io.nem.sdk.infrastructure.SerializationUtils;
 import io.nem.sdk.model.account.Address;
-import io.nem.sdk.model.mosaic.MosaicId;
+import io.nem.sdk.model.account.UnresolvedAddress;
+import io.nem.sdk.model.mosaic.UnresolvedMosaicId;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
 
 /**
  * Mosaic address restriction transaction.
  *
- * Enabling accounts to transact with the token is similar to the process of
- * adding elevated permissions to a user in a company computer network.
+ * Enabling accounts to transact with the token is similar to the process of adding elevated
+ * permissions to a user in a company computer network.
  *
- * The mosaic creator can modify the permissions of an account by sending a
- * mosaic restriction transaction targeting the account address.
+ * The mosaic creator can modify the permissions of an account by sending a mosaic restriction
+ * transaction targeting the account address.
  *
  * **MosaicAddressRestrictionTransaction can only be announced in with Aggregate Transaction
  *
@@ -45,9 +47,9 @@ import java.nio.ByteBuffer;
  */
 public class MosaicAddressRestrictionTransaction extends Transaction {
 
-    private final MosaicId mosaicId;
+    private final UnresolvedMosaicId mosaicId;
     private final BigInteger restrictionKey;
-    private final Address targetAddress;
+    private final UnresolvedAddress targetAddress;
     private final BigInteger previousRestrictionValue;
     private final BigInteger newRestrictionValue;
 
@@ -68,9 +70,9 @@ public class MosaicAddressRestrictionTransaction extends Transaction {
     /**
      * Returns the mosaic id.
      *
-     * @return {@link MosaicId}
+     * @return {@link UnresolvedMosaicId}
      */
-    public MosaicId getMosaicId() {
+    public UnresolvedMosaicId getMosaicId() {
         return mosaicId;
     }
 
@@ -88,7 +90,7 @@ public class MosaicAddressRestrictionTransaction extends Transaction {
      *
      * @return {@link Address}
      */
-    public Address getTargetAddress() {
+    public UnresolvedAddress getTargetAddress() {
         return targetAddress;
     }
 
@@ -126,7 +128,8 @@ public class MosaicAddressRestrictionTransaction extends Transaction {
                 new TimestampDto(getDeadline().getInstant()),
                 new UnresolvedMosaicIdDto(getMosaicId().getIdAsLong()),
                 getRestrictionKey().longValue(),
-                new UnresolvedAddressDto(getTargetAddress().getByteBuffer()),
+                new UnresolvedAddressDto(
+                    SerializationUtils.fromUnresolvedAddressToByteBuffer(getTargetAddress())),
                 getPreviousRestrictionValue().longValue(),
                 getNewRestrictionValue().longValue()
             );
@@ -143,7 +146,8 @@ public class MosaicAddressRestrictionTransaction extends Transaction {
                 getEntityTypeDto(),
                 new UnresolvedMosaicIdDto(getMosaicId().getIdAsLong()),
                 getRestrictionKey().longValue(),
-                new UnresolvedAddressDto(getTargetAddress().getByteBuffer()),
+                new UnresolvedAddressDto(
+                    SerializationUtils.fromUnresolvedAddressToByteBuffer(getTargetAddress())),
                 getPreviousRestrictionValue().longValue(),
                 getNewRestrictionValue().longValue()
             );

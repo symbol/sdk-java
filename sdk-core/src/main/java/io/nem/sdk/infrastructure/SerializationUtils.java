@@ -27,18 +27,24 @@ import io.nem.catapult.builders.UnresolvedAddressDto;
 import io.nem.catapult.builders.UnresolvedMosaicBuilder;
 import io.nem.catapult.builders.UnresolvedMosaicIdDto;
 import io.nem.core.utils.ConvertUtils;
+import io.nem.core.utils.MapperUtils;
 import io.nem.core.utils.StringEncoder;
 import io.nem.sdk.model.account.Address;
 import io.nem.sdk.model.account.PublicAccount;
+import io.nem.sdk.model.account.UnresolvedAddress;
 import io.nem.sdk.model.blockchain.NetworkType;
 import io.nem.sdk.model.mosaic.Mosaic;
 import io.nem.sdk.model.mosaic.MosaicId;
+import io.nem.sdk.model.mosaic.UnresolvedMosaicId;
 import io.nem.sdk.model.namespace.NamespaceId;
 import java.io.ByteArrayInputStream;
 import java.io.DataInput;
 import java.io.DataInputStream;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import org.apache.commons.codec.binary.Base32;
+import org.apache.commons.lang3.Validate;
 
 /**
  * Utility class used to serialize/deserialize catbuffer values.
@@ -82,7 +88,7 @@ public class SerializationUtils {
      * @param dto the catbuffer {@link UnresolvedMosaicIdDto}.
      * @return the model {@link MosaicId}
      */
-    public static MosaicId toMosaicId(UnresolvedMosaicIdDto dto) {
+    public static UnresolvedMosaicId toMosaicId(UnresolvedMosaicIdDto dto) {
         return new MosaicId(toUnsignedBigInteger(dto.getUnresolvedMosaicId()));
     }
 
@@ -112,8 +118,31 @@ public class SerializationUtils {
      * @param dto the catbuffer {@link UnresolvedAddressDto}.
      * @return the model {@link Address}
      */
-    public static Address toAddress(UnresolvedAddressDto dto) {
-        return Address.createFromEncoded(ConvertUtils.toHex(dto.getUnresolvedAddress().array()));
+    public static UnresolvedAddress toAddress(UnresolvedAddressDto dto) {
+        return MapperUtils.toUnresolvedAddress(ConvertUtils.toHex(dto.getUnresolvedAddress().array()));
+    }
+
+    /**
+     * It serializes a UnresolvedAddress to a xx
+     */
+    public static ByteBuffer fromUnresolvedAddressToByteBuffer(
+        UnresolvedAddress unresolvedAddress) {
+        Validate.notNull(unresolvedAddress, "unresolvedAddress must not be null");
+
+        if (unresolvedAddress instanceof NamespaceId) {
+            final ByteBuffer namespaceIdAlias = ByteBuffer.allocate(25);
+            final byte firstByte = (byte) 0x91;
+            namespaceIdAlias.order(ByteOrder.LITTLE_ENDIAN);
+            namespaceIdAlias.put(firstByte);
+            namespaceIdAlias.putLong(((NamespaceId) unresolvedAddress).getIdAsLong());
+            return ByteBuffer.wrap(namespaceIdAlias.array());
+        }
+
+        if (unresolvedAddress instanceof Address) {
+            return ByteBuffer.wrap(new Base32().decode(((Address) unresolvedAddress).plain()));
+        }
+        throw new IllegalArgumentException(
+            "Unexpected UnresolvedAddress type " + unresolvedAddress.getClass());
     }
 
 
