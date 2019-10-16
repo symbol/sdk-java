@@ -23,7 +23,6 @@ import io.nem.sdk.model.account.Address;
 import io.nem.sdk.model.blockchain.NetworkType;
 import io.nem.sdk.model.mosaic.MosaicId;
 import io.nem.sdk.model.namespace.MosaicAlias;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -45,7 +44,7 @@ public class ResolutionEntryTest {
     void shouldCreateAddressResolutionEntry() {
 
         ResolutionEntry<Address> resolutionEntry =
-            new ResolutionEntry<>(address, receiptSource, ReceiptType.ADDRESS_ALIAS_RESOLUTION);
+            new ResolutionEntry(address, receiptSource, ReceiptType.ADDRESS_ALIAS_RESOLUTION);
         assertEquals(ReceiptType.ADDRESS_ALIAS_RESOLUTION, resolutionEntry.getType());
         assertEquals(resolutionEntry.getReceiptSource(), receiptSource);
         assertEquals(resolutionEntry.getResolved(), address);
@@ -54,8 +53,8 @@ public class ResolutionEntryTest {
     @Test
     void shouldCreateMosaicResolutionEntry() {
 
-        ResolutionEntry<MosaicId> resolutionEntry =
-            new ResolutionEntry<>(mosaicId, receiptSource, ReceiptType.MOSAIC_ALIAS_RESOLUTION);
+        ResolutionEntry<MosaicAlias> resolutionEntry =
+            new ResolutionEntry(mosaicId, receiptSource, ReceiptType.MOSAIC_ALIAS_RESOLUTION);
         assertEquals(ReceiptType.MOSAIC_ALIAS_RESOLUTION, resolutionEntry.getType());
         assertEquals(resolutionEntry.getReceiptSource(), receiptSource);
         assertEquals(resolutionEntry.getResolved(), mosaicId);
@@ -69,7 +68,7 @@ public class ResolutionEntryTest {
                 new ResolutionEntry<>(address, receiptSource, ReceiptType.NAMESPACE_RENTAL_FEE);
             });
 
-        Assertions.assertEquals("Receipt type: [NAMESPACE_RENTAL_FEE] is not valid.", exception.getMessage());
+        assertEquals("Receipt type: [NAMESPACE_RENTAL_FEE] is not valid.", exception.getMessage());
     }
 
     @Test
@@ -79,7 +78,7 @@ public class ResolutionEntryTest {
             () -> {
                 new ResolutionEntry("", receiptSource, ReceiptType.ADDRESS_ALIAS_RESOLUTION);
             });
-        Assertions.assertEquals(
+        assertEquals(
             "Resolved type: [io.nem.sdk.model.account.Address] is not valid for this ResolutionEntry of type [ADDRESS_ALIAS_RESOLUTION]",
             exception.getMessage());
     }

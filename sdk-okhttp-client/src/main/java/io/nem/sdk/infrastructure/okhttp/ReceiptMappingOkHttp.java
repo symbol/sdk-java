@@ -80,7 +80,7 @@ public class ReceiptMappingOkHttp {
         ResolutionStatementBodyDTO statement = receiptDto.getStatement();
         return new AddressResolutionStatement(
             statement.getHeight(),
-            toAddressFromEncoded(statement.getUnresolved().toString()),
+            MapperUtils.toUnresolvedAddress(statement.getUnresolved().toString()),
             statement.getResolutionEntries().stream()
                 .map(
                     entry ->
@@ -96,7 +96,7 @@ public class ReceiptMappingOkHttp {
         ResolutionStatementBodyDTO statement = receiptDto.getStatement();
         return new MosaicResolutionStatement(
             statement.getHeight(),
-            toMosaicId(statement.getUnresolved().toString()),
+            MapperUtils.toUnresolvedMosaicId(statement.getUnresolved().toString()),
             statement.getResolutionEntries().stream()
                 .map(
                     entry ->
@@ -175,7 +175,7 @@ public class ReceiptMappingOkHttp {
         BalanceTransferReceiptDTO receipt, NetworkType networkType) {
         return new BalanceTransferReceipt(
             PublicAccount.createFromPublicKey(receipt.getSenderPublicKey(), networkType),
-            MapperUtils.toAddressFromEncoded(receipt.getRecipientAddress()),
+            MapperUtils.toUnresolvedAddress(receipt.getRecipientAddress()),
             new MosaicId(receipt.getMosaicId()),
             receipt.getAmount(),
             ReceiptType.rawValueOf(receipt.getType().getValue()),

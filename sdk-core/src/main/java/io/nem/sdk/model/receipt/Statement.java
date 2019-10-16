@@ -16,6 +16,8 @@
 
 package io.nem.sdk.model.receipt;
 
+import io.nem.sdk.model.account.Address;
+import io.nem.sdk.model.mosaic.MosaicId;
 import java.util.List;
 
 public class Statement {
