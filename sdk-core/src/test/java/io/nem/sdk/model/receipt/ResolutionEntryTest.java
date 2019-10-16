@@ -29,17 +29,14 @@ import org.junit.jupiter.api.Test;
 
 public class ResolutionEntryTest {
 
-    static AddressAlias addressAlias;
-    static MosaicAlias mosaicAlias;
+    static Address address;
+    static MosaicId mosaicId;
     static ReceiptSource receiptSource;
 
     @BeforeAll
     public static void setup() {
-        addressAlias =
-            new AddressAlias(
-                new Address("SDGLFW-DSHILT-IUHGIB-H5UGX2-VYF5VN-JEKCCD-BR26",
-                    NetworkType.MIJIN_TEST));
-        mosaicAlias = new MosaicAlias(new MosaicId("85BBEA6CC462B244"));
+        address = new Address("SDGLFW-DSHILT-IUHGIB-H5UGX2-VYF5VN-JEKCCD-BR26", NetworkType.MIJIN_TEST);
+        mosaicId = new MosaicId("85BBEA6CC462B244");
         receiptSource = new ReceiptSource(1, 1);
     }
 
@@ -47,20 +44,20 @@ public class ResolutionEntryTest {
     void shouldCreateAddressResolutionEntry() {
 
         ResolutionEntry<AddressAlias> resolutionEntry =
-            new ResolutionEntry(addressAlias, receiptSource, ReceiptType.ADDRESS_ALIAS_RESOLUTION);
+            new ResolutionEntry(address, receiptSource, ReceiptType.ADDRESS_ALIAS_RESOLUTION);
         assertEquals(ReceiptType.ADDRESS_ALIAS_RESOLUTION, resolutionEntry.getType());
         assertEquals(resolutionEntry.getReceiptSource(), receiptSource);
-        assertEquals(resolutionEntry.getResolved(), addressAlias);
+        assertEquals(resolutionEntry.getResolved(), address);
     }
 
     @Test
     void shouldCreateMosaicResolutionEntry() {
 
         ResolutionEntry<MosaicAlias> resolutionEntry =
-            new ResolutionEntry(mosaicAlias, receiptSource, ReceiptType.MOSAIC_ALIAS_RESOLUTION);
+            new ResolutionEntry(mosaicId, receiptSource, ReceiptType.MOSAIC_ALIAS_RESOLUTION);
         assertEquals(ReceiptType.MOSAIC_ALIAS_RESOLUTION, resolutionEntry.getType());
         assertEquals(resolutionEntry.getReceiptSource(), receiptSource);
-        assertEquals(resolutionEntry.getResolved(), mosaicAlias);
+        assertEquals(resolutionEntry.getResolved(), mosaicId);
     }
 
     @Test
@@ -68,7 +65,7 @@ public class ResolutionEntryTest {
         assertThrows(
             IllegalArgumentException.class,
             () -> {
-                new ResolutionEntry(addressAlias, receiptSource, ReceiptType.NAMESPACE_RENTAL_FEE);
+                new ResolutionEntry(address, receiptSource, ReceiptType.NAMESPACE_RENTAL_FEE);
             });
     }
 

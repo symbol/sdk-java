@@ -2,9 +2,12 @@ package io.nem.sdk.model.receipt;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import io.nem.core.utils.MapperUtils;
 import io.nem.sdk.model.account.Address;
+import io.nem.sdk.model.account.UnresolvedAddress;
 import io.nem.sdk.model.blockchain.NetworkType;
 import io.nem.sdk.model.mosaic.MosaicId;
+import io.nem.sdk.model.mosaic.UnresolvedMosaicId;
 import io.nem.sdk.model.namespace.AddressAlias;
 import io.nem.sdk.model.namespace.MosaicAlias;
 import java.math.BigInteger;
@@ -16,8 +19,8 @@ import org.junit.jupiter.api.Test;
 public class StatementTest {
 
     static List<TransactionStatement> transactionStatements = new ArrayList<>();
-    static List<ResolutionStatement<Address>> addressResolutionStatements = new ArrayList<>();
-    static List<ResolutionStatement<MosaicId>> mosaicResolutionStatements = new ArrayList<>();
+    static List<ResolutionStatement<UnresolvedAddress>> addressResolutionStatements = new ArrayList<>();
+    static List<ResolutionStatement<UnresolvedMosaicId>> mosaicResolutionStatements = new ArrayList<>();
 
     @BeforeAll
     public static void setup() {
@@ -25,18 +28,18 @@ public class StatementTest {
         MosaicId mosaicId = new MosaicId("85BBEA6CC462B244");
         Address address =
             new Address("SDGLFW-DSHILT-IUHGIB-H5UGX2-VYF5VN-JEKCCD-BR26", NetworkType.MIJIN_TEST);
-        AddressAlias addressAlias = new AddressAlias(address);
-        MosaicAlias mosaicAlias = new MosaicAlias(mosaicId);
+        UnresolvedAddress unresolvedAddress = MapperUtils.toUnresolvedAddress(address.encoded());
+        UnresolvedMosaicId unresolvedMosaicId = MapperUtils.toUnresolvedMosaicId("85BBEA6CC462B244");
         receiptSource = new ReceiptSource(1, 1);
-        ResolutionEntry<AddressAlias> addressAliasResolutionEntry =
-            new ResolutionEntry<>(addressAlias, receiptSource, ReceiptType.ADDRESS_ALIAS_RESOLUTION);
-        ResolutionEntry<MosaicAlias> mosaicAliasResolutionEntry =
-            new ResolutionEntry<>(mosaicAlias, receiptSource, ReceiptType.MOSAIC_ALIAS_RESOLUTION);
+        ResolutionEntry<Address> addressAliasResolutionEntry =
+            new ResolutionEntry<>(address, receiptSource, ReceiptType.ADDRESS_ALIAS_RESOLUTION);
+        ResolutionEntry<MosaicId> mosaicAliasResolutionEntry =
+            new ResolutionEntry<>(mosaicId, receiptSource, ReceiptType.MOSAIC_ALIAS_RESOLUTION);
 
-        List<ResolutionEntry<AddressAlias>> addressEntries = new ArrayList<>();
+        List<ResolutionEntry<Address>> addressEntries = new ArrayList<>();
         addressEntries.add(addressAliasResolutionEntry);
 
-        List<ResolutionEntry<MosaicAlias>> mosaicEntries = new ArrayList<>();
+        List<ResolutionEntry<MosaicId>> mosaicEntries = new ArrayList<>();
         mosaicEntries.add(mosaicAliasResolutionEntry);
         ArtifactExpiryReceipt<MosaicId> mosaicExpiryReceipt =
             new ArtifactExpiryReceipt<>(
@@ -47,9 +50,9 @@ public class StatementTest {
         transactionStatements
             .add(new TransactionStatement(BigInteger.TEN, receiptSource, receipts));
         addressResolutionStatements.add(
-            new ResolutionStatement(BigInteger.TEN, address, addressEntries));
+            new ResolutionStatement(ResolutionType.ADDRESS, BigInteger.TEN, unresolvedAddress, addressEntries));
         mosaicResolutionStatements.add(
-            new ResolutionStatement(BigInteger.TEN, mosaicId, mosaicEntries));
+            new ResolutionStatement(ResolutionType.MOSAIC, BigInteger.TEN, unresolvedMosaicId, mosaicEntries));
     }
 
     @Test

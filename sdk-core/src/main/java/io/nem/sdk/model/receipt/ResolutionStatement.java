@@ -20,7 +20,9 @@ import io.nem.core.crypto.Hashes;
 import io.nem.core.utils.ArrayUtils;
 import io.nem.core.utils.ByteUtils;
 import io.nem.sdk.infrastructure.SerializationUtils;
+import io.nem.sdk.model.account.Address;
 import io.nem.sdk.model.account.UnresolvedAddress;
+import io.nem.sdk.model.mosaic.MosaicId;
 import io.nem.sdk.model.mosaic.UnresolvedMosaicId;
 import java.math.BigInteger;
 import java.util.List;
@@ -92,8 +94,8 @@ public class ResolutionStatement<T> {
      */
     private void validateType() {
         Class unresolvedClass = this.unresolved.getClass();
-        if (!UnresolvedAddress.class.isAssignableFrom(unresolvedClass)
-            && !UnresolvedMosaicId.class.isAssignableFrom(unresolvedClass)) {
+        if ((!UnresolvedAddress.class.isAssignableFrom(unresolvedClass) && resolutionType == ResolutionType.ADDRESS)
+            || (!UnresolvedMosaicId.class.isAssignableFrom(unresolvedClass) && resolutionType == ResolutionType.MOSAIC)) {
             throw new IllegalArgumentException(
                 "Unresolved type: ["
                     + unresolvedClass.getName()
@@ -101,13 +103,13 @@ public class ResolutionStatement<T> {
         }
         this.resolutionEntries.forEach(
             entry -> {
-                if ((UnresolvedAddress.class.isAssignableFrom(unresolvedClass)
+                if ((Address.class.isAssignableFrom(entry.getResolved().getClass())
                     && entry.getType() != ReceiptType.ADDRESS_ALIAS_RESOLUTION)
-                    || (UnresolvedMosaicId.class.isAssignableFrom(unresolvedClass)
+                    || (MosaicId.class.isAssignableFrom(entry.getResolved().getClass())
                     && entry.getType() != ReceiptType.MOSAIC_ALIAS_RESOLUTION)) {
                     throw new IllegalArgumentException(
                         "Unresolved type: ["
-                            + unresolvedClass.getName()
+                            + entry.getResolved().getClass().getName()
                             + "] does not match ResolutionEntry's type: ["
                             + entry.getType().name()
                             + "]for this ResolutionStatement");

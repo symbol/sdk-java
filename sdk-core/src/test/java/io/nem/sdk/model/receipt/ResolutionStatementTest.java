@@ -19,9 +19,12 @@ package io.nem.sdk.model.receipt;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import io.nem.core.utils.MapperUtils;
 import io.nem.sdk.model.account.Address;
+import io.nem.sdk.model.account.UnresolvedAddress;
 import io.nem.sdk.model.blockchain.NetworkType;
 import io.nem.sdk.model.mosaic.MosaicId;
+import io.nem.sdk.model.mosaic.UnresolvedMosaicId;
 import io.nem.sdk.model.namespace.AddressAlias;
 import io.nem.sdk.model.namespace.MosaicAlias;
 import java.math.BigInteger;
@@ -34,32 +37,32 @@ public class ResolutionStatementTest {
 
     static Address address;
     static MosaicId mosaicId;
-    static AddressAlias addressAlias;
-    static MosaicAlias mosaicAlias;
+    static UnresolvedAddress unresolvedAddress;
+    static UnresolvedMosaicId unresolvedMosaicId;
     static ReceiptSource receiptSource;
-    static ResolutionEntry<AddressAlias> addressAliasResolutionEntry;
-    static ResolutionEntry<MosaicAlias> mosaicAliasResolutionEntry;
+    static ResolutionEntry<Address> addressAliasResolutionEntry;
+    static ResolutionEntry<MosaicId> mosaicAliasResolutionEntry;
 
     @BeforeAll
     public static void setup() {
         address = new Address("SDGLFW-DSHILT-IUHGIB-H5UGX2-VYF5VN-JEKCCD-BR26",
             NetworkType.MIJIN_TEST);
         mosaicId = new MosaicId("85BBEA6CC462B244");
-        addressAlias = new AddressAlias(address);
-        mosaicAlias = new MosaicAlias(mosaicId);
+        unresolvedAddress = MapperUtils.toUnresolvedAddress(address.encoded());
+        unresolvedMosaicId = MapperUtils.toUnresolvedMosaicId("85BBEA6CC462B244");
         receiptSource = new ReceiptSource(1, 1);
         addressAliasResolutionEntry =
-            new ResolutionEntry(addressAlias, receiptSource, ReceiptType.ADDRESS_ALIAS_RESOLUTION);
+            new ResolutionEntry(address, receiptSource, ReceiptType.ADDRESS_ALIAS_RESOLUTION);
         mosaicAliasResolutionEntry =
-            new ResolutionEntry(mosaicAlias, receiptSource, ReceiptType.MOSAIC_ALIAS_RESOLUTION);
+            new ResolutionEntry(mosaicId, receiptSource, ReceiptType.MOSAIC_ALIAS_RESOLUTION);
     }
 
     @Test
     void shouldCreateAddressResolutionStatement() {
-        List<ResolutionEntry<AddressAlias>> resolutionEntries = new ArrayList<>();
+        List<ResolutionEntry<Address>> resolutionEntries = new ArrayList<>();
         resolutionEntries.add(addressAliasResolutionEntry);
         ResolutionStatement<Address> resolutionStatement =
-            new ResolutionStatement(BigInteger.TEN, address, resolutionEntries);
+            new ResolutionStatement(ResolutionType.ADDRESS, BigInteger.TEN, unresolvedAddress, resolutionEntries);
         assertEquals(BigInteger.TEN, resolutionStatement.getHeight());
         assertEquals(resolutionStatement.getUnresolved(), address);
         assertEquals(resolutionStatement.getResolutionEntries(), resolutionEntries);
@@ -67,12 +70,12 @@ public class ResolutionStatementTest {
 
     @Test
     void shouldCreateMosaicResolutionStatement() {
-        List<ResolutionEntry<MosaicAlias>> resolutionEntries = new ArrayList<>();
+        List<ResolutionEntry<MosaicId>> resolutionEntries = new ArrayList<>();
         resolutionEntries.add(mosaicAliasResolutionEntry);
         ResolutionStatement<Address> resolutionStatement =
-            new ResolutionStatement(BigInteger.TEN, mosaicId, resolutionEntries);
+            new ResolutionStatement(ResolutionType.MOSAIC, BigInteger.TEN, unresolvedMosaicId, resolutionEntries);
         assertEquals(BigInteger.TEN, resolutionStatement.getHeight());
-        assertEquals(resolutionStatement.getUnresolved(), mosaicId);
+        assertEquals(resolutionStatement.getUnresolved(), unresolvedMosaicId);
         assertEquals(resolutionStatement.getResolutionEntries(), resolutionEntries);
     }
 
@@ -81,9 +84,9 @@ public class ResolutionStatementTest {
         assertThrows(
             IllegalArgumentException.class,
             () -> {
-                List<ResolutionEntry<MosaicAlias>> resolutionEntries = new ArrayList<>();
+                List<ResolutionEntry<MosaicId>> resolutionEntries = new ArrayList<>();
                 resolutionEntries.add(mosaicAliasResolutionEntry);
-                new ResolutionStatement(BigInteger.TEN, "", resolutionEntries);
+                new ResolutionStatement(ResolutionType.MOSAIC, BigInteger.TEN, "", resolutionEntries);
             });
     }
 
@@ -92,9 +95,9 @@ public class ResolutionStatementTest {
         assertThrows(
             IllegalArgumentException.class,
             () -> {
-                List<ResolutionEntry<MosaicAlias>> resolutionEntries = new ArrayList<>();
+                List<ResolutionEntry<MosaicId>> resolutionEntries = new ArrayList<>();
                 resolutionEntries.add(mosaicAliasResolutionEntry);
-                new ResolutionStatement(BigInteger.TEN, address, resolutionEntries);
+                new ResolutionStatement(ResolutionType.MOSAIC, BigInteger.TEN, unresolvedAddress, resolutionEntries);
             });
     }
 }
