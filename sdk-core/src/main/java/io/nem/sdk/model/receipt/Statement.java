@@ -17,14 +17,16 @@
 package io.nem.sdk.model.receipt;
 
 import io.nem.sdk.model.account.Address;
+import io.nem.sdk.model.account.UnresolvedAddress;
 import io.nem.sdk.model.mosaic.MosaicId;
+import io.nem.sdk.model.mosaic.UnresolvedMosaicId;
 import java.util.List;
 
 public class Statement {
 
     private final List<TransactionStatement> transactionStatements;
-    private final List<ResolutionStatement<Address>> addressResolutionStatements;
-    private final List<ResolutionStatement<MosaicId>> mosaicResolutionStatement;
+    private final List<ResolutionStatement<UnresolvedAddress>> addressResolutionStatements;
+    private final List<ResolutionStatement<UnresolvedMosaicId>> mosaicResolutionStatement;
 
     /**
      * Constructor
@@ -35,8 +37,8 @@ public class Statement {
      */
     public Statement(
         List<TransactionStatement> transactionStatements,
-        List<ResolutionStatement<Address>> addressResolutionStatements,
-        List<ResolutionStatement<MosaicId>> mosaicResolutionStatement) {
+        List<ResolutionStatement<UnresolvedAddress>> addressResolutionStatements,
+        List<ResolutionStatement<UnresolvedMosaicId>> mosaicResolutionStatement) {
         this.addressResolutionStatements = addressResolutionStatements;
         this.mosaicResolutionStatement = mosaicResolutionStatement;
         this.transactionStatements = transactionStatements;
@@ -56,7 +58,7 @@ public class Statement {
      *
      * @return address resolution statements.
      */
-    public List<ResolutionStatement<Address>> getAddressResolutionStatements() {
+    public List<ResolutionStatement<UnresolvedAddress>> getAddressResolutionStatements() {
         return this.addressResolutionStatements;
     }
 
@@ -65,7 +67,7 @@ public class Statement {
      *
      * @return mosaic resolution statements.
      */
-    public List<ResolutionStatement<MosaicId>> getMosaicResolutionStatement() {
+    public List<ResolutionStatement<UnresolvedMosaicId>> getMosaicResolutionStatement() {
         return this.mosaicResolutionStatement;
     }
 }

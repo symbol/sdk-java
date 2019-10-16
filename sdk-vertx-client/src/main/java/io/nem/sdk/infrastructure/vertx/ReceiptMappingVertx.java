@@ -35,6 +35,7 @@ import io.nem.sdk.model.receipt.ReceiptType;
 import io.nem.sdk.model.receipt.ReceiptVersion;
 import io.nem.sdk.model.receipt.ResolutionEntry;
 import io.nem.sdk.model.receipt.ResolutionStatement;
+import io.nem.sdk.model.receipt.ResolutionType;
 import io.nem.sdk.model.receipt.Statement;
 import io.nem.sdk.model.receipt.TransactionStatement;
 import io.nem.sdk.model.transaction.JsonHelper;
@@ -64,11 +65,11 @@ public class ReceiptMappingVertx {
             input.getTransactionStatements().stream()
                 .map(receiptDto -> createTransactionStatement(receiptDto, networkType))
                 .collect(Collectors.toList());
-        List<ResolutionStatement<Address>> addressResolutionStatements =
+        List<ResolutionStatement<UnresolvedAddress>> addressResolutionStatements =
             input.getAddressResolutionStatements().stream()
                 .map(this::createAddressResolutionStatementFromDto)
                 .collect(Collectors.toList());
-        List<ResolutionStatement<MosaicId>> mosaicResolutionStatements =
+        List<ResolutionStatement<UnresolvedMosaicId>> mosaicResolutionStatements =
             input.getMosaicResolutionStatements().stream()
                 .map(this::createMosaicResolutionStatementFromDto)
                 .collect(Collectors.toList());
@@ -80,15 +81,15 @@ public class ReceiptMappingVertx {
     public ResolutionStatement<UnresolvedAddress> createAddressResolutionStatementFromDto(
         ResolutionStatementDTO receiptDto) {
         ResolutionStatementBodyDTO statement = receiptDto.getStatement();
-        return new ResolutionStatement<UnresolvedAddress>(
+        return new ResolutionStatement<>(
+            ResolutionType.ADDRESS,
             statement.getHeight(),
-            MapperUtils.toAddressFromEncoded(statement.getUnresolved().toString()),
+            MapperUtils.toUnresolvedAddress(statement.getUnresolved().toString()),
             statement.getResolutionEntries().stream()
                 .map(
                     entry ->
                         new ResolutionEntry<>(
-                            new AddressAlias(
-                                MapperUtils.toAddressFromEncoded(entry.getResolved().toString())),
+                            MapperUtils.toAddressFromEncoded(entry.getResolved().toString()),
                             new ReceiptSource(
                                 entry.getSource().getPrimaryId(),
                                 entry.getSource().getSecondaryId()),
@@ -99,11 +100,12 @@ public class ReceiptMappingVertx {
     public ResolutionStatement<UnresolvedMosaicId> createMosaicResolutionStatementFromDto(
         ResolutionStatementDTO receiptDto) {
         return new ResolutionStatement<UnresolvedMosaicId>(
+            ResolutionType.MOSAIC,
             receiptDto.getStatement().getHeight(),
-            MapperUtils.toMosaicId(receiptDto.getStatement().getUnresolved().toString()),
+            MapperUtils.toUnresolvedMosaicId(receiptDto.getStatement().getUnresolved().toString()),
             receiptDto.getStatement().getResolutionEntries().stream()
                 .map(entry -> new ResolutionEntry<>(
-                    new MosaicAlias(MapperUtils.toMosaicId(entry.getResolved().toString())),
+                    MapperUtils.toMosaicId(entry.getResolved().toString()),
                     new ReceiptSource(
                         entry.getSource().getPrimaryId(),
                         entry.getSource().getSecondaryId()),
