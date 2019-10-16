@@ -1,7 +1,10 @@
 package io.nem.sdk.model.receipt;
 
+import io.nem.core.utils.ByteUtils;
+import io.nem.core.utils.ConvertUtils;
 import io.nem.sdk.model.account.Address;
 import io.nem.sdk.model.mosaic.MosaicId;
+import java.nio.ByteBuffer;
 
 public class ResolutionEntry<T> {
 
@@ -59,6 +62,32 @@ public class ResolutionEntry<T> {
         if (!ReceiptType.RESOLUTION_STATEMENT.contains(type)) {
             throw new IllegalArgumentException("Receipt type: [" + type.name() + "] is not valid.");
         }
+    }
+
+    /**
+     * Serialize receipt and returns receipt bytes
+     *
+     * @return receipt bytes
+     */
+    public byte[] serialize() {
+        final byte[] resolvedBytes = getResolvedBytes();
+        final ByteBuffer buffer = ByteBuffer.allocate(8 + resolvedBytes.length);
+        buffer.put(resolvedBytes);
+        buffer.put(getReceiptSource().serialize());
+        return buffer.array();
+    }
+
+    /**
+     * Serialize resolved value depends on type
+     *
+     * @return resolved bytes
+     */
+    private byte[] getResolvedBytes() {
+        Class resolutionClass = this.resolved.getClass();
+        if (Address.class.isAssignableFrom(resolutionClass)) {
+            return ConvertUtils.getBytes(((Address)getResolved()).encoded());
+        }
+        return ByteUtils.reverseCopy(ByteUtils.bigIntToBytes(((MosaicId)getResolved()).getId()));
     }
 
     /**

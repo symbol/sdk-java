@@ -19,8 +19,10 @@ package io.nem.sdk.infrastructure.vertx;
 import io.nem.core.utils.MapperUtils;
 import io.nem.sdk.model.account.Address;
 import io.nem.sdk.model.account.PublicAccount;
+import io.nem.sdk.model.account.UnresolvedAddress;
 import io.nem.sdk.model.blockchain.NetworkType;
 import io.nem.sdk.model.mosaic.MosaicId;
+import io.nem.sdk.model.mosaic.UnresolvedMosaicId;
 import io.nem.sdk.model.namespace.AddressAlias;
 import io.nem.sdk.model.namespace.MosaicAlias;
 import io.nem.sdk.model.receipt.ArtifactExpiryReceipt;
@@ -75,10 +77,10 @@ public class ReceiptMappingVertx {
     }
 
 
-    public ResolutionStatement<Address> createAddressResolutionStatementFromDto(
+    public ResolutionStatement<UnresolvedAddress> createAddressResolutionStatementFromDto(
         ResolutionStatementDTO receiptDto) {
         ResolutionStatementBodyDTO statement = receiptDto.getStatement();
-        return new ResolutionStatement<>(
+        return new ResolutionStatement<UnresolvedAddress>(
             statement.getHeight(),
             MapperUtils.toAddressFromEncoded(statement.getUnresolved().toString()),
             statement.getResolutionEntries().stream()
@@ -94,9 +96,9 @@ public class ReceiptMappingVertx {
                 .collect(Collectors.toList()));
     }
 
-    public ResolutionStatement<MosaicId> createMosaicResolutionStatementFromDto(
+    public ResolutionStatement<UnresolvedMosaicId> createMosaicResolutionStatementFromDto(
         ResolutionStatementDTO receiptDto) {
-        return new ResolutionStatement<>(
+        return new ResolutionStatement<UnresolvedMosaicId>(
             receiptDto.getStatement().getHeight(),
             MapperUtils.toMosaicId(receiptDto.getStatement().getUnresolved().toString()),
             receiptDto.getStatement().getResolutionEntries().stream()
@@ -169,9 +171,9 @@ public class ReceiptMappingVertx {
             ReceiptVersion.BALANCE_CHANGE);
     }
 
-    public BalanceTransferReceipt<Address> createBalanceTransferRecipient(
+    public BalanceTransferReceipt createBalanceTransferRecipient(
         BalanceTransferReceiptDTO receipt, NetworkType networkType) {
-        return new BalanceTransferReceipt<>(
+        return new BalanceTransferReceipt(
             PublicAccount.createFromPublicKey(receipt.getSenderPublicKey(), networkType),
             MapperUtils.toAddressFromEncoded(receipt.getRecipientAddress()),
             new MosaicId(receipt.getMosaicId()),

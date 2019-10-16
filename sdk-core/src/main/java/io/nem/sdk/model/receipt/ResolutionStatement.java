@@ -16,15 +16,19 @@
 
 package io.nem.sdk.model.receipt;
 
-import io.nem.sdk.model.account.Address;
+import io.nem.core.crypto.Hashes;
+import io.nem.core.utils.ArrayUtils;
+import io.nem.core.utils.ByteUtils;
+import io.nem.sdk.infrastructure.SerializationUtils;
 import io.nem.sdk.model.account.UnresolvedAddress;
-import io.nem.sdk.model.mosaic.MosaicId;
 import io.nem.sdk.model.mosaic.UnresolvedMosaicId;
 import java.math.BigInteger;
 import java.util.List;
+import org.bouncycastle.util.encoders.Hex;
 
 public class ResolutionStatement<T> {
 
+    private final ResolutionType resolutionType;
     private final BigInteger height;
     private final T unresolved;
     private final List<ResolutionEntry> resolutionEntries;
@@ -37,10 +41,11 @@ public class ResolutionStatement<T> {
      * @param resolutionEntries Array of resolution entries.
      */
     public ResolutionStatement(
-        BigInteger height, T unresolved, List<ResolutionEntry> resolutionEntries) {
+        ResolutionType resolutionType, BigInteger height, T unresolved, List<ResolutionEntry> resolutionEntries) {
         this.height = height;
         this.unresolved = unresolved;
         this.resolutionEntries = resolutionEntries;
+        this.resolutionType = resolutionType;
         this.validateType();
     }
 
@@ -72,6 +77,15 @@ public class ResolutionStatement<T> {
     }
 
     /**
+     * Returns resolution type
+     *
+     * @return resolution type
+     */
+    public ResolutionType getResolutionType() {
+        return this.resolutionType;
+    }
+
+    /**
      * Validate unresolved type against resolutionEntry
      *
      * @return void
@@ -100,4 +114,40 @@ public class ResolutionStatement<T> {
                 }
             });
     }
+
+    /**
+     * Serialize resolution statement and generate hash
+     *
+     * @return resolution statement hash
+     */
+    public String generateHash() {
+
+        final byte[] versionByte = ByteUtils.shortToBytes(Short.reverseBytes((short)ReceiptVersion.RESOLUTION_STATEMENT.getValue()));
+        final byte[] typeByte = getResolutionType() == ResolutionType.ADDRESS ?
+            ByteUtils.shortToBytes(Short.reverseBytes((short)ReceiptType.ADDRESS_ALIAS_RESOLUTION.getValue())) :
+            ByteUtils.shortToBytes(Short.reverseBytes((short)ReceiptType.MOSAIC_ALIAS_RESOLUTION.getValue()));
+        final byte[] unresolvedBytes = serializeUnresolved();
+
+        byte[] results =  ArrayUtils.concat(versionByte, typeByte, unresolvedBytes);
+
+        for (final ResolutionEntry entry : resolutionEntries) {
+            results = ArrayUtils.concat(entry.serialize());
+        }
+
+        byte[] result = Hashes.sha3_256(results);
+        return Hex.toHexString(result).toUpperCase();
+    }
+
+    /**
+     * Generate unresolved bytes
+     *
+     * @return unresolved bytes
+     */
+    private byte[] serializeUnresolved() {
+        if (getResolutionType() == ResolutionType.ADDRESS) {
+            return SerializationUtils.fromUnresolvedAddressToByteBuffer((UnresolvedAddress)getUnresolved()).array();
+        }
+        return ByteUtils.reverseCopy(ByteUtils.bigIntToBytes(((UnresolvedMosaicId)getUnresolved()).getId()));
+    }
+
 }
