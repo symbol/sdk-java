@@ -17,14 +17,11 @@
 package io.nem.sdk.infrastructure.okhttp;
 
 import static io.nem.sdk.infrastructure.okhttp.TestHelperOkHttp.loadResource;
-import static io.nem.sdk.infrastructure.okhttp.TestHelperOkHttp.loadTransactionInfoDTO;
 
 import io.nem.sdk.model.blockchain.NetworkType;
 import io.nem.sdk.model.receipt.Statement;
 import io.nem.sdk.model.transaction.JsonHelper;
 import io.nem.sdk.openapi.okhttp_gson.model.StatementsDTO;
-import io.nem.sdk.openapi.okhttp_gson.model.TransactionInfoDTO;
-import org.bouncycastle.util.encoders.Hex;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

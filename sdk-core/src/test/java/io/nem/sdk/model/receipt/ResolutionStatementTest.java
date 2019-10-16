@@ -17,6 +17,7 @@
 package io.nem.sdk.model.receipt;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -134,13 +135,13 @@ public class ResolutionStatementTest {
     @Test
     void shouldGenerateHash() {
         List<ResolutionEntry<MosaicId>> resolutionEntries = new ArrayList<>();
-        resolutionEntries.add(mosaicAliasResolutionEntry);
-        ResolutionStatement<Address> resolutionStatement =
-            new ResolutionStatement(ResolutionType.MOSAIC, BigInteger.TEN, unresolvedMosaicId, resolutionEntries);
+        resolutionEntries.add(mosaicResolutionEntry);
+        MosaicResolutionStatement resolutionStatement = new MosaicResolutionStatement(
+            BigInteger.TEN, mosaicId, resolutionEntries);
 
         String hash = resolutionStatement.generateHash();
 
-        assertTrue(!hash.isEmpty());
+        assertFalse(hash.isEmpty());
         assertEquals(hash, "C965152CBD197283CC9F7AFD7F8C4C3FF03B0B54FCE7C8F4820F966AB0591A5C");
     }
 }
