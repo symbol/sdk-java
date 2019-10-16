@@ -133,11 +133,11 @@ public class ResolutionStatement<T> {
         byte[] results =  ArrayUtils.concat(versionByte, typeByte, unresolvedBytes);
 
         for (final ResolutionEntry entry : resolutionEntries) {
-            results = ArrayUtils.concat(entry.serialize());
+            results = ArrayUtils.concat(results, entry.serialize());
         }
 
-        byte[] result = Hashes.sha3_256(results);
-        return Hex.toHexString(result).toUpperCase();
+        byte[] hash = Hashes.sha3_256(results);
+        return Hex.toHexString(hash).toUpperCase();
     }
 
     /**
