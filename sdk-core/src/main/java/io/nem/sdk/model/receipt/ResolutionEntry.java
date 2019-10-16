@@ -13,17 +13,41 @@ public class ResolutionEntry<T> {
     private final ReceiptType type;
 
     /**
-     * Constructor
+     * Private constructor
      *
      * @param resolved A resolved address or resolved mosaicId alias (MosaicId| Address).
      * @param receiptSource The receipt source.
      */
-    public ResolutionEntry(T resolved, ReceiptSource receiptSource, ReceiptType type) {
+    ResolutionEntry(T resolved, ReceiptSource receiptSource, ReceiptType type) {
         this.receiptSource = receiptSource;
         this.resolved = resolved;
         this.type = type;
         this.validateReceiptType(type);
         this.validateResolvedType();
+    }
+
+    /**
+     * It creates a {@link ResolutionEntry} of an {@link Address}
+     *
+     * @param resolved the address
+     * @param receiptSource the recipient source
+     * @return the {@link ResolutionEntry}.
+     */
+    public static ResolutionEntry<Address> forAddress(Address resolved,
+        ReceiptSource receiptSource) {
+        return new ResolutionEntry<>(resolved, receiptSource, ReceiptType.ADDRESS_ALIAS_RESOLUTION);
+    }
+
+    /**
+     * It creates a {@link ResolutionEntry} of an {@link MosaicId}
+     *
+     * @param resolved the {@link MosaicId}
+     * @param receiptSource the recipient source
+     * @return the {@link ResolutionEntry}.
+     */
+    public static ResolutionEntry<MosaicId> forMosaicId(MosaicId resolved,
+        ReceiptSource receiptSource) {
+        return new ResolutionEntry<>(resolved, receiptSource, ReceiptType.MOSAIC_ALIAS_RESOLUTION);
     }
 
     /**
@@ -55,8 +79,6 @@ public class ResolutionEntry<T> {
 
     /**
      * Validate receipt type
-     *
-     * @return void
      */
     private void validateReceiptType(ReceiptType type) {
         if (!ReceiptType.RESOLUTION_STATEMENT.contains(type)) {
@@ -85,24 +107,29 @@ public class ResolutionEntry<T> {
     private byte[] getResolvedBytes() {
         Class resolutionClass = this.resolved.getClass();
         if (Address.class.isAssignableFrom(resolutionClass)) {
-            return ConvertUtils.getBytes(((Address)getResolved()).encoded());
+            return ConvertUtils.getBytes(((Address) getResolved()).encoded());
         }
-        return ByteUtils.reverseCopy(ByteUtils.bigIntToBytes(((MosaicId)getResolved()).getId()));
+        return ByteUtils.reverseCopy(ByteUtils.bigIntToBytes(((MosaicId) getResolved()).getId()));
     }
 
     /**
      * Validate resolved type (MosaicId | Address)
-     *
-     * @return void
      */
     private void validateResolvedType() {
-        Class resolutionClass = this.resolved.getClass();
-        if (!Address.class.isAssignableFrom(resolutionClass)
-            && !MosaicId.class.isAssignableFrom(resolutionClass)) {
+        validateType(ReceiptType.ADDRESS_ALIAS_RESOLUTION, Address.class);
+        validateType(ReceiptType.MOSAIC_ALIAS_RESOLUTION, MosaicId.class);
+    }
+
+    /**
+     * Validate resolved type (MosaicId | Address)
+     */
+    private void validateType(ReceiptType givenRecipientType, Class<?> expectedType) {
+        if (!expectedType.isAssignableFrom(this.resolved.getClass())
+            && getType() == givenRecipientType) {
             throw new IllegalArgumentException(
                 "Resolved type: ["
-                    + resolutionClass.getName()
-                    + "] is not valid for this ResolutionEntry");
+                    + expectedType.getName()
+                    + "] is not valid for this ResolutionEntry of type [" + getType() + "]");
         }
     }
 }

@@ -68,7 +68,7 @@ public class BalanceChangeReceipt extends Receipt {
         BigInteger amount,
         ReceiptType type,
         ReceiptVersion version) {
-        super(type, version, null);
+        super(type, version, Optional.empty());
         this.account = account;
         this.amount = amount;
         this.mosaicId = mosaicId;

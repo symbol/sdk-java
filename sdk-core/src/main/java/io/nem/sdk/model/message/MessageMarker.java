@@ -22,6 +22,12 @@ package io.nem.sdk.model.message;
 public class MessageMarker {
 
     /**
+     * private constructor.
+     */
+    private MessageMarker(){
+
+    }
+    /**
      * 8-byte marker: FE CC 71 C7 64 BF E5 98 for PersistentDelegationRequestTransaction message
      */
     public static final String PERSISTENT_DELEGATION_UNLOCK = "FECC71C764BFE598";

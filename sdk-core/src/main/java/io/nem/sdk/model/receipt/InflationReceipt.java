@@ -16,7 +16,6 @@
 
 package io.nem.sdk.model.receipt;
 
-import io.nem.core.utils.ConvertUtils;
 import io.nem.sdk.model.mosaic.MosaicId;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
@@ -58,7 +57,7 @@ public class InflationReceipt extends Receipt {
      */
     public InflationReceipt(
         MosaicId mosaicId, BigInteger amount, ReceiptType type, ReceiptVersion version) {
-        super(type, version, null);
+        super(type, version, Optional.empty());
         this.amount = amount;
         this.mosaicId = mosaicId;
         this.validateReceiptType(type);

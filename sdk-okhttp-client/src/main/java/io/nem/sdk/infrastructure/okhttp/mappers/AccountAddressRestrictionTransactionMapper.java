@@ -18,7 +18,6 @@ package io.nem.sdk.infrastructure.okhttp.mappers;
 
 import io.nem.core.utils.MapperUtils;
 import io.nem.sdk.model.account.UnresolvedAddress;
-import io.nem.sdk.model.account.UnresolvedAddress;
 import io.nem.sdk.model.blockchain.NetworkType;
 import io.nem.sdk.model.transaction.AccountAddressRestrictionTransaction;
 import io.nem.sdk.model.transaction.AccountAddressRestrictionTransactionFactory;

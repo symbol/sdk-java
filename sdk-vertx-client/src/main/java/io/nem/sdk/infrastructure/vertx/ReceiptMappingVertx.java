@@ -16,6 +16,10 @@
 
 package io.nem.sdk.infrastructure.vertx;
 
+import static io.nem.core.utils.MapperUtils.toAddressFromEncoded;
+import static io.nem.core.utils.MapperUtils.toAddressFromRawAddress;
+import static io.nem.core.utils.MapperUtils.toMosaicId;
+
 import io.nem.core.utils.MapperUtils;
 import io.nem.sdk.model.account.Address;
 import io.nem.sdk.model.account.PublicAccount;
@@ -25,16 +29,19 @@ import io.nem.sdk.model.mosaic.MosaicId;
 import io.nem.sdk.model.mosaic.UnresolvedMosaicId;
 import io.nem.sdk.model.namespace.AddressAlias;
 import io.nem.sdk.model.namespace.MosaicAlias;
+import io.nem.sdk.model.receipt.AddressResolutionStatement;
 import io.nem.sdk.model.receipt.ArtifactExpiryReceipt;
 import io.nem.sdk.model.receipt.BalanceChangeReceipt;
 import io.nem.sdk.model.receipt.BalanceTransferReceipt;
 import io.nem.sdk.model.receipt.InflationReceipt;
+import io.nem.sdk.model.receipt.MosaicResolutionStatement;
 import io.nem.sdk.model.receipt.Receipt;
 import io.nem.sdk.model.receipt.ReceiptSource;
 import io.nem.sdk.model.receipt.ReceiptType;
 import io.nem.sdk.model.receipt.ReceiptVersion;
 import io.nem.sdk.model.receipt.ResolutionEntry;
 import io.nem.sdk.model.receipt.ResolutionStatement;
+import io.nem.sdk.model.receipt.ResolutionType;
 import io.nem.sdk.model.receipt.Statement;
 import io.nem.sdk.model.receipt.TransactionStatement;
 import io.nem.sdk.model.transaction.JsonHelper;
@@ -64,11 +71,11 @@ public class ReceiptMappingVertx {
             input.getTransactionStatements().stream()
                 .map(receiptDto -> createTransactionStatement(receiptDto, networkType))
                 .collect(Collectors.toList());
-        List<ResolutionStatement<Address>> addressResolutionStatements =
+        List<AddressResolutionStatement> addressResolutionStatements =
             input.getAddressResolutionStatements().stream()
                 .map(this::createAddressResolutionStatementFromDto)
                 .collect(Collectors.toList());
-        List<ResolutionStatement<MosaicId>> mosaicResolutionStatements =
+        List<MosaicResolutionStatement> mosaicResolutionStatements =
             input.getMosaicResolutionStatements().stream()
                 .map(this::createMosaicResolutionStatementFromDto)
                 .collect(Collectors.toList());
@@ -77,40 +84,38 @@ public class ReceiptMappingVertx {
     }
 
 
-    public ResolutionStatement<UnresolvedAddress> createAddressResolutionStatementFromDto(
+    public AddressResolutionStatement createAddressResolutionStatementFromDto(
         ResolutionStatementDTO receiptDto) {
         ResolutionStatementBodyDTO statement = receiptDto.getStatement();
-        return new ResolutionStatement<UnresolvedAddress>(
+        return new AddressResolutionStatement(
             statement.getHeight(),
-            MapperUtils.toAddressFromEncoded(statement.getUnresolved().toString()),
+            toAddressFromEncoded(statement.getUnresolved().toString()),
             statement.getResolutionEntries().stream()
                 .map(
                     entry ->
-                        new ResolutionEntry<>(
-                            new AddressAlias(
-                                MapperUtils.toAddressFromEncoded(entry.getResolved().toString())),
+                        ResolutionEntry.forAddress(
+                            toAddressFromEncoded(entry.getResolved().toString()),
+                            new ReceiptSource(entry.getSource().getPrimaryId(),
+                                entry.getSource().getSecondaryId())))
+                .collect(Collectors.toList()));
+    }
+
+    public MosaicResolutionStatement createMosaicResolutionStatementFromDto(
+        ResolutionStatementDTO receiptDto) {
+        ResolutionStatementBodyDTO statement = receiptDto.getStatement();
+        return new MosaicResolutionStatement(
+            statement.getHeight(),
+            toMosaicId(statement.getUnresolved().toString()),
+            statement.getResolutionEntries().stream()
+                .map(
+                    entry ->
+                        ResolutionEntry.forMosaicId(
+                            toMosaicId(entry.getResolved().toString()),
                             new ReceiptSource(
                                 entry.getSource().getPrimaryId(),
-                                entry.getSource().getSecondaryId()),
-                            ReceiptType.ADDRESS_ALIAS_RESOLUTION))
+                                entry.getSource().getSecondaryId())))
                 .collect(Collectors.toList()));
     }
-
-    public ResolutionStatement<UnresolvedMosaicId> createMosaicResolutionStatementFromDto(
-        ResolutionStatementDTO receiptDto) {
-        return new ResolutionStatement<UnresolvedMosaicId>(
-            receiptDto.getStatement().getHeight(),
-            MapperUtils.toMosaicId(receiptDto.getStatement().getUnresolved().toString()),
-            receiptDto.getStatement().getResolutionEntries().stream()
-                .map(entry -> new ResolutionEntry<>(
-                    new MosaicAlias(MapperUtils.toMosaicId(entry.getResolved().toString())),
-                    new ReceiptSource(
-                        entry.getSource().getPrimaryId(),
-                        entry.getSource().getSecondaryId()),
-                    ReceiptType.MOSAIC_ALIAS_RESOLUTION))
-                .collect(Collectors.toList()));
-    }
-
 
     public TransactionStatement createTransactionStatement(
         TransactionStatementDTO input, NetworkType networkType) {

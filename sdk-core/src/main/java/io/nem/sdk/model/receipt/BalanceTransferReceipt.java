@@ -79,7 +79,7 @@ public class BalanceTransferReceipt extends Receipt {
         BigInteger amount,
         ReceiptType type,
         ReceiptVersion version) {
-        super(type, version, null);
+        super(type, version, Optional.empty());
         this.sender = sender;
         this.recipient = recipient;
         this.amount = amount;

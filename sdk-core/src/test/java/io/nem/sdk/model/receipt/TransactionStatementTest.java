@@ -53,7 +53,7 @@ public class TransactionStatementTest {
                 BigInteger.valueOf(10),
                 ReceiptType.LOCK_SECRET_EXPIRED,
                 ReceiptVersion.BALANCE_CHANGE);
-        BalanceTransferReceipt<Address> balanceTransferReceipt =
+        BalanceTransferReceipt balanceTransferReceipt =
             new BalanceTransferReceipt(
                 account.getPublicAccount(),
                 recipientAddress,

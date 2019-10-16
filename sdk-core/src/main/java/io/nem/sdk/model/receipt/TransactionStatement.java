@@ -84,7 +84,7 @@ public class TransactionStatement {
         byte[] results =  ArrayUtils.concat(versionByte, typeByte, sourceByte);
 
         for (final Receipt receipt : receipts) {
-            results = ArrayUtils.concat(receipt.serialize());
+            results = ArrayUtils.concat(results, receipt.serialize());
         }
 
         byte[] result = Hashes.sha3_256(results);

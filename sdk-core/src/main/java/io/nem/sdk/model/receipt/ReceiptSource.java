@@ -16,7 +16,6 @@
 
 package io.nem.sdk.model.receipt;
 
-import io.nem.core.utils.ConvertUtils;
 import java.nio.ByteBuffer;
 
 /**

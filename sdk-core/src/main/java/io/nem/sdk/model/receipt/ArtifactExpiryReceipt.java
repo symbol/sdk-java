@@ -16,7 +16,6 @@
 
 package io.nem.sdk.model.receipt;
 
-import io.nem.core.utils.ConvertUtils;
 import io.nem.sdk.model.mosaic.MosaicId;
 import io.nem.sdk.model.namespace.NamespaceId;
 import java.math.BigInteger;
@@ -51,7 +50,7 @@ public class ArtifactExpiryReceipt<T> extends Receipt {
      * @param version Receipt Version
      */
     public ArtifactExpiryReceipt(T artifactId, ReceiptType type, ReceiptVersion version) {
-        super(type, version, null);
+        super(type, version, Optional.empty());
         this.artifactId = artifactId;
         this.validateArtifactType();
         this.validateReceiptType(type);
@@ -89,8 +88,8 @@ public class ArtifactExpiryReceipt<T> extends Receipt {
      */
     public byte[] serialize() {
         final ByteBuffer buffer = ByteBuffer.allocate(12);
-        buffer.putShort(Short.reverseBytes((short)getVersion().getValue()));
-        buffer.putShort(Short.reverseBytes((short)getType().getValue()));
+        buffer.putShort(Short.reverseBytes((short) getVersion().getValue()));
+        buffer.putShort(Short.reverseBytes((short) getType().getValue()));
         buffer.putLong(Long.reverseBytes(getArtifactIdValue().longValue()));
         return buffer.array();
     }
@@ -108,13 +107,14 @@ public class ArtifactExpiryReceipt<T> extends Receipt {
 
     /**
      * Return typed artifact Id value
+     *
      * @return typed artifact Id value
      */
     private BigInteger getArtifactIdValue() {
         Class artifactClass = this.artifactId.getClass();
         if (MosaicId.class.isAssignableFrom(artifactClass)) {
-            return ((MosaicId)this.artifactId).getId();
+            return ((MosaicId) this.artifactId).getId();
         }
-        return ((NamespaceId)this.artifactId).getId();
+        return ((NamespaceId) this.artifactId).getId();
     }
 }
