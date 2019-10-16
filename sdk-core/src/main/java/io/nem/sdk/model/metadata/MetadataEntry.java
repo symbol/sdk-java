@@ -17,7 +17,6 @@
 package io.nem.sdk.model.metadata;
 
 import io.nem.core.utils.MapperUtils;
-import io.nem.sdk.model.mosaic.UnresolvedMosaicId;
 import java.math.BigInteger;
 import java.util.Optional;
 

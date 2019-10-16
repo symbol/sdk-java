@@ -16,7 +16,6 @@
 
 package io.nem.core.utils;
 
-import io.nem.sdk.infrastructure.SerializationUtils;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;

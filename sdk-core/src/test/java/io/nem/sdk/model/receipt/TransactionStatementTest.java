@@ -17,6 +17,7 @@
 package io.nem.sdk.model.receipt;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import io.nem.sdk.model.account.Account;
 import io.nem.sdk.model.account.Address;
@@ -53,7 +54,7 @@ public class TransactionStatementTest {
                 BigInteger.valueOf(10),
                 ReceiptType.LOCK_SECRET_EXPIRED,
                 ReceiptVersion.BALANCE_CHANGE);
-        BalanceTransferReceipt<Address> balanceTransferReceipt =
+        BalanceTransferReceipt balanceTransferReceipt =
             new BalanceTransferReceipt(
                 account.getPublicAccount(),
                 recipientAddress,
@@ -69,11 +70,22 @@ public class TransactionStatementTest {
     }
 
     @Test
-    void shouldCreateAddressResolutionTransactionStatement() {
+    void shouldCreateTransactionStatement() {
         TransactionStatement transactionStatement =
             new TransactionStatement(BigInteger.TEN, receiptSource, receipts);
         assertEquals(BigInteger.TEN, transactionStatement.getHeight());
         assertEquals(transactionStatement.getReceiptSource(), receiptSource);
         assertEquals(transactionStatement.getReceipts(), receipts);
+    }
+
+    @Test
+    void shouldGenerateHash() {
+        TransactionStatement transactionStatement =
+            new TransactionStatement(BigInteger.TEN, receiptSource, receipts);
+
+        String hash = transactionStatement.generateHash();
+
+        assertTrue(!hash.isEmpty());
+        assertEquals(hash, "7F3D026DF73EDD6E5C88456330FCDC60987620B13FECE946D8CD785021BE0252");
     }
 }

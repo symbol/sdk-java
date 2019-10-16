@@ -17,7 +17,6 @@
 package io.nem.sdk.model.transaction;
 
 import io.nem.sdk.model.account.UnresolvedAddress;
-import io.nem.sdk.model.account.UnresolvedAddress;
 import io.nem.sdk.model.blockchain.NetworkType;
 import java.util.List;
 import org.apache.commons.lang3.Validate;

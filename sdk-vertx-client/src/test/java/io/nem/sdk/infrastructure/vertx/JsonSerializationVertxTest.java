@@ -18,11 +18,9 @@ package io.nem.sdk.infrastructure.vertx;
 
 
 import static io.nem.sdk.infrastructure.vertx.TestHelperVertx.loadResource;
-import static io.nem.sdk.infrastructure.vertx.TestHelperVertx.loadTransactionInfoDTO;
 
 import io.nem.sdk.api.JsonSerialization;
 import io.nem.sdk.model.transaction.Transaction;
-import io.nem.sdk.openapi.vertx.model.TransactionInfoDTO;
 import io.vertx.core.json.Json;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

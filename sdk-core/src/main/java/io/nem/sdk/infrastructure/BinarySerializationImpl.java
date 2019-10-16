@@ -43,7 +43,6 @@ import io.nem.catapult.builders.NamespaceMetadataTransactionBodyBuilder;
 import io.nem.catapult.builders.NamespaceRegistrationTransactionBodyBuilder;
 import io.nem.catapult.builders.SecretLockTransactionBodyBuilder;
 import io.nem.catapult.builders.SecretProofTransactionBodyBuilder;
-import io.nem.catapult.builders.SignatureDto;
 import io.nem.catapult.builders.TransactionBuilder;
 import io.nem.catapult.builders.TransferTransactionBodyBuilder;
 import io.nem.core.utils.ConvertUtils;
@@ -51,7 +50,6 @@ import io.nem.core.utils.MapperUtils;
 import io.nem.core.utils.StringEncoder;
 import io.nem.sdk.api.BinarySerialization;
 import io.nem.sdk.model.account.Address;
-import io.nem.sdk.model.account.UnresolvedAddress;
 import io.nem.sdk.model.account.PublicAccount;
 import io.nem.sdk.model.account.UnresolvedAddress;
 import io.nem.sdk.model.blockchain.BlockDuration;
@@ -106,7 +104,7 @@ import java.io.DataInputStream;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -124,7 +122,8 @@ public class BinarySerializationImpl implements BinarySerialization {
     /**
      * The deserializers, one per {@link TransactionType} must be registered.
      */
-    private final Map<TransactionType, TransactionDeserializer> deserializers = new HashMap<>();
+    private final Map<TransactionType, TransactionDeserializer> deserializers = new EnumMap<>(
+        TransactionType.class);
 
     public BinarySerializationImpl() {
         register(new TransferTransactionDeserializer());

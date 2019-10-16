@@ -22,14 +22,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import io.nem.core.crypto.KeyPair;
 import io.nem.core.crypto.PrivateKey;
-import io.nem.sdk.api.BinarySerialization;
-import io.nem.sdk.infrastructure.BinarySerializationImpl;
 import io.nem.core.utils.ByteUtils;
 import io.nem.core.utils.ConvertUtils;
+import io.nem.sdk.api.BinarySerialization;
+import io.nem.sdk.infrastructure.BinarySerializationImpl;
 import io.nem.sdk.model.account.Account;
 import io.nem.sdk.model.account.Address;
 import io.nem.sdk.model.account.PublicAccount;
-import io.nem.sdk.model.account.UnresolvedAddress;
 import io.nem.sdk.model.blockchain.NetworkType;
 import io.nem.sdk.model.message.MessageType;
 import io.nem.sdk.model.message.PersistentHarvestingDelegationMessage;
@@ -41,9 +40,7 @@ import io.nem.sdk.model.namespace.NamespaceId;
 import java.math.BigInteger;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
 import org.bouncycastle.util.encoders.Hex;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -308,9 +305,11 @@ class TransferTransactionTest extends AbstractTransactionTester {
         String payload = signedTransaction.getPayload();
 
         assertEquals(mosaics.get(1).getId().getIdAsHex(),
-            ConvertUtils.toHex(ByteUtils.reverseCopy(ConvertUtils.getBytes(payload.substring(298, 314)))));
+            ConvertUtils
+                .toHex(ByteUtils.reverseCopy(ConvertUtils.getBytes(payload.substring(298, 314)))));
         assertEquals(mosaics.get(0).getId().getIdAsHex(),
-            ConvertUtils.toHex(ByteUtils.reverseCopy(ConvertUtils.getBytes(payload.substring(330, 346)))));
+            ConvertUtils
+                .toHex(ByteUtils.reverseCopy(ConvertUtils.getBytes(payload.substring(330, 346)))));
     }
 
     @Test
@@ -330,17 +329,20 @@ class TransferTransactionTest extends AbstractTransactionTester {
                 mosaics,
                 PlainMessage.Empty).deadline(new FakeDeadline()).build();
 
-        assertEquals(mosaics.get(0).getId().getIdAsHex().toUpperCase(), "D525AD41D95FCF29");
-        assertEquals(mosaics.get(1).getId().getIdAsHex().toUpperCase(), "77A1969932D987D7");
-        assertEquals(mosaics.get(2).getId().getIdAsHex().toUpperCase(), "67F2B76F28BD36BA");
+        assertEquals("D525AD41D95FCF29", mosaics.get(0).getId().getIdAsHex().toUpperCase());
+        assertEquals("77A1969932D987D7", mosaics.get(1).getId().getIdAsHex().toUpperCase());
+        assertEquals("67F2B76F28BD36BA", mosaics.get(2).getId().getIdAsHex().toUpperCase());
         SignedTransaction signedTransaction = transaction.signWith(account, generationHash);
         String payload = signedTransaction.getPayload();
 
         assertEquals(mosaics.get(2).getId().getIdAsHex(),
-            ConvertUtils.toHex(ByteUtils.reverseCopy(ConvertUtils.getBytes(payload.substring(298, 314)))));
+            ConvertUtils
+                .toHex(ByteUtils.reverseCopy(ConvertUtils.getBytes(payload.substring(298, 314)))));
         assertEquals(mosaics.get(1).getId().getIdAsHex(),
-            ConvertUtils.toHex(ByteUtils.reverseCopy(ConvertUtils.getBytes(payload.substring(330, 346)))));
+            ConvertUtils
+                .toHex(ByteUtils.reverseCopy(ConvertUtils.getBytes(payload.substring(330, 346)))));
         assertEquals(mosaics.get(0).getId().getIdAsHex(),
-            ConvertUtils.toHex(ByteUtils.reverseCopy(ConvertUtils.getBytes(payload.substring(362, 378)))));
+            ConvertUtils
+                .toHex(ByteUtils.reverseCopy(ConvertUtils.getBytes(payload.substring(362, 378)))));
     }
 }

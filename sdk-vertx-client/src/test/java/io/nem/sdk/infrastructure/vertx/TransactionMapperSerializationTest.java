@@ -16,21 +16,16 @@
 
 package io.nem.sdk.infrastructure.vertx;
 
-import io.nem.sdk.api.JsonSerialization;
 import io.nem.sdk.infrastructure.vertx.mappers.GeneralTransactionMapper;
 import io.nem.sdk.model.transaction.JsonHelper;
 import io.nem.sdk.model.transaction.Transaction;
 import io.nem.sdk.openapi.vertx.model.TransactionInfoDTO;
 import io.vertx.core.json.Json;
 import java.io.File;
-import java.io.InputStream;
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -51,7 +46,8 @@ public class TransactionMapperSerializationTest {
 
 
     private static List<String> transactionJsonFiles() {
-        return Arrays.stream(getResourceFolderFiles("json")).map(File::getName)
+        return Arrays.stream(getResourceFolderFiles("json"))
+            .filter(f -> f.getName().contains("Transaction")).map(File::getName)
             .collect(Collectors.toList());
     }
 
