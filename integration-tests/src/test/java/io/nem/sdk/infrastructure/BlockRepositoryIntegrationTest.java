@@ -23,6 +23,7 @@ import io.nem.sdk.api.BlockRepository;
 import io.nem.sdk.api.QueryParams;
 import io.nem.sdk.api.RepositoryCallException;
 import io.nem.sdk.model.blockchain.BlockInfo;
+import io.nem.sdk.model.blockchain.MerkelProofInfo;
 import io.nem.sdk.model.receipt.Statement;
 import io.nem.sdk.model.transaction.Transaction;
 import java.math.BigInteger;
@@ -74,6 +75,18 @@ class BlockRepositoryIntegrationTest extends BaseIntegrationTest {
             getBlockRepository(type).getBlockReceipts(BigInteger.valueOf(1)));
         assertTrue(statement.getTransactionStatements().isEmpty());
     }
+
+    @ParameterizedTest
+    @EnumSource(RepositoryType.class)
+    void getBlockReceiptMerkle(RepositoryType type) {
+        Statement statement = get(
+            getBlockRepository(type).getBlockReceipts(BigInteger.valueOf(2)));
+        String hash = statement.getTransactionStatements().get(0).generateHash();
+
+        MerkelProofInfo merkleInfo = get(getBlockRepository(type).getMerkleReceipts(BigInteger.valueOf(2), hash));
+        assertTrue(merkleInfo.getPayload().size() >= 0);
+    }
+
 
     @ParameterizedTest
     @EnumSource(RepositoryType.class)

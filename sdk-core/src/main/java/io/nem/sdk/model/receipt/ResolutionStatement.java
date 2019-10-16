@@ -161,8 +161,8 @@ public abstract class ResolutionStatement<U, R> {
             results = ArrayUtils.concat(results, entry.serialize());
         }
 
-        byte[] result = Hashes.sha3_256(results);
-        return Hex.toHexString(result).toUpperCase();
+        byte[] hash = Hashes.sha3_256(results);
+        return Hex.toHexString(hash).toUpperCase();
     }
 
     /**

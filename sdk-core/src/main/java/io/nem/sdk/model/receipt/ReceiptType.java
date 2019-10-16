@@ -158,7 +158,7 @@ public enum ReceiptType {
 
 
     public static final Set<ReceiptType> ARTIFACT_EXPIRY = Collections.unmodifiableSet(EnumSet
-        .of(MOSAIC_EXPIRED, NAMESPACE_EXPIRED));
+        .of(MOSAIC_EXPIRED, NAMESPACE_EXPIRED, NAMESPACE_DELETED));
 
     public static final Set<ReceiptType> BALANCE_CHANGE = Collections.unmodifiableSet(EnumSet.of(
         HARVEST_FEE,

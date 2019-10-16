@@ -18,6 +18,7 @@ package io.nem.sdk.model.receipt;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import io.nem.sdk.model.account.Address;
 import io.nem.sdk.model.blockchain.NetworkType;
@@ -128,5 +129,18 @@ public class ResolutionStatementTest {
         Assertions.assertEquals(
             "Unresolved Type: [io.nem.sdk.model.account.UnresolvedAddress] is not valid for this ResolutionEntry type ADDRESS",
             exception.getMessage());
+    }
+
+    @Test
+    void shouldGenerateHash() {
+        List<ResolutionEntry<MosaicId>> resolutionEntries = new ArrayList<>();
+        resolutionEntries.add(mosaicAliasResolutionEntry);
+        ResolutionStatement<Address> resolutionStatement =
+            new ResolutionStatement(ResolutionType.MOSAIC, BigInteger.TEN, unresolvedMosaicId, resolutionEntries);
+
+        String hash = resolutionStatement.generateHash();
+
+        assertTrue(!hash.isEmpty());
+        assertEquals(hash, "C965152CBD197283CC9F7AFD7F8C4C3FF03B0B54FCE7C8F4820F966AB0591A5C");
     }
 }

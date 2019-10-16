@@ -87,7 +87,7 @@ public class TransactionStatement {
             results = ArrayUtils.concat(results, receipt.serialize());
         }
 
-        byte[] result = Hashes.sha3_256(results);
-        return Hex.toHexString(result).toUpperCase();
+        byte[] hash = Hashes.sha3_256(results);
+        return Hex.toHexString(hash).toUpperCase();
     }
 }
