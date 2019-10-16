@@ -25,6 +25,12 @@ deploy:
       jdk: oraclejdk8
   - provider: script
     skip_cleanup: true
+    script: /bin/sh release.sh
+    on:
+      branch: release
+      jdk: oraclejdk8
+  - provider: script
+    skip_cleanup: true
     script: /bin/sh sonarqube.sh
     on:
       branch: master

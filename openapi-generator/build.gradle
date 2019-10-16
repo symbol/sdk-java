@@ -9,6 +9,7 @@ buildscript {
 
 plugins {
     id "org.openapi.generator" version "4.1.0"
+    id 'ch.netzwerg.release' version '1.2.5'
 }
 
 task clean(type: Delete) {
@@ -16,7 +17,7 @@ task clean(type: Delete) {
 }
 
 ext {
-    artifactVersion = "0.7.19-SNAPSHOT"
+    artifactVersion = rootProject.file('version.txt').text.trim()
 }
 
 //NOTE - For some reason the library field is ignored. I had to create a configFile per library.
@@ -174,3 +175,9 @@ subprojects {
         }
     }
 }
+
+release {
+    tagPrefix = 'open-api-spec-'
+}
+
+release.dependsOn subprojects.install

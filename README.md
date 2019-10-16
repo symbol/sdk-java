@@ -37,7 +37,7 @@ Each SDK user can depend on the best library for its need (example, ``sdk-vertx-
 <dependency>
     <groupId>io.nem</groupId>
     <artifactId>sdk-vertx-client</artifactId>
-    <version>0.13.0</version>
+    <version>0.14.0</version>
 </dependency>
 ```
 
@@ -47,27 +47,27 @@ OR
 <dependency>
     <groupId>io.nem</groupId>
     <artifactId>sdk-okhttp-client</artifactId>
-    <version>0.13.0</version>
+    <version>0.14.0</version>
 </dependency>
 ```
 
 
 ### Gradle
 
-```compile 'io.nem:sdk-vertx-client:0.13.0```
+```compile 'io.nem:sdk-vertx-client:0.14.0```
 
 OR
 
-```compile 'io.nem:sdk-okhttp-client:0.13.0```
+```compile 'io.nem:sdk-okhttp-client:0.14.0```
 
 
 ### SBT
 
-```libraryDependencies += "io.nem" % "sdk-vertx-client" % "0.13.0"```
+```libraryDependencies += "io.nem" % "sdk-vertx-client" % "0.14.0"```
 
 OR
 
-```libraryDependencies += "io.nem" % "sdk-okhttp-client" % "0.13.0"```
+```libraryDependencies += "io.nem" % "sdk-okhttp-client" % "0.14.0"```
 
 
 ## Documentation and Getting Started
@@ -112,4 +112,4 @@ Licensed under the [Apache License 2.0](LICENSE)
 [self]: https://github.com/nemtech/nem2-sdk-java
 [docs]: http://nemtech.github.io/getting-started/setup-workstation.html
 [issues]: https://github.com/nemtech/nem2-sdk-java/issues
-[sdk-ref]: http://nemtech.github.io/nem2-sdk-java
+[sdk-ref]: http://nemtech.github.io/nem2-sdk-java/javadoc/0.14.0/
