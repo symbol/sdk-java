@@ -16,7 +16,6 @@
 
 package io.nem.sdk.infrastructure;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 

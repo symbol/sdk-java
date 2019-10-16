@@ -21,7 +21,6 @@ import io.nem.core.utils.StringEncoder;
 import io.nem.sdk.model.account.PublicAccount;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
-import java.nio.charset.StandardCharsets;
 
 /**
  * Abstract transaction for all the metadata transactions.

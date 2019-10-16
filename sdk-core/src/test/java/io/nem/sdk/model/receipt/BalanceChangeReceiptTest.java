@@ -17,13 +17,15 @@
 package io.nem.sdk.model.receipt;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import io.nem.sdk.model.account.Account;
 import io.nem.sdk.model.blockchain.NetworkType;
 import io.nem.sdk.model.mosaic.MosaicId;
 import java.math.BigInteger;
+import org.bouncycastle.util.encoders.Hex;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -56,7 +58,7 @@ public class BalanceChangeReceiptTest {
                 ReceiptType.HARVEST_FEE,
                 ReceiptVersion.BALANCE_CHANGE);
         assertEquals(ReceiptType.HARVEST_FEE, balanceChangeReceipt.getType());
-        assertNull(balanceChangeReceipt.getSize());
+        assertFalse(balanceChangeReceipt.getSize().isPresent());
         assertEquals(ReceiptVersion.BALANCE_CHANGE, balanceChangeReceipt.getVersion());
         assertEquals(
             balanceChangeReceipt.getAccount().getPublicKey().toHex().toUpperCase(),
@@ -64,6 +66,9 @@ public class BalanceChangeReceiptTest {
         assertEquals("85BBEA6CC462B244",
             balanceChangeReceipt.getMosaicId().getIdAsHex().toUpperCase());
         assertEquals(BigInteger.TEN, balanceChangeReceipt.getAmount());
+
+        String hex = Hex.toHexString(balanceChangeReceipt.serialize());
+        Assertions.assertEquals("010043211026d70e1954775749c6811084d6450a3184d977383f0e4282cd47118af3775544b262c46ceabb850a00000000000000", hex);
     }
 
     @Test
@@ -76,8 +81,7 @@ public class BalanceChangeReceiptTest {
                 BigInteger.valueOf(10),
                 ReceiptType.LOCK_HASH_CREATED,
                 ReceiptVersion.BALANCE_CHANGE);
-        assertEquals(ReceiptType.LOCK_HASH_CREATED, balanceChangeReceipt.getType());
-        assertNull(balanceChangeReceipt.getSize());
+        assertEquals(ReceiptType.LOCK_HASH_CREATED, balanceChangeReceipt.getType());assertFalse(balanceChangeReceipt.getSize().isPresent());
         assertEquals(ReceiptVersion.BALANCE_CHANGE, balanceChangeReceipt.getVersion());
         assertEquals(
             balanceChangeReceipt.getAccount().getPublicKey().toHex().toUpperCase(),
@@ -86,6 +90,9 @@ public class BalanceChangeReceiptTest {
             balanceChangeReceipt.getMosaicId().getIdAsHex().toUpperCase()
         );
         assertEquals(BigInteger.TEN, balanceChangeReceipt.getAmount());
+
+        String hex = Hex.toHexString(balanceChangeReceipt.serialize());
+        Assertions.assertEquals("010048311026d70e1954775749c6811084d6450a3184d977383f0e4282cd47118af3775544b262c46ceabb850a00000000000000", hex);
     }
 
     @Test
@@ -99,7 +106,7 @@ public class BalanceChangeReceiptTest {
                 ReceiptType.LOCK_HASH_EXPIRED,
                 ReceiptVersion.BALANCE_CHANGE);
         assertEquals(ReceiptType.LOCK_HASH_EXPIRED, balanceChangeReceipt.getType());
-        assertNull(balanceChangeReceipt.getSize());
+        assertFalse(balanceChangeReceipt.getSize().isPresent());
         assertEquals(ReceiptVersion.BALANCE_CHANGE, balanceChangeReceipt.getVersion());
         assertEquals(
             balanceChangeReceipt.getAccount().getPublicKey().toHex().toUpperCase(),
@@ -108,6 +115,9 @@ public class BalanceChangeReceiptTest {
             balanceChangeReceipt.getMosaicId().getIdAsHex().toUpperCase()
         );
         assertEquals(BigInteger.TEN, balanceChangeReceipt.getAmount());
+
+        String hex = Hex.toHexString(balanceChangeReceipt.serialize());
+        Assertions.assertEquals("010048231026d70e1954775749c6811084d6450a3184d977383f0e4282cd47118af3775544b262c46ceabb850a00000000000000", hex);
     }
 
     @Test
@@ -120,8 +130,7 @@ public class BalanceChangeReceiptTest {
                 BigInteger.valueOf(10),
                 ReceiptType.LOCK_HASH_COMPLETED,
                 ReceiptVersion.BALANCE_CHANGE);
-        assertEquals(ReceiptType.LOCK_HASH_COMPLETED, balanceChangeReceipt.getType());
-        assertNull(balanceChangeReceipt.getSize());
+        assertEquals(ReceiptType.LOCK_HASH_COMPLETED, balanceChangeReceipt.getType());assertFalse(balanceChangeReceipt.getSize().isPresent());
         assertEquals(ReceiptVersion.BALANCE_CHANGE, balanceChangeReceipt.getVersion());
         assertEquals(
             balanceChangeReceipt.getAccount().getPublicKey().toHex().toUpperCase(),
@@ -130,6 +139,9 @@ public class BalanceChangeReceiptTest {
             balanceChangeReceipt.getMosaicId().getIdAsHex().toUpperCase()
         );
         assertEquals(BigInteger.TEN, balanceChangeReceipt.getAmount());
+
+        String hex = Hex.toHexString(balanceChangeReceipt.serialize());
+        Assertions.assertEquals("010048221026d70e1954775749c6811084d6450a3184d977383f0e4282cd47118af3775544b262c46ceabb850a00000000000000", hex);
     }
 
     @Test
@@ -143,7 +155,7 @@ public class BalanceChangeReceiptTest {
                 ReceiptType.LOCK_SECRET_CREATED,
                 ReceiptVersion.BALANCE_CHANGE);
         assertEquals(ReceiptType.LOCK_SECRET_CREATED, balanceChangeReceipt.getType());
-        assertNull(balanceChangeReceipt.getSize());
+        assertFalse(balanceChangeReceipt.getSize().isPresent());
         assertEquals(ReceiptVersion.BALANCE_CHANGE, balanceChangeReceipt.getVersion());
         assertEquals(
             balanceChangeReceipt.getAccount().getPublicKey().toHex().toUpperCase(),
@@ -152,6 +164,9 @@ public class BalanceChangeReceiptTest {
             balanceChangeReceipt.getMosaicId().getIdAsHex().toUpperCase()
         );
         assertEquals(BigInteger.TEN, balanceChangeReceipt.getAmount());
+
+        String hex = Hex.toHexString(balanceChangeReceipt.serialize());
+        Assertions.assertEquals("010052311026d70e1954775749c6811084d6450a3184d977383f0e4282cd47118af3775544b262c46ceabb850a00000000000000", hex);
     }
 
     @Test
@@ -165,7 +180,7 @@ public class BalanceChangeReceiptTest {
                 ReceiptType.LOCK_SECRET_EXPIRED,
                 ReceiptVersion.BALANCE_CHANGE);
         assertEquals(ReceiptType.LOCK_SECRET_EXPIRED, balanceChangeReceipt.getType());
-        assertNull(balanceChangeReceipt.getSize());
+        assertFalse(balanceChangeReceipt.getSize().isPresent());
         assertEquals(ReceiptVersion.BALANCE_CHANGE, balanceChangeReceipt.getVersion());
         assertEquals(
             balanceChangeReceipt.getAccount().getPublicKey().toHex().toUpperCase(),
@@ -174,6 +189,9 @@ public class BalanceChangeReceiptTest {
             balanceChangeReceipt.getMosaicId().getIdAsHex().toUpperCase()
         );
         assertEquals(BigInteger.TEN, balanceChangeReceipt.getAmount());
+
+        String hex = Hex.toHexString(balanceChangeReceipt.serialize());
+        Assertions.assertEquals("010052231026d70e1954775749c6811084d6450a3184d977383f0e4282cd47118af3775544b262c46ceabb850a00000000000000", hex);
     }
 
     @Test
@@ -187,7 +205,7 @@ public class BalanceChangeReceiptTest {
                 ReceiptType.LOCK_SECRET_COMPLETED,
                 ReceiptVersion.BALANCE_CHANGE);
         assertEquals(ReceiptType.LOCK_SECRET_COMPLETED, balanceChangeReceipt.getType());
-        assertNull(balanceChangeReceipt.getSize());
+        assertFalse(balanceChangeReceipt.getSize().isPresent());
         assertEquals(ReceiptVersion.BALANCE_CHANGE, balanceChangeReceipt.getVersion());
         assertEquals(
             balanceChangeReceipt.getAccount().getPublicKey().toHex().toUpperCase(),
@@ -196,6 +214,9 @@ public class BalanceChangeReceiptTest {
             balanceChangeReceipt.getMosaicId().getIdAsHex().toUpperCase()
         );
         assertEquals(BigInteger.TEN, balanceChangeReceipt.getAmount());
+
+        String hex = Hex.toHexString(balanceChangeReceipt.serialize());
+        Assertions.assertEquals("010052221026d70e1954775749c6811084d6450a3184d977383f0e4282cd47118af3775544b262c46ceabb850a00000000000000", hex);
     }
 
     @Test

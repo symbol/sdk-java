@@ -1,0 +1,86 @@
+{
+  "transactionStatements": [
+    {
+      "statement": {
+        "height": "52",
+        "source": {
+          "primaryId": 0,
+          "secondaryId": 0
+        },
+        "receipts": [
+          {
+            "version": 1,
+            "type": 8515,
+            "targetPublicKey": "2FC3872A792933617D70E02AFF8FBDE152821A0DF0CA5FB04CB56FC3D21C8863",
+            "mosaicId": "85BBEA6CC462B244",
+            "amount": "1000"
+          }
+        ]
+      }
+    }
+  ],
+  "addressResolutionStatements": [
+    {
+      "statement": {
+        "height": "1488",
+        "unresolved": "9103B60AAF2762688300000000000000000000000000000000",
+        "resolutionEntries": [
+          {
+            "source": {
+              "primaryId": 4,
+              "secondaryId": 0
+            },
+            "resolved": "917E7E29A01014C2F300000000000000000000000000000000"
+          }
+        ]
+      }
+    },
+    {
+      "statement": {
+        "height": "1488",
+        "unresolved": "917E7E29A01014C2F300000000000000000000000000000000",
+        "resolutionEntries": [
+          {
+            "source": {
+              "primaryId": 2,
+              "secondaryId": 0
+            },
+            "resolved": "9103B60AAF2762688300000000000000000000000000000000"
+          }
+        ]
+      }
+    }
+  ],
+  "mosaicResolutionStatements": [
+    {
+      "statement": {
+        "height": "1506",
+        "unresolved": "85BBEA6CC462B244",
+        "resolutionEntries": [
+          {
+            "source": {
+              "primaryId": 1,
+              "secondaryId": 0
+            },
+            "resolved": "941299B2B7E1291C"
+          }
+        ]
+      }
+    },
+    {
+      "statement": {
+        "height": "1506",
+        "unresolved": "85BBEA6CC462B244",
+        "resolutionEntries": [
+          {
+            "source": {
+              "primaryId": 5,
+              "secondaryId": 0
+            },
+            "resolved": "941299B2B7E1291C"
+          }
+        ]
+      }
+    }
+  ]
+}

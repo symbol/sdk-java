@@ -31,8 +31,6 @@ import io.vertx.core.http.impl.headers.VertxHttpHeaders;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
-import org.apache.commons.codec.binary.Base32;
-import org.apache.commons.codec.binary.Hex;
 import org.junit.jupiter.api.BeforeEach;
 import org.mockito.Mockito;
 import org.mockito.stubbing.Answer;
