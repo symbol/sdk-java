@@ -73,7 +73,7 @@ def signingPassword = getPropertyValue('signingPassword')
 
 def githubToken = getPropertyValue('githubToken')
 def repoPath = getPropertyValue('TRAVIS_REPO_SLUG')
-def excludedCoverage = ['**/nem/catapult/builders/**']
+def excludedCoverage = ['**catapult**']
 
 allprojects {
     ext."signing.keyId" = signingKeyId
@@ -278,6 +278,11 @@ task jacocoRootReport(type: JacocoReport, group: 'Coverage reports') {
         html.enabled = true // human readable
         xml.enabled = true // required by coveralls
     }
+    afterEvaluate {
+        classDirectories = files(classDirectories.files.collect {
+            fileTree(dir: it, exclude: excludedCoverage)
+        })
+    }
 }
 
 coveralls {
@@ -347,6 +352,6 @@ sonarqube {
         property "sonar.organization", sonarOrganization
         property "sonar.login", sonarLogin
         property "sonar.host.url", sonarHostUrl
-        property "sonar.exclusions", "**/io/nem/catapult/builders/**"
+        property "sonar.exclusions", excludedCoverage.join(",")
     }
 }
