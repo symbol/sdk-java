@@ -161,7 +161,7 @@ subprojects {
     jacocoTestReport {
         afterEvaluate {
             classDirectories = files(classDirectories.files.collect {
-                fileTree(dir: it, exclude: ['**/*DTO.*', '**/*Buffer.*'])
+                fileTree(dir: it, exclude: [ '**/nem/catapult/builders/**'])
             })
         }
         reports {
@@ -196,7 +196,7 @@ subprojects {
         }
     }
     uploadArchives {
-        
+
         repositories {
             mavenDeployer {
                 if (signingKeyId != null) {
