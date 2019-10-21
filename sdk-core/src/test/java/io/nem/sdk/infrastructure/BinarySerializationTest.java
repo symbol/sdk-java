@@ -56,7 +56,7 @@ class BinarySerializationTest {
         List<TransactionType> notHandledTransactionTypes = Arrays.stream(TransactionType.values())
             .filter(t -> {
                 try {
-                    Assertions.assertNotNull(binarySerialization.resolveMapper(t));
+                    Assertions.assertNotNull(binarySerialization.resolveSerializer(t));
                     return false;
                 } catch (UnsupportedOperationException e) {
                     return true;

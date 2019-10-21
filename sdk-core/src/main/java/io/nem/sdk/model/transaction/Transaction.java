@@ -16,18 +16,18 @@
 
 package io.nem.sdk.model.transaction;
 
-import io.nem.catapult.builders.EntityTypeDto;
 import io.nem.core.crypto.CryptoEngines;
 import io.nem.core.crypto.DsaSigner;
 import io.nem.core.crypto.Hashes;
 import io.nem.core.crypto.Signature;
 import io.nem.core.utils.ConvertUtils;
 import io.nem.core.utils.MapperUtils;
+import io.nem.sdk.api.BinarySerialization;
+import io.nem.sdk.infrastructure.BinarySerializationImpl;
 import io.nem.sdk.model.account.Account;
 import io.nem.sdk.model.account.PublicAccount;
 import io.nem.sdk.model.blockchain.NetworkType;
 import java.math.BigInteger;
-import java.nio.ByteBuffer;
 import java.util.Optional;
 import org.bouncycastle.util.encoders.Hex;
 
@@ -37,6 +37,11 @@ import org.bouncycastle.util.encoders.Hex;
  * @since 1.0
  */
 public abstract class Transaction {
+
+    /**
+     * The BinarySerialization object.
+     */
+    private static final BinarySerialization BINARY_SERIALIZATION = new BinarySerializationImpl();
 
     private final TransactionType type;
     private final NetworkType networkType;
@@ -68,13 +73,13 @@ public abstract class Transaction {
      * @return generated transaction hash.
      */
     public static String createTransactionHash(
-        String transactionPayload, final byte[] generationhashBytes) {
+        String transactionPayload, final byte[] generationHashBytes) {
         byte[] bytes = Hex.decode(transactionPayload);
-        byte[] signingBytes = new byte[bytes.length + generationhashBytes.length - 36];
+        byte[] signingBytes = new byte[bytes.length + generationHashBytes.length - 36];
         System.arraycopy(bytes, 4, signingBytes, 0, 32);
         System.arraycopy(bytes, 68, signingBytes, 32, 32);
-        System.arraycopy(generationhashBytes, 0, signingBytes, 64, generationhashBytes.length);
-        System.arraycopy(bytes, 100, signingBytes, generationhashBytes.length + 64,
+        System.arraycopy(generationHashBytes, 0, signingBytes, 64, generationHashBytes.length);
+        System.arraycopy(bytes, 100, signingBytes, generationHashBytes.length + 64,
             bytes.length - 100);
 
         byte[] result = Hashes.sha3_256(signingBytes);
@@ -156,25 +161,13 @@ public abstract class Transaction {
     }
 
     /**
-     * Generate bytes for a specific transaction.
-     */
-    abstract byte[] generateBytes();
-
-    /**
-     * Generate bytes for a specific inner transaction.
-     *
-     * @return bytes of the transaction
-     */
-    abstract byte[] generateEmbeddedBytes();
-
-    /**
      * Serialises a transaction model into binary (unsigned payload). Gets the serialised bytes for
      * a transaction.
      *
      * @return bytes of the transaction
      */
     public byte[] serialize() {
-        return this.generateBytes();
+        return BINARY_SERIALIZATION.serialize(this);
     }
 
     /**
@@ -188,7 +181,7 @@ public abstract class Transaction {
 
         final DsaSigner theSigner = CryptoEngines.defaultEngine()
             .createDsaSigner(account.getKeyPair(), getNetworkType().resolveSignSchema());
-        final byte[] bytes = this.generateBytes();
+        final byte[] bytes = this.serialize();
         final byte[] generationHashBytes = ConvertUtils.getBytes(generationHash);
         final byte[] signingBytes = new byte[bytes.length + generationHashBytes.length - 100];
         System.arraycopy(generationHashBytes, 0, signingBytes, 0, generationHashBytes.length);
@@ -213,15 +206,6 @@ public abstract class Transaction {
     }
 
     /**
-     * Takes a transaction and formats bytes to be included in an aggregate transaction.
-     *
-     * @return transaction with signer serialized to be part of an aggregate transaction
-     */
-    byte[] toAggregateTransactionBytes() {
-        return this.generateEmbeddedBytes();
-    }
-
-    /**
      * Convert an aggregate transaction to an inner transaction including transaction signer.
      *
      * @param signer Transaction signer.
@@ -238,12 +222,9 @@ public abstract class Transaction {
      * @return if a transaction is pending to be included in a block
      */
     public boolean isUnconfirmed() {
-        return this.transactionInfo.isPresent()
-            && this.transactionInfo.get().getHeight().equals(BigInteger.valueOf(0))
-            && this.transactionInfo
-            .get()
-            .getHash()
-            .equals(this.transactionInfo.get().getMerkleComponentHash());
+        return getTransactionInfo().filter(info -> info.getHeight().equals(BigInteger.valueOf(0))
+            && info.getHash().equals(info.getMerkleComponentHash())).isPresent();
+
     }
 
     /**
@@ -252,8 +233,8 @@ public abstract class Transaction {
      * @return if a transaction is included in a block
      */
     public boolean isConfirmed() {
-        return this.transactionInfo.isPresent()
-            && this.transactionInfo.get().getHeight().intValue() > 0;
+        return this.getTransactionInfo().filter(info -> info.getHeight().intValue() > 0)
+            .isPresent();
     }
 
     /**
@@ -262,12 +243,10 @@ public abstract class Transaction {
      * @return if a transaction has missing signatures
      */
     public boolean hasMissingSignatures() {
-        return this.transactionInfo.isPresent()
-            && this.transactionInfo.get().getHeight().equals(BigInteger.valueOf(0))
-            && !this.transactionInfo
-            .get()
-            .getHash()
-            .equals(this.transactionInfo.get().getMerkleComponentHash());
+        return this.getTransactionInfo()
+            .filter(info -> info.getHeight().equals(BigInteger.valueOf(0))
+                && !info.getHash().equals(info.getMerkleComponentHash()))
+            .isPresent();
     }
 
     /**
@@ -276,16 +255,7 @@ public abstract class Transaction {
      * @return if a transaction is not known by the network
      */
     public boolean isUnannounced() {
-        return !this.transactionInfo.isPresent();
-    }
-
-    /**
-     * Gets the version of the transaction to send to the server.
-     *
-     * @return Version of the transaction
-     */
-    protected short getNetworkVersion() {
-        return (short) getTransactionVersion();
+        return !this.getTransactionInfo().isPresent();
     }
 
     /**
@@ -295,35 +265,5 @@ public abstract class Transaction {
      */
     public int getTransactionVersion() {
         return MapperUtils.toNetworkVersion(getNetworkType(), getVersion());
-    }
-
-    /**
-     * Returns (optionally) the transaction creator public account.
-     *
-     * @return an optional of the signer public account
-     */
-    protected Optional<ByteBuffer> getSignerBytes() {
-        if (signer.isPresent()) {
-            final byte[] bytes = signer.get().getPublicKey().getBytes();
-            return Optional.of(ByteBuffer.wrap(bytes));
-        }
-        return Optional.empty();
-    }
-
-    /**
-     * Returns the transaction creator public account.
-     *
-     * @return the signer public account
-     */
-    protected ByteBuffer getRequiredSignerBytes() {
-        return getSignerBytes()
-            .orElseThrow(() -> new IllegalStateException("SignerBytes is required"));
-    }
-
-    /**
-     * @return EntityTypeDto transaction type of this transaction for catbuffer.
-     */
-    protected EntityTypeDto getEntityTypeDto() {
-        return EntityTypeDto.rawValueOf((short) type.getValue());
     }
 }

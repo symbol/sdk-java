@@ -107,7 +107,7 @@ public class VertxAggregateTransactionTest {
                             NetworkType.MIJIN_TEST)))
             ).deadline(new VertxFakeDeadline()).build();
 
-        byte[] actual = aggregateTx.generateBytes();
+        byte[] actual = aggregateTx.serialize();
         assertEquals(expected, Hex.toHexString(actual));
     }
 

@@ -15,19 +15,7 @@
  */
 package io.nem.sdk.model.transaction;
 
-import io.nem.catapult.builders.AccountMosaicRestrictionModificationBuilder;
-import io.nem.catapult.builders.AccountMosaicRestrictionTransactionBuilder;
-import io.nem.catapult.builders.AccountRestrictionModificationActionDto;
-import io.nem.catapult.builders.AccountRestrictionTypeDto;
-import io.nem.catapult.builders.AmountDto;
-import io.nem.catapult.builders.EmbeddedAccountMosaicRestrictionTransactionBuilder;
-import io.nem.catapult.builders.KeyDto;
-import io.nem.catapult.builders.SignatureDto;
-import io.nem.catapult.builders.TimestampDto;
-import io.nem.catapult.builders.UnresolvedMosaicIdDto;
 import io.nem.sdk.model.mosaic.UnresolvedMosaicId;
-import java.nio.ByteBuffer;
-import java.util.ArrayList;
 import java.util.List;
 
 public class AccountMosaicRestrictionTransaction extends Transaction {
@@ -60,62 +48,4 @@ public class AccountMosaicRestrictionTransaction extends Transaction {
         return this.modifications;
     }
 
-    /**
-     * Serialized the transaction.
-     *
-     * @return bytes of the transaction.
-     */
-    byte[] generateBytes() {
-        // Add place holders to the signer and signature until actually signed
-        final ByteBuffer signerBuffer = ByteBuffer.allocate(32);
-        final ByteBuffer signatureBuffer = ByteBuffer.allocate(64);
-
-        AccountMosaicRestrictionTransactionBuilder txBuilder =
-            AccountMosaicRestrictionTransactionBuilder.create(
-                new SignatureDto(signatureBuffer),
-                new KeyDto(signerBuffer),
-                getNetworkVersion(),
-                getEntityTypeDto(),
-                new AmountDto(getMaxFee().longValue()),
-                new TimestampDto(getDeadline().getInstant()),
-                AccountRestrictionTypeDto.rawValueOf((byte) this.restrictionType.getValue()),
-                getModificationBuilder());
-        return txBuilder.serialize();
-    }
-
-    /**
-     * Gets the embedded tx bytes.
-     *
-     * @return Embedded tx bytes
-     */
-    byte[] generateEmbeddedBytes() {
-        EmbeddedAccountMosaicRestrictionTransactionBuilder txBuilder =
-            EmbeddedAccountMosaicRestrictionTransactionBuilder.create(
-                new KeyDto(getRequiredSignerBytes()),
-                getNetworkVersion(),
-                getEntityTypeDto(),
-                AccountRestrictionTypeDto.rawValueOf((byte) this.restrictionType.getValue()),
-                getModificationBuilder());
-        return txBuilder.serialize();
-    }
-
-    /**
-     * Gets account restriction modification.
-     *
-     * @return account restriction modification.
-     */
-    private ArrayList<AccountMosaicRestrictionModificationBuilder> getModificationBuilder() {
-        final ArrayList<AccountMosaicRestrictionModificationBuilder> modificationBuilder =
-            new ArrayList<>(modifications.size());
-        for (AccountRestrictionModification<UnresolvedMosaicId> accountRestrictionModification : modifications) {
-            final AccountMosaicRestrictionModificationBuilder builder =
-                AccountMosaicRestrictionModificationBuilder.create(
-                    AccountRestrictionModificationActionDto.rawValueOf(
-                        accountRestrictionModification.getModificationAction().getValue()),
-                    new UnresolvedMosaicIdDto(
-                        accountRestrictionModification.getValue().getIdAsLong()));
-            modificationBuilder.add(builder);
-        }
-        return modificationBuilder;
-    }
 }

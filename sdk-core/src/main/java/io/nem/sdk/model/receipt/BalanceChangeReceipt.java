@@ -109,8 +109,8 @@ public class BalanceChangeReceipt extends Receipt {
      */
     public byte[] serialize() {
         final ByteBuffer buffer = ByteBuffer.allocate(52);
-        buffer.putShort(Short.reverseBytes((short)getVersion().getValue()));
-        buffer.putShort(Short.reverseBytes((short)getType().getValue()));
+        buffer.putShort(Short.reverseBytes((short) getVersion().getValue()));
+        buffer.putShort(Short.reverseBytes((short) getType().getValue()));
         buffer.put(ConvertUtils.getBytes(getAccount().getPublicKey().toHex()));
         buffer.putLong(Long.reverseBytes(getMosaicId().getIdAsLong()));
         buffer.putLong(Long.reverseBytes(getAmount().longValue()));

@@ -17,20 +17,10 @@
 
 package io.nem.sdk.model.transaction;
 
-import io.nem.catapult.builders.AmountDto;
-import io.nem.catapult.builders.EmbeddedMosaicAddressRestrictionTransactionBuilder;
-import io.nem.catapult.builders.KeyDto;
-import io.nem.catapult.builders.MosaicAddressRestrictionTransactionBuilder;
-import io.nem.catapult.builders.SignatureDto;
-import io.nem.catapult.builders.TimestampDto;
-import io.nem.catapult.builders.UnresolvedAddressDto;
-import io.nem.catapult.builders.UnresolvedMosaicIdDto;
-import io.nem.sdk.infrastructure.SerializationUtils;
 import io.nem.sdk.model.account.Address;
 import io.nem.sdk.model.account.UnresolvedAddress;
 import io.nem.sdk.model.mosaic.UnresolvedMosaicId;
 import java.math.BigInteger;
-import java.nio.ByteBuffer;
 
 /**
  * Mosaic address restriction transaction.
@@ -112,45 +102,4 @@ public class MosaicAddressRestrictionTransaction extends Transaction {
         return newRestrictionValue;
     }
 
-    @Override
-    byte[] generateBytes() {
-        // Add place holders to the signer and signature until actually signed
-        final ByteBuffer signerBuffer = ByteBuffer.allocate(32);
-        final ByteBuffer signatureBuffer = ByteBuffer.allocate(64);
-
-        MosaicAddressRestrictionTransactionBuilder txBuilder =
-            MosaicAddressRestrictionTransactionBuilder.create(
-                new SignatureDto(signatureBuffer),
-                new KeyDto(signerBuffer),
-                getNetworkVersion(),
-                getEntityTypeDto(),
-                new AmountDto(getMaxFee().longValue()),
-                new TimestampDto(getDeadline().getInstant()),
-                new UnresolvedMosaicIdDto(getMosaicId().getIdAsLong()),
-                getRestrictionKey().longValue(),
-                new UnresolvedAddressDto(
-                    SerializationUtils.fromUnresolvedAddressToByteBuffer(getTargetAddress())),
-                getPreviousRestrictionValue().longValue(),
-                getNewRestrictionValue().longValue()
-            );
-        return txBuilder.serialize();
-    }
-
-    @Override
-    byte[] generateEmbeddedBytes() {
-
-        EmbeddedMosaicAddressRestrictionTransactionBuilder txBuilder =
-            EmbeddedMosaicAddressRestrictionTransactionBuilder.create(
-                new KeyDto(getRequiredSignerBytes()),
-                getNetworkVersion(),
-                getEntityTypeDto(),
-                new UnresolvedMosaicIdDto(getMosaicId().getIdAsLong()),
-                getRestrictionKey().longValue(),
-                new UnresolvedAddressDto(
-                    SerializationUtils.fromUnresolvedAddressToByteBuffer(getTargetAddress())),
-                getPreviousRestrictionValue().longValue(),
-                getNewRestrictionValue().longValue()
-            );
-        return txBuilder.serialize();
-    }
 }

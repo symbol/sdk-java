@@ -19,10 +19,12 @@ package io.nem.sdk.model.transaction;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import io.nem.core.utils.ConvertUtils;
 import io.nem.sdk.infrastructure.BinarySerializationImpl;
 import io.nem.sdk.model.account.Account;
 import java.math.BigInteger;
 import java.util.Collections;
+import java.util.Random;
 import org.bouncycastle.util.encoders.Hex;
 
 /**
@@ -45,7 +47,7 @@ abstract class AbstractTransactionTester {
      * @return the cloned transaction
      */
     protected <T extends Transaction> T assertSerialization(String expected, T transaction) {
-        byte[] actual = transaction.generateBytes();
+        byte[] actual = transaction.serialize();
         assertEquals(expected, Hex.toHexString(actual));
         T deserialized = (T) binarySerialization.deserialize(actual);
         assertEquals(expected, Hex.toHexString(binarySerialization.serialize(deserialized)));
@@ -67,7 +69,7 @@ abstract class AbstractTransactionTester {
      * @return the cloned transaction
      */
     protected <T extends Transaction> T assertAggregate(T transaction) {
-        byte[] actual = transaction.generateBytes();
+        byte[] actual = transaction.serialize();
         //Clone
         T deserialized = (T) binarySerialization.deserialize(actual);
         String generationHash = "57F7DA205008026C776CB6AED843393F04CD458E0AA2D9F1D5F31A402072B2D6";
@@ -99,10 +101,17 @@ abstract class AbstractTransactionTester {
      */
     protected <T extends Transaction> T assertEmbeddedSerialization(String expected,
         T transaction) {
-        byte[] actual = transaction.generateEmbeddedBytes();
+        byte[] actual = binarySerialization.serializeEmbedded(transaction);
         assertEquals(expected, Hex.toHexString(actual));
         T deserialized = (T) binarySerialization.deserializeEmbedded(actual);
-        assertEquals(expected, Hex.toHexString(deserialized.generateEmbeddedBytes()));
+        assertEquals(expected,
+            Hex.toHexString(binarySerialization.serializeEmbedded(deserialized)));
         return deserialized;
+    }
+
+    protected String createRandomSignature() {
+        byte[] randomSignature = new byte[64];
+        new Random().nextBytes(randomSignature);
+        return ConvertUtils.toHex(randomSignature);
     }
 }

@@ -16,6 +16,7 @@
 
 package io.nem.sdk.model.transaction;
 
+import io.nem.sdk.infrastructure.BinarySerializationImpl;
 import io.nem.sdk.model.account.Account;
 import io.nem.sdk.model.account.Address;
 import io.nem.sdk.model.account.PublicAccount;
@@ -78,18 +79,19 @@ public class AggregateTransactionTest extends AbstractTransactionTester {
 
         String expected = "1601000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001904142000000000000000001000000000000009a000000610000009a49366406aca952b88badf5f1e9be6ce4968141035a60be503273ea65456b240190544190e8febd671dd41bee94ec3ba5831cb608a312c2f203ba84ac0d000100536f6d65204d657373616765672b0000ce5600006400000000000000390000009a49366406aca952b88badf5f1e9be6ce4968141035a60be503273ea65456b2401904d428869746e9b1a7057010a00000000000000";
 
-        AggregateTransaction serialized = assertSerialization(expected,
-            aggregateTransaction);
+        BinarySerializationImpl binarySerialization = new BinarySerializationImpl();
+
+        AggregateTransaction serialized = assertSerialization(expected, aggregateTransaction);
         Assertions.assertEquals(0, serialized.getCosignatures().size());
         Assertions.assertEquals(2, serialized.getInnerTransactions().size());
         Assertions.assertEquals(transaction1.getType(),
             serialized.getInnerTransactions().get(0).getType());
-        Assertions.assertArrayEquals(transaction1.generateEmbeddedBytes(),
-            serialized.getInnerTransactions().get(0).generateEmbeddedBytes());
+        Assertions.assertArrayEquals(binarySerialization.serializeEmbedded(transaction1),
+            binarySerialization.serializeEmbedded(serialized.getInnerTransactions().get(0)));
         Assertions.assertEquals(transaction2.getType(),
             serialized.getInnerTransactions().get(1).getType());
-        Assertions.assertArrayEquals(transaction2.generateEmbeddedBytes(),
-            serialized.getInnerTransactions().get(1).generateEmbeddedBytes());
+        Assertions.assertArrayEquals(binarySerialization.serializeEmbedded(transaction2),
+            binarySerialization.serializeEmbedded(serialized.getInnerTransactions().get(1)));
     }
 
     @Test
@@ -191,15 +193,17 @@ public class AggregateTransactionTest extends AbstractTransactionTester {
         Assertions.assertEquals(cosignature2.getSignature(),
             serialized.getCosignatures().get(1).getSignature().toUpperCase());
 
+        BinarySerializationImpl binarySerialization = new BinarySerializationImpl();
+
         Assertions.assertEquals(2, serialized.getInnerTransactions().size());
         Assertions.assertEquals(transaction1.getType(),
             serialized.getInnerTransactions().get(0).getType());
-        Assertions.assertArrayEquals(transaction1.generateEmbeddedBytes(),
-            serialized.getInnerTransactions().get(0).generateEmbeddedBytes());
+        Assertions.assertArrayEquals(binarySerialization.serializeEmbedded(transaction1),
+            binarySerialization.serializeEmbedded(serialized.getInnerTransactions().get(0)));
         Assertions.assertEquals(transaction2.getType(),
             serialized.getInnerTransactions().get(1).getType());
-        Assertions.assertArrayEquals(transaction2.generateEmbeddedBytes(),
-            serialized.getInnerTransactions().get(1).generateEmbeddedBytes());
+        Assertions.assertArrayEquals(binarySerialization.serializeEmbedded(transaction2),
+            binarySerialization.serializeEmbedded(serialized.getInnerTransactions().get(1)));
     }
 
 }

@@ -101,7 +101,7 @@ public class OkHttpAggregateTransactionTest {
                             "846B4439154579A5903B1459C9CF69CB8153F6D0110A7A0ED61DE29AE4810BF2",
                             NetworkType.MIJIN_TEST)))).deadline(new OkHttpFakeDeadline()).build();
 
-        byte[] actual = aggregateTx.generateBytes();
+        byte[] actual = aggregateTx.serialize();
         assertEquals(expected, Hex.toHexString(actual));
     }
 

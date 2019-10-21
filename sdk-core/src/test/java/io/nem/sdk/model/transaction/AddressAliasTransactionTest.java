@@ -17,11 +17,13 @@
 
 package io.nem.sdk.model.transaction;
 
+import io.nem.core.utils.ConvertUtils;
 import io.nem.sdk.model.account.PublicAccount;
 import io.nem.sdk.model.blockchain.NetworkType;
 import io.nem.sdk.model.namespace.AliasAction;
 import io.nem.sdk.model.namespace.NamespaceId;
 import java.math.BigInteger;
+import java.util.Random;
 import org.junit.jupiter.api.Test;
 
 public class AddressAliasTransactionTest extends AbstractTransactionTester {
@@ -43,15 +45,20 @@ public class AddressAliasTransactionTest extends AbstractTransactionTester {
                 "3D28C804EDD07D5A728E5C5FFEC01AB07AFA5766AE6997B38526D36015A4D006",
                 "5A0069D83F17CF0001777E55");
 
+        String signatureHex = createRandomSignature();
+
         AddressAliasTransaction transaction = AddressAliasTransactionFactory.create(networkType,
             AliasAction.LINK, namespaceId, signature.getAddress()).signer(signature)
-            .transactionInfo(transactionInfo).signature("signing").deadline(new FakeDeadline())
+            .transactionInfo(transactionInfo).signature(signatureHex).deadline(new FakeDeadline())
             .maxFee(fee).build();
 
-        String expectedHash = "9a00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001904e4201000000000000000100000000000000014bfa5f372d55b3849049e14bebca93758eb36805bae760a57239976f009a545cad";
+        String expectedHash = "9a000000" + signatureHex
+            + "68b3fbb18729c1fde225c57f8ce080fa828f0067e451a3fd81fa628842b0b76301904e4201000000000000000100000000000000014bfa5f372d55b3849049e14bebca93758eb36805bae760a57239976f009a545cad";
         assertSerialization(expectedHash, transaction);
 
         String expectedEmbeddedHash = "4a00000068b3fbb18729c1fde225c57f8ce080fa828f0067e451a3fd81fa628842b0b76301904e42014bfa5f372d55b3849049e14bebca93758eb36805bae760a57239976f009a545cad";
         assertEmbeddedSerialization(expectedEmbeddedHash, transaction);
     }
+
+
 }
