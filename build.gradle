@@ -138,7 +138,7 @@ subprojects {
 
             // configure jacoco to analyze the junitPlatformTest task
             jacoco {
-                excludes = excludedCoverage
+               // excludes = excludedCoverage
                 applyTo task
             }
 
@@ -147,7 +147,7 @@ subprojects {
                     {
                         sourceDirectories = files("./src/main")
                         classDirectories = files("$buildDir/classes/main")
-                        excludes = excludedCoverage
+                       // excludes = excludedCoverage
                         executionData task
                     })
         }
@@ -173,7 +173,7 @@ subprojects {
     junitPlatformTest {
         jacoco {
             destinationFile = file("${buildDir}/jacoco/test.exec")
-            excludes = excludedCoverage
+            //excludes = excludedCoverage
         }
     }
 
