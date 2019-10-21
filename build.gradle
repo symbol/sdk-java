@@ -73,7 +73,7 @@ def signingPassword = getPropertyValue('signingPassword')
 
 def githubToken = getPropertyValue('githubToken')
 def repoPath = getPropertyValue('TRAVIS_REPO_SLUG')
-
+def excludedCoverage = ['**/nem/catapult/builders/**']
 
 allprojects {
     ext."signing.keyId" = signingKeyId
@@ -138,8 +138,7 @@ subprojects {
 
             // configure jacoco to analyze the junitPlatformTest task
             jacoco {
-                // this tool version is compatible with
-//                toolVersion = "0.7.6.201602180812"
+                excludes = excludedCoverage
                 applyTo task
             }
 
@@ -148,20 +147,20 @@ subprojects {
                     {
                         sourceDirectories = files("./src/main")
                         classDirectories = files("$buildDir/classes/main")
+                        excludes = excludedCoverage
                         executionData task
                     })
         }
     }
 
     jacoco {
-//        toolVersion = '0.7.9'
         applyTo junitPlatformTest
     }
 
     jacocoTestReport {
         afterEvaluate {
             classDirectories = files(classDirectories.files.collect {
-                fileTree(dir: it, exclude: [ '**/nem/catapult/builders/**'])
+                fileTree(dir: it, exclude: excludedCoverage)
             })
         }
         reports {
@@ -174,6 +173,7 @@ subprojects {
     junitPlatformTest {
         jacoco {
             destinationFile = file("${buildDir}/jacoco/test.exec")
+            excludes = excludedCoverage
         }
     }
 
