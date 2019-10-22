@@ -16,6 +16,8 @@
 
 package io.nem.sdk.infrastructure.okhttp;
 
+import io.nem.sdk.api.BinarySerialization;
+import io.nem.sdk.infrastructure.BinarySerializationImpl;
 import io.nem.sdk.infrastructure.okhttp.mappers.GeneralTransactionMapper;
 import io.nem.sdk.model.transaction.JsonHelper;
 import io.nem.sdk.model.transaction.Transaction;
@@ -31,6 +33,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.bouncycastle.util.encoders.Hex;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -81,6 +84,11 @@ public class TransactionMapperSerializationTest {
 
         Assertions.assertEquals(jsonHelper.prettyPrint(originalTransactionInfo),
             jsonHelper.prettyPrint(mappedTransactionInfo));
+
+        BinarySerialization serialization = new BinarySerializationImpl();
+        Assertions.assertEquals(Hex.toHexString(serialization.serialize(transactionModel)),
+            Hex.toHexString(serialization.serialize(transactionMapper.map(mappedTransactionInfo))));
+
 
     }
 

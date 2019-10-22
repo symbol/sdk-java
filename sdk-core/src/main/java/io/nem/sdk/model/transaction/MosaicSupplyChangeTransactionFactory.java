@@ -18,8 +18,8 @@
 package io.nem.sdk.model.transaction;
 
 import io.nem.sdk.model.blockchain.NetworkType;
-import io.nem.sdk.model.mosaic.UnresolvedMosaicId;
 import io.nem.sdk.model.mosaic.MosaicSupplyChangeActionType;
+import io.nem.sdk.model.mosaic.UnresolvedMosaicId;
 import java.math.BigInteger;
 import org.apache.commons.lang3.Validate;
 

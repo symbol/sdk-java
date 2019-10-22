@@ -16,9 +16,6 @@
 
 package io.nem.sdk.model.account;
 
-import io.nem.sdk.model.mosaic.MosaicId;
-import java.nio.ByteBuffer;
-
 /**
  * Unresolved address is used when the referenced account can be accessed via an {@link Address} or
  * a {@link io.nem.sdk.model.namespace.NamespaceId}

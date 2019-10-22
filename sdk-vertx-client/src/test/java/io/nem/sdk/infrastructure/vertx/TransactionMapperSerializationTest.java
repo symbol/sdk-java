@@ -16,6 +16,8 @@
 
 package io.nem.sdk.infrastructure.vertx;
 
+import io.nem.sdk.api.BinarySerialization;
+import io.nem.sdk.infrastructure.BinarySerializationImpl;
 import io.nem.sdk.infrastructure.vertx.mappers.GeneralTransactionMapper;
 import io.nem.sdk.model.transaction.JsonHelper;
 import io.nem.sdk.model.transaction.Transaction;
@@ -25,7 +27,9 @@ import java.io.File;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
+import org.bouncycastle.util.encoders.Hex;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -72,8 +76,17 @@ public class TransactionMapperSerializationTest {
 
         TransactionInfoDTO mappedTransactionInfo = transactionMapper.map(transactionModel);
 
+        //Patching the sort
+        mappedTransactionInfo
+            .setTransaction(jsonHelper.convert(mappedTransactionInfo.getTransaction(),
+                Map.class));
+
         Assertions.assertEquals(jsonHelper.prettyPrint(originalTransactionInfo),
             jsonHelper.prettyPrint(mappedTransactionInfo));
+
+        BinarySerialization serialization = new BinarySerializationImpl();
+        Assertions.assertEquals(Hex.toHexString(serialization.serialize(transactionModel)),
+            Hex.toHexString(serialization.serialize(transactionMapper.map(mappedTransactionInfo))));
 
     }
 

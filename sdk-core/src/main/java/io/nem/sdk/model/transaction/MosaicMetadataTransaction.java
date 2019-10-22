@@ -17,15 +17,7 @@
 
 package io.nem.sdk.model.transaction;
 
-import io.nem.catapult.builders.AmountDto;
-import io.nem.catapult.builders.EmbeddedMosaicMetadataTransactionBuilder;
-import io.nem.catapult.builders.KeyDto;
-import io.nem.catapult.builders.MosaicMetadataTransactionBuilder;
-import io.nem.catapult.builders.SignatureDto;
-import io.nem.catapult.builders.TimestampDto;
-import io.nem.catapult.builders.UnresolvedMosaicIdDto;
 import io.nem.sdk.model.mosaic.UnresolvedMosaicId;
-import java.nio.ByteBuffer;
 
 /**
  * Announce an MosaicMetadataTransaction to associate a key-value state to an mosaic.
@@ -50,46 +42,6 @@ public class MosaicMetadataTransaction extends MetadataTransaction {
 
     public UnresolvedMosaicId getTargetMosaicId() {
         return targetMosaicId;
-    }
-
-
-    @Override
-    byte[] generateBytes() {
-        // Add place holders to the signer and signature until actually signed
-        final ByteBuffer signerBuffer = ByteBuffer.allocate(32);
-        final ByteBuffer signatureBuffer = ByteBuffer.allocate(64);
-
-        MosaicMetadataTransactionBuilder txBuilder =
-            MosaicMetadataTransactionBuilder.create(
-                new SignatureDto(signatureBuffer),
-                new KeyDto(signerBuffer),
-                getNetworkVersion(),
-                getEntityTypeDto(),
-                new AmountDto(getMaxFee().longValue()),
-                new TimestampDto(getDeadline().getInstant()),
-                new KeyDto(this.getTargetAccount().getPublicKey().getByteBuffer()),
-                this.getScopedMetadataKey().longValue(),
-                new UnresolvedMosaicIdDto(getTargetMosaicId().getId().longValue()),
-                (short) getValueSizeDelta(),
-                getValueBuffer()
-            );
-        return txBuilder.serialize();
-    }
-
-    @Override
-    byte[] generateEmbeddedBytes() {
-        EmbeddedMosaicMetadataTransactionBuilder txBuilder =
-            EmbeddedMosaicMetadataTransactionBuilder.create(
-                new KeyDto(getRequiredSignerBytes()),
-                getNetworkVersion(),
-                getEntityTypeDto(),
-                new KeyDto(this.getTargetAccount().getPublicKey().getByteBuffer()),
-                this.getScopedMetadataKey().longValue(),
-                new UnresolvedMosaicIdDto(getTargetMosaicId().getId().longValue()),
-                (short) getValueSizeDelta(),
-                getValueBuffer()
-            );
-        return txBuilder.serialize();
     }
 
 }

@@ -77,11 +77,13 @@ public class TransactionStatement {
      */
     public String generateHash() {
 
-        final byte[] versionByte = ByteUtils.shortToBytes(Short.reverseBytes((short)ReceiptVersion.TRANSACTION_STATEMENT.getValue()));
-        final byte[] typeByte = ByteUtils.shortToBytes(Short.reverseBytes((short)ReceiptType.TRANSACTION_GROUP.getValue()));
+        final byte[] versionByte = ByteUtils.shortToBytes(
+            Short.reverseBytes((short) ReceiptVersion.TRANSACTION_STATEMENT.getValue()));
+        final byte[] typeByte = ByteUtils
+            .shortToBytes(Short.reverseBytes((short) ReceiptType.TRANSACTION_GROUP.getValue()));
         final byte[] sourceByte = getReceiptSource().serialize();
 
-        byte[] results =  ArrayUtils.concat(versionByte, typeByte, sourceByte);
+        byte[] results = ArrayUtils.concat(versionByte, typeByte, sourceByte);
 
         for (final Receipt receipt : receipts) {
             results = ArrayUtils.concat(results, receipt.serialize());

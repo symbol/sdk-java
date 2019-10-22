@@ -20,6 +20,7 @@ import io.nem.sdk.model.account.Address;
 import io.nem.sdk.model.account.UnresolvedAddress;
 import java.math.BigInteger;
 import java.util.List;
+
 /**
  * {@link ResolutionStatement} specific for addresses.
  */

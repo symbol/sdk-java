@@ -67,7 +67,7 @@ class MosaicSupplyChangeTransactionTest extends AbstractTransactionTester {
                 BigInteger.valueOf(10)
             ).deadline(new FakeDeadline()).build();
 
-        byte[] actual = transaction.generateBytes();
+        byte[] actual = transaction.serialize();
         assertEquals(expected, Hex.toHexString(actual));
 
         assertSerialization(expected, transaction);
