@@ -28,10 +28,11 @@ public interface BinarySerialization {
     /**
      * It serializes a transaction into a byte array using the catapult buffer format.
      *
+     * @param <T> the type of the transaction
      * @param transaction the transaction
      * @return the byte array.
      */
-    byte[] serialize(Transaction transaction);
+    <T extends Transaction> byte[] serialize(T transaction);
 
 
     /**

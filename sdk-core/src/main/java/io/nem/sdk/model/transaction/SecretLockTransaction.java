@@ -16,24 +16,9 @@
 
 package io.nem.sdk.model.transaction;
 
-import io.nem.catapult.builders.AmountDto;
-import io.nem.catapult.builders.BlockDurationDto;
-import io.nem.catapult.builders.EmbeddedSecretLockTransactionBuilder;
-import io.nem.catapult.builders.Hash256Dto;
-import io.nem.catapult.builders.KeyDto;
-import io.nem.catapult.builders.LockHashAlgorithmDto;
-import io.nem.catapult.builders.SecretLockTransactionBuilder;
-import io.nem.catapult.builders.SignatureDto;
-import io.nem.catapult.builders.TimestampDto;
-import io.nem.catapult.builders.UnresolvedAddressDto;
-import io.nem.catapult.builders.UnresolvedMosaicBuilder;
-import io.nem.catapult.builders.UnresolvedMosaicIdDto;
-import io.nem.sdk.infrastructure.SerializationUtils;
 import io.nem.sdk.model.account.UnresolvedAddress;
 import io.nem.sdk.model.mosaic.Mosaic;
 import java.math.BigInteger;
-import java.nio.ByteBuffer;
-import org.bouncycastle.util.encoders.Hex;
 
 public class SecretLockTransaction extends Transaction {
 
@@ -103,67 +88,4 @@ public class SecretLockTransaction extends Transaction {
         return recipient;
     }
 
-    /**
-     * Serialized the transaction.
-     *
-     * @return bytes of the transaction.
-     */
-    @Override
-    byte[] generateBytes() {
-        // Add place holders to the signer and signature until actually signed
-        final ByteBuffer signerBuffer = ByteBuffer.allocate(32);
-        final ByteBuffer signatureBuffer = ByteBuffer.allocate(64);
-
-        SecretLockTransactionBuilder txBuilder =
-            SecretLockTransactionBuilder.create(
-                new SignatureDto(signatureBuffer),
-                new KeyDto(signerBuffer),
-                getNetworkVersion(),
-                getEntityTypeDto(),
-                new AmountDto(getMaxFee().longValue()),
-                new TimestampDto(getDeadline().getInstant()),
-                UnresolvedMosaicBuilder.create(
-                    new UnresolvedMosaicIdDto(mosaic.getId().getIdAsLong()),
-                    new AmountDto(mosaic.getAmount().longValue())),
-                new BlockDurationDto(duration.longValue()),
-                LockHashAlgorithmDto.rawValueOf((byte) hashAlgorithm.getValue()),
-                new Hash256Dto(getSecretBuffer()),
-                new UnresolvedAddressDto(
-                    SerializationUtils.fromUnresolvedAddressToByteBuffer(getRecipient())));
-        return txBuilder.serialize();
-    }
-
-    /**
-     * Gets the embedded tx bytes.
-     *
-     * @return Embedded tx bytes
-     */
-    @Override
-    byte[] generateEmbeddedBytes() {
-        EmbeddedSecretLockTransactionBuilder txBuilder =
-            EmbeddedSecretLockTransactionBuilder.create(
-                new KeyDto(getRequiredSignerBytes()),
-                getNetworkVersion(),
-                getEntityTypeDto(),
-                UnresolvedMosaicBuilder.create(
-                    new UnresolvedMosaicIdDto(mosaic.getId().getIdAsLong()),
-                    new AmountDto(mosaic.getAmount().longValue())),
-                new BlockDurationDto(duration.longValue()),
-                LockHashAlgorithmDto.rawValueOf((byte) hashAlgorithm.getValue()),
-                new Hash256Dto(getSecretBuffer()),
-                new UnresolvedAddressDto(
-                    SerializationUtils.fromUnresolvedAddressToByteBuffer(getRecipient())));
-        return txBuilder.serialize();
-    }
-
-    /**
-     * Gets secret buffer.
-     *
-     * @return Secret buffer.
-     */
-    private ByteBuffer getSecretBuffer() {
-        final ByteBuffer secretBuffer = ByteBuffer.allocate(32);
-        secretBuffer.put(Hex.decode(secret));
-        return secretBuffer;
-    }
 }

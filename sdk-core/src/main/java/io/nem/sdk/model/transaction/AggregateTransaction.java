@@ -16,21 +16,11 @@
 
 package io.nem.sdk.model.transaction;
 
-import io.nem.catapult.builders.AggregateTransactionBuilder;
-import io.nem.catapult.builders.AmountDto;
-import io.nem.catapult.builders.CosignatureBuilder;
-import io.nem.catapult.builders.EntityTypeDto;
-import io.nem.catapult.builders.KeyDto;
-import io.nem.catapult.builders.SignatureDto;
-import io.nem.catapult.builders.TimestampDto;
 import io.nem.core.crypto.CryptoEngines;
 import io.nem.core.crypto.DsaSigner;
-import io.nem.core.utils.ExceptionUtils;
-import io.nem.core.utils.ConvertUtils;
 import io.nem.sdk.model.account.Account;
 import io.nem.sdk.model.account.PublicAccount;
 import java.math.BigInteger;
-import java.nio.ByteBuffer;
 import java.util.List;
 import org.apache.commons.lang3.ArrayUtils;
 import org.bouncycastle.util.encoders.Hex;
@@ -74,63 +64,7 @@ public class AggregateTransaction extends Transaction {
         return cosignatures;
     }
 
-    /**
-     * Serialized the transaction.
-     *
-     * @return bytes of the transaction.
-     */
-    @Override
-    public byte[] generateBytes() {
-        return ExceptionUtils.propagate(
-            () -> {
-                byte[] transactionsBytes = new byte[0];
-                for (Transaction innerTransaction : innerTransactions) {
-                    final byte[] transactionBytes = innerTransaction.toAggregateTransactionBytes();
-                    transactionsBytes = ArrayUtils.addAll(transactionsBytes, transactionBytes);
-                }
-                final ByteBuffer transactionsBuffer = ByteBuffer.wrap(transactionsBytes);
 
-                byte[] cosignaturesBytes = new byte[0];
-                for (AggregateTransactionCosignature cosignature : cosignatures) {
-                    final byte[] signerBytes = cosignature.getSigner().getPublicKey().getBytes();
-                    final byte[] signatureBytes = ConvertUtils.getBytes(cosignature.getSignature());
-                    final ByteBuffer signerBuffer = ByteBuffer.wrap(signerBytes);
-                    final ByteBuffer signatureBuffer = ByteBuffer.wrap(signatureBytes);
-                    final CosignatureBuilder cosignatureBuilder = CosignatureBuilder
-                        .create(new KeyDto(signerBuffer),
-                            new SignatureDto(signatureBuffer));
-                    byte[] consignaturePayload = cosignatureBuilder.serialize();
-                    cosignaturesBytes = ArrayUtils
-                        .addAll(cosignaturesBytes, consignaturePayload);
-                }
-                final ByteBuffer cosignaturesBuffer = ByteBuffer.wrap(cosignaturesBytes);
-
-                // Add place holders to the signer and signature until actually signed
-                final ByteBuffer signerBuffer = ByteBuffer.allocate(32);
-                final ByteBuffer signatureBuffer = ByteBuffer.allocate(64);
-
-                AggregateTransactionBuilder txBuilder =
-                    AggregateTransactionBuilder.create(
-                        new SignatureDto(signatureBuffer),
-                        new KeyDto(signerBuffer),
-                        getNetworkVersion(),
-                        EntityTypeDto.rawValueOf((short) getType().getValue()),
-                        new AmountDto(getMaxFee().longValue()),
-                        new TimestampDto(getDeadline().getInstant()),
-                        transactionsBuffer,
-                        cosignaturesBuffer);
-                return txBuilder.serialize();
-            });
-    }
-
-    /**
-     * Fail if this method is called.
-     */
-    @Override
-    protected byte[] generateEmbeddedBytes() {
-        throw new IllegalStateException(
-            "Aggregate class cannot generate bytes for an embedded transaction.");
-    }
 
     /**
      * Sign transaction with cosignatories creating a new SignedTransaction.

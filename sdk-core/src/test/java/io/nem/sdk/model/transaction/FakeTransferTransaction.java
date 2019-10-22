@@ -21,14 +21,4 @@ public class FakeTransferTransaction extends Transaction {
     public FakeTransferTransaction(FakeTransferTransactionFactory factory) {
         super(factory);
     }
-
-    @Override
-    byte[] generateBytes() {
-        throw new Error("Method no implemented");
-    }
-
-    @Override
-    byte[] generateEmbeddedBytes() {
-        throw new Error("Method no implemented");
-    }
 }

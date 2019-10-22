@@ -73,7 +73,7 @@ def signingPassword = getPropertyValue('signingPassword')
 
 def githubToken = getPropertyValue('githubToken')
 def repoPath = getPropertyValue('TRAVIS_REPO_SLUG')
-
+def excludedCoverage = ['**catapult**']
 
 allprojects {
     ext."signing.keyId" = signingKeyId
@@ -138,8 +138,7 @@ subprojects {
 
             // configure jacoco to analyze the junitPlatformTest task
             jacoco {
-                // this tool version is compatible with
-//                toolVersion = "0.7.6.201602180812"
+               // excludes = excludedCoverage
                 applyTo task
             }
 
@@ -148,20 +147,20 @@ subprojects {
                     {
                         sourceDirectories = files("./src/main")
                         classDirectories = files("$buildDir/classes/main")
+                       // excludes = excludedCoverage
                         executionData task
                     })
         }
     }
 
     jacoco {
-//        toolVersion = '0.7.9'
         applyTo junitPlatformTest
     }
 
     jacocoTestReport {
         afterEvaluate {
             classDirectories = files(classDirectories.files.collect {
-                fileTree(dir: it, exclude: ['**/*DTO.*', '**/*Buffer.*'])
+                fileTree(dir: it, exclude: excludedCoverage)
             })
         }
         reports {
@@ -174,6 +173,7 @@ subprojects {
     junitPlatformTest {
         jacoco {
             destinationFile = file("${buildDir}/jacoco/test.exec")
+            //excludes = excludedCoverage
         }
     }
 
@@ -196,7 +196,7 @@ subprojects {
         }
     }
     uploadArchives {
-        
+
         repositories {
             mavenDeployer {
                 if (signingKeyId != null) {
@@ -278,6 +278,11 @@ task jacocoRootReport(type: JacocoReport, group: 'Coverage reports') {
         html.enabled = true // human readable
         xml.enabled = true // required by coveralls
     }
+    afterEvaluate {
+        classDirectories = files(classDirectories.files.collect {
+            fileTree(dir: it, exclude: excludedCoverage)
+        })
+    }
 }
 
 coveralls {
@@ -347,6 +352,6 @@ sonarqube {
         property "sonar.organization", sonarOrganization
         property "sonar.login", sonarLogin
         property "sonar.host.url", sonarHostUrl
-        property "sonar.exclusions", "**/io/nem/catapult/builders/**"
+        property "sonar.exclusions", excludedCoverage.join(",")
     }
 }

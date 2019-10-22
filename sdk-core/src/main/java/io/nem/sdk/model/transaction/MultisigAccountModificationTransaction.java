@@ -16,16 +16,6 @@
 
 package io.nem.sdk.model.transaction;
 
-import io.nem.catapult.builders.AmountDto;
-import io.nem.catapult.builders.CosignatoryModificationActionDto;
-import io.nem.catapult.builders.CosignatoryModificationBuilder;
-import io.nem.catapult.builders.EmbeddedMultisigAccountModificationTransactionBuilder;
-import io.nem.catapult.builders.KeyDto;
-import io.nem.catapult.builders.MultisigAccountModificationTransactionBuilder;
-import io.nem.catapult.builders.SignatureDto;
-import io.nem.catapult.builders.TimestampDto;
-import java.nio.ByteBuffer;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -78,67 +68,4 @@ public class MultisigAccountModificationTransaction extends Transaction {
         return modifications;
     }
 
-    /**
-     * Serialized the transaction.
-     *
-     * @return bytes of the transaction.
-     */
-    byte[] generateBytes() {
-        // Add place holders to the signer and signature until actually signed
-        final ByteBuffer signerBuffer = ByteBuffer.allocate(32);
-        final ByteBuffer signatureBuffer = ByteBuffer.allocate(64);
-
-        MultisigAccountModificationTransactionBuilder txBuilder =
-            MultisigAccountModificationTransactionBuilder.create(
-                new SignatureDto(signatureBuffer),
-                new KeyDto(signerBuffer),
-                getNetworkVersion(),
-                getEntityTypeDto(),
-                new AmountDto(getMaxFee().longValue()),
-                new TimestampDto(getDeadline().getInstant()),
-                (byte) getMinRemovalDelta(),
-                (byte) getMinApprovalDelta(),
-                getModificationBuilder());
-        return txBuilder.serialize();
-    }
-
-    /**
-     * Gets the embedded tx bytes.
-     *
-     * @return Embedded tx bytes
-     */
-    byte[] generateEmbeddedBytes() {
-        EmbeddedMultisigAccountModificationTransactionBuilder txBuilder =
-            EmbeddedMultisigAccountModificationTransactionBuilder.create(
-                new KeyDto(getRequiredSignerBytes()),
-                getNetworkVersion(),
-                getEntityTypeDto(),
-                (byte) getMinRemovalDelta(),
-                (byte) getMinApprovalDelta(),
-                getModificationBuilder());
-        return txBuilder.serialize();
-    }
-
-    /**
-     * Gets cosignatory modification.
-     *
-     * @return Cosignatory modification.
-     */
-    private ArrayList<CosignatoryModificationBuilder> getModificationBuilder() {
-        final ArrayList<CosignatoryModificationBuilder> modificationBuilder =
-            new ArrayList<>(modifications.size());
-        for (MultisigCosignatoryModification multisigCosignatoryModification : modifications) {
-            final byte[] byteCosignatoryPublicKey =
-                multisigCosignatoryModification.getCosignatoryPublicAccount().getPublicKey()
-                    .getBytes();
-            final ByteBuffer keyBuffer = ByteBuffer.wrap(byteCosignatoryPublicKey);
-            final CosignatoryModificationBuilder cosignatoryModificationBuilder =
-                CosignatoryModificationBuilder.create(
-                    CosignatoryModificationActionDto.rawValueOf(
-                        (byte) multisigCosignatoryModification.getModificationAction().getValue()),
-                    new KeyDto(keyBuffer));
-            modificationBuilder.add(cosignatoryModificationBuilder);
-        }
-        return modificationBuilder;
-    }
 }

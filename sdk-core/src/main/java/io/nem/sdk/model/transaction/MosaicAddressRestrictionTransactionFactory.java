@@ -17,7 +17,6 @@
 
 package io.nem.sdk.model.transaction;
 
-import io.nem.sdk.model.account.Address;
 import io.nem.sdk.model.account.UnresolvedAddress;
 import io.nem.sdk.model.blockchain.NetworkType;
 import io.nem.sdk.model.mosaic.UnresolvedMosaicId;

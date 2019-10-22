@@ -130,10 +130,11 @@ public class BalanceTransferReceipt extends Receipt {
      * @return receipt bytes
      */
     public byte[] serialize() {
-        ByteBuffer recipientBytes = SerializationUtils.fromUnresolvedAddressToByteBuffer(getRecipient());
+        ByteBuffer recipientBytes = SerializationUtils
+            .fromUnresolvedAddressToByteBuffer(getRecipient());
         final ByteBuffer buffer = ByteBuffer.allocate(52 + recipientBytes.remaining());
-        buffer.putShort(Short.reverseBytes((short)getVersion().getValue()));
-        buffer.putShort(Short.reverseBytes((short)getType().getValue()));
+        buffer.putShort(Short.reverseBytes((short) getVersion().getValue()));
+        buffer.putShort(Short.reverseBytes((short) getType().getValue()));
         buffer.put(recipientBytes);
         buffer.put(ConvertUtils.getBytes(getSender().getPublicKey().toHex()));
         buffer.putLong(Long.reverseBytes(getMosaicId().getIdAsLong()));

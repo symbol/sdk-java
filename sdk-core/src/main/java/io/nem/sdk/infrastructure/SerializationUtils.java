@@ -18,6 +18,7 @@ package io.nem.sdk.infrastructure;
 
 import io.nem.catapult.builders.AddressDto;
 import io.nem.catapult.builders.AmountDto;
+import io.nem.catapult.builders.GeneratorUtils;
 import io.nem.catapult.builders.Hash256Dto;
 import io.nem.catapult.builders.KeyDto;
 import io.nem.catapult.builders.MosaicIdDto;
@@ -119,7 +120,8 @@ public class SerializationUtils {
      * @return the model {@link Address}
      */
     public static UnresolvedAddress toAddress(UnresolvedAddressDto dto) {
-        return MapperUtils.toUnresolvedAddress(ConvertUtils.toHex(dto.getUnresolvedAddress().array()));
+        return MapperUtils
+            .toUnresolvedAddress(ConvertUtils.toHex(dto.getUnresolvedAddress().array()));
     }
 
     /**
@@ -216,6 +218,7 @@ public class SerializationUtils {
     public static String toHexString(Hash256Dto dto) {
         return ConvertUtils.toHex(dto.getHash256().array());
     }
+
     /**
      * It extracts the hex string from the {@link SignatureDto}
      *
@@ -234,6 +237,43 @@ public class SerializationUtils {
      */
     public static String toString(ByteBuffer buffer) {
         return StringEncoder.getString(buffer.array());
+    }
+
+    /**
+     * It concats the 2 byte arrays patching the int size at the beginning of the first byte array
+     * setting up the sum of both lengths.
+     *
+     * @param commonBytes the common transaction byte array
+     * @param transactionBytes the specific transaction byte array.
+     * @return the concated byte array.
+     */
+    public static byte[] concat(byte[] commonBytes, byte[] transactionBytes) {
+        return GeneratorUtils.serialize(dataOutputStream -> {
+            dataOutputStream
+                .writeInt(Integer.reverseBytes(commonBytes.length + transactionBytes.length));
+            dataOutputStream.write(commonBytes, 4, commonBytes.length - 4);
+            dataOutputStream.write(transactionBytes);
+        });
+    }
+
+    /**
+     * It serializes the public key of a public account.
+     *
+     * @return the public account
+     */
+    public static ByteBuffer toByteBuffer(PublicAccount publicAccount) {
+        final byte[] bytes = publicAccount.getPublicKey().getBytes();
+        return ByteBuffer.wrap(bytes);
+    }
+
+    /**
+     * It serializes the string signature into a SignatureDto catbuffer understands
+     *
+     * @param signature the signature string
+     * @return SignatureDto.
+     */
+    public static SignatureDto toSignatureDto(String signature) {
+        return new SignatureDto(ByteBuffer.wrap(ConvertUtils.getBytes(signature)));
     }
 
 

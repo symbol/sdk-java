@@ -16,19 +16,7 @@
 
 package io.nem.sdk.model.transaction;
 
-import io.nem.catapult.builders.AmountDto;
-import io.nem.catapult.builders.EmbeddedSecretProofTransactionBuilder;
-import io.nem.catapult.builders.Hash256Dto;
-import io.nem.catapult.builders.KeyDto;
-import io.nem.catapult.builders.LockHashAlgorithmDto;
-import io.nem.catapult.builders.SecretProofTransactionBuilder;
-import io.nem.catapult.builders.SignatureDto;
-import io.nem.catapult.builders.TimestampDto;
-import io.nem.catapult.builders.UnresolvedAddressDto;
-import io.nem.sdk.infrastructure.SerializationUtils;
 import io.nem.sdk.model.account.UnresolvedAddress;
-import java.nio.ByteBuffer;
-import org.bouncycastle.util.encoders.Hex;
 
 /**
  * Secret proof transaction.
@@ -82,32 +70,6 @@ public class SecretProofTransaction extends Transaction {
         return proof;
     }
 
-    /**
-     * Serialized the transaction.
-     *
-     * @return bytes of the transaction.
-     */
-    @Override
-    byte[] generateBytes() {
-        // Add place holders to the signer and signature until actually signed
-        final ByteBuffer signerBuffer = ByteBuffer.allocate(32);
-        final ByteBuffer signatureBuffer = ByteBuffer.allocate(64);
-
-        SecretProofTransactionBuilder txBuilder =
-            SecretProofTransactionBuilder.create(
-                new SignatureDto(signatureBuffer),
-                new KeyDto(signerBuffer),
-                getNetworkVersion(),
-                getEntityTypeDto(),
-                new AmountDto(getMaxFee().longValue()),
-                new TimestampDto(getDeadline().getInstant()),
-                LockHashAlgorithmDto.rawValueOf((byte) hashType.getValue()),
-                new Hash256Dto(getSecretBuffer()),
-                new UnresolvedAddressDto(
-                    SerializationUtils.fromUnresolvedAddressToByteBuffer(this.getRecipient())),
-                getProofBuffer());
-        return txBuilder.serialize();
-    }
 
     /**
      * @return the recipient
@@ -116,39 +78,4 @@ public class SecretProofTransaction extends Transaction {
         return recipient;
     }
 
-    /**
-     * Gets the embedded tx bytes.
-     *
-     * @return Embedded tx bytes
-     */
-    @Override
-    byte[] generateEmbeddedBytes() {
-        EmbeddedSecretProofTransactionBuilder txBuilder =
-            EmbeddedSecretProofTransactionBuilder.create(
-                new KeyDto(getRequiredSignerBytes()),
-                getNetworkVersion(),
-                getEntityTypeDto(),
-                LockHashAlgorithmDto.rawValueOf((byte) hashType.getValue()),
-                new Hash256Dto(getSecretBuffer()),
-                new UnresolvedAddressDto(
-                    SerializationUtils.fromUnresolvedAddressToByteBuffer(this.getRecipient())),
-                getProofBuffer());
-        return txBuilder.serialize();
-    }
-
-    private ByteBuffer getSecretBuffer() {
-        final ByteBuffer secretBuffer = ByteBuffer.allocate(32);
-        secretBuffer.put(Hex.decode(secret));
-        return secretBuffer;
-    }
-
-    /**
-     * Gets proof buffer
-     *
-     * @return Proof buffer.
-     */
-    private ByteBuffer getProofBuffer() {
-        final byte[] proofBytes = Hex.decode(proof);
-        return ByteBuffer.wrap(proofBytes);
-    }
 }

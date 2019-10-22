@@ -20,7 +20,6 @@ package io.nem.sdk.model.transaction;
 import io.nem.core.utils.StringEncoder;
 import io.nem.sdk.model.account.PublicAccount;
 import java.math.BigInteger;
-import java.nio.ByteBuffer;
 
 /**
  * Abstract transaction for all the metadata transactions.
@@ -77,15 +76,6 @@ public abstract class MetadataTransaction extends Transaction {
 
     public String getValue() {
         return value;
-    }
-
-    /**
-     * Gets value buffer
-     *
-     * @return Value buffer.
-     */
-    protected ByteBuffer getValueBuffer() {
-        return ByteBuffer.wrap(toByteArray(value));
     }
 
     /**
