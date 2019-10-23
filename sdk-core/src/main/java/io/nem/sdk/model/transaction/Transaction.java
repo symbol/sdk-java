@@ -70,6 +70,7 @@ public abstract class Transaction {
      * Generates hash for a serialized transaction payload.
      *
      * @param transactionPayload Transaction payload
+     * @param generationHashBytes the generation hash.
      * @return generated transaction hash.
      */
     public static String createTransactionHash(

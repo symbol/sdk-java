@@ -30,6 +30,7 @@ public enum RoleType {
     /**
      * Static constructor converting role type raw value to enum instance.
      *
+     * @param value the low level int value.
      * @return {@link RoleType}
      */
     public static RoleType rawValueOf(int value) {

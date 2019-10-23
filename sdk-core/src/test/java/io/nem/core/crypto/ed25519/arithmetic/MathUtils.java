@@ -22,8 +22,8 @@ import io.nem.core.crypto.PublicKey;
 import io.nem.core.crypto.SignSchema;
 import io.nem.core.crypto.Signature;
 import io.nem.core.utils.ArrayUtils;
+import io.nem.sdk.infrastructure.RandomUtils;
 import java.math.BigInteger;
-import java.security.SecureRandom;
 import java.util.Arrays;
 
 /**
@@ -43,7 +43,7 @@ public class MathUtils {
         4 * 26 + 4 * 25,
         5 * 26 + 4 * 25
     };
-    private static final SecureRandom RANDOM = new SecureRandom();
+
     private static final BigInteger D =
         new BigInteger("-121665").multiply(new BigInteger("121666").modInverse(Ed25519Field.P));
 
@@ -183,9 +183,7 @@ public class MathUtils {
      * @return The random byte array.
      */
     public static byte[] getRandomByteArray(final int length) {
-        final byte[] bytes = new byte[length];
-        RANDOM.nextBytes(bytes);
-        return bytes;
+        return RandomUtils.generateRandomBytes(length);
     }
 
     /**
@@ -196,7 +194,7 @@ public class MathUtils {
     public static Ed25519FieldElement getRandomFieldElement() {
         final int[] t = new int[10];
         for (int j = 0; j < 10; j++) {
-            t[j] = RANDOM.nextInt(1 << 25) - (1 << 24);
+            t[j] = RandomUtils.generateRandomInt(1 << 25) - (1 << 24);
         }
         return new Ed25519FieldElement(t);
     }
@@ -223,11 +221,9 @@ public class MathUtils {
      * @return The group element.
      */
     public static Ed25519GroupElement getRandomGroupElement() {
-        final byte[] bytes = new byte[32];
         while (true) {
             try {
-                RANDOM.nextBytes(bytes);
-                return new Ed25519EncodedGroupElement(bytes).decode();
+                return new Ed25519EncodedGroupElement(RandomUtils.generateRandomBytes(32)).decode();
             } catch (final IllegalArgumentException e) {
                 // Will fail in about 50%, so try again.
             }
@@ -564,7 +560,8 @@ public class MathUtils {
         final Ed25519EncodedFieldElement h =
             new Ed25519EncodedFieldElement(
                 SignSchema
-                    .toHash64Bytes(signSchema, R.encode().getRaw(), keyPair.getPublicKey().getBytes(),
+                    .toHash64Bytes(signSchema, R.encode().getRaw(),
+                        keyPair.getPublicKey().getBytes(),
                         data));
         final Ed25519EncodedFieldElement hReduced = reduceModGroupOrder(h);
         final BigInteger S =

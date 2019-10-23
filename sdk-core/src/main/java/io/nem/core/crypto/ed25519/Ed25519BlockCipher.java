@@ -23,7 +23,7 @@ import io.nem.core.crypto.PublicKey;
 import io.nem.core.crypto.SignSchema;
 import io.nem.core.crypto.ed25519.arithmetic.Ed25519EncodedGroupElement;
 import io.nem.core.crypto.ed25519.arithmetic.Ed25519GroupElement;
-import java.security.SecureRandom;
+import io.nem.sdk.infrastructure.RandomUtils;
 import java.util.Arrays;
 import org.bouncycastle.crypto.BufferedBlockCipher;
 import org.bouncycastle.crypto.CipherParameters;
@@ -43,7 +43,6 @@ public class Ed25519BlockCipher implements BlockCipher {
 
     private final KeyPair senderKeyPair;
     private final KeyPair recipientKeyPair;
-    private final SecureRandom random;
     private final int keyLength;
     private final SignSchema signSchema;
 
@@ -52,7 +51,6 @@ public class Ed25519BlockCipher implements BlockCipher {
         this.senderKeyPair = senderKeyPair;
         this.recipientKeyPair = recipientKeyPair;
         this.signSchema = signSchema;
-        this.random = new SecureRandom();
         this.keyLength = recipientKeyPair.getPublicKey().getBytes().length;
     }
 
@@ -60,8 +58,7 @@ public class Ed25519BlockCipher implements BlockCipher {
     @SuppressWarnings("squid:S1168")
     public byte[] encrypt(final byte[] input) {
         // Setup salt.
-        final byte[] salt = new byte[this.keyLength];
-        this.random.nextBytes(salt);
+        final byte[] salt = RandomUtils.generateRandomBytes(this.keyLength);
 
         // Derive shared key.
         final byte[] sharedKey = getSharedKey(
@@ -69,8 +66,7 @@ public class Ed25519BlockCipher implements BlockCipher {
             signSchema);
 
         // Setup IV.
-        final byte[] ivData = new byte[16];
-        this.random.nextBytes(ivData);
+        final byte[] ivData = RandomUtils.generateRandomBytes(16);
 
         // Setup block cipher.
         final BufferedBlockCipher cipher = this.setupBlockCipher(sharedKey, ivData, true);

@@ -87,12 +87,10 @@ public class NodeRepositoryVertxImpl extends AbstractRepositoryVertxImpl impleme
     }
 
     private NodeTime toNodeTime(NodeTimeDTO nodeTimeDTO) {
-        BigInteger sendTimeStamp = nodeTimeDTO.getCommunicationTimestamps().getSendTimestamp();
-        BigInteger receiveTimeStamp = nodeTimeDTO.getCommunicationTimestamps()
+        BigInteger sendTimestamp = nodeTimeDTO.getCommunicationTimestamps().getSendTimestamp();
+        BigInteger receiveTimestamp = nodeTimeDTO.getCommunicationTimestamps()
             .getReceiveTimestamp();
-        return new NodeTime(
-            sendTimeStamp,
-            receiveTimeStamp);
+        return new NodeTime(sendTimestamp, receiveTimestamp);
     }
 
 }

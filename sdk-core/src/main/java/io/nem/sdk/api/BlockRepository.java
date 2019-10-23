@@ -86,6 +86,8 @@ public interface BlockRepository {
      * the calculated root equals the one recorded in the block header, verifying that the
      * transaction was included in the block.
      *
+     * @param height the height.
+     * @param hash the expected hash.
      * @return {@link Observable} of MerkleProofInfo
      */
     Observable<MerkelProofInfo> getMerkleTransaction(BigInteger height, String hash);

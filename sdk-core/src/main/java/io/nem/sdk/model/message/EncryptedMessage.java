@@ -35,6 +35,8 @@ public class EncryptedMessage extends Message {
 
     /**
      * It creates a Encrypted Message from the encryptedPayload.
+     *
+     * @param encryptedPayload the encrypted payload.
      */
     public EncryptedMessage(String encryptedPayload) {
         super(MessageType.ENCRYPTED_MESSAGE, encryptedPayload);
@@ -92,7 +94,8 @@ public class EncryptedMessage extends Message {
         KeyPair recipient = KeyPair.fromPrivate(recipientPrivateKey, signSchema);
         BlockCipher blockCipher = engine
             .createBlockCipher(sender, recipient, signSchema);
-        return StringEncoder.getString(blockCipher.decrypt(ConvertUtils.fromHexToBytes(getPayload())));
+        return StringEncoder
+            .getString(blockCipher.decrypt(ConvertUtils.fromHexToBytes(getPayload())));
     }
 
 }

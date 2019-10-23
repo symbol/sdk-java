@@ -16,8 +16,8 @@
 
 package io.nem.core.utils;
 
+import io.nem.sdk.infrastructure.RandomUtils;
 import java.math.BigInteger;
-import java.security.SecureRandom;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.core.IsEqual;
 import org.hamcrest.core.IsNot;
@@ -253,7 +253,8 @@ public class ArrayUtilsTest {
         final byte[] bytes = ArrayUtils.toByteArray(new BigInteger("F21495", 16), 3);
 
         // Assert:
-        MatcherAssert.assertThat(bytes, IsEqual.equalTo(new byte[]{(byte) 0x95, 0x14, (byte) 0xF2}));
+        MatcherAssert
+            .assertThat(bytes, IsEqual.equalTo(new byte[]{(byte) 0x95, 0x14, (byte) 0xF2}));
     }
 
     @Test
@@ -313,11 +314,10 @@ public class ArrayUtilsTest {
     @Test
     public void isEqualsReturnsOneForEqualByteArrays() {
         // Arrange:
-        final SecureRandom random = new SecureRandom();
-        final byte[] bytes1 = new byte[32];
-        final byte[] bytes2 = new byte[32];
+
         for (int i = 0; i < 100; i++) {
-            random.nextBytes(bytes1);
+            byte[] bytes1 = RandomUtils.generateRandomBytes(32);
+            byte[] bytes2 = new byte[32];
             System.arraycopy(bytes1, 0, bytes2, 0, 32);
 
             // Act:
@@ -331,11 +331,10 @@ public class ArrayUtilsTest {
     @Test
     public void isEqualsReturnsZeroForUnequalByteArrays() {
         // Arrange:
-        final SecureRandom random = new SecureRandom();
-        final byte[] bytes1 = new byte[32];
-        final byte[] bytes2 = new byte[32];
-        random.nextBytes(bytes1);
+        byte[] bytes1 = RandomUtils.generateRandomBytes(32);
+        byte[] bytes2 = new byte[32];
         for (int i = 0; i < 32; i++) {
+
             System.arraycopy(bytes1, 0, bytes2, 0, 32);
             bytes2[i] = (byte) (bytes2[i] ^ 0xff);
 

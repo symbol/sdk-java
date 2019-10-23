@@ -8,6 +8,8 @@ public class MerkelProofInfo {
 
     /**
      * Constructor
+     *
+     * @param merklePath the path.
      */
     public MerkelProofInfo(List<MerkelPathItem> merklePath) {
         this.merklePath = merklePath;

@@ -21,11 +21,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import io.nem.core.utils.ConvertUtils;
 import io.nem.sdk.infrastructure.BinarySerializationImpl;
+import io.nem.sdk.infrastructure.RandomUtils;
 import io.nem.sdk.model.account.Account;
 import io.nem.sdk.model.blockchain.NetworkType;
 import java.math.BigInteger;
 import java.util.Collections;
-import java.util.Random;
 import org.bouncycastle.util.encoders.Hex;
 
 /**
@@ -113,8 +113,6 @@ abstract class AbstractTransactionTester {
     }
 
     protected String createRandomSignature() {
-        byte[] randomSignature = new byte[64];
-        new Random().nextBytes(randomSignature);
-        return ConvertUtils.toHex(randomSignature);
+        return ConvertUtils.toHex(RandomUtils.generateRandomBytes(64));
     }
 }

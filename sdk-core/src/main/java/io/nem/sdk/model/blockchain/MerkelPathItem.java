@@ -7,6 +7,9 @@ public class MerkelPathItem {
 
     /**
      * Constructor
+     *
+     * @param position the position in the path.
+     * @param hash the hash.
      */
     public MerkelPathItem(Integer position, String hash) {
         this.position = position;

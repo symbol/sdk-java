@@ -263,6 +263,7 @@ public class BinarySerializationImpl implements BinarySerialization {
      * Serialized the transfer transaction to embedded bytes.
      *
      * @param transaction the transaction
+     * @param <T> the transaction class
      * @return bytes of the transaction.
      */
     public <T extends Transaction> byte[] serializeEmbedded(T transaction) {

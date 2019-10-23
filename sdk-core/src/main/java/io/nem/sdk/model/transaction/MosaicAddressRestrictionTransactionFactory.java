@@ -123,8 +123,8 @@ public class MosaicAddressRestrictionTransactionFactory
 
     /**
      * It sets the previoudRestrictionValue when necessary.
-     * @param previousRestrictionValue
-     * @return
+     * @param previousRestrictionValue the previous restriction value
+     * @return this factory.
      */
     public MosaicAddressRestrictionTransactionFactory previousRestrictionValue(
         BigInteger previousRestrictionValue) {

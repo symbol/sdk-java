@@ -31,6 +31,8 @@ public class AccountRestrictionModification<T> {
     }
 
     /**
+     * @param modificationType the modification type.
+     * @param address the affected unresolved address.
      * @return AccountRestrictionModification of {@link Address}
      */
     public static AccountRestrictionModification<UnresolvedAddress> createForAddress(
@@ -39,6 +41,8 @@ public class AccountRestrictionModification<T> {
     }
 
     /**
+     * @param modificationType the modification type.
+     * @param mosaicId the affected unresolved mosaic id.
      * @return AccountRestrictionModification {@link UnresolvedMosaicId}
      */
     public static AccountRestrictionModification<UnresolvedMosaicId> createForMosaic(
@@ -47,6 +51,8 @@ public class AccountRestrictionModification<T> {
     }
 
     /**
+     * @param modificationType the modification type.
+     * @param transactionType the affected transaction type.
      * @return AccountRestrictionModification of {@link TransactionType}
      */
     public static AccountRestrictionModification<TransactionType> createForTransactionType(

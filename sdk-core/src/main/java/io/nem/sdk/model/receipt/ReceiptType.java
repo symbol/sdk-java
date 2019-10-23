@@ -184,6 +184,7 @@ public enum ReceiptType {
     /**
      * Static constructor converting receipt type raw value to enum instance.
      *
+     * @param value the low level int value.
      * @return {@link ReceiptType}
      */
     public static ReceiptType rawValueOf(int value) {

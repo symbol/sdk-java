@@ -28,6 +28,8 @@ public class AddressAlias extends AliasBase<Address> {
 
     /**
      * Create AddressAlias from address
+     *
+     * @param address the original address
      */
     public AddressAlias(Address address) {
         super(AliasType.ADDRESS, address);

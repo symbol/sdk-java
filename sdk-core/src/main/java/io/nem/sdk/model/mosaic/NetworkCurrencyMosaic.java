@@ -36,7 +36,7 @@ public class NetworkCurrencyMosaic extends Mosaic {
     public static final boolean SUPPLYMUTABLE = false;
 
     /**
-     *
+     * @param amount the mosaic amount.
      */
     public NetworkCurrencyMosaic(BigInteger amount) {
         super(NetworkCurrencyMosaic.NAMESPACEID, amount);

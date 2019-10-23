@@ -65,12 +65,12 @@ public class AggregateTransaction extends Transaction {
     }
 
 
-
     /**
      * Sign transaction with cosignatories creating a new SignedTransaction.
      *
      * @param initiatorAccount Initiator account
      * @param cosignatories The list of accounts that will cosign the transaction
+     * @param generationHash the block 1 generation hash used to sign.
      * @return {@link SignedTransaction}
      */
     public SignedTransaction signTransactionWithCosigners(

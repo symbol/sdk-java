@@ -16,8 +16,8 @@
 
 package io.nem.core.crypto.ed25519.arithmetic;
 
+import io.nem.sdk.infrastructure.RandomUtils;
 import java.math.BigInteger;
-import java.security.SecureRandom;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.core.IsEqual;
 import org.hamcrest.core.IsNot;
@@ -204,12 +204,11 @@ public class Ed25519EncodedFieldElementTest {
 
     @Test
     public void encodeReturnsCorrectByteArray() {
-        final SecureRandom random = new SecureRandom();
         for (int i = 0; i < 10000; i++) {
             // Arrange:
             final int[] t = new int[10];
             for (int j = 0; j < 10; j++) {
-                t[j] = random.nextInt(1 << 28) - (1 << 27);
+                t[j] = RandomUtils.generateRandomInt(1 << 28) - (1 << 27);
             }
             final Ed25519FieldElement fieldElement = new Ed25519FieldElement(t);
             final BigInteger b = MathUtils.toBigInteger(t);
@@ -227,11 +226,9 @@ public class Ed25519EncodedFieldElementTest {
 
     @Test
     public void isNegativeReturnsCorrectResult() {
-        final SecureRandom random = new SecureRandom();
         for (int i = 0; i < 10000; i++) {
             // Arrange:
-            final byte[] values = new byte[32];
-            random.nextBytes(values);
+            final byte[] values = RandomUtils.generateRandomBytes(32);
             values[31] &= 0x7F;
             final Ed25519EncodedFieldElement encoded = new Ed25519EncodedFieldElement(values);
             final boolean isNegative =
