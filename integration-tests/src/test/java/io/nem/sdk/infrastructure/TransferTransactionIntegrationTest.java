@@ -88,7 +88,7 @@ public class TransferTransactionIntegrationTest extends BaseIntegrationTest {
 
         NamespaceId recipient = setAddressAlias(type, getRecipient(), namespaceName);
         Assertions.assertEquals("9188dd7d72227ecae700000000000000000000000000000000",
-            recipient.encoded());
+            recipient.encoded(getNetworkType()));
         String message = "E2ETest:standaloneTransferTransaction:message 漢字";
 
         NetworkType networkType = getNetworkType();
@@ -128,7 +128,9 @@ public class TransferTransactionIntegrationTest extends BaseIntegrationTest {
     private void assertTransferTransactions(TransferTransaction expected,
         TransferTransaction processed) {
         Assertions
-            .assertEquals(expected.getRecipient().encoded(), processed.getRecipient().encoded());
+            .assertEquals(expected.getRecipient().encoded(getNetworkType()),
+                processed.getRecipient().encoded(
+                    getNetworkType()));
         Assertions.assertEquals(expected.getRecipient(), processed.getRecipient());
         Assertions.assertEquals(expected.getMessage().getType(), processed.getMessage().getType());
         Assertions

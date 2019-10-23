@@ -160,6 +160,7 @@ class AddressTest {
         Address address = Address
             .createFromEncoded(encoded);
         assertEquals(encoded, address.encoded().toUpperCase());
+        assertEquals(encoded, address.encoded(NetworkType.MIJIN_TEST).toUpperCase());
     }
 
     @Test
@@ -229,11 +230,12 @@ class AddressTest {
 
     @Test
     void createFromRawAddressShouldFailWhenInvalidSuffix() {
-        Assertions.assertEquals("ADRDGFTDLLCB67D4HPGIMIHPNSRYRJRT7DOBGWZY is an invalid address.", assertThrows(
-            IllegalArgumentException.class,
-            () -> {
-                Address.createFromRawAddress("ADRDGF-TDLLCB-67D4HP-GIMIHP-NSRYRJ-RT7DOB-GWZY");
-            }).getMessage());
+        Assertions.assertEquals("ADRDGFTDLLCB67D4HPGIMIHPNSRYRJRT7DOBGWZY is an invalid address.",
+            assertThrows(
+                IllegalArgumentException.class,
+                () -> {
+                    Address.createFromRawAddress("ADRDGF-TDLLCB-67D4HP-GIMIHP-NSRYRJ-RT7DOB-GWZY");
+                }).getMessage());
     }
 
     @ParameterizedTest
