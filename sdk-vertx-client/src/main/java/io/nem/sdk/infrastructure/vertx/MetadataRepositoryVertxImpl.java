@@ -192,7 +192,7 @@ public class MetadataRepositoryVertxImpl extends AbstractRepositoryVertxImpl imp
     }
 
 
-    private String toHex(BigInteger key) {
+    protected String toHex(BigInteger key) {
         return ConvertUtils.toSize16Hex(key);
     }
 }
