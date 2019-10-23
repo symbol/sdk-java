@@ -71,7 +71,6 @@ public class BlockRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl impl
 
     public Observable<List<BlockInfo>> getBlocksByHeightWithLimit(
         BigInteger height, int limit, Optional<QueryParams> queryParams) {
-        //TODO queryParams not defined in the descriptor nor generated.
         Callable<List<BlockInfoDTO>> callback = () ->
             getClient().getBlocksByHeightWithLimit(height.longValue(), limit);
 
@@ -97,7 +96,7 @@ public class BlockRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl impl
                     pathItem ->
                         new MerkelPathItem(pathItem.getPosition(), pathItem.getHash()))
                 .collect(Collectors.toList());
-        return new MerkelProofInfo(pathItems, "TODO MerkelProofInfoDto.getType()");
+        return new MerkelProofInfo(pathItems);
     }
 
     public Observable<MerkelProofInfo> getMerkleTransaction(BigInteger height, String hash) {

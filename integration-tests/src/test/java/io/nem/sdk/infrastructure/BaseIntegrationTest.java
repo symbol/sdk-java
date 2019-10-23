@@ -51,7 +51,6 @@ import io.nem.sdk.model.transaction.TransactionStatusError;
 import io.nem.sdk.model.transaction.TransactionType;
 import io.reactivex.Observable;
 import java.math.BigInteger;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -102,7 +101,7 @@ public abstract class BaseIntegrationTest {
     @BeforeEach
     void coolDown() throws InterruptedException {
         //To avoid rate-limiting errors from server. (5 per seconds)
-        Thread.sleep(500);
+        sleep(500);
     }
 
     private String resolveGenerationHash() {
@@ -355,15 +354,15 @@ public abstract class BaseIntegrationTest {
             getRepositoryFactory(type).createAccountRepository().getAccountsNames(
                 Collections.singletonList(address)));
 
-        if (!accountNames.stream().anyMatch(
+        if (accountNames.stream().anyMatch(
             an -> an.getNames().stream().anyMatch(
                 ns -> ns.getName().equals(namespaceName) && ns.getNamespaceId()
                     .equals(namespaceId)))) {
-            System.out.println(namespaceName + " Alias not found, recreating");
+            System.out.println(namespaceName + " ADDRESS Alias found, reusing it.");
             return namespaceId;
 
         } else {
-            System.out.println(namespaceName + " found, reusing it.");
+            System.out.println(namespaceName + " ADDRESS Alias not found, CREATING MOSAIC ALIAS");
         }
 
         System.out.println(
@@ -399,15 +398,14 @@ public abstract class BaseIntegrationTest {
             getRepositoryFactory(type).createMosaicRepository().getMosaicsNames(
                 Collections.singletonList(mosaicId)));
 
-        if (!mosaicNames.stream().anyMatch(
+        if (mosaicNames.stream().anyMatch(
             an -> an.getNames().stream().anyMatch(
                 ns -> ns.getName().equals(namespaceName) && ns.getNamespaceId()
                     .equals(namespaceId)))) {
-            System.out.println(namespaceName + " Alias not found, recreating");
+            System.out.println(namespaceName + " MOSAIC Alias found, reusing it.");
             return namespaceId;
-
         } else {
-            System.out.println(namespaceName + " found, reusing it.");
+            System.out.println(namespaceName + " MOSAIC Alias not found, CREATING MOSAIC ALIAS");
         }
 
         System.out.println(

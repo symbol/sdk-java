@@ -19,9 +19,7 @@ package io.nem.sdk.model.account;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import io.nem.core.crypto.SignSchema;
 import io.nem.sdk.model.blockchain.NetworkType;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.Assertions;
@@ -162,6 +160,7 @@ class AddressTest {
         Address address = Address
             .createFromEncoded(encoded);
         assertEquals(encoded, address.encoded().toUpperCase());
+        assertEquals(encoded, address.encoded(NetworkType.MIJIN_TEST).toUpperCase());
     }
 
     @Test
@@ -231,11 +230,12 @@ class AddressTest {
 
     @Test
     void createFromRawAddressShouldFailWhenInvalidSuffix() {
-        Assertions.assertEquals("ADRDGFTDLLCB67D4HPGIMIHPNSRYRJRT7DOBGWZY is an invalid address.", assertThrows(
-            IllegalArgumentException.class,
-            () -> {
-                Address.createFromRawAddress("ADRDGF-TDLLCB-67D4HP-GIMIHP-NSRYRJ-RT7DOB-GWZY");
-            }).getMessage());
+        Assertions.assertEquals("ADRDGFTDLLCB67D4HPGIMIHPNSRYRJRT7DOBGWZY is an invalid address.",
+            assertThrows(
+                IllegalArgumentException.class,
+                () -> {
+                    Address.createFromRawAddress("ADRDGF-TDLLCB-67D4HP-GIMIHP-NSRYRJ-RT7DOB-GWZY");
+                }).getMessage());
     }
 
     @ParameterizedTest

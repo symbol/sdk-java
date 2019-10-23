@@ -27,11 +27,12 @@ import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Random;
 import org.apache.commons.lang3.RandomUtils;
-import org.junit.Assert;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 public class MapperUtilsTest {
+
+    private NetworkType networkType = NetworkType.MIJIN_TEST;
 
     @Test
     void shouldMapToNamespaceId() {
@@ -46,8 +47,8 @@ public class MapperUtilsTest {
         Address address = MapperUtils
             .toAddressFromRawAddress("SBCPGZ3S2SCC3YHBBTYDCUZV4ZZEPHM2KGCP4QXX");
         Assertions.assertNotNull(address);
-        Assert.assertEquals("SBCPGZ3S2SCC3YHBBTYDCUZV4ZZEPHM2KGCP4QXX", address.plain());
-        Assert.assertEquals("SBCPGZ-3S2SCC-3YHBBT-YDCUZV-4ZZEPH-M2KGCP-4QXX", address.pretty());
+        Assertions.assertEquals("SBCPGZ3S2SCC3YHBBTYDCUZV4ZZEPHM2KGCP4QXX", address.plain());
+        Assertions.assertEquals("SBCPGZ-3S2SCC-3YHBBT-YDCUZV-4ZZEPH-M2KGCP-4QXX", address.pretty());
     }
 
     @Test
@@ -59,8 +60,8 @@ public class MapperUtilsTest {
         Assertions.assertNotNull(
             address);
 
-        Assert.assertEquals("SBILTA367K2LX2FEXG5TFWAS7GEFYAGY7QLFBYKC", address.plain());
-        Assert.assertEquals("SBILTA-367K2L-X2FEXG-5TFWAS-7GEFYA-GY7QLF-BYKC", address.pretty());
+        Assertions.assertEquals("SBILTA367K2LX2FEXG5TFWAS7GEFYAGY7QLFBYKC", address.plain());
+        Assertions.assertEquals("SBILTA-367K2L-X2FEXG-5TFWAS-7GEFYA-GY7QLF-BYKC", address.pretty());
     }
 
     @Test
@@ -112,22 +113,24 @@ public class MapperUtilsTest {
         NamespaceId namespaceId = NamespaceId.createFromName("some.name");
 
         Assertions.assertEquals("91d9e338f78767ed9500000000000000000000000000000000",
-            namespaceId.encoded());
+            namespaceId.encoded(networkType));
         Assertions
-            .assertEquals(namespaceId.encoded(),
-                MapperUtils.toUnresolvedAddress(namespaceId.encoded()).encoded());
+            .assertEquals(namespaceId.encoded(networkType),
+                MapperUtils.toUnresolvedAddress(namespaceId.encoded(networkType)).encoded(
+                    networkType));
 
         Address address = Address.createFromRawAddress("MCTVW23D2MN5VE4AQ4TZIDZENGNOZXPRPR72DYSX");
         Assertions.assertNull(MapperUtils.toUnresolvedAddress(null));
 
-        Assertions.assertEquals(address, MapperUtils.toUnresolvedAddress(address.encoded()));
+        Assertions.assertEquals(address, MapperUtils.toUnresolvedAddress(address.encoded(
+            networkType)));
 
         address = Address
             .createFromRawAddress("SBILTA367K2LX2FEXG5TFWAS7GEFYAGY7QLFBYKC");
 
         Assertions
             .assertEquals(address,
-                MapperUtils.toUnresolvedAddress(address.encoded()));
+                MapperUtils.toUnresolvedAddress(address.encoded(networkType)));
     }
 
 
