@@ -19,15 +19,18 @@ import java.math.BigInteger;
 
 public class NodeTime {
 
-    private final BigInteger sendTimeStamp;
-    private final BigInteger receiveTimeStamp;
+    private final BigInteger sendTimestamp;
+    private final BigInteger receiveTimestamp;
 
     /**
      * Constructor
+     *
+     * @param sendTimestamp the send timestamp.
+     * @param receiveTimestamp the receive timestamp.
      */
-    public NodeTime(BigInteger sendTimeStamp, BigInteger receiveTimeStamp) {
-        this.receiveTimeStamp = receiveTimeStamp;
-        this.sendTimeStamp = sendTimeStamp;
+    public NodeTime(BigInteger sendTimestamp, BigInteger receiveTimestamp) {
+        this.receiveTimestamp = receiveTimestamp;
+        this.sendTimestamp = sendTimestamp;
     }
 
     /**
@@ -35,8 +38,8 @@ public class NodeTime {
      *
      * @return BigInteger
      */
-    public BigInteger getSendTimeStamp() {
-        return this.sendTimeStamp;
+    public BigInteger getSendTimestamp() {
+        return this.sendTimestamp;
     }
 
     /**
@@ -44,7 +47,7 @@ public class NodeTime {
      *
      * @return BigInteger
      */
-    public BigInteger getReceiveTimeStamp() {
-        return this.receiveTimeStamp;
+    public BigInteger getReceiveTimestamp() {
+        return this.receiveTimestamp;
     }
 }

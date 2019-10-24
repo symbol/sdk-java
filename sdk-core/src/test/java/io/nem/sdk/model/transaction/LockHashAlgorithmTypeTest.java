@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import io.nem.core.crypto.Hashes;
-import java.util.Random;
+import io.nem.sdk.infrastructure.RandomUtils;
 import org.apache.commons.codec.binary.Hex;
 import org.junit.jupiter.api.Test;
 
@@ -28,8 +28,7 @@ class LockHashAlgorithmTypeTest {
 
     @Test
     void SHA3_256ShouldBeExactly64CharactersLength() {
-        byte[] secretBytes = new byte[20];
-        new Random().nextBytes(secretBytes);
+        byte[] secretBytes = RandomUtils.generateRandomBytes(20);
         byte[] result = Hashes.sha3_256(secretBytes);
         String secret = Hex.encodeHexString(result);
 
@@ -38,8 +37,7 @@ class LockHashAlgorithmTypeTest {
 
     @Test
     void SHA3_256ShouldReturnFalseIfItIsNot64CharsLength() {
-        byte[] secretBytes = new byte[20];
-        new Random().nextBytes(secretBytes);
+        byte[] secretBytes = RandomUtils.generateRandomBytes(20);
         byte[] result = Hashes.sha3_512(secretBytes);
         String secret = Hex.encodeHexString(result);
 
@@ -54,8 +52,7 @@ class LockHashAlgorithmTypeTest {
 
     @Test
     void KECCAK_256ShouldBeExactly64CharactersLength() {
-        byte[] secretBytes = new byte[20];
-        new Random().nextBytes(secretBytes);
+        byte[] secretBytes = RandomUtils.generateRandomBytes(20);
         byte[] result = Hashes.keccak256(secretBytes);
         String secret = Hex.encodeHexString(result);
 
@@ -64,8 +61,7 @@ class LockHashAlgorithmTypeTest {
 
     @Test
     void KECCAK_256ShouldReturnFalseIfItIsNot64CharsLength() {
-        byte[] secretBytes = new byte[20];
-        new Random().nextBytes(secretBytes);
+        byte[] secretBytes = RandomUtils.generateRandomBytes(20);
         byte[] result = Hashes.ripemd160(secretBytes);
         String secret = Hex.encodeHexString(result);
 
@@ -80,8 +76,7 @@ class LockHashAlgorithmTypeTest {
 
     @Test
     void HASH_160ShouldBeExactly40CharactersLength() {
-        byte[] secretBytes = new byte[20];
-        new Random().nextBytes(secretBytes);
+        byte[] secretBytes = RandomUtils.generateRandomBytes(20);
         byte[] result = Hashes.hash160(secretBytes);
         String secret = Hex.encodeHexString(result);
 
@@ -90,8 +85,7 @@ class LockHashAlgorithmTypeTest {
 
     @Test
     void HASH_160ShouldReturnFalseIfItIsNot40CharsLength() {
-        byte[] secretBytes = new byte[20];
-        new Random().nextBytes(secretBytes);
+        byte[] secretBytes = RandomUtils.generateRandomBytes(20);
         byte[] result = Hashes.sha3_256(secretBytes);
         String secret = Hex.encodeHexString(result);
 
@@ -106,8 +100,7 @@ class LockHashAlgorithmTypeTest {
 
     @Test
     void HASH_256ShouldBeExactly64CharactersLength() {
-        byte[] secretBytes = new byte[20];
-        new Random().nextBytes(secretBytes);
+        byte[] secretBytes = RandomUtils.generateRandomBytes(20);
         byte[] result = Hashes.hash256(secretBytes);
         String secret = Hex.encodeHexString(result);
 
@@ -116,8 +109,7 @@ class LockHashAlgorithmTypeTest {
 
     @Test
     void HASH_256ShouldReturnFalseIfItIsNot64CharsLength() {
-        byte[] secretBytes = new byte[20];
-        new Random().nextBytes(secretBytes);
+        byte[] secretBytes = RandomUtils.generateRandomBytes(20);
         byte[] result = Hashes.ripemd160(secretBytes);
         String secret = Hex.encodeHexString(result);
 

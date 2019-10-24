@@ -130,6 +130,7 @@ public class Hashes {
     /**
      * Performs a KECCAK_256 hash of the concatenated inputs.
      *
+     * @param keccak the keccak hasher.
      * @param inputs The byte arrays to concatenate and hash.
      * @return The hash of the concatenated inputs.
      * @throws CryptoException if the hash operation failed.

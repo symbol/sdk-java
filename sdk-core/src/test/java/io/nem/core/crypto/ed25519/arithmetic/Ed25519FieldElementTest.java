@@ -16,8 +16,8 @@
 
 package io.nem.core.crypto.ed25519.arithmetic;
 
+import io.nem.sdk.infrastructure.RandomUtils;
 import java.math.BigInteger;
-import java.security.SecureRandom;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.core.IsEqual;
 import org.hamcrest.core.IsNot;
@@ -231,7 +231,8 @@ public class Ed25519FieldElementTest {
 
             // Assert:
             // (u / v)^4 == (sqrt(u^2 / v^2))^4.
-            MatcherAssert.assertThat(fraction.square().square(), IsEqual.equalTo(sqrt.square().square()));
+            MatcherAssert
+                .assertThat(fraction.square().square(), IsEqual.equalTo(sqrt.square().square()));
 
             // (u / v) == +-1 * sqrt(u^2 / v^2) or (u / v) == +-i * sqrt(u^2 / v^2)
             MatcherAssert.assertThat(
@@ -263,11 +264,9 @@ public class Ed25519FieldElementTest {
 
     @Test
     public void decodeReturnsCorrectFieldElement() {
-        final SecureRandom random = new SecureRandom();
         for (int i = 0; i < 10000; i++) {
             // Arrange:
-            final byte[] bytes = new byte[32];
-            random.nextBytes(bytes);
+            final byte[] bytes = RandomUtils.generateRandomBytes(32);
             bytes[31] = (byte) (bytes[31] & 0x7f);
             final BigInteger b1 = MathUtils.toBigInteger(bytes);
 
@@ -286,12 +285,11 @@ public class Ed25519FieldElementTest {
 
     @Test
     public void isNegativeReturnsCorrectResult() {
-        final SecureRandom random = new SecureRandom();
         for (int i = 0; i < 10000; i++) {
             // Arrange:
             final int[] t = new int[10];
             for (int j = 0; j < 10; j++) {
-                t[j] = random.nextInt(1 << 28) - (1 << 27);
+                t[j] = RandomUtils.generateRandomInt(1 << 28) - (1 << 27);
             }
 
             // odd numbers are negative

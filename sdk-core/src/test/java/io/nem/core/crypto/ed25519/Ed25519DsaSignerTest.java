@@ -26,7 +26,7 @@ import io.nem.core.crypto.PublicKey;
 import io.nem.core.crypto.SignSchema;
 import io.nem.core.crypto.Signature;
 import io.nem.core.crypto.ed25519.arithmetic.MathUtils;
-import io.nem.core.test.Utils;
+import io.nem.sdk.infrastructure.RandomUtils;
 import java.math.BigInteger;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -42,7 +42,7 @@ public class Ed25519DsaSignerTest extends DsaSignerTest {
         final CryptoEngine engine = this.getCryptoEngine();
         final KeyPair kp = KeyPair.random(engine, signSchema);
         final DsaSigner dsaSigner = this.getDsaSigner(kp, signSchema);
-        final byte[] input = Utils.generateRandomBytes();
+        final byte[] input = RandomUtils.generateRandomBytes();
 
         // Act:
         final Signature signature = dsaSigner.sign(input);
@@ -60,7 +60,7 @@ public class Ed25519DsaSignerTest extends DsaSignerTest {
         final CryptoEngine engine = this.getCryptoEngine();
         final KeyPair kp = KeyPair.random(engine, signSchema);
         final DsaSigner dsaSigner = this.getDsaSigner(kp, signSchema);
-        final byte[] input = Utils.generateRandomBytes();
+        final byte[] input = RandomUtils.generateRandomBytes();
 
         // Act:
         final Signature signature = dsaSigner.sign(input);
@@ -85,7 +85,7 @@ public class Ed25519DsaSignerTest extends DsaSignerTest {
         Signature signature;
         byte[] input;
         while (true) {
-            input = Utils.generateRandomBytes();
+            input = RandomUtils.generateRandomBytes();
             signature = dsaSigner.sign(input);
             if (signature.getR().add(groupOrder).compareTo(BigInteger.ONE.shiftLeft(256)) < 0) {
                 break;
@@ -108,7 +108,7 @@ public class Ed25519DsaSignerTest extends DsaSignerTest {
         final KeyPair keyPair = KeyPair.random(engine, signSchema);
         for (int i = 0; i < 20; i++) {
             final DsaSigner dsaSigner = this.getDsaSigner(keyPair, signSchema);
-            final byte[] input = Utils.generateRandomBytes();
+            final byte[] input = RandomUtils.generateRandomBytes();
 
             // Act:
             final Signature signature1 = dsaSigner.sign(input);
@@ -127,7 +127,7 @@ public class Ed25519DsaSignerTest extends DsaSignerTest {
         final KeyPair keyPair = KeyPair.random(engine, signSchema);
         for (int i = 0; i < 20; i++) {
             final DsaSigner dsaSigner = this.getDsaSigner(keyPair, signSchema);
-            final byte[] input = Utils.generateRandomBytes();
+            final byte[] input = RandomUtils.generateRandomBytes();
 
             // Act:
             final Signature signature1 = dsaSigner.sign(input);
@@ -149,7 +149,7 @@ public class Ed25519DsaSignerTest extends DsaSignerTest {
                 return false;
             }
         };
-        final byte[] input = Utils.generateRandomBytes();
+        final byte[] input = RandomUtils.generateRandomBytes();
 
         // Act:
         Assertions.assertEquals("Generated signature is not canonical",
@@ -164,7 +164,7 @@ public class Ed25519DsaSignerTest extends DsaSignerTest {
         final CryptoEngine engine = this.getCryptoEngine();
         final KeyPair kp = KeyPair.random(engine, signSchema);
         final DsaSigner dsaSigner = this.getDsaSigner(kp, signSchema);
-        final byte[] input = Utils.generateRandomBytes();
+        final byte[] input = RandomUtils.generateRandomBytes();
         final Signature signature = dsaSigner.sign(input);
         final Ed25519DsaSigner dsaSignerWithZeroArrayPublicKey = Mockito
             .mock(Ed25519DsaSigner.class);

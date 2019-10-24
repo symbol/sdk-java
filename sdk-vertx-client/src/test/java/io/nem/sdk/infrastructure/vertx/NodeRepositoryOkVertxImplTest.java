@@ -87,8 +87,8 @@ public class NodeRepositoryOkVertxImplTest extends AbstractVertxRespositoryTest 
 
         Assertions.assertNotNull(info);
 
-        Assertions.assertEquals(BigInteger.valueOf(1L), info.getReceiveTimeStamp());
-        Assertions.assertEquals(BigInteger.valueOf(2L), info.getSendTimeStamp());
+        Assertions.assertEquals(BigInteger.valueOf(1L), info.getReceiveTimestamp());
+        Assertions.assertEquals(BigInteger.valueOf(2L), info.getSendTimestamp());
 
     }
 

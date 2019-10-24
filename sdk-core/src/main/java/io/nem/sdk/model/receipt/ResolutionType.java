@@ -35,6 +35,7 @@ public enum ResolutionType {
     /**
      * Static constructor converting resolution type raw value to enum instance.
      *
+     * @param value the low level int value.
      * @return {@link ReceiptType}
      */
     public static ResolutionType rawValueOf(int value) {

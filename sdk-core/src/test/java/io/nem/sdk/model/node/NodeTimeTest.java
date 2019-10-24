@@ -40,7 +40,7 @@ public class NodeTimeTest {
     void shouldCreateNodeTime() {
         NodeTime nodeTime = new NodeTime(BigInteger.valueOf(1234567890),
             BigInteger.valueOf(987654321));
-        assertEquals(987654321, nodeTime.getReceiveTimeStamp().intValue());
-        assertEquals(1234567890, nodeTime.getSendTimeStamp().intValue());
+        assertEquals(987654321, nodeTime.getReceiveTimestamp().intValue());
+        assertEquals(1234567890, nodeTime.getSendTimestamp().intValue());
     }
 }

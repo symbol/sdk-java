@@ -24,6 +24,9 @@ public class BlockchainScore {
 
     /**
      * Constructor
+     *
+     * @param scoreLow the score low.
+     * @param scoreHigh the score high.
      */
     public BlockchainScore(BigInteger scoreLow, BigInteger scoreHigh) {
         this.scoreHigh = scoreHigh;

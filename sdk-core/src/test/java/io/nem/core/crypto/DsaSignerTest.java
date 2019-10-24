@@ -16,7 +16,7 @@
 
 package io.nem.core.crypto;
 
-import io.nem.core.test.Utils;
+import io.nem.sdk.infrastructure.RandomUtils;
 import java.math.BigInteger;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -32,7 +32,7 @@ public abstract class DsaSignerTest {
         final CryptoEngine engine = this.getCryptoEngine();
         final KeyPair kp = KeyPair.random(engine, signSchema);
         final DsaSigner dsaSigner = this.getDsaSigner(kp, signSchema);
-        final byte[] input = Utils.generateRandomBytes();
+        final byte[] input = RandomUtils.generateRandomBytes();
 
         // Act:
         final Signature signature = dsaSigner.sign(input);
@@ -50,7 +50,7 @@ public abstract class DsaSignerTest {
         final KeyPair kp2 = KeyPair.random(engine, signSchema);
         final DsaSigner dsaSigner1 = this.getDsaSigner(kp1, signSchema);
         final DsaSigner dsaSigner2 = this.getDsaSigner(kp2, signSchema);
-        final byte[] input = Utils.generateRandomBytes();
+        final byte[] input = RandomUtils.generateRandomBytes();
 
         // Act:
         final Signature signature1 = dsaSigner1.sign(input);
@@ -70,7 +70,7 @@ public abstract class DsaSignerTest {
         final CryptoEngine engine = this.getCryptoEngine();
         final KeyPair kp = KeyPair.random(engine, signSchema);
         final DsaSigner dsaSigner = this.getDsaSigner(kp, signSchema);
-        final byte[] input = Utils.generateRandomBytes();
+        final byte[] input = RandomUtils.generateRandomBytes();
 
         // Act:
         final Signature signature1 = dsaSigner.sign(input);
@@ -88,7 +88,7 @@ public abstract class DsaSignerTest {
         final KeyPair kp = KeyPair
             .onlyPublic(KeyPair.random(engine, signSchema).getPublicKey(), engine);
         final DsaSigner dsaSigner = this.getDsaSigner(kp, signSchema);
-        final byte[] input = Utils.generateRandomBytes();
+        final byte[] input = RandomUtils.generateRandomBytes();
 
         // Act:
         CryptoException exception = Assertions
@@ -104,7 +104,7 @@ public abstract class DsaSignerTest {
         final CryptoEngine engine = this.getCryptoEngine();
         final KeyPair kp = KeyPair.random(engine, signSchema);
         final DsaSigner dsaSigner = this.getDsaSigner(kp, signSchema);
-        final byte[] input = Utils.generateRandomBytes();
+        final byte[] input = RandomUtils.generateRandomBytes();
 
         // Act:
         final Signature signature = dsaSigner.sign(input);
@@ -120,7 +120,7 @@ public abstract class DsaSignerTest {
         final CryptoEngine engine = this.getCryptoEngine();
         final KeyPair kp = KeyPair.random(engine, signSchema);
         final DsaSigner dsaSigner = Mockito.spy(this.getDsaSigner(kp, signSchema));
-        final byte[] input = Utils.generateRandomBytes();
+        final byte[] input = RandomUtils.generateRandomBytes();
         final Signature signature = new Signature(BigInteger.ONE, BigInteger.ONE);
 
         // Act:

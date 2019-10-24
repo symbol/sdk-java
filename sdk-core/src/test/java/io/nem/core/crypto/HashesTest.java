@@ -16,7 +16,7 @@
 
 package io.nem.core.crypto;
 
-import io.nem.core.test.Utils;
+import io.nem.sdk.infrastructure.RandomUtils;
 import java.util.Arrays;
 import java.util.function.Function;
 import org.hamcrest.MatcherAssert;
@@ -42,7 +42,7 @@ public class HashesTest {
         final Function<byte[], byte[]> hashFunction2) {
 
         // Arrange:
-        final byte[] input = Utils.generateRandomBytes();
+        final byte[] input = RandomUtils.generateRandomBytes();
 
         // Act:
         final byte[] hash1 = hashFunction1.apply(input);
@@ -343,7 +343,7 @@ public class HashesTest {
 
         public void assertHashHasExpectedLength() {
             // Arrange:
-            final byte[] input = Utils.generateRandomBytes();
+            final byte[] input = RandomUtils.generateRandomBytes();
 
             // Act:
             final byte[] hash = this.hashFunction.apply(input);
@@ -354,7 +354,7 @@ public class HashesTest {
 
         public void assertHashIsSameForSameInputs() {
             // Arrange:
-            final byte[] input = Utils.generateRandomBytes();
+            final byte[] input = RandomUtils.generateRandomBytes();
 
             // Act:
             final byte[] hash1 = this.hashFunction.apply(input);
@@ -366,7 +366,7 @@ public class HashesTest {
 
         public void assertHashIsSameForSplitInputs() {
             // Arrange:
-            final byte[] input = Utils.generateRandomBytes();
+            final byte[] input = RandomUtils.generateRandomBytes();
 
             // Act:
             final byte[] hash1 = this.hashFunction.apply(input);
@@ -378,8 +378,8 @@ public class HashesTest {
 
         public void assertHashIsDifferentForDifferentInputs() {
             // Arrange:
-            final byte[] input1 = Utils.generateRandomBytes();
-            final byte[] input2 = Utils.generateRandomBytes();
+            final byte[] input1 = RandomUtils.generateRandomBytes();
+            final byte[] input2 = RandomUtils.generateRandomBytes();
 
             // Act:
             final byte[] hash1 = this.hashFunction.apply(input1);

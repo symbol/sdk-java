@@ -25,6 +25,9 @@ public class ServerInfo {
 
     /**
      * Constructor
+     *
+     * @param restVersion the rest version
+     * @param sdkVersion the sdk version
      */
     public ServerInfo(String restVersion, String sdkVersion) {
         this.restVersion = restVersion;

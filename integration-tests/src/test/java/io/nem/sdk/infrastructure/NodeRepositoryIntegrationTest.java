@@ -48,7 +48,7 @@ class NodeRepositoryIntegrationTest extends BaseIntegrationTest {
     @EnumSource(RepositoryType.class)
     void getNodeTime(RepositoryType type) {
         NodeTime nodeTime = get(getNodeRepository(type).getNodeTime());
-        assertTrue(nodeTime.getReceiveTimeStamp().longValue() > 0);
-        assertTrue(nodeTime.getSendTimeStamp().longValue() > 0);
+        assertTrue(nodeTime.getReceiveTimestamp().longValue() > 0);
+        assertTrue(nodeTime.getSendTimestamp().longValue() > 0);
     }
 }

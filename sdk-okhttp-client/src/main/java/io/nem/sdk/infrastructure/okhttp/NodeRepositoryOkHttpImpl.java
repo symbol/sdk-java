@@ -80,13 +80,11 @@ public class NodeRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl imple
     }
 
     private NodeTime toNodeTime(NodeTimeDTO nodeTimeDTO) {
-        BigInteger sendTimeStamp = (
+        BigInteger sendTimestamp = (
             nodeTimeDTO.getCommunicationTimestamps().getSendTimestamp());
-        BigInteger receiveTimeStamp = (
+        BigInteger receiveTimestamp = (
             nodeTimeDTO.getCommunicationTimestamps().getReceiveTimestamp());
-        return new NodeTime(
-            sendTimeStamp,
-            receiveTimeStamp);
+        return new NodeTime(sendTimestamp, receiveTimestamp);
     }
 
 }

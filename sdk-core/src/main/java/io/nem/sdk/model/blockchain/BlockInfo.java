@@ -16,6 +16,7 @@
 
 package io.nem.sdk.model.blockchain;
 
+import io.nem.core.utils.MapperUtils;
 import io.nem.sdk.model.account.PublicAccount;
 import java.math.BigInteger;
 import java.util.List;
@@ -138,25 +139,30 @@ public class BlockInfo {
     /**
      * Get network type
      *
+     * @param blockVersion the block version.
      * @return network type
      */
     public static NetworkType getNetworkType(Integer blockVersion) {
-        return NetworkType.rawValueOf(
-            Integer.parseInt(Integer.toHexString(blockVersion.intValue()).substring(0, 2), 16));
+        return MapperUtils.extractNetworkType(blockVersion);
     }
 
     /**
      * Get transaction version
      *
+     * param blockVersion the block version.
+     *
+     * @param blockVersion the block version.
      * @return transaction version
      */
     public static Integer getTransactionVersion(Integer blockVersion) {
-        return Integer.parseInt(Integer.toHexString(blockVersion.intValue()).substring(2, 4), 16);
+        return MapperUtils.extractTransactionVersion(blockVersion);
     }
 
     /**
      * Get public account
      *
+     * @param publicKey the public key
+     * @param networkType the {@link NetworkType}
      * @return public account
      */
     public static PublicAccount getPublicAccount(String publicKey, NetworkType networkType) {
@@ -164,9 +170,11 @@ public class BlockInfo {
     }
 
     /**
-     * Get public account
+     * Get public account if possible
      *
-     * @return public account
+     * @param publicKey the public key
+     * @param networkType the {@link NetworkType}
+     * @return public account or empty if no public key is provided.
      */
     public static Optional<PublicAccount> getPublicAccount(
         Optional<String> publicKey, NetworkType networkType) {

@@ -44,6 +44,7 @@ public class Ed25519DsaSigner implements DsaSigner {
      * Creates a Ed25519 DSA signer.
      *
      * @param keyPair The key pair to use.
+     * @param signSchema the schema used to create and hash private keys.
      */
     public Ed25519DsaSigner(final KeyPair keyPair, final SignSchema signSchema) {
         this.keyPair = keyPair;
