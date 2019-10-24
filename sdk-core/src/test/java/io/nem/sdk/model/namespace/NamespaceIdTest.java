@@ -20,6 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import io.nem.core.utils.ConvertUtils;
 import java.math.BigInteger;
 import java.util.List;
 import java.util.stream.Stream;
@@ -44,10 +45,35 @@ class NamespaceIdTest {
 
     @ParameterizedTest
     @MethodSource("provider")
-    void createNamespaceIdsFromUInt64LowerAndHigher(
+    void createNamespaceIdsFromLong(
         String expectedIdAsHex, long idAsLong) {
         NamespaceId namespaceId = NamespaceId.createFromId(BigInteger.valueOf(idAsLong));
         assertEquals(expectedIdAsHex, namespaceId.getIdAsHex());
+        assertEquals(idAsLong, namespaceId.getIdAsLong());
+        assertTrue(namespaceId.getId().compareTo(BigInteger.ZERO) > 0);
+        assertEquals(ConvertUtils.toUnsignedBigInteger(idAsLong), namespaceId.getId());
+    }
+
+    @ParameterizedTest
+    @MethodSource("provider")
+    void createNamespaceIdsFromBigInteger(
+        String expectedIdAsHex, long idAsLong) {
+        NamespaceId namespaceId = NamespaceId
+            .createFromId(ConvertUtils.toUnsignedBigInteger(idAsLong));
+        assertEquals(expectedIdAsHex, namespaceId.getIdAsHex());
+        assertEquals(idAsLong, namespaceId.getIdAsLong());
+        assertTrue(namespaceId.getId().compareTo(BigInteger.ZERO) > 0);
+        assertEquals(ConvertUtils.toUnsignedBigInteger(idAsLong), namespaceId.getId());
+    }
+
+    @ParameterizedTest
+    @MethodSource("provider")
+    void createNamespaceIdsFromHex(String hex, long idAsLong) {
+        NamespaceId namespaceId = NamespaceId.createFromId(new BigInteger(hex, 16));
+        assertEquals(hex, namespaceId.getIdAsHex());
+        assertEquals(idAsLong, namespaceId.getIdAsLong());
+        assertTrue(namespaceId.getId().compareTo(BigInteger.ZERO) > 0);
+        assertEquals(ConvertUtils.toUnsignedBigInteger(idAsLong), namespaceId.getId());
     }
 
     @Test
@@ -104,7 +130,8 @@ class NamespaceIdTest {
     @Test
     void createANamespaceIdFromIdViaConstructor() {
         NamespaceId namespaceId = NamespaceId.createFromId(new BigInteger("-8884663987180930485"));
-        assertEquals(namespaceId.getId(), new BigInteger("-8884663987180930485"));
+        assertEquals(namespaceId.getId(),
+            ConvertUtils.toUnsignedBigInteger(new BigInteger("-8884663987180930485")));
         assertFalse(namespaceId.getFullName().isPresent());
     }
 

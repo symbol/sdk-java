@@ -48,7 +48,7 @@ public class ArtifactExpiryReceiptTest {
 
     @Test
     void shouldCreateNamespaceExpiryReceipt() {
-        NamespaceId namespaceId = NamespaceId.createFromId(new BigInteger("-8884663987180930485"));
+        NamespaceId namespaceId = NamespaceId.createFromId(new BigInteger("9562080086528621131"));
         ArtifactExpiryReceipt<NamespaceId> namespaceExpiryReceipt =
             new ArtifactExpiryReceipt<>(
                 namespaceId, ReceiptType.NAMESPACE_EXPIRED, ReceiptVersion.ARTIFACT_EXPIRY);
@@ -56,7 +56,7 @@ public class ArtifactExpiryReceiptTest {
         assertFalse(namespaceExpiryReceipt.getSize().isPresent());
         assertEquals(ReceiptVersion.ARTIFACT_EXPIRY, namespaceExpiryReceipt.getVersion());
         assertEquals(
-            namespaceExpiryReceipt.getArtifactId().getId(), new BigInteger("-8884663987180930485"));
+            namespaceExpiryReceipt.getArtifactId().getId(), new BigInteger("9562080086528621131"));
 
         String hex = Hex.toHexString(namespaceExpiryReceipt.serialize());
         Assertions.assertEquals("01004e414bfa5f372d55b384", hex);
