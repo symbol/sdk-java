@@ -53,7 +53,7 @@ public class NamespaceId implements UnresolvedMosaicId, UnresolvedAddress {
     }
 
     private NamespaceId(BigInteger id, Optional<String> fullName) {
-        this.id = id;
+        this.id = ConvertUtils.toUnsignedBigInteger(id);
         this.fullName = fullName;
     }
 
