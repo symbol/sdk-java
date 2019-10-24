@@ -1,10 +1,11 @@
 # nem2-sdk for Java/Kotlin/Scala
 #
 
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.nem/sdk/badge.svg)](https://maven-badges.herokuapp.com/maven-central/io.nem/sdk)
+[![sdk-vertx-client](https://maven-badges.herokuapp.com/maven-central/io.nem/sdk-vertx-client/badge.svg)](https://maven-badges.herokuapp.com/maven-central/io.nem/sdk-vertx-client)
 [![Build Status](https://api.travis-ci.org/nemtech/nem2-sdk-java.svg?branch=master)](https://travis-ci.org/nemtech/nem2-sdk-java)
 [![Coverage Status](https://coveralls.io/repos/github/nemtech/nem2-sdk-java/badge.svg?branch=master)](https://coveralls.io/github/nemtech/nem2-sdk-java?branch=master)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+
 
 The official nem2-sdk for Java, Kotlin and Scala to work with the NEM2 (a.k.a Catapult).
 
@@ -37,7 +38,7 @@ Each SDK user can depend on the best library for its need (example, ``sdk-vertx-
 <dependency>
     <groupId>io.nem</groupId>
     <artifactId>sdk-vertx-client</artifactId>
-    <version>0.14.0</version>
+    <version>0.14.1</version>
 </dependency>
 ```
 
@@ -47,27 +48,27 @@ OR
 <dependency>
     <groupId>io.nem</groupId>
     <artifactId>sdk-okhttp-client</artifactId>
-    <version>0.14.0</version>
+    <version>0.14.1</version>
 </dependency>
 ```
 
 
 ### Gradle
 
-```compile 'io.nem:sdk-vertx-client:0.14.0```
+```compile 'io.nem:sdk-vertx-client:0.14.1```
 
 OR
 
-```compile 'io.nem:sdk-okhttp-client:0.14.0```
+```compile 'io.nem:sdk-okhttp-client:0.14.1```
 
 
 ### SBT
 
-```libraryDependencies += "io.nem" % "sdk-vertx-client" % "0.14.0"```
+```libraryDependencies += "io.nem" % "sdk-vertx-client" % "0.14.1"```
 
 OR
 
-```libraryDependencies += "io.nem" % "sdk-okhttp-client" % "0.14.0"```
+```libraryDependencies += "io.nem" % "sdk-okhttp-client" % "0.14.1"```
 
 
 ## Documentation and Getting Started
@@ -112,4 +113,4 @@ Licensed under the [Apache License 2.0](LICENSE)
 [self]: https://github.com/nemtech/nem2-sdk-java
 [docs]: http://nemtech.github.io/getting-started/setup-workstation.html
 [issues]: https://github.com/nemtech/nem2-sdk-java/issues
-[sdk-ref]: http://nemtech.github.io/nem2-sdk-java/javadoc/0.14.0/
+[sdk-ref]: http://nemtech.github.io/nem2-sdk-java/javadoc/0.14.1/
