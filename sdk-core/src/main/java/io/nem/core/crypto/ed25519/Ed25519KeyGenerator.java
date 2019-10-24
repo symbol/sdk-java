@@ -25,27 +25,23 @@ import io.nem.core.crypto.SignSchema;
 import io.nem.core.crypto.ed25519.arithmetic.Ed25519EncodedFieldElement;
 import io.nem.core.crypto.ed25519.arithmetic.Ed25519Group;
 import io.nem.core.crypto.ed25519.arithmetic.Ed25519GroupElement;
+import io.nem.sdk.infrastructure.RandomUtils;
 import java.math.BigInteger;
-import java.security.SecureRandom;
 
 /**
  * Implementation of the key generator for Ed25519.
  */
 public class Ed25519KeyGenerator implements KeyGenerator {
 
-    private final SecureRandom random;
-
     private final SignSchema signSchema;
 
     public Ed25519KeyGenerator(SignSchema signSchema) {
         this.signSchema = signSchema;
-        this.random = new SecureRandom();
     }
 
     @Override
     public KeyPair generateKeyPair() {
-        final byte[] seed = new byte[32];
-        this.random.nextBytes(seed);
+        final byte[] seed = RandomUtils.generateRandomBytes(32);
 
         // seed is the private key.
         final PrivateKey privateKey = new PrivateKey(new BigInteger(seed));

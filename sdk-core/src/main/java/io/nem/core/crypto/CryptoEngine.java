@@ -32,6 +32,7 @@ public interface CryptoEngine {
      * Creates a DSA signer.
      *
      * @param keyPair The key pair.
+     * @param signSchema the signSchema used to generate the signer.
      * @return The DSA signer.
      */
     DsaSigner createDsaSigner(final KeyPair keyPair, SignSchema signSchema);
@@ -39,6 +40,7 @@ public interface CryptoEngine {
     /**
      * Creates a key generator.
      *
+     * @param signSchema the schema that defines how to create private keys and hashes.
      * @return The key generator.
      */
     KeyGenerator createKeyGenerator(SignSchema signSchema);
@@ -50,6 +52,7 @@ public interface CryptoEngine {
      * encryption.
      * @param recipientKeyPair The recipient KeyPair. The recipient's private key is required for
      * decryption.
+     * @param signSchema the schema that defines how to create private keys and hashes.
      * @return The IES cipher.
      */
     BlockCipher createBlockCipher(final KeyPair senderKeyPair, final KeyPair recipientKeyPair,

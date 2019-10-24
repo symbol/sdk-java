@@ -72,13 +72,13 @@ class NamespaceInfoTest {
     @Test
     void shouldReturnRootNamespaceId() {
         NamespaceInfo namespaceInfo = createRootNamespaceInfo();
-        assertEquals(new BigInteger("-8884663987180930485"), namespaceInfo.getId().getId());
+        assertEquals(new BigInteger("9562080086528621131"), namespaceInfo.getId().getId());
     }
 
     @Test
     void shouldReturnSubNamespaceId() {
         NamespaceInfo namespaceInfo = createSubNamespaceInfo();
-        assertEquals(new BigInteger("-1087871471161192663"), namespaceInfo.getId().getId());
+        assertEquals(new BigInteger("17358872602548358953"), namespaceInfo.getId().getId());
     }
 
     @Test
@@ -108,7 +108,7 @@ class NamespaceInfoTest {
     @Test
     void shouldReturnParentNamespaceIdWhenNamespaceInfoIsFromSubNamespace() {
         NamespaceInfo namespaceInfo = createSubNamespaceInfo();
-        assertEquals(new BigInteger("-3087871471161192663"),
+        assertEquals(new BigInteger("15358872602548358953"),
             namespaceInfo.parentNamespaceId().getId());
     }
 
@@ -149,7 +149,7 @@ class NamespaceInfoTest {
             NamespaceRegistrationType.SUB_NAMESPACE,
             1,
             Arrays.asList(
-                NamespaceId.createFromId(new BigInteger("-3087871471161192663")),
+                NamespaceId.createFromId(new BigInteger("17358872602548358953")),
                 NamespaceId.createFromId(new BigInteger("-1087871471161192663"))),
             NamespaceId.createFromId(new BigInteger("-3087871471161192663")),
             new PublicAccount(

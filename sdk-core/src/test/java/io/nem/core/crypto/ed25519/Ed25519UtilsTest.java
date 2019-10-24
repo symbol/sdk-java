@@ -18,7 +18,7 @@ package io.nem.core.crypto.ed25519;
 
 import io.nem.core.crypto.PrivateKey;
 import io.nem.core.crypto.SignSchema;
-import io.nem.core.test.Utils;
+import io.nem.sdk.infrastructure.RandomUtils;
 import java.math.BigInteger;
 import java.util.stream.Stream;
 import org.bouncycastle.util.encoders.Hex;
@@ -55,7 +55,7 @@ public class Ed25519UtilsTest {
     @EnumSource(SignSchema.class)
     public void prepareForScalarMultiplyReturnsClampedValue(SignSchema signSchema) {
         // Arrange:
-        final PrivateKey privateKey = new PrivateKey(new BigInteger(Utils.generateRandomBytes(32)));
+        final PrivateKey privateKey = new PrivateKey(new BigInteger(RandomUtils.generateRandomBytes(32)));
 
         // Act:
         final byte[] a = Ed25519Utils.prepareForScalarMultiply(privateKey, signSchema).getRaw();

@@ -16,7 +16,6 @@
 
 package io.nem.core.crypto;
 
-import io.nem.core.test.Utils;
 import java.math.BigInteger;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.core.IsEqual;
@@ -35,6 +34,21 @@ public class SignatureTest {
     private static Signature createSignature(final int r, final int s) {
         return new Signature(
             new BigInteger(String.format("%d", r)), new BigInteger(String.format("%d", s)));
+    }
+
+    /**
+     * Creates a string initialized with a single character.
+     *
+     * @param ch The character used in the string.
+     * @param numChars The number of characters in hte string.
+     * @return A string of length numChars initialized to ch.
+     */
+    public static String createString(final char ch, final int numChars) {
+        final StringBuilder builder = new StringBuilder();
+        for (int i = 0; i < numChars; ++i) {
+            builder.append(ch);
+        }
+        return builder.toString();
     }
 
     @Test
@@ -168,8 +182,8 @@ public class SignatureTest {
 
     private Signature[] createRoundtripTestSignatures() {
         return new Signature[]{
-            createSignature(Utils.createString('F', 64), Utils.createString('0', 64)),
-            createSignature(Utils.createString('0', 64), Utils.createString('F', 64)),
+            createSignature(createString('F', 64), createString('0', 64)),
+            createSignature(createString('0', 64), createString('F', 64)),
             createSignature("99512345", "12351234")
         };
     }

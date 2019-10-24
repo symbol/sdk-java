@@ -39,6 +39,7 @@ public enum MetadataType {
     /**
      * Static constructor converting metadata type raw value to enum instance.
      *
+     * @param value the low level int value.
      * @return {@link TransactionType}
      */
     public static MetadataType rawValueOf(int value) {

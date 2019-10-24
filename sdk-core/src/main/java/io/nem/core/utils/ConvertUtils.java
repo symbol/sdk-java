@@ -146,7 +146,18 @@ public class ConvertUtils {
      * @return the positive {@link BigInteger}.
      */
     public static BigInteger toUnsignedBigInteger(long value) {
-        return BigInteger.valueOf(value).and(UNSIGNED_LONG_MASK);
+        return toUnsignedBigInteger(BigInteger.valueOf(value));
+    }
+
+    /**
+     * It converts a signed BigInteger into an unsigned BigInteger. It fixes overflow problems that
+     * could happen when working with unsigned int 64.
+     *
+     * @param value the value, positive or negative.
+     * @return the positive {@link BigInteger}.
+     */
+    public static BigInteger toUnsignedBigInteger(BigInteger value) {
+        return value.and(UNSIGNED_LONG_MASK);
     }
 
     /**

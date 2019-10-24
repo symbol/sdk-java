@@ -17,6 +17,7 @@
 
 package io.nem.core.utils;
 
+import io.nem.sdk.infrastructure.RandomUtils;
 import io.nem.sdk.model.account.Address;
 import io.nem.sdk.model.account.UnresolvedAddress;
 import io.nem.sdk.model.blockchain.NetworkType;
@@ -25,8 +26,6 @@ import io.nem.sdk.model.namespace.NamespaceId;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
-import java.util.Random;
-import org.apache.commons.lang3.RandomUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -92,7 +91,7 @@ public class MapperUtilsTest {
             .assertEquals(36865, MapperUtils.toNetworkVersion(NetworkType.MIJIN_TEST, 1));
 
         Arrays.stream(NetworkType.values()).forEach(networkType -> {
-            int version = RandomUtils.nextInt(1, 100);
+            int version = RandomUtils.generateRandomInt(99) + 1;
 
             Assertions.assertEquals(networkType,
                 MapperUtils.extractNetworkType(MapperUtils.toNetworkVersion(networkType,
@@ -160,8 +159,7 @@ public class MapperUtilsTest {
 
     @Test
     public void givenUsingPlainJava_whenGeneratingRandomStringUnbounded_thenCorrect() {
-        byte[] array = new byte[7]; // length is bounded by 7
-        new Random().nextBytes(array);
+        byte[] array = RandomUtils.generateRandomBytes(7);
         String generatedString = new String(array, StandardCharsets.UTF_8);
         Assertions.assertNotNull(generatedString);
     }

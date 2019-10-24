@@ -26,7 +26,6 @@ import io.nem.sdk.model.transaction.SecretLockTransactionFactory;
 import io.nem.sdk.model.transaction.SecretProofTransaction;
 import io.nem.sdk.model.transaction.SecretProofTransactionFactory;
 import java.math.BigInteger;
-import java.util.Random;
 import org.apache.commons.codec.binary.Hex;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -41,8 +40,7 @@ public class SecretLockSecretProofTransactionIntegrationTest extends BaseIntegra
     @ParameterizedTest
     @EnumSource(RepositoryType.class)
     void standaloneSecretLockTransaction(RepositoryType type) {
-        byte[] secretBytes = new byte[20];
-        new Random().nextBytes(secretBytes);
+        byte[] secretBytes = RandomUtils.generateRandomBytes(20);
         byte[] result = Hashes.sha3_256(secretBytes);
         String secret = Hex.encodeHexString(result);
         Address recipient = config().getTestAccount2().getAddress();
@@ -61,8 +59,7 @@ public class SecretLockSecretProofTransactionIntegrationTest extends BaseIntegra
     @ParameterizedTest
     @EnumSource(RepositoryType.class)
     void aggregateSecretLockTransaction(RepositoryType type) {
-        byte[] secretBytes = new byte[20];
-        new Random().nextBytes(secretBytes);
+        byte[] secretBytes = RandomUtils.generateRandomBytes(20);
         byte[] result = Hashes.sha3_256(secretBytes);
         String secret = Hex.encodeHexString(result);
         Address recipient = config().getTestAccount2().getAddress();
@@ -83,8 +80,7 @@ public class SecretLockSecretProofTransactionIntegrationTest extends BaseIntegra
     @ParameterizedTest
     @EnumSource(RepositoryType.class)
     void standaloneSecretProofTransaction(RepositoryType type) {
-        byte[] secretBytes = new byte[20];
-        new Random().nextBytes(secretBytes);
+        byte[] secretBytes = RandomUtils.generateRandomBytes(20);
         byte[] result = Hashes.sha3_256(secretBytes);
         String secret = Hex.encodeHexString(result);
         String proof = Hex.encodeHexString(secretBytes);
@@ -115,8 +111,7 @@ public class SecretLockSecretProofTransactionIntegrationTest extends BaseIntegra
     @ParameterizedTest
     @EnumSource(RepositoryType.class)
     void aggregateSecretProofTransaction(RepositoryType type) {
-        byte[] secretBytes = new byte[20];
-        new Random().nextBytes(secretBytes);
+        byte[] secretBytes = RandomUtils.generateRandomBytes(20);
         byte[] result = Hashes.sha3_256(secretBytes);
         String secret = Hex.encodeHexString(result);
         String proof = Hex.encodeHexString(secretBytes);

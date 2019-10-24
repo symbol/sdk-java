@@ -38,6 +38,7 @@ public class MosaicId implements UnresolvedMosaicId {
     /**
      * Create MosaicId from mosaic Hex string
      *
+     * @param hex the hex value.
      * @throws IllegalIdentifierException MosaicId identifier
      */
     public MosaicId(String hex) {
@@ -48,6 +49,8 @@ public class MosaicId implements UnresolvedMosaicId {
 
     /**
      * Create MosaicId from BigInteger id
+     *
+     * @param id the mosaic id as {@link BigInteger}.
      */
     public MosaicId(BigInteger id) {
         this.id = id;
@@ -56,6 +59,9 @@ public class MosaicId implements UnresolvedMosaicId {
 
     /**
      * Create MosaicId from a MosaicNonce and a PublicAccount
+     *
+     * @param mosaicNonce the mosaic nonce.
+     * @param owner the public account.
      */
     public MosaicId(MosaicNonce mosaicNonce, PublicAccount owner) {
         this.id = IdGenerator
@@ -65,6 +71,11 @@ public class MosaicId implements UnresolvedMosaicId {
 
     /**
      * Create MosaicId from a MosaicNonce and a PublicAccount
+     *
+     * @param mosaicNonce the mosaic nonce
+     * @param owner thw account owner.
+     *
+     * @return the created {@link MosaicId}.
      */
     public static MosaicId createFromNonce(MosaicNonce mosaicNonce, PublicAccount owner) {
         return new MosaicId(mosaicNonce, owner);

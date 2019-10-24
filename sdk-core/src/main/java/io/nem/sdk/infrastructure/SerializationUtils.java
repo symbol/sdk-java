@@ -264,6 +264,7 @@ public class SerializationUtils {
     /**
      * It serializes the public key of a public account.
      *
+     * @param publicAccount to be serialized.
      * @return the public account
      */
     public static ByteBuffer toByteBuffer(PublicAccount publicAccount) {

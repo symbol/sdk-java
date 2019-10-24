@@ -42,6 +42,7 @@ public abstract class ResolutionStatement<U, R> {
     /**
      * Constructor
      *
+     * @param resolutionType the ResolutionType
      * @param height Height
      * @param unresolved An unresolved address or unresolved mosaicId ({@link UnresolvedAddress} |
      * {@link UnresolvedMosaicId}).

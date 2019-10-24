@@ -27,7 +27,6 @@ import java.math.BigInteger;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.Random;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -44,7 +43,7 @@ public class AccountMetadataIntegrationTest extends BaseIntegrationTest {
     @ParameterizedTest
     @EnumSource(RepositoryType.class)
     public void addMetadataToAccount(RepositoryType type) throws InterruptedException {
-        BigInteger key = BigInteger.valueOf(new Random().nextInt(100000));
+        BigInteger key = BigInteger.valueOf(RandomUtils.generateRandomInt(100000));
 
         String message = "This is the message for this account! 汉字" + key;
         System.out.println(

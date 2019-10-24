@@ -36,7 +36,7 @@ public class NetworkHarvestMosaic extends Mosaic {
     public static final boolean SUPPLYMUTABLE = true;
 
     /**
-     *
+     * @param amount the mosaic amount.
      */
     public NetworkHarvestMosaic(BigInteger amount) {
         super(NetworkHarvestMosaic.NAMESPACEID, amount);

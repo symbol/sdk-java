@@ -43,6 +43,7 @@ public class NamespaceId implements UnresolvedMosaicId, UnresolvedAddress {
     /**
      * Create NamespaceId from namespace Hex string
      *
+     * @param hex the hex value.
      * @throws IllegalIdentifierException NamespaceId identifier
      */
     public NamespaceId(String hex) {
@@ -52,12 +53,15 @@ public class NamespaceId implements UnresolvedMosaicId, UnresolvedAddress {
     }
 
     private NamespaceId(BigInteger id, Optional<String> fullName) {
-        this.id = id;
+        this.id = ConvertUtils.toUnsignedBigInteger(id);
         this.fullName = fullName;
     }
 
     /**
      * Create NamespaceId from namespace string name (ex: nem or domain.subdom.subdome)
+     *
+     * @param namespaceName the namespace name.
+     * @return the new {@link NamespaceId}
      */
     public static NamespaceId createFromName(String namespaceName) {
         return new NamespaceId(IdGenerator.generateNamespaceId(namespaceName),
@@ -67,6 +71,10 @@ public class NamespaceId implements UnresolvedMosaicId, UnresolvedAddress {
     /**
      * Create NamespaceId from namespace string name (ex: nem or domain.subdom.subdome) and parent
      * id
+     *
+     * @param namespaceName the namespace name.
+     * @param parentId the parent id.
+     * @return the new {@link NamespaceId}
      */
     public static NamespaceId createFromNameAndParentId(String namespaceName, BigInteger parentId) {
         return new NamespaceId(IdGenerator.generateNamespaceId(namespaceName, parentId),
@@ -76,6 +84,10 @@ public class NamespaceId implements UnresolvedMosaicId, UnresolvedAddress {
     /**
      * Create NamespaceId from namespace string name (ex: nem or domain.subdom.subdome) and parent
      * namespace name
+     *
+     * @param namespaceName the namespace name.
+     * @param parentNamespaceName the parent's namespace name.
+     * @return the new {@link NamespaceId}
      */
     public static NamespaceId createFromNameAndParentName(String namespaceName,
         String parentNamespaceName) {
@@ -85,6 +97,9 @@ public class NamespaceId implements UnresolvedMosaicId, UnresolvedAddress {
 
     /**
      * Create NamespaceId from BigInteger id
+     *
+     * @param id the namespace id as {@link BigInteger}.
+     * @return the new {@link NamespaceId}
      */
     public static NamespaceId createFromId(BigInteger id) {
         return new NamespaceId(id, Optional.empty());
@@ -92,6 +107,9 @@ public class NamespaceId implements UnresolvedMosaicId, UnresolvedAddress {
 
     /**
      * Returns a list of BigInteger ids for a namespace path (ex: nem or domain.subdom.subdome)
+     *
+     * @param namespaceName the namespace name.
+     * @return the paths
      */
     public static List<BigInteger> getNamespacePath(String namespaceName) {
         return IdGenerator.generateNamespacePath(namespaceName);

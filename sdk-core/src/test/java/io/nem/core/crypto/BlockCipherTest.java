@@ -16,7 +16,7 @@
 
 package io.nem.core.crypto;
 
-import io.nem.core.test.Utils;
+import io.nem.sdk.infrastructure.RandomUtils;
 import org.bouncycastle.util.encoders.Hex;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.core.IsEqual;
@@ -34,7 +34,7 @@ public abstract class BlockCipherTest {
         final CryptoEngine engine = this.getCryptoEngine();
         final KeyPair kp = KeyPair.random(engine, signSchema);
         final BlockCipher blockCipher = this.getBlockCipher(kp, kp, signSchema);
-        final byte[] input = Utils.generateRandomBytes();
+        final byte[] input = RandomUtils.generateRandomBytes();
 
         // Act:
         final byte[] encryptedBytes = blockCipher.encrypt(input);
@@ -54,7 +54,7 @@ public abstract class BlockCipherTest {
         final KeyPair rkp = KeyPair.random(engine, signSchema);
         final BlockCipher blockCipher =
             this.getBlockCipher(skp, KeyPair.onlyPublic(rkp.getPublicKey(), engine), signSchema);
-        final byte[] input = Utils.generateRandomBytes();
+        final byte[] input = RandomUtils.generateRandomBytes();
 
         // Act:
         final byte[] encryptedBytes = blockCipher.encrypt(input);
@@ -74,7 +74,7 @@ public abstract class BlockCipherTest {
             this.getBlockCipher(skp, KeyPair.onlyPublic(rkp.getPublicKey(), engine), signSchema);
         final BlockCipher blockCipher2 =
             this.getBlockCipher(KeyPair.onlyPublic(skp.getPublicKey(), engine), rkp, signSchema);
-        final byte[] input = Utils.generateRandomBytes();
+        final byte[] input = RandomUtils.generateRandomBytes();
 
         // Act:
         final byte[] encryptedBytes = blockCipher1.encrypt(input);
@@ -95,7 +95,7 @@ public abstract class BlockCipherTest {
             this.getBlockCipher(skp, KeyPair.onlyPublic(rkp.getPublicKey(), engine), signSchema);
         final BlockCipher blockCipher2 =
             this.getBlockCipher(KeyPair.onlyPublic(rkp.getPublicKey(), engine), skp, signSchema);
-        final byte[] input = Utils.generateRandomBytes();
+        final byte[] input = RandomUtils.generateRandomBytes();
 
         // Act:
         final byte[] encryptedBytes = blockCipher1.encrypt(input);
@@ -117,7 +117,7 @@ public abstract class BlockCipherTest {
         final BlockCipher blockCipher2 =
             this.getBlockCipher(KeyPair.random(engine, signSchema), KeyPair.random(engine,
                 signSchema), signSchema);
-        final byte[] input = Utils.generateRandomBytes();
+        final byte[] input = RandomUtils.generateRandomBytes();
 
         // Act:
         final byte[] encryptedBytes1 = blockCipher1.encrypt(input);
