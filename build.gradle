@@ -38,6 +38,7 @@ plugins {
 apply plugin: 'nebula-aggregate-javadocs'
 
 def artifactVersion = rootProject.file('version.txt').text.trim()
+def isReleaseVersion = !artifactVersion.contains("SNAPSHOT")
 
 ext {
     vertxVersion = "3.5.0"
@@ -54,9 +55,9 @@ repositories {
     mavenCentral()
 }
 
-def getPropertyValue(key) {
+def getPropertyValue(key, defaultValue = null) {
     def value = project.hasProperty(key) ? project[key] : System.getenv(key)
-    return value?.trim() == '' ? null : value
+    return value?.trim() == '' ? defaultValue : value
 }
 
 def ossrhUsername = getPropertyValue('ossrhUsername');
@@ -73,7 +74,7 @@ def signingKeyId = getPropertyValue('signingKeyId')
 def signingPassword = getPropertyValue('signingPassword')
 
 def githubToken = getPropertyValue('GRGIT_USER')
-def repoPath = getPropertyValue('TRAVIS_REPO_SLUG')
+def repoPath = getPropertyValue('TRAVIS_REPO_SLUG', "nemtech/nem2-sdk-java")
 def excludedCoverage = ['**catapult**']
 
 allprojects {
@@ -81,6 +82,8 @@ allprojects {
     ext."signing.secretKeyRingFile" = signingSecretKeyRingFile
     ext."signing.password" = signingPassword
 }
+
+
 
 
 subprojects {
@@ -91,15 +94,28 @@ subprojects {
     apply plugin: 'org.sonarqube'
     apply plugin: "de.marcphilipp.nexus-publish"
 
-    signing {
-        required { signingKeyId }
-        sign publishing.publications
-    }
 
     group 'io.nem'
     sourceCompatibility = 1.8
     version = artifactVersion
 
+    signing {
+        required { signingKeyId }
+        sign publishing.publications
+    }
+
+    task checkForSnapshotDependencies {
+        onlyIf { isReleaseVersion }
+        doLast {
+            allprojects { project ->
+                project.configurations.runtime.each {
+                    if (it.toString().contains("-SNAPSHOT"))
+                        throw new Exception("Release build contains snapshot dependencies: " + it)
+                }
+            }
+        }
+    }
+    jar.dependsOn checkForSnapshotDependencies
 
     repositories {
         mavenLocal()
@@ -152,8 +168,8 @@ subprojects {
 
         testImplementation(platform("org.junit:junit-bom:$junitVersion"))
         testImplementation("org.junit.jupiter:junit-jupiter:$junitVersion")
-
     }
+
 
     if (project.name != "integration-tests") {
         publishing {
@@ -164,14 +180,14 @@ subprojects {
                     artifact javadocJar
                     pom {
                         packaging = 'jar'
-                        url = 'https://github.com/nemtech/nem2-sdk-java'
+                        url = "https://github.com/${repoPath}"
                         name = "${project.name}"
                         description = "${project.name} lib for NEM2 sdk Java"
 
                         scm {
-                            connection = 'scm:git:https://github.com/nemtech/nem2-sdk-java.git'
-                            developerConnection = 'scm:svn:https://github.com/nemtech/nem2-sdk-java'
-                            url = 'https://github.com/nemtech/nem2-sdk-java'
+                            connection = "scm:git:https://github.com/${repoPath}.git"
+                            developerConnection = "scm:svn:https://github.com/${repoPath}"
+                            url = "https://github.com/${repoPath}"
                         }
 
                         licenses {
