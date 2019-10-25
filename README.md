@@ -12,21 +12,7 @@ The official nem2-sdk for Java, Kotlin and Scala to work with the NEM2 (a.k.a Ca
 ## Requirements
 
 - Java 8
-- Java 9 has not been tested yet
-
-## Installation
-
-### Open API Generated Libraries (Optional)
-
-The SDK libs depend on Open API 3 generated clients. The clients jars are automatically generated and deployed into Maven central. 
-The following steps are required if you are working on the Open API specification, you want to change or tune the generator. 
-
-If you want to build the clients,  execute the following to generate and install the libraries.
-
-```
-./gradlew -b ./openapi-generator/build.gradle clean generate
-./gradlew -b ./openapi-generator/build.gradle install
-```
+- Java 9
 
 ## Usage
 
@@ -77,11 +63,16 @@ Get started and learn more about nem2-sdk-java, check the [official documentatio
 
 Check SDK reference [here][sdk-ref]
 
+### Open API Generated Clients
+
+The SDK libs depend on Open API 3 generated clients. The clients Jars are automatically generated and deployed into Maven central by the [nem2-open-api-java-generator][nem2-open-api-java-generator] project. 
+
+If you want to change or tune the generated libraries, you would need to clone/fork [nem2-open-api-java-generator][nem2-open-api-java-generator] repository.
+
 ## Modules
 
 The SDK is composed of multiple sub-modules/folders:
 
-- **openapi-generator:** Utility folder that knows how to generate, install and release to maven central the different API clients from the open api 3 specification. The generated clients are `api-vertx-client`, `api-okhttp-gson-client`, `api-jersey2-client`. We may add more if customers require them.
 - **sdk-core:** This module includes the model objects, interfaces and common utility classes. It is Vertx, ok-http, gson, etc agnostic. Clients won't depend on this jar directly, they will depend on one of the implementations below.
 - **sdk-vertx-client:** The nem2-sdk-java Implementation that uses Vertx and generated `api-vertx-client` lib and dtos. A client may depend on this SDK implementation if Vertx is the selected implementation (e.g. server users).
 - **sdk-okhttp-client:** The nem2-sdk-java Implementation that uses OkHttp and the generated `api-okhttp-gson-client`. A client may depend on this SDK implementation if OkHttp is the selected implementation (e.g. android users).
@@ -114,3 +105,4 @@ Licensed under the [Apache License 2.0](LICENSE)
 [docs]: http://nemtech.github.io/getting-started/setup-workstation.html
 [issues]: https://github.com/nemtech/nem2-sdk-java/issues
 [sdk-ref]: http://nemtech.github.io/nem2-sdk-java/javadoc/0.14.1/
+[nem2-open-api-java-generator]: https://github.com/NEMStudios/nem2-open-api-java-generator
