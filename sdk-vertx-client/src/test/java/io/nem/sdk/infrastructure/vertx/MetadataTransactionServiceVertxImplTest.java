@@ -83,7 +83,7 @@ public class MetadataTransactionServiceVertxImplTest {
                 account.getPublicAccount(),
                 BigInteger.valueOf(10),
                 "123BAC",
-                account.getPublicAccount()).toFuture().get();
+                account.getPublicAccount().getPublicKey()).toFuture().get();
 
         Assertions.assertEquals(factory.getScopedMetadataKey(), result.getScopedMetadataKey());
     }
