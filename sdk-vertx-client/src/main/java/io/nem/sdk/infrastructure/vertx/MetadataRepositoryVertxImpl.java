@@ -105,9 +105,10 @@ public class MetadataRepositoryVertxImpl extends AbstractRepositoryVertxImpl imp
 
     @Override
     public Observable<Metadata> getMosaicMetadataByKeyAndSender(MosaicId targetMosaicId, BigInteger key,
-        String publicKey) {
+        String senderPublicKey) {
         Consumer<Handler<AsyncResult<MetadataDTO>>> callback = handler -> getClient()
-            .getMosaicMetadataByKeyAndSender(targetMosaicId.getIdAsHex(), toHex(key), publicKey,
+            .getMosaicMetadataByKeyAndSender(targetMosaicId.getIdAsHex(), toHex(key),
+                senderPublicKey,
                 handler);
         return handleOne(callback);
     }
@@ -133,9 +134,10 @@ public class MetadataRepositoryVertxImpl extends AbstractRepositoryVertxImpl imp
 
     @Override
     public Observable<Metadata> getNamespaceMetadataByKeyAndSender(NamespaceId targetNamespaceId,
-        BigInteger key, String publicKey) {
+        BigInteger key, String senderPublicKey) {
         Consumer<Handler<AsyncResult<MetadataDTO>>> callback = handler -> getClient()
-            .getNamespaceMetadataByKeyAndSender(targetNamespaceId.getIdAsHex(), toHex(key), publicKey,
+            .getNamespaceMetadataByKeyAndSender(targetNamespaceId.getIdAsHex(), toHex(key),
+                senderPublicKey,
                 handler);
         return handleOne(callback);
     }

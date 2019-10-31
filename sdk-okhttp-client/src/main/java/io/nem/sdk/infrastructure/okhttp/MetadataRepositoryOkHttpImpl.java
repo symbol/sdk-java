@@ -97,9 +97,10 @@ public class MetadataRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl i
 
     @Override
     public Observable<Metadata> getMosaicMetadataByKeyAndSender(MosaicId targetMosaicId, BigInteger key,
-        String publicKey) {
+        String senderPublicKey) {
         Callable<MetadataDTO> callback = () -> getClient()
-            .getMosaicMetadataByKeyAndSender(targetMosaicId.getIdAsHex(), toHex(key), publicKey);
+            .getMosaicMetadataByKeyAndSender(targetMosaicId.getIdAsHex(), toHex(key),
+                senderPublicKey);
         return handleOne(callback);
     }
 
@@ -124,10 +125,10 @@ public class MetadataRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl i
 
     @Override
     public Observable<Metadata> getNamespaceMetadataByKeyAndSender(NamespaceId targetNamespaceId,
-        BigInteger key, String publicKey) {
+        BigInteger key, String senderPublicKey) {
         Callable<MetadataDTO> callback = () -> getClient()
             .getNamespaceMetadataByKeyAndSender(targetNamespaceId.getIdAsHex(),
-                MetadataRepositoryOkHttpImpl.this.toHex(key), publicKey);
+                MetadataRepositoryOkHttpImpl.this.toHex(key), senderPublicKey);
         return handleOne(callback);
     }
 

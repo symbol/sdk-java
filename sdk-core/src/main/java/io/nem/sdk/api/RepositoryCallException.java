@@ -35,6 +35,7 @@ public class RepositoryCallException extends RuntimeException {
     /**
      * @param message the message. It may be resolved from the response body an status of a failed
      * request.
+     * @param statusCode the http status code (like 404 or 500).
      * @param cause the original exception, probably linked to the specific implementation.
      */
     public RepositoryCallException(String message, int statusCode, Throwable cause) {
