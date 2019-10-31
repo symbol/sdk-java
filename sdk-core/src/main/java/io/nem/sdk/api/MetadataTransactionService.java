@@ -5,8 +5,11 @@ import io.nem.sdk.model.blockchain.NetworkType;
 import io.nem.sdk.model.mosaic.MosaicId;
 import io.nem.sdk.model.namespace.NamespaceId;
 import io.nem.sdk.model.transaction.AccountMetadataTransaction;
+import io.nem.sdk.model.transaction.AccountMetadataTransactionFactory;
 import io.nem.sdk.model.transaction.MosaicMetadataTransaction;
+import io.nem.sdk.model.transaction.MosaicMetadataTransactionFactory;
 import io.nem.sdk.model.transaction.NamespaceMetadataTransaction;
+import io.nem.sdk.model.transaction.NamespaceMetadataTransactionFactory;
 import io.reactivex.Observable;
 import java.math.BigInteger;
 
@@ -23,33 +26,29 @@ public interface MetadataTransactionService {
      * @param targetPublicAccount
      * @param key
      * @param value
-     * @param senderPublicKey
-     * @param maxFee
+     * @param senderPublicAccount
      * @return
      */
-    Observable<AccountMetadataTransaction> createAccountMetadataTransaction(
+    Observable<AccountMetadataTransactionFactory> createAccountMetadataTransactionFactory(
         NetworkType networkType,
         PublicAccount targetPublicAccount,
         BigInteger key,
         String value,
-        String senderPublicKey,
-        BigInteger maxFee);
+        PublicAccount senderPublicAccount);
 
-    Observable<MosaicMetadataTransaction> createMosaicMetadataTransaction(
+    Observable<MosaicMetadataTransactionFactory> createMosaicMetadataTransactionFactory(
         NetworkType networkType,
         PublicAccount targetPublicAccount,
         BigInteger key,
         String value,
-        String senderPublicKey,
-        MosaicId targetId,
-        BigInteger maxFee);
+        PublicAccount senderPublicAccount,
+        MosaicId targetId);
 
-    Observable<NamespaceMetadataTransaction> createNamespaceMetadataTransaction(
+    Observable<NamespaceMetadataTransactionFactory> createNamespaceMetadataTransactionFactory(
         NetworkType networkType,
         PublicAccount targetPublicAccount,
         BigInteger key,
         String value,
-        String senderPublicKey,
-        NamespaceId targetId,
-        BigInteger maxFee);
+        PublicAccount senderPublicAccount,
+        NamespaceId targetId);
 }

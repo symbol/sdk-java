@@ -20,6 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.nem.core.utils.ExceptionUtils;
+import io.nem.sdk.api.Listener;
 import io.nem.sdk.api.RepositoryFactory;
 import io.nem.sdk.infrastructure.okhttp.RepositoryFactoryOkHttpImpl;
 import io.nem.sdk.infrastructure.vertx.JsonHelperJackson2;

@@ -16,6 +16,7 @@
 
 package io.nem.sdk.infrastructure;
 
+import io.nem.sdk.api.Listener;
 import io.nem.sdk.model.account.Address;
 import io.nem.sdk.model.blockchain.BlockInfo;
 import io.nem.sdk.model.transaction.AggregateTransaction;

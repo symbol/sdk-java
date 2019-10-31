@@ -29,7 +29,7 @@ import io.nem.sdk.api.NodeRepository;
 import io.nem.sdk.api.RepositoryFactory;
 import io.nem.sdk.api.RestrictionRepository;
 import io.nem.sdk.api.TransactionRepository;
-import io.nem.sdk.infrastructure.Listener;
+import io.nem.sdk.api.Listener;
 import io.nem.sdk.openapi.okhttp_gson.invoker.ApiClient;
 import okhttp3.OkHttpClient;
 import org.apache.commons.io.IOUtils;

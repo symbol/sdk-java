@@ -31,7 +31,7 @@ import io.nem.sdk.api.RepositoryCallException;
 import io.nem.sdk.api.RepositoryFactory;
 import io.nem.sdk.api.RestrictionRepository;
 import io.nem.sdk.api.TransactionRepository;
-import io.nem.sdk.infrastructure.Listener;
+import io.nem.sdk.api.Listener;
 import io.nem.sdk.model.blockchain.NetworkType;
 import io.nem.sdk.openapi.vertx.invoker.ApiClient;
 import io.vertx.core.Vertx;
