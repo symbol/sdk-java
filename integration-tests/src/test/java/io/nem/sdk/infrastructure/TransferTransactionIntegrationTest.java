@@ -74,8 +74,9 @@ public class TransferTransactionIntegrationTest extends BaseIntegrationTest {
                 // Use long message to test if size of inner transaction is calculated correctly
             ).build();
 
-        TransferTransaction processed = announceAggregateAndValidate(type, account,
-            transferTransaction);
+        TransferTransaction processed = announceAggregateAndValidate(type, transferTransaction,
+            account
+        );
         Assertions.assertEquals(message, processed.getMessage().getPayload());
     }
 
