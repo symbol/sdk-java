@@ -83,6 +83,9 @@ public abstract class BaseIntegrationTest {
      */
     protected static final RepositoryType DEFAULT_REPOSITORY_TYPE = RepositoryType.VERTX;
 
+
+    protected BigInteger maxFee = BigInteger.valueOf(200);
+
     /**
      * Known implementations of repositories that the integration tests use.
      */
@@ -114,9 +117,7 @@ public abstract class BaseIntegrationTest {
 
     private String resolveGenerationHash() {
         return Optional.ofNullable(this.config().getGenerationHash()).orElseGet(
-            () -> get(getRepositoryFactory(DEFAULT_REPOSITORY_TYPE).createBlockRepository()
-                .getBlockByHeight(
-                    BigInteger.ONE)).getGenerationHash());
+            () -> get(getRepositoryFactory(DEFAULT_REPOSITORY_TYPE).getGenerationHash()));
 
     }
 
@@ -254,7 +255,7 @@ public abstract class BaseIntegrationTest {
                 getNetworkType(),
                 Arrays.stream(signers).map(s -> transaction.toAggregate(s.getPublicAccount()))
                     .collect(Collectors.toList())
-            ).build();
+            ).maxFee(this.maxFee).build();
 
         T announcedCorrectly = (T) announceAndValidate(
             type, signers[0], aggregateTransaction).getInnerTransactions().get(0);
@@ -268,8 +269,11 @@ public abstract class BaseIntegrationTest {
 
         if (transaction.getType() != TransactionType.AGGREGATE_COMPLETE) {
             System.out
-                .println("Announcing Transaction address: " + testAccount.getAddress().pretty()
-                    + " Transaction: " + transaction.getType());
+                .println(
+                    "Announcing Transaction address: " + testAccount.getAddress().plain()
+                        + " Public Key: "
+                        + testAccount.getPublicAccount().getPublicKey().toHex()
+                        + " Transaction: " + transaction.getType());
         }
         SignedTransaction signedTransaction = testAccount
             .sign(transaction, getGenerationHash());
@@ -362,7 +366,7 @@ public abstract class BaseIntegrationTest {
         Account nemesisAccount = config().getNemesisAccount();
 
         List<AccountNames> accountNames = get(
-            getRepositoryFactory(type).createAccountRepository().getAccountsNames(
+            getRepositoryFactory(type).createNamespaceRepository().getAccountsNames(
                 Collections.singletonList(address)));
 
         if (accountNames.stream().anyMatch(
@@ -382,7 +386,7 @@ public abstract class BaseIntegrationTest {
             NamespaceRegistrationTransactionFactory.createRootNamespace(
                 getNetworkType(),
                 namespaceName,
-                BigInteger.valueOf(100)).build();
+                BigInteger.valueOf(100)).maxFee(this.maxFee).build();
 
         NamespaceId rootNamespaceId = announceAggregateAndValidate(type,
             namespaceRegistrationTransaction, nemesisAccount
@@ -395,7 +399,7 @@ public abstract class BaseIntegrationTest {
                 AliasAction.LINK,
                 rootNamespaceId,
                 address
-            ).build();
+            ).maxFee(this.maxFee).build();
 
         announceAggregateAndValidate(type, aliasTransaction, nemesisAccount);
         return rootNamespaceId;
@@ -407,7 +411,7 @@ public abstract class BaseIntegrationTest {
         Account nemesisAccount = config().getNemesisAccount();
         NamespaceId namespaceId = NamespaceId.createFromName(namespaceName);
         List<MosaicNames> mosaicNames = get(
-            getRepositoryFactory(type).createMosaicRepository().getMosaicsNames(
+            getRepositoryFactory(type).createNamespaceRepository().getMosaicsNames(
                 Collections.singletonList(mosaicId)));
 
         if (mosaicNames.stream().anyMatch(
@@ -426,7 +430,7 @@ public abstract class BaseIntegrationTest {
             NamespaceRegistrationTransactionFactory.createRootNamespace(
                 getNetworkType(),
                 namespaceName,
-                BigInteger.valueOf(100)).build();
+                BigInteger.valueOf(100)).maxFee(this.maxFee).build();
 
         NamespaceId rootNamespaceId = announceAggregateAndValidate(type,
             namespaceRegistrationTransaction, nemesisAccount
@@ -440,7 +444,7 @@ public abstract class BaseIntegrationTest {
                 AliasAction.LINK,
                 rootNamespaceId,
                 mosaicId
-            ).build();
+            ).maxFee(this.maxFee).build();
 
         announceAggregateAndValidate(type, aliasTransaction, nemesisAccount);
         return rootNamespaceId;
@@ -455,7 +459,7 @@ public abstract class BaseIntegrationTest {
                 nonce,
                 mosaicId,
                 MosaicFlags.create(true, true, true),
-                4, new BlockDuration(100)).build();
+                4, new BlockDuration(100)).maxFee(this.maxFee).build();
 
         MosaicDefinitionTransaction validateTransaction = announceAndValidate(type, account,
             mosaicDefinitionTransaction);

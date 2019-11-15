@@ -63,7 +63,7 @@ class MosaicRepositoryIntegrationTest extends BaseIntegrationTest {
     @ParameterizedTest
     @EnumSource(RepositoryType.class)
     void getMosaicsNames(RepositoryType type) {
-        List<MosaicNames> mosaicNames = get(getMosaicRepository(type)
+        List<MosaicNames> mosaicNames = get(getRepositoryFactory(type).createNamespaceRepository()
             .getMosaicsNames(Collections.singletonList(mosaicId)));
         assertEquals(1, mosaicNames.size());
         assertEquals(mosaicId, mosaicNames.get(0).getMosaicId());
@@ -106,7 +106,7 @@ class MosaicRepositoryIntegrationTest extends BaseIntegrationTest {
                 nonce,
                 mosaicId,
                 MosaicFlags.create(true, true, true),
-                4, new BlockDuration(100)).build();
+                4, new BlockDuration(100)).maxFee(this.maxFee).build();
 
         MosaicDefinitionTransaction validateTransaction = announceAndValidate(type,
             testAccount, mosaicDefinitionTransaction);

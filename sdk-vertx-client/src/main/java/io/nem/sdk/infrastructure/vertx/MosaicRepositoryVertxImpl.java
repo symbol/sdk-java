@@ -21,25 +21,20 @@ import static io.nem.core.utils.MapperUtils.toMosaicId;
 import io.nem.sdk.api.MosaicRepository;
 import io.nem.sdk.model.account.PublicAccount;
 import io.nem.sdk.model.blockchain.NetworkType;
+import io.nem.sdk.model.mosaic.MosaicFlags;
 import io.nem.sdk.model.mosaic.MosaicId;
 import io.nem.sdk.model.mosaic.MosaicInfo;
-import io.nem.sdk.model.mosaic.MosaicNames;
-import io.nem.sdk.model.mosaic.MosaicFlags;
-import io.nem.sdk.model.namespace.NamespaceName;
 import io.nem.sdk.openapi.vertx.api.MosaicRoutesApi;
 import io.nem.sdk.openapi.vertx.api.MosaicRoutesApiImpl;
 import io.nem.sdk.openapi.vertx.invoker.ApiClient;
 import io.nem.sdk.openapi.vertx.model.MosaicDTO;
 import io.nem.sdk.openapi.vertx.model.MosaicIds;
 import io.nem.sdk.openapi.vertx.model.MosaicInfoDTO;
-import io.nem.sdk.openapi.vertx.model.MosaicNamesDTO;
-import io.nem.sdk.openapi.vertx.model.MosaicsNamesDTO;
 import io.reactivex.Observable;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Handler;
 import java.util.List;
 import java.util.function.Consumer;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 /**
@@ -52,9 +47,12 @@ public class MosaicRepositoryVertxImpl extends AbstractRepositoryVertxImpl imple
 
     private final MosaicRoutesApi client;
 
-    public MosaicRepositoryVertxImpl(ApiClient apiClient, Supplier<NetworkType> networkType) {
-        super(apiClient, networkType);
-        client = new MosaicRoutesApiImpl(apiClient);
+    private final Observable<NetworkType> networkTypeObservable;
+
+    public MosaicRepositoryVertxImpl(ApiClient apiClient, Observable<NetworkType> networkTypeObservable) {
+        super(apiClient);
+        this.client = new MosaicRoutesApiImpl(apiClient);
+        this.networkTypeObservable = networkTypeObservable;
     }
 
     public MosaicRoutesApi getClient() {
@@ -66,7 +64,8 @@ public class MosaicRepositoryVertxImpl extends AbstractRepositoryVertxImpl imple
 
         Consumer<Handler<AsyncResult<MosaicInfoDTO>>> callback = handler -> getClient()
             .getMosaic((mosaicId.getIdAsHex()), handler);
-        return exceptionHandling(call(callback).map(this::createMosaicInfo));
+        return exceptionHandling(networkTypeObservable.flatMap(networkType -> call(callback).map(
+            (MosaicInfoDTO mosaicInfoDTO) -> createMosaicInfo(mosaicInfoDTO, networkType))));
     }
 
     @Override
@@ -78,13 +77,15 @@ public class MosaicRepositoryVertxImpl extends AbstractRepositoryVertxImpl imple
             .collect(Collectors.toList()));
         Consumer<Handler<AsyncResult<List<MosaicInfoDTO>>>> callback = handler -> getClient()
             .getMosaics(mosaicIds, handler);
-        return exceptionHandling(
-            call(callback).flatMapIterable(item -> item).map(this::createMosaicInfo).toList()
-                .toObservable());
+        return exceptionHandling(networkTypeObservable.flatMap(networkType ->
+            call(callback).flatMapIterable(item -> item).map(
+                (MosaicInfoDTO mosaicInfoDTO) -> createMosaicInfo(mosaicInfoDTO, networkType))
+                .toList()
+                .toObservable()));
     }
 
-    private MosaicInfo createMosaicInfo(MosaicInfoDTO mosaicInfoDTO) {
-        NetworkType networkType = getNetworkTypeBlocking();
+    private MosaicInfo createMosaicInfo(MosaicInfoDTO mosaicInfoDTO, NetworkType networkType) {
+
         return MosaicInfo.create(
             toMosaicId(mosaicInfoDTO.getMosaic().getId()),
             mosaicInfoDTO.getMosaic().getSupply(),
@@ -96,31 +97,6 @@ public class MosaicRepositoryVertxImpl extends AbstractRepositoryVertxImpl imple
             mosaicInfoDTO.getMosaic().getDuration());
     }
 
-    @Override
-    public Observable<List<MosaicNames>> getMosaicsNames(List<MosaicId> ids) {
-        MosaicIds mosaicIds = new MosaicIds();
-        mosaicIds.mosaicIds(ids.stream()
-            .map(MosaicId::getIdAsHex)
-            .collect(Collectors.toList()));
-        Consumer<Handler<AsyncResult<MosaicsNamesDTO>>> callback = handler -> getClient()
-            .getMosaicsNames(mosaicIds, handler);
-        return exceptionHandling(
-            call(callback).map(MosaicsNamesDTO::getMosaicNames).flatMapIterable(item -> item)
-                .map(this::toMosaicNames).toList()
-                .toObservable());
-    }
-
-    /**
-     * Converts a {@link MosaicNamesDTO} into a {@link MosaicNames}
-     *
-     * @param dto {@link MosaicNamesDTO}
-     * @return {@link MosaicNames}
-     */
-    private MosaicNames toMosaicNames(MosaicNamesDTO dto) {
-        return new MosaicNames(
-            toMosaicId(dto.getMosaicId()),
-            dto.getNames().stream().map(NamespaceName::new).collect(Collectors.toList()));
-    }
 
     public static MosaicFlags extractMosaicFlags(MosaicDTO mosaicDTO) {
         return MosaicFlags.create(mosaicDTO.getFlags().intValue());

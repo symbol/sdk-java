@@ -21,9 +21,12 @@ import static io.nem.core.utils.MapperUtils.toNamespaceId;
 import io.nem.core.utils.MapperUtils;
 import io.nem.sdk.api.NamespaceRepository;
 import io.nem.sdk.api.QueryParams;
+import io.nem.sdk.model.account.AccountNames;
 import io.nem.sdk.model.account.Address;
 import io.nem.sdk.model.account.PublicAccount;
+import io.nem.sdk.model.blockchain.NetworkType;
 import io.nem.sdk.model.mosaic.MosaicId;
+import io.nem.sdk.model.mosaic.MosaicNames;
 import io.nem.sdk.model.namespace.AddressAlias;
 import io.nem.sdk.model.namespace.Alias;
 import io.nem.sdk.model.namespace.AliasType;
@@ -36,10 +39,16 @@ import io.nem.sdk.model.namespace.NamespaceRegistrationType;
 import io.nem.sdk.openapi.okhttp_gson.api.NamespaceRoutesApi;
 import io.nem.sdk.openapi.okhttp_gson.invoker.ApiClient;
 import io.nem.sdk.openapi.okhttp_gson.model.AccountIds;
+import io.nem.sdk.openapi.okhttp_gson.model.AccountNamesDTO;
+import io.nem.sdk.openapi.okhttp_gson.model.AccountsNamesDTO;
+import io.nem.sdk.openapi.okhttp_gson.model.MosaicIds;
+import io.nem.sdk.openapi.okhttp_gson.model.MosaicNamesDTO;
+import io.nem.sdk.openapi.okhttp_gson.model.MosaicsNamesDTO;
 import io.nem.sdk.openapi.okhttp_gson.model.NamespaceDTO;
 import io.nem.sdk.openapi.okhttp_gson.model.NamespaceIds;
 import io.nem.sdk.openapi.okhttp_gson.model.NamespaceInfoDTO;
 import io.nem.sdk.openapi.okhttp_gson.model.NamespaceNameDTO;
+import io.nem.sdk.openapi.okhttp_gson.model.NamespacesInfoDTO;
 import io.reactivex.Observable;
 import java.util.ArrayList;
 import java.util.List;
@@ -57,9 +66,13 @@ public class NamespaceRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl 
 
     private final NamespaceRoutesApi client;
 
-    public NamespaceRepositoryOkHttpImpl(ApiClient apiClient) {
+    private final Observable<NetworkType> networkTypeObservable;
+
+    public NamespaceRepositoryOkHttpImpl(ApiClient apiClient,
+        Observable<NetworkType> networkTypeObservable) {
         super(apiClient);
-        client = new NamespaceRoutesApi(apiClient);
+        this.client = new NamespaceRoutesApi(apiClient);
+        this.networkTypeObservable = networkTypeObservable;
     }
 
     public NamespaceRoutesApi getClient() {
@@ -70,7 +83,8 @@ public class NamespaceRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl 
     public Observable<NamespaceInfo> getNamespace(NamespaceId namespaceId) {
         Callable<NamespaceInfoDTO> callback = () -> getClient()
             .getNamespace(namespaceId.getIdAsHex());
-        return exceptionHandling(call(callback).map(this::toNamespaceInfo));
+        return exceptionHandling(networkTypeObservable.flatMap(networkType -> call(callback).map(
+            namespaceInfoDTO -> toNamespaceInfo(namespaceInfoDTO, networkType))));
     }
 
     @Override
@@ -87,15 +101,16 @@ public class NamespaceRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl 
     private Observable<List<NamespaceInfo>> getNamespacesFromAccount(
         Address address, Optional<QueryParams> queryParams) {
 
-        Callable<List<NamespaceInfoDTO>> callback = () ->
+        Callable<NamespacesInfoDTO> callback = () ->
             getClient().getNamespacesFromAccount(address.plain(),
                 getPageSize(queryParams),
                 getId(queryParams)
             );
 
-        return exceptionHandling(
-            call(callback).flatMapIterable(item -> item).map(this::toNamespaceInfo).toList()
-                .toObservable());
+        return exceptionHandling(networkTypeObservable.flatMap(networkType ->
+            call(callback).flatMapIterable(NamespacesInfoDTO::getNamespaces)
+                .map(namespaceInfoDTO -> toNamespaceInfo(namespaceInfoDTO, networkType)).toList()
+                .toObservable()));
     }
 
 
@@ -117,12 +132,14 @@ public class NamespaceRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl 
             .addresses(addresses.stream().map(Address::plain).collect(
                 Collectors.toList()));
 
-        Callable<List<NamespaceInfoDTO>> callback = () ->
-            getClient().getNamespacesFromAccounts(accounts);
+        Callable<NamespacesInfoDTO> callback = () ->
+            getClient()
+                .getNamespacesFromAccounts(accounts);
 
-        return exceptionHandling(
-            call(callback).flatMapIterable(item -> item).map(this::toNamespaceInfo).toList()
-                .toObservable());
+        return exceptionHandling(networkTypeObservable.flatMap(networkType ->
+            call(callback).flatMapIterable(NamespacesInfoDTO::getNamespaces)
+                .map(namespaceInfoDTO -> toNamespaceInfo(namespaceInfoDTO, networkType)).toList()
+                .toObservable()));
     }
 
 
@@ -176,15 +193,68 @@ public class NamespaceRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl 
             .toAddress(namespaceInfoDTO.getNamespace())));
     }
 
+
+    @Override
+    public Observable<List<AccountNames>> getAccountsNames(List<Address> addresses) {
+        AccountIds accountIds = new AccountIds()
+            .addresses(addresses.stream().map(Address::plain).collect(Collectors.toList()));
+        return getAccountNames(accountIds);
+    }
+
+    private Observable<List<AccountNames>> getAccountNames(AccountIds accountIds) {
+        Callable<AccountsNamesDTO> callback = () -> getClient()
+            .getAccountsNames(accountIds);
+        return exceptionHandling(
+            call(callback).map(AccountsNamesDTO::getAccountNames).flatMapIterable(item -> item)
+                .map(this::toAccountNames).toList().toObservable());
+    }
+
+    /**
+     * Converts a {@link AccountNamesDTO} into a {@link AccountNames}
+     *
+     * @param dto {@link AccountNamesDTO}
+     * @return {@link AccountNames}
+     */
+    private AccountNames toAccountNames(AccountNamesDTO dto) {
+        return new AccountNames(MapperUtils.toAddressFromEncoded(dto.getAddress()),
+            dto.getNames().stream().map(NamespaceName::new).collect(Collectors.toList()));
+    }
+
+
+    @Override
+    public Observable<List<MosaicNames>> getMosaicsNames(List<MosaicId> ids) {
+        MosaicIds mosaicIds = new MosaicIds();
+        mosaicIds.mosaicIds(ids.stream()
+            .map(MosaicId::getIdAsHex)
+            .collect(Collectors.toList()));
+        Callable<MosaicsNamesDTO> callback = () -> getClient()
+            .getMosaicsNames(mosaicIds);
+        return exceptionHandling(
+            call(callback).map(MosaicsNamesDTO::getMosaicNames).flatMapIterable(item -> item)
+                .map(this::toMosaicNames).toList()
+                .toObservable());
+    }
+
+    /**
+     * Converts a {@link MosaicNamesDTO} into a {@link MosaicNames}
+     *
+     * @param dto {@link MosaicNamesDTO}
+     * @return {@link MosaicNames}
+     */
+    private MosaicNames toMosaicNames(MosaicNamesDTO dto) {
+        return new MosaicNames(
+            MapperUtils.toMosaicId(dto.getMosaicId()),
+            dto.getNames().stream().map(NamespaceName::new).collect(Collectors.toList()));
+    }
+
     /**
      * Create a NamespaceInfo from a NamespaceInfoDTO and a NetworkType
      *
      * @param namespaceInfoDTO, networkType
-     * @internal
-     * @access private
+     * @param networkType the network type
      */
     private NamespaceInfo toNamespaceInfo(
-        NamespaceInfoDTO namespaceInfoDTO) {
+        NamespaceInfoDTO namespaceInfoDTO, NetworkType networkType) {
         return new NamespaceInfo(
             namespaceInfoDTO.getMeta().getActive(),
             namespaceInfoDTO.getMeta().getIndex(),
@@ -194,8 +264,7 @@ public class NamespaceRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl 
             namespaceInfoDTO.getNamespace().getDepth(),
             this.extractLevels(namespaceInfoDTO),
             toNamespaceId(namespaceInfoDTO.getNamespace().getParentId()),
-            new PublicAccount(namespaceInfoDTO.getNamespace().getOwnerPublicKey(),
-                getNetworkTypeBlocking()),
+            new PublicAccount(namespaceInfoDTO.getNamespace().getOwnerPublicKey(), networkType),
             namespaceInfoDTO.getNamespace().getStartHeight(),
             namespaceInfoDTO.getNamespace().getEndHeight(),
             this.extractAlias(namespaceInfoDTO.getNamespace()));
@@ -204,9 +273,6 @@ public class NamespaceRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl 
 
     /**
      * Extract a list of NamespaceId levels from a NamespaceInfoDTO
-     *
-     * @internal
-     * @access private
      */
     private List<NamespaceId> extractLevels(NamespaceInfoDTO namespaceInfoDTO) {
         List<NamespaceId> levels = new ArrayList<>();
@@ -227,9 +293,6 @@ public class NamespaceRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl 
 
     /**
      * Extract the alias from a NamespaceDTO
-     *
-     * @internal
-     * @access private
      */
     private Alias extractAlias(NamespaceDTO namespaceDTO) {
 
@@ -247,9 +310,6 @@ public class NamespaceRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl 
 
     /**
      * Create a MosaicId from a NamespaceDTO
-     *
-     * @internal
-     * @access private
      */
     private MosaicId toMosaicId(NamespaceDTO namespaceDTO) {
         if (namespaceDTO.getAlias() != null && AliasType.MOSAIC.getValue()
@@ -262,9 +322,6 @@ public class NamespaceRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl 
 
     /**
      * Create a Address from a NamespaceDTO
-     *
-     * @internal
-     * @access private
      */
     private Address toAddress(NamespaceDTO namespaceDTO) {
         if (namespaceDTO.getAlias() != null && AliasType.ADDRESS.getValue()

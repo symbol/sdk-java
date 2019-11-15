@@ -21,16 +21,23 @@ import io.nem.sdk.api.BlockRepository;
 import io.nem.sdk.api.ChainRepository;
 import io.nem.sdk.api.DiagnosticRepository;
 import io.nem.sdk.api.JsonSerialization;
+import io.nem.sdk.api.Listener;
 import io.nem.sdk.api.MetadataRepository;
 import io.nem.sdk.api.MosaicRepository;
+import io.nem.sdk.api.MultisigRepository;
 import io.nem.sdk.api.NamespaceRepository;
 import io.nem.sdk.api.NetworkRepository;
 import io.nem.sdk.api.NodeRepository;
+import io.nem.sdk.api.ReceiptRepository;
 import io.nem.sdk.api.RepositoryFactory;
-import io.nem.sdk.api.RestrictionRepository;
+import io.nem.sdk.api.RestrictionAccountRepository;
+import io.nem.sdk.api.RestrictionMosaicRepository;
 import io.nem.sdk.api.TransactionRepository;
-import io.nem.sdk.api.Listener;
+import io.nem.sdk.model.blockchain.BlockInfo;
+import io.nem.sdk.model.blockchain.NetworkType;
 import io.nem.sdk.openapi.okhttp_gson.invoker.ApiClient;
+import io.reactivex.Observable;
+import java.math.BigInteger;
 import okhttp3.OkHttpClient;
 import org.apache.commons.io.IOUtils;
 
@@ -47,11 +54,28 @@ public class RepositoryFactoryOkHttpImpl implements RepositoryFactory {
 
     private final String baseUrl;
 
+    private final Observable<NetworkType> networkTypeObservable;
+
+    private final Observable<String> generationHashObservable;
+
     public RepositoryFactoryOkHttpImpl(String baseUrl) {
         this.baseUrl = baseUrl;
         this.apiClient = new ApiClient();
         this.apiClient.setBasePath(baseUrl);
-        apiClient.getJSON().setGson(JsonHelperGson.creatGson(false));
+        this.apiClient.getJSON().setGson(JsonHelperGson.creatGson(false));
+        this.networkTypeObservable = createNetworkRepository().getNetworkType().cache();
+        this.generationHashObservable = createBlockRepository().getBlockByHeight(BigInteger.ONE)
+            .map(BlockInfo::getGenerationHash).cache();
+    }
+
+    @Override
+    public Observable<NetworkType> getNetworkType() {
+        return networkTypeObservable;
+    }
+
+    @Override
+    public Observable<String> getGenerationHash() {
+        return generationHashObservable;
     }
 
     @Override
@@ -60,8 +84,18 @@ public class RepositoryFactoryOkHttpImpl implements RepositoryFactory {
     }
 
     @Override
+    public MultisigRepository createMultisigRepository() {
+        return new MultisigRepositoryOkHttpImpl(apiClient, getNetworkType());
+    }
+
+    @Override
     public BlockRepository createBlockRepository() {
         return new BlockRepositoryOkHttpImpl(apiClient);
+    }
+
+    @Override
+    public ReceiptRepository createReceiptRepository() {
+        return new ReceiptRepositoryOkHttpImpl(apiClient, getNetworkType());
     }
 
     @Override
@@ -76,12 +110,12 @@ public class RepositoryFactoryOkHttpImpl implements RepositoryFactory {
 
     @Override
     public MosaicRepository createMosaicRepository() {
-        return new MosaicRepositoryOkHttpImpl(apiClient);
+        return new MosaicRepositoryOkHttpImpl(apiClient, getNetworkType());
     }
 
     @Override
     public NamespaceRepository createNamespaceRepository() {
-        return new NamespaceRepositoryOkHttpImpl(apiClient);
+        return new NamespaceRepositoryOkHttpImpl(apiClient, getNetworkType());
     }
 
     @Override
@@ -105,8 +139,13 @@ public class RepositoryFactoryOkHttpImpl implements RepositoryFactory {
     }
 
     @Override
-    public RestrictionRepository createRestrictionRepository() {
-        return new RestrictionRepositoryOkHttpImpl(apiClient);
+    public RestrictionAccountRepository createRestrictionAccountRepository() {
+        return new RestrictionAccountRepositoryOkHttpImpl(apiClient);
+    }
+
+    @Override
+    public RestrictionMosaicRepository createRestrictionMosaicRepository() {
+        return new RestrictionMosaicRepositoryOkHttpImpl(apiClient);
     }
 
     @Override

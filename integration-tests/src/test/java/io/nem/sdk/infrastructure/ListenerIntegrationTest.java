@@ -76,7 +76,7 @@ class ListenerIntegrationTest extends BaseIntegrationTest {
     @ParameterizedTest
     @EnumSource(RepositoryType.class)
     void shouldReturnNewBlockViaListener(RepositoryType type)
-        throws ExecutionException, InterruptedException, TimeoutException {
+        throws ExecutionException, InterruptedException {
         Listener listener = getRepositoryFactory(type).createListener();
         listener.open().get();
 
@@ -91,7 +91,7 @@ class ListenerIntegrationTest extends BaseIntegrationTest {
     @EnumSource(RepositoryType.class)
     void shouldReturnConfirmedTransactionAddressSignerViaListener(
         RepositoryType type)
-        throws ExecutionException, InterruptedException, TimeoutException {
+        throws ExecutionException, InterruptedException {
         Listener listener = getRepositoryFactory(type).createListener();
         listener.open().get();
 
@@ -174,7 +174,7 @@ class ListenerIntegrationTest extends BaseIntegrationTest {
     @ParameterizedTest
     @EnumSource(RepositoryType.class)
     void shouldReturnAggregateBondedRemovedTransactionViaListener(RepositoryType type)
-        throws ExecutionException, InterruptedException, TimeoutException {
+        throws ExecutionException, InterruptedException {
         Listener listener = getRepositoryFactory(type).createListener();
         listener.open().get();
 
@@ -188,7 +188,7 @@ class ListenerIntegrationTest extends BaseIntegrationTest {
     @ParameterizedTest
     @EnumSource(RepositoryType.class)
     void shouldReturnCosignatureAddedViaListener(RepositoryType type)
-        throws ExecutionException, InterruptedException, TimeoutException {
+        throws ExecutionException, InterruptedException {
         Listener listener = getRepositoryFactory(type).createListener();
         listener.open().get();
 
@@ -239,7 +239,7 @@ class ListenerIntegrationTest extends BaseIntegrationTest {
                 this.getRecipient(),
                 Collections.emptyList(),
                 PlainMessage.create("test-message")
-            ).build();
+            ).maxFee(this.maxFee).build();
 
         SignedTransaction signedTransaction = this.account
             .sign(transferTransaction, getGenerationHash());
@@ -253,15 +253,14 @@ class ListenerIntegrationTest extends BaseIntegrationTest {
     }
 
     private SignedTransaction announceStandaloneTransferTransactionWithInsufficientBalance(
-        RepositoryType type)
-        throws ExecutionException, InterruptedException, TimeoutException {
+        RepositoryType type) {
         TransferTransaction transferTransaction =
             TransferTransactionFactory.create(NetworkType.MIJIN_TEST,
                 new Address("SBILTA367K2LX2FEXG5TFWAS7GEFYAGY7QLFBYKC", NetworkType.MIJIN_TEST),
                 Collections.singletonList(
                     NetworkCurrencyMosaic.createRelative(new BigInteger("100000000000"))),
                 PlainMessage.create("test-message")
-            ).build();
+            ).maxFee(this.maxFee).build();
 
         SignedTransaction signedTransaction = this.account
             .sign(transferTransaction, getGenerationHash());
@@ -269,41 +268,39 @@ class ListenerIntegrationTest extends BaseIntegrationTest {
         return signedTransaction;
     }
 
-    private SignedTransaction announceAggregateBondedTransaction(
-        RepositoryType type)
-        throws ExecutionException, InterruptedException, TimeoutException {
+    private SignedTransaction announceAggregateBondedTransaction(RepositoryType type) {
         TransferTransaction transferTransaction =
             TransferTransactionFactory.create(NetworkType.MIJIN_TEST,
                 new Address("SBILTA367K2LX2FEXG5TFWAS7GEFYAGY7QLFBYKC", NetworkType.MIJIN_TEST),
                 Collections.emptyList(),
                 PlainMessage.create("test-message")
-            ).build();
+            ).maxFee(this.maxFee).build();
 
         AggregateTransaction aggregateTransaction =
             AggregateTransactionFactory.createComplete(
                 NetworkType.MIJIN_TEST,
                 Collections.singletonList(
                     transferTransaction.toAggregate(this.multisigAccount.getPublicAccount())))
-                .build();
+                .maxFee(this.maxFee).build();
 
         SignedTransaction signedTransaction =
             this.cosignatoryAccount.sign(aggregateTransaction, getGenerationHash());
 
-        get(getTransactionRepository(type).announceAggregateBonded(signedTransaction));
+        get(getRepositoryFactory(type).createTransactionRepository()
+            .announceAggregateBonded(signedTransaction));
 
         return signedTransaction;
     }
 
     private CosignatureSignedTransaction announceCosignatureTransaction(
-        AggregateTransaction transactionToCosign,
-        RepositoryType type) throws ExecutionException, InterruptedException, TimeoutException {
+        AggregateTransaction transactionToCosign, RepositoryType type) {
         CosignatureTransaction cosignatureTransaction = new CosignatureTransaction(
             transactionToCosign);
 
         CosignatureSignedTransaction cosignatureSignedTransaction =
             this.cosignatoryAccount2.signCosignatureTransaction(cosignatureTransaction);
 
-        get(getTransactionRepository(type)
+        get(getRepositoryFactory(type).createTransactionRepository()
             .announceAggregateBondedCosignature(cosignatureSignedTransaction));
 
         return cosignatureSignedTransaction;

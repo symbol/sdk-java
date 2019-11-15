@@ -52,10 +52,12 @@ abstract class AbstractTransactionTester {
      */
     protected <T extends Transaction> T assertSerialization(String expected, T transaction) {
         byte[] actual = transaction.serialize();
+
         assertEquals(expected, Hex.toHexString(actual));
         Assertions
             .assertEquals(ConvertUtils.fromHexToBytes(expected).length, transaction.getSize());
         T deserialized = (T) binarySerialization.deserialize(actual);
+
         assertEquals(expected, Hex.toHexString(binarySerialization.serialize(deserialized)));
         if (!AggregateTransaction.class.isInstance(transaction)) {
             assertAggregate(transaction);
@@ -112,7 +114,7 @@ abstract class AbstractTransactionTester {
         T transaction) {
         byte[] actual = binarySerialization.serializeEmbedded(transaction);
         assertEquals(expected, Hex.toHexString(actual));
-        T deserialized = (T) binarySerialization.deserializeEmbedded(actual);
+        T deserialized = (T) binarySerialization.deserializeEmbedded(actual).getLeft();
         assertEquals(expected,
             Hex.toHexString(binarySerialization.serializeEmbedded(deserialized)));
         return deserialized;

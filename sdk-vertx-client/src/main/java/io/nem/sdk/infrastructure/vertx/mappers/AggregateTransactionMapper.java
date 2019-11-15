@@ -25,7 +25,7 @@ import io.nem.sdk.model.transaction.AggregateTransactionFactory;
 import io.nem.sdk.model.transaction.JsonHelper;
 import io.nem.sdk.model.transaction.Transaction;
 import io.nem.sdk.model.transaction.TransactionType;
-import io.nem.sdk.openapi.vertx.model.AggregateBondedTransactionDTO;
+import io.nem.sdk.openapi.vertx.model.AggregateTransactionDTO;
 import io.nem.sdk.openapi.vertx.model.CosignatureDTO;
 import io.nem.sdk.openapi.vertx.model.EmbeddedTransactionInfoDTO;
 import java.util.ArrayList;
@@ -37,20 +37,20 @@ import java.util.stream.Collectors;
  * Aggregate transaction mapper.
  */
 class AggregateTransactionMapper extends
-    AbstractTransactionMapper<AggregateBondedTransactionDTO, AggregateTransaction> {
+    AbstractTransactionMapper<AggregateTransactionDTO, AggregateTransaction> {
 
     private TransactionMapper transactionMapper;
 
     public AggregateTransactionMapper(JsonHelper jsonHelper,
         TransactionType transactionType,
         TransactionMapper transactionMapper) {
-        super(jsonHelper, transactionType, AggregateBondedTransactionDTO.class);
+        super(jsonHelper, transactionType, AggregateTransactionDTO.class);
         this.transactionMapper = transactionMapper;
     }
 
     @Override
     protected AggregateTransactionFactory createFactory(NetworkType networkType,
-        AggregateBondedTransactionDTO transaction) {
+        AggregateTransactionDTO transaction) {
 
         List<Transaction> transactions = transaction.getTransactions().stream()
             .map(embeddedTransactionInfoDTO -> {
@@ -76,8 +76,10 @@ class AggregateTransactionMapper extends
                     .collect(Collectors.toList());
         }
 
-        return AggregateTransactionFactory.create(getTransactionType(), networkType, transactions,
-            cosignatures);
+        return AggregateTransactionFactory
+            .create(getTransactionType(), networkType, transaction.getTransactionsHash(),
+                transactions,
+                cosignatures);
     }
 
     private AggregateTransactionCosignature toCosignature(NetworkType networkType,
@@ -90,7 +92,7 @@ class AggregateTransactionMapper extends
     }
 
     @Override
-    protected void copyToDto(AggregateTransaction transaction, AggregateBondedTransactionDTO dto) {
+    protected void copyToDto(AggregateTransaction transaction, AggregateTransactionDTO dto) {
         List<EmbeddedTransactionInfoDTO> transactions = transaction.getInnerTransactions().stream()
             .map(embeddedTransactionInfoDTO -> transactionMapper
                 .mapToEmbedded(embeddedTransactionInfoDTO)).collect(Collectors.toList());
@@ -100,6 +102,7 @@ class AggregateTransactionMapper extends
                 transaction.getCosignatures().stream().map(this::toCosignature)
                     .collect(Collectors.toList());
         }
+        dto.setTransactionsHash(transaction.getTransactionsHash());
         dto.setCosignatures(cosignatures);
         dto.setTransactions(transactions);
     }

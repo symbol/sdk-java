@@ -55,7 +55,7 @@ public class AddressAliasTransactionIntegrationTest extends BaseIntegrationTest 
             NamespaceRegistrationTransactionFactory.createRootNamespace(
                 getNetworkType(),
                 namespaceName,
-                BigInteger.valueOf(100)).build();
+                BigInteger.valueOf(100)).maxFee(this.maxFee).build();
 
         NamespaceId rootNamespaceId = announceAggregateAndValidate(type,
             namespaceRegistrationTransaction, account
@@ -67,20 +67,20 @@ public class AddressAliasTransactionIntegrationTest extends BaseIntegrationTest 
                 AliasAction.LINK,
                 rootNamespaceId,
                 account.getAddress()
-            ).build();
+            ).maxFee(this.maxFee).build();
 
         AggregateTransaction aggregateTransaction2 =
             AggregateTransactionFactory.createComplete(
                 getNetworkType(),
                 Collections.singletonList(
                     addressAliasTransaction.toAggregate(account.getPublicAccount()))
-            ).build();
+            ).maxFee(this.maxFee).build();
 
         announceAndValidate(type, account, aggregateTransaction2);
 
         sleep(1000);
 
-        List<AccountNames> accountNames = get(getRepositoryFactory(type).createAccountRepository()
+        List<AccountNames> accountNames = get(getRepositoryFactory(type).createNamespaceRepository()
             .getAccountsNames(Collections.singletonList(account.getAddress())));
 
         Assertions.assertEquals(1, accountNames.size());

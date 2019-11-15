@@ -20,7 +20,6 @@ import io.nem.core.utils.ConvertUtils;
 import io.nem.sdk.api.MetadataRepository;
 import io.nem.sdk.api.QueryParams;
 import io.nem.sdk.model.account.Address;
-import io.nem.sdk.model.blockchain.NetworkType;
 import io.nem.sdk.model.metadata.Metadata;
 import io.nem.sdk.model.metadata.MetadataEntry;
 import io.nem.sdk.model.metadata.MetadataType;
@@ -40,7 +39,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
-import java.util.function.Supplier;
 
 
 /**
@@ -51,9 +49,8 @@ public class MetadataRepositoryVertxImpl extends AbstractRepositoryVertxImpl imp
 
     private final MetadataRoutesApi client;
 
-    public MetadataRepositoryVertxImpl(ApiClient apiClient,
-        Supplier<NetworkType> networkType) {
-        super(apiClient, networkType);
+    public MetadataRepositoryVertxImpl(ApiClient apiClient) {
+        super(apiClient);
         client = new MetadataRoutesApiImpl(apiClient);
     }
 
@@ -187,7 +184,7 @@ public class MetadataRepositoryVertxImpl extends AbstractRepositoryVertxImpl imp
         MetadataEntry metadataEntry = new MetadataEntry(entryDto.getCompositeHash(),
             entryDto.getSenderPublicKey(), entryDto.getTargetPublicKey(),
             new BigInteger(entryDto.getScopedMetadataKey(), 16),
-            MetadataType.rawValueOf(entryDto.getMetadataType().getValue()), entryDto.getValueSize(),
+            MetadataType.rawValueOf(entryDto.getMetadataType().getValue()),
             ConvertUtils.fromHexToString(entryDto.getValue()),
             Optional.ofNullable(Objects.toString(entryDto.getTargetId(), null)));
         return new Metadata(dto.getId(), metadataEntry);

@@ -17,7 +17,7 @@
 package io.nem.sdk.infrastructure;
 
 import io.nem.sdk.api.RepositoryCallException;
-import io.nem.sdk.api.RestrictionRepository;
+import io.nem.sdk.api.RestrictionMosaicRepository;
 import io.nem.sdk.model.account.Account;
 import io.nem.sdk.model.account.Address;
 import io.nem.sdk.model.blockchain.BlockDuration;
@@ -64,7 +64,7 @@ public class MosaicAddressRestrictionIntegrationTest extends BaseIntegrationTest
                 restrictionKey,
                 BigInteger.valueOf(20),
                 MosaicRestrictionType.GE
-            ).build();
+            ).maxFee(this.maxFee).build();
 
         announceAndValidate(
             type, testAccount, mosaicGlobalRestrictionTransaction);
@@ -81,7 +81,7 @@ public class MosaicAddressRestrictionIntegrationTest extends BaseIntegrationTest
                 restrictionKey,
                 targetAddressAlias,
                 originalRestrictionValue
-            ).build();
+            ).maxFee(this.maxFee).build();
 
         //4)Announce and validate
         assertTransaction(createTransaction, announceAggregateAndValidate(
@@ -90,8 +90,8 @@ public class MosaicAddressRestrictionIntegrationTest extends BaseIntegrationTest
         //5) Validate that endpoints have the data.
         sleep(1000);
 
-        RestrictionRepository restrictionRepository = getRepositoryFactory(type)
-            .createRestrictionRepository();
+        RestrictionMosaicRepository restrictionRepository = getRepositoryFactory(type)
+            .createRestrictionMosaicRepository();
 
         assertMosaicAddressRestriction(targetAddress, createTransaction, get(
             restrictionRepository
@@ -110,7 +110,7 @@ public class MosaicAddressRestrictionIntegrationTest extends BaseIntegrationTest
                 restrictionKey,
                 targetAddress,
                 BigInteger.valueOf(40)
-            ).previousRestrictionValue(originalRestrictionValue).build();
+            ).previousRestrictionValue(originalRestrictionValue).maxFee(this.maxFee).build();
 
         //7) Announce and validate.
         assertTransaction(updateTransaction, announceAggregateAndValidate(
@@ -181,7 +181,7 @@ public class MosaicAddressRestrictionIntegrationTest extends BaseIntegrationTest
                 nonce,
                 mosaicId,
                 MosaicFlags.create(true, true, true),
-                4, new BlockDuration(100)).build();
+                4, new BlockDuration(100)).maxFee(this.maxFee).build();
 
         MosaicDefinitionTransaction validateTransaction = announceAndValidate(type,
             testAccount, mosaicDefinitionTransaction);
@@ -192,7 +192,8 @@ public class MosaicAddressRestrictionIntegrationTest extends BaseIntegrationTest
     @ParameterizedTest
     @EnumSource(RepositoryType.class)
     void getMosaicAddressRestrictionWhenMosaicDoesNotExist(RepositoryType type) {
-        RestrictionRepository repository = getRepositoryFactory(type).createRestrictionRepository();
+        RestrictionMosaicRepository repository = getRepositoryFactory(type)
+            .createRestrictionMosaicRepository();
 
         Address address = Address
             .createFromPublicKey("67F69FA4BFCD158F6E1AF1ABC82F725F5C5C4710D6E29217B12BE66397435DFB",
@@ -216,7 +217,8 @@ public class MosaicAddressRestrictionIntegrationTest extends BaseIntegrationTest
             .createFromPublicKey("67F69FA4BFCD158F6E1AF1ABC82F725F5C5C4710D6E29217B12BE66397435DFB",
                 getNetworkType());
 
-        RestrictionRepository repository = getRepositoryFactory(type).createRestrictionRepository();
+        RestrictionMosaicRepository repository = getRepositoryFactory(type)
+            .createRestrictionMosaicRepository();
         Assertions.assertEquals(0, get(repository
             .getMosaicAddressRestrictions(new MosaicId(BigInteger.valueOf(888888)),
                 Collections.singletonList(address))).size());

@@ -88,4 +88,5 @@ public interface TransactionRepository {
      */
     Observable<TransactionAnnounceResponse> announceAggregateBondedCosignature(
         CosignatureSignedTransaction cosignatureSignedTransaction);
+
 }

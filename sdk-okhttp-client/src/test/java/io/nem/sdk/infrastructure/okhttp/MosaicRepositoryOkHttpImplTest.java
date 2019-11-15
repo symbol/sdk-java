@@ -19,11 +19,8 @@ package io.nem.sdk.infrastructure.okhttp;
 import io.nem.core.utils.MapperUtils;
 import io.nem.sdk.model.mosaic.MosaicId;
 import io.nem.sdk.model.mosaic.MosaicInfo;
-import io.nem.sdk.model.mosaic.MosaicNames;
 import io.nem.sdk.openapi.okhttp_gson.model.MosaicDTO;
 import io.nem.sdk.openapi.okhttp_gson.model.MosaicInfoDTO;
-import io.nem.sdk.openapi.okhttp_gson.model.MosaicNamesDTO;
-import io.nem.sdk.openapi.okhttp_gson.model.MosaicsNamesDTO;
 import java.math.BigInteger;
 import java.util.Collections;
 import java.util.List;
@@ -43,40 +40,11 @@ public class MosaicRepositoryOkHttpImplTest extends AbstractOkHttpRespositoryTes
     @BeforeEach
     public void setUp() {
         super.setUp();
-        repository = new MosaicRepositoryOkHttpImpl(apiClientMock);
+        repository = new MosaicRepositoryOkHttpImpl(apiClientMock, networkTypeObservable);
     }
-
-
-    @Test
-    public void shouldGetMosaicsNamesFromPublicKeys() throws Exception {
-
-        MosaicId mosaicId = MapperUtils.toMosaicId("99262122238339734");
-
-        MosaicNamesDTO dto = new MosaicNamesDTO();
-        dto.setMosaicId("99262122238339734");
-        dto.setNames(Collections.singletonList("accountalias"));
-
-        MosaicsNamesDTO accountsNamesDTO = new MosaicsNamesDTO();
-        accountsNamesDTO.setMosaicNames(Collections.singletonList(dto));
-
-        mockRemoteCall(accountsNamesDTO);
-
-        List<MosaicNames> resolvedList = repository
-            .getMosaicsNames(Collections.singletonList(mosaicId))
-            .toFuture().get();
-
-        Assertions.assertEquals(1, resolvedList.size());
-
-        MosaicNames accountNames = resolvedList.get(0);
-
-        Assertions.assertEquals(mosaicId, accountNames.getMosaicId());
-        Assertions.assertEquals("accountalias", accountNames.getNames().get(0).getName());
-    }
-
 
     @Test
     public void shouldGetMosaics() throws Exception {
-        resolveNetworkType();
         MosaicId mosaicId = MapperUtils.toMosaicId("481110499AAA");
 
         MosaicDTO mosaicDto = new MosaicDTO();
@@ -115,7 +83,6 @@ public class MosaicRepositoryOkHttpImplTest extends AbstractOkHttpRespositoryTes
     @Test
     public void shouldGetMosaic() throws Exception {
 
-        resolveNetworkType();
         MosaicId mosaicId = MapperUtils.toMosaicId("481110499AAA");
 
         MosaicDTO mosiacMetaDto = new MosaicDTO();

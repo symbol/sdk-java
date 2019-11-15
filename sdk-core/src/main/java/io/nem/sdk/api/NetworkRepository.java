@@ -16,6 +16,7 @@
 
 package io.nem.sdk.api;
 
+import io.nem.sdk.model.blockchain.NetworkInfo;
 import io.nem.sdk.model.blockchain.NetworkType;
 import io.reactivex.Observable;
 
@@ -32,4 +33,9 @@ public interface NetworkRepository {
      * @return network type enum.
      */
     Observable<NetworkType> getNetworkType();
+
+    /**
+     * @return the network information with like the network's name and description.
+     */
+    Observable<NetworkInfo> getNetworkInfo();
 }
