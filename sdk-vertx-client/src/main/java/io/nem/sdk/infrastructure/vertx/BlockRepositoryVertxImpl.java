@@ -77,15 +77,13 @@ public class BlockRepositoryVertxImpl extends AbstractRepositoryVertxImpl implem
     }
 
     @Override
-    public Observable<List<BlockInfo>> getBlocksByHeightWithLimit(
-        BigInteger height, int limit, Optional<QueryParams> queryParams) {
+    public Observable<List<BlockInfo>> getBlocksByHeightWithLimit(BigInteger height, int limit) {
         Consumer<Handler<AsyncResult<List<BlockInfoDTO>>>> callback = handler ->
             client.getBlocksByHeightWithLimit(height, limit, handler);
 
         return exceptionHandling(
             call(callback).flatMapIterable(item -> item).map(BlockRepositoryVertxImpl::toBlockInfo)
-                .toList()
-                .toObservable());
+                .toList().toObservable());
     }
 
     @Override

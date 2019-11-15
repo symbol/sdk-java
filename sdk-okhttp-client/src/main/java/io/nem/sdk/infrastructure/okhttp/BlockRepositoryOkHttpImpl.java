@@ -72,8 +72,7 @@ public class BlockRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl impl
     }
 
     @Override
-    public Observable<List<BlockInfo>> getBlocksByHeightWithLimit(
-        BigInteger height, int limit, Optional<QueryParams> queryParams) {
+    public Observable<List<BlockInfo>> getBlocksByHeightWithLimit(BigInteger height, int limit) {
         Callable<List<BlockInfoDTO>> callback = () ->
             getClient().getBlocksByHeightWithLimit(height, limit);
 

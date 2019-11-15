@@ -22,7 +22,6 @@ import io.nem.sdk.model.transaction.Transaction;
 import io.reactivex.Observable;
 import java.math.BigInteger;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * Blockchain interface repository
@@ -65,11 +64,10 @@ public interface BlockRepository {
      *
      * @param height the height
      * @param limit the limit.
-     * @param queryParams QueryParams
      * @return {@link Observable} of BlockInfo
      */
     Observable<List<BlockInfo>> getBlocksByHeightWithLimit(
-        BigInteger height, int limit, Optional<QueryParams> queryParams);
+        BigInteger height, int limit);
 
 
 

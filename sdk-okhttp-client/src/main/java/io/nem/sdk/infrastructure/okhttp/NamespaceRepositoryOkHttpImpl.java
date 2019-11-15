@@ -113,20 +113,8 @@ public class NamespaceRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl 
                 .toObservable()));
     }
 
-
-    @Override
-    public Observable<List<NamespaceInfo>> getNamespacesFromAccounts(
-        List<Address> addresses, QueryParams queryParams) {
-        return this.getNamespacesFromAccounts(addresses, Optional.of(queryParams));
-    }
-
     @Override
     public Observable<List<NamespaceInfo>> getNamespacesFromAccounts(List<Address> addresses) {
-        return this.getNamespacesFromAccounts(addresses, Optional.empty());
-    }
-
-    private Observable<List<NamespaceInfo>> getNamespacesFromAccounts(
-        List<Address> addresses, Optional<QueryParams> queryParams) {
 
         AccountIds accounts = new AccountIds()
             .addresses(addresses.stream().map(Address::plain).collect(

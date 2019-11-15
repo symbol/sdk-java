@@ -63,7 +63,7 @@ public class RepositoryFactoryOkHttpImpl implements RepositoryFactory {
         this.apiClient = new ApiClient();
         this.apiClient.setBasePath(baseUrl);
         this.apiClient.getJSON().setGson(JsonHelperGson.creatGson(false));
-        this.networkTypeObservable = createNetworkRepository().getNetworkType().cache();
+        this.networkTypeObservable = Observable.just(NetworkType.MIJIN_TEST);
         this.generationHashObservable = createBlockRepository().getBlockByHeight(BigInteger.ONE)
             .map(BlockInfo::getGenerationHash).cache();
     }
