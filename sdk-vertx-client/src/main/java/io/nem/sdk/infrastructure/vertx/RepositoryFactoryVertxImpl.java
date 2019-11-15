@@ -76,7 +76,7 @@ public class RepositoryFactoryVertxImpl implements RepositoryFactory {
         //Note: For some reason the generated code use to mapper instances.
         JsonHelperJackson2.configureMapper(apiClient.getObjectMapper());
         JsonHelperJackson2.configureMapper(Json.mapper);
-        this.networkTypeObservable = Observable.just(NetworkType.MIJIN_TEST);
+        this.networkTypeObservable = createNetworkRepository().getNetworkType().cache();
         this.generationHashObservable = createBlockRepository().getBlockByHeight(BigInteger.ONE)
             .map(BlockInfo::getGenerationHash).cache();
     }

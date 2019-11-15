@@ -165,14 +165,19 @@ public class SetUpAccountsTool extends BaseIntegrationTest {
         printAccount(recipient);
 
         BigInteger amount = BigInteger.valueOf(AMOUNT_PER_TRANSFER);
-        TransferTransaction transferTransaction =
+
+
+        TransferTransactionFactory factory =
             TransferTransactionFactory.create(
                 getNetworkType(),
                 recipient.getAddress(),
-                Collections
-                    .singletonList(NetworkCurrencyMosaic.createAbsolute(amount)),
+                Collections.singletonList(NetworkCurrencyMosaic.createAbsolute(amount)),
                 new PlainMessage("E2ETest:SetUpAccountsTool")
-            ).maxFee(this.maxFee).build();
+            );
+
+        factory.maxFee(this.maxFee);
+        TransferTransaction transferTransaction = factory.build();
+
 
         TransferTransaction processedTransaction = announceAndValidate(type, nemesisAccount,
             transferTransaction);
