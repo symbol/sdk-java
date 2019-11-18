@@ -63,13 +63,15 @@ class TransferTransactionTest extends AbstractTransactionTester {
     @Test
     void createATransferTransactionViaStaticConstructor() {
 
-        TransferTransaction transaction =
-            TransferTransactionFactory.create(NetworkType.MIJIN_TEST,
+        TransferTransactionFactory factory = TransferTransactionFactory
+            .create(NetworkType.MIJIN_TEST,
                 new Address("SDGLFW-DSHILT-IUHGIB-H5UGX2-VYF5VN-JEKCCD-BR26",
                     networkType),
                 Collections.emptyList(),
                 PlainMessage.Empty
-            ).build();
+            );
+        TransferTransaction transaction =
+            factory.build();
 
         assertEquals(NetworkType.MIJIN_TEST, transaction.getNetworkType());
         assertEquals(1, (int) transaction.getVersion());
@@ -80,6 +82,9 @@ class TransferTransactionTest extends AbstractTransactionTester {
             transaction.getRecipient());
         assertEquals(0, transaction.getMosaics().size());
         assertNotNull(transaction.getMessage());
+
+        assertEquals(161, factory.getSize());
+        assertEquals(transaction.getSize(), factory.getSize());
 
     }
 

@@ -54,6 +54,34 @@ class MosaicRepositoryIntegrationTest extends BaseIntegrationTest {
 
     @ParameterizedTest
     @EnumSource(RepositoryType.class)
+    void getMosaicsFromAccount(RepositoryType type) {
+        List<MosaicInfo> mosaicInfos = get(getMosaicRepository(type)
+            .getMosaicsFromAccount(testAccount.getAddress()));
+        Assertions.assertTrue(mosaicInfos.size() > 0);
+        mosaicInfos.forEach(this::assertMosaic);
+    }
+
+    @ParameterizedTest
+    @EnumSource(RepositoryType.class)
+    void getMosaicsFromAccounts(RepositoryType type) {
+        List<MosaicInfo> mosaicInfos = get(getMosaicRepository(type)
+            .getMosaicsFromAccounts(Collections.singletonList(testAccount.getAddress())));
+        Assertions.assertTrue(mosaicInfos.size() > 0);
+        mosaicInfos.forEach(this::assertMosaic);
+    }
+
+    private void assertMosaic(MosaicInfo m) {
+        Assertions.assertEquals(testAccount.getPublicAccount(), m.getOwner());
+        Assertions.assertNotNull(m.getMosaicId());
+        Assertions.assertNotNull(m.getStartHeight());
+        Assertions.assertNotNull(m.getDuration());
+        Assertions.assertNotNull(m.getRevision());
+        Assertions.assertNotNull(m.getSupply());
+    }
+
+
+    @ParameterizedTest
+    @EnumSource(RepositoryType.class)
     void getMosaicViaMosaicId(RepositoryType type) {
         MosaicInfo mosaicInfo = get(getMosaicRepository(type).getMosaic(mosaicId));
         assertEquals(mosaicId, mosaicInfo.getMosaicId());

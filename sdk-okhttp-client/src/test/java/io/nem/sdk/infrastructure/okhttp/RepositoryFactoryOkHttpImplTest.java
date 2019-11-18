@@ -63,9 +63,8 @@ public class RepositoryFactoryOkHttpImplTest {
             () -> GeneratorUtils.propagate(
                 () -> new RepositoryFactoryOkHttpImpl(baseUrl).getNetworkType().toFuture().get()));
 
-        Assertions.assertEquals(
-            "ApiException: java.net.ConnectException: Failed to connect to localhost/127.0.0.1:1934 - 0",
-            e.getMessage());
+        Assertions.assertTrue(
+            e.getMessage().contains("ApiException: java.net.ConnectException: Failed to connect"));
     }
 
 
@@ -75,11 +74,11 @@ public class RepositoryFactoryOkHttpImplTest {
 
         RepositoryCallException e = Assertions.assertThrows(RepositoryCallException.class,
             () -> GeneratorUtils.propagate(
-                () -> new RepositoryFactoryOkHttpImpl(baseUrl).getGenerationHash().toFuture().get()));
+                () -> new RepositoryFactoryOkHttpImpl(baseUrl).getGenerationHash().toFuture()
+                    .get()));
 
-        Assertions.assertEquals(
-            "ApiException: java.net.ConnectException: Failed to connect to localhost/127.0.0.1:1934 - 0",
-            e.getMessage());
+        Assertions.assertTrue(
+            e.getMessage().contains("ApiException: java.net.ConnectException: Failed to connect"));
     }
 
 }

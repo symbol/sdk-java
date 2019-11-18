@@ -233,6 +233,15 @@ public abstract class TransactionFactory<T extends Transaction> {
         return signer;
     }
 
+
+    /**
+     * @return the size of the transaction that's going to be created. Useful when you want to
+     * update the maxFee of the transaction depending on its size.
+     */
+    public int getSize() {
+        return build().getSize();
+    }
+
     /**
      * @return the new transaction immutable based on the configured factory.
      */

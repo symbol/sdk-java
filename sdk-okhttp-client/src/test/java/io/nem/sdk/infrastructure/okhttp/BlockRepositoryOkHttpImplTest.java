@@ -16,7 +16,6 @@
 
 package io.nem.sdk.infrastructure.okhttp;
 
-import io.nem.sdk.api.QueryParams;
 import io.nem.sdk.model.blockchain.BlockInfo;
 import io.nem.sdk.model.blockchain.NetworkType;
 import io.nem.sdk.model.transaction.Transaction;
@@ -29,7 +28,6 @@ import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -134,8 +132,7 @@ public class BlockRepositoryOkHttpImplTest extends AbstractOkHttpRespositoryTest
         mockRemoteCall(Collections.singletonList(dto));
 
         BigInteger height = BigInteger.valueOf(10L);
-        BlockInfo info = repository
-            .getBlocksByHeightWithLimit(height, 1, Optional.of(new QueryParams(10, "someId", "id")))
+        BlockInfo info = repository.getBlocksByHeightWithLimit(height, 1)
             .toFuture().get().get(0);
 
         Assertions.assertNotNull(info);

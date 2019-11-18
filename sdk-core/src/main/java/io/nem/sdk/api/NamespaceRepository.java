@@ -59,15 +59,6 @@ public interface NamespaceRepository {
      */
     Observable<List<NamespaceInfo>> getNamespacesFromAccount(Address address);
 
-    /**
-     * Gets list of NamespaceInfo for different account. With pagination.
-     *
-     * @param addresses List of Address
-     * @param queryParams QueryParams
-     * @return {@link Observable} of {@link NamespaceInfo} List
-     */
-    Observable<List<NamespaceInfo>> getNamespacesFromAccounts(
-        List<Address> addresses, QueryParams queryParams);
 
     /**
      * Gets list of NamespaceInfo for different account.
