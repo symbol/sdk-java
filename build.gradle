@@ -49,6 +49,7 @@ ext {
     junit4Version = '4.12'
     jackson_databind_version = "2.9.9"
 }
+def encoding = "UTF-8"
 
 repositories {
     mavenLocal()
@@ -84,8 +85,6 @@ allprojects {
 }
 
 
-
-
 subprojects {
     apply plugin: 'java'
     apply plugin: 'maven'
@@ -98,6 +97,10 @@ subprojects {
     group 'io.nem'
     sourceCompatibility = 1.8
     version = artifactVersion
+
+    compileJava.options.encoding = encoding
+    compileTestJava.options.encoding = encoding
+    javadoc.options.encoding = encoding
 
     signing {
         required { signingKeyId }
