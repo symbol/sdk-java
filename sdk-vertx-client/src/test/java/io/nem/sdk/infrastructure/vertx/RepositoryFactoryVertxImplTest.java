@@ -63,9 +63,8 @@ public class RepositoryFactoryVertxImplTest {
             () -> GeneratorUtils.propagate(
                 () -> new RepositoryFactoryVertxImpl(baseUrl).getNetworkType().toFuture().get()));
 
-        Assertions.assertEquals(
-            "ApiException: Connection refused: localhost/127.0.0.1:1934 - 500",
-            e.getMessage());
+        Assertions.assertTrue(
+            e.getMessage().contains("ApiException: Connection refused"));
     }
 
     @Test
@@ -74,11 +73,12 @@ public class RepositoryFactoryVertxImplTest {
 
         RepositoryCallException e = Assertions.assertThrows(RepositoryCallException.class,
             () -> GeneratorUtils.propagate(
-                () -> new RepositoryFactoryVertxImpl(baseUrl).getGenerationHash().toFuture().get()));
+                () -> new RepositoryFactoryVertxImpl(baseUrl).getGenerationHash().toFuture()
+                    .get()));
 
-        Assertions.assertEquals(
-            "ApiException: Connection refused: localhost/127.0.0.1:1934 - 500",
-            e.getMessage());
+        Assertions.assertTrue(
+            e.getMessage().contains("ApiException: Connection refused"));
+
     }
 
 }
