@@ -84,7 +84,7 @@ public abstract class BaseIntegrationTest {
     protected static final RepositoryType DEFAULT_REPOSITORY_TYPE = RepositoryType.VERTX;
 
 
-    protected BigInteger maxFee = BigInteger.valueOf(200);
+    protected BigInteger maxFee = BigInteger.valueOf(1000000);
 
     /**
      * Known implementations of repositories that the integration tests use.
@@ -94,19 +94,21 @@ public abstract class BaseIntegrationTest {
     }
 
     private static final Config CONFIG = Config.getInstance();
-    private final NetworkType networkType = this.config().getNetworkType();
     private final Long timeoutSeconds = this.config().getTimeoutSeconds();
     private final Map<RepositoryType, RepositoryFactory> repositoryFactoryMap = new HashMap<>();
     private final Map<RepositoryType, Listener> listenerMap = new HashMap<>();
     private final JsonHelper jsonHelper = new JsonHelperJackson2(
         JsonHelperJackson2.configureMapper(new ObjectMapper()));
     private String generationHash = this.config().getGenerationHash();
+    private NetworkType networkType;
 
     @BeforeAll
     void setUp() {
         System.out.println("Running tests against server: " + config().getApiUrl());
         generationHash = resolveGenerationHash();
         System.out.println("Generation Hash: " + generationHash);
+
+        networkType = resolveNetworkType();
     }
 
     @BeforeEach
@@ -118,6 +120,12 @@ public abstract class BaseIntegrationTest {
     private String resolveGenerationHash() {
         return Optional.ofNullable(this.config().getGenerationHash()).orElseGet(
             () -> get(getRepositoryFactory(DEFAULT_REPOSITORY_TYPE).getGenerationHash()));
+
+    }
+
+    private NetworkType resolveNetworkType() {
+        return Optional.ofNullable(this.config().getNetworkType()).orElseGet(
+            () -> get(getRepositoryFactory(DEFAULT_REPOSITORY_TYPE).getNetworkType()));
 
     }
 

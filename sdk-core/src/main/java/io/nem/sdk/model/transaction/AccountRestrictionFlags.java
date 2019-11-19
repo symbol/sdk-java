@@ -21,7 +21,7 @@ import java.util.List;
 
 /**
  * The valid combinations of {@link AccountRestrictionFlag} that creates a {@link
- * AccountRestrictionType}.
+ * AccountRestrictionFlags}.
  *
  * Type of account restriction types:
  *
@@ -42,7 +42,7 @@ import java.util.List;
  * 0xC004 (49156 decimal) - Block outgoing transactions with a given transaction type.
  */
 
-public enum AccountRestrictionType {
+public enum AccountRestrictionFlags {
     /**
      * Allow only incoming transactions from a given address.
      */
@@ -119,7 +119,7 @@ public enum AccountRestrictionType {
      * @param targetType the target type
      * @param flags the values this type is composed of.
      */
-    AccountRestrictionType(AccountRestrictionTargetType targetType,
+    AccountRestrictionFlags(AccountRestrictionTargetType targetType,
         AccountRestrictionFlag... flags) {
         this.flags = Arrays.asList(flags);
         this.value = this.flags.stream().mapToInt(AccountRestrictionFlag::getValue).sum();
@@ -132,7 +132,7 @@ public enum AccountRestrictionType {
      * @param value Raw value of the enum.
      * @return Enum value.
      */
-    public static AccountRestrictionType rawValueOf(final int value) {
+    public static AccountRestrictionFlags rawValueOf(final int value) {
         return Arrays.stream(values()).filter(e -> e.value == value).findFirst()
             .orElseThrow(() -> new IllegalArgumentException(value + " is not a valid value"));
     }

@@ -16,7 +16,7 @@
 
 package io.nem.sdk.model.account;
 
-import io.nem.sdk.model.transaction.AccountRestrictionType;
+import io.nem.sdk.model.transaction.AccountRestrictionFlags;
 import java.util.List;
 
 /**
@@ -27,22 +27,22 @@ public class AccountRestriction {
     /**
      * The restriction type.
      */
-    private final AccountRestrictionType restrictionType;
+    private final AccountRestrictionFlags restrictionFlags;
 
     /**
      * The list of model objects referencing the restricted value. It can be a {@link
      * io.nem.sdk.model.mosaic.MosaicId}, an {@link Address} or a {@link
-     * io.nem.sdk.model.transaction.TransactionType} depending on the target of the restrictionType
+     * io.nem.sdk.model.transaction.TransactionType} depending on the target of the restrictionFlags
      */
     private final List<Object> values;
 
-    public AccountRestriction(AccountRestrictionType restrictionType, List<Object> values) {
-        this.restrictionType = restrictionType;
+    public AccountRestriction(AccountRestrictionFlags restrictionFlags, List<Object> values) {
+        this.restrictionFlags = restrictionFlags;
         this.values = values;
     }
 
-    public AccountRestrictionType getRestrictionType() {
-        return restrictionType;
+    public AccountRestrictionFlags getRestrictionFlags() {
+        return restrictionFlags;
     }
 
     public List<Object> getValues() {

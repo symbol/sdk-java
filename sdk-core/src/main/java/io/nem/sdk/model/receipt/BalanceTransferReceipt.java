@@ -79,13 +79,12 @@ public class BalanceTransferReceipt extends Receipt {
         BigInteger amount,
         ReceiptType type,
         ReceiptVersion version) {
-        super(type, version, Optional.empty());
-        this.sender = sender;
-        this.recipient = recipient;
-        this.amount = amount;
-        this.mosaicId = mosaicId;
-        this.validateRecipientType();
-        this.validateReceiptType(type);
+        this(sender,
+            recipient,
+            mosaicId,
+            amount,
+            type,
+            version, Optional.empty());
     }
 
     /**
@@ -137,9 +136,9 @@ public class BalanceTransferReceipt extends Receipt {
         buffer.putShort(Short.reverseBytes((short) getVersion().getValue()));
         buffer.putShort(Short.reverseBytes((short) getType().getValue()));
         buffer.put(recipientBytes);
-        buffer.put(ConvertUtils.getBytes(getSender().getPublicKey().toHex()));
         buffer.putLong(Long.reverseBytes(getMosaicId().getIdAsLong()));
         buffer.putLong(Long.reverseBytes(getAmount().longValue()));
+        buffer.put(ConvertUtils.getBytes(getSender().getPublicKey().toHex()));
         return buffer.array();
     }
 

@@ -26,7 +26,6 @@ import io.nem.sdk.api.TransactionRepository;
 import io.nem.sdk.model.account.Account;
 import io.nem.sdk.model.account.Address;
 import io.nem.sdk.model.blockchain.BlockInfo;
-import io.nem.sdk.model.blockchain.NetworkType;
 import io.nem.sdk.model.message.PlainMessage;
 import io.nem.sdk.model.mosaic.NetworkCurrencyMosaic;
 import io.nem.sdk.model.transaction.AggregateTransaction;
@@ -235,7 +234,7 @@ class ListenerIntegrationTest extends BaseIntegrationTest {
     private SignedTransaction announceStandaloneTransferTransaction(RepositoryType type) {
         TransferTransaction transferTransaction =
             TransferTransactionFactory.create(
-                NetworkType.MIJIN_TEST,
+                getNetworkType(),
                 this.getRecipient(),
                 Collections.emptyList(),
                 PlainMessage.create("test-message")
@@ -255,8 +254,8 @@ class ListenerIntegrationTest extends BaseIntegrationTest {
     private SignedTransaction announceStandaloneTransferTransactionWithInsufficientBalance(
         RepositoryType type) {
         TransferTransaction transferTransaction =
-            TransferTransactionFactory.create(NetworkType.MIJIN_TEST,
-                new Address("SBILTA367K2LX2FEXG5TFWAS7GEFYAGY7QLFBYKC", NetworkType.MIJIN_TEST),
+            TransferTransactionFactory.create(getNetworkType(),
+                new Address("SBILTA367K2LX2FEXG5TFWAS7GEFYAGY7QLFBYKC", getNetworkType()),
                 Collections.singletonList(
                     NetworkCurrencyMosaic.createRelative(new BigInteger("100000000000"))),
                 PlainMessage.create("test-message")
@@ -270,15 +269,15 @@ class ListenerIntegrationTest extends BaseIntegrationTest {
 
     private SignedTransaction announceAggregateBondedTransaction(RepositoryType type) {
         TransferTransaction transferTransaction =
-            TransferTransactionFactory.create(NetworkType.MIJIN_TEST,
-                new Address("SBILTA367K2LX2FEXG5TFWAS7GEFYAGY7QLFBYKC", NetworkType.MIJIN_TEST),
+            TransferTransactionFactory.create(getNetworkType(),
+                new Address("SBILTA367K2LX2FEXG5TFWAS7GEFYAGY7QLFBYKC", getNetworkType()),
                 Collections.emptyList(),
                 PlainMessage.create("test-message")
             ).maxFee(this.maxFee).build();
 
         AggregateTransaction aggregateTransaction =
             AggregateTransactionFactory.createComplete(
-                NetworkType.MIJIN_TEST,
+                getNetworkType(),
                 Collections.singletonList(
                     transferTransaction.toAggregate(this.multisigAccount.getPublicAccount())))
                 .maxFee(this.maxFee).build();

@@ -27,7 +27,7 @@ import org.apache.commons.lang3.Validate;
 public class AccountAddressRestrictionTransactionFactory extends
     TransactionFactory<AccountAddressRestrictionTransaction> {
 
-    private final AccountRestrictionType restrictionType;
+    private final AccountRestrictionFlags restrictionFlags;
 
     private final List<UnresolvedAddress> restrictionAdditions;
 
@@ -35,16 +35,16 @@ public class AccountAddressRestrictionTransactionFactory extends
 
     private AccountAddressRestrictionTransactionFactory(
         final NetworkType networkType,
-        final AccountRestrictionType restrictionType,
+        final AccountRestrictionFlags restrictionFlags,
         List<UnresolvedAddress> restrictionAdditions,
         List<UnresolvedAddress> restrictionDeletions) {
         super(TransactionType.ACCOUNT_ADDRESS_RESTRICTION, networkType);
 
-        Validate.notNull(restrictionType, "RestrictionType must not be null");
+        Validate.notNull(restrictionFlags, "RestrictionType must not be null");
         Validate.notNull(restrictionAdditions, "RestrictionAdditions must not be null");
         Validate.notNull(restrictionDeletions, "RestrictionDeletions must not be null");
 
-        this.restrictionType = restrictionType;
+        this.restrictionFlags = restrictionFlags;
         this.restrictionAdditions = restrictionAdditions;
         this.restrictionDeletions = restrictionDeletions;
     }
@@ -53,27 +53,27 @@ public class AccountAddressRestrictionTransactionFactory extends
      * Static create method for factory.
      *
      * @param networkType Network type.
-     * @param restrictionType Restriction type.
+     * @param restrictionFlags Restriction type.
      * @param restrictionAdditions List of addresses that are going to be added to the restriction.
      * @param restrictionDeletions List of addresses that are going to be removed from the
      * restriction.
      * @return Account address restriction transaction.
      */
     public static AccountAddressRestrictionTransactionFactory create(NetworkType networkType,
-        AccountRestrictionType restrictionType,
+        AccountRestrictionFlags restrictionFlags,
         List<UnresolvedAddress> restrictionAdditions,
         List<UnresolvedAddress> restrictionDeletions) {
-        return new AccountAddressRestrictionTransactionFactory(networkType, restrictionType,
+        return new AccountAddressRestrictionTransactionFactory(networkType, restrictionFlags,
             restrictionAdditions, restrictionDeletions);
     }
 
     /**
-     * Get account restriction type
+     * Get account restriction flags.
      *
-     * @return {@link AccountRestrictionType}
+     * @return {@link AccountRestrictionFlags}
      */
-    public AccountRestrictionType getRestrictionType() {
-        return this.restrictionType;
+    public AccountRestrictionFlags getRestrictionFlags() {
+        return this.restrictionFlags;
     }
 
 

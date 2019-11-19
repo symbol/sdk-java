@@ -7,14 +7,14 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 /**
- * Tests for {@link AccountRestrictionType}
+ * Tests for {@link AccountRestrictionFlags}
  */
-public class AccountRestrictionTypeTest {
+public class AccountRestrictionFlagsTest {
 
 
     @Test
     public void shouldMatchCatbufferValues() {
-        Arrays.stream(AccountRestrictionType.values()).forEach(a -> {
+        Arrays.stream(AccountRestrictionFlags.values()).forEach(a -> {
             //Testing that all possible values are handled.
             Assertions.assertNotNull(AccountRestrictionFlagsDto.rawValueOf((byte) a.getValue()));
         });

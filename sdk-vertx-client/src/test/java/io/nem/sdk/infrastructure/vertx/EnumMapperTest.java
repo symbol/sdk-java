@@ -29,7 +29,7 @@ import io.nem.sdk.model.namespace.NamespaceRegistrationType;
 import io.nem.sdk.model.receipt.ReceiptType;
 import io.nem.sdk.model.restriction.MosaicRestrictionEntryType;
 import io.nem.sdk.model.transaction.AccountLinkAction;
-import io.nem.sdk.model.transaction.AccountRestrictionType;
+import io.nem.sdk.model.transaction.AccountRestrictionFlags;
 import io.nem.sdk.model.transaction.LockHashAlgorithmType;
 import io.nem.sdk.model.transaction.MosaicRestrictionType;
 import io.nem.sdk.model.transaction.TransactionType;
@@ -89,12 +89,12 @@ public class EnumMapperTest {
     @Test
     public void shouldAccountRestrictionTypeEnumMapToAccountRestrictionType() {
         Arrays.stream(AccountRestrictionFlagsEnum.values()).forEach(
-            v -> Assertions.assertNotNull(AccountRestrictionType.rawValueOf(v.getValue())));
+            v -> Assertions.assertNotNull(AccountRestrictionFlags.rawValueOf(v.getValue())));
     }
 
     @Test
     public void shouldAccountRestrictionTypeMapToAccountRestrictionType() {
-        Arrays.stream(AccountRestrictionType.values()).forEach(
+        Arrays.stream(AccountRestrictionFlags.values()).forEach(
             v -> Assertions
                 .assertNotNull(AccountRestrictionFlagsEnum.fromValue((int) v.getValue())));
 
@@ -201,7 +201,7 @@ public class EnumMapperTest {
     @Test
     void testAccountRestrictionModificationDTO() {
         Set<Integer> existingValues = new HashSet<>();
-        Arrays.stream(AccountRestrictionType.values()).forEach(v -> {
+        Arrays.stream(AccountRestrictionFlags.values()).forEach(v -> {
             Assertions
                 .assertNotNull(AccountRestrictionFlagsEnum.fromValue(v.getValue()), v.name());
             Assertions
@@ -235,7 +235,7 @@ public class EnumMapperTest {
     @Test
     void testAccountRestrictionTypeDTO() {
         Set<Integer> existingValues = new HashSet<>();
-        Arrays.stream(AccountRestrictionType.values()).forEach(v -> {
+        Arrays.stream(AccountRestrictionFlags.values()).forEach(v -> {
             Assertions
                 .assertNotNull(AccountRestrictionFlagsEnum.fromValue(v.getValue()), v.name());
             Assertions
@@ -248,7 +248,7 @@ public class EnumMapperTest {
         Set<Integer> existingValues = new HashSet<>();
         Arrays.stream(AccountRestrictionFlagsEnum.values()).forEach(v -> {
             Assertions
-                .assertNotNull(AccountRestrictionType.rawValueOf(v.getValue()),
+                .assertNotNull(AccountRestrictionFlags.rawValueOf(v.getValue()),
                     v.name());
             Assertions
                 .assertTrue(existingValues.add(v.getValue()), v.getValue() + " is duplicated!!");

@@ -21,7 +21,7 @@ import io.nem.sdk.api.RestrictionAccountRepository;
 import io.nem.sdk.model.account.AccountRestriction;
 import io.nem.sdk.model.account.AccountRestrictions;
 import io.nem.sdk.model.account.Address;
-import io.nem.sdk.model.transaction.AccountRestrictionType;
+import io.nem.sdk.model.transaction.AccountRestrictionFlags;
 import io.nem.sdk.openapi.vertx.api.RestrictionAccountRoutesApi;
 import io.nem.sdk.openapi.vertx.api.RestrictionAccountRoutesApiImpl;
 import io.nem.sdk.openapi.vertx.invoker.ApiClient;
@@ -84,12 +84,12 @@ public class RestrictionAccountRepositoryVertxImpl extends AbstractRepositoryVer
     }
 
     private AccountRestriction toAccountRestriction(AccountRestrictionDTO dto) {
-        AccountRestrictionType restrictionType = AccountRestrictionType
-            .rawValueOf(dto.getRestrictionType().getValue());
+        AccountRestrictionFlags restrictionFlags = AccountRestrictionFlags
+            .rawValueOf(dto.getRestrictionFlags().getValue());
         return new AccountRestriction(
-            restrictionType,
+            restrictionFlags,
             dto.getValues().stream().filter(Objects::nonNull).map(Object::toString)
-                .map(restrictionType.getTargetType()::fromString).collect(
+                .map(restrictionFlags.getTargetType()::fromString).collect(
                 Collectors.toList()));
     }
 

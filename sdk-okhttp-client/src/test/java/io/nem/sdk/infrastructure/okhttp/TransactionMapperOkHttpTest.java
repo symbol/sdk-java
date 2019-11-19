@@ -32,7 +32,7 @@ import io.nem.sdk.model.transaction.AccountLinkTransaction;
 import io.nem.sdk.model.transaction.AccountMetadataTransaction;
 import io.nem.sdk.model.transaction.AccountMosaicRestrictionTransaction;
 import io.nem.sdk.model.transaction.AccountOperationRestrictionTransaction;
-import io.nem.sdk.model.transaction.AccountRestrictionType;
+import io.nem.sdk.model.transaction.AccountRestrictionFlags;
 import io.nem.sdk.model.transaction.AddressAliasTransaction;
 import io.nem.sdk.model.transaction.AggregateTransaction;
 import io.nem.sdk.model.transaction.HashLockTransaction;
@@ -580,8 +580,8 @@ public class TransactionMapperOkHttpTest {
 
         validateStandaloneTransaction(transaction, transactionInfoDTO);
 
-        Assertions.assertEquals(AccountRestrictionType.ALLOW_INCOMING_ADDRESS,
-            transaction.getRestrictionType());
+        Assertions.assertEquals(AccountRestrictionFlags.ALLOW_INCOMING_ADDRESS,
+            transaction.getRestrictionFlags());
         Assertions.assertEquals(1, transaction.getRestrictionAdditions().size());
         Assertions.assertEquals(
             MapperUtils.toAddressFromEncoded("9050b9837efab4bbe8a4b9bb32d812f9885c00d8fc16501111"),
@@ -604,8 +604,8 @@ public class TransactionMapperOkHttpTest {
 
         validateStandaloneTransaction(transaction, transactionInfoDTO);
 
-        Assertions.assertEquals(AccountRestrictionType.ALLOW_INCOMING_MOSAIC,
-            transaction.getRestrictionType());
+        Assertions.assertEquals(AccountRestrictionFlags.ALLOW_INCOMING_MOSAIC,
+            transaction.getRestrictionFlags());
         Assertions.assertEquals(1, transaction.getRestrictionAdditions().size());
         Assertions.assertEquals("00003646934825aa",
             transaction.getRestrictionAdditions().get(0).getIdAsHex());
@@ -622,8 +622,8 @@ public class TransactionMapperOkHttpTest {
 
         validateStandaloneTransaction(transaction, transactionInfoDTO);
 
-        Assertions.assertEquals(AccountRestrictionType.ALLOW_INCOMING_MOSAIC,
-            transaction.getRestrictionType());
+        Assertions.assertEquals(AccountRestrictionFlags.ALLOW_INCOMING_MOSAIC,
+            transaction.getRestrictionFlags());
         Assertions.assertEquals(1, transaction.getRestrictionAdditions().size());
         Assertions.assertEquals(TransactionType.MOSAIC_METADATA_TRANSACTION,
             transaction.getRestrictionAdditions().get(0));

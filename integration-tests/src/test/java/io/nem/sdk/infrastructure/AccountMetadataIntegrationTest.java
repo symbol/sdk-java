@@ -21,8 +21,6 @@ import io.nem.sdk.model.metadata.Metadata;
 import io.nem.sdk.model.metadata.MetadataType;
 import io.nem.sdk.model.transaction.AccountMetadataTransaction;
 import io.nem.sdk.model.transaction.AccountMetadataTransactionFactory;
-import io.nem.sdk.model.transaction.AggregateTransaction;
-import io.nem.sdk.model.transaction.AggregateTransactionFactory;
 import java.math.BigInteger;
 import java.util.Collections;
 import java.util.List;
@@ -57,24 +55,9 @@ public class AccountMetadataIntegrationTest extends BaseIntegrationTest {
                 message
             ).maxFee(this.maxFee).build();
 
-        AggregateTransaction aggregateTransaction = AggregateTransactionFactory
-            .createComplete(getNetworkType(),
-                Collections.singletonList(transaction.toAggregate(testAccount.getPublicAccount())))
-            .maxFee(this.maxFee).build();
+        AccountMetadataTransaction processedTransaction = announceAggregateAndValidate(type,
+            transaction, testAccount);
 
-        AggregateTransaction announceCorrectly = announceAndValidate(type,
-            testAccount, aggregateTransaction);
-
-        Assertions.assertEquals(aggregateTransaction.getType(), announceCorrectly.getType());
-        Assertions
-            .assertEquals(testAccount.getPublicAccount(), announceCorrectly.getSigner().get());
-        Assertions.assertEquals(1, announceCorrectly.getInnerTransactions().size());
-        Assertions
-            .assertEquals(transaction.getType(),
-                announceCorrectly.getInnerTransactions().get(0).getType());
-        AccountMetadataTransaction processedTransaction = (AccountMetadataTransaction) announceCorrectly
-            .getInnerTransactions()
-            .get(0);
         Assertions.assertEquals(transaction.getValueSizeDelta(),
             processedTransaction.getValueSizeDelta());
 

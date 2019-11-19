@@ -68,11 +68,11 @@ public class BalanceChangeReceipt extends Receipt {
         BigInteger amount,
         ReceiptType type,
         ReceiptVersion version) {
-        super(type, version, Optional.empty());
-        this.account = account;
-        this.amount = amount;
-        this.mosaicId = mosaicId;
-        this.validateReceiptType(type);
+        this(account,
+            mosaicId,
+            amount,
+            type,
+            version, Optional.empty());
     }
 
     /**
@@ -111,9 +111,9 @@ public class BalanceChangeReceipt extends Receipt {
         final ByteBuffer buffer = ByteBuffer.allocate(52);
         buffer.putShort(Short.reverseBytes((short) getVersion().getValue()));
         buffer.putShort(Short.reverseBytes((short) getType().getValue()));
-        buffer.put(ConvertUtils.getBytes(getAccount().getPublicKey().toHex()));
         buffer.putLong(Long.reverseBytes(getMosaicId().getIdAsLong()));
         buffer.putLong(Long.reverseBytes(getAmount().longValue()));
+        buffer.put(ConvertUtils.getBytes(getAccount().getPublicKey().toHex()));
         return buffer.array();
     }
 

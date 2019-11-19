@@ -20,7 +20,7 @@ import java.util.List;
 
 public class AccountMosaicRestrictionTransaction extends Transaction {
 
-    private final AccountRestrictionType restrictionType;
+    private final AccountRestrictionFlags restrictionFlags;
 
     private final List<UnresolvedMosaicId> restrictionAdditions;
 
@@ -29,18 +29,18 @@ public class AccountMosaicRestrictionTransaction extends Transaction {
     AccountMosaicRestrictionTransaction(
         AccountMosaicRestrictionTransactionFactory factory) {
         super(factory);
-        this.restrictionType = factory.getRestrictionType();
+        this.restrictionFlags = factory.getRestrictionFlags();
         this.restrictionAdditions = factory.getRestrictionAdditions();
         this.restrictionDeletions = factory.getRestrictionDeletions();
     }
 
     /**
-     * Get account restriction type
+     * Get account restriction flags
      *
-     * @return {@link AccountRestrictionType}
+     * @return {@link AccountRestrictionFlags}
      */
-    public AccountRestrictionType getRestrictionType() {
-        return this.restrictionType;
+    public AccountRestrictionFlags getRestrictionFlags() {
+        return this.restrictionFlags;
     }
 
 
