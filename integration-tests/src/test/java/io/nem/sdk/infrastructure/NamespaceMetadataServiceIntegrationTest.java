@@ -21,7 +21,6 @@ import io.nem.sdk.api.MetadataTransactionService;
 import io.nem.sdk.api.RepositoryFactory;
 import io.nem.sdk.model.account.Account;
 import io.nem.sdk.model.metadata.Metadata;
-import io.nem.sdk.model.mosaic.MosaicId;
 import io.nem.sdk.model.namespace.NamespaceId;
 import io.nem.sdk.model.transaction.NamespaceMetadataTransaction;
 import java.math.BigInteger;
@@ -34,20 +33,19 @@ import org.junit.jupiter.params.provider.EnumSource;
  * Integration tests around namespace metadata service.
  */
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class NamespaceIdMetadataServiceIntegrationTest extends BaseIntegrationTest {
+class NamespaceMetadataServiceIntegrationTest extends BaseIntegrationTest {
 
-    private Account signerAccount = config().getTestAccount();
+    private Account signerAccount = config().getDefaultAccount();
 
-    private Account targetAccount = config().getTestAccount();
-
+    private Account targetAccount = config().getDefaultAccount();
 
     @ParameterizedTest
     @EnumSource(RepositoryType.class)
     void setAndUpdateNamespaceMetadata(RepositoryType type) throws InterruptedException {
 
-        MosaicId targetMosaicId = super.createMosaic(signerAccount, type);
-        String namespaceName = "root-namespace";
-        NamespaceId targetNamespaceId = super.setMosaicAlias(type, targetMosaicId, namespaceName);
+        NamespaceId targetNamespaceId = super
+            .createRootNamespace(type, signerAccount,
+                "namespace-id-metadata-service-integration-test");
 
         BigInteger key = BigInteger.valueOf(RandomUtils.generateRandomInt(100000));
 
@@ -63,7 +61,8 @@ class NamespaceIdMetadataServiceIntegrationTest extends BaseIntegrationTest {
         NamespaceMetadataTransaction originalTransaction = get(service
             .createNamespaceMetadataTransactionFactory(getNetworkType(),
                 targetAccount.getPublicAccount(), key, originalMessage,
-                signerAccount.getPublicAccount().getPublicKey(), targetNamespaceId)).maxFee(this.maxFee).build();
+                signerAccount.getPublicAccount().getPublicKey(), targetNamespaceId))
+            .maxFee(this.maxFee).build();
 
         announceAggregateAndValidate(type, originalTransaction, signerAccount);
 
@@ -74,7 +73,8 @@ class NamespaceIdMetadataServiceIntegrationTest extends BaseIntegrationTest {
         NamespaceMetadataTransaction updateTransaction = get(service
             .createNamespaceMetadataTransactionFactory(getNetworkType(),
                 targetAccount.getPublicAccount(), key, newMessage,
-                signerAccount.getPublicAccount().getPublicKey(), targetNamespaceId)).maxFee(this.maxFee).build();
+                signerAccount.getPublicAccount().getPublicKey(), targetNamespaceId))
+            .maxFee(this.maxFee).build();
 
         announceAggregateAndValidate(type, updateTransaction, signerAccount);
 

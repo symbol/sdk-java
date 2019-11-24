@@ -73,6 +73,7 @@ public class AggregateTransaction extends Transaction {
     public String getTransactionsHash() {
         return transactionsHash;
     }
+
     /**
      * Sign transaction with cosignatories creating a new SignedTransaction.
      *
@@ -106,6 +107,25 @@ public class AggregateTransaction extends Transaction {
 
         return new SignedTransaction(
             Hex.toHexString(payloadBytes), signedTransaction.getHash(), getType());
+    }
+
+    /**
+     * Get the bytes required for signing.
+     *
+     * @param payloadBytes Payload bytes.
+     * @param generationHashBytes Generation hash bytes.
+     * @return Bytes to sign.
+     */
+    @Override
+    public byte[] getSignBytes(final byte[] payloadBytes, final byte[] generationHashBytes) {
+        final short headerSize = 4 + 32 + 64 + 8;
+        // Aggregate tx only require to sign the body.
+        final short signingBytesSize = 52;
+        final byte[] signingBytes = new byte[signingBytesSize + generationHashBytes.length];
+        System.arraycopy(generationHashBytes, 0, signingBytes, 0, generationHashBytes.length);
+        System.arraycopy(payloadBytes, headerSize, signingBytes, generationHashBytes.length,
+            signingBytesSize);
+        return signingBytes;
     }
 
     /**

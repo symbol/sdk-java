@@ -49,17 +49,21 @@ public abstract class AbstractRepositoryVertxImpl {
     }
 
     public <T> Observable<T> call(Consumer<Handler<AsyncResult<T>>> callback) {
-        Function<? super Throwable, ? extends ObservableSource<? extends T>> resumeFunction = this::onError;
+        IllegalArgumentException originalException = new IllegalArgumentException("Original call");
+        Function<? super Throwable, ? extends ObservableSource<? extends T>> resumeFunction = this
+            .onError(originalException);
         return new AsyncResultSingle<T>(callback::accept).toObservable()
             .onErrorResumeNext(resumeFunction);
     }
 
-    public RepositoryCallException exceptionHandling(Throwable e) {
+    public RepositoryCallException exceptionHandling(Throwable e,
+        IllegalArgumentException originalException) {
         if (e instanceof RepositoryCallException) {
             return (RepositoryCallException) e;
         }
-        return new RepositoryCallException(extractMessageFromException(e),
-            extractStatusCodeFromException(e), e);
+        return new RepositoryCallException(
+            extractMessageFromException(e),
+            extractStatusCodeFromException(e), originalException);
     }
 
     private String extractMessageFromException(Throwable e) {
@@ -86,13 +90,16 @@ public abstract class AbstractRepositoryVertxImpl {
         return (e instanceof ApiException) ? ((ApiException) e).getCode() : 0;
     }
 
-    public <T> Observable<T> onError(Throwable e) {
-        return Observable.error(exceptionHandling(e));
+    public <T> Function<? super Throwable, Observable<T>> onError(
+        IllegalArgumentException originalException) {
+        return (Throwable e) -> Observable.error(exceptionHandling(e, originalException));
     }
 
-
     public <T> Observable<T> exceptionHandling(Observable<T> observable) {
-        Function<? super Throwable, ? extends ObservableSource<? extends T>> resumeFunction = this::onError;
+
+        IllegalArgumentException originalException = new IllegalArgumentException("Original call");
+        Function<? super Throwable, ? extends ObservableSource<? extends T>> resumeFunction = this
+            .onError(originalException);
         return observable.onErrorResumeNext(resumeFunction);
     }
 

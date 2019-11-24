@@ -17,7 +17,6 @@
 
 package io.nem.sdk.model.transaction;
 
-import io.nem.core.crypto.Hashes;
 import io.nem.core.crypto.MerkleHashBuilder;
 import io.nem.core.crypto.SignSchema;
 import io.nem.core.utils.ConvertUtils;
@@ -45,11 +44,15 @@ public class AggregateTransactionFactory extends TransactionFactory<AggregateTra
         List<Transaction> innerTransactions,
         List<AggregateTransactionCosignature> cosignatures) {
         super(type, networkType);
-        Validate.notNull(transactionsHash, "transactionsHash must not be null");
+        //Remove this once rest provides the transactionsHash
+        String theTransactionsHash =
+            transactionsHash == null ? calculateTransactionsHash(innerTransactions)
+                : transactionsHash;
+        Validate.notNull(theTransactionsHash, "transactionsHash must not be null");
         Validate.notNull(innerTransactions, "InnerTransactions must not be null");
         Validate.notNull(cosignatures, "Cosignatures must not be null");
-        ConvertUtils.validateIsHexString(transactionsHash, 64);
-        this.transactionsHash = transactionsHash;
+        ConvertUtils.validateIsHexString(theTransactionsHash, 64);
+        this.transactionsHash = theTransactionsHash;
         this.innerTransactions = innerTransactions;
         this.cosignatures = cosignatures;
     }
@@ -168,7 +171,10 @@ public class AggregateTransactionFactory extends TransactionFactory<AggregateTra
 
         for (final Transaction transaction : transactions) {
             final byte[] bytes = transactionSerialization.serializeEmbedded(transaction);
-            byte[] transactionHash = Hashes.sha3_256(bytes);
+
+            byte[] transactionHash = SignSchema
+                .toHash32Bytes(transaction.getNetworkType().resolveSignSchema(), bytes);
+
             transactionsHashBuilder.update(transactionHash);
         }
 

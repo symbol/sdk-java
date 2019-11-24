@@ -1641,9 +1641,8 @@ public class BinarySerializationImpl implements BinarySerialization {
                 final byte[] signerBytes = cosignature.getSigner().getPublicKey().getBytes();
 
                 final ByteBuffer signerBuffer = ByteBuffer.wrap(signerBytes);
-                final CosignatureBuilder cosignatureBuilder =
-                    CosignatureBuilder.create(
-                        new KeyDto(signerBuffer),
+                final CosignatureBuilder cosignatureBuilder = CosignatureBuilder
+                    .create(new KeyDto(signerBuffer),
                         SerializationUtils.toSignatureDto(cosignature.getSignature()));
                 byte[] consignaturePayload = cosignatureBuilder.serialize();
                 cosignaturesBytes = ArrayUtils.addAll(cosignaturesBytes, consignaturePayload);

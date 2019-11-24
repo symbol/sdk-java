@@ -31,6 +31,7 @@ import io.nem.sdk.model.transaction.JsonHelper;
 import java.io.IOException;
 import java.math.BigInteger;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 
 /**
  * Created by fernando on 03/08/19.
@@ -78,7 +79,7 @@ public class JsonHelperJackson2 implements JsonHelper {
             }
             return objectMapper.readValue(string, clazz);
         } catch (Exception e) {
-            throw handleException(e);
+            throw handleException(e, "Json payload: " + string);
         }
     }
 
@@ -103,13 +104,17 @@ public class JsonHelperJackson2 implements JsonHelper {
 
             return objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(object);
         } catch (IOException e) {
-            throw handleException(e);
+            throw handleException(e, null);
         }
     }
 
 
-    private static IllegalArgumentException handleException(Exception e) {
-        return new IllegalArgumentException(e.getMessage(), e);
+    private static IllegalArgumentException handleException(Exception e, String extraMessage) {
+        String message = ExceptionUtils.getMessage(e);
+        if (StringUtils.isNotBlank(extraMessage)) {
+            message += ". " + extraMessage;
+        }
+        return new IllegalArgumentException(message, e);
     }
 
     @Override

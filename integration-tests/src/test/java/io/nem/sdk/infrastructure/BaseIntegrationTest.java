@@ -62,12 +62,10 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 
 /**
@@ -93,22 +91,25 @@ public abstract class BaseIntegrationTest {
         VERTX, OKHTTP
     }
 
-    private static final Config CONFIG = Config.getInstance();
-    private final Long timeoutSeconds = this.config().getTimeoutSeconds();
+    private final Config config;
+    private final Long timeoutSeconds;
     private final Map<RepositoryType, RepositoryFactory> repositoryFactoryMap = new HashMap<>();
     private final Map<RepositoryType, Listener> listenerMap = new HashMap<>();
     private final JsonHelper jsonHelper = new JsonHelperJackson2(
         JsonHelperJackson2.configureMapper(new ObjectMapper()));
-    private String generationHash = this.config().getGenerationHash();
-    private NetworkType networkType;
+    private final String generationHash;
+    private final NetworkType networkType;
 
-    @BeforeAll
-    void setUp() {
-        System.out.println("Running tests against server: " + config().getApiUrl());
-        generationHash = resolveGenerationHash();
+    public BaseIntegrationTest() {
+        this.config = new Config();
+        this.timeoutSeconds = this.config().getTimeoutSeconds();
+        this.generationHash = resolveGenerationHash();
+        this.networkType = resolveNetworkType();
+        this.config.init(networkType);
+
+        System.out.println("Network Type: " + networkType);
         System.out.println("Generation Hash: " + generationHash);
-
-        networkType = resolveNetworkType();
+        System.out.println("Running tests against server: " + config().getApiUrl());
     }
 
     @BeforeEach
@@ -118,15 +119,11 @@ public abstract class BaseIntegrationTest {
     }
 
     private String resolveGenerationHash() {
-        return Optional.ofNullable(this.config().getGenerationHash()).orElseGet(
-            () -> get(getRepositoryFactory(DEFAULT_REPOSITORY_TYPE).getGenerationHash()));
-
+        return get(getRepositoryFactory(DEFAULT_REPOSITORY_TYPE).getGenerationHash());
     }
 
     private NetworkType resolveNetworkType() {
-        return Optional.ofNullable(this.config().getNetworkType()).orElseGet(
-            () -> get(getRepositoryFactory(DEFAULT_REPOSITORY_TYPE).getNetworkType()));
-
+        return get(getRepositoryFactory(DEFAULT_REPOSITORY_TYPE).getNetworkType());
     }
 
     @AfterAll
@@ -174,7 +171,7 @@ public abstract class BaseIntegrationTest {
     }
 
     public Config config() {
-        return BaseIntegrationTest.CONFIG;
+        return config;
     }
 
     public JsonHelper jsonHelper() {
@@ -295,7 +292,7 @@ public abstract class BaseIntegrationTest {
 
         Transaction announceCorrectly = this
             .validateTransactionAnnounceCorrectly(
-                testAccount.getAddress(), signedTransaction.getHash(), type);
+                testAccount.getAddress(), signedTransaction.getHash(), type, transaction);
         Assertions.assertEquals(announceCorrectly.getType(), transaction.getType());
         if (transaction.getType() != TransactionType.AGGREGATE_COMPLETE) {
             System.out.println("Transaction completed");
@@ -305,25 +302,26 @@ public abstract class BaseIntegrationTest {
 
 
     Transaction validateTransactionAnnounceCorrectly(Address address, String transactionHash,
-        RepositoryType type) {
+        RepositoryType type, Transaction originalTransaction) {
         Listener listener = getListener(type);
         Observable<Transaction> observable = listener.confirmed(address)
             .filter(t -> t.getTransactionInfo().flatMap(TransactionInfo::getHash)
                 .filter(s -> s.equals(transactionHash)).isPresent());
-        Transaction transaction = getTransactionOrFail(address, listener, observable);
+        Transaction transaction = getTransactionOrFail(address, listener, observable,
+            originalTransaction);
         assertEquals(transactionHash, transaction.getTransactionInfo().get().getHash().get());
         return transaction;
     }
 
 
     AggregateTransaction validateAggregateBondedTransactionAnnounceCorrectly(Address address,
-        String transactionHash, RepositoryType type) {
+        String transactionHash, RepositoryType type, Transaction originalTransaction) {
         Listener listener = getListener(type);
         Observable<AggregateTransaction> observable = listener.aggregateBondedAdded(address)
             .filter(t -> t.getTransactionInfo().flatMap(TransactionInfo::getHash)
                 .filter(s -> s.equals(transactionHash)).isPresent());
         AggregateTransaction aggregateTransaction = getTransactionOrFail(address, listener,
-            observable);
+            observable, originalTransaction);
         assertEquals(transactionHash,
             aggregateTransaction.getTransactionInfo().get().getHash().get());
         return aggregateTransaction;
@@ -331,12 +329,12 @@ public abstract class BaseIntegrationTest {
 
     CosignatureSignedTransaction validateAggregateBondedCosignatureTransactionAnnounceCorrectly(
         Address address, String transactionHash,
-        RepositoryType type) {
+        RepositoryType type, Transaction originalTransaction) {
         Listener listener = getListener(type);
         Observable<CosignatureSignedTransaction> observable = listener.cosignatureAdded(address)
             .filter(t -> t.getParentHash().equals(transactionHash));
         CosignatureSignedTransaction transaction = getTransactionOrFail(address, listener,
-            observable);
+            observable, originalTransaction);
         assertEquals(transactionHash, transaction.getParentHash());
         return transaction;
     }
@@ -347,16 +345,26 @@ public abstract class BaseIntegrationTest {
      * the method will fail before timing out as it listens errors raised by the server.
      */
     private <T> T getTransactionOrFail(Address address, Listener listener,
-        Observable<T> observable) {
-        Observable<Object> errorOrTransactionObservable = Observable
-            .merge(observable, listener.status(address));
-        Object errorOrTransaction = get(errorOrTransactionObservable.take(1));
-        if (errorOrTransaction instanceof TransactionStatusError) {
+        Observable<T> observable, Transaction originalTransaction) {
+        try {
+            Observable<Object> errorOrTransactionObservable = Observable
+                .merge(observable, listener.status(address));
+            Object errorOrTransaction = get(errorOrTransactionObservable.take(1));
+            if (errorOrTransaction instanceof TransactionStatusError) {
+                throw new IllegalArgumentException(
+                    "TransactionStatusError " + ((TransactionStatusError) errorOrTransaction)
+                        .getStatus());
+            }
+            return (T) errorOrTransaction;
+        } catch (Exception e) {
+            String failedTransaction = getRepositoryFactory(DEFAULT_REPOSITORY_TYPE)
+                .createJsonSerialization()
+                .transactionToJson(originalTransaction);
             throw new IllegalArgumentException(
-                "TransactionStatusError " + ((TransactionStatusError) errorOrTransaction)
-                    .getStatus());
+                org.apache.commons.lang3.exception.ExceptionUtils.getMessage(e)
+                    + ". Failed Transaction json: \n" + failedTransaction, e);
         }
-        return (T) errorOrTransaction;
+
     }
 
 
@@ -473,6 +481,26 @@ public abstract class BaseIntegrationTest {
             mosaicDefinitionTransaction);
         Assertions.assertEquals(mosaicId, validateTransaction.getMosaicId());
         return mosaicId;
+    }
+
+    public NamespaceId createRootNamespace(RepositoryType type, Account testAccount,
+        String namespaceName) {
+
+        System.out.println("Creating namespace " + namespaceName);
+        NamespaceRegistrationTransaction namespaceRegistrationTransaction = NamespaceRegistrationTransactionFactory
+            .createRootNamespace(
+                getNetworkType(), namespaceName, BigInteger.valueOf(10)).maxFee(this.maxFee)
+            .build();
+
+        NamespaceRegistrationTransaction processedTransaction = announceAndValidate(type,
+            testAccount, namespaceRegistrationTransaction);
+
+        Assertions.assertEquals(namespaceRegistrationTransaction.getNamespaceId().getIdAsHex(),
+            processedTransaction.getNamespaceId().getIdAsHex());
+
+        Assertions.assertEquals(namespaceRegistrationTransaction.getNamespaceName(),
+            processedTransaction.getNamespaceName());
+        return namespaceRegistrationTransaction.getNamespaceId();
     }
 
 }
