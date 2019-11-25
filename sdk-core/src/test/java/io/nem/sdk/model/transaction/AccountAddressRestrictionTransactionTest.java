@@ -46,10 +46,10 @@ public class AccountAddressRestrictionTransactionTest extends AbstractTransactio
         AccountAddressRestrictionTransaction transaction =
             AccountAddressRestrictionTransactionFactory.create(
                 NetworkType.MIJIN_TEST,
-                AccountRestrictionType.ALLOW_INCOMING_ADDRESS,
+                AccountRestrictionFlags.ALLOW_INCOMING_ADDRESS,
                 additions, deletions).deadline(new FakeDeadline()).build();
-        Assertions.assertEquals(AccountRestrictionType.ALLOW_INCOMING_ADDRESS,
-            transaction.getRestrictionType());
+        Assertions.assertEquals(AccountRestrictionFlags.ALLOW_INCOMING_ADDRESS,
+            transaction.getRestrictionFlags());
         Assertions.assertEquals(additions, transaction.getRestrictionAdditions());
         Assertions.assertEquals(deletions, transaction.getRestrictionDeletions());
     }
@@ -63,12 +63,12 @@ public class AccountAddressRestrictionTransactionTest extends AbstractTransactio
         AccountAddressRestrictionTransaction transaction =
             AccountAddressRestrictionTransactionFactory.create(
                 NetworkType.MIJIN_TEST,
-                AccountRestrictionType.ALLOW_INCOMING_ADDRESS,
+                AccountRestrictionFlags.ALLOW_INCOMING_ADDRESS,
                 additions, deletions).deadline(new FakeDeadline())
                 .signer(account.getPublicAccount())
                 .build();
-        Assertions.assertEquals(AccountRestrictionType.ALLOW_INCOMING_ADDRESS,
-            transaction.getRestrictionType());
+        Assertions.assertEquals(AccountRestrictionFlags.ALLOW_INCOMING_ADDRESS,
+            transaction.getRestrictionFlags());
 
         String expected = "ba00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000009a49366406aca952b88badf5f1e9be6ce4968141035a60be503273ea65456b24000000000190504100000000000000000100000000000000010001010000000090018141b12dedd54d4e74b80f5c45266983131e03b5d7d54f90afb3793570d11c4dd7957eae7040e887572cebecee3e25e3";
         assertSerialization(expected, transaction);

@@ -34,9 +34,9 @@ import org.junit.jupiter.params.provider.EnumSource;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class AccountMetadataServiceIntegrationTest extends BaseIntegrationTest {
 
-    private Account signerAccount = config().getTestAccount();
+    private Account signerAccount = config().getDefaultAccount();
 
-    private Account targetAccount = config().getTestAccount();
+    private Account targetAccount = config().getDefaultAccount();
 
     @ParameterizedTest
     @EnumSource(RepositoryType.class)

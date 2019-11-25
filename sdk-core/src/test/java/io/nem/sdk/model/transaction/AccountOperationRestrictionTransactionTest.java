@@ -38,10 +38,10 @@ public class AccountOperationRestrictionTransactionTest extends AbstractTransact
         AccountOperationRestrictionTransaction transaction =
             AccountOperationRestrictionTransactionFactory.create(
                 NetworkType.MIJIN_TEST,
-                AccountRestrictionType.ALLOW_OUTGOING_TRANSACTION_TYPE,
+                AccountRestrictionFlags.ALLOW_OUTGOING_TRANSACTION_TYPE,
                 additions, deletions).deadline(new FakeDeadline()).build();
-        Assertions.assertEquals(AccountRestrictionType.ALLOW_OUTGOING_TRANSACTION_TYPE,
-            transaction.getRestrictionType());
+        Assertions.assertEquals(AccountRestrictionFlags.ALLOW_OUTGOING_TRANSACTION_TYPE,
+            transaction.getRestrictionFlags());
         Assertions.assertEquals(additions, transaction.getRestrictionAdditions());
         Assertions.assertEquals(deletions, transaction.getRestrictionDeletions());
     }
@@ -54,7 +54,7 @@ public class AccountOperationRestrictionTransactionTest extends AbstractTransact
         AccountOperationRestrictionTransaction transaction =
             AccountOperationRestrictionTransactionFactory.create(
                 NetworkType.MIJIN_TEST,
-                AccountRestrictionType.ALLOW_INCOMING_MOSAIC,
+                AccountRestrictionFlags.ALLOW_INCOMING_MOSAIC,
                 additions, deletions).signer(account.getPublicAccount())
                 .deadline(new FakeDeadline())
                 .build();

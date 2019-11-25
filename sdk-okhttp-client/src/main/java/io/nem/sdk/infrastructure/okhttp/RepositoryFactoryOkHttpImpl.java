@@ -42,7 +42,7 @@ import okhttp3.OkHttpClient;
 import org.apache.commons.io.IOUtils;
 
 /**
- * Vertx implementation of a {@link RepositoryFactory}
+ * OkHttp implementation of a {@link RepositoryFactory}
  *
  * @author Fernando Boucquez
  */

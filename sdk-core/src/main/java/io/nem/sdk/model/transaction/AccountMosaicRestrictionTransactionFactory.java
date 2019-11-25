@@ -27,7 +27,7 @@ import org.apache.commons.lang3.Validate;
 public class AccountMosaicRestrictionTransactionFactory extends
     TransactionFactory<AccountMosaicRestrictionTransaction> {
 
-    private final AccountRestrictionType restrictionType;
+    private final AccountRestrictionFlags restrictionFlags;
 
     private final List<UnresolvedMosaicId> restrictionAdditions;
 
@@ -35,14 +35,14 @@ public class AccountMosaicRestrictionTransactionFactory extends
 
     private AccountMosaicRestrictionTransactionFactory(
         final NetworkType networkType,
-        final AccountRestrictionType restrictionType,
+        final AccountRestrictionFlags restrictionFlags,
         final List<UnresolvedMosaicId> restrictionAdditions,
         final List<UnresolvedMosaicId> restrictionDeletions) {
         super(TransactionType.ACCOUNT_MOSAIC_RESTRICTION, networkType);
-        Validate.notNull(restrictionType, "RestrictionType must not be null");
+        Validate.notNull(restrictionFlags, "RestrictionType must not be null");
         Validate.notNull(restrictionAdditions, "RestrictionAdditions must not be null");
         Validate.notNull(restrictionDeletions, "RestrictionDeletions must not be null");
-        this.restrictionType = restrictionType;
+        this.restrictionFlags = restrictionFlags;
         this.restrictionAdditions = restrictionAdditions;
         this.restrictionDeletions = restrictionDeletions;
     }
@@ -51,25 +51,25 @@ public class AccountMosaicRestrictionTransactionFactory extends
      * Static create method for factory.
      *
      * @param networkType Network type.
-     * @param restrictionType Restriction type.
+     * @param restrictionFlags Restriction falgs.
      * @param restrictionAdditions List of mosaic ids that are going to be added to the restriction.
      * @param restrictionDeletions List of mosaic ids that are going to be removed from the restriction.
      * @return Account mosaic restriction transaction.
      */
     public static AccountMosaicRestrictionTransactionFactory create(NetworkType networkType,
-        AccountRestrictionType restrictionType, final List<UnresolvedMosaicId> restrictionAdditions,
+        AccountRestrictionFlags restrictionFlags, final List<UnresolvedMosaicId> restrictionAdditions,
         final List<UnresolvedMosaicId> restrictionDeletions) {
-        return new AccountMosaicRestrictionTransactionFactory(networkType, restrictionType,
+        return new AccountMosaicRestrictionTransactionFactory(networkType, restrictionFlags,
             restrictionAdditions, restrictionDeletions);
     }
 
     /**
      * Get account restriction type
      *
-     * @return {@link AccountRestrictionType}
+     * @return {@link AccountRestrictionFlags}
      */
-    public AccountRestrictionType getRestrictionType() {
-        return this.restrictionType;
+    public AccountRestrictionFlags getRestrictionFlags() {
+        return this.restrictionFlags;
     }
 
 

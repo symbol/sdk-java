@@ -45,53 +45,63 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.TestMethodOrder;
 
 /**
  * Utility main class that uses the nemesis address configured to generate new accounts necessary
  * for the integration tests. Use with caution!!
  */
-public class SetUpAccountsTool extends BaseIntegrationTest {
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@TestMethodOrder(OrderAnnotation.class)
+public class AAASetupIntegrationTest extends BaseIntegrationTest {
 
     public static final long AMOUNT_PER_TRANSFER = 10000000;
 
     private final RepositoryType type = DEFAULT_REPOSITORY_TYPE;
 
-    public static void main(String[] args) {
-        new SetUpAccountsTool().createAccounts();
+    @Test
+    @Order(1)
+    void createTestAccount() {
+        sendMosaicFromNemesis(config().getTestAccount(), false);
+        setAddressAlias(type, config().getTestAccount().getAddress(), "testaccount");
     }
 
-    private void createAccounts() {
-        setUp();
+    @Test
+    @Order(2)
+    void createTestAccount2() {
+        sendMosaicFromNemesis(config().getTestAccount2(), false);
+        setAddressAlias(type, config().getTestAccount2().getAddress(), "testaccount2");
+    }
 
-        try {
-            sendMosaicFromNemesis(config().getTestAccount(), false);
-            setAddressAlias(type, config().getTestAccount().getAddress(), "testaccount");
+    @Test
+    @Order(3)
+    void createCosignatoryAccount() {
+        sendMosaicFromNemesis(config().getCosignatoryAccount(), true);
+        setAddressAlias(type, config().getCosignatoryAccount().getAddress(),
+            "cosignatory-account");
+    }
 
-            sendMosaicFromNemesis(config().getTestAccount2(), false);
-            setAddressAlias(type, config().getTestAccount2().getAddress(), "testaccount2");
+    @Test
+    @Order(4)
+    void createCosignatoryAccount2() {
+        sendMosaicFromNemesis(config().getCosignatory2Account(), true);
+        setAddressAlias(type, config().getCosignatory2Account().getAddress(),
+            "cosignatory-account2");
+    }
 
-            sendMosaicFromNemesis(config().getCosignatoryAccount(), false);
-            setAddressAlias(type, config().getCosignatoryAccount().getAddress(),
-                "cosignatory-account");
-
-            sendMosaicFromNemesis(config().getCosignatory2Account(), false);
-            setAddressAlias(type, config().getCosignatory2Account().getAddress(),
-                "cosignatory-account2");
-
-            sendMosaicFromNemesis(config().getCosignatory3Account(), false);
-            setAddressAlias(type, config().getCosignatory3Account().getAddress(),
-                "cosignatory-account3");
-
-            sendMosaicFromNemesis(config().getMultisigAccount(), false);
-            setAddressAlias(type, config().getMultisigAccount().getAddress(), "nemesis-account");
-
-            createMultisigAccount(config().getMultisigAccount(),
-                config().getCosignatoryAccount(),
-                config().getCosignatory2Account()
-            );
-        } finally {
-            tearDown();
-        }
+    @Test
+    @Order(5)
+    void createMultisigAccount() {
+        sendMosaicFromNemesis(config().getMultisigAccount(), true);
+        setAddressAlias(type, config().getMultisigAccount().getAddress(), "multisig-account");
+        createMultisigAccount(config().getMultisigAccount(),
+            config().getCosignatoryAccount(),
+            config().getCosignatory2Account()
+        );
     }
 
     private void createMultisigAccount(Account multisigAccount, Account... accounts) {
@@ -148,9 +158,7 @@ public class SetUpAccountsTool extends BaseIntegrationTest {
             transactionAnnounceResponse.getMessage());
 
         validateTransactionAnnounceCorrectly(multisigAccount.getAddress(),
-            signedTransaction.getHash(), type);
-
-
+            signedTransaction.getHash(), type, aggregateTransaction);
     }
 
     private void sendMosaicFromNemesis(Account recipient, boolean force) {
@@ -166,7 +174,6 @@ public class SetUpAccountsTool extends BaseIntegrationTest {
 
         BigInteger amount = BigInteger.valueOf(AMOUNT_PER_TRANSFER);
 
-
         TransferTransactionFactory factory =
             TransferTransactionFactory.create(
                 getNetworkType(),
@@ -177,7 +184,6 @@ public class SetUpAccountsTool extends BaseIntegrationTest {
 
         factory.maxFee(this.maxFee);
         TransferTransaction transferTransaction = factory.build();
-
 
         TransferTransaction processedTransaction = announceAndValidate(type, nemesisAccount,
             transferTransaction);

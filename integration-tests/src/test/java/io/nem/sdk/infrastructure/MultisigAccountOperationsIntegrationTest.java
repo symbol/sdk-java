@@ -69,7 +69,7 @@ public class MultisigAccountOperationsIntegrationTest extends BaseIntegrationTes
         get(getTransactionRepository(type).announce(signedTransaction));
 
         validateTransactionAnnounceCorrectly(cosignatoryAccount.getAddress(),
-            signedTransaction.getHash(), type);
+            signedTransaction.getHash(), type, aggregateTransaction);
     }
 
     private TransactionRepository getTransactionRepository(

@@ -22,7 +22,7 @@ import io.nem.sdk.model.account.UnresolvedAddress;
 import io.nem.sdk.model.blockchain.NetworkType;
 import io.nem.sdk.model.transaction.AccountAddressRestrictionTransaction;
 import io.nem.sdk.model.transaction.AccountAddressRestrictionTransactionFactory;
-import io.nem.sdk.model.transaction.AccountRestrictionType;
+import io.nem.sdk.model.transaction.AccountRestrictionFlags;
 import io.nem.sdk.model.transaction.JsonHelper;
 import io.nem.sdk.model.transaction.TransactionType;
 import io.nem.sdk.openapi.vertx.model.AccountAddressRestrictionTransactionDTO;
@@ -45,8 +45,8 @@ public class AccountAddressRestrictionTransactionMapper extends
     @Override
     protected AccountAddressRestrictionTransactionFactory createFactory(
         NetworkType networkType, AccountAddressRestrictionTransactionDTO transaction) {
-        AccountRestrictionType restrictionType = AccountRestrictionType
-            .rawValueOf(transaction.getRestrictionType().getValue());
+        AccountRestrictionFlags restrictionFlags = AccountRestrictionFlags
+            .rawValueOf(transaction.getRestrictionFlags().getValue());
         List<UnresolvedAddress> restrictionAdditions = transaction
             .getRestrictionAdditions().stream().map(MapperUtils::toUnresolvedAddress)
             .collect(Collectors.toList());
@@ -55,7 +55,7 @@ public class AccountAddressRestrictionTransactionMapper extends
             .getRestrictionDeletions().stream().map(MapperUtils::toUnresolvedAddress)
             .collect(Collectors.toList());
 
-        return AccountAddressRestrictionTransactionFactory.create(networkType, restrictionType,
+        return AccountAddressRestrictionTransactionFactory.create(networkType, restrictionFlags,
             restrictionAdditions, restrictionDeletions);
     }
 
@@ -64,8 +64,8 @@ public class AccountAddressRestrictionTransactionMapper extends
     protected void copyToDto(
         AccountAddressRestrictionTransaction transaction,
         AccountAddressRestrictionTransactionDTO dto) {
-        dto.setRestrictionType(
-            AccountRestrictionFlagsEnum.fromValue(transaction.getRestrictionType().getValue()));
+        dto.setRestrictionFlags(
+            AccountRestrictionFlagsEnum.fromValue(transaction.getRestrictionFlags().getValue()));
 
         dto.setRestrictionAdditions(transaction.getRestrictionAdditions().stream()
             .map(r -> r.encoded(transaction.getNetworkType())).collect(

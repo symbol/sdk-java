@@ -37,6 +37,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.TreeSet;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.threeten.bp.LocalDate;
 import org.threeten.bp.OffsetDateTime;
 
@@ -51,8 +52,7 @@ public class JsonHelperGson implements JsonHelper {
     private final Gson prettyObjectMapper;
 
     public JsonHelperGson() {
-        this(JsonHelperGson.creatGson(false),
-            JsonHelperGson.creatGson(true));
+        this(JsonHelperGson.creatGson(false), JsonHelperGson.creatGson(true));
     }
 
     public JsonHelperGson(Gson objectMapper) {
@@ -96,7 +96,7 @@ public class JsonHelperGson implements JsonHelper {
             }
             return objectMapper.fromJson(string, clazz);
         } catch (Exception e) {
-            throw handleException(e);
+            throw handleException(e, "Json payload: " + string);
         }
     }
 
@@ -130,8 +130,12 @@ public class JsonHelperGson implements JsonHelper {
     }
 
 
-    private static IllegalArgumentException handleException(Exception e) {
-        return new IllegalArgumentException(e.getMessage(), e);
+    private static IllegalArgumentException handleException(Exception e, String extraMessage) {
+        String message = ExceptionUtils.getMessage(e);
+        if (StringUtils.isNotBlank(extraMessage)) {
+            message += ". " + extraMessage;
+        }
+        return new IllegalArgumentException(message, e);
     }
 
     @Override

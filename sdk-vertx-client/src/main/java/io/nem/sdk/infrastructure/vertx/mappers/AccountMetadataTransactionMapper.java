@@ -52,6 +52,10 @@ class AccountMetadataTransactionMapper extends
             scopedMetaDataKey,
             value);
         factory.valueSizeDelta(valueSizeDelta);
+        Integer valueSize = transaction.getValueSize();
+        if (valueSize != null) {
+            factory.valueSize(valueSize);
+        }
         return factory;
     }
 
@@ -63,5 +67,6 @@ class AccountMetadataTransactionMapper extends
         dto.setValueSizeDelta(transaction.getValueSizeDelta());
         dto.setScopedMetadataKey(transaction.getScopedMetadataKey().toString(16));
         dto.setValue(ConvertUtils.fromStringToHex(transaction.getValue()));
+        dto.setValueSize(transaction.getValueSize());
     }
 }

@@ -93,7 +93,7 @@ import io.nem.sdk.model.transaction.AccountMosaicRestrictionTransaction;
 import io.nem.sdk.model.transaction.AccountMosaicRestrictionTransactionFactory;
 import io.nem.sdk.model.transaction.AccountOperationRestrictionTransaction;
 import io.nem.sdk.model.transaction.AccountOperationRestrictionTransactionFactory;
-import io.nem.sdk.model.transaction.AccountRestrictionType;
+import io.nem.sdk.model.transaction.AccountRestrictionFlags;
 import io.nem.sdk.model.transaction.AddressAliasTransaction;
 import io.nem.sdk.model.transaction.AddressAliasTransactionFactory;
 import io.nem.sdk.model.transaction.AggregateTransaction;
@@ -1171,11 +1171,11 @@ public class BinarySerializationImpl implements BinarySerialization {
             AccountAddressRestrictionTransactionBodyBuilder builder = AccountAddressRestrictionTransactionBodyBuilder
                 .loadFromBinary(stream);
 
-            long restrictionTypeValue = builder.getRestrictionFlags().stream()
+            long restrictionFlagsValue = builder.getRestrictionFlags().stream()
                 .mapToLong(AccountRestrictionFlagsDto::getValue).sum();
 
-            AccountRestrictionType restrictionType = AccountRestrictionType
-                .rawValueOf((int) restrictionTypeValue);
+            AccountRestrictionFlags restrictionFlags = AccountRestrictionFlags
+                .rawValueOf((int) restrictionFlagsValue);
 
             List<UnresolvedAddress> restrictionAdditions = builder.getRestrictionAdditions()
                 .stream()
@@ -1188,13 +1188,13 @@ public class BinarySerializationImpl implements BinarySerialization {
                 .collect(Collectors.toList());
 
             return AccountAddressRestrictionTransactionFactory
-                .create(networkType, restrictionType, restrictionAdditions, restrictionDeletions);
+                .create(networkType, restrictionFlags, restrictionAdditions, restrictionDeletions);
         }
 
         @Override
         public Serializer getBodyBuilder(AccountAddressRestrictionTransaction transaction) {
 
-            EnumSet<AccountRestrictionFlagsDto> flags = transaction.getRestrictionType().getFlags()
+            EnumSet<AccountRestrictionFlagsDto> flags = transaction.getRestrictionFlags().getFlags()
                 .stream().map(f -> AccountRestrictionFlagsDto.rawValueOf(
                     (short) f.getValue())).collect(Collectors
                     .toCollection(() -> EnumSet.noneOf(AccountRestrictionFlagsDto.class)));
@@ -1238,44 +1238,38 @@ public class BinarySerializationImpl implements BinarySerialization {
             AccountMosaicRestrictionTransactionBodyBuilder builder = AccountMosaicRestrictionTransactionBodyBuilder
                 .loadFromBinary(stream);
 
-            long restrictionTypeValue = builder.getRestrictionFlags().stream()
+            long restrictionFlagsValues = builder.getRestrictionFlags().stream()
                 .mapToLong(AccountRestrictionFlagsDto::getValue).sum();
 
-            AccountRestrictionType restrictionType = AccountRestrictionType
-                .rawValueOf((int) restrictionTypeValue);
+            AccountRestrictionFlags restrictionFlags = AccountRestrictionFlags
+                .rawValueOf((int) restrictionFlagsValues);
 
             List<UnresolvedMosaicId> restrictionAdditions = builder.getRestrictionAdditions()
-                .stream()
-                .map(SerializationUtils::toUnresolvedMosaicId)
+                .stream().map(SerializationUtils::toUnresolvedMosaicId)
                 .collect(Collectors.toList());
 
             List<UnresolvedMosaicId> restrictionDeletions = builder.getRestrictionDeletions()
-                .stream()
-                .map(SerializationUtils::toUnresolvedMosaicId)
+                .stream().map(SerializationUtils::toUnresolvedMosaicId)
                 .collect(Collectors.toList());
 
             return AccountMosaicRestrictionTransactionFactory
-                .create(networkType, restrictionType, restrictionAdditions, restrictionDeletions);
+                .create(networkType, restrictionFlags, restrictionAdditions, restrictionDeletions);
         }
 
         @Override
         public Serializer getBodyBuilder(AccountMosaicRestrictionTransaction transaction) {
 
-            EnumSet<AccountRestrictionFlagsDto> flags = transaction.getRestrictionType().getFlags()
+            EnumSet<AccountRestrictionFlagsDto> flags = transaction.getRestrictionFlags().getFlags()
                 .stream().map(f -> AccountRestrictionFlagsDto.rawValueOf(
                     (short) f.getValue())).collect(Collectors
                     .toCollection(() -> EnumSet.noneOf(AccountRestrictionFlagsDto.class)));
 
             List<UnresolvedMosaicIdDto> restrictionAdditions = transaction.getRestrictionAdditions()
-                .stream()
-                .map(
-                    a -> new UnresolvedMosaicIdDto(
-                        a.getIdAsLong()))
+                .stream().map(a -> new UnresolvedMosaicIdDto(a.getIdAsLong()))
                 .collect(Collectors.toList());
 
             List<UnresolvedMosaicIdDto> restrictionDeletions = transaction.getRestrictionDeletions()
-                .stream()
-                .map(a -> new UnresolvedMosaicIdDto(a.getIdAsLong()))
+                .stream().map(a -> new UnresolvedMosaicIdDto(a.getIdAsLong()))
                 .collect(Collectors.toList());
 
             return AccountMosaicRestrictionTransactionBodyBuilder.create(
@@ -1304,11 +1298,11 @@ public class BinarySerializationImpl implements BinarySerialization {
             AccountOperationRestrictionTransactionBodyBuilder builder = AccountOperationRestrictionTransactionBodyBuilder
                 .loadFromBinary(stream);
 
-            long restrictionTypeValue = builder.getRestrictionFlags().stream()
+            long restrictionFlagsValue = builder.getRestrictionFlags().stream()
                 .mapToLong(AccountRestrictionFlagsDto::getValue).sum();
 
-            AccountRestrictionType restrictionType = AccountRestrictionType
-                .rawValueOf((int) restrictionTypeValue);
+            AccountRestrictionFlags restrictionFlags = AccountRestrictionFlags
+                .rawValueOf((int) restrictionFlagsValue);
 
             List<TransactionType> restrictionAdditions = builder.getRestrictionAdditions()
                 .stream()
@@ -1321,13 +1315,13 @@ public class BinarySerializationImpl implements BinarySerialization {
                 .collect(Collectors.toList());
 
             return AccountOperationRestrictionTransactionFactory
-                .create(networkType, restrictionType, restrictionAdditions, restrictionDeletions);
+                .create(networkType, restrictionFlags, restrictionAdditions, restrictionDeletions);
         }
 
         @Override
         public Serializer getBodyBuilder(AccountOperationRestrictionTransaction transaction) {
 
-            EnumSet<AccountRestrictionFlagsDto> flags = transaction.getRestrictionType().getFlags()
+            EnumSet<AccountRestrictionFlagsDto> flags = transaction.getRestrictionFlags().getFlags()
                 .stream().map(f -> AccountRestrictionFlagsDto.rawValueOf(
                     (short) f.getValue())).collect(Collectors
                     .toCollection(() -> EnumSet.noneOf(AccountRestrictionFlagsDto.class)));
@@ -1647,9 +1641,8 @@ public class BinarySerializationImpl implements BinarySerialization {
                 final byte[] signerBytes = cosignature.getSigner().getPublicKey().getBytes();
 
                 final ByteBuffer signerBuffer = ByteBuffer.wrap(signerBytes);
-                final CosignatureBuilder cosignatureBuilder =
-                    CosignatureBuilder.create(
-                        new KeyDto(signerBuffer),
+                final CosignatureBuilder cosignatureBuilder = CosignatureBuilder
+                    .create(new KeyDto(signerBuffer),
                         SerializationUtils.toSignatureDto(cosignature.getSignature()));
                 byte[] consignaturePayload = cosignatureBuilder.serialize();
                 cosignaturesBytes = ArrayUtils.addAll(cosignaturesBytes, consignaturePayload);

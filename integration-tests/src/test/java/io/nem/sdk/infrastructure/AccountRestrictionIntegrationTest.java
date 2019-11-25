@@ -31,7 +31,7 @@ import io.nem.sdk.model.transaction.AccountMosaicRestrictionTransaction;
 import io.nem.sdk.model.transaction.AccountMosaicRestrictionTransactionFactory;
 import io.nem.sdk.model.transaction.AccountOperationRestrictionTransaction;
 import io.nem.sdk.model.transaction.AccountOperationRestrictionTransactionFactory;
-import io.nem.sdk.model.transaction.AccountRestrictionType;
+import io.nem.sdk.model.transaction.AccountRestrictionFlags;
 import io.nem.sdk.model.transaction.TransactionType;
 import java.util.Collections;
 import java.util.List;
@@ -48,7 +48,7 @@ class AccountRestrictionIntegrationTest extends BaseIntegrationTest {
     @EnumSource(RepositoryType.class)
     public void addAndRemoveTransactionRestriction(RepositoryType type) {
 
-        AccountRestrictionType restrictionType = AccountRestrictionType.BLOCK_OUTGOING_TRANSACTION_TYPE;
+        AccountRestrictionFlags restrictionFlags = AccountRestrictionFlags.BLOCK_OUTGOING_TRANSACTION_TYPE;
         TransactionType transactionType = TransactionType.SECRET_PROOF;
 
         Account testAccount = getTestAccount();
@@ -56,22 +56,22 @@ class AccountRestrictionIntegrationTest extends BaseIntegrationTest {
         Assertions.assertNotNull(get(getRepositoryFactory(type).createAccountRepository()
             .getAccountInfo(testAccount.getAddress())));
 
-        if (hasRestriction(type, testAccount, restrictionType, transactionType)) {
+        if (hasRestriction(type, testAccount, restrictionFlags, transactionType)) {
             System.out.println("Removing existing transaction restriction!");
-            sendAccountRestrictionTransaction(type, transactionType, false, restrictionType);
+            sendAccountRestrictionTransaction(type, transactionType, false, restrictionFlags);
             Assertions
-                .assertFalse(hasRestriction(type, testAccount, restrictionType, transactionType));
+                .assertFalse(hasRestriction(type, testAccount, restrictionFlags, transactionType));
         }
 
         System.out.println("Adding transaction restriction");
-        sendAccountRestrictionTransaction(type, transactionType, true, restrictionType);
+        sendAccountRestrictionTransaction(type, transactionType, true, restrictionFlags);
 
-        Assertions.assertTrue(hasRestriction(type, testAccount, restrictionType, transactionType));
+        Assertions.assertTrue(hasRestriction(type, testAccount, restrictionFlags, transactionType));
 
         System.out.println("Removing transaction restriction");
-        sendAccountRestrictionTransaction(type, transactionType, false, restrictionType);
+        sendAccountRestrictionTransaction(type, transactionType, false, restrictionFlags);
 
-        Assertions.assertFalse(hasRestriction(type, testAccount, restrictionType, transactionType));
+        Assertions.assertFalse(hasRestriction(type, testAccount, restrictionFlags, transactionType));
 
     }
 
@@ -80,7 +80,7 @@ class AccountRestrictionIntegrationTest extends BaseIntegrationTest {
     @EnumSource(RepositoryType.class)
     public void addAndRemoveMosaicRestriction(RepositoryType type) {
 
-        AccountRestrictionType restrictionType = AccountRestrictionType.ALLOW_INCOMING_MOSAIC;
+        AccountRestrictionFlags restrictionFlags = AccountRestrictionFlags.ALLOW_INCOMING_MOSAIC;
 
         Account testAccount = getTestAccount();
 
@@ -90,21 +90,21 @@ class AccountRestrictionIntegrationTest extends BaseIntegrationTest {
         Assertions.assertNotNull(get(getRepositoryFactory(type).createAccountRepository()
             .getAccountInfo(testAccount.getAddress())));
 
-        if (hasRestriction(type, testAccount, restrictionType, mosaicId)) {
+        if (hasRestriction(type, testAccount, restrictionFlags, mosaicId)) {
             System.out.println("Removing existing mosaic restriction!");
-            sendAccountRestrictionMosaic(type, mosaicId, false, restrictionType);
-            Assertions.assertFalse(hasRestriction(type, testAccount, restrictionType, mosaicId));
+            sendAccountRestrictionMosaic(type, mosaicId, false, restrictionFlags);
+            Assertions.assertFalse(hasRestriction(type, testAccount, restrictionFlags, mosaicId));
         }
 
         System.out.println("Adding mosaic restriction");
-        sendAccountRestrictionMosaic(type, mosaicId, true, restrictionType);
+        sendAccountRestrictionMosaic(type, mosaicId, true, restrictionFlags);
 
-        Assertions.assertTrue(hasRestriction(type, testAccount, restrictionType, mosaicId));
+        Assertions.assertTrue(hasRestriction(type, testAccount, restrictionFlags, mosaicId));
 
         System.out.println("Removing mosaic restriction");
-        sendAccountRestrictionMosaic(type, mosaicId, false, restrictionType);
+        sendAccountRestrictionMosaic(type, mosaicId, false, restrictionFlags);
 
-        Assertions.assertFalse(hasRestriction(type, testAccount, restrictionType, mosaicId));
+        Assertions.assertFalse(hasRestriction(type, testAccount, restrictionFlags, mosaicId));
 
     }
 
@@ -112,7 +112,7 @@ class AccountRestrictionIntegrationTest extends BaseIntegrationTest {
     @EnumSource(RepositoryType.class)
     public void addAndRemoveAddressRestriction(RepositoryType type) {
 
-        AccountRestrictionType restrictionType = AccountRestrictionType.ALLOW_OUTGOING_ADDRESS;
+        AccountRestrictionFlags restrictionFlags = AccountRestrictionFlags.ALLOW_OUTGOING_ADDRESS;
         Address address = getRecipient();
 
         Account testAccount = getTestAccount();
@@ -120,28 +120,28 @@ class AccountRestrictionIntegrationTest extends BaseIntegrationTest {
         Assertions.assertNotNull(get(getRepositoryFactory(type).createAccountRepository()
             .getAccountInfo(testAccount.getAddress())));
 
-        if (hasRestriction(type, testAccount, restrictionType, address)) {
+        if (hasRestriction(type, testAccount, restrictionFlags, address)) {
             System.out.println("Removing existing address restriction!");
-            sendAccountRestrictionAddress(type, address, false, restrictionType);
-            Assertions.assertFalse(hasRestriction(type, testAccount, restrictionType, address));
+            sendAccountRestrictionAddress(type, address, false, restrictionFlags);
+            Assertions.assertFalse(hasRestriction(type, testAccount, restrictionFlags, address));
         }
 
         System.out.println("Adding address restriction");
-        sendAccountRestrictionAddress(type, address, true, restrictionType);
+        sendAccountRestrictionAddress(type, address, true, restrictionFlags);
 
-        Assertions.assertTrue(hasRestriction(type, testAccount, restrictionType,
+        Assertions.assertTrue(hasRestriction(type, testAccount, restrictionFlags,
             address));
 
         System.out.println("Removing address restriction");
-        sendAccountRestrictionAddress(type, address, false, restrictionType);
+        sendAccountRestrictionAddress(type, address, false, restrictionFlags);
 
-        Assertions.assertFalse(hasRestriction(type, testAccount, restrictionType, address));
+        Assertions.assertFalse(hasRestriction(type, testAccount, restrictionFlags, address));
 
     }
 
 
     private boolean hasRestriction(RepositoryType type, Account testAccount,
-        AccountRestrictionType restrictionType, Object value) {
+        AccountRestrictionFlags restrictionFlags, Object value) {
         try {
             sleep(2000);//Need to wait?
             AccountRestrictions restrictions = get(
@@ -151,8 +151,8 @@ class AccountRestrictionIntegrationTest extends BaseIntegrationTest {
 
             System.out.println("Current Restrictions: " + jsonHelper().print(restrictions));
             return restrictions.getRestrictions().stream().anyMatch(
-                r -> r.getRestrictionType()
-                    .equals(restrictionType) && r.getValues()
+                r -> r.getRestrictionFlags()
+                    .equals(restrictionFlags) && r.getValues()
                     .contains(value));
         } catch (RepositoryCallException | InterruptedException e) {
             //If it fails, it's because is a new account.
@@ -167,7 +167,7 @@ class AccountRestrictionIntegrationTest extends BaseIntegrationTest {
 
     private void sendAccountRestrictionTransaction(RepositoryType type,
         TransactionType transactionType, boolean add,
-        AccountRestrictionType accountRestrictionType) {
+        AccountRestrictionFlags accountRestrictionFlags) {
 
         Account testAccount = getTestAccount();
         List<TransactionType> additions =
@@ -178,21 +178,21 @@ class AccountRestrictionIntegrationTest extends BaseIntegrationTest {
         AccountOperationRestrictionTransaction transaction =
             AccountOperationRestrictionTransactionFactory.create(
                 getNetworkType(),
-                accountRestrictionType
+                accountRestrictionFlags
                 , additions, deletions
             ).maxFee(this.maxFee).build();
 
         AccountOperationRestrictionTransaction processedTransaction = announceAndValidate(type,
             testAccount, transaction);
 
-        Assertions.assertEquals(accountRestrictionType, processedTransaction.getRestrictionType());
+        Assertions.assertEquals(accountRestrictionFlags, processedTransaction.getRestrictionFlags());
         Assertions.assertEquals(additions, processedTransaction.getRestrictionAdditions());
         Assertions.assertEquals(deletions, processedTransaction.getRestrictionDeletions());
     }
 
     private void sendAccountRestrictionMosaic(RepositoryType type,
         UnresolvedMosaicId unresolvedMosaicId, boolean add,
-        AccountRestrictionType accountRestrictionType) {
+        AccountRestrictionFlags accountRestrictionFlags) {
 
         List<UnresolvedMosaicId> additions =
             add ? Collections.singletonList(unresolvedMosaicId) : Collections.emptyList();
@@ -203,21 +203,21 @@ class AccountRestrictionIntegrationTest extends BaseIntegrationTest {
         AccountMosaicRestrictionTransaction transaction =
             AccountMosaicRestrictionTransactionFactory.create(
                 getNetworkType(),
-                accountRestrictionType
+                accountRestrictionFlags
                 , additions, deletions
             ).maxFee(this.maxFee).build();
 
         AccountMosaicRestrictionTransaction processedTransaction = announceAndValidate(type,
             testAccount, transaction);
 
-        Assertions.assertEquals(accountRestrictionType, processedTransaction.getRestrictionType());
+        Assertions.assertEquals(accountRestrictionFlags, processedTransaction.getRestrictionFlags());
         Assertions.assertEquals(additions, processedTransaction.getRestrictionAdditions());
         Assertions.assertEquals(deletions, processedTransaction.getRestrictionDeletions());
     }
 
     private void sendAccountRestrictionAddress(RepositoryType type,
         UnresolvedAddress unresolvedAddress, boolean add,
-        AccountRestrictionType accountRestrictionType) {
+        AccountRestrictionFlags accountRestrictionFlags) {
 
         List<UnresolvedAddress> additions =
             add ? Collections.singletonList(unresolvedAddress) : Collections.emptyList();
@@ -228,15 +228,15 @@ class AccountRestrictionIntegrationTest extends BaseIntegrationTest {
         AccountAddressRestrictionTransaction transaction =
             AccountAddressRestrictionTransactionFactory.create(
                 getNetworkType(),
-                accountRestrictionType
+                accountRestrictionFlags
                 , additions, deletions
             ).maxFee(this.maxFee).build();
 
         AccountAddressRestrictionTransaction processedTransaction = announceAndValidate(type,
             testAccount, transaction);
 
-        Assertions.assertEquals(accountRestrictionType, processedTransaction.getRestrictionType());
-        Assertions.assertEquals(accountRestrictionType, processedTransaction.getRestrictionType());
+        Assertions.assertEquals(accountRestrictionFlags, processedTransaction.getRestrictionFlags());
+        Assertions.assertEquals(accountRestrictionFlags, processedTransaction.getRestrictionFlags());
         Assertions.assertEquals(additions, processedTransaction.getRestrictionAdditions());
         Assertions.assertEquals(deletions, processedTransaction.getRestrictionDeletions());
 

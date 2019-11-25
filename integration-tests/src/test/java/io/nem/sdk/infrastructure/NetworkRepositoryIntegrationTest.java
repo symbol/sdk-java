@@ -21,6 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import io.nem.sdk.api.NetworkRepository;
 import io.nem.sdk.model.blockchain.NetworkInfo;
 import io.nem.sdk.model.blockchain.NetworkType;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
@@ -40,8 +41,8 @@ class NetworkRepositoryIntegrationTest extends BaseIntegrationTest {
     @EnumSource(RepositoryType.class)
     void getNetworkInfo(RepositoryType type) {
         NetworkInfo networkInfo = get(getNetworkRepository(type).getNetworkInfo());
-        assertEquals("mijinTest", networkInfo.getName());
-        assertEquals("catapult development network", networkInfo.getDescription());
+        assertEquals(getNetworkType().getNetworkName(), networkInfo.getName());
+        Assertions.assertNotNull(networkInfo.getDescription());
     }
 
     private NetworkRepository getNetworkRepository(RepositoryType type) {

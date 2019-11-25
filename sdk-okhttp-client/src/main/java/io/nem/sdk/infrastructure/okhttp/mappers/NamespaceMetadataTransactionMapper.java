@@ -55,6 +55,10 @@ class NamespaceMetadataTransactionMapper extends
             scopedMetaDataKey,
             value);
         factory.valueSizeDelta(valueSizeDelta);
+        Integer valueSize = transaction.getValueSize();
+        if (valueSize != null) {
+            factory.valueSize(valueSize);
+        }
         return factory;
     }
 
@@ -66,6 +70,7 @@ class NamespaceMetadataTransactionMapper extends
         dto.setScopedMetadataKey(transaction.getScopedMetadataKey().toString());
         dto.setValue(ConvertUtils.fromStringToHex(transaction.getValue()));
         dto.setValueSizeDelta(transaction.getValueSizeDelta());
+        dto.setValueSize(transaction.getValueSize());
 
     }
 }

@@ -18,7 +18,7 @@ package io.nem.sdk.model.transaction;
 
 import io.nem.core.crypto.CryptoEngines;
 import io.nem.core.crypto.DsaSigner;
-import io.nem.core.crypto.Hashes;
+import io.nem.core.crypto.SignSchema;
 import io.nem.core.crypto.Signature;
 import io.nem.core.utils.ConvertUtils;
 import io.nem.sdk.api.BinarySerialization;
@@ -168,7 +168,7 @@ public abstract class Transaction {
      * @param generationHashBytes the generation hash.
      * @return generated transaction hash.
      */
-    public static String createTransactionHash(
+    public String createTransactionHash(
         String transactionPayload, final byte[] generationHashBytes) {
         byte[] bytes = Hex.decode(transactionPayload);
         final byte[] dataBytes = getSignBytes(bytes, generationHashBytes);
@@ -176,8 +176,7 @@ public abstract class Transaction {
         System.arraycopy(bytes, 8, signingBytes, 0, 32);
         System.arraycopy(bytes, 72, signingBytes, 32, 32);
         System.arraycopy(dataBytes, 0, signingBytes, 64, dataBytes.length);
-
-        byte[] result = Hashes.sha3_256(signingBytes);
+        byte[] result = SignSchema.toHash32Bytes(SignSchema.SHA3, signingBytes);
         return Hex.toHexString(result).toUpperCase();
     }
 
@@ -188,13 +187,16 @@ public abstract class Transaction {
      * @param generationHashBytes Generation hash bytes.
      * @return Bytes to sign.
      */
-    public static byte[] getSignBytes(final byte[] payloadBytes, final byte[] generationHashBytes) {
+    public byte[] getSignBytes(final byte[] payloadBytes, final byte[] generationHashBytes) {
         final short headerSize = 4 + 32 + 64 + 8;
-        final byte[] signingBytes = new byte[payloadBytes.length + generationHashBytes.length - headerSize];
+        final byte[] signingBytes = new byte[payloadBytes.length + generationHashBytes.length
+            - headerSize];
         System.arraycopy(generationHashBytes, 0, signingBytes, 0, generationHashBytes.length);
-        System.arraycopy(payloadBytes, headerSize, signingBytes, generationHashBytes.length, payloadBytes.length - headerSize);
+        System.arraycopy(payloadBytes, headerSize, signingBytes, generationHashBytes.length,
+            payloadBytes.length - headerSize);
         return signingBytes;
     }
+
 
     /**
      * Serialize and sign transaction creating a new SignedTransaction.
@@ -216,10 +218,7 @@ public abstract class Transaction {
         System.arraycopy(theSignature.getBytes(), 0, payload, 8,
             theSignature.getBytes().length); // Signature
         System.arraycopy(
-            account.getKeyPair().getPublicKey().getBytes(),
-            0,
-            payload,
-            64 + 8,
+            account.getKeyPair().getPublicKey().getBytes(), 0, payload, 64 + 8,
             account.getKeyPair().getPublicKey().getBytes().length); // Signer
         System.arraycopy(bytes, 104, payload, 104, bytes.length - 104);
 
@@ -267,8 +266,7 @@ public abstract class Transaction {
     public boolean hasMissingSignatures() {
         return this.getTransactionInfo()
             .filter(info -> info.getHeight().equals(BigInteger.valueOf(0))
-                && !info.getHash().equals(info.getMerkleComponentHash()))
-            .isPresent();
+                && !info.getHash().equals(info.getMerkleComponentHash())).isPresent();
     }
 
     /**

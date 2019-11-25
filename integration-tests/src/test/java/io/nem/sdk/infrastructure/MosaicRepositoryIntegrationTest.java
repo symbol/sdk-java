@@ -59,6 +59,8 @@ class MosaicRepositoryIntegrationTest extends BaseIntegrationTest {
             .getMosaicsFromAccount(testAccount.getAddress()));
         Assertions.assertTrue(mosaicInfos.size() > 0);
         mosaicInfos.forEach(this::assertMosaic);
+        Assertions.assertTrue(
+            mosaicInfos.stream().anyMatch(mosaicInfo -> mosaicInfo.getMosaicId().equals(mosaicId)));
     }
 
     @ParameterizedTest
@@ -68,6 +70,8 @@ class MosaicRepositoryIntegrationTest extends BaseIntegrationTest {
             .getMosaicsFromAccounts(Collections.singletonList(testAccount.getAddress())));
         Assertions.assertTrue(mosaicInfos.size() > 0);
         mosaicInfos.forEach(this::assertMosaic);
+        Assertions.assertTrue(
+            mosaicInfos.stream().anyMatch(mosaicInfo -> mosaicInfo.getMosaicId().equals(mosaicId)));
     }
 
     private void assertMosaic(MosaicInfo m) {
