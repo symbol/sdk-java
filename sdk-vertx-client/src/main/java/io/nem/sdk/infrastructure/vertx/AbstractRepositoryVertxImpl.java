@@ -18,7 +18,6 @@ package io.nem.sdk.infrastructure.vertx;
 
 import io.nem.sdk.api.QueryParams;
 import io.nem.sdk.api.RepositoryCallException;
-import io.nem.sdk.model.blockchain.NetworkType;
 import io.nem.sdk.model.transaction.JsonHelper;
 import io.nem.sdk.openapi.vertx.invoker.ApiClient;
 import io.nem.sdk.openapi.vertx.invoker.ApiException;
@@ -32,7 +31,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -44,26 +42,28 @@ import org.apache.commons.lang3.exception.ExceptionUtils;
  */
 public abstract class AbstractRepositoryVertxImpl {
 
-    private final Supplier<NetworkType> networkType;
-
     private final JsonHelper jsonHelper;
 
-    public AbstractRepositoryVertxImpl(ApiClient apiClient, Supplier<NetworkType> networkType) {
-        this.networkType = networkType;
+    public AbstractRepositoryVertxImpl(ApiClient apiClient) {
         this.jsonHelper = new JsonHelperJackson2(apiClient.getObjectMapper());
     }
 
     public <T> Observable<T> call(Consumer<Handler<AsyncResult<T>>> callback) {
-        Function<? super Throwable, ? extends ObservableSource<? extends T>> resumeFunction = this::onError;
+        IllegalArgumentException originalException = new IllegalArgumentException("Original call");
+        Function<? super Throwable, ? extends ObservableSource<? extends T>> resumeFunction = this
+            .onError(originalException);
         return new AsyncResultSingle<T>(callback::accept).toObservable()
             .onErrorResumeNext(resumeFunction);
     }
 
-    public RepositoryCallException exceptionHandling(Throwable e) {
+    public RepositoryCallException exceptionHandling(Throwable e,
+        IllegalArgumentException originalException) {
         if (e instanceof RepositoryCallException) {
             return (RepositoryCallException) e;
         }
-        return new RepositoryCallException(extractMessageFromException(e), e);
+        return new RepositoryCallException(
+            extractMessageFromException(e),
+            extractStatusCodeFromException(e), originalException);
     }
 
     private String extractMessageFromException(Throwable e) {
@@ -86,16 +86,20 @@ public abstract class AbstractRepositoryVertxImpl {
         return messages.stream().filter(StringUtils::isNotBlank).collect(Collectors.joining(" - "));
     }
 
-    public <T> Observable<T> onError(Throwable e) {
-        return Observable.error(exceptionHandling(e));
+    private int extractStatusCodeFromException(Throwable e) {
+        return (e instanceof ApiException) ? ((ApiException) e).getCode() : 0;
     }
 
-    protected NetworkType getNetworkTypeBlocking() {
-        return networkType.get();
+    public <T> Function<? super Throwable, Observable<T>> onError(
+        IllegalArgumentException originalException) {
+        return (Throwable e) -> Observable.error(exceptionHandling(e, originalException));
     }
 
     public <T> Observable<T> exceptionHandling(Observable<T> observable) {
-        Function<? super Throwable, ? extends ObservableSource<? extends T>> resumeFunction = this::onError;
+
+        IllegalArgumentException originalException = new IllegalArgumentException("Original call");
+        Function<? super Throwable, ? extends ObservableSource<? extends T>> resumeFunction = this
+            .onError(originalException);
         return observable.onErrorResumeNext(resumeFunction);
     }
 

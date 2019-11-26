@@ -27,54 +27,68 @@ import org.apache.commons.lang3.Validate;
 public class AccountMosaicRestrictionTransactionFactory extends
     TransactionFactory<AccountMosaicRestrictionTransaction> {
 
-    private final AccountRestrictionType restrictionType;
+    private final AccountRestrictionFlags restrictionFlags;
 
-    private final List<AccountRestrictionModification<UnresolvedMosaicId>> modifications;
+    private final List<UnresolvedMosaicId> restrictionAdditions;
+
+    private final List<UnresolvedMosaicId> restrictionDeletions;
 
     private AccountMosaicRestrictionTransactionFactory(
         final NetworkType networkType,
-        final AccountRestrictionType restrictionType,
-        final List<AccountRestrictionModification<UnresolvedMosaicId>> modifications) {
+        final AccountRestrictionFlags restrictionFlags,
+        final List<UnresolvedMosaicId> restrictionAdditions,
+        final List<UnresolvedMosaicId> restrictionDeletions) {
         super(TransactionType.ACCOUNT_MOSAIC_RESTRICTION, networkType);
-        Validate.notNull(restrictionType, "RestrictionType must not be null");
-        Validate.notNull(modifications, "Modifications must not be null");
-        this.restrictionType = restrictionType;
-        this.modifications = modifications;
+        Validate.notNull(restrictionFlags, "RestrictionType must not be null");
+        Validate.notNull(restrictionAdditions, "RestrictionAdditions must not be null");
+        Validate.notNull(restrictionDeletions, "RestrictionDeletions must not be null");
+        this.restrictionFlags = restrictionFlags;
+        this.restrictionAdditions = restrictionAdditions;
+        this.restrictionDeletions = restrictionDeletions;
     }
 
     /**
      * Static create method for factory.
      *
      * @param networkType Network type.
-     * @param restrictionType Restriction type.
-     * @param modifications List of account mosaic restriction modifications.
+     * @param restrictionFlags Restriction falgs.
+     * @param restrictionAdditions List of mosaic ids that are going to be added to the restriction.
+     * @param restrictionDeletions List of mosaic ids that are going to be removed from the restriction.
      * @return Account mosaic restriction transaction.
      */
-    public static AccountMosaicRestrictionTransactionFactory create(NetworkType networkType, AccountRestrictionType restrictionType,
-        List<AccountRestrictionModification<UnresolvedMosaicId>> modifications) {
-        return new AccountMosaicRestrictionTransactionFactory(networkType, restrictionType, modifications);
+    public static AccountMosaicRestrictionTransactionFactory create(NetworkType networkType,
+        AccountRestrictionFlags restrictionFlags, final List<UnresolvedMosaicId> restrictionAdditions,
+        final List<UnresolvedMosaicId> restrictionDeletions) {
+        return new AccountMosaicRestrictionTransactionFactory(networkType, restrictionFlags,
+            restrictionAdditions, restrictionDeletions);
     }
 
     /**
      * Get account restriction type
      *
-     * @return {@link AccountRestrictionType}
+     * @return {@link AccountRestrictionFlags}
      */
-    public AccountRestrictionType getRestrictionType() {
-        return this.restrictionType;
+    public AccountRestrictionFlags getRestrictionFlags() {
+        return this.restrictionFlags;
     }
 
-    /**
-     * Get account mosaic restriction modifications
-     *
-     * @return list of {@link AccountRestrictionModification} with {@link UnresolvedMosaicId}
-     */
-    public List<AccountRestrictionModification<UnresolvedMosaicId>> getModifications() {
-        return this.modifications;
-    }
 
     @Override
     public AccountMosaicRestrictionTransaction build() {
         return new AccountMosaicRestrictionTransaction(this);
+    }
+
+    /**
+     * @return List of mosaic ids that are going to be added to the restriction.
+     */
+    public List<UnresolvedMosaicId> getRestrictionAdditions() {
+        return restrictionAdditions;
+    }
+
+    /**
+     * @return List of mosaic ids that are going to be removed from the restriction.
+     */
+    public List<UnresolvedMosaicId> getRestrictionDeletions() {
+        return restrictionDeletions;
     }
 }

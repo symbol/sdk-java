@@ -16,8 +16,10 @@
 
 package io.nem.sdk.api;
 
+import io.nem.sdk.model.account.AccountNames;
 import io.nem.sdk.model.account.Address;
 import io.nem.sdk.model.mosaic.MosaicId;
+import io.nem.sdk.model.mosaic.MosaicNames;
 import io.nem.sdk.model.namespace.NamespaceId;
 import io.nem.sdk.model.namespace.NamespaceInfo;
 import io.nem.sdk.model.namespace.NamespaceName;
@@ -57,15 +59,6 @@ public interface NamespaceRepository {
      */
     Observable<List<NamespaceInfo>> getNamespacesFromAccount(Address address);
 
-    /**
-     * Gets list of NamespaceInfo for different account. With pagination.
-     *
-     * @param addresses List of Address
-     * @param queryParams QueryParams
-     * @return {@link Observable} of {@link NamespaceInfo} List
-     */
-    Observable<List<NamespaceInfo>> getNamespacesFromAccounts(
-        List<Address> addresses, QueryParams queryParams);
 
     /**
      * Gets list of NamespaceInfo for different account.
@@ -98,4 +91,25 @@ public interface NamespaceRepository {
      * @return Observable of {@link Address}
      */
     Observable<Address> getLinkedAddress(NamespaceId namespaceId);
+
+
+    /**
+     * Gets AccountNames for different accounts based on their addresses. The names are namespaces
+     * linked using address aliases.
+     *
+     * @param addresses {@link List} of {@link Address}
+     * @return Observable {@link List} of {@link AccountNames}
+     */
+    Observable<List<AccountNames>> getAccountsNames(List<Address> addresses);
+
+
+    /**
+     * Gets MosaicNames for different accounts. The names are namespaces linked using mosaic
+     * aliases.
+     *
+     * @param mosaicIds {@link List} of {@link MosaicId}
+     * @return {@link Observable} of {@link MosaicNames} List
+     */
+
+    Observable<List<MosaicNames>> getMosaicsNames(List<MosaicId> mosaicIds);
 }

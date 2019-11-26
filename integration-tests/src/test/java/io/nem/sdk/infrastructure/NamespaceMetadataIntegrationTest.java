@@ -24,8 +24,6 @@ import io.nem.sdk.model.transaction.AggregateTransaction;
 import io.nem.sdk.model.transaction.AggregateTransactionFactory;
 import io.nem.sdk.model.transaction.NamespaceMetadataTransaction;
 import io.nem.sdk.model.transaction.NamespaceMetadataTransactionFactory;
-import io.nem.sdk.model.transaction.NamespaceRegistrationTransaction;
-import io.nem.sdk.model.transaction.NamespaceRegistrationTransactionFactory;
 import java.math.BigInteger;
 import java.util.Collections;
 import java.util.List;
@@ -46,8 +44,12 @@ public class NamespaceMetadataIntegrationTest extends BaseIntegrationTest {
     @ParameterizedTest
     @EnumSource(RepositoryType.class)
     public void addMetadataToNamespace(RepositoryType type) throws InterruptedException {
+        String namespaceName =
+            "namespace-for-metadata-integration-test-" + new Double(
+                Math.floor(Math.random() * 10000))
+                .intValue();
 
-        NamespaceId targetNamespaceId = createNamespace(type);
+        NamespaceId targetNamespaceId = createRootNamespace(type, testAccount, namespaceName);
 
         System.out.println("Setting metadata " + targetNamespaceId.getIdAsHex());
 
@@ -57,12 +59,12 @@ public class NamespaceMetadataIntegrationTest extends BaseIntegrationTest {
             NamespaceMetadataTransactionFactory.create(
                 getNetworkType(), testAccount.getPublicAccount(), targetNamespaceId,
                 key, message
-            ).build();
+            ).maxFee(this.maxFee).build();
 
         AggregateTransaction aggregateTransaction = AggregateTransactionFactory
             .createComplete(getNetworkType(),
                 Collections.singletonList(transaction.toAggregate(testAccount.getPublicAccount())))
-            .build();
+            .maxFee(this.maxFee).build();
 
         AggregateTransaction announceCorrectly = announceAndValidate(type, testAccount,
             aggregateTransaction);
@@ -129,30 +131,5 @@ public class NamespaceMetadataIntegrationTest extends BaseIntegrationTest {
         return endpointMetadata.get().getId();
     }
 
-    public NamespaceId createNamespace(RepositoryType type) {
 
-        String namespaceName =
-            "namespace-for-metadata-integration-test-" + new Double(
-                Math.floor(Math.random() * 10000))
-                .intValue();
-
-        System.out.println("Creating namespace " + namespaceName);
-        NamespaceRegistrationTransaction namespaceRegistrationTransaction = NamespaceRegistrationTransactionFactory
-            .createRootNamespace(
-                getNetworkType(), namespaceName, BigInteger.valueOf(10)).build();
-
-        NamespaceRegistrationTransaction processedTransaction = announceAndValidate(type,
-            testAccount, namespaceRegistrationTransaction);
-
-        Assertions.assertEquals(namespaceRegistrationTransaction.getNamespaceId().getIdAsHex(),
-            processedTransaction.getNamespaceId().getIdAsHex());
-
-//TODO  https://nem.atlassian.net/browse/JS-52
-        Assertions.assertEquals(namespaceRegistrationTransaction.getNamespaceId().getIdAsHex(),
-            processedTransaction.getNamespaceId().getIdAsHex());
-
-        Assertions.assertEquals(namespaceRegistrationTransaction.getNamespaceName(),
-            processedTransaction.getNamespaceName());
-        return namespaceRegistrationTransaction.getNamespaceId();
-    }
 }

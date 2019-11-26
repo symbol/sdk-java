@@ -20,6 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.nem.core.utils.ExceptionUtils;
+import io.nem.sdk.api.Listener;
 import io.nem.sdk.api.RepositoryFactory;
 import io.nem.sdk.infrastructure.okhttp.RepositoryFactoryOkHttpImpl;
 import io.nem.sdk.infrastructure.vertx.JsonHelperJackson2;
@@ -28,9 +29,12 @@ import io.nem.sdk.model.account.Account;
 import io.nem.sdk.model.account.AccountNames;
 import io.nem.sdk.model.account.Address;
 import io.nem.sdk.model.account.PublicAccount;
+import io.nem.sdk.model.blockchain.BlockDuration;
 import io.nem.sdk.model.blockchain.NetworkType;
+import io.nem.sdk.model.mosaic.MosaicFlags;
 import io.nem.sdk.model.mosaic.MosaicId;
 import io.nem.sdk.model.mosaic.MosaicNames;
+import io.nem.sdk.model.mosaic.MosaicNonce;
 import io.nem.sdk.model.namespace.AliasAction;
 import io.nem.sdk.model.namespace.NamespaceId;
 import io.nem.sdk.model.transaction.AddressAliasTransaction;
@@ -41,6 +45,8 @@ import io.nem.sdk.model.transaction.CosignatureSignedTransaction;
 import io.nem.sdk.model.transaction.JsonHelper;
 import io.nem.sdk.model.transaction.MosaicAliasTransaction;
 import io.nem.sdk.model.transaction.MosaicAliasTransactionFactory;
+import io.nem.sdk.model.transaction.MosaicDefinitionTransaction;
+import io.nem.sdk.model.transaction.MosaicDefinitionTransactionFactory;
 import io.nem.sdk.model.transaction.NamespaceRegistrationTransaction;
 import io.nem.sdk.model.transaction.NamespaceRegistrationTransactionFactory;
 import io.nem.sdk.model.transaction.SignedTransaction;
@@ -51,15 +57,15 @@ import io.nem.sdk.model.transaction.TransactionStatusError;
 import io.nem.sdk.model.transaction.TransactionType;
 import io.reactivex.Observable;
 import java.math.BigInteger;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 
 /**
@@ -75,6 +81,9 @@ public abstract class BaseIntegrationTest {
      */
     protected static final RepositoryType DEFAULT_REPOSITORY_TYPE = RepositoryType.VERTX;
 
+
+    protected BigInteger maxFee = BigInteger.valueOf(1000000);
+
     /**
      * Known implementations of repositories that the integration tests use.
      */
@@ -82,20 +91,25 @@ public abstract class BaseIntegrationTest {
         VERTX, OKHTTP
     }
 
-    private static final Config CONFIG = Config.getInstance();
-    private final NetworkType networkType = this.config().getNetworkType();
-    private final Long timeoutSeconds = this.config().getTimeoutSeconds();
+    private final Config config;
+    private final Long timeoutSeconds;
     private final Map<RepositoryType, RepositoryFactory> repositoryFactoryMap = new HashMap<>();
     private final Map<RepositoryType, Listener> listenerMap = new HashMap<>();
     private final JsonHelper jsonHelper = new JsonHelperJackson2(
         JsonHelperJackson2.configureMapper(new ObjectMapper()));
-    private String generationHash = this.config().getGenerationHash();
+    private final String generationHash;
+    private final NetworkType networkType;
 
-    @BeforeAll
-    void setUp() {
-        System.out.println("Running tests against server: " + config().getApiUrl());
-        generationHash = resolveGenerationHash();
+    public BaseIntegrationTest() {
+        this.config = new Config();
+        this.timeoutSeconds = this.config().getTimeoutSeconds();
+        this.generationHash = resolveGenerationHash();
+        this.networkType = resolveNetworkType();
+        this.config.init(networkType);
+
+        System.out.println("Network Type: " + networkType);
         System.out.println("Generation Hash: " + generationHash);
+        System.out.println("Running tests against server: " + config().getApiUrl());
     }
 
     @BeforeEach
@@ -105,11 +119,11 @@ public abstract class BaseIntegrationTest {
     }
 
     private String resolveGenerationHash() {
-        return Optional.ofNullable(this.config().getGenerationHash()).orElseGet(
-            () -> get(getRepositoryFactory(DEFAULT_REPOSITORY_TYPE).createBlockRepository()
-                .getBlockByHeight(
-                    BigInteger.ONE)).getGenerationHash());
+        return get(getRepositoryFactory(DEFAULT_REPOSITORY_TYPE).getGenerationHash());
+    }
 
+    private NetworkType resolveNetworkType() {
+        return get(getRepositoryFactory(DEFAULT_REPOSITORY_TYPE).getNetworkType());
     }
 
     @AfterAll
@@ -157,7 +171,7 @@ public abstract class BaseIntegrationTest {
     }
 
     public Config config() {
-        return BaseIntegrationTest.CONFIG;
+        return config;
     }
 
     public JsonHelper jsonHelper() {
@@ -232,21 +246,24 @@ public abstract class BaseIntegrationTest {
     }
 
 
-    <T extends Transaction> T announceAggregateAndValidate(RepositoryType type, Account testAccount,
-        T transaction) {
+    <T extends Transaction> T announceAggregateAndValidate(RepositoryType type, T transaction,
+        Account... signers) {
+
+        Assertions.assertTrue(signers.length > 0);
 
         System.out.println(
-            "Announcing Aggregate Transaction address: " + testAccount.getAddress().pretty()
+            "Announcing Aggregate Transaction address: " + Arrays.stream(signers)
+                .map(s -> s.getAddress().plain()).collect(Collectors.joining(", "))
                 + " Transaction: " + transaction.getType());
         AggregateTransaction aggregateTransaction =
             AggregateTransactionFactory.createComplete(
                 getNetworkType(),
-                Collections.singletonList(
-                    transaction.toAggregate(testAccount.getPublicAccount()))
-            ).build();
+                Arrays.stream(signers).map(s -> transaction.toAggregate(s.getPublicAccount()))
+                    .collect(Collectors.toList())
+            ).maxFee(this.maxFee).build();
 
         T announcedCorrectly = (T) announceAndValidate(
-            type, testAccount, aggregateTransaction).getInnerTransactions().get(0);
+            type, signers[0], aggregateTransaction).getInnerTransactions().get(0);
         System.out.println("Transaction completed");
         return announcedCorrectly;
     }
@@ -257,8 +274,11 @@ public abstract class BaseIntegrationTest {
 
         if (transaction.getType() != TransactionType.AGGREGATE_COMPLETE) {
             System.out
-                .println("Announcing Transaction address: " + testAccount.getAddress().pretty()
-                    + " Transaction: " + transaction.getType());
+                .println(
+                    "Announcing Transaction address: " + testAccount.getAddress().plain()
+                        + " Public Key: "
+                        + testAccount.getPublicAccount().getPublicKey().toHex()
+                        + " Transaction: " + transaction.getType());
         }
         SignedTransaction signedTransaction = testAccount
             .sign(transaction, getGenerationHash());
@@ -272,7 +292,7 @@ public abstract class BaseIntegrationTest {
 
         Transaction announceCorrectly = this
             .validateTransactionAnnounceCorrectly(
-                testAccount.getAddress(), signedTransaction.getHash(), type);
+                testAccount.getAddress(), signedTransaction.getHash(), type, transaction);
         Assertions.assertEquals(announceCorrectly.getType(), transaction.getType());
         if (transaction.getType() != TransactionType.AGGREGATE_COMPLETE) {
             System.out.println("Transaction completed");
@@ -282,25 +302,26 @@ public abstract class BaseIntegrationTest {
 
 
     Transaction validateTransactionAnnounceCorrectly(Address address, String transactionHash,
-        RepositoryType type) {
+        RepositoryType type, Transaction originalTransaction) {
         Listener listener = getListener(type);
         Observable<Transaction> observable = listener.confirmed(address)
             .filter(t -> t.getTransactionInfo().flatMap(TransactionInfo::getHash)
                 .filter(s -> s.equals(transactionHash)).isPresent());
-        Transaction transaction = getTransactionOrFail(address, listener, observable);
+        Transaction transaction = getTransactionOrFail(address, listener, observable,
+            originalTransaction);
         assertEquals(transactionHash, transaction.getTransactionInfo().get().getHash().get());
         return transaction;
     }
 
 
     AggregateTransaction validateAggregateBondedTransactionAnnounceCorrectly(Address address,
-        String transactionHash, RepositoryType type) {
+        String transactionHash, RepositoryType type, Transaction originalTransaction) {
         Listener listener = getListener(type);
         Observable<AggregateTransaction> observable = listener.aggregateBondedAdded(address)
             .filter(t -> t.getTransactionInfo().flatMap(TransactionInfo::getHash)
                 .filter(s -> s.equals(transactionHash)).isPresent());
         AggregateTransaction aggregateTransaction = getTransactionOrFail(address, listener,
-            observable);
+            observable, originalTransaction);
         assertEquals(transactionHash,
             aggregateTransaction.getTransactionInfo().get().getHash().get());
         return aggregateTransaction;
@@ -308,12 +329,12 @@ public abstract class BaseIntegrationTest {
 
     CosignatureSignedTransaction validateAggregateBondedCosignatureTransactionAnnounceCorrectly(
         Address address, String transactionHash,
-        RepositoryType type) {
+        RepositoryType type, Transaction originalTransaction) {
         Listener listener = getListener(type);
         Observable<CosignatureSignedTransaction> observable = listener.cosignatureAdded(address)
             .filter(t -> t.getParentHash().equals(transactionHash));
         CosignatureSignedTransaction transaction = getTransactionOrFail(address, listener,
-            observable);
+            observable, originalTransaction);
         assertEquals(transactionHash, transaction.getParentHash());
         return transaction;
     }
@@ -324,16 +345,26 @@ public abstract class BaseIntegrationTest {
      * the method will fail before timing out as it listens errors raised by the server.
      */
     private <T> T getTransactionOrFail(Address address, Listener listener,
-        Observable<T> observable) {
-        Observable<Object> errorOrTransactionObservable = Observable
-            .merge(observable, listener.status(address));
-        Object errorOrTransaction = get(errorOrTransactionObservable.take(1));
-        if (errorOrTransaction instanceof TransactionStatusError) {
+        Observable<T> observable, Transaction originalTransaction) {
+        try {
+            Observable<Object> errorOrTransactionObservable = Observable
+                .merge(observable, listener.status(address));
+            Object errorOrTransaction = get(errorOrTransactionObservable.take(1));
+            if (errorOrTransaction instanceof TransactionStatusError) {
+                throw new IllegalArgumentException(
+                    "TransactionStatusError " + ((TransactionStatusError) errorOrTransaction)
+                        .getStatus());
+            }
+            return (T) errorOrTransaction;
+        } catch (Exception e) {
+            String failedTransaction = getRepositoryFactory(DEFAULT_REPOSITORY_TYPE)
+                .createJsonSerialization()
+                .transactionToJson(originalTransaction);
             throw new IllegalArgumentException(
-                "TransactionStatusError " + ((TransactionStatusError) errorOrTransaction)
-                    .getStatus());
+                org.apache.commons.lang3.exception.ExceptionUtils.getMessage(e)
+                    + ". Failed Transaction json: \n" + failedTransaction, e);
         }
-        return (T) errorOrTransaction;
+
     }
 
 
@@ -351,7 +382,7 @@ public abstract class BaseIntegrationTest {
         Account nemesisAccount = config().getNemesisAccount();
 
         List<AccountNames> accountNames = get(
-            getRepositoryFactory(type).createAccountRepository().getAccountsNames(
+            getRepositoryFactory(type).createNamespaceRepository().getAccountsNames(
                 Collections.singletonList(address)));
 
         if (accountNames.stream().anyMatch(
@@ -371,10 +402,11 @@ public abstract class BaseIntegrationTest {
             NamespaceRegistrationTransactionFactory.createRootNamespace(
                 getNetworkType(),
                 namespaceName,
-                BigInteger.valueOf(100)).build();
+                BigInteger.valueOf(100)).maxFee(this.maxFee).build();
 
-        NamespaceId rootNamespaceId = announceAggregateAndValidate(type, nemesisAccount,
-            namespaceRegistrationTransaction).getNamespaceId();
+        NamespaceId rootNamespaceId = announceAggregateAndValidate(type,
+            namespaceRegistrationTransaction, nemesisAccount
+        ).getNamespaceId();
 
         System.out.println(
             "Setting account alias " + address.plain() + " alias: " + namespaceName);
@@ -383,9 +415,9 @@ public abstract class BaseIntegrationTest {
                 AliasAction.LINK,
                 rootNamespaceId,
                 address
-            ).build();
+            ).maxFee(this.maxFee).build();
 
-        announceAggregateAndValidate(type, nemesisAccount, aliasTransaction);
+        announceAggregateAndValidate(type, aliasTransaction, nemesisAccount);
         return rootNamespaceId;
     }
 
@@ -395,7 +427,7 @@ public abstract class BaseIntegrationTest {
         Account nemesisAccount = config().getNemesisAccount();
         NamespaceId namespaceId = NamespaceId.createFromName(namespaceName);
         List<MosaicNames> mosaicNames = get(
-            getRepositoryFactory(type).createMosaicRepository().getMosaicsNames(
+            getRepositoryFactory(type).createNamespaceRepository().getMosaicsNames(
                 Collections.singletonList(mosaicId)));
 
         if (mosaicNames.stream().anyMatch(
@@ -414,10 +446,11 @@ public abstract class BaseIntegrationTest {
             NamespaceRegistrationTransactionFactory.createRootNamespace(
                 getNetworkType(),
                 namespaceName,
-                BigInteger.valueOf(100)).build();
+                BigInteger.valueOf(100)).maxFee(this.maxFee).build();
 
-        NamespaceId rootNamespaceId = announceAggregateAndValidate(type, nemesisAccount,
-            namespaceRegistrationTransaction).getNamespaceId();
+        NamespaceId rootNamespaceId = announceAggregateAndValidate(type,
+            namespaceRegistrationTransaction, nemesisAccount
+        ).getNamespaceId();
 
         System.out.println(
             "Setting mosaic alias " + mosaicId.getIdAsHex() + " alias: " + namespaceName);
@@ -427,10 +460,47 @@ public abstract class BaseIntegrationTest {
                 AliasAction.LINK,
                 rootNamespaceId,
                 mosaicId
-            ).build();
+            ).maxFee(this.maxFee).build();
 
-        announceAggregateAndValidate(type, nemesisAccount, aliasTransaction);
+        announceAggregateAndValidate(type, aliasTransaction, nemesisAccount);
         return rootNamespaceId;
+    }
+
+    protected MosaicId createMosaic(Account account, RepositoryType type) {
+        MosaicNonce nonce = MosaicNonce.createRandom();
+        MosaicId mosaicId = MosaicId.createFromNonce(nonce, account.getPublicAccount());
+
+        MosaicDefinitionTransaction mosaicDefinitionTransaction =
+            MosaicDefinitionTransactionFactory.create(getNetworkType(),
+                nonce,
+                mosaicId,
+                MosaicFlags.create(true, true, true),
+                4, new BlockDuration(100)).maxFee(this.maxFee).build();
+
+        MosaicDefinitionTransaction validateTransaction = announceAndValidate(type, account,
+            mosaicDefinitionTransaction);
+        Assertions.assertEquals(mosaicId, validateTransaction.getMosaicId());
+        return mosaicId;
+    }
+
+    public NamespaceId createRootNamespace(RepositoryType type, Account testAccount,
+        String namespaceName) {
+
+        System.out.println("Creating namespace " + namespaceName);
+        NamespaceRegistrationTransaction namespaceRegistrationTransaction = NamespaceRegistrationTransactionFactory
+            .createRootNamespace(
+                getNetworkType(), namespaceName, BigInteger.valueOf(10)).maxFee(this.maxFee)
+            .build();
+
+        NamespaceRegistrationTransaction processedTransaction = announceAndValidate(type,
+            testAccount, namespaceRegistrationTransaction);
+
+        Assertions.assertEquals(namespaceRegistrationTransaction.getNamespaceId().getIdAsHex(),
+            processedTransaction.getNamespaceId().getIdAsHex());
+
+        Assertions.assertEquals(namespaceRegistrationTransaction.getNamespaceName(),
+            processedTransaction.getNamespaceName());
+        return namespaceRegistrationTransaction.getNamespaceId();
     }
 
 }

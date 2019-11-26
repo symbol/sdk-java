@@ -44,11 +44,12 @@ ext {
     vertxVersion = "3.5.0"
     rxjavaVersion = "2.1.7"
     junitVersion = "5.4.0"
-    restApiVersion = "0.7.20.1"
+    restApiVersion = "0.7.21"
     jackson_version = "2.9.9"
     junit4Version = '4.12'
     jackson_databind_version = "2.9.9"
 }
+def encoding = "UTF-8"
 
 repositories {
     mavenLocal()
@@ -84,8 +85,6 @@ allprojects {
 }
 
 
-
-
 subprojects {
     apply plugin: 'java'
     apply plugin: 'maven'
@@ -98,6 +97,10 @@ subprojects {
     group 'io.nem'
     sourceCompatibility = 1.8
     version = artifactVersion
+
+    compileJava.options.encoding = encoding
+    compileTestJava.options.encoding = encoding
+    javadoc.options.encoding = encoding
 
     signing {
         required { signingKeyId }
@@ -155,6 +158,17 @@ subprojects {
             events "skipped", "failed"
         }
     }
+
+    task integrationTest(type: Test) {
+        include '**/**IntegrationTest.class'
+        useJUnitPlatform {
+            includeEngines 'junit-jupiter'
+        }
+        testLogging {
+            events "skipped", "failed"
+        }
+    }
+
 
     jacocoTestReport {
         reports {

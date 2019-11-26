@@ -17,6 +17,7 @@
 
 package io.nem.sdk.infrastructure;
 
+import io.nem.sdk.api.Listener;
 import io.nem.sdk.model.account.Account;
 import java.util.concurrent.ExecutionException;
 
@@ -31,7 +32,6 @@ public class ListenerForTests extends BaseIntegrationTest {
     }
 
     private void run() throws ExecutionException, InterruptedException {
-        setUp();
         Listener listener = getRepositoryFactory(DEFAULT_REPOSITORY_TYPE).createListener();
         listener.open().get();
         listenToAccount("Test Account 1", config().getTestAccount(), listener);

@@ -27,56 +27,72 @@ import org.apache.commons.lang3.Validate;
 public class AccountAddressRestrictionTransactionFactory extends
     TransactionFactory<AccountAddressRestrictionTransaction> {
 
-    private final AccountRestrictionType restrictionType;
+    private final AccountRestrictionFlags restrictionFlags;
 
-    private final List<AccountRestrictionModification<UnresolvedAddress>> modifications;
+    private final List<UnresolvedAddress> restrictionAdditions;
+
+    private final List<UnresolvedAddress> restrictionDeletions;
 
     private AccountAddressRestrictionTransactionFactory(
         final NetworkType networkType,
-        final AccountRestrictionType restrictionType,
-        final List<AccountRestrictionModification<UnresolvedAddress>> modifications) {
+        final AccountRestrictionFlags restrictionFlags,
+        List<UnresolvedAddress> restrictionAdditions,
+        List<UnresolvedAddress> restrictionDeletions) {
         super(TransactionType.ACCOUNT_ADDRESS_RESTRICTION, networkType);
-        Validate.notNull(restrictionType, "RestrictionType must not be null");
-        Validate.notNull(modifications, "Modifications must not be null");
-        this.restrictionType = restrictionType;
-        this.modifications = modifications;
+
+        Validate.notNull(restrictionFlags, "RestrictionType must not be null");
+        Validate.notNull(restrictionAdditions, "RestrictionAdditions must not be null");
+        Validate.notNull(restrictionDeletions, "RestrictionDeletions must not be null");
+
+        this.restrictionFlags = restrictionFlags;
+        this.restrictionAdditions = restrictionAdditions;
+        this.restrictionDeletions = restrictionDeletions;
     }
 
     /**
      * Static create method for factory.
      *
      * @param networkType Network type.
-     * @param restrictionType Restriction type.
-     * @param modifications List of account address restriction modifications.
+     * @param restrictionFlags Restriction type.
+     * @param restrictionAdditions List of addresses that are going to be added to the restriction.
+     * @param restrictionDeletions List of addresses that are going to be removed from the
+     * restriction.
      * @return Account address restriction transaction.
      */
     public static AccountAddressRestrictionTransactionFactory create(NetworkType networkType,
-        AccountRestrictionType restrictionType,
-        List<AccountRestrictionModification<UnresolvedAddress>> modifications) {
-        return new AccountAddressRestrictionTransactionFactory(networkType, restrictionType,
-            modifications);
+        AccountRestrictionFlags restrictionFlags,
+        List<UnresolvedAddress> restrictionAdditions,
+        List<UnresolvedAddress> restrictionDeletions) {
+        return new AccountAddressRestrictionTransactionFactory(networkType, restrictionFlags,
+            restrictionAdditions, restrictionDeletions);
     }
 
     /**
-     * Get account restriction type
+     * Get account restriction flags.
      *
-     * @return {@link AccountRestrictionType}
+     * @return {@link AccountRestrictionFlags}
      */
-    public AccountRestrictionType getRestrictionType() {
-        return this.restrictionType;
+    public AccountRestrictionFlags getRestrictionFlags() {
+        return this.restrictionFlags;
     }
 
-    /**
-     * Get account address restriction modifications
-     *
-     * @return List of {@link AccountRestrictionModification}
-     */
-    public List<AccountRestrictionModification<UnresolvedAddress>> getModifications() {
-        return this.modifications;
-    }
 
     @Override
     public AccountAddressRestrictionTransaction build() {
         return new AccountAddressRestrictionTransaction(this);
+    }
+
+    /**
+     * @return List of addresses that are going to be added to the restriction.
+     */
+    public List<UnresolvedAddress> getRestrictionAdditions() {
+        return restrictionAdditions;
+    }
+
+    /**
+     * @return List of addresses that are going to be removed from the restriction.
+     */
+    public List<UnresolvedAddress> getRestrictionDeletions() {
+        return restrictionDeletions;
     }
 }

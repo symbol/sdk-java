@@ -20,32 +20,42 @@ import java.util.List;
 
 public class AccountMosaicRestrictionTransaction extends Transaction {
 
-    private final AccountRestrictionType restrictionType;
-    private final List<AccountRestrictionModification<UnresolvedMosaicId>> modifications;
+    private final AccountRestrictionFlags restrictionFlags;
 
-    public AccountMosaicRestrictionTransaction(
+    private final List<UnresolvedMosaicId> restrictionAdditions;
+
+    private final List<UnresolvedMosaicId> restrictionDeletions;
+
+    AccountMosaicRestrictionTransaction(
         AccountMosaicRestrictionTransactionFactory factory) {
         super(factory);
-        this.restrictionType = factory.getRestrictionType();
-        this.modifications = factory.getModifications();
+        this.restrictionFlags = factory.getRestrictionFlags();
+        this.restrictionAdditions = factory.getRestrictionAdditions();
+        this.restrictionDeletions = factory.getRestrictionDeletions();
     }
 
     /**
-     * Get account restriction type
+     * Get account restriction flags
      *
-     * @return {@link AccountRestrictionType}
+     * @return {@link AccountRestrictionFlags}
      */
-    public AccountRestrictionType getRestrictionType() {
-        return this.restrictionType;
+    public AccountRestrictionFlags getRestrictionFlags() {
+        return this.restrictionFlags;
+    }
+
+
+    /**
+     * @return List of mosaic ids that are going to be added to the restriction.
+     */
+    public List<UnresolvedMosaicId> getRestrictionAdditions() {
+        return restrictionAdditions;
     }
 
     /**
-     * Get account mosaic restriction modifications
-     *
-     * @return list of {@link AccountRestrictionModification} with {@link UnresolvedMosaicId}
+     * @return List of mosaic ids that are going to be removed from the restriction.
      */
-    public List<AccountRestrictionModification<UnresolvedMosaicId>> getModifications() {
-        return this.modifications;
+    public List<UnresolvedMosaicId> getRestrictionDeletions() {
+        return restrictionDeletions;
     }
 
 }

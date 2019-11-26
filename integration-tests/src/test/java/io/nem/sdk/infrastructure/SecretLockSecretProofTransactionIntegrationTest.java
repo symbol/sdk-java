@@ -51,7 +51,7 @@ public class SecretLockSecretProofTransactionIntegrationTest extends BaseIntegra
                 LockHashAlgorithmType.SHA3_256,
                 secret,
                 recipient
-            ).build();
+            ).maxFee(this.maxFee).build();
 
         announceAndValidate(type, account, secretLockTransaction);
     }
@@ -71,9 +71,9 @@ public class SecretLockSecretProofTransactionIntegrationTest extends BaseIntegra
                 LockHashAlgorithmType.SHA3_256,
                 secret,
                 recipient
-            ).build();
+            ).maxFee(this.maxFee).build();
 
-        announceAggregateAndValidate(type, account, transaction);
+        announceAggregateAndValidate(type, transaction, account);
 
     }
 
@@ -93,7 +93,7 @@ public class SecretLockSecretProofTransactionIntegrationTest extends BaseIntegra
                 LockHashAlgorithmType.SHA3_256,
                 secret,
                 recipient
-            ).build();
+            ).maxFee(this.maxFee).build();
 
         announceAndValidate(type, account, secretLockTransaction);
 
@@ -103,7 +103,7 @@ public class SecretLockSecretProofTransactionIntegrationTest extends BaseIntegra
                 LockHashAlgorithmType.SHA3_256,
                 recipient,
                 secret,
-                proof).build();
+                proof).maxFee(this.maxFee).build();
 
         announceAndValidate(type, account, secretProofTransaction);
     }
@@ -123,7 +123,7 @@ public class SecretLockSecretProofTransactionIntegrationTest extends BaseIntegra
                 BigInteger.valueOf(100),
                 LockHashAlgorithmType.SHA3_256,
                 secret,
-                recipient).build();
+                recipient).maxFee(this.maxFee).build();
 
         announceAndValidate(type, account, secretLockTransaction);
 
@@ -133,8 +133,8 @@ public class SecretLockSecretProofTransactionIntegrationTest extends BaseIntegra
                 recipient,
                 secret,
                 proof
-            ).build();
+            ).maxFee(this.maxFee).build();
 
-        announceAggregateAndValidate(type, account, secretProofTransaction);
+        announceAggregateAndValidate(type, secretProofTransaction, account);
     }
 }

@@ -19,31 +19,39 @@ import java.util.List;
 
 public class AccountOperationRestrictionTransaction extends Transaction {
 
-    private final AccountRestrictionType restrictionType;
-    private final List<AccountRestrictionModification<TransactionType>> modifications;
+    private final AccountRestrictionFlags restrictionFlags;
+    private final List<TransactionType> restrictionAdditions;
+    private final List<TransactionType> restrictionDeletions;
 
     AccountOperationRestrictionTransaction(
         AccountOperationRestrictionTransactionFactory factory) {
         super(factory);
-        this.restrictionType = factory.getRestrictionType();
-        this.modifications = factory.getModifications();
+        this.restrictionFlags = factory.getRestrictionFlags();
+        this.restrictionAdditions = factory.getRestrictionAdditions();
+        this.restrictionDeletions = factory.getRestrictionDeletions();
     }
 
     /**
-     * Get account restriction type
+     * Get account restriction flags
      *
-     * @return {@link AccountRestrictionType}
+     * @return {@link AccountRestrictionFlags}
      */
-    public AccountRestrictionType getRestrictionType() {
-        return this.restrictionType;
+    public AccountRestrictionFlags getRestrictionFlags() {
+        return this.restrictionFlags;
+    }
+
+
+    /**
+     * @return List of transaction types that are going to be added to the restriction.
+     */
+    public List<TransactionType> getRestrictionAdditions() {
+        return restrictionAdditions;
     }
 
     /**
-     * Get account operation restriction modifications
-     *
-     * @return list of {@link AccountRestrictionModification}
+     * @return List of transaction types that are going to be removed from the restriction.
      */
-    public List<AccountRestrictionModification<TransactionType>> getModifications() {
-        return this.modifications;
+    public List<TransactionType> getRestrictionDeletions() {
+        return restrictionDeletions;
     }
 }

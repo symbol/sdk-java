@@ -16,7 +16,8 @@
 
 package io.nem.sdk.api;
 
-import io.nem.sdk.infrastructure.Listener;
+import io.nem.sdk.model.blockchain.NetworkType;
+import io.reactivex.Observable;
 import java.io.Closeable;
 
 /**
@@ -28,14 +29,36 @@ import java.io.Closeable;
 public interface RepositoryFactory extends Closeable {
 
     /**
+     * @return the network type of the network. This method is cached, the server is only called the
+     * first time.
+     */
+    Observable<NetworkType> getNetworkType();
+
+    /**
+     * @return the generation hash used to sign transactions. Value retrieved from the block/1
+     * endpoint. This method is cached, the server is only called the first time.
+     */
+    Observable<String> getGenerationHash();
+
+    /**
      * @return a newly created {@link AccountRepository}
      */
     AccountRepository createAccountRepository();
 
     /**
+     * @return a newly created {@link MultisigRepository}
+     */
+    MultisigRepository createMultisigRepository();
+
+    /**
      * @return a newly created {@link BlockRepository}
      */
     BlockRepository createBlockRepository();
+
+    /**
+     * @return a newly created {@link ReceiptRepository}
+     */
+    ReceiptRepository createReceiptRepository();
 
     /**
      * @return a newly created {@link ChainRepository}
@@ -78,9 +101,14 @@ public interface RepositoryFactory extends Closeable {
     MetadataRepository createMetadataRepository();
 
     /**
-     * @return a newly created {@link RestrictionRepository}
+     * @return a newly created {@link RestrictionAccountRepository}
      */
-    RestrictionRepository createRestrictionRepository();
+    RestrictionAccountRepository createRestrictionAccountRepository();
+
+    /**
+     * @return a newly created {@link RestrictionMosaicRepository}
+     */
+    RestrictionMosaicRepository createRestrictionMosaicRepository();
 
     /**
      * @return a newly created {@link Listener}

@@ -17,23 +17,26 @@
 package io.nem.sdk.infrastructure.vertx;
 
 import io.nem.core.utils.MapperUtils;
+import io.nem.sdk.model.account.AccountNames;
 import io.nem.sdk.model.account.Address;
-import io.nem.sdk.model.blockchain.NetworkType;
 import io.nem.sdk.model.mosaic.MosaicId;
+import io.nem.sdk.model.mosaic.MosaicNames;
 import io.nem.sdk.model.namespace.NamespaceId;
 import io.nem.sdk.model.namespace.NamespaceInfo;
 import io.nem.sdk.model.namespace.NamespaceName;
 import io.nem.sdk.model.namespace.NamespaceRegistrationType;
-import io.nem.sdk.openapi.vertx.invoker.ApiException;
+import io.nem.sdk.openapi.vertx.model.AccountNamesDTO;
+import io.nem.sdk.openapi.vertx.model.AccountsNamesDTO;
 import io.nem.sdk.openapi.vertx.model.AliasDTO;
 import io.nem.sdk.openapi.vertx.model.AliasTypeEnum;
+import io.nem.sdk.openapi.vertx.model.MosaicNamesDTO;
+import io.nem.sdk.openapi.vertx.model.MosaicsNamesDTO;
 import io.nem.sdk.openapi.vertx.model.NamespaceDTO;
 import io.nem.sdk.openapi.vertx.model.NamespaceInfoDTO;
 import io.nem.sdk.openapi.vertx.model.NamespaceMetaDTO;
 import io.nem.sdk.openapi.vertx.model.NamespaceNameDTO;
 import io.nem.sdk.openapi.vertx.model.NamespaceRegistrationTypeEnum;
-import io.nem.sdk.openapi.vertx.model.NetworkTypeDTO;
-import io.nem.sdk.openapi.vertx.model.NetworkTypeNameEnum;
+import io.nem.sdk.openapi.vertx.model.NamespacesInfoDTO;
 import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.Collections;
@@ -54,13 +57,11 @@ public class NamespaceRepositoryVertxImplTest extends AbstractVertxRespositoryTe
     @BeforeEach
     public void setUp() {
         super.setUp();
-        repository = new NamespaceRepositoryVertxImpl(apiClientMock, networkType);
+        repository = new NamespaceRepositoryVertxImpl(apiClientMock, networkTypeObservable);
     }
 
     @Test
     public void shouldGetNamespace() throws Exception {
-
-        resolveNetworkType();
 
         NamespaceId namespaceId = NamespaceId.createFromName("accountalias");
 
@@ -106,8 +107,6 @@ public class NamespaceRepositoryVertxImplTest extends AbstractVertxRespositoryTe
     @Test
     public void shouldGetNamespacesFromAccount() throws Exception {
 
-        resolveNetworkType();
-
         Address address = MapperUtils
             .toAddressFromRawAddress("SBCPGZ3S2SCC3YHBBTYDCUZV4ZZEPHM2KGCP4QXX");
 
@@ -133,7 +132,7 @@ public class NamespaceRepositoryVertxImplTest extends AbstractVertxRespositoryTe
 
         dto.setNamespace(namespace);
 
-        mockRemoteCall(Collections.singletonList(dto));
+        mockRemoteCall(new NamespacesInfoDTO().addNamespacesItem(dto));
 
         NamespaceInfo info = repository.getNamespacesFromAccount(address).toFuture().get().get(0);
 
@@ -152,8 +151,6 @@ public class NamespaceRepositoryVertxImplTest extends AbstractVertxRespositoryTe
 
     @Test
     public void shouldGetNamespacesFromAccounts() throws Exception {
-
-        resolveNetworkType();
 
         Address address =
             Address.createFromRawAddress(
@@ -181,7 +178,7 @@ public class NamespaceRepositoryVertxImplTest extends AbstractVertxRespositoryTe
 
         dto.setNamespace(namespace);
 
-        mockRemoteCall(Collections.singletonList(dto));
+        mockRemoteCall(new NamespacesInfoDTO().addNamespacesItem(dto));
 
         NamespaceInfo info = repository
             .getNamespacesFromAccounts(Collections.singletonList(address)).toFuture().get().get(0);
@@ -201,7 +198,6 @@ public class NamespaceRepositoryVertxImplTest extends AbstractVertxRespositoryTe
 
     @Test
     public void shouldGetNamespaceNames() throws Exception {
-        resolveNetworkType();
         NamespaceId namespaceId = NamespaceId.createFromName("accountalias");
         NamespaceNameDTO dto1 = new NamespaceNameDTO();
         dto1.setName("someName1");
@@ -237,8 +233,6 @@ public class NamespaceRepositoryVertxImplTest extends AbstractVertxRespositoryTe
             Address.createFromRawAddress(
                 "SBCPGZ3S2SCC3YHBBTYDCUZV4ZZEPHM2KGCP4QXX");
 
-        resolveNetworkType();
-
         NamespaceId namespaceId = NamespaceId.createFromName("accountalias");
 
         NamespaceInfoDTO dto = new NamespaceInfoDTO();
@@ -273,8 +267,6 @@ public class NamespaceRepositoryVertxImplTest extends AbstractVertxRespositoryTe
     @Test
     public void shouldGetLinkedMosaicId() throws Exception {
 
-        resolveNetworkType();
-
         NamespaceId namespaceId = NamespaceId.createFromName("accountalias");
 
         NamespaceInfoDTO dto = new NamespaceInfoDTO();
@@ -306,12 +298,57 @@ public class NamespaceRepositoryVertxImplTest extends AbstractVertxRespositoryTe
         Assertions.assertEquals("0000528280977531", linkedMosaicId.getIdAsHex());
     }
 
-    protected void resolveNetworkType() throws ApiException {
-        NetworkTypeDTO networkTypeDTO = new NetworkTypeDTO();
-        networkTypeDTO.setName(NetworkTypeNameEnum.MIJINTEST);
-        mockRemoteCall(networkTypeDTO);
-        NetworkType networkType = repository.getNetworkTypeBlocking();
-        Assertions.assertEquals(NetworkType.MIJIN_TEST, networkType);
+    @Test
+    public void shouldGetMosaicsNamesFromPublicKeys() throws Exception {
+
+        MosaicId mosaicId = MapperUtils.toMosaicId("99262122238339734");
+
+        MosaicNamesDTO dto = new MosaicNamesDTO();
+        dto.setMosaicId("99262122238339734");
+        dto.setNames(Collections.singletonList("accountalias"));
+
+        MosaicsNamesDTO accountsNamesDTO = new MosaicsNamesDTO();
+        accountsNamesDTO.setMosaicNames(Collections.singletonList(dto));
+
+        mockRemoteCall(accountsNamesDTO);
+
+        List<MosaicNames> resolvedList = repository
+            .getMosaicsNames(Collections.singletonList(mosaicId))
+            .toFuture().get();
+
+        Assertions.assertEquals(1, resolvedList.size());
+
+        MosaicNames accountNames = resolvedList.get(0);
+
+        Assertions.assertEquals(mosaicId, accountNames.getMosaicId());
+        Assertions.assertEquals("accountalias", accountNames.getNames().get(0).getName());
     }
+
+    @Test
+    public void shouldGetAccountsNamesFromAddresses() throws Exception {
+        Address address =
+            Address.createFromRawAddress(
+                "SBCPGZ3S2SCC3YHBBTYDCUZV4ZZEPHM2KGCP4QXX");
+
+        AccountNamesDTO dto = new AccountNamesDTO();
+        dto.setAddress(encodeAddress(address));
+        dto.setNames(Collections.singletonList("accountalias"));
+
+        AccountsNamesDTO accountsNamesDTO = new AccountsNamesDTO();
+        accountsNamesDTO.setAccountNames(Collections.singletonList(dto));
+
+        mockRemoteCall(accountsNamesDTO);
+
+        List<AccountNames> resolvedList = repository
+            .getAccountsNames(Collections.singletonList(address)).toFuture().get();
+
+        Assertions.assertEquals(1, resolvedList.size());
+
+        AccountNames accountNames = resolvedList.get(0);
+
+        Assertions.assertEquals(address, accountNames.getAddress());
+        Assertions.assertEquals("accountalias", accountNames.getNames().get(0).getName());
+    }
+
 
 }

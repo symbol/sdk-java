@@ -48,6 +48,11 @@ public abstract class MetadataTransactionFactory<T extends MetadataTransaction> 
      */
     private final String value;
 
+    /**
+     * The value size. Defaulted to the size of the encoded value.
+     */
+    private int valueSize;
+
     MetadataTransactionFactory(
         TransactionType transactionType,
         NetworkType networkType,
@@ -65,6 +70,7 @@ public abstract class MetadataTransactionFactory<T extends MetadataTransaction> 
         this.value = value;
         int defaultSize = MetadataTransaction.toByteArray(value).length;
         this.valueSizeDelta = defaultSize;
+        this.valueSize = defaultSize;
     }
 
     public PublicAccount getTargetAccount() {
@@ -91,6 +97,14 @@ public abstract class MetadataTransactionFactory<T extends MetadataTransaction> 
         return this;
     }
 
+    public int getValueSize() {
+        return valueSize;
+    }
+
+    public MetadataTransactionFactory<T> valueSize(int valueSize) {
+        this.valueSize = valueSize;
+        return this;
+    }
 
     public String getValue() {
         return value;

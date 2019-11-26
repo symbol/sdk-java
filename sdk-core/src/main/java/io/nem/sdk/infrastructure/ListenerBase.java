@@ -17,10 +17,10 @@
 package io.nem.sdk.infrastructure;
 
 import io.nem.core.utils.MapperUtils;
+import io.nem.sdk.api.Listener;
 import io.nem.sdk.model.account.Address;
 import io.nem.sdk.model.blockchain.BlockInfo;
 import io.nem.sdk.model.transaction.AggregateTransaction;
-import io.nem.sdk.model.transaction.CosignatoryModificationActionType;
 import io.nem.sdk.model.transaction.CosignatureSignedTransaction;
 import io.nem.sdk.model.transaction.Deadline;
 import io.nem.sdk.model.transaction.JsonHelper;
@@ -251,11 +251,8 @@ public abstract class ListenerBase implements Listener {
         }
 
         if (transaction instanceof MultisigAccountModificationTransaction) {
-            return ((MultisigAccountModificationTransaction) transaction)
-                .getModifications().stream()
-                .anyMatch(
-                    m -> m.getModificationAction() == CosignatoryModificationActionType.ADD && m
-                        .getCosignatoryPublicAccount().getAddress().equals(address));
+            return ((MultisigAccountModificationTransaction) transaction).getPublicKeyAdditions()
+                .stream().anyMatch(m -> m.getAddress().equals(address));
         }
         if (transaction instanceof AggregateTransaction) {
             final AggregateTransaction aggregateTransaction = (AggregateTransaction) transaction;

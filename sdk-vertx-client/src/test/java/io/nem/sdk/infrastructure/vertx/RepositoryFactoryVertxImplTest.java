@@ -16,9 +16,9 @@
 
 package io.nem.sdk.infrastructure.vertx;
 
+import io.nem.catapult.builders.GeneratorUtils;
 import io.nem.sdk.api.RepositoryCallException;
 import io.nem.sdk.api.RepositoryFactory;
-import io.nem.sdk.model.blockchain.NetworkType;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -32,16 +32,11 @@ public class RepositoryFactoryVertxImplTest {
 
         String baseUrl = "https://nem.com:3000/path";
 
-        RepositoryFactory factory = new RepositoryFactoryVertxImpl(
-            baseUrl) {
-            @Override
-            protected NetworkType loadNetworkType() {
-                return NetworkType.MAIN_NET;
-            }
-        };
+        RepositoryFactory factory = new RepositoryFactoryVertxImpl(baseUrl);
 
         Assertions.assertNotNull(factory.createAccountRepository());
         Assertions.assertNotNull(factory.createBlockRepository());
+        Assertions.assertNotNull(factory.createReceiptRepository());
         Assertions.assertNotNull(factory.createChainRepository());
         Assertions.assertNotNull(factory.createDiagnosticRepository());
         Assertions.assertNotNull(factory.createListener());
@@ -51,7 +46,8 @@ public class RepositoryFactoryVertxImplTest {
         Assertions.assertNotNull(factory.createNodeRepository());
         Assertions.assertNotNull(factory.createTransactionRepository());
         Assertions.assertNotNull(factory.createMetadataRepository());
-        Assertions.assertNotNull(factory.createRestrictionRepository());
+        Assertions.assertNotNull(factory.createRestrictionAccountRepository());
+        Assertions.assertNotNull(factory.createRestrictionMosaicRepository());
         Assertions.assertNotNull(factory.createJsonSerialization());
 
         factory.close();
@@ -60,17 +56,29 @@ public class RepositoryFactoryVertxImplTest {
     }
 
     @Test
-    public void shouldFailInvalidServer() {
-
+    public void getNetworkTypeFailWhenInvalidServer() {
         String baseUrl = "https://localhost:1934/path";
 
-        RepositoryCallException e = Assertions.assertThrows(RepositoryCallException.class, () -> {
-            new RepositoryFactoryVertxImpl(baseUrl);
-        });
+        RepositoryCallException e = Assertions.assertThrows(RepositoryCallException.class,
+            () -> GeneratorUtils.propagate(
+                () -> new RepositoryFactoryVertxImpl(baseUrl).getNetworkType().toFuture().get()));
 
         Assertions.assertTrue(
-            e.getMessage().contains(
-                "Unable to load NetworkType. Error: RepositoryCallException: ApiException: Connection refused"));
+            e.getMessage().contains("ApiException: Connection refused"));
+    }
+
+    @Test
+    public void getGenerationHashFailWhenInvalidServer() {
+        String baseUrl = "https://localhost:1934/path";
+
+        RepositoryCallException e = Assertions.assertThrows(RepositoryCallException.class,
+            () -> GeneratorUtils.propagate(
+                () -> new RepositoryFactoryVertxImpl(baseUrl).getGenerationHash().toFuture()
+                    .get()));
+
+        Assertions.assertTrue(
+            e.getMessage().contains("ApiException: Connection refused"));
+
     }
 
 }

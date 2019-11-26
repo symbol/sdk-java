@@ -54,6 +54,38 @@ class MosaicRepositoryIntegrationTest extends BaseIntegrationTest {
 
     @ParameterizedTest
     @EnumSource(RepositoryType.class)
+    void getMosaicsFromAccount(RepositoryType type) {
+        List<MosaicInfo> mosaicInfos = get(getMosaicRepository(type)
+            .getMosaicsFromAccount(testAccount.getAddress()));
+        Assertions.assertTrue(mosaicInfos.size() > 0);
+        mosaicInfos.forEach(this::assertMosaic);
+        Assertions.assertTrue(
+            mosaicInfos.stream().anyMatch(mosaicInfo -> mosaicInfo.getMosaicId().equals(mosaicId)));
+    }
+
+    @ParameterizedTest
+    @EnumSource(RepositoryType.class)
+    void getMosaicsFromAccounts(RepositoryType type) {
+        List<MosaicInfo> mosaicInfos = get(getMosaicRepository(type)
+            .getMosaicsFromAccounts(Collections.singletonList(testAccount.getAddress())));
+        Assertions.assertTrue(mosaicInfos.size() > 0);
+        mosaicInfos.forEach(this::assertMosaic);
+        Assertions.assertTrue(
+            mosaicInfos.stream().anyMatch(mosaicInfo -> mosaicInfo.getMosaicId().equals(mosaicId)));
+    }
+
+    private void assertMosaic(MosaicInfo m) {
+        Assertions.assertEquals(testAccount.getPublicAccount(), m.getOwner());
+        Assertions.assertNotNull(m.getMosaicId());
+        Assertions.assertNotNull(m.getStartHeight());
+        Assertions.assertNotNull(m.getDuration());
+        Assertions.assertNotNull(m.getRevision());
+        Assertions.assertNotNull(m.getSupply());
+    }
+
+
+    @ParameterizedTest
+    @EnumSource(RepositoryType.class)
     void getMosaicViaMosaicId(RepositoryType type) {
         MosaicInfo mosaicInfo = get(getMosaicRepository(type).getMosaic(mosaicId));
         assertEquals(mosaicId, mosaicInfo.getMosaicId());
@@ -63,7 +95,7 @@ class MosaicRepositoryIntegrationTest extends BaseIntegrationTest {
     @ParameterizedTest
     @EnumSource(RepositoryType.class)
     void getMosaicsNames(RepositoryType type) {
-        List<MosaicNames> mosaicNames = get(getMosaicRepository(type)
+        List<MosaicNames> mosaicNames = get(getRepositoryFactory(type).createNamespaceRepository()
             .getMosaicsNames(Collections.singletonList(mosaicId)));
         assertEquals(1, mosaicNames.size());
         assertEquals(mosaicId, mosaicNames.get(0).getMosaicId());
@@ -106,7 +138,7 @@ class MosaicRepositoryIntegrationTest extends BaseIntegrationTest {
                 nonce,
                 mosaicId,
                 MosaicFlags.create(true, true, true),
-                4, new BlockDuration(100)).build();
+                4, new BlockDuration(100)).maxFee(this.maxFee).build();
 
         MosaicDefinitionTransaction validateTransaction = announceAndValidate(type,
             testAccount, mosaicDefinitionTransaction);

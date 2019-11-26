@@ -66,10 +66,11 @@ public class MosaicAliasTransactionIntegrationTest extends BaseIntegrationTest {
             NamespaceRegistrationTransactionFactory.createRootNamespace(
                 getNetworkType(),
                 namespaceName,
-                BigInteger.valueOf(100)).build();
+                BigInteger.valueOf(100)).maxFee(this.maxFee).build();
 
-        NamespaceId rootNamespaceId = announceAggregateAndValidate(type, account,
-            namespaceRegistrationTransaction).getNamespaceId();
+        NamespaceId rootNamespaceId = announceAggregateAndValidate(type,
+            namespaceRegistrationTransaction, account
+        ).getNamespaceId();
 
         sleep(1000);
 
@@ -78,13 +79,13 @@ public class MosaicAliasTransactionIntegrationTest extends BaseIntegrationTest {
                 getNetworkType(),
                 AliasAction.LINK,
                 rootNamespaceId,
-                mosaicId).build();
+                mosaicId).maxFee(this.maxFee).build();
 
-        announceAggregateAndValidate(type, account, addressAliasTransaction);
+        announceAggregateAndValidate(type, addressAliasTransaction, account);
 
         sleep(2000);
 
-        List<MosaicNames> accountNames = get(getRepositoryFactory(type).createMosaicRepository()
+        List<MosaicNames> accountNames = get(getRepositoryFactory(type).createNamespaceRepository()
             .getMosaicsNames(Collections.singletonList(mosaicId)));
 
         Assertions.assertEquals(1, accountNames.size());
@@ -104,7 +105,7 @@ public class MosaicAliasTransactionIntegrationTest extends BaseIntegrationTest {
                 nonce,
                 mosaicId,
                 MosaicFlags.create(true, true, true),
-                4, new BlockDuration(100)).build();
+                4, new BlockDuration(100)).maxFee(this.maxFee).build();
 
         return announceAndValidate(type, account, mosaicDefinitionTransaction).getMosaicId();
     }

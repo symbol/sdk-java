@@ -32,8 +32,7 @@ import io.nem.sdk.model.transaction.AccountLinkTransaction;
 import io.nem.sdk.model.transaction.AccountMetadataTransaction;
 import io.nem.sdk.model.transaction.AccountMosaicRestrictionTransaction;
 import io.nem.sdk.model.transaction.AccountOperationRestrictionTransaction;
-import io.nem.sdk.model.transaction.AccountRestrictionModificationAction;
-import io.nem.sdk.model.transaction.AccountRestrictionType;
+import io.nem.sdk.model.transaction.AccountRestrictionFlags;
 import io.nem.sdk.model.transaction.AddressAliasTransaction;
 import io.nem.sdk.model.transaction.AggregateTransaction;
 import io.nem.sdk.model.transaction.HashLockTransaction;
@@ -52,7 +51,6 @@ import io.nem.sdk.model.transaction.TransactionType;
 import io.nem.sdk.model.transaction.TransferTransaction;
 import io.nem.sdk.openapi.vertx.model.AggregateTransactionBodyDTO;
 import io.nem.sdk.openapi.vertx.model.HashLockTransactionDTO;
-import io.nem.sdk.openapi.vertx.model.Mosaic;
 import io.nem.sdk.openapi.vertx.model.MosaicDefinitionTransactionDTO;
 import io.nem.sdk.openapi.vertx.model.MosaicSupplyChangeTransactionDTO;
 import io.nem.sdk.openapi.vertx.model.MultisigAccountModificationTransactionDTO;
@@ -61,6 +59,7 @@ import io.nem.sdk.openapi.vertx.model.SecretLockTransactionDTO;
 import io.nem.sdk.openapi.vertx.model.SecretProofTransactionDTO;
 import io.nem.sdk.openapi.vertx.model.TransactionInfoDTO;
 import io.nem.sdk.openapi.vertx.model.TransferTransactionDTO;
+import io.nem.sdk.openapi.vertx.model.UnresolvedMosaic;
 import io.vertx.core.json.Json;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
@@ -421,21 +420,9 @@ public class TransactionMapperVertxTest {
             transaction.getSigner().get().getPublicKey().toHex());
         assertEquals(transaction.getType().getValue(),
             (int) jsonHelper.getInteger(transactionDTO.getTransaction(), "type"));
-        int version =
-            (int)
-                Long.parseLong(
-                    Integer.toHexString(
-                        jsonHelper.getInteger(transactionDTO.getTransaction(), "version"))
-                        .substring(2, 4),
-                    16);
-        assertTrue(transaction.getVersion() == version);
-        int networkType =
-            (int)
-                Long.parseLong(
-                    Integer.toHexString(
-                        jsonHelper.getInteger(transactionDTO.getTransaction(), "version"))
-                        .substring(0, 2),
-                    16);
+        int version = jsonHelper.getInteger(transactionDTO.getTransaction(), "version");
+        assertEquals((int) transaction.getVersion(), version);
+        int networkType = jsonHelper.getInteger(transactionDTO.getTransaction(), "network");
         assertEquals(transaction.getNetworkType().getValue(), networkType);
         assertEquals(
             jsonHelper.getBigInteger(parentTransaction.getTransaction(), "maxFee"),
@@ -497,11 +484,11 @@ public class TransactionMapperVertxTest {
         validateAggregateTransaction(
             (AggregateTransaction) aggregateTransferTransaction, aggregateTransferTransactionDTO);
 
-
         MosaicAliasTransaction transaction = (MosaicAliasTransaction) ((AggregateTransaction) aggregateTransferTransaction)
             .getInnerTransactions().get(0);
 
-        Assertions.assertEquals(new BigInteger("884562898459306"), transaction.getMosaicId().getId());
+        Assertions
+            .assertEquals(new BigInteger("884562898459306"), transaction.getMosaicId().getId());
         Assertions.assertEquals(AliasAction.UNLINK, transaction.getAliasAction());
         Assertions.assertEquals(new BigInteger("307262000798378"),
             transaction.getNamespaceId().getId());
@@ -579,6 +566,7 @@ public class TransactionMapperVertxTest {
             .assertEquals("This is the message for this account! 汉字89664", transaction.getValue());
     }
 
+
     @Test
     public void shouldCreateAccountAddressRestriction() throws Exception {
 
@@ -590,15 +578,17 @@ public class TransactionMapperVertxTest {
 
         validateStandaloneTransaction(transaction, transactionInfoDTO);
 
-        Assertions.assertEquals(AccountRestrictionType.ALLOW_INCOMING_ADDRESS,
-            transaction.getRestrictionType());
-        Assertions.assertEquals(1, transaction.getModifications().size());
-        Assertions
-            .assertEquals(Address.createFromRawAddress("SBILTA367K2LX2FEXG5TFWAS7GEFYAGY7QLFBYKC"),
-                transaction.getModifications().get(0).getValue());
+        Assertions.assertEquals(AccountRestrictionFlags.ALLOW_INCOMING_ADDRESS,
+            transaction.getRestrictionFlags());
+        Assertions.assertEquals(1, transaction.getRestrictionAdditions().size());
         Assertions.assertEquals(
-            AccountRestrictionModificationAction.ADD,
-            transaction.getModifications().get(0).getModificationAction());
+            MapperUtils.toAddressFromEncoded("9050b9837efab4bbe8a4b9bb32d812f9885c00d8fc16501111"),
+            transaction.getRestrictionAdditions().get(0));
+
+        Assertions.assertEquals(
+            MapperUtils.toAddressFromEncoded("9050b9837efab4bbe8a4b9bb32d812f9885c00d8fc16502222"),
+            transaction.getRestrictionDeletions().get(0));
+
     }
 
     @Test
@@ -612,14 +602,11 @@ public class TransactionMapperVertxTest {
 
         validateStandaloneTransaction(transaction, transactionInfoDTO);
 
-        Assertions.assertEquals(AccountRestrictionType.ALLOW_INCOMING_MOSAIC,
-            transaction.getRestrictionType());
-        Assertions.assertEquals(1, transaction.getModifications().size());
+        Assertions.assertEquals(AccountRestrictionFlags.ALLOW_INCOMING_MOSAIC,
+            transaction.getRestrictionFlags());
+        Assertions.assertEquals(1, transaction.getRestrictionAdditions().size());
         Assertions.assertEquals("00003646934825aa",
-            transaction.getModifications().get(0).getValue().getIdAsHex());
-        Assertions.assertEquals(
-            AccountRestrictionModificationAction.ADD,
-            transaction.getModifications().get(0).getModificationAction());
+            transaction.getRestrictionAdditions().get(0).getIdAsHex());
     }
 
     @Test
@@ -633,14 +620,11 @@ public class TransactionMapperVertxTest {
 
         validateStandaloneTransaction(transaction, transactionInfoDTO);
 
-        Assertions.assertEquals(AccountRestrictionType.ALLOW_INCOMING_MOSAIC,
-            transaction.getRestrictionType());
-        Assertions.assertEquals(1, transaction.getModifications().size());
+        Assertions.assertEquals(AccountRestrictionFlags.ALLOW_INCOMING_MOSAIC,
+            transaction.getRestrictionFlags());
+        Assertions.assertEquals(1, transaction.getRestrictionAdditions().size());
         Assertions.assertEquals(TransactionType.MOSAIC_METADATA_TRANSACTION,
-            transaction.getModifications().get(0).getValue());
-        Assertions.assertEquals(
-            AccountRestrictionModificationAction.REMOVE,
-            transaction.getModifications().get(0).getModificationAction());
+            transaction.getRestrictionAdditions().get(0));
     }
 
 
@@ -699,21 +683,9 @@ public class TransactionMapperVertxTest {
         assertEquals(
             jsonHelper.getString(transactionDto.getTransaction(), "signerPublicKey"),
             aggregateTransaction.getSigner().get().getPublicKey().toHex());
-        int version =
-            (int)
-                Long.parseLong(
-                    Integer.toHexString(
-                        jsonHelper.getInteger(transactionDto.getTransaction(), "version"))
-                        .substring(2, 4),
-                    16);
+        int version = jsonHelper.getInteger(transactionDto.getTransaction(), "version");
         assertEquals((int) aggregateTransaction.getVersion(), version);
-        int networkType =
-            (int)
-                Long.parseLong(
-                    Integer.toHexString(
-                        jsonHelper.getInteger(transactionDto.getTransaction(), "version"))
-                        .substring(0, 2),
-                    16);
+        int networkType = jsonHelper.getInteger(transactionDto.getTransaction(), "network");
         assertEquals(aggregateTransaction.getNetworkType().getValue(), networkType);
         assertEquals(aggregateTransaction.getType().getValue(),
             (int) jsonHelper.getInteger(transactionDto.getTransaction(), "type"));
@@ -745,7 +717,7 @@ public class TransactionMapperVertxTest {
                 transferTransaction.getRecipientAddress()),
             transaction.getRecipient());
 
-        List<Mosaic> mosaicsDTO = transferTransaction.getMosaics();
+        List<UnresolvedMosaic> mosaicsDTO = transferTransaction.getMosaics();
         if (mosaicsDTO != null && mosaicsDTO.size() > 0) {
             assertEquals(
                 MapperUtils.fromHexToBigInteger(mosaicsDTO.get(0).getId()),
@@ -835,17 +807,12 @@ public class TransactionMapperVertxTest {
         assertEquals(transaction.getMinRemovalDelta(),
             (int) modifyMultisigAccountTransaction.getMinRemovalDelta());
         assertEquals(
-            modifyMultisigAccountTransaction.getModifications().get(0).getCosignatoryPublicKey(),
+            modifyMultisigAccountTransaction.getPublicKeyAdditions().get(0),
             transaction
-                .getModifications()
+                .getPublicKeyAdditions()
                 .get(0)
-                .getCosignatoryPublicAccount()
                 .getPublicKey()
                 .toHex());
-        assertEquals(
-            (int) modifyMultisigAccountTransaction.getModifications().get(0).getModificationAction()
-                .getValue(),
-            transaction.getModifications().get(0).getModificationAction().getValue());
     }
 
     void validateLockFundsTx(HashLockTransaction transaction, TransactionInfoDTO transactionDTO) {

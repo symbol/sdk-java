@@ -68,7 +68,7 @@ public class BalanceChangeReceiptTest {
         assertEquals(BigInteger.TEN, balanceChangeReceipt.getAmount());
 
         String hex = Hex.toHexString(balanceChangeReceipt.serialize());
-        Assertions.assertEquals("010043211026d70e1954775749c6811084d6450a3184d977383f0e4282cd47118af3775544b262c46ceabb850a00000000000000", hex);
+        Assertions.assertEquals("0100432144b262c46ceabb850a000000000000001026d70e1954775749c6811084d6450a3184d977383f0e4282cd47118af37755", hex);
     }
 
     @Test
@@ -92,7 +92,7 @@ public class BalanceChangeReceiptTest {
         assertEquals(BigInteger.TEN, balanceChangeReceipt.getAmount());
 
         String hex = Hex.toHexString(balanceChangeReceipt.serialize());
-        Assertions.assertEquals("010048311026d70e1954775749c6811084d6450a3184d977383f0e4282cd47118af3775544b262c46ceabb850a00000000000000", hex);
+        Assertions.assertEquals("0100483144b262c46ceabb850a000000000000001026d70e1954775749c6811084d6450a3184d977383f0e4282cd47118af37755", hex);
     }
 
     @Test
@@ -117,7 +117,7 @@ public class BalanceChangeReceiptTest {
         assertEquals(BigInteger.TEN, balanceChangeReceipt.getAmount());
 
         String hex = Hex.toHexString(balanceChangeReceipt.serialize());
-        Assertions.assertEquals("010048231026d70e1954775749c6811084d6450a3184d977383f0e4282cd47118af3775544b262c46ceabb850a00000000000000", hex);
+        Assertions.assertEquals("0100482344b262c46ceabb850a000000000000001026d70e1954775749c6811084d6450a3184d977383f0e4282cd47118af37755", hex);
     }
 
     @Test
@@ -141,7 +141,7 @@ public class BalanceChangeReceiptTest {
         assertEquals(BigInteger.TEN, balanceChangeReceipt.getAmount());
 
         String hex = Hex.toHexString(balanceChangeReceipt.serialize());
-        Assertions.assertEquals("010048221026d70e1954775749c6811084d6450a3184d977383f0e4282cd47118af3775544b262c46ceabb850a00000000000000", hex);
+        Assertions.assertEquals("0100482244b262c46ceabb850a000000000000001026d70e1954775749c6811084d6450a3184d977383f0e4282cd47118af37755", hex);
     }
 
     @Test
@@ -166,7 +166,7 @@ public class BalanceChangeReceiptTest {
         assertEquals(BigInteger.TEN, balanceChangeReceipt.getAmount());
 
         String hex = Hex.toHexString(balanceChangeReceipt.serialize());
-        Assertions.assertEquals("010052311026d70e1954775749c6811084d6450a3184d977383f0e4282cd47118af3775544b262c46ceabb850a00000000000000", hex);
+        Assertions.assertEquals("0100523144b262c46ceabb850a000000000000001026d70e1954775749c6811084d6450a3184d977383f0e4282cd47118af37755", hex);
     }
 
     @Test
@@ -191,7 +191,7 @@ public class BalanceChangeReceiptTest {
         assertEquals(BigInteger.TEN, balanceChangeReceipt.getAmount());
 
         String hex = Hex.toHexString(balanceChangeReceipt.serialize());
-        Assertions.assertEquals("010052231026d70e1954775749c6811084d6450a3184d977383f0e4282cd47118af3775544b262c46ceabb850a00000000000000", hex);
+        Assertions.assertEquals("0100522344b262c46ceabb850a000000000000001026d70e1954775749c6811084d6450a3184d977383f0e4282cd47118af37755", hex);
     }
 
     @Test
@@ -216,7 +216,7 @@ public class BalanceChangeReceiptTest {
         assertEquals(BigInteger.TEN, balanceChangeReceipt.getAmount());
 
         String hex = Hex.toHexString(balanceChangeReceipt.serialize());
-        Assertions.assertEquals("010052221026d70e1954775749c6811084d6450a3184d977383f0e4282cd47118af3775544b262c46ceabb850a00000000000000", hex);
+        Assertions.assertEquals("0100522244b262c46ceabb850a000000000000001026d70e1954775749c6811084d6450a3184d977383f0e4282cd47118af37755", hex);
     }
 
     @Test

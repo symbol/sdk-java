@@ -16,9 +16,9 @@
 
 package io.nem.sdk.api;
 
+import io.nem.sdk.model.account.Address;
 import io.nem.sdk.model.mosaic.MosaicId;
 import io.nem.sdk.model.mosaic.MosaicInfo;
-import io.nem.sdk.model.mosaic.MosaicNames;
 import io.reactivex.Observable;
 import java.util.List;
 
@@ -45,14 +45,21 @@ public interface MosaicRepository {
      */
     Observable<List<MosaicInfo>> getMosaics(List<MosaicId> mosaicIds);
 
-    /**
-     * Gets MosaicNames for different accounts. The names are namespaces linked using mosaic
-     * aliases.
-     *
-     * @param mosaicIds {@link List} of {@link MosaicId}
-     * @return {@link Observable} of {@link MosaicNames} List
-     */
 
-    Observable<List<MosaicNames>> getMosaicsNames(List<MosaicId> mosaicIds);
+    /**
+     * Gets an array of mosaics created for a given account address.
+     *
+     * @param address the address
+     * @return {@link Observable} of {@link MosaicInfo} List
+     */
+    Observable<List<MosaicInfo>> getMosaicsFromAccount(Address address);
+
+    /**
+     * Gets an array of mosaics created for the given account addresses.
+     *
+     * @param addresses the account addresses.
+     * @return {@link Observable} of {@link MosaicInfo} List
+     */
+    Observable<List<MosaicInfo>> getMosaicsFromAccounts(List<Address> addresses);
 
 }

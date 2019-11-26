@@ -62,20 +62,15 @@ public class TransferTransactionIntegrationTest extends BaseIntegrationTest {
                 "oooooooong";
         TransferTransaction transferTransaction =
             TransferTransactionFactory.create(
-                getNetworkType(),
-                recipient,
+                getNetworkType(), recipient,
                 Collections
                     .singletonList(NetworkCurrencyMosaic.createAbsolute(BigInteger.valueOf(1))),
-                /*new PlainMessage(
-                    "E2ETest:aggregateTransferTransaction:message"), */
-// short message for debugging
-                new PlainMessage(
-                    message)
-                // Use long message to test if size of inner transaction is calculated correctly
-            ).build();
+                new PlainMessage(message)
+            ).maxFee(this.maxFee).build();
 
-        TransferTransaction processed = announceAggregateAndValidate(type, account,
-            transferTransaction);
+        TransferTransaction processed = announceAggregateAndValidate(type, transferTransaction,
+            account
+        );
         Assertions.assertEquals(message, processed.getMessage().getPayload());
     }
 
@@ -106,7 +101,7 @@ public class TransferTransactionIntegrationTest extends BaseIntegrationTest {
                 Collections
                     .singletonList(NetworkCurrencyMosaic.createAbsolute(BigInteger.valueOf(1))),
                 encryptedMessage
-            ).build();
+            ).maxFee(this.maxFee).build();
 
         TransferTransaction processed = announceAndValidate(type, account, transferTransaction);
 
@@ -162,7 +157,7 @@ public class TransferTransactionIntegrationTest extends BaseIntegrationTest {
                 getNetworkType(),
                 senderKeyPair.getPrivateKey(), senderKeyPair.getPrivateKey(),
                 recipientKeyPair.getPublicKey()
-            ).build();
+            ).maxFee(this.maxFee).build();
 
         TransferTransaction processed = announceAndValidate(type, account, transferTransaction);
 

@@ -18,12 +18,10 @@ package io.nem.sdk.api;
 
 import io.nem.sdk.model.blockchain.BlockInfo;
 import io.nem.sdk.model.blockchain.MerkelProofInfo;
-import io.nem.sdk.model.receipt.Statement;
 import io.nem.sdk.model.transaction.Transaction;
 import io.reactivex.Observable;
 import java.math.BigInteger;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * Blockchain interface repository
@@ -66,18 +64,12 @@ public interface BlockRepository {
      *
      * @param height the height
      * @param limit the limit.
-     * @param queryParams QueryParams
      * @return {@link Observable} of BlockInfo
      */
     Observable<List<BlockInfo>> getBlocksByHeightWithLimit(
-        BigInteger height, int limit, Optional<QueryParams> queryParams);
+        BigInteger height, int limit);
 
-    /**
-     * @param height the height
-     * @param hash the hash.
-     * @return {@link Observable} of MerkleProofInfo
-     */
-    Observable<MerkelProofInfo> getMerkleReceipts(BigInteger height, String hash);
+
 
     /**
      * Get the merkle path for a given a transaction and block Returns the merkle path for a
@@ -92,11 +84,5 @@ public interface BlockRepository {
      */
     Observable<MerkelProofInfo> getMerkleTransaction(BigInteger height, String hash);
 
-    /**
-     * Get receipts from a block
-     *
-     * @param height the height
-     * @return {@link Observable} of Statement
-     */
-    Observable<Statement> getBlockReceipts(BigInteger height);
+
 }

@@ -52,7 +52,7 @@ public class TransactionRepositoryVertxImplTest extends AbstractVertxRespository
     @BeforeEach
     public void setUp() {
         super.setUp();
-        repository = new TransactionRepositoryVertxImpl(apiClientMock, networkType);
+        repository = new TransactionRepositoryVertxImpl(apiClientMock);
     }
 
     @Test
@@ -171,13 +171,14 @@ public class TransactionRepositoryVertxImplTest extends AbstractVertxRespository
             announceTransactionInfoDTO.getMessage());
     }
 
+
     private SignedTransaction getSignedTransaction() {
 
         String generationHash = "A94B1BE81F1D4C95D6D252AD7BA3FFFB1674991FD880B7A57DC3180AF8D69C32";
 
         Account account = Account.createFromPrivateKey(
             "063F36659A8BB01D5685826C19E2C2CA9D281465B642BD5E43CB69510408ECF7",
-            this.networkType.get());
+            this.networkType);
 
         Address recipientAddress =
             Address.createFromRawAddress(
@@ -194,7 +195,7 @@ public class TransactionRepositoryVertxImplTest extends AbstractVertxRespository
 
         SignedTransaction signedTransaction = account.sign(transferTransaction, generationHash);
         String payload = signedTransaction.getPayload();
-        assertEquals(420, payload.length());
+        assertEquals(444, payload.length());
         return signedTransaction;
     }
 

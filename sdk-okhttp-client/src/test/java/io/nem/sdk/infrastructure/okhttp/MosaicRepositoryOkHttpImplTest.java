@@ -17,13 +17,12 @@
 package io.nem.sdk.infrastructure.okhttp;
 
 import io.nem.core.utils.MapperUtils;
+import io.nem.sdk.model.account.Address;
 import io.nem.sdk.model.mosaic.MosaicId;
 import io.nem.sdk.model.mosaic.MosaicInfo;
-import io.nem.sdk.model.mosaic.MosaicNames;
 import io.nem.sdk.openapi.okhttp_gson.model.MosaicDTO;
 import io.nem.sdk.openapi.okhttp_gson.model.MosaicInfoDTO;
-import io.nem.sdk.openapi.okhttp_gson.model.MosaicNamesDTO;
-import io.nem.sdk.openapi.okhttp_gson.model.MosaicsNamesDTO;
+import io.nem.sdk.openapi.okhttp_gson.model.MosaicsInfoDTO;
 import java.math.BigInteger;
 import java.util.Collections;
 import java.util.List;
@@ -43,40 +42,11 @@ public class MosaicRepositoryOkHttpImplTest extends AbstractOkHttpRespositoryTes
     @BeforeEach
     public void setUp() {
         super.setUp();
-        repository = new MosaicRepositoryOkHttpImpl(apiClientMock);
+        repository = new MosaicRepositoryOkHttpImpl(apiClientMock, networkTypeObservable);
     }
-
-
-    @Test
-    public void shouldGetMosaicsNamesFromPublicKeys() throws Exception {
-
-        MosaicId mosaicId = MapperUtils.toMosaicId("99262122238339734");
-
-        MosaicNamesDTO dto = new MosaicNamesDTO();
-        dto.setMosaicId("99262122238339734");
-        dto.setNames(Collections.singletonList("accountalias"));
-
-        MosaicsNamesDTO accountsNamesDTO = new MosaicsNamesDTO();
-        accountsNamesDTO.setMosaicNames(Collections.singletonList(dto));
-
-        mockRemoteCall(accountsNamesDTO);
-
-        List<MosaicNames> resolvedList = repository
-            .getMosaicsNames(Collections.singletonList(mosaicId))
-            .toFuture().get();
-
-        Assertions.assertEquals(1, resolvedList.size());
-
-        MosaicNames accountNames = resolvedList.get(0);
-
-        Assertions.assertEquals(mosaicId, accountNames.getMosaicId());
-        Assertions.assertEquals("accountalias", accountNames.getNames().get(0).getName());
-    }
-
 
     @Test
     public void shouldGetMosaics() throws Exception {
-        resolveNetworkType();
         MosaicId mosaicId = MapperUtils.toMosaicId("481110499AAA");
 
         MosaicDTO mosaicDto = new MosaicDTO();
@@ -115,7 +85,6 @@ public class MosaicRepositoryOkHttpImplTest extends AbstractOkHttpRespositoryTes
     @Test
     public void shouldGetMosaic() throws Exception {
 
-        resolveNetworkType();
         MosaicId mosaicId = MapperUtils.toMosaicId("481110499AAA");
 
         MosaicDTO mosiacMetaDto = new MosaicDTO();
@@ -138,6 +107,84 @@ public class MosaicRepositoryOkHttpImplTest extends AbstractOkHttpRespositoryTes
             .getMosaic(mosaicId)
             .toFuture().get();
 
+        Assertions.assertEquals(mosaicId, mosaicInfo.getMosaicId());
+        Assertions.assertEquals(mosaicDto.getRevision(), mosaicInfo.getRevision());
+        Assertions
+            .assertEquals(mosaicDto.getOwnerPublicKey(),
+                mosaicInfo.getOwner().getPublicKey().toHex());
+
+        Assertions.assertFalse(mosaicInfo.isTransferable());
+        Assertions.assertEquals(6, mosaicInfo.getDivisibility());
+        Assertions.assertEquals(BigInteger.valueOf(7), mosaicInfo.getDuration());
+    }
+
+    @Test
+    public void shouldGetMosaicsFromAccount() throws Exception {
+
+        Address address = MapperUtils
+            .toAddressFromRawAddress("SBCPGZ3S2SCC3YHBBTYDCUZV4ZZEPHM2KGCP4QXX");
+
+        MosaicId mosaicId = MapperUtils.toMosaicId("481110499AAA");
+
+        MosaicDTO mosaicDto = new MosaicDTO();
+
+        mosaicDto
+            .setOwnerPublicKey("B630EFDDFADCC4A2077AB8F1EC846B08FEE2D2972EACF95BBAC6BFAC3D31834C");
+        mosaicDto.setId("481110499AAA");
+        mosaicDto.setRevision(123);
+
+        mosaicDto.setFlags(5);
+        mosaicDto.setDivisibility(6);
+        mosaicDto.setDuration(BigInteger.valueOf(7));
+
+        mockRemoteCall(new MosaicsInfoDTO().mosaics(Collections.singletonList(mosaicDto)));
+
+        List<MosaicInfo> resolvedList = repository
+            .getMosaicsFromAccount(address)
+            .toFuture().get();
+
+        Assertions.assertEquals(1, resolvedList.size());
+
+        MosaicInfo mosaicInfo = resolvedList.get(0);
+        Assertions.assertEquals(mosaicId, mosaicInfo.getMosaicId());
+        Assertions.assertEquals(mosaicDto.getRevision(), mosaicInfo.getRevision());
+        Assertions
+            .assertEquals(mosaicDto.getOwnerPublicKey(),
+                mosaicInfo.getOwner().getPublicKey().toHex());
+
+        Assertions.assertFalse(mosaicInfo.isTransferable());
+        Assertions.assertEquals(6, mosaicInfo.getDivisibility());
+        Assertions.assertEquals(BigInteger.valueOf(7), mosaicInfo.getDuration());
+    }
+
+    @Test
+    public void shouldGetMosaicsFromAccounts() throws Exception {
+
+        Address address = MapperUtils
+            .toAddressFromRawAddress("SBCPGZ3S2SCC3YHBBTYDCUZV4ZZEPHM2KGCP4QXX");
+
+        MosaicId mosaicId = MapperUtils.toMosaicId("481110499AAA");
+
+        MosaicDTO mosaicDto = new MosaicDTO();
+
+        mosaicDto
+            .setOwnerPublicKey("B630EFDDFADCC4A2077AB8F1EC846B08FEE2D2972EACF95BBAC6BFAC3D31834C");
+        mosaicDto.setId("481110499AAA");
+        mosaicDto.setRevision(123);
+
+        mosaicDto.setFlags(5);
+        mosaicDto.setDivisibility(6);
+        mosaicDto.setDuration(BigInteger.valueOf(7));
+
+        mockRemoteCall(new MosaicsInfoDTO().mosaics(Collections.singletonList(mosaicDto)));
+
+        List<MosaicInfo> resolvedList = repository
+            .getMosaicsFromAccounts(Collections.singletonList(address))
+            .toFuture().get();
+
+        Assertions.assertEquals(1, resolvedList.size());
+
+        MosaicInfo mosaicInfo = resolvedList.get(0);
         Assertions.assertEquals(mosaicId, mosaicInfo.getMosaicId());
         Assertions.assertEquals(mosaicDto.getRevision(), mosaicInfo.getRevision());
         Assertions

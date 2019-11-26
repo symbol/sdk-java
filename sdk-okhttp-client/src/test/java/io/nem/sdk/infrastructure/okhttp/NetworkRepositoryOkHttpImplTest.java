@@ -16,7 +16,10 @@
 
 package io.nem.sdk.infrastructure.okhttp;
 
+import io.nem.sdk.model.blockchain.NetworkInfo;
 import io.nem.sdk.model.blockchain.NetworkType;
+import io.nem.sdk.openapi.okhttp_gson.model.NetworkTypeDTO;
+import io.nem.sdk.openapi.okhttp_gson.model.NodeInfoDTO;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -39,13 +42,34 @@ public class NetworkRepositoryOkHttpImplTest extends AbstractOkHttpRespositoryTe
     @Test
     public void shouldGetNetworkType() throws Exception {
 
-        resolveNetworkType();
+        NodeInfoDTO dto = new NodeInfoDTO();
+        dto.setNetworkIdentifier(NetworkType.MIJIN_TEST.getValue());
+
+        mockRemoteCall(dto);
 
         NetworkType info = repository.getNetworkType().toFuture().get();
 
         Assertions.assertNotNull(info);
 
         Assertions.assertEquals(NetworkType.MIJIN_TEST, info);
+
+    }
+
+    @Test
+    public void shouldGetNetworkInfo() throws Exception {
+
+        NetworkTypeDTO networkTypeDTO = new NetworkTypeDTO();
+        networkTypeDTO.setName("mijinTest");
+        networkTypeDTO.setDescription("some description");
+
+        mockRemoteCall(networkTypeDTO);
+
+        NetworkInfo info = repository.getNetworkInfo().toFuture().get();
+
+        Assertions.assertNotNull(info);
+
+        Assertions.assertEquals("mijinTest", info.getName());
+        Assertions.assertEquals("some description", info.getDescription());
 
     }
 
