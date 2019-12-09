@@ -43,13 +43,13 @@ public class CreatingAnEscrowContractWithAggregateBondedTransactionIntegrationTe
 
     @Test
     @Disabled
-    void executeTransfer() {
+    void executeTransfer() throws InterruptedException {
 
         Account ticketDistributorAccount = this.config().getTestAccount();
         Account aliceAccount = this.config().getTestAccount2();
         RepositoryType type = DEFAULT_REPOSITORY_TYPE;
 
-        MosaicId mosaicId = createMosaic(ticketDistributorAccount, type);
+        MosaicId mosaicId = createMosaic(ticketDistributorAccount, type, BigInteger.ZERO, null);
 
         TransferTransaction aliceToTicketDistributorTx = TransferTransactionFactory.create(
             getNetworkType(),

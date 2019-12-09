@@ -20,6 +20,7 @@ import io.nem.sdk.model.transaction.AggregateTransaction;
 import io.nem.sdk.model.transaction.SignedTransaction;
 import io.nem.sdk.model.transaction.Transaction;
 import io.reactivex.Observable;
+import java.util.List;
 
 /**
  * Utility service that simplifies how transactions are announced and validated.
@@ -94,4 +95,29 @@ public interface TransactionService {
     Observable<AggregateTransaction> announceHashLockAggregateBonded(
         Listener listener, SignedTransaction signedHashLockTransaction,
         SignedTransaction signedAggregateTransaction);
+
+    /**
+     * This method loads all transactions with the given hashes from the catapult server where all
+     * the aliases have been resolved.
+     *
+     * For example, if a {@link io.nem.sdk.model.transaction.TransferTransaction}'s recipient was
+     * 'customerone' {@link io.nem.sdk.model.namespace.NamespaceId}, this method will return the
+     * same {@link io.nem.sdk.model.transaction.TransferTransaction} where the recipient is the real
+     * {@link io.nem.sdk.model.account.Address}.
+     *
+     * Similarly, if {@link io.nem.sdk.model.transaction.MosaicMetadataTransaction} was announced
+     * using the {@link io.nem.sdk.model.namespace.NamespaceId} alias of the mosaic, the returned
+     * {@link io.nem.sdk.model.transaction.MosaicMetadataTransaction} will reference the real {@link
+     * io.nem.sdk.model.mosaic.MosaicId}.
+     *
+     * All the {@link io.nem.sdk.model.mosaic.UnresolvedMosaicId} and {@link
+     * io.nem.sdk.model.account.UnresolvedAddress} in the returned transaction should be instances
+     * of {@link io.nem.sdk.model.mosaic.MosaicId} and {@link io.nem.sdk.model.account.Address}
+     *
+     * @param transactionHashes the transaction hashes of all the transaction that you want to load
+     * and resolve.
+     * @return an {@link Observable} list of {@link Transaction} where all the aliases have been
+     * resolved.
+     */
+    Observable<List<Transaction>> resolveAliases(List<String> transactionHashes);
 }

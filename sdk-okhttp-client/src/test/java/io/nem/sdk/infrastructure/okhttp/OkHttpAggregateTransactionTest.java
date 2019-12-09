@@ -71,7 +71,7 @@ public class OkHttpAggregateTransactionTest {
                             NetworkType.MIJIN_TEST)))).build();
 
         assertEquals(NetworkType.MIJIN_TEST, aggregateTx.getNetworkType());
-        assertTrue(1 == aggregateTx.getVersion());
+        assertEquals(1, (int) aggregateTx.getVersion());
         assertTrue(LocalDateTime.now().isBefore(aggregateTx.getDeadline().getLocalDateTime()));
         assertEquals(BigInteger.valueOf(0), aggregateTx.getMaxFee());
         assertEquals(1, aggregateTx.getInnerTransactions().size());
