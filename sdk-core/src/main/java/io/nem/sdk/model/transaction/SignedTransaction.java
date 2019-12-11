@@ -16,6 +16,8 @@
 
 package io.nem.sdk.model.transaction;
 
+import io.nem.sdk.model.account.PublicAccount;
+
 /**
  * The signed transaction object is used to transfer the transaction data and the signature to NIS
  * in order to initiate and broadcast a transaction.
@@ -24,14 +26,34 @@ package io.nem.sdk.model.transaction;
  */
 public class SignedTransaction {
 
+    private final PublicAccount signer;
     private final String payload;
     private final String hash;
     private final TransactionType type;
 
-    public SignedTransaction(String payload, String hash, TransactionType type) {
+    /**
+     * The SignedTransaction constructor.
+     *
+     * @param signer the signer of the transaction.
+     * @param payload the payload.
+     * @param hash the hash of the transaction.
+     * @param type the transaction type.
+     */
+    public SignedTransaction(PublicAccount signer, String payload, String hash,
+        TransactionType type) {
+        this.signer = signer;
         this.payload = payload;
         this.hash = hash;
         this.type = type;
+    }
+
+    /**
+     * Returns the signer of this transaction.
+     *
+     * @return the signer of this transaction.
+     */
+    public PublicAccount getSigner() {
+        return signer;
     }
 
     /**

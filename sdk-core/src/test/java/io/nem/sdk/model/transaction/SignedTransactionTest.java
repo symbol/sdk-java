@@ -18,17 +18,22 @@ package io.nem.sdk.model.transaction;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import io.nem.sdk.model.account.Account;
+import io.nem.sdk.model.blockchain.NetworkType;
 import org.junit.jupiter.api.Test;
 
 public class SignedTransactionTest {
 
     @Test
     void createASignedTransactionViaConstructor() {
+        Account signer = Account.generateNewAccount(NetworkType.MIJIN_TEST);
         SignedTransaction signedTransaction =
-            new SignedTransaction("payload", "hash", TransactionType.TRANSFER);
+            new SignedTransaction(signer.getPublicAccount(), "payload", "hash",
+                TransactionType.TRANSFER);
 
         assertEquals("payload", signedTransaction.getPayload());
         assertEquals("hash", signedTransaction.getHash());
         assertEquals(TransactionType.TRANSFER, signedTransaction.getType());
+        assertEquals(signer.getPublicAccount(), signedTransaction.getSigner());
     }
 }

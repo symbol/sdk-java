@@ -40,7 +40,7 @@ public abstract class Transaction {
     /**
      * The BinarySerialization object.
      */
-    private static final BinarySerialization BINARY_SERIALIZATION = new BinarySerializationImpl();
+    private static final BinarySerialization BINARY_SERIALIZATION = BinarySerializationImpl.INSTANCE;
 
     private final TransactionType type;
     private final NetworkType networkType;
@@ -223,7 +223,8 @@ public abstract class Transaction {
         System.arraycopy(bytes, 104, payload, 104, bytes.length - 104);
 
         final String hash = createTransactionHash(Hex.toHexString(payload), generationHashBytes);
-        return new SignedTransaction(Hex.toHexString(payload).toUpperCase(), hash, type);
+        return new SignedTransaction(account.getPublicAccount(),
+            Hex.toHexString(payload).toUpperCase(), hash, type);
     }
 
     /**

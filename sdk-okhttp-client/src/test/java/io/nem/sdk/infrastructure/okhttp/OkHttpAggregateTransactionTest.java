@@ -64,14 +64,14 @@ public class OkHttpAggregateTransactionTest {
 
         AggregateTransaction aggregateTx =
             AggregateTransactionFactory.createComplete(NetworkType.MIJIN_TEST,
-                Arrays.asList(
+                Collections.singletonList(
                     transferTx.toAggregate(
                         new PublicAccount(
                             "9A49366406ACA952B88BADF5F1E9BE6CE4968141035A60BE503273EA65456B24",
                             NetworkType.MIJIN_TEST)))).build();
 
         assertEquals(NetworkType.MIJIN_TEST, aggregateTx.getNetworkType());
-        assertTrue(1 == aggregateTx.getVersion());
+        assertEquals(1, (int) aggregateTx.getVersion());
         assertTrue(LocalDateTime.now().isBefore(aggregateTx.getDeadline().getLocalDateTime()));
         assertEquals(BigInteger.valueOf(0), aggregateTx.getMaxFee());
         assertEquals(1, aggregateTx.getInnerTransactions().size());
@@ -140,7 +140,7 @@ public class OkHttpAggregateTransactionTest {
                 aggregateTx, Collections.singletonList(cosignatoryAccount2), generationHash);
 
         assertEquals("6801000000000000", signedTransaction.getPayload().substring(0, 16));
-        assertEquals("1a000000d6a52a97", signedTransaction.getPayload().substring(248, 264));
+        assertEquals("00000000d6a52a97", signedTransaction.getPayload().substring(248, 264));
 
     }
 

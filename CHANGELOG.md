@@ -3,6 +3,15 @@ All notable changes to this project will be documented in this file.
 
 The changelog format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [0.16.0] - 11-Dev-2019
+
+**Milestone**: Fuschicho 3
+
+- Added TransactionService. A service with many utility methods that simplifies how transactions are announced, validated and resolved.
+- Added AggregateTransactionService. A service that allows clients to validate if an Aggregate Transactions is completed with all the necessary signatures.
+- Fixed BalanceTransferReceipt serialization
+- Added epochAdjustment introduced in catapult-server v0.9.1.1 (Fushicho.3)
+
 ## [0.15.0] - 25-Nov-2019
 
 **Milestone**: Fuschicho 2
