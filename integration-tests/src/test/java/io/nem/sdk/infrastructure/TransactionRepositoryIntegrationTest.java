@@ -19,7 +19,6 @@ package io.nem.sdk.infrastructure;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import io.nem.sdk.api.AccountRepository;
-import io.nem.sdk.api.QueryParams;
 import io.nem.sdk.api.RepositoryCallException;
 import io.nem.sdk.api.TransactionRepository;
 import io.nem.sdk.model.account.PublicAccount;
@@ -49,7 +48,7 @@ public class TransactionRepositoryIntegrationTest extends BaseIntegrationTest {
             .createAccountRepository();
         PublicAccount account = config().getDefaultAccount().getPublicAccount();
         List<Transaction> transactions = get(
-            accountRepository.transactions(account, new QueryParams(100, null)))
+            accountRepository.transactions(account))
             .stream().filter(t -> t.getType() == TransactionType.TRANSFER).collect(
                 Collectors.toList());
         Assertions.assertTrue(transactions.size() > 0);
@@ -88,7 +87,7 @@ public class TransactionRepositoryIntegrationTest extends BaseIntegrationTest {
             get(getTransactionRepository(type).getTransactionStatus(transactionHash));
 
         System.out.println(transactionHash);
-        System.out.println(transactionStatus.getStatus());
+        System.out.println(transactionStatus.getCode());
         assertEquals(transactionHash, transactionStatus.getHash());
     }
 

@@ -32,7 +32,9 @@ import io.nem.sdk.model.transaction.TransferTransaction;
 import io.nem.sdk.model.transaction.TransferTransactionFactory;
 import io.nem.sdk.openapi.okhttp_gson.model.AnnounceTransactionInfoDTO;
 import io.nem.sdk.openapi.okhttp_gson.model.TransactionInfoDTO;
+import io.nem.sdk.openapi.okhttp_gson.model.TransactionStateTypeEnum;
 import io.nem.sdk.openapi.okhttp_gson.model.TransactionStatusDTO;
+import io.nem.sdk.openapi.okhttp_gson.model.TransactionStatusTypeEnum;
 import java.math.BigInteger;
 import java.util.Collections;
 import org.junit.jupiter.api.Assertions;
@@ -94,10 +96,11 @@ public class TransactionRepositoryOkHttpImplTest extends AbstractOkHttpResposito
     public void shouldGetTransactionStatus() throws Exception {
 
         TransactionStatusDTO transactionStatusDTO = new TransactionStatusDTO();
-        transactionStatusDTO.setGroup("someGorup");
-        transactionStatusDTO.setDeadline(BigInteger.valueOf(5L));
-        transactionStatusDTO.setHeight(BigInteger.valueOf(6L));
-        transactionStatusDTO.setStatus("SomeStatus");
+        transactionStatusDTO.setGroup(TransactionStateTypeEnum.FAILED);
+        transactionStatusDTO.setDeadline(BigInteger.valueOf(5));
+        transactionStatusDTO.setHeight(BigInteger.valueOf(6));
+        transactionStatusDTO
+            .setCode(TransactionStatusTypeEnum.FAILURE_ACCOUNTLINK_LINK_ALREADY_EXISTS);
         transactionStatusDTO.setHash("someHash");
         mockRemoteCall(transactionStatusDTO);
 
@@ -109,17 +112,19 @@ public class TransactionRepositoryOkHttpImplTest extends AbstractOkHttpResposito
         Assertions.assertEquals(transactionStatusDTO.getHash(), transaction.getHash());
         Assertions.assertEquals(5L, transaction.getDeadline().getInstant());
         Assertions.assertEquals(BigInteger.valueOf(6L), transaction.getHeight());
-        Assertions.assertEquals(transactionStatusDTO.getStatus(), transactionStatusDTO.getStatus());
+        Assertions.assertEquals("Failure_AccountLink_Link_Already_Exists", transaction.getCode());
+        Assertions.assertEquals(transaction.getGroup().getValue(), transactionStatusDTO.getGroup().getValue());
     }
 
     @Test
     public void shouldGetTransactionStatuses() throws Exception {
 
         TransactionStatusDTO transactionStatusDTO = new TransactionStatusDTO();
-        transactionStatusDTO.setGroup("someGorup");
-        transactionStatusDTO.setDeadline(BigInteger.valueOf(5L));
-        transactionStatusDTO.setHeight(BigInteger.valueOf(6L));
-        transactionStatusDTO.setStatus("SomeStatus");
+        transactionStatusDTO.setGroup(TransactionStateTypeEnum.FAILED);
+        transactionStatusDTO.setDeadline(BigInteger.valueOf(5));
+        transactionStatusDTO.setHeight(BigInteger.valueOf(6));
+        transactionStatusDTO
+            .setCode(TransactionStatusTypeEnum.FAILURE_ACCOUNTLINK_LINK_ALREADY_EXISTS);
         transactionStatusDTO.setHash("someHash");
         mockRemoteCall(Collections.singletonList(transactionStatusDTO));
 
@@ -132,7 +137,8 @@ public class TransactionRepositoryOkHttpImplTest extends AbstractOkHttpResposito
         Assertions.assertEquals(transactionStatusDTO.getHash(), transaction.getHash());
         Assertions.assertEquals(5L, transaction.getDeadline().getInstant());
         Assertions.assertEquals(BigInteger.valueOf(6L), transaction.getHeight());
-        Assertions.assertEquals(transactionStatusDTO.getStatus(), transactionStatusDTO.getStatus());
+        Assertions.assertEquals("Failure_AccountLink_Link_Already_Exists", transaction.getCode());
+        Assertions.assertEquals(transaction.getGroup().getValue(), transactionStatusDTO.getGroup().getValue());
     }
 
 

@@ -1,20 +1,20 @@
 /*
  * Copyright 2019 NEM
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
+ * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
 
-package io.nem.sdk.infrastructure.vertx;
+package io.nem.sdk.infrastructure.okhttp;
 
 import io.nem.catapult.builders.AliasActionDto;
 import io.nem.catapult.builders.LockHashAlgorithmDto;
@@ -34,19 +34,19 @@ import io.nem.sdk.model.transaction.LockHashAlgorithmType;
 import io.nem.sdk.model.transaction.MosaicRestrictionType;
 import io.nem.sdk.model.transaction.TransactionState;
 import io.nem.sdk.model.transaction.TransactionType;
-import io.nem.sdk.openapi.vertx.model.AccountLinkActionEnum;
-import io.nem.sdk.openapi.vertx.model.AccountRestrictionFlagsEnum;
-import io.nem.sdk.openapi.vertx.model.AccountTypeEnum;
-import io.nem.sdk.openapi.vertx.model.AliasActionEnum;
-import io.nem.sdk.openapi.vertx.model.LockHashAlgorithmEnum;
-import io.nem.sdk.openapi.vertx.model.MessageTypeEnum;
-import io.nem.sdk.openapi.vertx.model.MosaicRestrictionEntryTypeEnum;
-import io.nem.sdk.openapi.vertx.model.MosaicRestrictionTypeEnum;
-import io.nem.sdk.openapi.vertx.model.MosaicSupplyChangeActionEnum;
-import io.nem.sdk.openapi.vertx.model.NamespaceRegistrationTypeEnum;
-import io.nem.sdk.openapi.vertx.model.ReceiptTypeEnum;
-import io.nem.sdk.openapi.vertx.model.TransactionStateTypeEnum;
-import io.nem.sdk.openapi.vertx.model.TransactionTypeEnum;
+import io.nem.sdk.openapi.okhttp_gson.model.AccountLinkActionEnum;
+import io.nem.sdk.openapi.okhttp_gson.model.AccountRestrictionFlagsEnum;
+import io.nem.sdk.openapi.okhttp_gson.model.AccountTypeEnum;
+import io.nem.sdk.openapi.okhttp_gson.model.AliasActionEnum;
+import io.nem.sdk.openapi.okhttp_gson.model.LockHashAlgorithmEnum;
+import io.nem.sdk.openapi.okhttp_gson.model.MessageTypeEnum;
+import io.nem.sdk.openapi.okhttp_gson.model.MosaicRestrictionEntryTypeEnum;
+import io.nem.sdk.openapi.okhttp_gson.model.MosaicRestrictionTypeEnum;
+import io.nem.sdk.openapi.okhttp_gson.model.MosaicSupplyChangeActionEnum;
+import io.nem.sdk.openapi.okhttp_gson.model.NamespaceRegistrationTypeEnum;
+import io.nem.sdk.openapi.okhttp_gson.model.ReceiptTypeEnum;
+import io.nem.sdk.openapi.okhttp_gson.model.TransactionStateTypeEnum;
+import io.nem.sdk.openapi.okhttp_gson.model.TransactionTypeEnum;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;

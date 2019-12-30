@@ -21,8 +21,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import io.nem.sdk.api.AccountRepository;
-import io.nem.sdk.api.QueryParams;
 import io.nem.sdk.api.RepositoryCallException;
+import io.nem.sdk.api.TransactionSearchCriteria;
 import io.nem.sdk.model.account.Account;
 import io.nem.sdk.model.account.AccountInfo;
 import io.nem.sdk.model.account.AccountNames;
@@ -104,9 +104,6 @@ class AccountRepositoryIntegrationTest extends BaseIntegrationTest {
     }
 
 
-
-
-
     @ParameterizedTest
     @EnumSource(RepositoryType.class)
     void transactionsWithPagination(RepositoryType type) {
@@ -121,8 +118,8 @@ class AccountRepositoryIntegrationTest extends BaseIntegrationTest {
             get(this.getAccountRepository(type)
                 .transactions(
                     account.getPublicAccount(),
-                    new QueryParams(transactions.size() - 1,
-                        transactions.get(0).getTransactionInfo().get().getId().get())));
+                    new TransactionSearchCriteria()
+                        .id(transactions.get(0).getTransactionInfo().get().getId().get())));
 
         System.out.println(nextTransactions.size());
         assertEquals(
@@ -137,7 +134,8 @@ class AccountRepositoryIntegrationTest extends BaseIntegrationTest {
         //Testing that many transaction can be at at least parsed.
         List<Transaction> transactions =
             get(this.getAccountRepository(type)
-                .transactions(this.getTestPublicAccount(), new QueryParams(100, null)));
+                .transactions(this.getTestPublicAccount(),
+                    new TransactionSearchCriteria().pageSize(100)));
         assertTrue(transactions.size() <= 100);
 
         transactions.forEach(transaction -> assertTransaction(transaction, false));

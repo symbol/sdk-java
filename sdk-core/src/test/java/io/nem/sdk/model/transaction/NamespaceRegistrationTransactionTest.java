@@ -58,7 +58,7 @@ class NamespaceRegistrationTransactionTest extends AbstractTransactionTester {
             signedTransaction.getPayload().substring(248)
         );
         assertEquals(networkType, namespaceRegistrationTransaction.getNetworkType());
-        assertTrue(1 == namespaceRegistrationTransaction.getVersion());
+        assertEquals(1, (int) namespaceRegistrationTransaction.getVersion());
         assertTrue(
             LocalDateTime.now()
                 .isBefore(namespaceRegistrationTransaction.getDeadline().getLocalDateTime()));
@@ -89,7 +89,7 @@ class NamespaceRegistrationTransactionTest extends AbstractTransactionTester {
             "000000004DF55E7F6D8FB7FF924207DF2CA1BBF30113726F6F742D746573742D6E616D657370616365",
             signedTransaction.getPayload().substring(248));
         assertEquals(networkType, namespaceRegistrationTransaction.getNetworkType());
-        assertTrue(1 == namespaceRegistrationTransaction.getVersion());
+        assertEquals(1, (int) namespaceRegistrationTransaction.getVersion());
         assertTrue(
             LocalDateTime.now()
                 .isBefore(namespaceRegistrationTransaction.getDeadline().getLocalDateTime()));
@@ -119,7 +119,7 @@ class NamespaceRegistrationTransactionTest extends AbstractTransactionTester {
             "000000004DF55E7F6D8FB7FF924207DF2CA1BBF30113726F6F742D746573742D6E616D657370616365",
             signedTransaction.getPayload().substring(248));
         assertEquals(networkType, namespaceRegistrationTransaction.getNetworkType());
-        assertTrue(1 == namespaceRegistrationTransaction.getVersion());
+        assertEquals(1, (int) namespaceRegistrationTransaction.getVersion());
         assertTrue(
             LocalDateTime.now()
                 .isBefore(namespaceRegistrationTransaction.getDeadline().getLocalDateTime()));

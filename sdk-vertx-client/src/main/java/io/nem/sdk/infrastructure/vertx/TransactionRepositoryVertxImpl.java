@@ -24,6 +24,7 @@ import io.nem.sdk.model.transaction.Deadline;
 import io.nem.sdk.model.transaction.SignedTransaction;
 import io.nem.sdk.model.transaction.Transaction;
 import io.nem.sdk.model.transaction.TransactionAnnounceResponse;
+import io.nem.sdk.model.transaction.TransactionState;
 import io.nem.sdk.model.transaction.TransactionStatus;
 import io.nem.sdk.openapi.vertx.api.TransactionRoutesApi;
 import io.nem.sdk.openapi.vertx.api.TransactionRoutesApiImpl;
@@ -95,8 +96,9 @@ public class TransactionRepositoryVertxImpl extends AbstractRepositoryVertxImpl 
 
     private TransactionStatus toTransactionStatus(TransactionStatusDTO transactionStatusDTO) {
         return new TransactionStatus(
-            transactionStatusDTO.getGroup(),
-            transactionStatusDTO.getStatus(),
+            TransactionState.valueOf(transactionStatusDTO.getGroup().name()),
+            transactionStatusDTO.getCode() == null ? null
+                : transactionStatusDTO.getCode().getValue(),
             transactionStatusDTO.getHash(),
             new Deadline(transactionStatusDTO.getDeadline()),
             transactionStatusDTO.getHeight());
