@@ -124,7 +124,7 @@ public class OkHttpAggregateTransactionTest {
                         new PublicAccount(
                             "B694186EE4AB0558CA4AFCFDD43B42114AE71094F5A1FC4A913FE9971CACD21D",
                             NetworkType.MIJIN_TEST)))
-            ).build();
+            ).deadline(new OkHttpFakeDeadline()).build();
 
         Account cosignatoryAccount =
             new Account(
