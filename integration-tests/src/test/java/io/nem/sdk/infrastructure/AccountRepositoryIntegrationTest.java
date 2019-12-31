@@ -30,6 +30,7 @@ import io.nem.sdk.model.account.AccountType;
 import io.nem.sdk.model.account.Address;
 import io.nem.sdk.model.transaction.AggregateTransaction;
 import io.nem.sdk.model.transaction.Transaction;
+import io.nem.sdk.model.transaction.TransactionType;
 import java.util.Collections;
 import java.util.List;
 import org.junit.jupiter.api.Assertions;
@@ -101,6 +102,98 @@ class AccountRepositoryIntegrationTest extends BaseIntegrationTest {
         Assertions.assertEquals(
             "ApiException: Not Found - 404 - ResourceNotFound - no resource exists with id 'SCGEGBEHICF5PPOGIP2JSCQ5OYGZXOOJF7KUSUQJ'",
             exception.getMessage());
+    }
+
+    @ParameterizedTest
+    @EnumSource(RepositoryType.class)
+    void getTransferTransactions(RepositoryType type) {
+        AccountRepository accountHttp = getRepositoryFactory(type).createAccountRepository();
+        Account account = config().getDefaultAccount();
+        TransactionType transactionType = TransactionType.TRANSFER;
+        List<Transaction> transactions = get(accountHttp.transactions(account.getPublicAccount(),
+            new TransactionSearchCriteria().transactionType(
+                transactionType)));
+        System.out.println(transactions.size());
+        Assertions.assertFalse(transactions.isEmpty());
+
+        transactions.forEach(t -> Assertions.assertEquals(transactionType, t.getType()));
+    }
+
+    @ParameterizedTest
+    @EnumSource(RepositoryType.class)
+    void getTransactionById(RepositoryType type) {
+        AccountRepository accountHttp = getRepositoryFactory(type).createAccountRepository();
+        Account account = config().getDefaultAccount();
+        List<Transaction> transactions = get(accountHttp.transactions(account.getPublicAccount(),
+            new TransactionSearchCriteria().pageSize(10)));
+        Assertions.assertFalse(transactions.isEmpty());
+
+        String id = transactions.get(0).getTransactionInfo().get().getId().get();
+        List<Transaction> transactions2 = get(accountHttp.transactions(account.getPublicAccount(),
+            new TransactionSearchCriteria()
+                .id(id)));
+
+        Assertions.assertEquals(1, transactions2.size());
+        transactions2
+            .forEach(t -> Assertions.assertEquals(id, t.getTransactionInfo().get().getId().get()));
+    }
+
+    @ParameterizedTest
+    @EnumSource(RepositoryType.class)
+    void outgoingTransactionsById(RepositoryType type) {
+        AccountRepository accountHttp = getRepositoryFactory(type).createAccountRepository();
+        Account account = config().getDefaultAccount();
+        List<Transaction> transactions = get(
+            accountHttp.outgoingTransactions(account.getPublicAccount(),
+                new TransactionSearchCriteria().pageSize(10)));
+        Assertions.assertFalse(transactions.isEmpty());
+
+        String id = transactions.get(0).getTransactionInfo().get().getId().get();
+        List<Transaction> transactions2 = get(
+            accountHttp.outgoingTransactions(account.getPublicAccount(),
+                new TransactionSearchCriteria()
+                    .id(id)));
+
+        Assertions.assertEquals(1, transactions2.size());
+        transactions2
+            .forEach(t -> Assertions.assertEquals(id, t.getTransactionInfo().get().getId().get()));
+    }
+
+    @ParameterizedTest
+    @EnumSource(RepositoryType.class)
+    void incomingTransactionsById(RepositoryType type) {
+        AccountRepository accountHttp = getRepositoryFactory(type).createAccountRepository();
+        Account account = config().getDefaultAccount();
+        List<Transaction> transactions = get(
+            accountHttp.incomingTransactions(account.getPublicAccount(),
+                new TransactionSearchCriteria().pageSize(10)));
+        Assertions.assertFalse(transactions.isEmpty());
+
+        String id = transactions.get(0).getTransactionInfo().get().getId().get();
+        List<Transaction> transactions2 = get(
+            accountHttp.incomingTransactions(account.getPublicAccount(),
+                new TransactionSearchCriteria()
+                    .id(id)));
+
+        Assertions.assertEquals(1, transactions2.size());
+        transactions2
+            .forEach(t -> Assertions.assertEquals(id, t.getTransactionInfo().get().getId().get()));
+    }
+
+
+    @ParameterizedTest
+    @EnumSource(RepositoryType.class)
+    void getMosaicGlobalRegistration(RepositoryType type) {
+        AccountRepository accountHttp = getRepositoryFactory(type).createAccountRepository();
+        Account account = config().getDefaultAccount();
+        TransactionType transactionType = TransactionType.MOSAIC_GLOBAL_RESTRICTION;
+        List<Transaction> transactions = get(accountHttp.transactions(account.getPublicAccount(),
+            new TransactionSearchCriteria().transactionType(
+                transactionType)));
+        System.out.println(transactions.size());
+        Assertions.assertFalse(transactions.isEmpty());
+
+        transactions.forEach(t -> Assertions.assertEquals(transactionType, t.getType()));
     }
 
 

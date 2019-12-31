@@ -30,6 +30,7 @@ import io.nem.sdk.model.account.PublicAccount;
 import io.nem.sdk.model.mosaic.Mosaic;
 import io.nem.sdk.model.transaction.AggregateTransaction;
 import io.nem.sdk.model.transaction.Transaction;
+import io.nem.sdk.model.transaction.TransactionType;
 import io.nem.sdk.openapi.okhttp_gson.api.AccountRoutesApi;
 import io.nem.sdk.openapi.okhttp_gson.invoker.ApiClient;
 import io.nem.sdk.openapi.okhttp_gson.model.AccountDTO;
@@ -95,7 +96,7 @@ public class AccountRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl im
         Callable<List<TransactionInfoDTO>> callback = () ->
             getClient().getAccountConfirmedTransactions(publicAccount.getPublicKey().toHex(),
                 criteria.getPageSize(), criteria.getId(), criteria.getOrder(),
-                TransactionTypeEnum.fromValue(criteria.getTransactionType().getValue()));
+                toTransactionType(criteria.getTransactionType()));
 
         return exceptionHandling(
             call(callback).flatMapIterable(item -> item).map(this::toTransaction).toList()
@@ -114,7 +115,7 @@ public class AccountRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl im
         Callable<List<TransactionInfoDTO>> callback = () ->
             getClient().getAccountIncomingTransactions(publicAccount.getPublicKey().toHex(),
                 criteria.getPageSize(), criteria.getId(), criteria.getOrder(),
-                TransactionTypeEnum.fromValue(criteria.getTransactionType().getValue()));
+                toTransactionType(criteria.getTransactionType()));
 
         return exceptionHandling(
             call(callback).flatMapIterable(item -> item).map(this::toTransaction).toList()
@@ -133,7 +134,7 @@ public class AccountRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl im
         Callable<List<TransactionInfoDTO>> callback = () ->
             getClient().getAccountOutgoingTransactions(publicAccount.getPublicKey().toHex(),
                 criteria.getPageSize(), criteria.getId(), criteria.getOrder(),
-                TransactionTypeEnum.fromValue(criteria.getTransactionType().getValue()));
+                toTransactionType(criteria.getTransactionType()));
 
         return exceptionHandling(
             call(callback).flatMapIterable(item -> item).map(this::toTransaction).toList()
@@ -158,7 +159,7 @@ public class AccountRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl im
         Callable<List<TransactionInfoDTO>> callback = () ->
             getClient().getAccountPartialTransactions(publicAccount.getPublicKey().toHex(),
                 criteria.getPageSize(), criteria.getId(), criteria.getOrder(),
-                TransactionTypeEnum.fromValue(criteria.getTransactionType().getValue()));
+                toTransactionType(criteria.getTransactionType()));
 
         return exceptionHandling(
             call(callback).flatMapIterable(item -> item).map(this::toTransaction)
@@ -177,7 +178,7 @@ public class AccountRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl im
         Callable<List<TransactionInfoDTO>> callback = () ->
             getClient().getAccountUnconfirmedTransactions(publicAccount.getPublicKey().toHex(),
                 criteria.getPageSize(), criteria.getId(), criteria.getOrder(),
-                TransactionTypeEnum.fromValue(criteria.getTransactionType().getValue()));
+                toTransactionType(criteria.getTransactionType()));
         return exceptionHandling(
             call(callback).flatMapIterable(item -> item).map(this::toTransaction).toList()
                 .toObservable());
@@ -201,5 +202,10 @@ public class AccountRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl im
 
     private AccountRoutesApi getClient() {
         return client;
+    }
+
+    private TransactionTypeEnum toTransactionType(TransactionType transactionType) {
+        return transactionType == null ? null
+            : TransactionTypeEnum.fromValue(transactionType.getValue());
     }
 }

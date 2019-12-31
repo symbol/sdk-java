@@ -30,6 +30,7 @@ import io.nem.sdk.model.account.PublicAccount;
 import io.nem.sdk.model.mosaic.Mosaic;
 import io.nem.sdk.model.transaction.AggregateTransaction;
 import io.nem.sdk.model.transaction.Transaction;
+import io.nem.sdk.model.transaction.TransactionType;
 import io.nem.sdk.openapi.vertx.api.AccountRoutesApi;
 import io.nem.sdk.openapi.vertx.api.AccountRoutesApiImpl;
 import io.nem.sdk.openapi.vertx.invoker.ApiClient;
@@ -98,7 +99,7 @@ public class AccountRepositoryVertxImpl extends AbstractRepositoryVertxImpl impl
         Consumer<Handler<AsyncResult<List<TransactionInfoDTO>>>> callback = handler ->
             client.getAccountConfirmedTransactions(publicAccount.getPublicKey().toHex(),
                 criteria.getPageSize(), criteria.getId(), criteria.getOrder(),
-                TransactionTypeEnum.fromValue(criteria.getTransactionType().getValue()), handler);
+                toTransactionType(criteria.getTransactionType()), handler);
 
         return exceptionHandling(
             call(callback).flatMapIterable(item -> item).map(this::toTransaction).toList()
@@ -117,7 +118,7 @@ public class AccountRepositoryVertxImpl extends AbstractRepositoryVertxImpl impl
         Consumer<Handler<AsyncResult<List<TransactionInfoDTO>>>> callback = handler ->
             client.getAccountIncomingTransactions(publicAccount.getPublicKey().toHex(),
                 criteria.getPageSize(), criteria.getId(), criteria.getOrder(),
-                TransactionTypeEnum.fromValue(criteria.getTransactionType().getValue()), handler);
+                toTransactionType(criteria.getTransactionType()), handler);
 
         return exceptionHandling(
             call(callback).flatMapIterable(item -> item).map(this::toTransaction).toList()
@@ -136,7 +137,7 @@ public class AccountRepositoryVertxImpl extends AbstractRepositoryVertxImpl impl
         Consumer<Handler<AsyncResult<List<TransactionInfoDTO>>>> callback = handler ->
             client.getAccountOutgoingTransactions(publicAccount.getPublicKey().toHex(),
                 criteria.getPageSize(), criteria.getId(), criteria.getOrder(),
-                TransactionTypeEnum.fromValue(criteria.getTransactionType().getValue()), handler);
+                toTransactionType(criteria.getTransactionType()), handler);
 
         return exceptionHandling(
             call(callback).flatMapIterable(item -> item).map(this::toTransaction).toList()
@@ -144,7 +145,6 @@ public class AccountRepositoryVertxImpl extends AbstractRepositoryVertxImpl impl
     }
 
     private Transaction toTransaction(TransactionInfoDTO input) {
-
         return transactionMapper.map(input);
     }
 
@@ -162,7 +162,7 @@ public class AccountRepositoryVertxImpl extends AbstractRepositoryVertxImpl impl
         Consumer<Handler<AsyncResult<List<TransactionInfoDTO>>>> callback = handler ->
             client.getAccountPartialTransactions(publicAccount.getPublicKey().toHex(),
                 criteria.getPageSize(), criteria.getId(), criteria.getOrder(),
-                TransactionTypeEnum.fromValue(criteria.getTransactionType().getValue()), handler);
+                toTransactionType(criteria.getTransactionType()), handler);
 
         return exceptionHandling(
             call(callback).flatMapIterable(item -> item).map(this::toTransaction)
@@ -182,7 +182,7 @@ public class AccountRepositoryVertxImpl extends AbstractRepositoryVertxImpl impl
         Consumer<Handler<AsyncResult<List<TransactionInfoDTO>>>> callback = handler ->
             client.getAccountUnconfirmedTransactions(publicAccount.getPublicKey().toHex(),
                 criteria.getPageSize(), criteria.getId(), criteria.getOrder(),
-                TransactionTypeEnum.fromValue(criteria.getTransactionType().getValue()), handler);
+                toTransactionType(criteria.getTransactionType()), handler);
         return exceptionHandling(
             call(callback).flatMapIterable(item -> item).map(this::toTransaction).toList()
                 .toObservable());
@@ -211,4 +211,10 @@ public class AccountRepositoryVertxImpl extends AbstractRepositoryVertxImpl impl
     private AccountRoutesApi getClient() {
         return client;
     }
+
+    private TransactionTypeEnum toTransactionType(TransactionType transactionType) {
+        return transactionType == null ? null
+            : TransactionTypeEnum.fromValue(transactionType.getValue());
+    }
+
 }
