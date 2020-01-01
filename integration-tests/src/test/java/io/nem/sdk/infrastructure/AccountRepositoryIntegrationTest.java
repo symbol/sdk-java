@@ -113,7 +113,6 @@ class AccountRepositoryIntegrationTest extends BaseIntegrationTest {
         List<Transaction> transactions = get(accountHttp.transactions(account.getPublicAccount(),
             new TransactionSearchCriteria().transactionType(
                 transactionType)));
-        System.out.println(transactions.size());
         Assertions.assertFalse(transactions.isEmpty());
 
         transactions.forEach(t -> Assertions.assertEquals(transactionType, t.getType()));
@@ -125,17 +124,19 @@ class AccountRepositoryIntegrationTest extends BaseIntegrationTest {
         AccountRepository accountHttp = getRepositoryFactory(type).createAccountRepository();
         Account account = config().getDefaultAccount();
         List<Transaction> transactions = get(accountHttp.transactions(account.getPublicAccount(),
-            new TransactionSearchCriteria().pageSize(10)));
-        Assertions.assertFalse(transactions.isEmpty());
+            new TransactionSearchCriteria().pageSize(10).order("id")));
+        Assertions.assertTrue(transactions.size() > 1);
 
-        String id = transactions.get(0).getTransactionInfo().get().getId().get();
+        String lastOne = transactions.get(0).getTransactionInfo().get().getId().get();
+        String id = transactions.get(1).getTransactionInfo().get().getId().get();
         List<Transaction> transactions2 = get(accountHttp.transactions(account.getPublicAccount(),
             new TransactionSearchCriteria()
                 .id(id)));
 
         Assertions.assertEquals(1, transactions2.size());
         transactions2
-            .forEach(t -> Assertions.assertEquals(id, t.getTransactionInfo().get().getId().get()));
+            .forEach(
+                t -> Assertions.assertEquals(lastOne, t.getTransactionInfo().get().getId().get()));
     }
 
     @ParameterizedTest
@@ -143,43 +144,21 @@ class AccountRepositoryIntegrationTest extends BaseIntegrationTest {
     void outgoingTransactionsById(RepositoryType type) {
         AccountRepository accountHttp = getRepositoryFactory(type).createAccountRepository();
         Account account = config().getDefaultAccount();
-        List<Transaction> transactions = get(
-            accountHttp.outgoingTransactions(account.getPublicAccount(),
-                new TransactionSearchCriteria().pageSize(10)));
-        Assertions.assertFalse(transactions.isEmpty());
+        List<Transaction> transactions = get(accountHttp.outgoingTransactions(account.getPublicAccount(),
+            new TransactionSearchCriteria().pageSize(10).order("id")));
+        Assertions.assertTrue(transactions.size() > 1);
 
-        String id = transactions.get(0).getTransactionInfo().get().getId().get();
-        List<Transaction> transactions2 = get(
-            accountHttp.outgoingTransactions(account.getPublicAccount(),
-                new TransactionSearchCriteria()
-                    .id(id)));
-
-        Assertions.assertEquals(1, transactions2.size());
-        transactions2
-            .forEach(t -> Assertions.assertEquals(id, t.getTransactionInfo().get().getId().get()));
-    }
-
-    @ParameterizedTest
-    @EnumSource(RepositoryType.class)
-    void incomingTransactionsById(RepositoryType type) {
-        AccountRepository accountHttp = getRepositoryFactory(type).createAccountRepository();
-        Account account = config().getDefaultAccount();
-        List<Transaction> transactions = get(
-            accountHttp.incomingTransactions(account.getPublicAccount(),
-                new TransactionSearchCriteria().pageSize(10)));
-        Assertions.assertFalse(transactions.isEmpty());
-
-        String id = transactions.get(0).getTransactionInfo().get().getId().get();
-        List<Transaction> transactions2 = get(
-            accountHttp.incomingTransactions(account.getPublicAccount(),
-                new TransactionSearchCriteria()
-                    .id(id)));
+        String lastOne = transactions.get(0).getTransactionInfo().get().getId().get();
+        String id = transactions.get(1).getTransactionInfo().get().getId().get();
+        List<Transaction> transactions2 = get(accountHttp.outgoingTransactions(account.getPublicAccount(),
+            new TransactionSearchCriteria()
+                .id(id)));
 
         Assertions.assertEquals(1, transactions2.size());
         transactions2
-            .forEach(t -> Assertions.assertEquals(id, t.getTransactionInfo().get().getId().get()));
+            .forEach(
+                t -> Assertions.assertEquals(lastOne, t.getTransactionInfo().get().getId().get()));
     }
-
 
     @ParameterizedTest
     @EnumSource(RepositoryType.class)
