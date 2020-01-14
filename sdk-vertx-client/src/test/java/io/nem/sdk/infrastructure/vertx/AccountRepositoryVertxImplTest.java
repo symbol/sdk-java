@@ -19,8 +19,8 @@ package io.nem.sdk.infrastructure.vertx;
 import static io.nem.sdk.infrastructure.vertx.TestHelperVertx.loadTransactionInfoDTO;
 
 import io.nem.core.utils.ExceptionUtils;
-import io.nem.sdk.api.QueryParams;
 import io.nem.sdk.api.RepositoryCallException;
+import io.nem.sdk.api.TransactionSearchCriteria;
 import io.nem.sdk.model.account.Account;
 import io.nem.sdk.model.account.AccountInfo;
 import io.nem.sdk.model.account.AccountType;
@@ -70,7 +70,8 @@ public class AccountRepositoryVertxImplTest extends AbstractVertxRespositoryTest
         Assertions.assertEquals(1, transactions.size());
         Assertions.assertEquals(TransactionType.TRANSFER, transactions.get(0).getType());
 
-        transactions = repository.incomingTransactions(publicAccount, new QueryParams(1, "id"))
+        transactions = repository
+            .incomingTransactions(publicAccount, new TransactionSearchCriteria())
             .toFuture().get();
         Assertions.assertEquals(1, transactions.size());
         Assertions.assertEquals(TransactionType.TRANSFER, transactions.get(0).getType());
@@ -91,7 +92,7 @@ public class AccountRepositoryVertxImplTest extends AbstractVertxRespositoryTest
         Assertions.assertEquals(1, transactions.size());
         Assertions.assertEquals(TransactionType.TRANSFER, transactions.get(0).getType());
 
-        transactions = repository.transactions(publicAccount, new QueryParams(1, "id"))
+        transactions = repository.transactions(publicAccount)
             .toFuture().get();
         Assertions.assertEquals(1, transactions.size());
         Assertions.assertEquals(TransactionType.TRANSFER, transactions.get(0).getType());
@@ -112,7 +113,7 @@ public class AccountRepositoryVertxImplTest extends AbstractVertxRespositoryTest
         Assertions.assertEquals(1, transactions.size());
         Assertions.assertEquals(TransactionType.TRANSFER, transactions.get(0).getType());
 
-        transactions = repository.outgoingTransactions(publicAccount, new QueryParams(1, "id"))
+        transactions = repository.outgoingTransactions(publicAccount)
             .toFuture().get();
         Assertions.assertEquals(1, transactions.size());
         Assertions.assertEquals(TransactionType.TRANSFER, transactions.get(0).getType());
@@ -134,7 +135,7 @@ public class AccountRepositoryVertxImplTest extends AbstractVertxRespositoryTest
         Assertions.assertEquals(1, transactions.size());
         Assertions.assertEquals(TransactionType.TRANSFER, transactions.get(0).getType());
 
-        transactions = repository.unconfirmedTransactions(publicAccount, new QueryParams(1, "id"))
+        transactions = repository.unconfirmedTransactions(publicAccount)
             .toFuture().get();
         Assertions.assertEquals(1, transactions.size());
         Assertions.assertEquals(TransactionType.TRANSFER, transactions.get(0).getType());
@@ -158,7 +159,7 @@ public class AccountRepositoryVertxImplTest extends AbstractVertxRespositoryTest
         Assertions.assertEquals(TransactionType.AGGREGATE_COMPLETE, transactions.get(0).getType());
 
         transactions = repository
-            .aggregateBondedTransactions(publicAccount, new QueryParams(1, "id"))
+            .aggregateBondedTransactions(publicAccount)
             .toFuture().get();
         Assertions.assertEquals(1, transactions.size());
         Assertions.assertEquals(TransactionType.AGGREGATE_COMPLETE, transactions.get(0).getType());

@@ -30,14 +30,14 @@ public class TransactionStatusTest {
     void createATransactionStatusViaConstructor() {
         TransactionStatus transactionStatus =
             new TransactionStatus(
-                "confirmed",
+                TransactionState.CONFIRMED,
                 "Success",
                 "B6C7648A3DDF71415650805E9E7801424FE03BBEE7D21F9C57B60220D3E95B2F",
                 new Deadline(2, ChronoUnit.HOURS),
                 new BigInteger("121855"));
 
-        assertEquals("confirmed", transactionStatus.getGroup());
-        assertEquals("Success", transactionStatus.getStatus());
+        assertEquals(TransactionState.CONFIRMED, transactionStatus.getGroup());
+        assertEquals("Success", transactionStatus.getCode());
         assertEquals(
             "B6C7648A3DDF71415650805E9E7801424FE03BBEE7D21F9C57B60220D3E95B2F",
             transactionStatus.getHash());

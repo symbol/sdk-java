@@ -25,20 +25,20 @@ import java.math.BigInteger;
  */
 public class TransactionStatus {
 
-    private final String group;
-    private final String status;
+    private final TransactionState group;
+    private final String code;
     private final String hash;
     private final Deadline deadline;
     private final BigInteger height;
 
     public TransactionStatus(
-        final String group,
-        final String status,
+        final TransactionState group,
+        final String code,
         final String hash,
         final Deadline deadline,
         final BigInteger height) {
         this.group = group;
-        this.status = status;
+        this.code = code;
         this.hash = hash;
         this.deadline = deadline;
         this.height = height;
@@ -49,7 +49,7 @@ public class TransactionStatus {
      *
      * @return transaction group name
      */
-    public String getGroup() {
+    public TransactionState getGroup() {
         return group;
     }
 
@@ -58,8 +58,8 @@ public class TransactionStatus {
      *
      * @return transaction status
      */
-    public String getStatus() {
-        return status;
+    public String getCode() {
+        return code;
     }
 
     /**
