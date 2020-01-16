@@ -23,6 +23,7 @@ import io.nem.sdk.model.transaction.Deadline;
 import io.nem.sdk.model.transaction.SignedTransaction;
 import io.nem.sdk.model.transaction.Transaction;
 import io.nem.sdk.model.transaction.TransactionAnnounceResponse;
+import io.nem.sdk.model.transaction.TransactionState;
 import io.nem.sdk.model.transaction.TransactionStatus;
 import io.nem.sdk.openapi.okhttp_gson.api.TransactionRoutesApi;
 import io.nem.sdk.openapi.okhttp_gson.invoker.ApiClient;
@@ -90,8 +91,9 @@ public class TransactionRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImp
 
     private TransactionStatus toTransactionStatus(TransactionStatusDTO transactionStatusDTO) {
         return new TransactionStatus(
-            transactionStatusDTO.getGroup(),
-            transactionStatusDTO.getStatus(),
+            TransactionState.valueOf(transactionStatusDTO.getGroup().name()),
+            transactionStatusDTO.getCode() == null ? null
+                : transactionStatusDTO.getCode().getValue(),
             transactionStatusDTO.getHash(),
             new Deadline((transactionStatusDTO.getDeadline())),
             (transactionStatusDTO.getHeight()));
@@ -136,7 +138,7 @@ public class TransactionRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImp
             .announceCosignatureTransaction(
                 new Cosignature().parentHash(cosignatureSignedTransaction.getParentHash())
                     .signature(cosignatureSignedTransaction.getSignature())
-                    .signature(cosignatureSignedTransaction.getSigner()));
+                    .signerPublicKey(cosignatureSignedTransaction.getSigner()));
         return exceptionHandling(
             call(callback).map(dto -> new TransactionAnnounceResponse(dto.getMessage())));
 

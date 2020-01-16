@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 NEM
+ * Copyright 2019 NEM
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,19 +14,18 @@
  * limitations under the License.
  */
 
-package io.nem.sdk.infrastructure;
+package io.nem.sdk.api;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-import io.nem.sdk.api.QueryParams;
 import org.junit.jupiter.api.Test;
 
 class QueryParamsTest {
 
 
     @Test
-    void shouldCreateQueryParamsViaCostructor() {
+    void shouldCreateQueryParamsViaConstructor() {
         QueryParams queryParams = new QueryParams(15, "5A2139FC71C1B9000147D624", "someId");
         assertEquals(15, (int) queryParams.getPageSize());
         assertEquals("5A2139FC71C1B9000147D624", queryParams.getId());

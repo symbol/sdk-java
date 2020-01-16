@@ -3,7 +3,19 @@ All notable changes to this project will be documented in this file.
 
 The changelog format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## [0.16.0] - 11-Dev-2019
+## [0.16.1] - 16-Jan-2020
+
+**Milestone**: Fuschicho 3
+
+- Fixed transaction status code issue in both Http and Websocket due to schema update.
+- Added transaction criteria to account repository with the ability of filter by transaction type.
+- Added partial transaction queries to the account repository. 
+- Fixed empty message mapping in transfer transactions.
+- Implemented MosaicRestrictionTransactionService.
+- Added missing 'partial' value in TransactionState.
+- Other small fixes.
+
+## [0.16.0] - 11-Dec-2019
 
 **Milestone**: Fuschicho 3
 

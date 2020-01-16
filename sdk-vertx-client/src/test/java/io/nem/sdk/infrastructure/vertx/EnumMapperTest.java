@@ -32,6 +32,7 @@ import io.nem.sdk.model.transaction.AccountLinkAction;
 import io.nem.sdk.model.transaction.AccountRestrictionFlags;
 import io.nem.sdk.model.transaction.LockHashAlgorithmType;
 import io.nem.sdk.model.transaction.MosaicRestrictionType;
+import io.nem.sdk.model.transaction.TransactionState;
 import io.nem.sdk.model.transaction.TransactionType;
 import io.nem.sdk.openapi.vertx.model.AccountLinkActionEnum;
 import io.nem.sdk.openapi.vertx.model.AccountRestrictionFlagsEnum;
@@ -44,12 +45,15 @@ import io.nem.sdk.openapi.vertx.model.MosaicRestrictionTypeEnum;
 import io.nem.sdk.openapi.vertx.model.MosaicSupplyChangeActionEnum;
 import io.nem.sdk.openapi.vertx.model.NamespaceRegistrationTypeEnum;
 import io.nem.sdk.openapi.vertx.model.ReceiptTypeEnum;
+import io.nem.sdk.openapi.vertx.model.TransactionStateTypeEnum;
 import io.nem.sdk.openapi.vertx.model.TransactionTypeEnum;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 
 /**
  * This class tests that the model and dto enums have the same values.
@@ -425,6 +429,25 @@ public class EnumMapperTest {
             Assertions
                 .assertTrue(existingValues.add(v.getValue()), v.getValue() + " is duplicated!!");
         });
+    }
+
+    @ParameterizedTest
+    @EnumSource(TransactionState.class)
+    void validFromTransactionState(TransactionState transactionState) {
+        Assertions.assertNotNull(TransactionStateTypeEnum.valueOf(transactionState.name()));
+        Assertions
+            .assertEquals(TransactionStateTypeEnum.valueOf(transactionState.name()).getValue(),
+                transactionState.getValue());
+    }
+
+    @ParameterizedTest
+    @EnumSource(TransactionStateTypeEnum.class)
+    void validFromTransactionStateTypeEnum(TransactionStateTypeEnum transactionState) {
+        Assertions.assertNotNull(TransactionState.valueOf(transactionState.name()));
+        Assertions
+            .assertEquals(TransactionStateTypeEnum.valueOf(transactionState.name()).getValue(),
+                transactionState.getValue());
+
     }
 
 

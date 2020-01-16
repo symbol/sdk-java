@@ -60,11 +60,11 @@ public interface AccountRepository {
      * pagination.
      *
      * @param publicAccount PublicAccount
-     * @param queryParams QueryParams
+     * @param criteria the criteria used to filter and order transactions
      * @return Observable {@link List} of {@link Transaction}
      */
     Observable<List<Transaction>> transactions(PublicAccount publicAccount,
-        QueryParams queryParams);
+        TransactionSearchCriteria criteria);
 
     /**
      * Gets an list of transactions for which an account is the recipient of a transaction. A
@@ -82,11 +82,11 @@ public interface AccountRepository {
      * of a transaction. With pagination.
      *
      * @param publicAccount PublicAccount
-     * @param queryParams QueryParams
+     * @param criteria the criteria used to filter and order transactions
      * @return Observable {@link List} of {@link Transaction}
      */
     Observable<List<Transaction>> incomingTransactions(
-        PublicAccount publicAccount, QueryParams queryParams);
+        PublicAccount publicAccount, TransactionSearchCriteria criteria);
 
     /**
      * Gets an list of transactions for which an account is the sender a transaction. A transaction
@@ -104,11 +104,31 @@ public interface AccountRepository {
      * transaction. With pagination.
      *
      * @param publicAccount PublicAccount
-     * @param queryParams QueryParams
+     * @param criteria the criteria used to filter and order transactions
      * @return Observable {@link List} of {@link Transaction}
      */
     Observable<List<Transaction>> outgoingTransactions(
-        PublicAccount publicAccount, QueryParams queryParams);
+        PublicAccount publicAccount, TransactionSearchCriteria criteria);
+
+    /**
+     * Gets an list of aggregate bonded transactions where the account is the sender or requires to
+     * cosign the transaction.
+     *
+     * @param publicAccount the sender account
+     * @return an observable list of Transaction
+     */
+    Observable<List<Transaction>> partialTransactions(PublicAccount publicAccount);
+
+    /**
+     * Gets an list of aggregate bonded transactions where the account is the sender or requires to
+     * cosign the transaction.
+     *
+     * @param publicAccount the sender account
+     * @param criteria the criteria with the pagination, ordering, filtering, etc
+     * @return an observable list of Transaction
+     */
+    Observable<List<Transaction>> partialTransactions(
+        PublicAccount publicAccount, TransactionSearchCriteria criteria);
 
     /**
      * Gets an list of transactions for which an account is the sender or has sign the transaction.
@@ -126,11 +146,11 @@ public interface AccountRepository {
      * signatures. With pagination.
      *
      * @param publicAccount PublicAccount
-     * @param queryParams QueryParams
+     * @param criteria the criteria used to filter and order transactions
      * @return Observable {@link List} of {@link Transaction}
      */
     Observable<List<AggregateTransaction>> aggregateBondedTransactions(
-        PublicAccount publicAccount, QueryParams queryParams);
+        PublicAccount publicAccount, TransactionSearchCriteria criteria);
 
     /**
      * Gets the list of transactions for which an account is the sender or receiver and which have
@@ -150,9 +170,9 @@ public interface AccountRepository {
      * in any block. With pagination.
      *
      * @param publicAccount PublicAccount
-     * @param queryParams QueryParams
+     * @param criteria the criteria used to filter and order transactions
      * @return Observable {@link List} of {@link Transaction}
      */
     Observable<List<Transaction>> unconfirmedTransactions(
-        PublicAccount publicAccount, QueryParams queryParams);
+        PublicAccount publicAccount, TransactionSearchCriteria criteria);
 }

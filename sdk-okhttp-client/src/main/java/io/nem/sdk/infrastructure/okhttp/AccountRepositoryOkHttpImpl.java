@@ -20,7 +20,7 @@ import static io.nem.core.utils.MapperUtils.toMosaicId;
 
 import io.nem.core.utils.MapperUtils;
 import io.nem.sdk.api.AccountRepository;
-import io.nem.sdk.api.QueryParams;
+import io.nem.sdk.api.TransactionSearchCriteria;
 import io.nem.sdk.infrastructure.okhttp.mappers.GeneralTransactionMapper;
 import io.nem.sdk.infrastructure.okhttp.mappers.TransactionMapper;
 import io.nem.sdk.model.account.AccountInfo;
@@ -30,15 +30,16 @@ import io.nem.sdk.model.account.PublicAccount;
 import io.nem.sdk.model.mosaic.Mosaic;
 import io.nem.sdk.model.transaction.AggregateTransaction;
 import io.nem.sdk.model.transaction.Transaction;
+import io.nem.sdk.model.transaction.TransactionType;
 import io.nem.sdk.openapi.okhttp_gson.api.AccountRoutesApi;
 import io.nem.sdk.openapi.okhttp_gson.invoker.ApiClient;
 import io.nem.sdk.openapi.okhttp_gson.model.AccountDTO;
 import io.nem.sdk.openapi.okhttp_gson.model.AccountIds;
 import io.nem.sdk.openapi.okhttp_gson.model.AccountInfoDTO;
 import io.nem.sdk.openapi.okhttp_gson.model.TransactionInfoDTO;
+import io.nem.sdk.openapi.okhttp_gson.model.TransactionTypeEnum;
 import io.reactivex.Observable;
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.Callable;
 import java.util.stream.Collectors;
 
@@ -85,23 +86,17 @@ public class AccountRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl im
 
     @Override
     public Observable<List<Transaction>> transactions(PublicAccount publicAccount) {
-        return this.transactions(publicAccount, Optional.empty());
+        return this.transactions(publicAccount, new TransactionSearchCriteria());
     }
 
     @Override
     public Observable<List<Transaction>> transactions(
-        PublicAccount publicAccount, QueryParams queryParams) {
-        return this.transactions(publicAccount, Optional.of(queryParams));
-    }
-
-    private Observable<List<Transaction>> transactions(
-        PublicAccount publicAccount, Optional<QueryParams> queryParams) {
+        PublicAccount publicAccount, TransactionSearchCriteria criteria) {
 
         Callable<List<TransactionInfoDTO>> callback = () ->
-            getClient().getAccountTransactions(publicAccount.getPublicKey().toHex(),
-                getPageSize(queryParams),
-                getId(queryParams),
-                null);
+            getClient().getAccountConfirmedTransactions(publicAccount.getPublicKey().toHex(),
+                criteria.getPageSize(), criteria.getId(), criteria.getOrder(),
+                toTransactionType(criteria.getTransactionType()));
 
         return exceptionHandling(
             call(callback).flatMapIterable(item -> item).map(this::toTransaction).toList()
@@ -110,21 +105,17 @@ public class AccountRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl im
 
     @Override
     public Observable<List<Transaction>> incomingTransactions(PublicAccount publicAccount) {
-        return this.incomingTransactions(publicAccount, Optional.empty());
+        return this.incomingTransactions(publicAccount, new TransactionSearchCriteria());
     }
 
     @Override
     public Observable<List<Transaction>> incomingTransactions(
-        PublicAccount publicAccount, QueryParams queryParams) {
-        return this.incomingTransactions(publicAccount, Optional.of(queryParams));
-    }
-
-    private Observable<List<Transaction>> incomingTransactions(
-        PublicAccount publicAccount, Optional<QueryParams> queryParams) {
+        PublicAccount publicAccount, TransactionSearchCriteria criteria) {
 
         Callable<List<TransactionInfoDTO>> callback = () ->
             getClient().getAccountIncomingTransactions(publicAccount.getPublicKey().toHex(),
-                getPageSize(queryParams), getId(queryParams), null);
+                criteria.getPageSize(), criteria.getId(), criteria.getOrder(),
+                toTransactionType(criteria.getTransactionType()));
 
         return exceptionHandling(
             call(callback).flatMapIterable(item -> item).map(this::toTransaction).toList()
@@ -133,22 +124,17 @@ public class AccountRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl im
 
     @Override
     public Observable<List<Transaction>> outgoingTransactions(PublicAccount publicAccount) {
-        return this.outgoingTransactions(publicAccount, Optional.empty());
+        return this.outgoingTransactions(publicAccount, new TransactionSearchCriteria());
     }
 
     @Override
     public Observable<List<Transaction>> outgoingTransactions(
-        PublicAccount publicAccount, QueryParams queryParams) {
-        return this.outgoingTransactions(publicAccount, Optional.of(queryParams));
-    }
-
-    private Observable<List<Transaction>> outgoingTransactions(
-        PublicAccount publicAccount, Optional<QueryParams> queryParams) {
+        PublicAccount publicAccount, TransactionSearchCriteria criteria) {
 
         Callable<List<TransactionInfoDTO>> callback = () ->
             getClient().getAccountOutgoingTransactions(publicAccount.getPublicKey().toHex(),
-                getPageSize(queryParams),
-                getId(queryParams), null);
+                criteria.getPageSize(), criteria.getId(), criteria.getOrder(),
+                toTransactionType(criteria.getTransactionType()));
 
         return exceptionHandling(
             call(callback).flatMapIterable(item -> item).map(this::toTransaction).toList()
@@ -163,21 +149,17 @@ public class AccountRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl im
     @Override
     public Observable<List<AggregateTransaction>> aggregateBondedTransactions(
         PublicAccount publicAccount) {
-        return this.aggregateBondedTransactions(publicAccount, Optional.empty());
+        return this.aggregateBondedTransactions(publicAccount, new TransactionSearchCriteria());
     }
 
     @Override
     public Observable<List<AggregateTransaction>> aggregateBondedTransactions(
-        PublicAccount publicAccount, QueryParams queryParams) {
-        return this.aggregateBondedTransactions(publicAccount, Optional.of(queryParams));
-    }
-
-    private Observable<List<AggregateTransaction>> aggregateBondedTransactions(
-        PublicAccount publicAccount, Optional<QueryParams> queryParams) {
+        PublicAccount publicAccount, TransactionSearchCriteria criteria) {
 
         Callable<List<TransactionInfoDTO>> callback = () ->
             getClient().getAccountPartialTransactions(publicAccount.getPublicKey().toHex(),
-                getPageSize(queryParams), getId(queryParams), null);
+                criteria.getPageSize(), criteria.getId(), criteria.getOrder(),
+                toTransactionType(criteria.getTransactionType()));
 
         return exceptionHandling(
             call(callback).flatMapIterable(item -> item).map(this::toTransaction)
@@ -187,21 +169,33 @@ public class AccountRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl im
 
     @Override
     public Observable<List<Transaction>> unconfirmedTransactions(PublicAccount publicAccount) {
-        return this.unconfirmedTransactions(publicAccount, Optional.empty());
+        return this.unconfirmedTransactions(publicAccount, new TransactionSearchCriteria());
     }
 
     @Override
     public Observable<List<Transaction>> unconfirmedTransactions(
-        PublicAccount publicAccount, QueryParams queryParams) {
-        return this.unconfirmedTransactions(publicAccount, Optional.of(queryParams));
-    }
-
-    private Observable<List<Transaction>> unconfirmedTransactions(
-        PublicAccount publicAccount, Optional<QueryParams> queryParams) {
+        PublicAccount publicAccount, TransactionSearchCriteria criteria) {
         Callable<List<TransactionInfoDTO>> callback = () ->
             getClient().getAccountUnconfirmedTransactions(publicAccount.getPublicKey().toHex(),
-                getPageSize(queryParams),
-                getId(queryParams), null);
+                criteria.getPageSize(), criteria.getId(), criteria.getOrder(),
+                toTransactionType(criteria.getTransactionType()));
+        return exceptionHandling(
+            call(callback).flatMapIterable(item -> item).map(this::toTransaction).toList()
+                .toObservable());
+    }
+
+    @Override
+    public Observable<List<Transaction>> partialTransactions(PublicAccount publicAccount) {
+        return this.partialTransactions(publicAccount, new TransactionSearchCriteria());
+    }
+
+    @Override
+    public Observable<List<Transaction>> partialTransactions(
+        PublicAccount publicAccount, TransactionSearchCriteria criteria) {
+        Callable<List<TransactionInfoDTO>> callback = () ->
+            getClient().getAccountPartialTransactions(publicAccount.getPublicKey().toHex(),
+                criteria.getPageSize(), criteria.getId(), criteria.getOrder(),
+                toTransactionType(criteria.getTransactionType()));
         return exceptionHandling(
             call(callback).flatMapIterable(item -> item).map(this::toTransaction).toList()
                 .toObservable());
@@ -225,5 +219,10 @@ public class AccountRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl im
 
     private AccountRoutesApi getClient() {
         return client;
+    }
+
+    private TransactionTypeEnum toTransactionType(TransactionType transactionType) {
+        return transactionType == null ? null
+            : TransactionTypeEnum.fromValue(transactionType.getValue());
     }
 }
