@@ -7,7 +7,7 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 
 **Milestone**: Fuschicho 3
 
-- Fixed transaction status's code issue in both Http and Websocket due to schema update.
+- Fixed transaction status code issue in both Http and Websocket due to schema update.
 - Added transaction criteria to account repository with the ability of filter by transaction type.
 - Added partial transaction queries to the account repository. 
 - Fixed empty message mapping in transfer transactions.
