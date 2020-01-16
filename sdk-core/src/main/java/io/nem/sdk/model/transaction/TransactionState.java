@@ -24,7 +24,9 @@ public enum TransactionState {
 
     UNCONFIRMED("unconfirmed"),
 
-    FAILED("failed");
+    FAILED("failed"),
+
+    PARTIAL("partial");
 
     private String value;
 
