@@ -63,7 +63,7 @@ public abstract class AbstractRepositoryVertxImpl {
         }
         return new RepositoryCallException(
             extractMessageFromException(e),
-            extractStatusCodeFromException(e), originalException);
+            extractStatusCodeFromException(e), e instanceof ApiException ? originalException : e);
     }
 
     private String extractMessageFromException(Throwable e) {
@@ -90,7 +90,7 @@ public abstract class AbstractRepositoryVertxImpl {
         return (e instanceof ApiException) ? ((ApiException) e).getCode() : 0;
     }
 
-    public <T> Function<? super Throwable, Observable<T>> onError(
+    public <T> Function<Throwable, Observable<T>> onError(
         IllegalArgumentException originalException) {
         return (Throwable e) -> Observable.error(exceptionHandling(e, originalException));
     }
