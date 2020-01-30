@@ -3,6 +3,16 @@ All notable changes to this project will be documented in this file.
 
 The changelog format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [0.16.2] - 30-Jan-2020
+
+**Milestone**: Fuschicho 3
+
+- Core 0.9.2.1 compatible. Changed hash algorithm for shared key derivation to `HKDF-HMAC-Sha256`.
+- Removed `senderPrivateKey` in `Persistent Delegation Request Transaction`. Instead, it uses an `ephemeral key pair` and the `EphemeralPublicKey` is now attached in the `PersistentDelegationMessage` payload.
+- Removed `salt` encryption and decryption functions which uses `HKDF-HMAC-Sha256` instead. This only affects the encrypted payload.
+- Updated `TransactionType` enum values to match `catabuffer` schema definition.
+- Improved Vertx exception handling.
+
 ## [0.16.1] - 16-Jan-2020
 
 **Milestone**: Fuschicho 3
