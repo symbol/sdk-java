@@ -325,6 +325,8 @@ nexusStaging {
     stagingProfileId = "365f7aa90b3b13"
     username = ossrhUsername
     password = ossrhPassword
+    numberOfRetries = 40
+    delayBetweenRetriesInMillis = 3000
 }
 
 
