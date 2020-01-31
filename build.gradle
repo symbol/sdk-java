@@ -58,7 +58,7 @@ repositories {
 
 def getPropertyValue(key, defaultValue = null) {
     def value = project.hasProperty(key) ? project[key] : System.getenv(key)
-    return value?.trim() == '' ? defaultValue : value
+    return value == null || value.trim() == '' ? defaultValue : value
 }
 
 def ossrhUsername = getPropertyValue('ossrhUsername');
@@ -240,6 +240,8 @@ subprojects {
                 password = ossrhPassword
             }
         }
+        connectTimeout = Duration.ofSeconds(180)
+        clientTimeout = Duration.ofSeconds(180)
     }
 }
 
@@ -325,6 +327,8 @@ nexusStaging {
     stagingProfileId = "365f7aa90b3b13"
     username = ossrhUsername
     password = ossrhPassword
+    numberOfRetries = 40
+    delayBetweenRetriesInMillis = 3000
 }
 
 
