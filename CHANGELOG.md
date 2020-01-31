@@ -3,7 +3,7 @@ All notable changes to this project will be documented in this file.
 
 The changelog format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## [0.16.2] - 30-Jan-2020
+## [0.16.3] - 30-Jan-2020
 
 **Milestone**: Fuschicho 3
 
