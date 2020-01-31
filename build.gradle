@@ -58,7 +58,7 @@ repositories {
 
 def getPropertyValue(key, defaultValue = null) {
     def value = project.hasProperty(key) ? project[key] : System.getenv(key)
-    return value?.trim() == '' ? defaultValue : value
+    return value == null || value.trim() == '' ? defaultValue : value
 }
 
 def ossrhUsername = getPropertyValue('ossrhUsername');
