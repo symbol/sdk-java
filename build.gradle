@@ -240,6 +240,8 @@ subprojects {
                 password = ossrhPassword
             }
         }
+        connectTimeout = Duration.ofSeconds(180)
+        clientTimeout = Duration.ofSeconds(180)
     }
 }
 
