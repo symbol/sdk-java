@@ -34,7 +34,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-//TODO Broken!!
 class NamespaceRepositoryIntegrationTest extends BaseIntegrationTest {
 
     private NamespaceId namespaceId;
@@ -106,7 +105,7 @@ class NamespaceRepositoryIntegrationTest extends BaseIntegrationTest {
             .assertThrows(RepositoryCallException.class, () -> get(getNamespaceRepository(type)
                 .getNamespace(NamespaceId.createFromName("nonregisterednamespace"))));
         Assertions.assertEquals(
-            "ApiException: Not Found - 404 - ResourceNotFound - no resource exists with id 'f75cf605c224a9e7'",
+            "ApiException: Not Found - 404 - ResourceNotFound - no resource exists with id 'F75CF605C224A9E7'",
             exception.getMessage());
     }
 
