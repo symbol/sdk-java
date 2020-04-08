@@ -24,9 +24,16 @@ if [ "$TRAVIS_BRANCH" = "$RELEASE_BRANCH" ]; then
 #  git commit --allow-empty -m "Testing credentials"
 #  git push --set-upstream $REMOTE_NAME $RELEASE_BRANCH:$POST_RELEASE_BRANCH
 
-  echo "Releasing sdk jars and javadocs"
-  ./gradlew release publish gitPublishPush
-  ./gradlew closeAndReleaseRepository
+  if [ "$SKIP_RELEASE_PUBLISH" = "true" ]; then
+    echo "Skipping publishing of sdk artifacts"
+    ./gradlew release
+    echo ""
+  else
+    echo "Releasing sdk jars and javadocs"
+    ./gradlew release publish gitPublishPush
+    ./gradlew closeAndReleaseRepository
+    echo ""
+  fi
 
   echo "New Version"
   cat version.txt
