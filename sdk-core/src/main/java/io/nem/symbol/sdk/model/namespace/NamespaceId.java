@@ -20,9 +20,9 @@ import io.nem.symbol.core.utils.ByteUtils;
 import io.nem.symbol.core.utils.ConvertUtils;
 import io.nem.symbol.sdk.infrastructure.SerializationUtils;
 import io.nem.symbol.sdk.model.account.UnresolvedAddress;
-import io.nem.symbol.sdk.model.blockchain.NetworkType;
 import io.nem.symbol.sdk.model.mosaic.IllegalIdentifierException;
 import io.nem.symbol.sdk.model.mosaic.UnresolvedMosaicId;
+import io.nem.symbol.sdk.model.network.NetworkType;
 import io.nem.symbol.sdk.model.transaction.IdGenerator;
 import java.math.BigInteger;
 import java.util.List;
@@ -190,8 +190,4 @@ public class NamespaceId implements UnresolvedMosaicId, UnresolvedAddress {
         return ConvertUtils.toHex(bytes);
     }
 
-    @Override
-    public boolean isAlias() {
-        return true;
-    }
 }

@@ -17,7 +17,7 @@
 package io.nem.symbol.sdk.model.transaction;
 
 import io.nem.symbol.sdk.model.account.UnresolvedAddress;
-import io.nem.symbol.sdk.model.blockchain.NetworkType;
+import io.nem.symbol.sdk.model.network.NetworkType;
 import org.apache.commons.lang3.Validate;
 
 /**
@@ -42,7 +42,8 @@ public class SecretProofTransactionFactory extends TransactionFactory<SecretProo
         Validate.notNull(recipient, "Recipient must not be null.");
         if (!LockHashAlgorithmType.validator(hashType, secret)) {
             throw new IllegalArgumentException(
-                "HashType and Secret have incompatible length or not hexadecimal string");
+                "HashType  " + hashType
+                    + " and Secret have incompatible length or not hexadecimal string");
         }
         this.hashType = hashType;
         this.secret = secret;

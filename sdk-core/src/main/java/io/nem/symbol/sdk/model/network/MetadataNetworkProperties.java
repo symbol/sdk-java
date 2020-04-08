@@ -14,19 +14,27 @@
  * limitations under the License.
  */
 
-package io.nem.symbol.sdk.model.blockchain;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import org.junit.jupiter.api.Test;
 
-class StorageInfoTest {
+package io.nem.symbol.sdk.model.network;
 
-    @Test
-    void createStorageInfo() {
-        StorageInfo storageInfo = new StorageInfo(1L, 2L, 3L);
-        assertEquals(1L, (long) storageInfo.getNumAccounts());
-        assertEquals(2L, (long) storageInfo.getNumBlocks());
-        assertEquals(3L, (long) storageInfo.getNumTransactions());
+/**
+ * MetadataNetworkProperties
+ */
+public class MetadataNetworkProperties {
+
+    /**
+     * Maximum metadata value size.
+     */
+    private final String maxValueSize;
+
+    public MetadataNetworkProperties(String maxValueSize) {
+        this.maxValueSize = maxValueSize;
+    }
+
+    public String getMaxValueSize() {
+        return maxValueSize;
     }
 }
+

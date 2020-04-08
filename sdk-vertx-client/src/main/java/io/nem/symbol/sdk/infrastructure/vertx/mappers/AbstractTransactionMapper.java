@@ -18,7 +18,7 @@ package io.nem.symbol.sdk.infrastructure.vertx.mappers;
 
 import io.nem.symbol.core.crypto.PublicKey;
 import io.nem.symbol.sdk.model.account.PublicAccount;
-import io.nem.symbol.sdk.model.blockchain.NetworkType;
+import io.nem.symbol.sdk.model.network.NetworkType;
 import io.nem.symbol.sdk.model.transaction.Deadline;
 import io.nem.symbol.sdk.model.transaction.JsonHelper;
 import io.nem.symbol.sdk.model.transaction.Transaction;
@@ -74,7 +74,9 @@ public abstract class AbstractTransactionMapper<D, T extends Transaction> implem
         NetworkType networkType = NetworkType.rawValueOf(transactionDTO.getNetwork().getValue());
         TransactionFactory<T> factory = createFactory(networkType, transaction);
         factory.version(transactionDTO.getVersion());
-        factory.deadline(new Deadline(transactionDTO.getDeadline()));
+        if (transactionDTO.getDeadline() != null) {
+            factory.deadline(new Deadline(transactionDTO.getDeadline()));
+        }
         if (transactionDTO.getSignerPublicKey() != null) {
             factory.signer(
                 PublicAccount

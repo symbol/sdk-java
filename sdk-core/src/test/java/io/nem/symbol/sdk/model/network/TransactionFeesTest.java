@@ -14,26 +14,26 @@
  * limitations under the License.
  */
 
-package io.nem.symbol.sdk.model.blockchain;
+package io.nem.symbol.sdk.model.network;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 /**
- * Test of {@link NetworkFees}
+ * Test of {@link TransactionFees}
  */
-class NetworkFeesTest {
+class TransactionFeesTest {
 
 
     @Test
-    void createNetworkFees() {
+    void createTransactionFees() {
 
-        NetworkFees info = new NetworkFees(0.1, 0.2, 3, 4);
+        TransactionFees info = new TransactionFees(1, 2, 3, 4);
 
         Assertions.assertNotNull(info);
 
-        Assertions.assertEquals(0.1, info.getAverageFeeMultiplier());
-        Assertions.assertEquals(0.2, info.getMedianFeeMultiplier());
+        Assertions.assertEquals(1, info.getAverageFeeMultiplier());
+        Assertions.assertEquals(2, info.getMedianFeeMultiplier());
         Assertions.assertEquals(3, info.getLowestFeeMultiplier());
         Assertions.assertEquals(4, info.getHighestFeeMultiplier());
 

@@ -17,8 +17,8 @@
 package io.nem.symbol.sdk.model.account;
 
 import io.nem.symbol.sdk.infrastructure.SerializationUtils;
-import io.nem.symbol.sdk.model.blockchain.NetworkType;
 import io.nem.symbol.sdk.model.namespace.NamespaceId;
+import io.nem.symbol.sdk.model.network.NetworkType;
 
 /**
  * Unresolved address is used when the referenced account can be accessed via an {@link Address} or
@@ -33,8 +33,4 @@ public interface UnresolvedAddress {
      */
     String encoded(NetworkType networkType);
 
-    /**
-     * @return if the address is an alias (namespace).
-     */
-    boolean isAlias();
 }

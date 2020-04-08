@@ -44,7 +44,7 @@ ext {
     vertxVersion = "3.5.0"
     rxjavaVersion = "2.1.7"
     junitVersion = "5.4.0"
-    restApiVersion = "0.8.5"
+    restApiVersion = "0.8.9"
     jackson_version = "2.9.9"
     junit4Version = '4.12'
     jackson_databind_version = "2.9.9"
@@ -74,7 +74,7 @@ def signingSecretKeyRingFile = getPropertyValue('signingSecretKeyRingFile')
 def signingKeyId = getPropertyValue('signingKeyId')
 def signingPassword = getPropertyValue('signingPassword')
 
-def githubToken = getPropertyValue('GRGIT_USER')
+def githubToken = getPropertyValue('GITHUB_TOKEN')
 def repoPath = getPropertyValue('TRAVIS_REPO_SLUG', "nemtech/symbol-sdk-java")
 
 allprojects {

@@ -19,9 +19,9 @@ package io.nem.symbol.sdk.infrastructure.vertx;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.nem.symbol.core.utils.HttpStatus;
 import io.nem.symbol.sdk.model.account.Address;
-import io.nem.symbol.sdk.model.blockchain.NetworkType;
 import io.nem.symbol.sdk.model.mosaic.Mosaic;
 import io.nem.symbol.sdk.model.namespace.NamespaceId;
+import io.nem.symbol.sdk.model.network.NetworkType;
 import io.nem.symbol.sdk.model.transaction.JsonHelper;
 import io.nem.symbol.sdk.openapi.vertx.invoker.ApiClient;
 import io.nem.symbol.sdk.openapi.vertx.invoker.ApiException;
@@ -88,7 +88,7 @@ public abstract class AbstractVertxRespositoryTest {
             .invokeAPI(Mockito.anyString(), Mockito.anyString(), Mockito.anyListOf(Pair.class),
                 argument.capture(),
                 Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(),
-                Mockito.any(), Mockito.any());
+                Mockito.any(), Mockito.any(), Mockito.any());
         return argument;
 
     }
@@ -135,7 +135,7 @@ public abstract class AbstractVertxRespositoryTest {
         }).when(apiClientMock)
             .invokeAPI(Mockito.anyString(), Mockito.anyString(), Mockito.anyList(), Mockito.any(),
                 Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(),
-                Mockito.any(), Mockito.any());
+                Mockito.any(), Mockito.any(), Mockito.any());
     }
 
     protected Mosaic createAbsolute(BigInteger amount) {

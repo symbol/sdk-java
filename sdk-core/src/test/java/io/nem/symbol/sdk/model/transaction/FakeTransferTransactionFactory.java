@@ -16,7 +16,7 @@
 
 package io.nem.symbol.sdk.model.transaction;
 
-import io.nem.symbol.sdk.model.blockchain.NetworkType;
+import io.nem.symbol.sdk.model.network.NetworkType;
 
 public class FakeTransferTransactionFactory extends TransactionFactory<FakeTransferTransaction> {
 

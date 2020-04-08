@@ -3,17 +3,34 @@ All notable changes to this project will be documented in this file.
 
 The changelog format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## [0.17.0] - 24-Feb-2020
+## [0.17.1] - 8-Apr-2020    
+
+**Milestone**: Fushicho.4(RC3 0.9.3.2)
+
+ Package  | Version  | Link
+---|---|---
+SDK OkHttp| v0.17.1 | https://repo.maven.apache.org/maven2/io/nem/symbol-sdk-okhttp-client
+SDK Vertx| v0.17.1 | https://repo.maven.apache.org/maven2/io/nem/symbol-sdk-vertx-client
+Catbuffer Library| v2.0.2 | https://repo.maven.apache.org/maven2/io/nem/catbuffer-java
+Client OkHttp | v0.8.9  | https://repo.maven.apache.org/maven2/io/nem/symbol-openapi-okhttp-gson-client
+Client Vertx | v0.8.9  | https://repo.maven.apache.org/maven2/io/nem/symbol-openapi-vertx-client/
+
+- Invalid private key generation when hex has leading zeros.
+- Removed confusion `isAlias()` from `MosaicId` and `NamespaceId`.
+- Added `GetNetworkProperties` to `NetworkRepository`.
+- Fixed Hash 160 secret deserialization.
+
+## [0.17.0] - 9-Mar-2020    
 
 **Milestone**: Fushicho.4(RC3 0.9.3.1)
 
- Versions  |   |
+ Package  | Version  | Link
 ---|---|---
 SDK OkHttp| v0.17.0 | https://repo.maven.apache.org/maven2/io/nem/symbol-sdk-okhttp-client
 SDK Vertx| v0.17.0 | https://repo.maven.apache.org/maven2/io/nem/symbol-sdk-vertx-client
 Catbuffer Library| v2.0.2 | https://repo.maven.apache.org/maven2/io/nem/catbuffer-java
 Client OkHttp | v0.8.5  | https://repo.maven.apache.org/maven2/io/nem/symbol-openapi-okhttp-gson-client
-Client Vertx | v0.8.5  | https://repo.maven.apache.org/maven2/io/nem/symbol-sdk-vertx-client
+Client Vertx | v0.8.5  | https://repo.maven.apache.org/maven2/io/nem/symbol-openapi-vertx-client/
 
 - **[BREAKING CHANGE]** Changed hashing algorithm to cope with catapult-server changes. All Key derivation and signing are now using `SHA512`. Removed `SignSchema` so `NetworkType` is no longer bonded to the schema anymore (sha3 / keccak). This change will affect all existing keypairs / address (derived from public key) and transaction signatures.
 - **[BREAKING CHANGE]** `NetworkCurrencyMosaic` and `NetworkHarvestMosaic` subclasses have been replaced with `NetworkCurrency.CAT_CURRENCY` and `NetworkCurrency.CAT_HARVEST` static values. `NetworkCurrency.SYMBOL_XYM` has been added describing the new currency.
