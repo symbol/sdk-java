@@ -15,6 +15,8 @@
  */
 package io.nem.symbol.sdk.model.transaction;
 
+import io.nem.symbol.core.crypto.Hasher;
+import io.nem.symbol.core.crypto.Hashes;
 import java.util.Arrays;
 
 /**
@@ -22,34 +24,39 @@ import java.util.Arrays;
  *
  * @since 1.0
  */
-public enum LockHashAlgorithmType {
+public enum LockHashAlgorithmType implements Hasher {
 
     /**
      * hashed using SHA3-256 (Catapult Native)
      */
-    SHA3_256(0),
-    /**
-     * hashed using Keccak-256 (ETH Compat)
-     */
-    KECCAK_256(1),
+    SHA3_256(0, Hashes::sha3_256),
     /**
      * hashed twice: first with SHA-256 and then with RIPEMD-160 (BTC Compat)
      */
-    HASH_160(2),
+    HASH_160(1, Hashes::hash160),
     /**
      * Hashed twice with SHA-256 (BTC Compat)
      */
-    HASH_256(3);
+    HASH_256(2, Hashes::hash256);
 
     /**
      * The regex used to validate a hashed value.
      */
     public static final String VALIDATOR_REGEX = "-?[0-9a-fA-F]+";
 
+    /**
+     * The catbuffer and open api value of this type
+     */
     private final int value;
 
-    LockHashAlgorithmType(int value) {
+    /**
+     * The {@link Hasher} that should be used when hashing values for this given Algorithm Type
+     */
+    private final Hasher delegate;
+
+    LockHashAlgorithmType(int value, Hasher delegate) {
         this.value = value;
+        this.delegate = delegate;
     }
 
     public static LockHashAlgorithmType rawValueOf(int value) {
@@ -68,18 +75,26 @@ public enum LockHashAlgorithmType {
         if (!input.matches(VALIDATOR_REGEX)) {
             return false;
         }
-        switch (hashType) {
-            case SHA3_256:
-            case KECCAK_256:
-            case HASH_256:
-                return input.length() == 64;
-            case HASH_160:
-                return input.length() == 64 || input.length() == 40;
+        if (hashType == LockHashAlgorithmType.HASH_160) {
+            return input.length() == 64 || input.length() == 40;
         }
-        return false;
+        return input.length() == 64;
+    }
+
+    /**
+     * Use this method to just hash values when the LockHashAlgorithmType is known. Users don't need
+     * to if/switch per algorithm.
+     *
+     * @param values the values to be hashed
+     * @return the hashed value using the algorithm.
+     */
+    @Override
+    public byte[] hash(byte[]... values) {
+        return this.delegate.hash(values);
     }
 
     public int getValue() {
         return value;
     }
+
 }
