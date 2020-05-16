@@ -17,8 +17,7 @@
 package io.nem.symbol.sdk.infrastructure;
 
 import io.nem.symbol.catapult.builders.AccountAddressRestrictionTransactionBodyBuilder;
-import io.nem.symbol.catapult.builders.AccountLinkActionDto;
-import io.nem.symbol.catapult.builders.AccountLinkTransactionBodyBuilder;
+import io.nem.symbol.catapult.builders.AccountKeyLinkTransactionBodyBuilder;
 import io.nem.symbol.catapult.builders.AccountMetadataTransactionBodyBuilder;
 import io.nem.symbol.catapult.builders.AccountMosaicRestrictionTransactionBodyBuilder;
 import io.nem.symbol.catapult.builders.AccountOperationRestrictionTransactionBodyBuilder;
@@ -35,6 +34,7 @@ import io.nem.symbol.catapult.builders.EntityTypeDto;
 import io.nem.symbol.catapult.builders.Hash256Dto;
 import io.nem.symbol.catapult.builders.HashLockTransactionBodyBuilder;
 import io.nem.symbol.catapult.builders.KeyDto;
+import io.nem.symbol.catapult.builders.LinkActionDto;
 import io.nem.symbol.catapult.builders.LockHashAlgorithmDto;
 import io.nem.symbol.catapult.builders.MosaicAddressRestrictionTransactionBodyBuilder;
 import io.nem.symbol.catapult.builders.MosaicAliasTransactionBodyBuilder;
@@ -52,6 +52,7 @@ import io.nem.symbol.catapult.builders.NamespaceIdDto;
 import io.nem.symbol.catapult.builders.NamespaceMetadataTransactionBodyBuilder;
 import io.nem.symbol.catapult.builders.NamespaceRegistrationTransactionBodyBuilder;
 import io.nem.symbol.catapult.builders.NetworkTypeDto;
+import io.nem.symbol.catapult.builders.NodeKeyLinkTransactionBodyBuilder;
 import io.nem.symbol.catapult.builders.SecretLockTransactionBodyBuilder;
 import io.nem.symbol.catapult.builders.SecretProofTransactionBodyBuilder;
 import io.nem.symbol.catapult.builders.Serializer;
@@ -63,6 +64,11 @@ import io.nem.symbol.catapult.builders.TransferTransactionBodyBuilder;
 import io.nem.symbol.catapult.builders.UnresolvedAddressDto;
 import io.nem.symbol.catapult.builders.UnresolvedMosaicBuilder;
 import io.nem.symbol.catapult.builders.UnresolvedMosaicIdDto;
+import io.nem.symbol.catapult.builders.VotingKeyDto;
+import io.nem.symbol.catapult.builders.VotingKeyLinkTransactionBodyBuilder;
+import io.nem.symbol.catapult.builders.VrfKeyLinkTransactionBodyBuilder;
+import io.nem.symbol.core.crypto.PublicKey;
+import io.nem.symbol.core.crypto.VotingKey;
 import io.nem.symbol.core.utils.ConvertUtils;
 import io.nem.symbol.core.utils.ExceptionUtils;
 import io.nem.symbol.core.utils.StringEncoder;
@@ -85,9 +91,8 @@ import io.nem.symbol.sdk.model.namespace.NamespaceRegistrationType;
 import io.nem.symbol.sdk.model.network.NetworkType;
 import io.nem.symbol.sdk.model.transaction.AccountAddressRestrictionTransaction;
 import io.nem.symbol.sdk.model.transaction.AccountAddressRestrictionTransactionFactory;
-import io.nem.symbol.sdk.model.transaction.AccountLinkAction;
-import io.nem.symbol.sdk.model.transaction.AccountLinkTransaction;
-import io.nem.symbol.sdk.model.transaction.AccountLinkTransactionFactory;
+import io.nem.symbol.sdk.model.transaction.AccountKeyLinkTransaction;
+import io.nem.symbol.sdk.model.transaction.AccountKeyLinkTransactionFactory;
 import io.nem.symbol.sdk.model.transaction.AccountMetadataTransaction;
 import io.nem.symbol.sdk.model.transaction.AccountMetadataTransactionFactory;
 import io.nem.symbol.sdk.model.transaction.AccountMosaicRestrictionTransaction;
@@ -103,6 +108,7 @@ import io.nem.symbol.sdk.model.transaction.AggregateTransactionFactory;
 import io.nem.symbol.sdk.model.transaction.Deadline;
 import io.nem.symbol.sdk.model.transaction.HashLockTransaction;
 import io.nem.symbol.sdk.model.transaction.HashLockTransactionFactory;
+import io.nem.symbol.sdk.model.transaction.LinkAction;
 import io.nem.symbol.sdk.model.transaction.LockHashAlgorithmType;
 import io.nem.symbol.sdk.model.transaction.MetadataTransaction;
 import io.nem.symbol.sdk.model.transaction.MosaicAddressRestrictionTransaction;
@@ -124,6 +130,8 @@ import io.nem.symbol.sdk.model.transaction.NamespaceMetadataTransaction;
 import io.nem.symbol.sdk.model.transaction.NamespaceMetadataTransactionFactory;
 import io.nem.symbol.sdk.model.transaction.NamespaceRegistrationTransaction;
 import io.nem.symbol.sdk.model.transaction.NamespaceRegistrationTransactionFactory;
+import io.nem.symbol.sdk.model.transaction.NodeKeyLinkTransaction;
+import io.nem.symbol.sdk.model.transaction.NodeKeyLinkTransactionFactory;
 import io.nem.symbol.sdk.model.transaction.SecretLockTransaction;
 import io.nem.symbol.sdk.model.transaction.SecretLockTransactionFactory;
 import io.nem.symbol.sdk.model.transaction.SecretProofTransaction;
@@ -133,6 +141,10 @@ import io.nem.symbol.sdk.model.transaction.TransactionFactory;
 import io.nem.symbol.sdk.model.transaction.TransactionType;
 import io.nem.symbol.sdk.model.transaction.TransferTransaction;
 import io.nem.symbol.sdk.model.transaction.TransferTransactionFactory;
+import io.nem.symbol.sdk.model.transaction.VotingKeyLinkTransaction;
+import io.nem.symbol.sdk.model.transaction.VotingKeyLinkTransactionFactory;
+import io.nem.symbol.sdk.model.transaction.VrfKeyLinkTransaction;
+import io.nem.symbol.sdk.model.transaction.VrfKeyLinkTransactionFactory;
 import java.io.DataInputStream;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
@@ -149,8 +161,7 @@ import org.apache.commons.lang3.Validate;
 
 
 /**
- * Implementation of BinarySerialization. It uses the catbuffer generated builders to deserialize an
- * object.
+ * Implementation of BinarySerialization. It uses the catbuffer generated builders to deserialize an object.
  */
 public class BinarySerializationImpl implements BinarySerialization {
 
@@ -172,7 +183,7 @@ public class BinarySerializationImpl implements BinarySerialization {
         register(new TransferTransactionSerializer());
         register(new MosaicSupplyChangeTransactionSerializer());
         register(new MosaicDefinitionTransactionSerializer());
-        register(new AccountLinkTransactionSerializer());
+        register(new AccountKeyLinkTransactionSerializer());
         register(new AccountMetadataTransactionSerializer());
         register(new MosaicMetadataTransactionSerializer());
         register(new NamespaceMetadataTransactionSerializer());
@@ -188,6 +199,9 @@ public class BinarySerializationImpl implements BinarySerialization {
         register(new AccountMosaicRestrictionTransactionSerializer());
         register(new AccountOperationRestrictionTransactionSerializer());
         register(new AccountAddressRestrictionTransactionSerializer());
+        register(new NodeKeyLinkTransactionBuilderSerializer());
+        register(new VotingKeyLinkTransactionBuilderSerializer());
+        register(new VrfKeyLinkTransactionBuilderSerializer());
         register(new AggregateTransactionSerializer(TransactionType.AGGREGATE_COMPLETE, this));
         register(new AggregateTransactionSerializer(TransactionType.AGGREGATE_BONDED, this));
     }
@@ -204,8 +218,7 @@ public class BinarySerializationImpl implements BinarySerialization {
     }
 
     /**
-     * It returns the registered {@link TransactionSerializer} for the given {@link
-     * TransactionType}.
+     * It returns the registered {@link TransactionSerializer} for the given {@link TransactionType}.
      *
      * @param transactionType the transaction type.
      * @param <T> the transaction type
@@ -334,9 +347,8 @@ public class BinarySerializationImpl implements BinarySerialization {
     }
 
     /**
-     * Deserialization of transactions. All the code related to the deserialization is handled in
-     * the class and its helpers. Transaction Model Objects are not polluted with deserialization
-     * functionality.
+     * Deserialization of transactions. All the code related to the deserialization is handled in the class and its
+     * helpers. Transaction Model Objects are not polluted with deserialization functionality.
      *
      * @param payload the byte array payload
      * @return the {@link TransactionFactory}.
@@ -352,9 +364,8 @@ public class BinarySerializationImpl implements BinarySerialization {
     }
 
     /**
-     * Deserialization of transactions. All the code related to the deserialization is handled in
-     * the class and its helpers. Transaction Model Objects are not polluted with deserialization
-     * functionality.
+     * Deserialization of transactions. All the code related to the deserialization is handled in the class and its
+     * helpers. Transaction Model Objects are not polluted with deserialization functionality.
      *
      * @param payload the byte array payload
      * @return the {@link Transaction}
@@ -449,8 +460,8 @@ public class BinarySerializationImpl implements BinarySerialization {
 
 
     /**
-     * Interface of the serializer helper classes that know how to serialize/deserialize one type of
-     * transaction from a payload.
+     * Interface of the serializer helper classes that know how to serialize/deserialize one type of transaction from a
+     * payload.
      */
     interface TransactionSerializer<T extends Transaction> {
 
@@ -465,23 +476,21 @@ public class BinarySerializationImpl implements BinarySerialization {
         Class<T> getTransactionClass();
 
         /**
-         * Subclasses would need to create the {@link TransactionFactory} for the handled {@link
-         * TransactionType} with just the specific transaction values. Common values like maxFee and
-         * deadline are handled at top level, subclasses won't need to duplicate the deserialization
-         * efforts.
+         * Subclasses would need to create the {@link TransactionFactory} for the handled {@link TransactionType} with
+         * just the specific transaction values. Common values like maxFee and deadline are handled at top level,
+         * subclasses won't need to duplicate the deserialization efforts.
          *
          * @param networkType the network type
-         * @param transactionBuilder the stream containing just the specific transaction values in
-         * the right order.
+         * @param transactionBuilder the stream containing just the specific transaction values in the right order.
          * @return the TransactionFactory of the transaction type this object handles.
          */
         TransactionFactory fromBodyBuilder(NetworkType networkType,
             Serializer transactionBuilder);
 
         /**
-         * Subclasses would need to know how to serialize the internal components of a transaction,
-         * the bytes that are serialized after the common attributes like max fee and duration.
-         * Subclasses would use catbuffer's transaction body builders.
+         * Subclasses would need to know how to serialize the internal components of a transaction, the bytes that are
+         * serialized after the common attributes like max fee and duration. Subclasses would use catbuffer's
+         * transaction body builders.
          *
          * @param transaction the transaction to be serialized
          * @return the catbuffer {@link Serializer}.
@@ -679,37 +688,36 @@ public class BinarySerializationImpl implements BinarySerialization {
         }
     }
 
-    private static class AccountLinkTransactionSerializer implements
-        TransactionSerializer<AccountLinkTransaction> {
+    private static class AccountKeyLinkTransactionSerializer implements
+        TransactionSerializer<AccountKeyLinkTransaction> {
 
         @Override
         public TransactionType getTransactionType() {
-            return TransactionType.ACCOUNT_LINK;
+            return TransactionType.ACCOUNT_KEY_LINK;
         }
 
         @Override
-        public Class<AccountLinkTransaction> getTransactionClass() {
-            return AccountLinkTransaction.class;
+        public Class<AccountKeyLinkTransaction> getTransactionClass() {
+            return AccountKeyLinkTransaction.class;
         }
 
         @Override
         public TransactionFactory fromBodyBuilder(NetworkType networkType,
             Serializer transactionBuilder) {
-            AccountLinkTransactionBodyBuilder builder = (AccountLinkTransactionBodyBuilder) transactionBuilder;
+            AccountKeyLinkTransactionBodyBuilder builder = (AccountKeyLinkTransactionBodyBuilder) transactionBuilder;
             PublicAccount remoteAccount = SerializationUtils
                 .toPublicAccount(builder.getRemotePublicKey(), networkType);
-            AccountLinkAction linkAction = AccountLinkAction
+            LinkAction linkAction = LinkAction
                 .rawValueOf(builder.getLinkAction().getValue());
-            return AccountLinkTransactionFactory
+            return AccountKeyLinkTransactionFactory
                 .create(networkType, remoteAccount, linkAction);
         }
 
         @Override
-        public Serializer toBodyBuilder(AccountLinkTransaction transaction) {
-            return AccountLinkTransactionBodyBuilder.create(
+        public Serializer toBodyBuilder(AccountKeyLinkTransaction transaction) {
+            return AccountKeyLinkTransactionBodyBuilder.create(
                 SerializationUtils.toKeyDto(transaction.getRemoteAccount().getPublicKey()),
-                AccountLinkActionDto.rawValueOf(transaction.getLinkAction().getValue()))
-                ;
+                LinkActionDto.rawValueOf(transaction.getLinkAction().getValue()));
 
         }
 
@@ -789,7 +797,7 @@ public class BinarySerializationImpl implements BinarySerialization {
             return MosaicMetadataTransactionBodyBuilder.create(
                 SerializationUtils.toKeyDto(transaction.getTargetAccount().getPublicKey()),
                 transaction.getScopedMetadataKey().longValue(),
-                new UnresolvedMosaicIdDto(transaction.getTargetMosaicId().getId().longValue()),
+                SerializationUtils.toUnresolvedMosaicIdDto(transaction.getTargetMosaicId()),
                 (short) transaction.getValueSizeDelta(),
                 ByteBuffer.wrap(MetadataTransaction.toByteArray(transaction.getValue()))
             );
@@ -896,7 +904,7 @@ public class BinarySerializationImpl implements BinarySerialization {
             if (transaction.getNamespaceRegistrationType()
                 == NamespaceRegistrationType.ROOT_NAMESPACE) {
                 txBuilder =
-                    NamespaceRegistrationTransactionBodyBuilder.create(
+                    NamespaceRegistrationTransactionBodyBuilder.createRoot(
                         new BlockDurationDto(transaction.getDuration()
                             .orElseThrow(() -> new IllegalStateException("Duration is required"))
                             .longValue()),
@@ -905,7 +913,7 @@ public class BinarySerializationImpl implements BinarySerialization {
 
             } else {
                 txBuilder =
-                    NamespaceRegistrationTransactionBodyBuilder.create(
+                    NamespaceRegistrationTransactionBodyBuilder.createChild(
                         new NamespaceIdDto(transaction.getParentId()
                             .orElseThrow(() -> new IllegalStateException("ParentId is required"))
                             .getId().longValue()),
@@ -1082,12 +1090,12 @@ public class BinarySerializationImpl implements BinarySerialization {
                 transaction.getNamespaceId().getIdAsLong());
             AliasActionDto aliasActionDto = AliasActionDto
                 .rawValueOf(transaction.getAliasAction().getValue());
-            AddressDto addressDto = new AddressDto(SerializationUtils
-                .fromUnresolvedAddressToByteBuffer(transaction.getAddress(),
-                    transaction.getNetworkType()));
+            Address address = transaction.getAddress();
+            AddressDto addressDto = SerializationUtils.toAddressDto(address, transaction.getNetworkType());
             return AddressAliasTransactionBodyBuilder
                 .create(namespaceIdDto, addressDto, aliasActionDto);
         }
+
 
     }
 
@@ -1610,6 +1618,100 @@ public class BinarySerializationImpl implements BinarySerialization {
                 .create(SerializationUtils.toKeyDto(c.getSigner().getPublicKey()),
                     SerializationUtils.toSignatureDto(c.getSignature()));
         }
+    }
+
+
+    private static class NodeKeyLinkTransactionBuilderSerializer implements
+        TransactionSerializer<NodeKeyLinkTransaction> {
+
+        @Override
+        public TransactionType getTransactionType() {
+            return TransactionType.NODE_KEY_LINK;
+        }
+
+        @Override
+        public Class<NodeKeyLinkTransaction> getTransactionClass() {
+            return NodeKeyLinkTransaction.class;
+        }
+
+        @Override
+        public TransactionFactory fromBodyBuilder(NetworkType networkType,
+            Serializer transactionBuilder) {
+            NodeKeyLinkTransactionBodyBuilder builder = (NodeKeyLinkTransactionBodyBuilder) transactionBuilder;
+            PublicKey linkedPublicKey = SerializationUtils.toPublicKey(builder.getLinkedPublicKey());
+            LinkAction linkAction = LinkAction.rawValueOf(builder.getLinkAction().getValue());
+            return NodeKeyLinkTransactionFactory.create(networkType, linkedPublicKey, linkAction);
+        }
+
+        @Override
+        public Serializer toBodyBuilder(NodeKeyLinkTransaction transaction) {
+            KeyDto linkedPublicKey = SerializationUtils.toKeyDto(transaction.getLinkedPublicKey());
+            LinkActionDto linkAction = LinkActionDto.rawValueOf(transaction.getLinkAction().getValue());
+            return NodeKeyLinkTransactionBodyBuilder.create(linkedPublicKey, linkAction);
+        }
+
+    }
+
+    private static class VrfKeyLinkTransactionBuilderSerializer implements
+        TransactionSerializer<VrfKeyLinkTransaction> {
+
+        @Override
+        public TransactionType getTransactionType() {
+            return TransactionType.VRF_KEY_LINK;
+        }
+
+        @Override
+        public Class<VrfKeyLinkTransaction> getTransactionClass() {
+            return VrfKeyLinkTransaction.class;
+        }
+
+        @Override
+        public TransactionFactory fromBodyBuilder(NetworkType networkType,
+            Serializer transactionBuilder) {
+            VrfKeyLinkTransactionBodyBuilder builder = (VrfKeyLinkTransactionBodyBuilder) transactionBuilder;
+            PublicKey linkedPublicKey = SerializationUtils.toPublicKey(builder.getLinkedPublicKey());
+            LinkAction linkAction = LinkAction.rawValueOf(builder.getLinkAction().getValue());
+            return VrfKeyLinkTransactionFactory.create(networkType, linkedPublicKey, linkAction);
+        }
+
+        @Override
+        public Serializer toBodyBuilder(VrfKeyLinkTransaction transaction) {
+            KeyDto linkedPublicKey = SerializationUtils.toKeyDto(transaction.getLinkedPublicKey());
+            LinkActionDto linkAction = LinkActionDto.rawValueOf(transaction.getLinkAction().getValue());
+            return VrfKeyLinkTransactionBodyBuilder.create(linkedPublicKey, linkAction);
+        }
+
+    }
+
+    private static class VotingKeyLinkTransactionBuilderSerializer implements
+        TransactionSerializer<VotingKeyLinkTransaction> {
+
+        @Override
+        public TransactionType getTransactionType() {
+            return TransactionType.VOTING_KEY_LINK;
+        }
+
+        @Override
+        public Class<VotingKeyLinkTransaction> getTransactionClass() {
+            return VotingKeyLinkTransaction.class;
+        }
+
+        @Override
+        public TransactionFactory fromBodyBuilder(NetworkType networkType,
+            Serializer transactionBuilder) {
+            VotingKeyLinkTransactionBodyBuilder builder = (VotingKeyLinkTransactionBodyBuilder) transactionBuilder;
+            VotingKey linkedPublicKey = SerializationUtils.toVotingKey(builder.getLinkedPublicKey());
+            LinkAction linkAction = LinkAction.rawValueOf(builder.getLinkAction().getValue());
+            return VotingKeyLinkTransactionFactory.create(networkType, linkedPublicKey, linkAction);
+        }
+
+        @Override
+        public Serializer toBodyBuilder(VotingKeyLinkTransaction transaction) {
+            VotingKeyDto linkedPublicKey = SerializationUtils.toVotingKeyDto(transaction.getLinkedPublicKey());
+            LinkActionDto linkAction = LinkActionDto.rawValueOf(transaction.getLinkAction().getValue());
+            return VotingKeyLinkTransactionBodyBuilder.create(linkedPublicKey, linkAction);
+        }
+
     }
 
 }

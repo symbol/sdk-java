@@ -35,23 +35,24 @@ import io.nem.symbol.sdk.model.node.NodeStatus;
 import io.nem.symbol.sdk.model.node.RoleType;
 import io.nem.symbol.sdk.model.receipt.ReceiptType;
 import io.nem.symbol.sdk.model.restriction.MosaicRestrictionEntryType;
-import io.nem.symbol.sdk.model.transaction.AccountLinkAction;
 import io.nem.symbol.sdk.model.transaction.AccountRestrictionFlags;
+import io.nem.symbol.sdk.model.transaction.LinkAction;
 import io.nem.symbol.sdk.model.transaction.LockHashAlgorithmType;
 import io.nem.symbol.sdk.model.transaction.MosaicRestrictionType;
 import io.nem.symbol.sdk.model.transaction.TransactionState;
 import io.nem.symbol.sdk.model.transaction.TransactionType;
-import io.nem.symbol.sdk.openapi.vertx.model.AccountLinkActionEnum;
 import io.nem.symbol.sdk.openapi.vertx.model.AccountRestrictionFlagsEnum;
 import io.nem.symbol.sdk.openapi.vertx.model.AccountTypeEnum;
 import io.nem.symbol.sdk.openapi.vertx.model.AliasActionEnum;
 import io.nem.symbol.sdk.openapi.vertx.model.AliasTypeEnum;
+import io.nem.symbol.sdk.openapi.vertx.model.LinkActionEnum;
 import io.nem.symbol.sdk.openapi.vertx.model.LockHashAlgorithmEnum;
 import io.nem.symbol.sdk.openapi.vertx.model.MessageTypeEnum;
 import io.nem.symbol.sdk.openapi.vertx.model.MosaicRestrictionEntryTypeEnum;
 import io.nem.symbol.sdk.openapi.vertx.model.MosaicRestrictionTypeEnum;
 import io.nem.symbol.sdk.openapi.vertx.model.MosaicSupplyChangeActionEnum;
 import io.nem.symbol.sdk.openapi.vertx.model.NamespaceRegistrationTypeEnum;
+import io.nem.symbol.sdk.openapi.vertx.model.NodeIdentityEqualityStrategy;
 import io.nem.symbol.sdk.openapi.vertx.model.NodeStatusEnum;
 import io.nem.symbol.sdk.openapi.vertx.model.PositionEnum;
 import io.nem.symbol.sdk.openapi.vertx.model.ReceiptTypeEnum;
@@ -62,7 +63,6 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
@@ -93,10 +93,10 @@ public class EnumMapperTest {
     }
 
     @Test
-    void testAccountLinkActionEnumDTO() {
+    void testLinkActionEnumDTO() {
         Set<Byte> existingValues = new HashSet<>();
-        Arrays.stream(AccountLinkAction.values()).forEach(v -> {
-            Assertions.assertNotNull(AccountLinkActionEnum.fromValue((int) v.getValue()), v.name());
+        Arrays.stream(LinkAction.values()).forEach(v -> {
+            Assertions.assertNotNull(LinkActionEnum.fromValue((int) v.getValue()), v.name());
             Assertions
                 .assertTrue(existingValues.add(v.getValue()), v.getValue() + " is duplicated!!");
         });
@@ -117,10 +117,10 @@ public class EnumMapperTest {
     }
 
     @Test
-    void testFromAccountLinkActionEnumToAccountLinkAction() {
+    void testFromLinkActionEnumToAccountLinkAction() {
         Set<Integer> existingValues = new HashSet<>();
-        Arrays.stream(AccountLinkActionEnum.values()).forEach(v -> {
-            Assertions.assertNotNull(AccountLinkAction.rawValueOf(v.getValue()), v.name());
+        Arrays.stream(LinkActionEnum.values()).forEach(v -> {
+            Assertions.assertNotNull(LinkAction.rawValueOf(v.getValue()), v.name());
             Assertions
                 .assertTrue(existingValues.add(v.getValue()), v.getValue() + " is duplicated!!");
         });
@@ -284,8 +284,6 @@ public class EnumMapperTest {
     }
 
     @Test
-    @Disabled
-        //Fix open api first
     void testLockHashAlgorithmTypeModel() {
         Set<Integer> existingValues = new HashSet<>();
         Arrays.stream(LockHashAlgorithmEnum.values()).forEach(v -> {
@@ -533,6 +531,23 @@ public class EnumMapperTest {
     void validAliasTypeEnum(AliasTypeEnum enumValue) {
         assertNotNull(AliasType.rawValueOf(enumValue.getValue()));
         Assertions.assertEquals(AliasTypeEnum.fromValue(enumValue.getValue()).getValue(),
+            enumValue.getValue());
+    }
+
+    @ParameterizedTest
+    @EnumSource(io.nem.symbol.sdk.model.network.NodeIdentityEqualityStrategy.class)
+    void validFromNodeIdentityEqualityStrategy(
+        io.nem.symbol.sdk.model.network.NodeIdentityEqualityStrategy enumValue) {
+        assertNotNull(NodeIdentityEqualityStrategy.fromValue(enumValue.getValue()));
+        assertEquals(NodeIdentityEqualityStrategy.fromValue(enumValue.getValue()).getValue(),
+            enumValue.getValue());
+    }
+
+    @ParameterizedTest
+    @EnumSource(NodeIdentityEqualityStrategy.class)
+    void validNodeIdentityEqualityStrategyEnum(NodeIdentityEqualityStrategy enumValue) {
+        assertNotNull(io.nem.symbol.sdk.model.network.NodeIdentityEqualityStrategy.rawValueOf(enumValue.getValue()));
+        Assertions.assertEquals(NodeIdentityEqualityStrategy.fromValue(enumValue.getValue()).getValue(),
             enumValue.getValue());
     }
 }

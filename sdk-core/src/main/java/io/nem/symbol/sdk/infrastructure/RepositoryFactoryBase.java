@@ -16,16 +16,23 @@
 
 package io.nem.symbol.sdk.infrastructure;
 
-import io.nem.symbol.sdk.api.NetworkCurrencyService;
 import io.nem.symbol.sdk.api.RepositoryFactory;
 import io.nem.symbol.sdk.api.RepositoryFactoryConfiguration;
-import io.nem.symbol.sdk.model.blockchain.BlockInfo;
+import io.nem.symbol.sdk.model.mosaic.MosaicId;
+import io.nem.symbol.sdk.model.mosaic.MosaicNames;
 import io.nem.symbol.sdk.model.mosaic.NetworkCurrency;
+import io.nem.symbol.sdk.model.mosaic.NetworkCurrencyBuilder;
+import io.nem.symbol.sdk.model.namespace.NamespaceId;
+import io.nem.symbol.sdk.model.namespace.NamespaceName;
+import io.nem.symbol.sdk.model.network.NetworkConfiguration;
 import io.nem.symbol.sdk.model.network.NetworkType;
+import io.nem.symbol.sdk.model.node.NodeInfo;
 import io.reactivex.Observable;
-import java.math.BigInteger;
+import io.reactivex.ObservableSource;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.Callable;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * Base class of all the {@link RepositoryFactory}. It handles common functions like resolving
@@ -46,13 +53,12 @@ public abstract class RepositoryFactoryBase implements RepositoryFactory {
     /**
      * The resolved generation hash. This observable is lazy (cold) and cached.
      */
-    private final Observable<String> generationHash;
+    private final Observable<String> generationHashSeed;
 
     /**
-     * The cached remote network currencies resolved using {@link NetworkCurrencyService}. This
-     * observable is lazy (cold) and cached.
+     * The cached remote network configuration.
      */
-    private final Observable<List<NetworkCurrency>> remoteNetworkCurrencies;
+    private final Observable<NetworkConfiguration> remoteNetworkConfiguration;
 
     /**
      * The resolved network currency . This observable is lazy (cold) and cached.
@@ -73,41 +79,66 @@ public abstract class RepositoryFactoryBase implements RepositoryFactory {
         this.networkType = createLazyObservable(configuration.getNetworkType(),
             () -> createNetworkRepository().getNetworkType());
 
-        this.generationHash = createLazyObservable(configuration.getGenerationHash(),
-            () -> createBlockRepository().getBlockByHeight(BigInteger.ONE)
-                .map(BlockInfo::getGenerationHash));
+        this.generationHashSeed = createLazyObservable(configuration.getGenerationHash(),
+            () -> createNodeRepository().getNodeInfo()
+                .map(NodeInfo::getNetworkGenerationHashSeed));
 
-        this.remoteNetworkCurrencies = Observable
-            .defer(() -> createNetworkCurrencyService()
-                .getNetworkCurrenciesFromNemesis()).cache();
+        this.remoteNetworkConfiguration = Observable
+            .defer(() -> createNetworkRepository().getNetworkProperties()).cache();
 
-        //TODO: once rest returns the main mosaic id, the networkCurrency can be resolved from there and not from the block 1.
-        this.networkCurrency = createLazyObservable(
-            configuration.getNetworkCurrency(),
-            () -> this.remoteNetworkCurrencies.map(cs -> {
-                if (cs.isEmpty()) {
-                    throw new IllegalStateException("No currency could be found in the network.");
-                }
-                //TODO improve how the network currency is resolved from the known list of block 1 network currencies.
-                return cs.stream().filter(c -> !c.isSupplyMutable()).findFirst()
-                    .orElse(cs.iterator().next());
-            }));
+        this.networkCurrency = createLazyObservable(configuration.getNetworkCurrency(),
+            this::loadNetworkCurrency);
 
-        //TODO: once rest returns the harvest mosaic id, the networkCurrency can be resolved from there and not from the nemesis block 1.
-        this.harvestCurrency = createLazyObservable(
-            configuration.getHarvestCurrency(),
-            () -> this.remoteNetworkCurrencies.map(cs -> {
-                if (cs.isEmpty()) {
-                    throw new IllegalStateException("No currency could be found in the network.");
-                }
-                //TODO improve how the harvest currency is resolved from the known list of block 1 network currencies.
-                return cs.stream().filter(NetworkCurrency::isSupplyMutable).findFirst()
-                    .orElse(cs.iterator().next());
-            }));
+        this.harvestCurrency = createLazyObservable(configuration.getHarvestCurrency(),
+            this::loadHarvestCurrency);
     }
 
-    protected NetworkCurrencyService createNetworkCurrencyService() {
-        return new NetworkCurrencyServiceImpl(this);
+    protected Observable<NetworkCurrency> loadHarvestCurrency() {
+        return this.remoteNetworkConfiguration.flatMap(cs -> {
+            if (cs == null || cs.getChain() == null
+                || cs.getChain().getHarvestingMosaicId() == null) {
+                return this.networkCurrency;
+            }
+            if (cs.getChain().getHarvestingMosaicId()
+                .equals(cs.getChain().getCurrencyMosaicId())) {
+                return this.networkCurrency;
+            }
+            return getNetworkCurrency(cs.getChain().getHarvestingMosaicId());
+        });
+    }
+
+    protected Observable<NetworkCurrency> loadNetworkCurrency() {
+        return this.remoteNetworkConfiguration.flatMap(cs -> {
+            if (cs == null || cs.getChain() == null
+                || cs.getChain().getCurrencyMosaicId() == null) {
+                return Observable.error(
+                    new IllegalStateException(
+                        "No currency could be found in the network configuration."));
+            }
+            return getNetworkCurrency(cs.getChain().getCurrencyMosaicId());
+        });
+    }
+
+    protected ObservableSource<NetworkCurrency> getNetworkCurrency(String mosaicIdHex) {
+        MosaicId mosaicId = new MosaicId(
+            StringUtils.removeStart(mosaicIdHex.replace("'", "").substring(2), "0x"));
+        return createMosaicRepository().getMosaic(mosaicId)
+            .map(mosaicInfo -> new NetworkCurrencyBuilder(mosaicInfo.getMosaicId(),
+                mosaicInfo.getDivisibility()).withTransferable(mosaicInfo.isTransferable())
+                .withSupplyMutable(mosaicInfo.isSupplyMutable()))
+            .flatMap(builder -> createNamespaceRepository()
+                .getMosaicsNames(Collections.singletonList(mosaicId)).map(
+                    names -> names.stream().filter(n -> n.getMosaicId().equals(mosaicId))
+                        .findFirst()
+                        .map(name -> builder.withNamespaceId(getNamespaceId(names)).build())
+                        .orElse(builder.build())));
+    }
+
+    private NamespaceId getNamespaceId(List<MosaicNames> names) {
+        NamespaceName namespaceName = names.get(0).getNames().get(0);
+        NamespaceId namespaceId = namespaceName.getNamespaceId();
+        return NamespaceId
+            .createFromIdAndFullName(namespaceId.getId(), namespaceName.getName());
     }
 
     private static <T> Observable<T> createLazyObservable(T providedValue,
@@ -126,7 +157,7 @@ public abstract class RepositoryFactoryBase implements RepositoryFactory {
 
     @Override
     public Observable<String> getGenerationHash() {
-        return generationHash;
+        return generationHashSeed;
     }
 
     protected String getBaseUrl() {

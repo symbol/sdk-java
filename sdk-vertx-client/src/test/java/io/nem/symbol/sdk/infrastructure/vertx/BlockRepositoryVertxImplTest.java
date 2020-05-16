@@ -58,7 +58,7 @@ public class BlockRepositoryVertxImplTest extends AbstractVertxRespositoryTest {
     public void getBlockTransactions() throws Exception {
 
         TransactionInfoDTO aggregateTransferTransactionDTO = TestHelperVertx.loadTransactionInfoDTO(
-            "shouldCreateAggregateTransferTransaction.json"
+            "aggregateTransferTransaction.json"
         );
 
         mockRemoteCall(Collections.singletonList(aggregateTransferTransactionDTO));
@@ -107,6 +107,7 @@ public class BlockRepositoryVertxImplTest extends AbstractVertxRespositoryTest {
         metaDTO.setNumStatements(20);
         metaDTO.setStateHashSubCacheMerkleRoots(Arrays.asList("string1", "string2"));
         metaDTO.setTotalFee(BigInteger.valueOf(8));
+
 
         dto.setMeta(metaDTO);
 
@@ -176,6 +177,10 @@ public class BlockRepositoryVertxImplTest extends AbstractVertxRespositoryTest {
             "B630EFDDFADCC4A2077AB8F1EC846B08FEE2D2972EACF95BBAC6BFAC3D31834C");
         blockDto.setHeight(BigInteger.valueOf(9));
 
+        blockDto.setProofGamma("proofGamma");
+        blockDto.setProofScalar("proofScalar");
+        blockDto.setProofVerificationHash("proofVerificationHash");
+
         dto.setBlock(blockDto);
 
         mockRemoteCall(Collections.singletonList(dto));
@@ -208,13 +213,18 @@ public class BlockRepositoryVertxImplTest extends AbstractVertxRespositoryTest {
 
         Assertions.assertEquals(blockDto.getHeight(), info.getHeight());
 
+
+        Assertions.assertEquals(blockDto.getProofGamma(), info.getProofGamma());
+        Assertions.assertEquals(blockDto.getProofScalar(), info.getProofScalar());
+        Assertions.assertEquals(blockDto.getProofVerificationHash(), info.getProofVerificationHash());
+
     }
 
 
     @Test
     public void shouldGetBlockTransactions() throws Exception {
         TransactionInfoDTO transactionInfoDTO = TestHelperVertx.loadTransactionInfoDTO(
-            "shouldCreateAggregateMosaicCreationTransaction.json");
+            "aggregateMosaicCreationTransaction.json");
 
         mockRemoteCall(Collections.singletonList(transactionInfoDTO));
 

@@ -16,6 +16,11 @@
 
 package io.nem.symbol.core.crypto;
 
+import io.nem.symbol.core.utils.ByteUtils;
+import io.nem.symbol.core.utils.ConvertUtils;
+import io.nem.symbol.sdk.infrastructure.RandomUtils;
+import io.nem.symbol.sdk.model.mosaic.IllegalIdentifierException;
+import java.math.BigInteger;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.core.IsEqual;
 import org.hamcrest.core.IsNot;
@@ -24,10 +29,17 @@ import org.junit.jupiter.api.Test;
 
 public class PublicKeyTest {
 
-    private static final byte[] TEST_BYTES = new byte[]{0x22, (byte) 0xAB, 0x71};
-    private static final byte[] MODIFIED_TEST_BYTES = new byte[]{0x22, (byte) 0xAB, 0x72};
+    private static final byte[] TEST_BYTES = RandomUtils.generateRandomBytes(PublicKey.SIZE);
+    private static final byte[] MODIFIED_TEST_BYTES = RandomUtils
+        .generateRandomBytes(PublicKey.SIZE);
 
     // region constructors / factories
+
+    @Test
+    public void randomUtilsFail() {
+        Assertions.assertThrows(IllegalIdentifierException.class,
+            () -> RandomUtils.generateRandomBytes(-1));
+    }
 
     @Test
     public void canCreateFromBytes() {
@@ -42,9 +54,11 @@ public class PublicKeyTest {
     public void canCreateFromHexString() {
         // Arrange:
         final PublicKey key = PublicKey.fromHexString("227F");
+        Assertions.assertEquals(PublicKey.SIZE, key.getSize());
 
         // Assert:
-        MatcherAssert.assertThat(key.getBytes(), IsEqual.equalTo(new byte[]{0x22, 0x7F}));
+        MatcherAssert.assertThat(key.getBytes(), IsEqual
+            .equalTo(ByteUtils.byteArrayLeadingZeros(new byte[]{0x22, 0x7F}, PublicKey.SIZE)));
     }
 
     @Test
@@ -62,16 +76,21 @@ public class PublicKeyTest {
     @Test
     public void cannotCreateAroundMalformedHexString() {
         // Act:
-        Assertions.assertThrows(CryptoException.class, () -> PublicKey.fromHexString("22G75"));
+        Assertions
+            .assertThrows(IllegalArgumentException.class, () -> PublicKey.fromHexString("22G75"));
     }
 
-    // endregion
+    @Test
+    public void crateFromBigInt() {
+        // Arrange:
+        final PublicKey key = new PublicKey(new BigInteger("2275"));
 
-    // region serializer
-
-    // endregion
-
-    // region equals / hashCode
+        // Assert:
+        MatcherAssert
+            .assertThat(new PublicKey(new BigInteger("2276")), IsNot.not(IsEqual.equalTo(key)));
+        Assertions.assertEquals("00000000000000000000000000000000000000000000000000000000000008E3",
+            key.toHex());
+    }
 
     @Test
     public void equalsOnlyReturnsTrueForEquivalentObjects() {
@@ -103,7 +122,7 @@ public class PublicKeyTest {
         // Assert:
         MatcherAssert.assertThat(
             new PublicKey(TEST_BYTES).toHex().toUpperCase(),
-            IsEqual.equalTo("22ab71".toUpperCase()));
+            IsEqual.equalTo(ConvertUtils.toHex(TEST_BYTES).toUpperCase()));
     }
 
     // endregion

@@ -21,18 +21,18 @@ import io.nem.symbol.sdk.model.network.NetworkType;
 import org.apache.commons.lang3.Validate;
 
 /**
- * Factory of {@link AccountLinkTransaction}
+ * Factory of {@link AccountKeyLinkTransaction}
  */
-public class AccountLinkTransactionFactory extends TransactionFactory<AccountLinkTransaction> {
+public class AccountKeyLinkTransactionFactory extends TransactionFactory<AccountKeyLinkTransaction> {
 
     private final PublicAccount remoteAccount;
-    private final AccountLinkAction linkAction;
+    private final LinkAction linkAction;
 
-    private AccountLinkTransactionFactory(
+    private AccountKeyLinkTransactionFactory(
         final NetworkType networkType,
         final PublicAccount remoteAccount,
-        final AccountLinkAction linkAction) {
-        super(TransactionType.ACCOUNT_LINK, networkType);
+        final LinkAction linkAction) {
+        super(TransactionType.ACCOUNT_KEY_LINK, networkType);
         Validate.notNull(remoteAccount, "RemoteAccount must not be null");
         Validate.notNull(linkAction, "LinkAction must not be null");
         this.remoteAccount = remoteAccount;
@@ -47,9 +47,9 @@ public class AccountLinkTransactionFactory extends TransactionFactory<AccountLin
    * @param linkAction Link action.
    * @return Account link transaction.
    */
-  public static AccountLinkTransactionFactory create(
-      NetworkType networkType, PublicAccount remoteAccount, AccountLinkAction linkAction) {
-        return new AccountLinkTransactionFactory(networkType, remoteAccount, linkAction);
+  public static AccountKeyLinkTransactionFactory create(
+      NetworkType networkType, PublicAccount remoteAccount, LinkAction linkAction) {
+        return new AccountKeyLinkTransactionFactory(networkType, remoteAccount, linkAction);
     }
 
     /**
@@ -66,13 +66,13 @@ public class AccountLinkTransactionFactory extends TransactionFactory<AccountLin
      *
      * @return Link action.
      */
-    public AccountLinkAction getLinkAction() {
+    public LinkAction getLinkAction() {
         return linkAction;
     }
 
 
     @Override
-    public AccountLinkTransaction build() {
-        return new AccountLinkTransaction(this);
+    public AccountKeyLinkTransaction build() {
+        return new AccountKeyLinkTransaction(this);
     }
 }
