@@ -27,7 +27,9 @@ import io.nem.symbol.catapult.builders.SignatureDto;
 import io.nem.symbol.catapult.builders.UnresolvedAddressDto;
 import io.nem.symbol.catapult.builders.UnresolvedMosaicBuilder;
 import io.nem.symbol.catapult.builders.UnresolvedMosaicIdDto;
+import io.nem.symbol.catapult.builders.VotingKeyDto;
 import io.nem.symbol.core.crypto.PublicKey;
+import io.nem.symbol.core.crypto.VotingKey;
 import io.nem.symbol.core.utils.Base32Encoder;
 import io.nem.symbol.core.utils.ConvertUtils;
 import io.nem.symbol.core.utils.MapperUtils;
@@ -259,8 +261,8 @@ public class SerializationUtils {
     }
 
     /**
-     * It concats the 2 byte arrays patching the int size at the beginning of the first byte array
-     * setting up the sum of both lengths.
+     * It concats the 2 byte arrays patching the int size at the beginning of the first byte array setting up the sum of
+     * both lengths.
      *
      * @param commonBytes the common transaction byte array
      * @param transactionBytes the specific transaction byte array.
@@ -307,6 +309,36 @@ public class SerializationUtils {
     }
 
     /**
+     * It creates a catbuffer {@link PublicKey} from a {@link KeyDto}.
+     *
+     * @param dto the public key.
+     * @return the {@link PublicKey}
+     */
+    public static PublicKey toPublicKey(KeyDto dto) {
+        return new PublicKey(dto.getKey().array());
+    }
+
+    /**
+     * It creates a {@link VotingKey} from the DTO
+     *
+     * @param votingKeyDto the dto
+     * @return the {@link VotingKey}
+     */
+    public static VotingKey toVotingKey(VotingKeyDto votingKeyDto) {
+        return new VotingKey(votingKeyDto.getVotingKey().array());
+    }
+
+    /**
+     * It creates a catbuffer VotingKeyDto from a {@link VotingKey}.
+     *
+     * @param key the voting key.
+     * @return the VotingKeyDto
+     */
+    public static VotingKeyDto toVotingKeyDto(VotingKey key) {
+        return new VotingKeyDto(ByteBuffer.wrap(key.getBytes()));
+    }
+
+    /**
      * It creates a catbuffer Hash256Dto from a String hash.
      *
      * @param hash the hash
@@ -314,6 +346,39 @@ public class SerializationUtils {
      */
     public static Hash256Dto toHash256Dto(String hash) {
         return new Hash256Dto(ByteBuffer.wrap(ConvertUtils.fromHexToBytes(hash)));
+    }
+
+    /**
+     * Converts an a model {@link Address} into an {@link AddressDto} from catbuffer.
+     *
+     * @param address the model adddress
+     * @param networkType the network type
+     * @return the address dto.
+     */
+    public static AddressDto toAddressDto(Address address, NetworkType networkType) {
+        return new AddressDto(SerializationUtils
+            .fromUnresolvedAddressToByteBuffer(address,
+                networkType));
+    }
+
+    /**
+     * Converts an a model {@link UnresolvedMosaicId} into an {@link UnresolvedMosaicIdDto} from catbuffer.
+     *
+     * @param mosaicId the model
+     * @return the dto
+     */
+    public static UnresolvedMosaicIdDto toUnresolvedMosaicIdDto(UnresolvedMosaicId mosaicId) {
+        return new UnresolvedMosaicIdDto(mosaicId.getId().longValue());
+    }
+
+    /**
+     * Converts an a model {@link MosaicId} into an {@link MosaicIdDto} from catbuffer.
+     *
+     * @param mosaicId the model
+     * @return the dto
+     */
+    public static MosaicIdDto toMosaicIdDto(MosaicId mosaicId) {
+        return new MosaicIdDto(mosaicId.getId().longValue());
     }
 
 }

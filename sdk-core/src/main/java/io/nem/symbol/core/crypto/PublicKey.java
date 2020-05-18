@@ -16,24 +16,42 @@
 
 package io.nem.symbol.core.crypto;
 
-import io.nem.symbol.core.utils.ConvertUtils;
-import java.nio.ByteBuffer;
-import java.util.Arrays;
+import java.math.BigInteger;
 
 /**
  * Represents a public key.
  */
-public class PublicKey {
-
-    private final byte[] value;
+public class PublicKey extends Key {
+    /**
+     * The size of Symbol's public keys.
+     */
+    public static final int SIZE = 32;
 
     /**
-     * Creates a new public key.
+     * Creates a new key from the byte array.
      *
      * @param bytes The raw public key value.
      */
-    public PublicKey(final byte[] bytes) {
-        this.value = bytes;
+    public PublicKey(byte[] bytes) {
+        super(bytes, SIZE);
+    }
+
+    /**
+     * Creates a new key from a big int value
+     *
+     * @param value the value
+     */
+    public PublicKey(BigInteger value) {
+        super(value, SIZE);
+    }
+
+    /**
+     * Creates a new key from an hex.
+     *
+     * @param hex the hex.
+     */
+    public PublicKey(String hex) {
+        super(hex, SIZE);
     }
 
     /**
@@ -43,58 +61,7 @@ public class PublicKey {
      * @return The new public key.
      */
     public static PublicKey fromHexString(final String hex) {
-        try {
-            return new PublicKey(ConvertUtils.getBytes(hex));
-        } catch (final IllegalArgumentException e) {
-            throw new CryptoException(e);
-        }
+        return new PublicKey(hex);
     }
 
-    /**
-     * Gets the raw public key value.
-     *
-     * @return The raw public key value.
-     */
-    public byte[] getBytes() {
-        return this.value;
-    }
-
-    /**
-     * Gets raw public key value.
-     *
-     * @return The raw public key value.
-     */
-    public ByteBuffer getByteBuffer() {
-        return ByteBuffer.wrap(this.value);
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        PublicKey publicKey = (PublicKey) o;
-        return Arrays.equals(value, publicKey.value);
-    }
-
-    @Override
-    public int hashCode() {
-        return Arrays.hashCode(value);
-    }
-
-    /**
-     * @return the hex representation of the public key.
-     */
-    public String toHex() {
-        return ConvertUtils.toHex(this.value).toUpperCase();
-    }
-
-
-    @Override
-    public String toString() {
-        return "PublicKey{" + toHex() + '}';
-    }
 }

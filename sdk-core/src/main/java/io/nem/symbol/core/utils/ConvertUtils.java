@@ -17,8 +17,6 @@
 package io.nem.symbol.core.utils;
 
 import java.math.BigInteger;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 import java.util.Arrays;
 import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.binary.Hex;
@@ -34,6 +32,7 @@ public class ConvertUtils {
      */
     private static final BigInteger UNSIGNED_LONG_MASK = BigInteger.ONE.shiftLeft(Long.SIZE)
         .subtract(BigInteger.ONE);
+
 
 
     /**
@@ -224,10 +223,10 @@ public class ConvertUtils {
      * @return the new hex string.
      */
     public static String reverseHexString(String hex) {
-        final ByteBuffer byteBuffer = ByteBuffer.allocate(hex.length() / 2);
-        byteBuffer.order(ByteOrder.LITTLE_ENDIAN);
-        byteBuffer.putLong(new BigInteger(hex, 16).longValue());
-        return ConvertUtils.toHex(byteBuffer.array()).toUpperCase();
+        final StringBuilder builder = new StringBuilder(hex.length());
+        for(int i = hex.length(); i > 1; i-=2)
+            builder.append(hex, i-2, i);
+        return builder.toString();
     }
 
     /**
