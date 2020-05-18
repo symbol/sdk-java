@@ -3,6 +3,33 @@ All notable changes to this project will be documented in this file.
 
 The changelog format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [0.19.0] - 18-May-2020    
+
+**Milestone**: Gorilla.1(0.9.5.1)
+
+ Package  | Version  | Link
+---|---|---
+SDK OkHttp| v0.19.0 | https://repo.maven.apache.org/maven2/io/nem/symbol-sdk-okhttp-client
+SDK Vertx| v0.19.0 | https://repo.maven.apache.org/maven2/io/nem/symbol-sdk-vertx-client
+Catbuffer Library| v0.0.15 | https://repo.maven.apache.org/maven2/io/nem/catbuffer-java
+Client OkHttp | v0.8.10  | https://repo.maven.apache.org/maven2/io/nem/symbol-openapi-okhttp-gson-client
+Client Vertx | v0.8.10  | https://repo.maven.apache.org/maven2/io/nem/symbol-openapi-vertx-client/
+
+- **[BREAKING CHANGE]** `Transaction signing` is now using `GenerationHashSeed` from `NodeInfo` or `NetworkProperties`. GenerationHash on Nemesis block (block:1) is `NOT` used for signing purposes. `RepositoryFactory.getGenerationHash()` has been updated.
+- **[BREAKING CHANGE]** Renamed `AccountLinkTransaction` to `AccountKeyLinkTransaction`.
+- **[BREAKING CHANGE]** Renamed `networkGenerationHash` to `networkGenerationHashSeed` in `NodeInfo`.
+- **[BREAKING CHANGE]** replaced `linkedPublickKey` with `supplementalAccountKeys` array in `AccountInfo`.
+- Added new transaction `VrfKeyLinkTransaction`.
+- Added new transaction `VotingKeyLinkTransaction`.
+- Added new transaction `NodeKeyLinkTransaction`.
+- Added new properties `proofGamma`, `proofScalar`, `proofVarificationHash` in `BlockInfo`
+- Added new properties `harvestNetworkPercentage`, `harvestNetworkFeeSinkPublicKey` in `NetworkProperties`.
+- Added new `KeyType`: Unset / Linked / VRF / Voting / Node / All.
+- Unified implementation of `PrivateKey` and `PublicKey`. Added `VotingKey`.
+- Transaction Factories can now calculate the max fees based on fee multipliers and cosignature configuration.
+- Fixed `ConvertUtils.reverseHexString`.
+- Added `BinarySerialization.deserializeToFactory`.
+
 ## [0.17.1] - 8-Apr-2020    
 
 **Milestone**: Fushicho.4(RC3 0.9.3.2)
