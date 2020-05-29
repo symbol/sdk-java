@@ -30,11 +30,12 @@ import io.nem.symbol.sdk.openapi.okhttp_gson.model.EmbeddedTransactionMetaDTO;
 import io.nem.symbol.sdk.openapi.okhttp_gson.model.NetworkTypeEnum;
 import io.nem.symbol.sdk.openapi.okhttp_gson.model.TransactionDTO;
 import io.nem.symbol.sdk.openapi.okhttp_gson.model.TransactionInfoDTO;
+import io.nem.symbol.sdk.openapi.okhttp_gson.model.TransactionInfoExtendedDTO;
 import io.nem.symbol.sdk.openapi.okhttp_gson.model.TransactionMetaDTO;
 
 /**
- * Abstract transaction mapper for the transaction mappers that support a specific type of
- * transaction (Account Link, Mosaic Alias, etc.).
+ * Abstract transaction mapper for the transaction mappers that support a specific type of transaction (Account Link,
+ * Mosaic Alias, etc.).
  *
  * @param <T> the dto type of the transaction object.
  */
@@ -45,7 +46,7 @@ public abstract class AbstractTransactionMapper<D, T extends Transaction> implem
 
     private final JsonHelper jsonHelper;
 
-    private Class<D> transactionDtoClass;
+    private final Class<D> transactionDtoClass;
 
     public AbstractTransactionMapper(JsonHelper jsonHelper, TransactionType transactionType,
         Class<D> transactionDtoClass) {
@@ -62,10 +63,19 @@ public abstract class AbstractTransactionMapper<D, T extends Transaction> implem
     }
 
     @Override
-    public Transaction map(TransactionInfoDTO transactionInfoDTO) {
-        TransactionInfo transactionInfo = createTransactionInfo(transactionInfoDTO.getMeta());
+    public Transaction map(TransactionInfoExtendedDTO transactionInfoDTO) {
+        TransactionInfo transactionInfo = createTransactionInfo(transactionInfoDTO.getMeta(),
+            transactionInfoDTO.getId());
         return createModel(transactionInfo, transactionInfoDTO.getTransaction());
     }
+
+    @Override
+    public Transaction map(TransactionInfoDTO transactionInfoDTO) {
+        TransactionInfo transactionInfo = createTransactionInfo(transactionInfoDTO.getMeta(),
+            transactionInfoDTO.getId());
+        return createModel(transactionInfo, transactionInfoDTO.getTransaction());
+    }
+
 
     protected final T createModel(TransactionInfo transactionInfo, Object transactionDto) {
         D transaction = getJsonHelper().convert(transactionDto, transactionDtoClass);
@@ -100,10 +110,10 @@ public abstract class AbstractTransactionMapper<D, T extends Transaction> implem
 
     protected abstract TransactionFactory<T> createFactory(NetworkType networkType, D transaction);
 
-    protected TransactionInfo createTransactionInfo(TransactionMetaDTO meta) {
+    protected TransactionInfo createTransactionInfo(TransactionMetaDTO meta, String id) {
         return meta == null ? null : TransactionInfo.create(meta.getHeight(),
             meta.getIndex(),
-            meta.getId(),
+            id,
             meta.getHash(),
             meta.getMerkleComponentHash());
     }
@@ -143,7 +153,6 @@ public abstract class AbstractTransactionMapper<D, T extends Transaction> implem
             TransactionMetaDTO dto = new TransactionMetaDTO();
             dto.setHeight(i.getHeight());
             dto.setHash(i.getHash().orElse(null));
-            dto.setId(i.getId().orElse(null));
             dto.setIndex(i.getIndex().orElse(null));
             dto.setMerkleComponentHash(i.getMerkleComponentHash().orElse(null));
             return dto;
@@ -155,6 +164,7 @@ public abstract class AbstractTransactionMapper<D, T extends Transaction> implem
     public TransactionInfoDTO map(Transaction transaction) {
         TransactionInfoDTO dto = new TransactionInfoDTO();
         dto.setMeta(createTransactionInfo(transaction));
+        dto.setId(transaction.getRecordId().orElse(null));
         dto.setTransaction(mapTransaction(transaction, false));
         return dto;
     }
@@ -183,9 +193,8 @@ public abstract class AbstractTransactionMapper<D, T extends Transaction> implem
 
 
     /**
-     * Subclasses need to map the values from the transaction model to the transaction dto. Only the
-     * specific fields need to be mapped, not the common like maxFee or deadline as they are done in
-     * this abstract class.
+     * Subclasses need to map the values from the transaction model to the transaction dto. Only the specific fields
+     * need to be mapped, not the common like maxFee or deadline as they are done in this abstract class.
      *
      * @param transaction the transaction model
      * @param dto the transaction dto.

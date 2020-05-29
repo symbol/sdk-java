@@ -17,9 +17,10 @@
 package io.nem.symbol.sdk.infrastructure;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import io.nem.symbol.sdk.api.AccountRepository;
+import io.nem.symbol.sdk.api.OrderBy;
 import io.nem.symbol.sdk.api.RepositoryCallException;
 import io.nem.symbol.sdk.api.TransactionRepository;
 import io.nem.symbol.sdk.api.TransactionSearchCriteria;
@@ -52,8 +53,8 @@ public class TransactionRepositoryIntegrationTest extends BaseIntegrationTest {
     @BeforeAll
     void setup() {
         RepositoryType type = RepositoryType.VERTX;
-        AccountRepository accountRepository = getRepositoryFactory(type)
-            .createAccountRepository();
+        TransactionRepository transactionRepository = getRepositoryFactory(type)
+            .createTransactionRepository();
 
         Address recipient = getRecipient();
 
@@ -74,7 +75,8 @@ public class TransactionRepositoryIntegrationTest extends BaseIntegrationTest {
 
         PublicAccount account = config().getDefaultAccount().getPublicAccount();
         List<Transaction> allTransactions = get(
-            accountRepository.transactions(account, new TransactionSearchCriteria().order("-id")));
+            transactionRepository.search(new TransactionSearchCriteria().order(OrderBy.DESC)
+                .signerPublicKey(account.getPublicKey()))).getData();
         List<Transaction> transactions = allTransactions
             .stream().filter(t -> t.getType() == TransactionType.TRANSFER).collect(
                 Collectors.toList());
@@ -158,5 +160,27 @@ public class TransactionRepositoryIntegrationTest extends BaseIntegrationTest {
     private TransactionRepository getTransactionRepository(
         RepositoryType type) {
         return getRepositoryFactory(type).createTransactionRepository();
+    }
+
+
+
+    @ParameterizedTest
+    @EnumSource(RepositoryType.class)
+    void getBlockTransactions(RepositoryType type) {
+        TransactionRepository transactionRepository = getRepositoryFactory(type)
+            .createTransactionRepository();
+
+        List<Transaction> transactions = get(transactionRepository
+            .search(
+                new TransactionSearchCriteria().height(BigInteger.ONE).pageNumber(1))).getData();
+
+        assertEquals(20, transactions.size());
+
+        List<Transaction> nextTransactions = get(transactionRepository
+            .search(
+                new TransactionSearchCriteria().height(BigInteger.ONE).pageNumber(2))).getData();
+        assertEquals(12, nextTransactions.size());
+        assertNotEquals(transactions.get(1).getTransactionInfo().get().getHash(),
+            nextTransactions.get(0).getTransactionInfo().get().getHash());
     }
 }

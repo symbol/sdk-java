@@ -79,13 +79,13 @@ public class TransactionInfo {
      *
      * @param height Block height in which the transaction was included.
      * @param index The transaction index.
-     * @param id transaction id.
+     * @param id The transaction database id.
      * @param hash The transaction hash.
      * @param merkleComponentHash The transaction merkle component hash.
      * @return instance of TransactionInfo
      */
     public static TransactionInfo create(
-        BigInteger height, Integer index, String id, String hash, String merkleComponentHash) {
+        BigInteger height, Integer index, String id,  String hash, String merkleComponentHash) {
         return new TransactionInfo(
             height,
             Optional.ofNullable(index),
