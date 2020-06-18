@@ -27,6 +27,7 @@ import io.nem.symbol.sdk.model.message.PersistentHarvestingDelegationMessage;
 import io.nem.symbol.sdk.model.message.PlainMessage;
 import io.nem.symbol.sdk.model.namespace.NamespaceId;
 import io.nem.symbol.sdk.model.network.NetworkType;
+import io.nem.symbol.sdk.model.transaction.TransactionGroup;
 import io.nem.symbol.sdk.model.transaction.TransferTransaction;
 import io.nem.symbol.sdk.model.transaction.TransferTransactionFactory;
 import java.math.BigInteger;
@@ -38,7 +39,6 @@ import org.junit.jupiter.params.provider.EnumSource;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class TransferTransactionIntegrationTest extends BaseIntegrationTest {
-
 
     private Account account = config().getDefaultAccount();
 
@@ -74,14 +74,13 @@ public class TransferTransactionIntegrationTest extends BaseIntegrationTest {
         Assertions.assertEquals(message, processed.getMessage().getPayload());
     }
 
-
     @ParameterizedTest
     @EnumSource(RepositoryType.class)
     public void standaloneTransferTransactionEncryptedMessage(RepositoryType type) {
         String namespaceName = "testaccount2";
 
         NamespaceId recipient = setAddressAlias(type, getRecipient(), namespaceName);
-        Assertions.assertEquals("9988DD7D72227ECAE700000000000000000000000000000000",
+        Assertions.assertEquals("9988DD7D72227ECAE7000000000000000000000000000000",
             recipient.encoded(getNetworkType()));
         String message = "E2ETest:standaloneTransferTransaction:message 漢字";
 
@@ -109,7 +108,7 @@ public class TransferTransactionIntegrationTest extends BaseIntegrationTest {
 
         TransferTransaction restTransaction = (TransferTransaction) get(
             getRepositoryFactory(type).createTransactionRepository()
-                .getTransaction(processed.getTransactionInfo().get().getHash().get()));
+                .getTransaction(TransactionGroup.CONFIRMED, processed.getTransactionInfo().get().getHash().get()));
 
         assertTransferTransactions(transferTransaction, restTransaction);
 
@@ -191,7 +190,7 @@ public class TransferTransactionIntegrationTest extends BaseIntegrationTest {
 
         TransferTransaction restTransaction = (TransferTransaction) get(
             getRepositoryFactory(type).createTransactionRepository()
-                .getTransaction(processed.getTransactionInfo().get().getHash().get()));
+                .getTransaction(TransactionGroup.CONFIRMED, processed.getTransactionInfo().get().getHash().get()));
 
         assertPersistentDelegationTransaction(recipientKeyPair, restTransaction);
     }

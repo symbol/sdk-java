@@ -26,9 +26,9 @@ import io.nem.symbol.sdk.infrastructure.TransactionMapper;
 import io.nem.symbol.sdk.model.blockchain.BlockInfo;
 import io.nem.symbol.sdk.model.transaction.CosignatureSignedTransaction;
 import io.nem.symbol.sdk.model.transaction.Transaction;
+import io.nem.symbol.sdk.model.transaction.TransactionGroup;
 import io.nem.symbol.sdk.openapi.vertx.model.BlockInfoDTO;
 import io.nem.symbol.sdk.openapi.vertx.model.Cosignature;
-import io.nem.symbol.sdk.openapi.vertx.model.TransactionInfoDTO;
 import io.vertx.core.http.HttpClient;
 import io.vertx.core.http.RequestOptions;
 import io.vertx.core.http.WebSocket;
@@ -57,9 +57,9 @@ public class ListenerVertx extends ListenerBase implements Listener {
     /**
      * @param httpClient the http client instance.
      * @param url of the host
+     * @param namespaceRepository the namespace repository used to resolve alias.
      */
-    public ListenerVertx(HttpClient httpClient, String url,
-        NamespaceRepository namespaceRepository) {
+    public ListenerVertx(HttpClient httpClient, String url, NamespaceRepository namespaceRepository) {
         super(new JsonHelperJackson2(JsonHelperJackson2.configureMapper(Json.mapper)),
             namespaceRepository);
         try {
@@ -109,16 +109,15 @@ public class ListenerVertx extends ListenerBase implements Listener {
     }
 
     @Override
-    protected Transaction toTransaction(Object transactionInfo) {
-        return transactionMapper
-            .mapFromDto(getJsonHelper().convert(transactionInfo, TransactionInfoDTO.class));
+    protected Transaction toTransaction(TransactionGroup group, Object transactionInfo) {
+        return transactionMapper.mapToFactoryFromDto(transactionInfo).group(group).build();
     }
 
     @Override
     protected CosignatureSignedTransaction toCosignatureSignedTransaction(
         Object cosignatureJson) {
         Cosignature cosignature = getJsonHelper().convert(cosignatureJson, Cosignature.class);
-        return new CosignatureSignedTransaction(cosignature.getParentHash(),
+        return new CosignatureSignedTransaction(cosignature.getVersion(), cosignature.getParentHash(),
             cosignature.getSignature(), cosignature.getSignerPublicKey());
     }
 

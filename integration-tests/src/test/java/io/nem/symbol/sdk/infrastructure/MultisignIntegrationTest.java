@@ -20,7 +20,7 @@ import io.nem.symbol.sdk.api.Listener;
 import io.nem.symbol.sdk.api.RepositoryFactory;
 import io.nem.symbol.sdk.api.TransactionRepository;
 import io.nem.symbol.sdk.api.TransactionSearchCriteria;
-import io.nem.symbol.sdk.api.TransactionSearchGroup;
+import io.nem.symbol.sdk.model.transaction.TransactionGroup;
 import io.nem.symbol.sdk.model.account.Account;
 import io.nem.symbol.sdk.model.account.Address;
 import io.nem.symbol.sdk.model.message.PlainMessage;
@@ -78,9 +78,9 @@ class MultisignIntegrationTest extends BaseIntegrationTest {
                 (byte) 2,
                 (byte) 1,
                 Arrays.asList(
-                    cosignAccount1.getPublicAccount(),
-                    cosignAccount2.getPublicAccount(),
-                    cosignAccount3.getPublicAccount()
+                    cosignAccount1.getAddress(),
+                    cosignAccount2.getAddress(),
+                    cosignAccount3.getAddress()
                 ),
                 Collections.emptyList()
             ).maxFee(maxFee).build();
@@ -129,8 +129,7 @@ class MultisignIntegrationTest extends BaseIntegrationTest {
                         .flatMap(a -> {
                             System.out.println("Aggregate bonded finished");
                             return repositoryFactory.createTransactionRepository()
-                                .search(new TransactionSearchCriteria().signerPublicKey(cosignAccount1.getPublicAccount().getPublicKey()).group(
-                                    TransactionSearchGroup.PARTIAL))
+                                .search(new TransactionSearchCriteria(TransactionGroup.PARTIAL).signerPublicKey(cosignAccount1.getPublicAccount().getPublicKey()))
                                 .flatMap((page) -> {
                                     List<Transaction> transactions = page.getData();
                                     System.out

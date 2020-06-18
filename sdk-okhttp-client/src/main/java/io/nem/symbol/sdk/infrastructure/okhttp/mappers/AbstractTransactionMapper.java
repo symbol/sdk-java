@@ -31,9 +31,7 @@ import io.nem.symbol.sdk.openapi.okhttp_gson.model.EmbeddedTransactionMetaDTO;
 import io.nem.symbol.sdk.openapi.okhttp_gson.model.NetworkTypeEnum;
 import io.nem.symbol.sdk.openapi.okhttp_gson.model.TransactionDTO;
 import io.nem.symbol.sdk.openapi.okhttp_gson.model.TransactionInfoDTO;
-import io.nem.symbol.sdk.openapi.okhttp_gson.model.TransactionInfoExtendedDTO;
 import io.nem.symbol.sdk.openapi.okhttp_gson.model.TransactionMetaDTO;
-import org.apache.commons.lang3.ObjectUtils;
 
 /**
  * Abstract transaction mapper for the transaction mappers that support a specific type of transaction (Account Link,
@@ -56,15 +54,23 @@ public abstract class AbstractTransactionMapper<D, T extends Transaction> implem
         this.transactionType = transactionType;
         this.transactionDtoClass = transactionDtoClass;
     }
-
-
     @Override
     public Transaction mapFromDto(Object object) {
-        TransactionInfoExtendedDTO transactionInfoDTO = this.jsonHelper
-            .convert(object, TransactionInfoExtendedDTO.class);
+        return mapToFactoryFromDto(object).build();
+    }
+
+    @Override
+    public TransactionFactory<T> mapToFactoryFromDto(Object object) {
+        if (object instanceof EmbeddedTransactionInfoDTO) {
+            EmbeddedTransactionInfoDTO transactionInfoDTO = (EmbeddedTransactionInfoDTO) object;
+            TransactionInfo transactionInfo = createTransactionInfo(transactionInfoDTO.getMeta(),
+                transactionInfoDTO.getId());
+            return createFactory(transactionInfo, transactionInfoDTO.getTransaction());
+        }
+        TransactionInfoDTO transactionInfoDTO = this.jsonHelper.convert(object, TransactionInfoDTO.class);
         TransactionInfo transactionInfo = createTransactionInfo(transactionInfoDTO.getMeta(),
             transactionInfoDTO.getId());
-        return createModel(transactionInfo, transactionInfoDTO.getTransaction());
+        return createFactory(transactionInfo, transactionInfoDTO.getTransaction());
     }
 
     protected TransactionInfo createTransactionInfo(Object meta, String id) {
@@ -76,7 +82,7 @@ public abstract class AbstractTransactionMapper<D, T extends Transaction> implem
             return TransactionInfo.createAggregate(
                 embedded.getHeight(),
                 embedded.getIndex(),
-                ObjectUtils.firstNonNull(embedded.getId(), id),
+                id,
                 embedded.getAggregateHash(),
                 embedded.getAggregateId());
         } else {
@@ -97,6 +103,7 @@ public abstract class AbstractTransactionMapper<D, T extends Transaction> implem
             .equals(embedded)) {
             EmbeddedTransactionInfoDTO dto = new EmbeddedTransactionInfoDTO();
             dto.setMeta(createTransactionInfoEmbedded(transaction));
+            dto.setId(transaction.getRecordId().orElse(null));
             dto.setTransaction(mapTransaction(transaction, true));
             return dto;
         } else {
@@ -109,7 +116,7 @@ public abstract class AbstractTransactionMapper<D, T extends Transaction> implem
     }
 
 
-    protected final T createModel(TransactionInfo transactionInfo, Object transactionDto) {
+    protected final TransactionFactory<T> createFactory(TransactionInfo transactionInfo, Object transactionDto) {
         D transaction = getJsonHelper().convert(transactionDto, transactionDtoClass);
         TransactionDTO transactionDTO = getJsonHelper()
             .convert(transactionDto, TransactionDTO.class);
@@ -133,13 +140,12 @@ public abstract class AbstractTransactionMapper<D, T extends Transaction> implem
         if (transactionInfo != null) {
             factory.transactionInfo(transactionInfo);
         }
-        T transactionModel = factory.build();
-        if (transactionModel.getType() != getTransactionType()) {
+        if (factory.getType() != getTransactionType()) {
             throw new IllegalStateException(
                 "Expected transaction to be " + getTransactionType() + " but got "
-                    + transactionModel.getType());
+                    + factory.getType());
         }
-        return transactionModel;
+        return factory;
     }
 
     protected abstract TransactionFactory<T> createFactory(NetworkType networkType, D transaction);
@@ -150,7 +156,6 @@ public abstract class AbstractTransactionMapper<D, T extends Transaction> implem
             EmbeddedTransactionMetaDTO dto = new EmbeddedTransactionMetaDTO();
             dto.setHeight(i.getHeight());
             dto.setAggregateHash(i.getAggregateHash().orElse(null));
-            dto.setId(i.getId().orElse(null));
             dto.setIndex(i.getIndex().orElse(null));
             dto.setAggregateId(i.getAggregateId().orElse(null));
             return dto;

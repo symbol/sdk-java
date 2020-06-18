@@ -16,9 +16,12 @@
 
 package io.nem.symbol.sdk.model.transaction;
 
+import io.nem.symbol.catapult.builders.CosignatureBuilder;
+import io.nem.symbol.catapult.builders.SignatureDto;
 import io.nem.symbol.core.crypto.CryptoEngines;
 import io.nem.symbol.core.crypto.DsaSigner;
 import io.nem.symbol.core.utils.ConvertUtils;
+import io.nem.symbol.sdk.infrastructure.SerializationUtils;
 import io.nem.symbol.sdk.model.account.Account;
 import io.nem.symbol.sdk.model.account.PublicAccount;
 import java.math.BigInteger;
@@ -93,7 +96,10 @@ public class AggregateTransaction extends Transaction {
                 .createDsaSigner(cosignatory.getKeyPair());
             byte[] bytes = ConvertUtils.fromHexToBytes(signedTransaction.getHash());
             byte[] signatureBytes = signer.sign(bytes).getBytes();
-            payload.append(cosignatory.getPublicKey()).append(ConvertUtils.toHex(signatureBytes));
+            SignatureDto signature = SerializationUtils.toSignatureDto(ConvertUtils.toHex(signatureBytes));
+            CosignatureBuilder builder = CosignatureBuilder.create(AggregateTransactionCosignature.DEFAULT_VERSION.longValue(),
+                SerializationUtils.toKeyDto(cosignatory.getPublicAccount().getPublicKey()), signature);
+            payload.append(ConvertUtils.toHex(builder.serialize()));
         }
 
         byte[] payloadBytes = ConvertUtils.fromHexToBytes(payload.toString());

@@ -16,10 +16,12 @@
 
 package io.nem.symbol.sdk.infrastructure.okhttp;
 
+import io.nem.symbol.core.utils.MapperUtils;
 import io.nem.symbol.sdk.api.BlockOrderBy;
 import io.nem.symbol.sdk.api.BlockRepository;
 import io.nem.symbol.sdk.api.BlockSearchCriteria;
 import io.nem.symbol.sdk.api.Page;
+import io.nem.symbol.sdk.model.account.PublicAccount;
 import io.nem.symbol.sdk.model.blockchain.BlockInfo;
 import io.nem.symbol.sdk.model.blockchain.MerklePathItem;
 import io.nem.symbol.sdk.model.blockchain.MerkleProofInfo;
@@ -43,8 +45,7 @@ import java.util.stream.Collectors;
  *
  * @since 1.0
  */
-public class BlockRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl implements
-    BlockRepository {
+public class BlockRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl implements BlockRepository {
 
     private final BlockRoutesApi client;
 
@@ -55,31 +56,20 @@ public class BlockRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl impl
     }
 
     public static BlockInfo toBlockInfo(BlockInfoDTO blockInfoDTO) {
-        return BlockInfo.create(
-            blockInfoDTO.getId(),
-            blockInfoDTO.getMeta().getHash(),
-            blockInfoDTO.getMeta().getGenerationHash(),
-            blockInfoDTO.getMeta().getTotalFee(),
-            blockInfoDTO.getMeta().getNumTransactions(),
-            Optional.ofNullable(blockInfoDTO.getMeta().getNumStatements()),
-            blockInfoDTO.getMeta().getStateHashSubCacheMerkleRoots(),
-            blockInfoDTO.getBlock().getSignature(),
-            blockInfoDTO.getBlock().getSignerPublicKey(),
-            NetworkType.rawValueOf(blockInfoDTO.getBlock().getNetwork().getValue()),
-            blockInfoDTO.getBlock().getVersion(),
-            blockInfoDTO.getBlock().getType(),
-            blockInfoDTO.getBlock().getHeight(),
-            blockInfoDTO.getBlock().getTimestamp(),
-            blockInfoDTO.getBlock().getDifficulty(),
-            blockInfoDTO.getBlock().getFeeMultiplier(),
-            blockInfoDTO.getBlock().getPreviousBlockHash(),
-            blockInfoDTO.getBlock().getTransactionsHash(),
-            blockInfoDTO.getBlock().getReceiptsHash(),
-            blockInfoDTO.getBlock().getStateHash(),
-            blockInfoDTO.getBlock().getProofGamma(),
-            blockInfoDTO.getBlock().getProofScalar(),
+        NetworkType networkType = NetworkType.rawValueOf(blockInfoDTO.getBlock().getNetwork().getValue());
+        return new BlockInfo(blockInfoDTO.getId(), blockInfoDTO.getBlock().getSize(), blockInfoDTO.getMeta().getHash(),
+            blockInfoDTO.getMeta().getGenerationHash(), blockInfoDTO.getMeta().getTotalFee(),
+            blockInfoDTO.getMeta().getNumTransactions(), Optional.ofNullable(blockInfoDTO.getMeta().getNumStatements()),
+            blockInfoDTO.getMeta().getStateHashSubCacheMerkleRoots(), blockInfoDTO.getBlock().getSignature(),
+            PublicAccount.createFromPublicKey(blockInfoDTO.getBlock().getSignerPublicKey(), networkType), networkType,
+            blockInfoDTO.getBlock().getVersion(), blockInfoDTO.getBlock().getType(),
+            blockInfoDTO.getBlock().getHeight(), blockInfoDTO.getBlock().getTimestamp(),
+            blockInfoDTO.getBlock().getDifficulty(), blockInfoDTO.getBlock().getFeeMultiplier(),
+            blockInfoDTO.getBlock().getPreviousBlockHash(), blockInfoDTO.getBlock().getTransactionsHash(),
+            blockInfoDTO.getBlock().getReceiptsHash(), blockInfoDTO.getBlock().getStateHash(),
+            blockInfoDTO.getBlock().getProofGamma(), blockInfoDTO.getBlock().getProofScalar(),
             blockInfoDTO.getBlock().getProofVerificationHash(),
-            blockInfoDTO.getBlock().getBeneficiaryPublicKey());
+            MapperUtils.toAddress(blockInfoDTO.getBlock().getBeneficiaryAddress()));
     }
 
     @Override
@@ -91,16 +81,12 @@ public class BlockRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl impl
     @Override
     public Observable<Page<BlockInfo>> search(BlockSearchCriteria criteria) {
         Callable<BlockPage> callback = () -> getClient()
-            .searchBlocks(toDto(criteria.getSignerPublicKey()),
-                toDto(criteria.getBeneficiaryPublicKey()),
-                criteria.getPageSize(),
-                criteria.getPageNumber(), criteria.getOffset(),
-                toDto(criteria.getOrder()), toDto(criteria.getOrderBy()));
+            .searchBlocks(toDto(criteria.getSignerPublicKey()), toDto(criteria.getBeneficiaryAddress()),
+                criteria.getPageSize(), criteria.getPageNumber(), criteria.getOffset(), toDto(criteria.getOrder()),
+                toDto(criteria.getOrderBy()));
 
-        return exceptionHandling(
-            call(callback).map(mosaicPage -> this.toPage(mosaicPage.getPagination(),
-                mosaicPage.getData().stream().map(BlockRepositoryOkHttpImpl::toBlockInfo).collect(
-                    Collectors.toList()))));
+        return exceptionHandling(call(callback).map(mosaicPage -> this.toPage(mosaicPage.getPagination(),
+            mosaicPage.getData().stream().map(BlockRepositoryOkHttpImpl::toBlockInfo).collect(Collectors.toList()))));
     }
 
     private BlockOrderByEnum toDto(BlockOrderBy orderBy) {
@@ -109,18 +95,15 @@ public class BlockRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl impl
 
     @Override
     public Observable<MerkleProofInfo> getMerkleTransaction(BigInteger height, String hash) {
-        Callable<MerkleProofInfoDTO> callback = () ->
-            getClient().getMerkleTransaction(height, hash);
+        Callable<MerkleProofInfoDTO> callback = () -> getClient().getMerkleTransaction(height, hash);
         return exceptionHandling(call(callback).map(this::toMerkleProofInfo));
 
     }
 
     private MerkleProofInfo toMerkleProofInfo(MerkleProofInfoDTO dto) {
-        List<MerklePathItem> pathItems =
-            dto.getMerklePath().stream()
-                .map(pathItem -> new MerklePathItem(pathItem.getPosition() == null ? null
-                    : Position.rawValueOf(pathItem.getPosition().getValue()), pathItem.getHash()))
-                .collect(Collectors.toList());
+        List<MerklePathItem> pathItems = dto.getMerklePath().stream().map(pathItem -> new MerklePathItem(
+            pathItem.getPosition() == null ? null : Position.rawValueOf(pathItem.getPosition().getValue()),
+            pathItem.getHash())).collect(Collectors.toList());
         return new MerkleProofInfo(pathItems);
     }
 

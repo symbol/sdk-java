@@ -17,6 +17,7 @@
 package io.nem.symbol.sdk.infrastructure.vertx;
 
 import io.nem.symbol.sdk.api.BlockSearchCriteria;
+import io.nem.symbol.sdk.model.account.Address;
 import io.nem.symbol.sdk.model.blockchain.BlockInfo;
 import io.nem.symbol.sdk.model.blockchain.MerkleProofInfo;
 import io.nem.symbol.sdk.model.blockchain.Position;
@@ -58,23 +59,20 @@ public class BlockRepositoryVertxImplTest extends AbstractVertxRespositoryTest {
 
         MerkleProofInfoDTO merkleProofInfoDTO = new MerkleProofInfoDTO();
 
-        MerklePathItemDTO item = new MerklePathItemDTO().hash("someHash")
-            .position(PositionEnum.LEFT);
+        MerklePathItemDTO item = new MerklePathItemDTO().hash("someHash").position(PositionEnum.LEFT);
         mockRemoteCall(merkleProofInfoDTO.addMerklePathItem(item));
 
-        MerkleProofInfo merkleProofInfo = repository
-            .getMerkleTransaction(BigInteger.ONE, "HASH!").toFuture()
-            .get();
+        MerkleProofInfo merkleProofInfo = repository.getMerkleTransaction(BigInteger.ONE, "HASH!").toFuture().get();
         Assertions.assertEquals(1, merkleProofInfo.getMerklePath().size());
         Assertions.assertEquals("someHash", merkleProofInfo.getMerklePath().get(0).getHash());
-        Assertions
-            .assertEquals(Position.LEFT, merkleProofInfo.getMerklePath().get(0).getPosition());
+        Assertions.assertEquals(Position.LEFT, merkleProofInfo.getMerklePath().get(0).getPosition());
 
     }
 
     @Test
     public void shouldGetBlockByHeight() throws Exception {
 
+        Address address = Address.generateRandom(this.networkType);
         BlockInfoDTO dto = new BlockInfoDTO();
         BlockMetaDTO metaDTO = new BlockMetaDTO();
         metaDTO.setHash("someHash");
@@ -89,11 +87,10 @@ public class BlockRepositoryVertxImplTest extends AbstractVertxRespositoryTest {
         BlockDTO blockDto = new BlockDTO();
         blockDto.setType(16716);
         blockDto.setVersion(3);
+        blockDto.setSize(10);
         blockDto.setNetwork(NetworkTypeEnum.NUMBER_144);
-        blockDto
-            .setSignerPublicKey("B630EFDDFADCC4A2077AB8F1EC846B08FEE2D2972EACF95BBAC6BFAC3D31834C");
-        blockDto.setBeneficiaryPublicKey(
-            "B630EFDDFADCC4A2077AB8F1EC846B08FEE2D2972EACF95BBAC6BFAC3D31834C");
+        blockDto.setSignerPublicKey("B630EFDDFADCC4A2077AB8F1EC846B08FEE2D2972EACF95BBAC6BFAC3D31834C");
+        blockDto.setBeneficiaryAddress(address.encoded());
         blockDto.setHeight(BigInteger.valueOf(9));
 
         dto.setBlock(blockDto);
@@ -105,13 +102,12 @@ public class BlockRepositoryVertxImplTest extends AbstractVertxRespositoryTest {
 
         Assertions.assertNotNull(info);
 
-        Assertions.assertEquals(blockDto.getBeneficiaryPublicKey(),
-            info.getBeneficiaryPublicAccount().getPublicKey().toHex());
+        Assertions.assertEquals(blockDto.getBeneficiaryAddress(), info.getBeneficiaryAddress().encoded());
 
-        Assertions.assertEquals(blockDto.getSignerPublicKey(),
-            info.getSignerPublicAccount().getPublicKey().toHex());
+        Assertions.assertEquals(blockDto.getSignerPublicKey(), info.getSignerPublicAccount().getPublicKey().toHex());
 
         Assertions.assertEquals(16716, info.getType());
+        Assertions.assertEquals(10, info.getSize());
         Assertions.assertEquals(3, info.getVersion().intValue());
         Assertions.assertEquals(NetworkType.MIJIN_TEST, info.getNetworkType());
         Assertions.assertEquals(BigInteger.valueOf(9L), info.getHeight());
@@ -119,18 +115,18 @@ public class BlockRepositoryVertxImplTest extends AbstractVertxRespositoryTest {
         Assertions.assertEquals(metaDTO.getNumTransactions(), info.getNumTransactions());
         Assertions.assertEquals(metaDTO.getNumStatements(), info.getNumStatements().get());
         Assertions.assertEquals(metaDTO.getGenerationHash(), info.getGenerationHash());
-        Assertions
-            .assertEquals(metaDTO.getStateHashSubCacheMerkleRoots(), info.getSubCacheMerkleRoots());
-        Assertions
-            .assertEquals(metaDTO.getTotalFee(), info.getTotalFee());
+        Assertions.assertEquals(metaDTO.getStateHashSubCacheMerkleRoots(), info.getSubCacheMerkleRoots());
+        Assertions.assertEquals(metaDTO.getTotalFee(), info.getTotalFee());
 
         Assertions.assertEquals(blockDto.getHeight(), info.getHeight());
+        Assertions.assertEquals(address, info.getBeneficiaryAddress());
 
     }
 
     @Test
     public void shouldGetBlocksByHeightWithLimit() throws Exception {
 
+        Address address = Address.generateRandom(this.networkType);
         BlockInfoDTO dto = new BlockInfoDTO();
         BlockMetaDTO metaDTO = new BlockMetaDTO();
         metaDTO.setHash("someHash");
@@ -145,10 +141,8 @@ public class BlockRepositoryVertxImplTest extends AbstractVertxRespositoryTest {
         BlockDTO blockDto = new BlockDTO();
         blockDto.setType(16716);
         blockDto.setVersion(3);
-        blockDto
-            .setSignerPublicKey("B630EFDDFADCC4A2077AB8F1EC846B08FEE2D2972EACF95BBAC6BFAC3D31834C");
-        blockDto.setBeneficiaryPublicKey(
-            "B630EFDDFADCC4A2077AB8F1EC846B08FEE2D2972EACF95BBAC6BFAC3D31834C");
+        blockDto.setSignerPublicKey("B630EFDDFADCC4A2077AB8F1EC846B08FEE2D2972EACF95BBAC6BFAC3D31834C");
+        blockDto.setBeneficiaryAddress(address.encoded());
         blockDto.setHeight(BigInteger.valueOf(9L));
         blockDto.setNetwork(NetworkTypeEnum.NUMBER_144);
 
@@ -162,18 +156,15 @@ public class BlockRepositoryVertxImplTest extends AbstractVertxRespositoryTest {
 
         mockRemoteCall(toPage(dto));
 
-        List<BlockInfo> resolvedList = repository
-            .search(new BlockSearchCriteria().offset("abc")).toFuture().get()
+        List<BlockInfo> resolvedList = repository.search(new BlockSearchCriteria().offset("abc")).toFuture().get()
             .getData();
 
         BlockInfo info = resolvedList.get(0);
         Assertions.assertNotNull(info);
 
-        Assertions.assertEquals(blockDto.getBeneficiaryPublicKey(),
-            info.getBeneficiaryPublicAccount().getPublicKey().toHex());
+        Assertions.assertEquals(blockDto.getBeneficiaryAddress(), info.getBeneficiaryAddress().encoded());
 
-        Assertions.assertEquals(blockDto.getSignerPublicKey(),
-            info.getSignerPublicAccount().getPublicKey().toHex());
+        Assertions.assertEquals(blockDto.getSignerPublicKey(), info.getSignerPublicAccount().getPublicKey().toHex());
 
         Assertions.assertEquals(16716, info.getType());
         Assertions.assertEquals(3, info.getVersion().intValue());
@@ -183,21 +174,19 @@ public class BlockRepositoryVertxImplTest extends AbstractVertxRespositoryTest {
         Assertions.assertEquals(metaDTO.getNumTransactions(), info.getNumTransactions());
         Assertions.assertEquals(metaDTO.getGenerationHash(), info.getGenerationHash());
         Assertions.assertEquals(metaDTO.getNumTransactions(), info.getNumTransactions());
-        Assertions
-            .assertEquals(metaDTO.getStateHashSubCacheMerkleRoots(), info.getSubCacheMerkleRoots());
-        Assertions
-            .assertEquals(metaDTO.getTotalFee(), info.getTotalFee());
+        Assertions.assertEquals(metaDTO.getStateHashSubCacheMerkleRoots(), info.getSubCacheMerkleRoots());
+        Assertions.assertEquals(metaDTO.getTotalFee(), info.getTotalFee());
 
         Assertions.assertEquals(blockDto.getHeight(), info.getHeight());
         Assertions.assertEquals(blockDto.getProofGamma(), info.getProofGamma());
         Assertions.assertEquals(blockDto.getProofScalar(), info.getProofScalar());
         Assertions.assertEquals(blockDto.getProofVerificationHash(), info.getProofVerificationHash());
+        Assertions.assertEquals(address, info.getBeneficiaryAddress());
     }
 
 
     private BlockPage toPage(BlockInfoDTO dto) {
-        return new BlockPage()
-            .data(Collections.singletonList(dto))
+        return new BlockPage().data(Collections.singletonList(dto))
             .pagination(new Pagination().pageNumber(1).pageSize(2).totalEntries(3).totalPages(4));
     }
 

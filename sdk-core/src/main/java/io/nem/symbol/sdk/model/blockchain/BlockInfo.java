@@ -17,6 +17,7 @@
 package io.nem.symbol.sdk.model.blockchain;
 
 import io.nem.symbol.sdk.model.Stored;
+import io.nem.symbol.sdk.model.account.Address;
 import io.nem.symbol.sdk.model.account.PublicAccount;
 import io.nem.symbol.sdk.model.network.NetworkType;
 import java.math.BigInteger;
@@ -29,6 +30,7 @@ import java.util.Optional;
 public class BlockInfo implements Stored {
 
     private final String recordId;
+    private final Integer size;
     private final String hash;
     private final String generationHash;
     private final BigInteger totalFee;
@@ -51,35 +53,17 @@ public class BlockInfo implements Stored {
     private final String proofGamma;
     private final String proofScalar;
     private final String proofVerificationHash;
-    private final PublicAccount beneficiaryPublicAccount;
+    private final Address beneficiaryAddress;
 
     @SuppressWarnings("squid:S00107")
-    private BlockInfo(
-        String recordId,
-        String hash,
-        String generationHash,
-        BigInteger totalFee,
-        Integer numTransactions,
-        Optional<Integer> numStatements,
-        List<String> subCacheMerkleRoots,
-        String signature,
-        PublicAccount signerPublicAccount,
-        NetworkType networkType,
-        Integer version,
-        int type,
-        BigInteger height,
-        BigInteger timestamp,
-        BigInteger difficulty,
-        Integer feeMultiplier,
-        String previousBlockHash,
-        String blockTransactionsHash,
-        String blockReceiptsHash,
-        String stateHash,
-        String proofGamma,
-        String proofScalar,
-        String proofVerificationHash,
-        PublicAccount beneficiaryPublicAccount) {
+    public BlockInfo(String recordId, Integer size, String hash, String generationHash, BigInteger totalFee,
+        Integer numTransactions, Optional<Integer> numStatements, List<String> subCacheMerkleRoots, String signature,
+        PublicAccount signerPublicAccount, NetworkType networkType, Integer version, int type, BigInteger height,
+        BigInteger timestamp, BigInteger difficulty, Integer feeMultiplier, String previousBlockHash,
+        String blockTransactionsHash, String blockReceiptsHash, String stateHash, String proofGamma, String proofScalar,
+        String proofVerificationHash, Address beneficiaryAddress) {
         this.recordId = recordId;
+        this.size = size;
         this.hash = hash;
         this.generationHash = generationHash;
         this.totalFee = totalFee;
@@ -102,89 +86,16 @@ public class BlockInfo implements Stored {
         this.proofGamma = proofGamma;
         this.proofScalar = proofScalar;
         this.proofVerificationHash = proofVerificationHash;
-        this.beneficiaryPublicAccount = beneficiaryPublicAccount;
-    }
-
-    @SuppressWarnings("squid:S00107")
-    public static BlockInfo create(
-        String recordId, String hash,
-        String generationHash,
-        BigInteger totalFee,
-        Integer numTransactions,
-        Optional<Integer> numStatements,
-        List<String> subCacheMerkleRoots,
-        String signature,
-        String signer,
-        NetworkType networkType,
-        Integer version,
-        int type,
-        BigInteger height,
-        BigInteger timestamp,
-        BigInteger difficulty,
-        Integer feeMultiplier,
-        String previousBlockHash,
-        String blockTransactionsHash,
-        String blockReceiptsHash,
-        String stateHash,
-        String proofGamma,
-        String proofScalar,
-        String proofVerificationHash,
-        String beneficiaryPublicKey) {
-        PublicAccount signerPublicAccount = BlockInfo.getPublicAccount(signer, networkType);
-        PublicAccount beneficiaryPublicAccount = beneficiaryPublicKey == null ? null :
-            BlockInfo.getPublicAccount(beneficiaryPublicKey, networkType);
-        return new BlockInfo(
-            recordId,
-            hash,
-            generationHash,
-            totalFee,
-            numTransactions,
-            numStatements,
-            subCacheMerkleRoots,
-            signature,
-            signerPublicAccount,
-            networkType,
-            version,
-            type,
-            height,
-            timestamp,
-            difficulty,
-            feeMultiplier,
-            previousBlockHash,
-            blockTransactionsHash,
-            blockReceiptsHash,
-            stateHash,
-            proofGamma,
-            proofScalar,
-            proofVerificationHash,
-            beneficiaryPublicAccount);
+        this.beneficiaryAddress = beneficiaryAddress;
     }
 
     /**
-     * Get public account
+     * Returns the size of the block
      *
-     * @param publicKey the public key
-     * @param networkType the {@link NetworkType}
-     * @return public account
+     * @return the size
      */
-    public static PublicAccount getPublicAccount(String publicKey, NetworkType networkType) {
-        return new PublicAccount(publicKey, networkType);
-    }
-
-    /**
-     * Get public account if possible
-     *
-     * @param publicKey the public key
-     * @param networkType the {@link NetworkType}
-     * @return public account or empty if no public key is provided.
-     */
-    public static Optional<PublicAccount> getPublicAccount(
-        Optional<String> publicKey, NetworkType networkType) {
-        if (publicKey.isPresent() && !publicKey.get().isEmpty()) {
-            return Optional.of(new PublicAccount(publicKey.get(), networkType));
-        } else {
-            return Optional.empty();
-        }
+    public Integer getSize() {
+        return size;
     }
 
     /**
@@ -233,9 +144,8 @@ public class BlockInfo implements Stored {
     }
 
     /**
-     * Gets a list of transactions.
      *
-     * @return List of transactions.
+     * @return list of SubCache Merkle Root.
      */
     public List<String> getSubCacheMerkleRoots() {
         return subCacheMerkleRoots;
@@ -361,12 +271,12 @@ public class BlockInfo implements Stored {
     }
 
     /**
-     * Returns the beneficiary public account.
+     * Returns the beneficiary address.
      *
      * @return PublicAccount
      */
-    public PublicAccount getBeneficiaryPublicAccount() {
-        return beneficiaryPublicAccount;
+    public Address getBeneficiaryAddress() {
+        return beneficiaryAddress;
     }
 
     /**

@@ -32,6 +32,7 @@ import io.nem.symbol.sdk.api.TransactionSearchCriteria;
 import io.nem.symbol.sdk.infrastructure.NetworkCurrencyServiceImpl;
 import io.nem.symbol.sdk.model.mosaic.NetworkCurrency;
 import io.nem.symbol.sdk.model.transaction.Transaction;
+import io.nem.symbol.sdk.model.transaction.TransactionGroup;
 import io.reactivex.Observable;
 import java.math.BigInteger;
 import java.util.List;
@@ -76,12 +77,11 @@ public class NetworkCurrencyServiceFromOkHttpGsonTest {
         Gson gson = JsonHelperGson.creatGson(false);
 
         JsonSerialization serialization = new JsonSerializationOkHttp(gson);
-        Stream<String> stream = gson.fromJson(transactionJsonList, List.class).stream()
-            .map(Object::toString);
+        Stream<String> stream = gson.fromJson(transactionJsonList, List.class).stream().map(Object::toString);
         List<Transaction> transactions = stream.map(serialization::jsonToTransaction)
             .collect(Collectors.toList());
 
-        TransactionSearchCriteria ctieria = new TransactionSearchCriteria().height(BigInteger.ONE)
+        TransactionSearchCriteria ctieria = new TransactionSearchCriteria(TransactionGroup.CONFIRMED).height(BigInteger.ONE)
             .pageNumber(1);
 
         when(transactionRepository.search(Mockito.eq(ctieria)))
