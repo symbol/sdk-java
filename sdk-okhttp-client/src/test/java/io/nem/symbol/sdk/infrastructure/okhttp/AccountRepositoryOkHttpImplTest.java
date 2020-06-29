@@ -21,14 +21,12 @@ import io.nem.symbol.sdk.api.RepositoryCallException;
 import io.nem.symbol.sdk.model.account.AccountInfo;
 import io.nem.symbol.sdk.model.account.AccountType;
 import io.nem.symbol.sdk.model.account.Address;
-import io.nem.symbol.sdk.model.account.KeyType;
 import io.nem.symbol.sdk.openapi.okhttp_gson.model.AccountDTO;
 import io.nem.symbol.sdk.openapi.okhttp_gson.model.AccountInfoDTO;
-import io.nem.symbol.sdk.openapi.okhttp_gson.model.AccountKeyDTO;
+import io.nem.symbol.sdk.openapi.okhttp_gson.model.AccountLinkPublicKeyDTO;
 import io.nem.symbol.sdk.openapi.okhttp_gson.model.AccountTypeEnum;
 import io.nem.symbol.sdk.openapi.okhttp_gson.model.ActivityBucketDTO;
-import io.nem.symbol.sdk.openapi.okhttp_gson.model.KeyTypeEnum;
-import io.nem.symbol.sdk.openapi.okhttp_gson.model.Mosaic;
+import io.nem.symbol.sdk.openapi.okhttp_gson.model.SupplementalPublicKeysDTO;
 import java.math.BigInteger;
 import java.util.Collections;
 import java.util.List;
@@ -50,6 +48,7 @@ public class AccountRepositoryOkHttpImplTest extends AbstractOkHttpRespositoryTe
         super.setUp();
         repository = new AccountRepositoryOkHttpImpl(apiClientMock);
     }
+
     @Test
     public void shouldGetAccountInfo() throws Exception {
 
@@ -58,23 +57,23 @@ public class AccountRepositoryOkHttpImplTest extends AbstractOkHttpRespositoryTe
         AccountDTO accountDTO = new AccountDTO();
         accountDTO.setAccountType(AccountTypeEnum.NUMBER_1);
         accountDTO.setAddress(encodeAddress(address));
-        accountDTO.setSupplementalAccountKeys(Collections.singletonList(new AccountKeyDTO().key("abc").keyType(
-            KeyTypeEnum.NUMBER_2)));
+        accountDTO.setSupplementalPublicKeys(
+            new SupplementalPublicKeysDTO().linked(new AccountLinkPublicKeyDTO().publicKey("abc")));
 
         AccountInfoDTO accountInfoDTO = new AccountInfoDTO();
         accountInfoDTO.setAccount(accountDTO);
 
         BigInteger startHeight = BigInteger.ONE;
         BigInteger totalFeesPaid = BigInteger.valueOf(2);
-        int beneficiaryCount = 3;
+        long beneficiaryCount = 3;
         BigInteger rawScore = BigInteger.valueOf(4);
         accountDTO.addActivityBucketsItem(new ActivityBucketDTO().startHeight(startHeight).totalFeesPaid(totalFeesPaid)
             .beneficiaryCount(beneficiaryCount).rawScore(rawScore));
 
         mockRemoteCall(Collections.singletonList(accountInfoDTO));
 
-        List<AccountInfo> resolvedAccountInfos = repository
-            .getAccountsInfo(Collections.singletonList(address)).toFuture().get();
+        List<AccountInfo> resolvedAccountInfos = repository.getAccountsInfo(Collections.singletonList(address))
+            .toFuture().get();
 
         Assertions.assertEquals(1, resolvedAccountInfos.size());
 
@@ -82,14 +81,13 @@ public class AccountRepositoryOkHttpImplTest extends AbstractOkHttpRespositoryTe
 
         Assertions.assertEquals(address, resolvedAccountInfo.getAddress());
         Assertions.assertEquals(AccountType.MAIN, resolvedAccountInfo.getAccountType());
-        Assertions.assertEquals("abc", resolvedAccountInfo.getSupplementalAccountKeys().get(0).getKey());
-        Assertions.assertEquals(
-            KeyType.VRF, resolvedAccountInfo.getSupplementalAccountKeys().get(0).getKeyType());
+        Assertions.assertEquals("abc", resolvedAccountInfo.getSupplementalAccountKeys().getLinked().get());
 
         Assertions.assertEquals(1, resolvedAccountInfo.getActivityBuckets().size());
         Assertions.assertEquals(startHeight, resolvedAccountInfo.getActivityBuckets().get(0).getStartHeight());
         Assertions.assertEquals(totalFeesPaid, resolvedAccountInfo.getActivityBuckets().get(0).getTotalFeesPaid());
-        Assertions.assertEquals(beneficiaryCount, resolvedAccountInfo.getActivityBuckets().get(0).getBeneficiaryCount());
+        Assertions
+            .assertEquals(beneficiaryCount, resolvedAccountInfo.getActivityBuckets().get(0).getBeneficiaryCount());
         Assertions.assertEquals(rawScore, resolvedAccountInfo.getActivityBuckets().get(0).getRawScore());
     }
 
@@ -102,22 +100,23 @@ public class AccountRepositoryOkHttpImplTest extends AbstractOkHttpRespositoryTe
         AccountDTO accountDTO = new AccountDTO();
         accountDTO.setAccountType(AccountTypeEnum.NUMBER_1);
         accountDTO.setAddress(encodeAddress(address));
-        accountDTO.setSupplementalAccountKeys(Collections.singletonList(new AccountKeyDTO().key("abc").keyType(KeyTypeEnum.NUMBER_2)));
+        accountDTO.setSupplementalPublicKeys(
+            new SupplementalPublicKeysDTO().node(new AccountLinkPublicKeyDTO().publicKey("abc")));
 
         AccountInfoDTO accountInfoDTO = new AccountInfoDTO();
         accountInfoDTO.setAccount(accountDTO);
 
         BigInteger startHeight = BigInteger.ONE;
         BigInteger totalFeesPaid = BigInteger.valueOf(2);
-        int beneficiaryCount = 3;
+        long beneficiaryCount = 3;
         BigInteger rawScore = BigInteger.valueOf(4);
         accountDTO.addActivityBucketsItem(new ActivityBucketDTO().startHeight(startHeight).totalFeesPaid(totalFeesPaid)
             .beneficiaryCount(beneficiaryCount).rawScore(rawScore));
 
         mockRemoteCall(Collections.singletonList(accountInfoDTO));
 
-        List<AccountInfo> resolvedAccountInfos = repository
-            .getAccountsInfo(Collections.singletonList(address)).toFuture().get();
+        List<AccountInfo> resolvedAccountInfos = repository.getAccountsInfo(Collections.singletonList(address))
+            .toFuture().get();
 
         Assertions.assertEquals(1, resolvedAccountInfos.size());
 
@@ -125,14 +124,13 @@ public class AccountRepositoryOkHttpImplTest extends AbstractOkHttpRespositoryTe
 
         Assertions.assertEquals(address, resolvedAccountInfo.getAddress());
         Assertions.assertEquals(AccountType.MAIN, resolvedAccountInfo.getAccountType());
-        Assertions.assertEquals("abc", resolvedAccountInfo.getSupplementalAccountKeys().get(0).getKey());
-        Assertions.assertEquals(
-            KeyType.VRF, resolvedAccountInfo.getSupplementalAccountKeys().get(0).getKeyType());
+        Assertions.assertEquals("abc", resolvedAccountInfo.getSupplementalAccountKeys().getNode().get());
 
         Assertions.assertEquals(1, resolvedAccountInfo.getActivityBuckets().size());
         Assertions.assertEquals(startHeight, resolvedAccountInfo.getActivityBuckets().get(0).getStartHeight());
         Assertions.assertEquals(totalFeesPaid, resolvedAccountInfo.getActivityBuckets().get(0).getTotalFeesPaid());
-        Assertions.assertEquals(beneficiaryCount, resolvedAccountInfo.getActivityBuckets().get(0).getBeneficiaryCount());
+        Assertions
+            .assertEquals(beneficiaryCount, resolvedAccountInfo.getActivityBuckets().get(0).getBeneficiaryCount());
         Assertions.assertEquals(rawScore, resolvedAccountInfo.getActivityBuckets().get(0).getRawScore());
 
     }
@@ -151,12 +149,10 @@ public class AccountRepositoryOkHttpImplTest extends AbstractOkHttpRespositoryTe
 
         mockErrorCode(404, "Account not found!");
 
-        Assertions
-            .assertEquals("ApiException: Not Found - 404 - Code Not Found - Account not found!",
-                Assertions.assertThrows(RepositoryCallException.class, () -> {
-                    ExceptionUtils
-                        .propagate(() -> repository.getAccountInfo(address).toFuture().get());
-                }).getMessage());
+        Assertions.assertEquals("ApiException: Not Found - 404 - Code Not Found - Account not found!",
+            Assertions.assertThrows(RepositoryCallException.class, () -> {
+                ExceptionUtils.propagate(() -> repository.getAccountInfo(address).toFuture().get());
+            }).getMessage());
 
     }
 
@@ -174,12 +170,10 @@ public class AccountRepositoryOkHttpImplTest extends AbstractOkHttpRespositoryTe
 
         mockErrorCodeRawResponse(400, "I'm a raw error, not json");
 
-        Assertions
-            .assertEquals("ApiException: Bad Request - 400 - I'm a raw error, not json",
-                Assertions.assertThrows(RepositoryCallException.class, () -> {
-                    ExceptionUtils
-                        .propagate(() -> repository.getAccountInfo(address).toFuture().get());
-                }).getMessage());
+        Assertions.assertEquals("ApiException: Bad Request - 400 - I'm a raw error, not json",
+            Assertions.assertThrows(RepositoryCallException.class, () -> {
+                ExceptionUtils.propagate(() -> repository.getAccountInfo(address).toFuture().get());
+            }).getMessage());
     }
 
 
