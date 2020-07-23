@@ -2,11 +2,12 @@ package io.nem.symbol.sdk.api;
 
 import io.nem.symbol.core.crypto.PublicKey;
 import io.nem.symbol.sdk.model.account.Address;
+import java.util.Objects;
 
 /**
  * Criteria used to search blocks
  */
-public class BlockSearchCriteria extends SearchCriteria {
+public class BlockSearchCriteria extends SearchCriteria<BlockSearchCriteria> {
 
     /**
      * Search block by signer.
@@ -17,12 +18,6 @@ public class BlockSearchCriteria extends SearchCriteria {
      * Search block by beneficiary.
      */
     private Address beneficiaryAddress;
-
-    /**
-     * Entry id at which to start pagination. If the ordering parameter is set to DESC, the elements returned precede
-     * the identifier. Otherwise, newer elements with respect to the id are returned.  (optional)
-     */
-    private String offset;
 
     /**
      * The atrribute used to sort the
@@ -53,13 +48,6 @@ public class BlockSearchCriteria extends SearchCriteria {
         this.orderBy = orderBy;
     }
 
-    public String getOffset() {
-        return offset;
-    }
-
-    public void setOffset(String offset) {
-        this.offset = offset;
-    }
 
     /**
      * Sets the signerPublicKey builder style.
@@ -94,47 +82,24 @@ public class BlockSearchCriteria extends SearchCriteria {
         return this;
     }
 
-    /**
-     * Sets the offset builder style.
-     *
-     * @param offset the offset.
-     * @return this object.
-     */
-    public BlockSearchCriteria offset(String offset) {
-        this.offset = offset;
-        return this;
-    }
-
-    /**
-     * Sets the page size builder style.
-     *
-     * @param pageSize the page size.
-     * @return this object.
-     */
-    public BlockSearchCriteria pageSize(Integer pageSize) {
-        return (BlockSearchCriteria) super.pageSize(pageSize);
-    }
-
-    /**
-     * Sets the order builder style.
-     *
-     * @param order the order.
-     * @return this object.
-     */
     @Override
-    public BlockSearchCriteria order(OrderBy order) {
-        return (BlockSearchCriteria) super.order(order);
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        if (!super.equals(o)) {
+            return false;
+        }
+        BlockSearchCriteria criteria = (BlockSearchCriteria) o;
+        return Objects.equals(signerPublicKey, criteria.signerPublicKey) && Objects
+            .equals(beneficiaryAddress, criteria.beneficiaryAddress) && orderBy == criteria.orderBy;
     }
 
-    /**
-     * Sets the page number builder style.
-     *
-     * @param pageNumber the page number.
-     * @return this objects.
-     */
     @Override
-    public BlockSearchCriteria pageNumber(Integer pageNumber) {
-        return (BlockSearchCriteria) super.pageNumber(pageNumber);
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), signerPublicKey, beneficiaryAddress, orderBy);
     }
-
 }

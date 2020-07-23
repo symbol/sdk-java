@@ -81,7 +81,7 @@ public class RepositoryFactoryOkHttpImpl extends RepositoryFactoryBase {
 
     @Override
     public ReceiptRepository createReceiptRepository() {
-        return new ReceiptRepositoryOkHttpImpl(apiClient, getNetworkType());
+        return new ReceiptRepositoryOkHttpImpl(apiClient);
     }
 
     @Override
@@ -96,7 +96,7 @@ public class RepositoryFactoryOkHttpImpl extends RepositoryFactoryBase {
 
     @Override
     public NamespaceRepository createNamespaceRepository() {
-        return new NamespaceRepositoryOkHttpImpl(apiClient, getNetworkType());
+        return new NamespaceRepositoryOkHttpImpl(apiClient);
     }
 
     @Override

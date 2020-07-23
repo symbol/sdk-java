@@ -222,7 +222,9 @@ class AddressTest {
     @Test
     void validate() {
         Assertions.assertEquals("Encoded Address it nos provided", Address.validateEncodedAddress(null).get());
-        Assertions.assertEquals("Encoded address zzz is invalid. Error: IllegalArgumentException: zzz could not be decoded. DecoderException: Odd number of characters.", Address.validateEncodedAddress("zzz").get());
+        Assertions.assertEquals(
+            "Encoded address zzz is invalid. Error: IllegalArgumentException: zzz could not be decoded. DecoderException: Odd number of characters.",
+            Address.validateEncodedAddress("zzz").get());
         Assertions.assertEquals("Plain Address it nos provided", Address.validatePlainAddress(null).get());
         Assertions.assertEquals("Plain address 'ABC' size is 3 when 39 is required",
             Address.validatePlainAddress("ABC").get());
