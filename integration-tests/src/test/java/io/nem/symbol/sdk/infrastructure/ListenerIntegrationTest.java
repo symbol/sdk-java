@@ -275,8 +275,8 @@ class ListenerIntegrationTest extends BaseIntegrationTest {
                 getNetworkType(),
                 recipient,
                 Collections.singletonList(
-                    getNetworkCurrency().createAbsolute(BigInteger.valueOf(10000L))),
-                PlainMessage.create("test-message"))
+                    getNetworkCurrency().createAbsolute(BigInteger.valueOf(10000L))))
+            .message(new PlainMessage("test-message"))
             .maxFee(maxFee)
             .build();
 
@@ -299,8 +299,8 @@ class ListenerIntegrationTest extends BaseIntegrationTest {
                 getNetworkType(),
                 Address.generateRandom(getNetworkType()),
                 Collections.singletonList(
-                    getNetworkCurrency().createRelative(new BigInteger("100000000000"))),
-                PlainMessage.create("test-message"))
+                    getNetworkCurrency().createRelative(new BigInteger("100000000000"))))
+            .message(new PlainMessage("test-message"))
             .maxFee(maxFee)
             .build();
 
@@ -313,9 +313,9 @@ class ListenerIntegrationTest extends BaseIntegrationTest {
   private Pair<SignedTransaction, SignedTransaction> createAggregateBondedTransaction(
       RepositoryType type) {
 
-    helper().sendMosaicFromNemesis(type, this.cosignatoryAccount, false);
-    helper().sendMosaicFromNemesis(type, this.cosignatoryAccount2, false);
-    helper().sendMosaicFromNemesis(type, this.multisigAccount, false);
+    helper().sendMosaicFromNemesis(type, this.cosignatoryAccount.getAddress(), false);
+    helper().sendMosaicFromNemesis(type, this.cosignatoryAccount2.getAddress(), false);
+    helper().sendMosaicFromNemesis(type, this.multisigAccount.getAddress(), false);
     helper()
         .createMultisigAccountBonded(
             type, this.multisigAccount, this.cosignatoryAccount, this.cosignatoryAccount2);
@@ -324,8 +324,8 @@ class ListenerIntegrationTest extends BaseIntegrationTest {
         TransferTransactionFactory.create(
                 getNetworkType(),
                 Account.generateNewAccount(getNetworkType()).getAddress(),
-                Collections.emptyList(),
-                PlainMessage.create("test-message"))
+                Collections.emptyList())
+            .message(new PlainMessage("test-message"))
             .maxFee(maxFee)
             .build();
 

@@ -25,7 +25,7 @@ import io.nem.symbol.core.utils.ConvertUtils;
 import io.nem.symbol.core.utils.StringEncoder;
 import org.apache.commons.lang3.Validate;
 
-public class PersistentHarvestingDelegationMessage extends Message {
+public class PersistentHarvestingDelegationMessage extends TypedMessage {
 
   /** When decrypting, the message is converted back to the 2 original private keys. */
   public static class HarvestingKeys {
@@ -102,10 +102,9 @@ public class PersistentHarvestingDelegationMessage extends Message {
     int markerLength = MessageMarker.PERSISTENT_DELEGATION_UNLOCK.length();
     int publicKeyHexSize = PublicKey.SIZE * 2;
     PublicKey senderPublicKey =
-        PublicKey.fromHexString(
-            getPayload().substring(markerLength, markerLength + publicKeyHexSize));
+        PublicKey.fromHexString(getText().substring(markerLength, markerLength + publicKeyHexSize));
 
-    String encryptedPayload = getPayload().substring(markerLength + publicKeyHexSize);
+    String encryptedPayload = getText().substring(markerLength + publicKeyHexSize);
 
     CryptoEngine engine = CryptoEngines.defaultEngine();
     KeyPair sender = KeyPair.onlyPublic(senderPublicKey, engine);

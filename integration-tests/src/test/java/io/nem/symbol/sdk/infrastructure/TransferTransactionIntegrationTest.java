@@ -65,24 +65,25 @@ public class TransferTransactionIntegrationTest extends BaseIntegrationTest {
                 getNetworkType(),
                 recipient,
                 Collections.singletonList(
-                    getNetworkCurrency().createAbsolute(BigInteger.valueOf(1))),
-                new PlainMessage(message))
+                    getNetworkCurrency().createAbsolute(BigInteger.valueOf(1))))
+            .message(new PlainMessage(message))
             .maxFee(maxFee)
             .build();
 
     TransferTransaction processed =
         announceAggregateAndValidate(type, transferTransaction, account).getKey();
-    Assertions.assertEquals(message, processed.getMessage().getPayload());
+    Assertions.assertEquals(message, processed.getMessage().get().getText());
   }
 
   @ParameterizedTest
   @EnumSource(RepositoryType.class)
   public void standaloneTransferTransactionEncryptedMessage(RepositoryType type) {
-    String namespaceName = "testaccount2";
+    this.helper().sendMosaicFromNemesis(type, getRecipient(), false);
+    String namespaceName = "standaloneTransferTransactionEncryptedMessagealias".toLowerCase();
 
     NamespaceId recipient = setAddressAlias(type, getRecipient(), namespaceName);
     Assertions.assertEquals(
-        "9988DD7D72227ECAE7000000000000000000000000000000", recipient.encoded(getNetworkType()));
+        "9960629109A48AFBC0000000000000000000000000000000", recipient.encoded(getNetworkType()));
     String message = "E2ETest:standaloneTransferTransaction:message 漢字";
 
     KeyPair senderKeyPair = KeyPair.random();
@@ -97,8 +98,8 @@ public class TransferTransactionIntegrationTest extends BaseIntegrationTest {
                 getNetworkType(),
                 recipient,
                 Collections.singletonList(
-                    getNetworkCurrency().createAbsolute(BigInteger.valueOf(1))),
-                encryptedMessage)
+                    getNetworkCurrency().createAbsolute(BigInteger.valueOf(1))))
+            .message(encryptedMessage)
             .maxFee(maxFee)
             .build();
 
@@ -137,8 +138,8 @@ public class TransferTransactionIntegrationTest extends BaseIntegrationTest {
                 getNetworkType(),
                 recipient,
                 Collections.singletonList(
-                    getNetworkCurrency().createAbsolute(BigInteger.valueOf(1000000000))),
-                PlainMessage.Empty)
+                    getNetworkCurrency().createAbsolute(BigInteger.valueOf(1000000000))))
+            .message(new PlainMessage(""))
             .maxFee(maxFee)
             .build();
 
@@ -156,9 +157,7 @@ public class TransferTransactionIntegrationTest extends BaseIntegrationTest {
         expected.getRecipient().encoded(getNetworkType()),
         processed.getRecipient().encoded(getNetworkType()));
     Assertions.assertEquals(expected.getRecipient(), processed.getRecipient());
-    Assertions.assertEquals(expected.getMessage().getType(), processed.getMessage().getType());
-    Assertions.assertEquals(
-        expected.getMessage().getPayload(), processed.getMessage().getPayload());
+    Assertions.assertEquals(expected.getMessage(), processed.getMessage());
   }
 
   private void assertEncryptedMessageTransaction(
@@ -166,10 +165,10 @@ public class TransferTransactionIntegrationTest extends BaseIntegrationTest {
       KeyPair senderKeyPair,
       KeyPair recipientKeyPair,
       TransferTransaction transaction) {
-    Assertions.assertTrue(transaction.getMessage() instanceof EncryptedMessage);
-    Assertions.assertNotEquals(message, transaction.getMessage().getPayload());
+    Assertions.assertTrue(transaction.getMessage().get() instanceof EncryptedMessage);
+    Assertions.assertNotEquals(message, transaction.getMessage().get().getText());
     String decryptedMessage =
-        ((EncryptedMessage) transaction.getMessage())
+        ((EncryptedMessage) transaction.getMessage().get())
             .decryptPayload(senderKeyPair.getPublicKey(), recipientKeyPair.getPrivateKey());
     Assertions.assertNotNull(message, decryptedMessage);
   }
@@ -211,12 +210,13 @@ public class TransferTransactionIntegrationTest extends BaseIntegrationTest {
       KeyPair recipientKeyPair, KeyPair vrfPrivateKey, TransferTransaction transaction) {
     String message = recipientKeyPair.getPublicKey().toHex();
     Assertions.assertTrue(
-        transaction.getMessage() instanceof PersistentHarvestingDelegationMessage);
-    Assertions.assertNotEquals(message, transaction.getMessage().getPayload());
+        transaction.getMessage().get() instanceof PersistentHarvestingDelegationMessage);
+    Assertions.assertNotEquals(message, transaction.getMessage().get().getText());
     Assertions.assertEquals(
-        MessageType.PERSISTENT_HARVESTING_DELEGATION_MESSAGE, transaction.getMessage().getType());
+        MessageType.PERSISTENT_HARVESTING_DELEGATION_MESSAGE,
+        transaction.getMessage().get().getType());
     HarvestingKeys decryptedMessage =
-        ((PersistentHarvestingDelegationMessage) transaction.getMessage())
+        ((PersistentHarvestingDelegationMessage) transaction.getMessage().get())
             .decryptPayload(recipientKeyPair.getPrivateKey());
     Assertions.assertEquals(
         recipientKeyPair.getPrivateKey(), decryptedMessage.getSigningPrivateKey());

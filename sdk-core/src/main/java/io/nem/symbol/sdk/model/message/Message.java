@@ -16,56 +16,118 @@
 package io.nem.symbol.sdk.model.message;
 
 import io.nem.symbol.core.utils.ConvertUtils;
+import io.nem.symbol.sdk.infrastructure.SerializationUtils;
+import java.nio.ByteBuffer;
+import java.util.Arrays;
+import java.util.Objects;
+import java.util.Optional;
+import org.apache.commons.lang3.Validate;
 
 /** An abstract message class that serves as the base class of all message types. */
 public abstract class Message {
 
-  private final MessageType type;
-  private final String payload;
+  /** The low level message. */
+  private final byte[] payload;
 
-  public Message(MessageType type, String payload) {
-    this.type = type;
+  /** The message type */
+  private final MessageType type;
+
+  public Message(byte[] payload, MessageType type) {
+    Validate.notNull(payload, "payload is required");
+    Validate.notNull(type, "type is required");
     this.payload = payload;
+    this.type = type;
   }
 
   /**
    * This factory method knows how to create the right Message instance from the provided message
-   * type and payload.
+   * payload.
    *
-   * @param messageType the message type you want to create.
-   * @param payload the raw payload as it comes from REST data.
+   * @param payloadHex the raw payload as it comes from REST data.
    * @return the Message.
    */
-  public static Message createFromPayload(MessageType messageType, String payload) {
-    String decoded =
-        payload == null || payload.isEmpty() ? "" : ConvertUtils.fromHexToString(payload);
-    switch (messageType) {
-      case PLAIN_MESSAGE:
-        return new PlainMessage(decoded);
-      case ENCRYPTED_MESSAGE:
-        return new EncryptedMessage(decoded);
-      case PERSISTENT_HARVESTING_DELEGATION_MESSAGE:
-        return new PersistentHarvestingDelegationMessage(decoded);
-      default:
-        throw new IllegalStateException("Unknown Message Type " + messageType);
+  public static Optional<Message> createFromHexPayload(String payloadHex) {
+    if (payloadHex == null || payloadHex.isEmpty()) {
+      return Optional.empty();
     }
+    return createFromPayload(ConvertUtils.fromHexToBytes(payloadHex));
   }
 
   /**
-   * Returns message type.
+   * This factory method knows how to create the right Message instance from the provided message
+   * payload.
    *
-   * @return int
+   * @param payload the raw payload as it comes from binary data.
+   * @return the Message.
    */
+  public static Optional<Message> createFromPayload(byte[] payload) {
+    if (payload == null || payload.length == 0) {
+      return Optional.empty();
+    }
+    MessageType messageType =
+        MessageType.rawValueOf(SerializationUtils.byteToUnsignedInt(payload[0]));
+
+    return Optional.of(createMessage(payload, messageType));
+  }
+
+  private static Message createMessage(byte[] payload, MessageType messageType) {
+    String messageHex = ConvertUtils.toHex(payload).substring(2);
+    String text = ConvertUtils.fromHexToString(messageHex);
+    switch (messageType) {
+      case PLAIN_MESSAGE:
+        return new PlainMessage(text);
+      case ENCRYPTED_MESSAGE:
+        return new EncryptedMessage(text);
+      case PERSISTENT_HARVESTING_DELEGATION_MESSAGE:
+        return new PersistentHarvestingDelegationMessage(text);
+      default:
+        return new RawMessage(payload);
+    }
+  }
+
+  /** @return the raw byte payload. */
+  public byte[] getPayload() {
+    return payload;
+  }
+
+  /** @return the type of this message. */
   public MessageType getType() {
     return type;
   }
 
   /**
-   * Returns message payload.
+   * Returns payload as text. Sub
    *
    * @return String
    */
-  public String getPayload() {
-    return payload;
+  public abstract String getText();
+
+  /** @return the full payload including the message type as byte buffer */
+  public ByteBuffer getPayloadByteBuffer() {
+    return ByteBuffer.wrap(getPayload());
+  }
+
+  /** @return the full payload including the message type as string. */
+  public String getPayloadHex() {
+    return ConvertUtils.toHex(getPayload());
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    Message message = (Message) o;
+    return Arrays.equals(payload, message.payload) && type == message.type;
+  }
+
+  @Override
+  public int hashCode() {
+    int result = Objects.hash(type);
+    result = 31 * result + Arrays.hashCode(payload);
+    return result;
   }
 }

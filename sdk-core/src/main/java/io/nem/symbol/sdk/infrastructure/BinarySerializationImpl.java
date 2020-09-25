@@ -78,7 +78,6 @@ import io.nem.symbol.sdk.model.account.PublicAccount;
 import io.nem.symbol.sdk.model.account.UnresolvedAddress;
 import io.nem.symbol.sdk.model.blockchain.BlockDuration;
 import io.nem.symbol.sdk.model.message.Message;
-import io.nem.symbol.sdk.model.message.MessageType;
 import io.nem.symbol.sdk.model.mosaic.Mosaic;
 import io.nem.symbol.sdk.model.mosaic.MosaicFlags;
 import io.nem.symbol.sdk.model.mosaic.MosaicId;
@@ -150,7 +149,6 @@ import io.nem.symbol.sdk.model.transaction.VrfKeyLinkTransactionFactory;
 import java.io.DataInputStream;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.EnumMap;
@@ -515,17 +513,17 @@ public class BinarySerializationImpl implements BinarySerialization {
       TransferTransactionBodyBuilder builder =
           ((TransferTransactionBodyBuilder) transactionBuilder);
       byte[] messageArray = builder.getMessage().array();
-      MessageType messageType =
-          MessageType.rawValueOf(SerializationUtils.byteToUnsignedInt(messageArray[0]));
-      String messageHex = ConvertUtils.toHex(messageArray).substring(2);
+
       UnresolvedAddress recipient =
           SerializationUtils.toUnresolvedAddress(builder.getRecipientAddress());
       List<Mosaic> mosaics =
           builder.getMosaics().stream()
               .map(SerializationUtils::toMosaic)
               .collect(Collectors.toList());
-      Message message = Message.createFromPayload(messageType, messageHex);
-      return TransferTransactionFactory.create(networkType, recipient, mosaics, message);
+      TransferTransactionFactory factory =
+          TransferTransactionFactory.create(networkType, recipient, mosaics);
+      Message.createFromPayload(messageArray).ifPresent(factory::message);
+      return factory;
     }
 
     @Override
@@ -569,14 +567,10 @@ public class BinarySerializationImpl implements BinarySerialization {
      * @return Message buffer.
      */
     private ByteBuffer getMessageBuffer(TransferTransaction transaction) {
-      final byte byteMessageType = (byte) transaction.getMessage().getType().getValue();
-      final byte[] bytePayload =
-          transaction.getMessage().getPayload().getBytes(StandardCharsets.UTF_8);
-      final ByteBuffer messageBuffer =
-          ByteBuffer.allocate(bytePayload.length + 1 /* for the message type */);
-      messageBuffer.put(byteMessageType);
-      messageBuffer.put(bytePayload);
-      return messageBuffer;
+      return transaction
+          .getMessage()
+          .map(Message::getPayloadByteBuffer)
+          .orElseGet(() -> ByteBuffer.allocate(0));
     }
   }
 
@@ -651,7 +645,7 @@ public class BinarySerializationImpl implements BinarySerialization {
       return MosaicDefinitionTransactionBodyBuilder.create(
           new MosaicIdDto(SerializationUtils.toUnsignedLong(transaction.getMosaicId().getId())),
           new BlockDurationDto(transaction.getBlockDuration().getDuration()),
-          new MosaicNonceDto(transaction.getMosaicNonce().getNonceAsInt()),
+          new MosaicNonceDto((int) transaction.getMosaicNonce().getNonceAsLong()),
           getMosaicFlagsEnumSet(transaction),
           (byte) transaction.getDivisibility());
     }
