@@ -16,14 +16,12 @@
 package io.nem.symbol.sdk.model.transaction;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import io.nem.symbol.core.utils.ConvertUtils;
 import io.nem.symbol.sdk.model.account.Account;
 import io.nem.symbol.sdk.model.namespace.NamespaceId;
 import io.nem.symbol.sdk.model.namespace.NamespaceRegistrationType;
 import java.math.BigInteger;
-import java.time.LocalDateTime;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -44,8 +42,10 @@ class NamespaceRegistrationTransactionTest extends AbstractTransactionTester {
     NamespaceId namespaceId = NamespaceId.createFromName("root-test-namespace");
     NamespaceRegistrationTransaction namespaceRegistrationTransaction =
         NamespaceRegistrationTransactionFactory.createRootNamespace(
-                networkType, "root-test-namespace", BigInteger.valueOf(1000))
-            .deadline(new FakeDeadline())
+                networkType,
+                new Deadline(BigInteger.ONE),
+                "root-test-namespace",
+                BigInteger.valueOf(1000))
             .build();
 
     assertEquals(
@@ -62,9 +62,6 @@ class NamespaceRegistrationTransactionTest extends AbstractTransactionTester {
         signedTransaction.getPayload().substring(248));
     assertEquals(networkType, namespaceRegistrationTransaction.getNetworkType());
     assertEquals(1, (int) namespaceRegistrationTransaction.getVersion());
-    assertTrue(
-        LocalDateTime.now()
-            .isBefore(namespaceRegistrationTransaction.getDeadline().getLocalDateTime()));
     assertEquals(BigInteger.valueOf(0), namespaceRegistrationTransaction.getMaxFee());
     assertEquals("root-test-namespace", namespaceRegistrationTransaction.getNamespaceName());
     assertEquals(
@@ -80,9 +77,9 @@ class NamespaceRegistrationTransactionTest extends AbstractTransactionTester {
     NamespaceRegistrationTransaction namespaceRegistrationTransaction =
         NamespaceRegistrationTransactionFactory.createSubNamespace(
                 networkType,
+                new Deadline(BigInteger.ONE),
                 "root-test-namespace",
                 NamespaceId.createFromName("parent-test-namespace"))
-            .deadline(new FakeDeadline())
             .build();
 
     SignedTransaction signedTransaction =
@@ -93,9 +90,6 @@ class NamespaceRegistrationTransactionTest extends AbstractTransactionTester {
         signedTransaction.getPayload().substring(248));
     assertEquals(networkType, namespaceRegistrationTransaction.getNetworkType());
     assertEquals(1, (int) namespaceRegistrationTransaction.getVersion());
-    assertTrue(
-        LocalDateTime.now()
-            .isBefore(namespaceRegistrationTransaction.getDeadline().getLocalDateTime()));
     assertEquals(BigInteger.valueOf(0), namespaceRegistrationTransaction.getMaxFee());
     assertEquals("root-test-namespace", namespaceRegistrationTransaction.getNamespaceName());
     assertEquals(
@@ -112,9 +106,9 @@ class NamespaceRegistrationTransactionTest extends AbstractTransactionTester {
     NamespaceRegistrationTransaction namespaceRegistrationTransaction =
         NamespaceRegistrationTransactionFactory.createSubNamespace(
                 networkType,
+                new Deadline(BigInteger.ONE),
                 "root-test-namespace",
                 NamespaceId.createFromId(new BigInteger("18426354100860810573")))
-            .deadline(new FakeDeadline())
             .build();
 
     SignedTransaction signedTransaction =
@@ -125,9 +119,6 @@ class NamespaceRegistrationTransactionTest extends AbstractTransactionTester {
         signedTransaction.getPayload().substring(248));
     assertEquals(networkType, namespaceRegistrationTransaction.getNetworkType());
     assertEquals(1, (int) namespaceRegistrationTransaction.getVersion());
-    assertTrue(
-        LocalDateTime.now()
-            .isBefore(namespaceRegistrationTransaction.getDeadline().getLocalDateTime()));
     assertEquals(BigInteger.valueOf(0), namespaceRegistrationTransaction.getMaxFee());
     assertEquals("root-test-namespace", namespaceRegistrationTransaction.getNamespaceName());
     assertEquals(
@@ -147,8 +138,10 @@ class NamespaceRegistrationTransactionTest extends AbstractTransactionTester {
   void serializationRootNamespace() {
     NamespaceRegistrationTransaction transaction =
         NamespaceRegistrationTransactionFactory.createRootNamespace(
-                networkType, "newnamespace", BigInteger.valueOf(10000))
-            .deadline(new FakeDeadline())
+                networkType,
+                new Deadline(BigInteger.ONE),
+                "newnamespace",
+                BigInteger.valueOf(10000))
             .signer(account.getPublicAccount())
             .build();
 
@@ -169,10 +162,10 @@ class NamespaceRegistrationTransactionTest extends AbstractTransactionTester {
     NamespaceRegistrationTransaction transaction =
         NamespaceRegistrationTransactionFactory.createSubNamespace(
                 networkType,
+                new Deadline(BigInteger.ONE),
                 "subnamespace",
                 NamespaceId.createFromId(new BigInteger("4635294387305441662")))
             .signer(account.getPublicAccount())
-            .deadline(new FakeDeadline())
             .build();
 
     String expected =

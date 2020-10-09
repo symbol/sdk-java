@@ -21,12 +21,12 @@ import io.nem.symbol.sdk.api.RepositoryFactory;
 import io.nem.symbol.sdk.api.TransactionService;
 import io.nem.symbol.sdk.model.account.Account;
 import io.nem.symbol.sdk.model.account.Address;
-import io.nem.symbol.sdk.model.account.PublicAccount;
 import io.nem.symbol.sdk.model.mosaic.MosaicId;
 import io.nem.symbol.sdk.model.mosaic.NetworkCurrency;
 import io.nem.symbol.sdk.model.namespace.NamespaceId;
 import io.nem.symbol.sdk.model.network.NetworkType;
 import io.nem.symbol.sdk.model.transaction.AggregateTransaction;
+import io.nem.symbol.sdk.model.transaction.Deadline;
 import io.nem.symbol.sdk.model.transaction.JsonHelper;
 import io.nem.symbol.sdk.model.transaction.Transaction;
 import io.reactivex.Observable;
@@ -108,12 +108,8 @@ public abstract class BaseIntegrationTest {
     return helper().getNetworkType();
   }
 
-  public Account getTestAccount() {
-    return config().getTestAccount();
-  }
-
-  public PublicAccount getTestPublicAccount() {
-    return config().getTestAccount().getPublicAccount();
+  public Deadline getDeadline() {
+    return helper().getDeadline();
   }
 
   public Address getRecipient() {

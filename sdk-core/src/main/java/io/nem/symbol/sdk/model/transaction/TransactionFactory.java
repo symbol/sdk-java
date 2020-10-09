@@ -48,11 +48,11 @@ public abstract class TransactionFactory<T extends Transaction> {
   /** The network type of the new transaction. */
   private final NetworkType networkType;
 
+  /** The deadline of the new transaction. */
+  private Deadline deadline;
+
   /** The version of the new transaction, by default the {@link TransactionType} default version. */
   private Integer version;
-
-  /** The deadline of the new transaction. 2 hours by default. */
-  private Deadline deadline = Deadline.create();
 
   /** The max fee of the new transaction. Zero by default. */
   private BigInteger maxFee = BigInteger.ZERO;
@@ -89,13 +89,16 @@ public abstract class TransactionFactory<T extends Transaction> {
    *
    * @param type the transaction type, this field is generally defined in the sub classes.
    * @param networkType the network type of this transaction.
+   * @param deadline The deadline of the new transaction based on the server epoch adjustment time.
    */
-  public TransactionFactory(TransactionType type, NetworkType networkType) {
+  public TransactionFactory(TransactionType type, NetworkType networkType, Deadline deadline) {
     Validate.notNull(type, "Type must not be null");
     Validate.notNull(networkType, "NetworkType must not be null");
+    Validate.notNull(deadline, "deadline must not be null");
     this.type = type;
     this.networkType = networkType;
     this.version = type.getCurrentVersion();
+    this.deadline = deadline;
   }
 
   /**
