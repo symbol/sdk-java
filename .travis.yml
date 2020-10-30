@@ -5,6 +5,8 @@ jdk:
   - oraclejdk8
   - oraclejdk9
   - openjdk8
+  - openjdk9
+  - openjdk10
 services:
   - docker
 env:
@@ -26,6 +28,7 @@ before_script:
   - . ./travis/travis-functions.sh
   - VERSION="$(load_version_from_file)-SNAPSHOT"
   - log_env_variables
+  - docker-compose -version
 install:
   - true
 script: ./gradlew install spotlessCheck jacocoTestReport coveralls -x javadoc -x integrationTest
@@ -42,6 +45,9 @@ jobs:
 #      script: ./gradlew sonarqube -x test
     - name: e2e tests
       script: source e2e.sh
+      os: linux
+      jdk: openjdk10
+      dist: focal
       if: (branch = env(DEV_BRANCH) AND type = cron) OR (commit_message = e2e)
     - stage: publish
       name: github alpha pages
