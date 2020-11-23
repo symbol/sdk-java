@@ -19,9 +19,11 @@ import io.nem.symbol.core.utils.ConvertUtils;
 import io.nem.symbol.sdk.api.MetadataSearchCriteria;
 import io.nem.symbol.sdk.model.account.Account;
 import io.nem.symbol.sdk.model.account.Address;
+import io.nem.symbol.sdk.model.blockchain.MerkleStateInfo;
 import io.nem.symbol.sdk.model.metadata.Metadata;
 import io.nem.symbol.sdk.model.mosaic.MosaicId;
 import io.nem.symbol.sdk.model.namespace.NamespaceId;
+import io.nem.symbol.sdk.openapi.okhttp_gson.model.MerkleStateInfoDTO;
 import io.nem.symbol.sdk.openapi.okhttp_gson.model.MetadataEntryDTO;
 import io.nem.symbol.sdk.openapi.okhttp_gson.model.MetadataInfoDTO;
 import io.nem.symbol.sdk.openapi.okhttp_gson.model.MetadataPage;
@@ -61,6 +63,14 @@ public class MetadataRepositoryOkHttpImplTest extends AbstractOkHttpRespositoryT
             .get()
             .getData();
     assertMetadataList(dto, resultList);
+  }
+
+  @Test
+  public void getMetadata() throws Exception {
+    MetadataInfoDTO metadataDTO = getMetadataEntriesDTO().getData().get(0);
+    mockRemoteCall(metadataDTO);
+    Metadata metadata = repository.getMetadata("abc").toFuture().get();
+    assertMetadata(metadataDTO, metadata);
   }
 
   private void assertMetadataList(MetadataPage expected, List<Metadata> resultList) {
@@ -141,6 +151,13 @@ public class MetadataRepositoryOkHttpImplTest extends AbstractOkHttpRespositoryT
     metadataEntry.setValue(ConvertUtils.fromStringToHex(name + " message"));
     dto.setMetadataEntry(metadataEntry);
     return dto;
+  }
+
+  @Test
+  public void getMetadataMerkle() throws Exception {
+    mockRemoteCall(new MerkleStateInfoDTO().raw("abc"));
+    MerkleStateInfo merkle = repository.getMetadataMerkle("abc").toFuture().get();
+    Assertions.assertEquals("abc", merkle.getRaw());
   }
 
   @Override

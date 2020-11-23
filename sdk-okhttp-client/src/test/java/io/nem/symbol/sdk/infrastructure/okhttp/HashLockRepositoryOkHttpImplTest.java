@@ -17,12 +17,15 @@ package io.nem.symbol.sdk.infrastructure.okhttp;
 
 import io.nem.symbol.sdk.api.HashLockSearchCriteria;
 import io.nem.symbol.sdk.model.account.Address;
+import io.nem.symbol.sdk.model.blockchain.MerkleStateInfo;
 import io.nem.symbol.sdk.model.mosaic.MosaicId;
 import io.nem.symbol.sdk.model.mosaic.MosaicNonce;
 import io.nem.symbol.sdk.model.transaction.HashLockInfo;
 import io.nem.symbol.sdk.openapi.okhttp_gson.model.HashLockEntryDTO;
 import io.nem.symbol.sdk.openapi.okhttp_gson.model.HashLockInfoDTO;
 import io.nem.symbol.sdk.openapi.okhttp_gson.model.HashLockPage;
+import io.nem.symbol.sdk.openapi.okhttp_gson.model.LockStatus;
+import io.nem.symbol.sdk.openapi.okhttp_gson.model.MerkleStateInfoDTO;
 import io.nem.symbol.sdk.openapi.okhttp_gson.model.Pagination;
 import java.math.BigInteger;
 import java.util.Collections;
@@ -62,7 +65,7 @@ public class HashLockRepositoryOkHttpImplTest extends AbstractOkHttpRespositoryT
     lockHashDto.setEndHeight(BigInteger.TEN);
     lockHashDto.setHash("ABC");
     lockHashDto.setMosaicId(mosaicId.getIdAsHex());
-    lockHashDto.setStatus(2);
+    lockHashDto.setStatus(LockStatus.NUMBER_1);
 
     HashLockInfoDTO hashLockInfoDTO = new HashLockInfoDTO();
     hashLockInfoDTO.setLock(lockHashDto);
@@ -75,7 +78,8 @@ public class HashLockRepositoryOkHttpImplTest extends AbstractOkHttpRespositoryT
     Assertions.assertEquals(hashLockInfoDTO.getId(), resolvedHashLockInfo.getRecordId().get());
     Assertions.assertEquals(address, resolvedHashLockInfo.getOwnerAddress());
     Assertions.assertEquals(lockHashDto.getHash(), resolvedHashLockInfo.getHash());
-    Assertions.assertEquals(lockHashDto.getStatus(), resolvedHashLockInfo.getStatus());
+    Assertions.assertEquals(
+        io.nem.symbol.sdk.model.transaction.LockStatus.USED, resolvedHashLockInfo.getStatus());
     Assertions.assertEquals(mosaicId, resolvedHashLockInfo.getMosaicId());
     Assertions.assertEquals(lockHashDto.getAmount(), resolvedHashLockInfo.getAmount());
     Assertions.assertEquals(lockHashDto.getEndHeight(), resolvedHashLockInfo.getEndHeight());
@@ -92,7 +96,7 @@ public class HashLockRepositoryOkHttpImplTest extends AbstractOkHttpRespositoryT
     lockHashDto.setEndHeight(BigInteger.TEN);
     lockHashDto.setHash("ABC");
     lockHashDto.setMosaicId(mosaicId.getIdAsHex());
-    lockHashDto.setStatus(2);
+    lockHashDto.setStatus(LockStatus.NUMBER_1);
 
     HashLockInfoDTO hashLockInfoDTO = new HashLockInfoDTO();
     hashLockInfoDTO.setLock(lockHashDto);
@@ -101,17 +105,25 @@ public class HashLockRepositoryOkHttpImplTest extends AbstractOkHttpRespositoryT
     mockRemoteCall(toPage(hashLockInfoDTO));
 
     List<HashLockInfo> list =
-        repository.search(new HashLockSearchCriteria(address)).toFuture().get().getData();
+        repository.search(new HashLockSearchCriteria().address(address)).toFuture().get().getData();
     Assertions.assertEquals(1, list.size());
     HashLockInfo resolvedHashLockInfo = list.get(0);
     Assertions.assertEquals(address, resolvedHashLockInfo.getOwnerAddress());
     Assertions.assertEquals(hashLockInfoDTO.getId(), resolvedHashLockInfo.getRecordId().get());
     Assertions.assertEquals(address, resolvedHashLockInfo.getOwnerAddress());
     Assertions.assertEquals(lockHashDto.getHash(), resolvedHashLockInfo.getHash());
-    Assertions.assertEquals(lockHashDto.getStatus(), resolvedHashLockInfo.getStatus());
+    Assertions.assertEquals(
+        io.nem.symbol.sdk.model.transaction.LockStatus.USED, resolvedHashLockInfo.getStatus());
     Assertions.assertEquals(mosaicId, resolvedHashLockInfo.getMosaicId());
     Assertions.assertEquals(lockHashDto.getAmount(), resolvedHashLockInfo.getAmount());
     Assertions.assertEquals(lockHashDto.getEndHeight(), resolvedHashLockInfo.getEndHeight());
+  }
+
+  @Test
+  public void getHashLockMerkle() throws Exception {
+    mockRemoteCall(new MerkleStateInfoDTO().raw("abc"));
+    MerkleStateInfo merkle = repository.getHashLockMerkle("hash").toFuture().get();
+    Assertions.assertEquals("abc", merkle.getRaw());
   }
 
   private HashLockPage toPage(HashLockInfoDTO dto) {
