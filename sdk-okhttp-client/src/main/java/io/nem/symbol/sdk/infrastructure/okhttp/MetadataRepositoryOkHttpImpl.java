@@ -32,8 +32,6 @@ import io.nem.symbol.sdk.openapi.okhttp_gson.model.MetadataTypeEnum;
 import io.nem.symbol.sdk.openapi.okhttp_gson.model.Order;
 import io.reactivex.Observable;
 import java.math.BigInteger;
-import java.util.Objects;
-import java.util.Optional;
 import java.util.concurrent.Callable;
 import java.util.stream.Collectors;
 
@@ -101,13 +99,14 @@ public class MetadataRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl
     MetadataEntryDTO entryDto = dto.getMetadataEntry();
     return new Metadata(
         dto.getId(),
+        dto.getMetadataEntry().getVersion(),
         entryDto.getCompositeHash(),
         MapperUtils.toAddress(entryDto.getSourceAddress()),
         MapperUtils.toAddress(entryDto.getTargetAddress()),
         new BigInteger(entryDto.getScopedMetadataKey(), 16),
         MetadataType.rawValueOf(entryDto.getMetadataType().getValue()),
         ConvertUtils.fromHexToString(entryDto.getValue()),
-        Optional.ofNullable(Objects.toString(entryDto.getTargetId(), null)));
+        entryDto.getTargetId());
   }
 
   @Override

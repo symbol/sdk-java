@@ -178,13 +178,14 @@ public class MosaicRestrictionTransactionServiceTest {
 
     return new NamespaceInfo(
         "abc",
+        1,
         true,
         0,
         NamespaceRegistrationType.ROOT_NAMESPACE,
         1,
         Collections.emptyList(),
         null,
-        null,
+        Address.generateRandom(networkType),
         BigInteger.ONE,
         BigInteger.TEN,
         new AddressAlias(address));
@@ -194,13 +195,14 @@ public class MosaicRestrictionTransactionServiceTest {
 
     return new NamespaceInfo(
         "abc",
+        1,
         true,
         0,
         NamespaceRegistrationType.ROOT_NAMESPACE,
         1,
         Collections.emptyList(),
         null,
-        null,
+        Address.generateRandom(networkType),
         BigInteger.ONE,
         BigInteger.TEN,
         new MosaicAlias(mosaicId));
@@ -463,7 +465,8 @@ public class MosaicRestrictionTransactionServiceTest {
             restrictionKey,
             new MosaicGlobalRestrictionItem(
                 mosaicId1, BigInteger.valueOf(20), MosaicRestrictionType.EQ));
-    return new MosaicGlobalRestriction("AAAA", MosaicRestrictionEntryType.GLOBAL, mosaicId1, map);
+    return new MosaicGlobalRestriction(
+        "a", 1, "AAAA", MosaicRestrictionEntryType.GLOBAL, mosaicId1, map);
   }
 
   private <T> Page<T> toPage(T... entities) {
@@ -472,6 +475,8 @@ public class MosaicRestrictionTransactionServiceTest {
 
   private MosaicAddressRestriction mockAddressRestriction() {
     return new MosaicAddressRestriction(
+        "a",
+        1,
         "BBBB",
         MosaicRestrictionEntryType.GLOBAL,
         mosaicId1,

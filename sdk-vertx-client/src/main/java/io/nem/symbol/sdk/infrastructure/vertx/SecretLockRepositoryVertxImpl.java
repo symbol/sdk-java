@@ -52,11 +52,12 @@ public class SecretLockRepositoryVertxImpl extends AbstractRepositoryVertxImpl
     MosaicId mosaicId = MapperUtils.toMosaicId(lock.getMosaicId());
     return new SecretLockInfo(
         dto.getId(),
+        lock.getVersion(),
         MapperUtils.toAddress(lock.getOwnerAddress()),
         mosaicId,
         lock.getAmount(),
         lock.getEndHeight(),
-        LockStatus.rawValueOf(lock.getStatus().getValue()),
+        LockStatus.rawValueOf(lock.getStatus().getValue().byteValue()),
         LockHashAlgorithm.rawValueOf(lock.getHashAlgorithm().getValue()),
         lock.getSecret(),
         MapperUtils.toAddress(lock.getRecipientAddress()),

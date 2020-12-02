@@ -108,6 +108,7 @@ public class MosaicRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl
   private MosaicInfo createMosaicInfo(MosaicDTO mosaic, String recordId) {
     return new MosaicInfo(
         recordId,
+        mosaic.getVersion(),
         toMosaicId(mosaic.getId()),
         mosaic.getSupply(),
         mosaic.getStartHeight(),

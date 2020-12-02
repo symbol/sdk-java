@@ -105,7 +105,7 @@ public class BlockRepositoryVertxImpl extends AbstractRepositoryVertxImpl
   public Observable<MerkleProofInfo> getMerkleTransaction(BigInteger height, String hash) {
     Consumer<Handler<AsyncResult<MerkleProofInfoDTO>>> callback =
         handler -> client.getMerkleTransaction(height, hash, handler);
-    return exceptionHandling(call(callback).map(this::toMerkleProofInfo));
+    return call(callback, this::toMerkleProofInfo);
   }
 
   private MerkleProofInfo toMerkleProofInfo(MerkleProofInfoDTO dto) {
@@ -125,7 +125,7 @@ public class BlockRepositoryVertxImpl extends AbstractRepositoryVertxImpl
   public Observable<MerkleProofInfo> getMerkleReceipts(BigInteger height, String hash) {
     Consumer<Handler<AsyncResult<MerkleProofInfoDTO>>> callback =
         (handler) -> getClient().getMerkleReceipts(height, hash, handler);
-    return exceptionHandling(call(callback).map(this::toMerkleProofInfo));
+    return call(callback, this::toMerkleProofInfo);
   }
 
   public static BlockInfo toBlockInfo(BlockInfoDTO blockInfoDTO, JsonHelper jsonHelper) {
@@ -133,7 +133,10 @@ public class BlockRepositoryVertxImpl extends AbstractRepositoryVertxImpl
         jsonHelper.convert(blockInfoDTO.getBlock(), ImportanceBlockDTO.class);
     NetworkType networkType = NetworkType.rawValueOf(block.getNetwork().getValue());
     BlockType type = BlockType.rawValueOf(block.getType());
-    if (type == BlockType.NORMAL_BLOCK)
+    // block.getVotingEligibleAccountsCount() == null for the testnet block 1 incomplete nemesis
+    // block.
+    // Remove before public net release
+    if (type == BlockType.NORMAL_BLOCK || block.getVotingEligibleAccountsCount() == null)
       return new BlockInfo(
           blockInfoDTO.getId(),
           block.getSize(),

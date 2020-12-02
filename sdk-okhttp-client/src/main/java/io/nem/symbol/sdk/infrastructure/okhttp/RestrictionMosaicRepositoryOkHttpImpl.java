@@ -38,6 +38,7 @@ import io.nem.symbol.sdk.openapi.okhttp_gson.model.MosaicRestrictionsPage;
 import io.nem.symbol.sdk.openapi.okhttp_gson.model.Order;
 import io.reactivex.Observable;
 import java.math.BigInteger;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.stream.Collectors;
@@ -61,9 +62,13 @@ public class RestrictionMosaicRepositoryOkHttpImpl extends AbstractRepositoryOkH
             .collect(
                 Collectors.toMap(
                     e -> new BigInteger(e.getKey()),
-                    e -> toMosaicGlobalRestrictionItem(e.getRestriction())));
+                    e -> toMosaicGlobalRestrictionItem(e.getRestriction()),
+                    (x, y) -> y,
+                    LinkedHashMap::new));
 
     return new MosaicGlobalRestriction(
+        mosaicGlobalRestrictionDTO.getId(),
+        mosaicGlobalRestrictionDTO.getMosaicRestrictionEntry().getVersion(),
         dto.getCompositeHash(),
         MosaicRestrictionEntryType.rawValueOf(dto.getEntryType().getValue()),
         MapperUtils.toMosaicId(dto.getMosaicId()),
@@ -88,6 +93,8 @@ public class RestrictionMosaicRepositoryOkHttpImpl extends AbstractRepositoryOkH
                 Collectors.toMap(e -> new BigInteger(e.getKey()), e -> toBigInteger(e.getValue())));
 
     return new MosaicAddressRestriction(
+        mosaicAddressRestrictionDTO.getId(),
+        mosaicAddressRestrictionDTO.getMosaicRestrictionEntry().getVersion(),
         dto.getCompositeHash(),
         MosaicRestrictionEntryType.rawValueOf(dto.getEntryType().getValue()),
         MapperUtils.toMosaicId(dto.getMosaicId()),

@@ -15,11 +15,23 @@
  */
 package io.nem.symbol.sdk.model.namespace;
 
+import io.nem.symbol.catapult.builders.AddressDto;
+import io.nem.symbol.catapult.builders.HeightDto;
+import io.nem.symbol.catapult.builders.NamespaceAliasBuilder;
+import io.nem.symbol.catapult.builders.NamespaceIdDto;
+import io.nem.symbol.catapult.builders.NamespaceLifetimeBuilder;
+import io.nem.symbol.catapult.builders.NamespacePathBuilder;
+import io.nem.symbol.catapult.builders.RootNamespaceHistoryBuilder;
+import io.nem.symbol.sdk.infrastructure.SerializationUtils;
 import io.nem.symbol.sdk.model.Stored;
-import io.nem.symbol.sdk.model.account.UnresolvedAddress;
+import io.nem.symbol.sdk.model.account.Address;
 import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import org.apache.commons.lang3.Validate;
 
 /**
  * NamespaceInfo contains the state information of a namespace.
@@ -28,32 +40,44 @@ import java.util.Optional;
  */
 public class NamespaceInfo implements Stored {
 
-  private final Optional<String> recordId;
+  private final String recordId;
+  private final int version;
   private final boolean active;
   private final Integer index;
   private final NamespaceRegistrationType registrationType;
   private final Integer depth;
   private final List<NamespaceId> levels;
   private final NamespaceId parentId;
-  private final UnresolvedAddress ownerAddress;
+  private final Address ownerAddress;
   private final BigInteger startHeight;
   private final BigInteger endHeight;
-  private final Alias alias;
+  private final Alias<?> alias;
 
   @SuppressWarnings("squid:S00107")
   public NamespaceInfo(
       String recordId,
+      int version,
       boolean active,
       Integer index,
       NamespaceRegistrationType registrationType,
       Integer depth,
       List<NamespaceId> levels,
       NamespaceId parentId,
-      UnresolvedAddress ownerAddress,
+      Address ownerAddress,
       BigInteger startHeight,
       BigInteger endHeight,
-      Alias alias) {
-    this.recordId = Optional.ofNullable(recordId);
+      Alias<?> alias) {
+
+    Validate.notNull(index, "index is required");
+    Validate.notNull(registrationType, "registrationType is required");
+    Validate.notNull(depth, "depth is required");
+    Validate.notNull(ownerAddress, "ownerAddress is required");
+    Validate.notNull(startHeight, "startHeight is required");
+    Validate.notNull(endHeight, "endHeight is required");
+    Validate.notNull(alias, "alias is required");
+
+    this.recordId = recordId;
+    this.version = version;
     this.active = active;
     this.index = index;
     this.registrationType = registrationType;
@@ -72,7 +96,7 @@ public class NamespaceInfo implements Stored {
    * @return the parent id.
    */
   public Optional<String> getRecordId() {
-    return recordId;
+    return Optional.ofNullable(recordId);
   }
 
   /**
@@ -134,7 +158,7 @@ public class NamespaceInfo implements Stored {
    *
    * @return mosaic namespace owner
    */
-  public UnresolvedAddress getOwnerAddress() {
+  public Address getOwnerAddress() {
     return ownerAddress;
   }
 
@@ -179,7 +203,7 @@ public class NamespaceInfo implements Stored {
    *
    * @return alias
    */
-  public Alias getAlias() {
+  public Alias<?> getAlias() {
     return alias;
   }
 
@@ -201,6 +225,11 @@ public class NamespaceInfo implements Stored {
     return this.registrationType == NamespaceRegistrationType.SUB_NAMESPACE;
   }
 
+  /** @return The state version */
+  public int getVersion() {
+    return version;
+  }
+
   /**
    * Returns the Parent Namespace Id
    *
@@ -211,5 +240,59 @@ public class NamespaceInfo implements Stored {
       throw new IllegalStateException("Is A Root Namespace");
     }
     return this.parentId;
+  }
+
+  /** @return serializes the state of this object. */
+  public byte[] serialize(List<NamespaceInfo> fullPath) {
+    if (!this.isRoot()) {
+      throw new IllegalArgumentException("Namespace must be root in order to serialize!");
+    }
+    List<NamespaceInfo> children = sortList(fullPath, this.getId());
+    if (fullPath.size() != children.size()) {
+      throw new IllegalArgumentException(
+          "Some of the children do not belong to this root namespace");
+    }
+
+    NamespaceIdDto id = new NamespaceIdDto(getId().getIdAsLong());
+    AddressDto ownerAddress = SerializationUtils.toAddressDto(getOwnerAddress());
+    NamespaceLifetimeBuilder lifetime =
+        NamespaceLifetimeBuilder.create(
+            new HeightDto(getStartHeight().longValue()), new HeightDto(getEndHeight().longValue()));
+    NamespaceAliasBuilder rootAlias = getAlias().createAliasBuilder();
+    List<NamespacePathBuilder> paths =
+        children.stream().map(this::toNamespaceAliasTypeDto).collect(Collectors.toList());
+    RootNamespaceHistoryBuilder builder =
+        RootNamespaceHistoryBuilder.create(
+            (short) getVersion(), id, ownerAddress, lifetime, rootAlias, paths);
+
+    return builder.serialize();
+  }
+
+  private static List<NamespaceInfo> sortList(
+      final List<NamespaceInfo> nodes, NamespaceId parentId) {
+    return treeAdd(nodes, parentId, new ArrayList<>());
+  }
+
+  private static List<NamespaceInfo> treeAdd(
+      List<NamespaceInfo> nodes, NamespaceId parentId, List<NamespaceInfo> treeList) {
+    nodes.stream()
+        .filter(r -> r.isSubnamespace() && r.parentNamespaceId().equals(parentId))
+        .sorted(Comparator.comparing(n -> n.getId().getId()))
+        .forEach(
+            n -> {
+              treeList.add(n);
+              treeAdd(nodes, n.getId(), treeList);
+            });
+    return treeList;
+  }
+
+  private NamespacePathBuilder toNamespaceAliasTypeDto(NamespaceInfo namespaceInfo) {
+    List<NamespaceIdDto> path =
+        namespaceInfo.getLevels().stream()
+            .skip(1)
+            .map(id -> new NamespaceIdDto(id.getIdAsLong()))
+            .collect(Collectors.toList());
+    NamespaceAliasBuilder alias = namespaceInfo.getAlias().createAliasBuilder();
+    return NamespacePathBuilder.create(path, alias);
   }
 }

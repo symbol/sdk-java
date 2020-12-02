@@ -58,6 +58,7 @@ import io.nem.symbol.sdk.model.transaction.HashLockInfo;
 import io.nem.symbol.sdk.model.transaction.HashLockTransaction;
 import io.nem.symbol.sdk.model.transaction.HashLockTransactionFactory;
 import io.nem.symbol.sdk.model.transaction.JsonHelper;
+import io.nem.symbol.sdk.model.transaction.LockStatus;
 import io.nem.symbol.sdk.model.transaction.MosaicAliasTransaction;
 import io.nem.symbol.sdk.model.transaction.MosaicAliasTransactionFactory;
 import io.nem.symbol.sdk.model.transaction.MosaicDefinitionTransaction;
@@ -610,20 +611,21 @@ public class TestHelper {
     }
   }
 
-  public Account getMultisigAccount(RepositoryType type) {
+  public Pair<Account, NamespaceId> getMultisigAccount(RepositoryType type) {
     Account multisigAccount = config().getMultisigAccount();
-    setAddressAlias(type, multisigAccount.getAddress(), "multisig-account");
+    NamespaceId namespaceId =
+        setAddressAlias(type, multisigAccount.getAddress(), "multisig-account");
     sendMosaicFromNemesis(type, multisigAccount.getAddress(), false);
     this.createMultisigAccountBonded(
         type, multisigAccount, config().getCosignatoryAccount(), config().getCosignatory2Account());
-    return multisigAccount;
+    return Pair.of(multisigAccount, namespaceId);
   }
 
-  public void createMultisigAccountBonded(
+  public MultisigAccountInfo createMultisigAccountBonded(
       RepositoryType type, Account multisigAccount, Account... accounts) {
 
     AccountRepository accountRepository = getRepositoryFactory(type).createAccountRepository();
-
+    MultisigRepository multisigRepository = getRepositoryFactory(type).createMultisigRepository();
     AccountInfo accountInfo = get(accountRepository.getAccountInfo(multisigAccount.getAddress()));
     System.out.println(getJsonHelper().print(accountInfo));
 
@@ -632,7 +634,7 @@ public class TestHelper {
           "Multisig account with address "
               + multisigAccount.getAddress().plain()
               + " already exist");
-      return;
+      return get(multisigRepository.getMultisigAccountInfo(multisigAccount.getAddress()));
     }
     System.out.println(
         "Multisig account with address "
@@ -691,7 +693,7 @@ public class TestHelper {
     Assertions.assertNotNull(hashLockInfo);
     Assertions.assertEquals(multisigAccount.getAddress(), hashLockInfo.getOwnerAddress());
     Assertions.assertEquals(hashAmount.getAmount(), hashLockInfo.getAmount());
-    Assertions.assertEquals(0, hashLockInfo.getStatus());
+    Assertions.assertEquals(LockStatus.UNUSED, hashLockInfo.getStatus());
     Assertions.assertEquals(hashLockTransaction.getHash(), hashLockInfo.getHash());
 
     Page<HashLockInfo> page =
@@ -701,9 +703,10 @@ public class TestHelper {
     Assertions.assertTrue(
         page.getData().stream().anyMatch(m -> m.getHash().equals(hashLockTransaction.getHash())));
     Assertions.assertEquals(20, page.getPageSize());
+    return get(multisigRepository.getMultisigAccountInfo(multisigAccount.getAddress()));
   }
 
-  public void createMultisigAccountComplete(
+  public MultisigAccountInfo createMultisigAccountComplete(
       RepositoryType type, Account multisigAccount, Account... accounts) {
 
     AccountRepository accountRepository = getRepositoryFactory(type).createAccountRepository();
@@ -722,7 +725,7 @@ public class TestHelper {
               + multisigAccount.getAddress().plain()
               + " already exist");
       System.out.println(getJsonHelper().print(multisigAccountInfo));
-      return;
+      return multisigAccountInfo;
     } catch (RepositoryCallException e) {
       System.out.println(
           "Multisig account with address "
@@ -765,6 +768,7 @@ public class TestHelper {
     Assertions.assertEquals(
         aggregateTransaciton.getTransactionInfo().get().getHash().get(),
         signedAggregateTransaction.getHash());
+    return get(multisigRepository.getMultisigAccountInfo(multisigAccount.getAddress()));
   }
 
   public TransactionService getTransactionService(RepositoryType type) {
@@ -783,9 +787,12 @@ public class TestHelper {
   }
 
   public void basicSendMosaicFromNemesis(RepositoryType type, UnresolvedAddress recipient) {
-
-    Account nemesisAccount = config().getNemesisAccount();
     BigInteger amount = BigInteger.valueOf(AMOUNT_PER_TRANSFER);
+    basicTransfer(type, config().getNemesisAccount(), recipient, amount);
+  }
+
+  public void basicTransfer(
+      RepositoryType type, Account nemesisAccount, UnresolvedAddress recipient, BigInteger amount) {
 
     TransferTransactionFactory factory =
         TransferTransactionFactory.create(
@@ -800,14 +807,6 @@ public class TestHelper {
     TransferTransaction processedTransaction =
         announceAndValidate(type, nemesisAccount, transferTransaction);
     Assertions.assertEquals(amount, processedTransaction.getMosaics().get(0).getAmount());
-  }
-
-  void printAccount(Account account) {
-    Map<String, String> map = new LinkedHashMap<>();
-    map.put("privateKey", account.getPrivateKey());
-    map.put("publicKey", account.getPublicKey());
-    map.put("address", account.getAddress().plain());
-    System.out.println(getJsonHelper().print(map));
   }
 
   void printAccount(Address account) {
@@ -832,10 +831,11 @@ public class TestHelper {
     return testAccount;
   }
 
-  public Account getTestAccount(RepositoryType type) {
+  public Pair<Account, NamespaceId> getTestAccount(RepositoryType type) {
     Account testAccount = config().getTestAccount();
+    NamespaceId namespaceId = setAddressAlias(type, testAccount.getAddress(), "testaccount");
     sendMosaicFromNemesis(type, testAccount.getAddress(), false);
-    return testAccount;
+    return Pair.of(testAccount, namespaceId);
   }
 
   public Deadline getDeadline() {

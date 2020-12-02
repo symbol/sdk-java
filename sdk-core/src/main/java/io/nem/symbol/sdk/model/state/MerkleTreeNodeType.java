@@ -13,42 +13,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.nem.symbol.sdk.model.account;
+package io.nem.symbol.sdk.model.state;
 
-import java.math.BigInteger;
+import java.util.Arrays;
 
-/** Importances of the account */
-public class Importances {
+/** type of node * */
+public enum MerkleTreeNodeType {
+  BRANCH(0x00),
 
-  private BigInteger value;
-  private BigInteger height;
+  LEAF(0xff);
 
-  /**
-   * Constructor.
-   *
-   * @param value Value
-   * @param height Height
-   */
-  public Importances(BigInteger value, BigInteger height) {
+  /** The catbuffer value. */
+  private final int value;
+
+  MerkleTreeNodeType(int value) {
     this.value = value;
-    this.height = height;
   }
 
-  /**
-   * Gets height.
-   *
-   * @return Height
-   */
-  public BigInteger getHeight() {
-    return height;
+  public static MerkleTreeNodeType rawValueOf(int value) {
+    return Arrays.stream(values())
+        .filter(e -> e.value == value)
+        .findFirst()
+        .orElseThrow(() -> new IllegalArgumentException(value + " is not a valid value"));
   }
 
-  /**
-   * Gets value.
-   *
-   * @return Value.
-   */
-  public BigInteger getValue() {
+  public int getValue() {
     return value;
   }
 }

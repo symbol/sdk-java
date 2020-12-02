@@ -92,13 +92,14 @@ public class AliasServiceTest {
 
     return new NamespaceInfo(
         "abc",
+        1,
         true,
         0,
         NamespaceRegistrationType.ROOT_NAMESPACE,
         1,
         Collections.emptyList(),
         null,
-        null,
+        Address.generateRandom(networkType),
         BigInteger.ONE,
         BigInteger.TEN,
         new AddressAlias(address));
@@ -108,13 +109,14 @@ public class AliasServiceTest {
 
     return new NamespaceInfo(
         "abc",
+        1,
         true,
         0,
         NamespaceRegistrationType.ROOT_NAMESPACE,
         1,
         Collections.emptyList(),
         null,
-        null,
+        Address.generateRandom(networkType),
         BigInteger.ONE,
         BigInteger.TEN,
         new MosaicAlias(mosaicId));

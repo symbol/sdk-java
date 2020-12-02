@@ -62,7 +62,10 @@ public class BlockRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl
         jsonHelper.convert(blockInfoDTO.getBlock(), ImportanceBlockDTO.class);
     NetworkType networkType = NetworkType.rawValueOf(block.getNetwork().getValue());
     BlockType type = BlockType.rawValueOf(block.getType());
-    if (type == BlockType.NORMAL_BLOCK)
+    // block.getVotingEligibleAccountsCount() == null for the testnet block 1 incomplete nemesis
+    // block.
+    // Remove before public net release
+    if (type == BlockType.NORMAL_BLOCK || block.getVotingEligibleAccountsCount() == null)
       return new BlockInfo(
           blockInfoDTO.getId(),
           block.getSize(),
@@ -169,12 +172,12 @@ public class BlockRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl
   @Override
   public Observable<MerkleProofInfo> getMerkleTransaction(BigInteger height, String hash) {
     Callable<MerkleProofInfoDTO> callback = () -> getClient().getMerkleTransaction(height, hash);
-    return exceptionHandling(call(callback).map(this::toMerkleProofInfo));
+    return call(callback, this::toMerkleProofInfo);
   }
 
   public Observable<MerkleProofInfo> getMerkleReceipts(BigInteger height, String hash) {
     Callable<MerkleProofInfoDTO> callback = () -> getClient().getMerkleReceipts(height, hash);
-    return exceptionHandling(call(callback).map(this::toMerkleProofInfo));
+    return call(callback, this::toMerkleProofInfo);
   }
 
   private MerkleProofInfo toMerkleProofInfo(MerkleProofInfoDTO dto) {

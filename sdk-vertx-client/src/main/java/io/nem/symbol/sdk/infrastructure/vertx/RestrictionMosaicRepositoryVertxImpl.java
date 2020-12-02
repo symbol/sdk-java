@@ -41,6 +41,7 @@ import io.reactivex.Observable;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Handler;
 import java.math.BigInteger;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -64,9 +65,13 @@ public class RestrictionMosaicRepositoryVertxImpl extends AbstractRepositoryVert
             .collect(
                 Collectors.toMap(
                     e -> new BigInteger(e.getKey()),
-                    e -> toMosaicGlobalRestrictionItem(e.getRestriction())));
+                    e -> toMosaicGlobalRestrictionItem(e.getRestriction()),
+                    (x, y) -> y,
+                    LinkedHashMap::new));
 
     return new MosaicGlobalRestriction(
+        mosaicGlobalRestrictionDTO.getId(),
+        mosaicGlobalRestrictionDTO.getMosaicRestrictionEntry().getVersion(),
         dto.getCompositeHash(),
         MosaicRestrictionEntryType.rawValueOf(dto.getEntryType().getValue()),
         MapperUtils.toMosaicId(dto.getMosaicId()),
@@ -91,6 +96,8 @@ public class RestrictionMosaicRepositoryVertxImpl extends AbstractRepositoryVert
                 Collectors.toMap(e -> new BigInteger(e.getKey()), e -> toBigInteger(e.getValue())));
 
     return new MosaicAddressRestriction(
+        mosaicAddressRestrictionDTO.getId(),
+        mosaicAddressRestrictionDTO.getMosaicRestrictionEntry().getVersion(),
         dto.getCompositeHash(),
         MosaicRestrictionEntryType.rawValueOf(dto.getEntryType().getValue()),
         MapperUtils.toMosaicId(dto.getMosaicId()),

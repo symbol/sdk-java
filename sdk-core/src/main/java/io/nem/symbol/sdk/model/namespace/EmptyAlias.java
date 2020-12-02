@@ -14,11 +14,19 @@
  * limitations under the License.
  */
 package io.nem.symbol.sdk.model.namespace;
+
+import io.nem.symbol.catapult.builders.NamespaceAliasBuilder;
+
 /** Empty alias */
 public class EmptyAlias extends AliasBase<Object> {
 
   /** Create AddressAlias from address */
   public EmptyAlias() {
     super(AliasType.NONE, null);
+  }
+
+  @Override
+  public NamespaceAliasBuilder createAliasBuilder() {
+    return NamespaceAliasBuilder.createNone();
   }
 }
