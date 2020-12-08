@@ -70,6 +70,7 @@ public class MosaicAddressRestriction extends MosaicRestriction<BigInteger> {
     AddressKeyValueSetBuilder restrictions =
         AddressKeyValueSetBuilder.create(
             getRestrictions().entrySet().stream()
+                .sorted(Entry.comparingByKey())
                 .map(this::toAddressKeyValueBuilder)
                 .collect(Collectors.toList()));
     MosaicAddressRestrictionEntryBuilder entry =
