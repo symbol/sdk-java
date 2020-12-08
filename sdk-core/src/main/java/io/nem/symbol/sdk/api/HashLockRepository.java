@@ -15,11 +15,13 @@
  */
 package io.nem.symbol.sdk.api;
 
+import io.nem.symbol.sdk.model.blockchain.MerkleStateInfo;
 import io.nem.symbol.sdk.model.transaction.HashLockInfo;
 import io.reactivex.Observable;
 
 /** Repository used to retrieves lock hashes. */
-public interface HashLockRepository extends Searcher<HashLockInfo, HashLockSearchCriteria> {
+public interface HashLockRepository
+    extends SearcherRepository<HashLockInfo, HashLockSearchCriteria> {
 
   /**
    * Returns a lock hash info based on the hash
@@ -28,4 +30,12 @@ public interface HashLockRepository extends Searcher<HashLockInfo, HashLockSearc
    * @return an observable of {@link HashLockInfo}
    */
   Observable<HashLockInfo> getHashLock(String hash);
+
+  /**
+   * Returns a lock hash merkle info based on the hash
+   *
+   * @param hash the hash
+   * @return an observable of {@link MerkleStateInfo}
+   */
+  Observable<MerkleStateInfo> getHashLockMerkle(String hash);
 }

@@ -19,12 +19,14 @@ import io.nem.symbol.core.utils.ConvertUtils;
 import io.nem.symbol.core.utils.MapperUtils;
 import io.nem.symbol.sdk.api.MosaicRestrictionSearchCriteria;
 import io.nem.symbol.sdk.model.account.Address;
+import io.nem.symbol.sdk.model.blockchain.MerkleStateInfo;
 import io.nem.symbol.sdk.model.mosaic.MosaicId;
 import io.nem.symbol.sdk.model.restriction.MosaicAddressRestriction;
 import io.nem.symbol.sdk.model.restriction.MosaicGlobalRestriction;
 import io.nem.symbol.sdk.model.restriction.MosaicRestriction;
 import io.nem.symbol.sdk.model.restriction.MosaicRestrictionEntryType;
 import io.nem.symbol.sdk.model.transaction.MosaicRestrictionType;
+import io.nem.symbol.sdk.openapi.vertx.model.MerkleStateInfoDTO;
 import io.nem.symbol.sdk.openapi.vertx.model.MosaicAddressRestrictionDTO;
 import io.nem.symbol.sdk.openapi.vertx.model.MosaicAddressRestrictionEntryDTO;
 import io.nem.symbol.sdk.openapi.vertx.model.MosaicAddressRestrictionEntryWrapperDTO;
@@ -80,6 +82,7 @@ public class RestrictionMosaicRepositoryVertxImplTest extends AbstractVertxRespo
     wrapperDTO.setMosaicId(mosaicId.getIdAsHex());
     wrapperDTO.setRestrictions(restrictions);
     wrapperDTO.setEntryType(MosaicRestrictionEntryTypeEnum.NUMBER_0);
+    wrapperDTO.setVersion(1);
     wrapperDTO.setTargetAddress(address.encoded());
 
     mockRemoteCall(toPage(dto));
@@ -129,6 +132,7 @@ public class RestrictionMosaicRepositoryVertxImplTest extends AbstractVertxRespo
     wrapperDTO.setCompositeHash("compositeHash");
     wrapperDTO.setMosaicId(mosaicId.getIdAsHex());
     wrapperDTO.setRestrictions(restrictions);
+    wrapperDTO.setVersion(1);
     wrapperDTO.setEntryType(MosaicRestrictionEntryTypeEnum.NUMBER_1);
 
     mockRemoteCall(toPage(dto));
@@ -190,6 +194,7 @@ public class RestrictionMosaicRepositoryVertxImplTest extends AbstractVertxRespo
     List<MosaicGlobalRestrictionEntryDTO> restrictions = new ArrayList<>();
     restrictions.add(entryDTO);
 
+    wrapperDTO.setVersion(1);
     wrapperDTO.setCompositeHash("compositeHash");
     wrapperDTO.setMosaicId(mosaicId.getIdAsHex());
     wrapperDTO.setRestrictions(restrictions);
@@ -247,6 +252,7 @@ public class RestrictionMosaicRepositoryVertxImplTest extends AbstractVertxRespo
     dto.setMosaicRestrictionEntry(wrapperDTO);
 
     MosaicAddressRestrictionEntryDTO entryDTO = new MosaicAddressRestrictionEntryDTO();
+    wrapperDTO.setVersion(1);
     entryDTO.setKey(ConvertUtils.toString(BigInteger.valueOf(1111)));
     entryDTO.setValue("2222");
     List<MosaicAddressRestrictionEntryDTO> restrictions = new ArrayList<>();
@@ -291,5 +297,12 @@ public class RestrictionMosaicRepositoryVertxImplTest extends AbstractVertxRespo
     return new MosaicRestrictionsPage()
         .data(Collections.singletonList(dto))
         .pagination(new Pagination().pageNumber(1).pageSize(2));
+  }
+
+  @Test
+  public void getMosaicRestrictionsMerkle() throws Exception {
+    mockRemoteCall(new MerkleStateInfoDTO().raw("abc"));
+    MerkleStateInfo merkle = repository.getMosaicRestrictionsMerkle("hash").toFuture().get();
+    Assertions.assertEquals("abc", merkle.getRaw());
   }
 }

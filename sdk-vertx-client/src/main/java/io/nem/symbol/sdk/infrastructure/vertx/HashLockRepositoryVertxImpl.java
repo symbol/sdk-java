@@ -19,7 +19,9 @@ import io.nem.symbol.core.utils.MapperUtils;
 import io.nem.symbol.sdk.api.HashLockRepository;
 import io.nem.symbol.sdk.api.HashLockSearchCriteria;
 import io.nem.symbol.sdk.api.Page;
+import io.nem.symbol.sdk.model.blockchain.MerkleStateInfo;
 import io.nem.symbol.sdk.model.transaction.HashLockInfo;
+import io.nem.symbol.sdk.model.transaction.LockStatus;
 import io.nem.symbol.sdk.openapi.vertx.api.HashLockRoutesApi;
 import io.nem.symbol.sdk.openapi.vertx.api.HashLockRoutesApiImpl;
 import io.nem.symbol.sdk.openapi.vertx.invoker.ApiClient;
@@ -30,9 +32,9 @@ import io.nem.symbol.sdk.openapi.vertx.model.Order;
 import io.reactivex.Observable;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Handler;
-import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
+import org.apache.commons.lang3.ObjectUtils;
 
 public class HashLockRepositoryVertxImpl extends AbstractRepositoryVertxImpl
     implements HashLockRepository {
@@ -49,15 +51,21 @@ public class HashLockRepositoryVertxImpl extends AbstractRepositoryVertxImpl
     return this.call((h) -> getClient().getHashLock(hash, h), this::toHashLockInfo);
   }
 
+  @Override
+  public Observable<MerkleStateInfo> getHashLockMerkle(String hash) {
+    return this.call((h) -> getClient().getHashLockMerkle(hash, h), this::toMerkleStateInfo);
+  }
+
   private HashLockInfo toHashLockInfo(HashLockInfoDTO dto) {
     HashLockEntryDTO lock = dto.getLock();
     return new HashLockInfo(
-        Optional.of(dto.getId()),
+        dto.getId(),
+        ObjectUtils.defaultIfNull(dto.getLock().getVersion(), 1),
         MapperUtils.toAddress(lock.getOwnerAddress()),
         MapperUtils.toMosaicId(lock.getMosaicId()),
         lock.getAmount(),
         lock.getEndHeight(),
-        lock.getStatus(),
+        LockStatus.rawValueOf(lock.getStatus().getValue().byteValue()),
         lock.getHash());
   }
 

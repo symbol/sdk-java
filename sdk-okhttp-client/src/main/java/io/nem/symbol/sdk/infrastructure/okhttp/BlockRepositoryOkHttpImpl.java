@@ -22,15 +22,19 @@ import io.nem.symbol.sdk.api.BlockSearchCriteria;
 import io.nem.symbol.sdk.api.Page;
 import io.nem.symbol.sdk.model.account.PublicAccount;
 import io.nem.symbol.sdk.model.blockchain.BlockInfo;
+import io.nem.symbol.sdk.model.blockchain.BlockType;
+import io.nem.symbol.sdk.model.blockchain.ImportanceBlockInfo;
 import io.nem.symbol.sdk.model.blockchain.MerklePathItem;
 import io.nem.symbol.sdk.model.blockchain.MerkleProofInfo;
 import io.nem.symbol.sdk.model.blockchain.Position;
 import io.nem.symbol.sdk.model.network.NetworkType;
+import io.nem.symbol.sdk.model.transaction.JsonHelper;
 import io.nem.symbol.sdk.openapi.okhttp_gson.api.BlockRoutesApi;
 import io.nem.symbol.sdk.openapi.okhttp_gson.invoker.ApiClient;
 import io.nem.symbol.sdk.openapi.okhttp_gson.model.BlockInfoDTO;
 import io.nem.symbol.sdk.openapi.okhttp_gson.model.BlockOrderByEnum;
 import io.nem.symbol.sdk.openapi.okhttp_gson.model.BlockPage;
+import io.nem.symbol.sdk.openapi.okhttp_gson.model.ImportanceBlockDTO;
 import io.nem.symbol.sdk.openapi.okhttp_gson.model.MerkleProofInfoDTO;
 import io.reactivex.Observable;
 import java.math.BigInteger;
@@ -53,44 +57,85 @@ public class BlockRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl
     this.client = new BlockRoutesApi(apiClient);
   }
 
-  public static BlockInfo toBlockInfo(BlockInfoDTO blockInfoDTO) {
-    NetworkType networkType =
-        NetworkType.rawValueOf(blockInfoDTO.getBlock().getNetwork().getValue());
-    return new BlockInfo(
-        blockInfoDTO.getId(),
-        blockInfoDTO.getBlock().getSize(),
-        blockInfoDTO.getMeta().getHash(),
-        blockInfoDTO.getMeta().getGenerationHash(),
-        blockInfoDTO.getMeta().getTotalFee(),
-        blockInfoDTO.getMeta().getStateHashSubCacheMerkleRoots(),
-        blockInfoDTO.getMeta().getTransactionsCount(),
-        blockInfoDTO.getMeta().getTotalTransactionsCount(),
-        blockInfoDTO.getMeta().getStatementsCount(),
-        blockInfoDTO.getMeta().getStateHashSubCacheMerkleRoots(),
-        blockInfoDTO.getBlock().getSignature(),
-        PublicAccount.createFromPublicKey(
-            blockInfoDTO.getBlock().getSignerPublicKey(), networkType),
-        networkType,
-        blockInfoDTO.getBlock().getVersion(),
-        blockInfoDTO.getBlock().getType(),
-        blockInfoDTO.getBlock().getHeight(),
-        blockInfoDTO.getBlock().getTimestamp(),
-        blockInfoDTO.getBlock().getDifficulty(),
-        blockInfoDTO.getBlock().getFeeMultiplier(),
-        blockInfoDTO.getBlock().getPreviousBlockHash(),
-        blockInfoDTO.getBlock().getTransactionsHash(),
-        blockInfoDTO.getBlock().getReceiptsHash(),
-        blockInfoDTO.getBlock().getStateHash(),
-        blockInfoDTO.getBlock().getProofGamma(),
-        blockInfoDTO.getBlock().getProofScalar(),
-        blockInfoDTO.getBlock().getProofVerificationHash(),
-        MapperUtils.toAddress(blockInfoDTO.getBlock().getBeneficiaryAddress()));
+  public static BlockInfo toBlockInfo(BlockInfoDTO blockInfoDTO, JsonHelper jsonHelper) {
+    ImportanceBlockDTO block =
+        jsonHelper.convert(blockInfoDTO.getBlock(), ImportanceBlockDTO.class);
+    NetworkType networkType = NetworkType.rawValueOf(block.getNetwork().getValue());
+    BlockType type = BlockType.rawValueOf(block.getType());
+    // block.getVotingEligibleAccountsCount() == null for the testnet block 1 incomplete nemesis
+    // block.
+    // Remove before public net release
+    if (type == BlockType.NORMAL_BLOCK || block.getVotingEligibleAccountsCount() == null)
+      return new BlockInfo(
+          blockInfoDTO.getId(),
+          block.getSize(),
+          blockInfoDTO.getMeta().getHash(),
+          blockInfoDTO.getMeta().getGenerationHash(),
+          blockInfoDTO.getMeta().getTotalFee(),
+          blockInfoDTO.getMeta().getStateHashSubCacheMerkleRoots(),
+          blockInfoDTO.getMeta().getTransactionsCount(),
+          blockInfoDTO.getMeta().getTotalTransactionsCount(),
+          blockInfoDTO.getMeta().getStatementsCount(),
+          blockInfoDTO.getMeta().getStateHashSubCacheMerkleRoots(),
+          block.getSignature(),
+          PublicAccount.createFromPublicKey(block.getSignerPublicKey(), networkType),
+          networkType,
+          block.getVersion(),
+          type,
+          block.getHeight(),
+          block.getTimestamp(),
+          block.getDifficulty(),
+          block.getFeeMultiplier(),
+          block.getPreviousBlockHash(),
+          block.getTransactionsHash(),
+          block.getReceiptsHash(),
+          block.getStateHash(),
+          block.getProofGamma(),
+          block.getProofScalar(),
+          block.getProofVerificationHash(),
+          MapperUtils.toAddress(block.getBeneficiaryAddress()));
+    else {
+      return new ImportanceBlockInfo(
+          blockInfoDTO.getId(),
+          block.getSize(),
+          blockInfoDTO.getMeta().getHash(),
+          blockInfoDTO.getMeta().getGenerationHash(),
+          blockInfoDTO.getMeta().getTotalFee(),
+          blockInfoDTO.getMeta().getStateHashSubCacheMerkleRoots(),
+          blockInfoDTO.getMeta().getTransactionsCount(),
+          blockInfoDTO.getMeta().getTotalTransactionsCount(),
+          blockInfoDTO.getMeta().getStatementsCount(),
+          blockInfoDTO.getMeta().getStateHashSubCacheMerkleRoots(),
+          block.getSignature(),
+          PublicAccount.createFromPublicKey(block.getSignerPublicKey(), networkType),
+          networkType,
+          block.getVersion(),
+          type,
+          block.getHeight(),
+          block.getTimestamp(),
+          block.getDifficulty(),
+          block.getFeeMultiplier(),
+          block.getPreviousBlockHash(),
+          block.getTransactionsHash(),
+          block.getReceiptsHash(),
+          block.getStateHash(),
+          block.getProofGamma(),
+          block.getProofScalar(),
+          block.getProofVerificationHash(),
+          MapperUtils.toAddress(block.getBeneficiaryAddress()),
+          block.getVotingEligibleAccountsCount(),
+          block.getHarvestingEligibleAccountsCount(),
+          block.getTotalVotingBalance(),
+          block.getPreviousImportanceBlockHash());
+    }
   }
 
   @Override
   public Observable<BlockInfo> getBlockByHeight(BigInteger height) {
     Callable<BlockInfoDTO> callback = () -> getClient().getBlockByHeight(height);
-    return exceptionHandling(call(callback).map(BlockRepositoryOkHttpImpl::toBlockInfo));
+    return exceptionHandling(
+        call(callback)
+            .map((BlockInfoDTO blockInfoDTO) -> toBlockInfo(blockInfoDTO, getJsonHelper())));
   }
 
   @Override
@@ -114,7 +159,9 @@ public class BlockRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl
                     this.toPage(
                         mosaicPage.getPagination(),
                         mosaicPage.getData().stream()
-                            .map(BlockRepositoryOkHttpImpl::toBlockInfo)
+                            .map(
+                                (BlockInfoDTO blockInfoDTO) ->
+                                    toBlockInfo(blockInfoDTO, getJsonHelper()))
                             .collect(Collectors.toList()))));
   }
 
@@ -125,12 +172,12 @@ public class BlockRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl
   @Override
   public Observable<MerkleProofInfo> getMerkleTransaction(BigInteger height, String hash) {
     Callable<MerkleProofInfoDTO> callback = () -> getClient().getMerkleTransaction(height, hash);
-    return exceptionHandling(call(callback).map(this::toMerkleProofInfo));
+    return call(callback, this::toMerkleProofInfo);
   }
 
   public Observable<MerkleProofInfo> getMerkleReceipts(BigInteger height, String hash) {
     Callable<MerkleProofInfoDTO> callback = () -> getClient().getMerkleReceipts(height, hash);
-    return exceptionHandling(call(callback).map(this::toMerkleProofInfo));
+    return call(callback, this::toMerkleProofInfo);
   }
 
   private MerkleProofInfo toMerkleProofInfo(MerkleProofInfoDTO dto) {

@@ -15,8 +15,6 @@
  */
 package io.nem.symbol.sdk.api;
 
-import io.nem.symbol.sdk.model.account.Address;
-import io.nem.symbol.sdk.model.network.NetworkType;
 import io.nem.symbol.sdk.model.transaction.SecretLockInfo;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -48,9 +46,6 @@ public class SecretLockPaginationStreamerTest {
     SecretLockRepository repository = Mockito.mock(SecretLockRepository.class);
     SecretLockPaginationStreamer streamer = new SecretLockPaginationStreamer(repository);
     return new PaginationStreamerTester<>(
-        streamer,
-        SecretLockInfo.class,
-        repository,
-        new SecretLockSearchCriteria(Address.generateRandom(NetworkType.MIJIN_TEST)));
+        streamer, SecretLockInfo.class, repository, new SecretLockSearchCriteria());
   }
 }

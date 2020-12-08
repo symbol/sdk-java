@@ -28,21 +28,24 @@ class SecretLockSearchCriteriaTest {
 
   @Test
   void shouldCreate() {
-    SecretLockSearchCriteria criteria = new SecretLockSearchCriteria(account1.getAddress());
+    SecretLockSearchCriteria criteria = new SecretLockSearchCriteria();
     Assertions.assertNull(criteria.getOrder());
+    Assertions.assertNull(criteria.getSecret());
     Assertions.assertNull(criteria.getPageSize());
     Assertions.assertNull(criteria.getPageNumber());
     Assertions.assertNull(criteria.getOffset());
-    Assertions.assertEquals(account1.getAddress(), criteria.getAddress());
+    Assertions.assertNull(criteria.getAddress());
   }
 
   @Test
   void shouldSetValues() {
 
-    SecretLockSearchCriteria criteria = new SecretLockSearchCriteria(account1.getAddress());
+    SecretLockSearchCriteria criteria = new SecretLockSearchCriteria();
+    criteria.setAddress(account1.getAddress());
     criteria.setOrder(OrderBy.DESC);
     criteria.setPageSize(10);
     criteria.setPageNumber(5);
+    criteria.setSecret("someSecret");
     criteria.setOffset("abc");
     Assertions.assertEquals(account1.getAddress(), criteria.getAddress());
 
@@ -50,15 +53,18 @@ class SecretLockSearchCriteriaTest {
     Assertions.assertEquals(10, criteria.getPageSize());
     Assertions.assertEquals(5, criteria.getPageNumber());
     Assertions.assertEquals("abc", criteria.getOffset());
+    Assertions.assertEquals("someSecret", criteria.getSecret());
   }
 
   @Test
   void shouldUseBuilderMethods() {
 
     SecretLockSearchCriteria criteria =
-        new SecretLockSearchCriteria(account1.getAddress())
+        new SecretLockSearchCriteria()
+            .address(account1.getAddress())
             .order(OrderBy.ASC)
             .pageSize(10)
+            .secret("someSecret")
             .pageNumber(5);
 
     criteria.offset("abc");
@@ -67,21 +73,24 @@ class SecretLockSearchCriteriaTest {
     Assertions.assertEquals(5, criteria.getPageNumber());
     Assertions.assertEquals("abc", criteria.getOffset());
     Assertions.assertEquals(account1.getAddress(), criteria.getAddress());
+    Assertions.assertEquals("someSecret", criteria.getSecret());
   }
 
   @Test
   void shouldBeEquals() {
 
-    SecretLockSearchCriteria criteria1 = new SecretLockSearchCriteria(account1.getAddress());
+    SecretLockSearchCriteria criteria1 =
+        new SecretLockSearchCriteria().address(account1.getAddress()).secret("someSecret");
 
-    SecretLockSearchCriteria criteria2 = new SecretLockSearchCriteria(account1.getAddress());
+    SecretLockSearchCriteria criteria2 =
+        new SecretLockSearchCriteria().address(account1.getAddress()).secret("someSecret");
 
     Assertions.assertEquals(
-        new SecretLockSearchCriteria(account1.getAddress()),
-        new SecretLockSearchCriteria(account1.getAddress()));
+        new SecretLockSearchCriteria().address(account1.getAddress()),
+        new SecretLockSearchCriteria().address(account1.getAddress()));
     Assertions.assertNotEquals(
-        new SecretLockSearchCriteria(account1.getAddress()),
-        new SecretLockSearchCriteria(account2.getAddress()));
+        new SecretLockSearchCriteria().address(account1.getAddress()),
+        new SecretLockSearchCriteria().address(account2.getAddress()));
     Assertions.assertEquals(criteria1, criteria2);
     Assertions.assertEquals(criteria1, criteria1);
     Assertions.assertEquals(criteria1.hashCode(), criteria2.hashCode());
@@ -90,7 +99,7 @@ class SecretLockSearchCriteriaTest {
     Assertions.assertNotEquals(criteria1, criteria2);
     Assertions.assertNotEquals(criteria1.hashCode(), criteria2.hashCode());
 
-    criteria2.pageNumber(100);
+    criteria2.secret("someSecret");
     Assertions.assertNotEquals(criteria1, criteria2);
     Assertions.assertNotEquals(criteria1.hashCode(), criteria2.hashCode());
 

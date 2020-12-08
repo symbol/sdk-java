@@ -16,7 +16,6 @@
 package io.nem.symbol.sdk.infrastructure;
 
 import io.nem.symbol.sdk.api.Page;
-import io.nem.symbol.sdk.api.RepositoryCallException;
 import io.nem.symbol.sdk.api.SecretLockRepository;
 import io.nem.symbol.sdk.api.SecretLockSearchCriteria;
 import io.nem.symbol.sdk.model.account.Address;
@@ -31,44 +30,11 @@ class SecretLockRepositoryIntegrationTest extends BaseIntegrationTest {
 
   @ParameterizedTest
   @EnumSource(RepositoryType.class)
-  void getSecretLockWhenDoesNotExist(RepositoryType type) {
-    SecretLockRepository SecretLockRepository =
-        getRepositoryFactory(type).createSecretLockRepository();
-    String secret = "671653C94E2254F2A23EFEDB15D67C38332AED1FBD24B063C0A8E675582B6A96";
-
-    RepositoryCallException exception =
-        Assertions.assertThrows(
-            RepositoryCallException.class, () -> get(SecretLockRepository.getSecretLock(secret)));
-
-    Assertions.assertTrue(
-        exception
-            .getMessage()
-            .contains(
-                "ApiException: Not Found - 404 - ResourceNotFound - no resource exists with id"));
-  }
-
-  @ParameterizedTest
-  @EnumSource(RepositoryType.class)
-  void getSecretLockWhenInvalid(RepositoryType type) {
-    SecretLockRepository SecretLockRepository =
-        getRepositoryFactory(type).createSecretLockRepository();
-    String secret = "invalid!";
-
-    RepositoryCallException exception =
-        Assertions.assertThrows(
-            RepositoryCallException.class, () -> get(SecretLockRepository.getSecretLock(secret)));
-
-    Assertions.assertEquals(
-        "ApiException: Conflict - 409 - InvalidArgument - secret has an invalid format",
-        exception.getMessage());
-  }
-
-  @ParameterizedTest
-  @EnumSource(RepositoryType.class)
   void searchWhenInvalidAddress(RepositoryType type) {
     SecretLockRepository repository = getRepositoryFactory(type).createSecretLockRepository();
     Address address = Address.generateRandom(getNetworkType());
-    Page<SecretLockInfo> page = get(repository.search(new SecretLockSearchCriteria(address)));
+    Page<SecretLockInfo> page =
+        get(repository.search(new SecretLockSearchCriteria().address(address)));
     Assertions.assertTrue(page.isLast());
     Assertions.assertTrue(page.getData().isEmpty());
     Assertions.assertEquals(20, page.getPageSize());

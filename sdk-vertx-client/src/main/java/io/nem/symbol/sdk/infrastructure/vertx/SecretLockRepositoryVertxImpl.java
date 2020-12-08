@@ -15,13 +15,14 @@
  */
 package io.nem.symbol.sdk.infrastructure.vertx;
 
-import io.nem.symbol.core.utils.ConvertUtils;
 import io.nem.symbol.core.utils.MapperUtils;
 import io.nem.symbol.sdk.api.Page;
 import io.nem.symbol.sdk.api.SecretLockRepository;
 import io.nem.symbol.sdk.api.SecretLockSearchCriteria;
+import io.nem.symbol.sdk.model.blockchain.MerkleStateInfo;
 import io.nem.symbol.sdk.model.mosaic.MosaicId;
 import io.nem.symbol.sdk.model.transaction.LockHashAlgorithm;
+import io.nem.symbol.sdk.model.transaction.LockStatus;
 import io.nem.symbol.sdk.model.transaction.SecretLockInfo;
 import io.nem.symbol.sdk.openapi.vertx.api.SecretLockRoutesApi;
 import io.nem.symbol.sdk.openapi.vertx.api.SecretLockRoutesApiImpl;
@@ -33,9 +34,9 @@ import io.nem.symbol.sdk.openapi.vertx.model.SecretLockPage;
 import io.reactivex.Observable;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Handler;
-import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
+import org.apache.commons.lang3.ObjectUtils;
 
 public class SecretLockRepositoryVertxImpl extends AbstractRepositoryVertxImpl
     implements SecretLockRepository {
@@ -47,26 +48,17 @@ public class SecretLockRepositoryVertxImpl extends AbstractRepositoryVertxImpl
     this.client = new SecretLockRoutesApiImpl(apiClient);
   }
 
-  @Override
-  public Observable<SecretLockInfo> getSecretLock(String secret) {
-    return this.call(
-        (h) ->
-            getClient()
-                .getSecretLock(
-                    ConvertUtils.padHex(secret, LockHashAlgorithm.DEFAULT_SECRET_HEX_SIZE), h),
-        this::toSecretLockInfo);
-  }
-
   private SecretLockInfo toSecretLockInfo(SecretLockInfoDTO dto) {
     SecretLockEntryDTO lock = dto.getLock();
     MosaicId mosaicId = MapperUtils.toMosaicId(lock.getMosaicId());
     return new SecretLockInfo(
-        Optional.of(dto.getId()),
+        dto.getId(),
+        ObjectUtils.defaultIfNull(lock.getVersion(), 1),
         MapperUtils.toAddress(lock.getOwnerAddress()),
         mosaicId,
         lock.getAmount(),
         lock.getEndHeight(),
-        lock.getStatus(),
+        LockStatus.rawValueOf(lock.getStatus().getValue().byteValue()),
         LockHashAlgorithm.rawValueOf(lock.getHashAlgorithm().getValue()),
         lock.getSecret(),
         MapperUtils.toAddress(lock.getRecipientAddress()),
@@ -79,9 +71,11 @@ public class SecretLockRepositoryVertxImpl extends AbstractRepositoryVertxImpl
     Integer pageSize = criteria.getPageSize();
     Integer pageNumber = criteria.getPageNumber();
     String offset = criteria.getOffset();
+    String secret = criteria.getSecret();
     Order order = toDto(criteria.getOrder());
     Consumer<Handler<AsyncResult<SecretLockPage>>> handlerConsumer =
-        (h) -> getClient().searchSecretLock(address, pageSize, pageNumber, offset, order, h);
+        (h) ->
+            getClient().searchSecretLock(address, secret, pageSize, pageNumber, offset, order, h);
     return this.call(handlerConsumer, this::toPage);
   }
 
@@ -93,5 +87,16 @@ public class SecretLockRepositoryVertxImpl extends AbstractRepositoryVertxImpl
 
   public SecretLockRoutesApi getClient() {
     return client;
+  }
+
+  @Override
+  public Observable<SecretLockInfo> getSecretLock(String compositeHash) {
+    return this.call((h) -> getClient().getSecretLock(compositeHash, h), this::toSecretLockInfo);
+  }
+
+  @Override
+  public Observable<MerkleStateInfo> getSecretLockMerkle(String compositeHash) {
+    return this.call(
+        (h) -> getClient().getSecretLockMerkle(compositeHash, h), this::toMerkleStateInfo);
   }
 }

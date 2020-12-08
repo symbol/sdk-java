@@ -21,5 +21,5 @@ public class MessageMarker {
   private MessageMarker() {}
 
   /** 8-byte marker: E201735761802AFE for PersistentDelegationRequestTransaction message */
-  public static final String PERSISTENT_DELEGATION_UNLOCK = "E201735761802AFE";
+  public static final String PERSISTENT_DELEGATION_UNLOCK = "FE2A8061577301E2";
 }

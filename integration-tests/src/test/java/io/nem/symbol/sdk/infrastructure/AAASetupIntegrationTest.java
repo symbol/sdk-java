@@ -15,7 +15,14 @@
  */
 package io.nem.symbol.sdk.infrastructure;
 
+import io.nem.symbol.sdk.api.RepositoryFactory;
+import io.nem.symbol.sdk.api.StateProofService;
+import io.nem.symbol.sdk.model.account.Account;
+import io.nem.symbol.sdk.model.account.MultisigAccountInfo;
 import io.nem.symbol.sdk.model.namespace.NamespaceId;
+import io.nem.symbol.sdk.model.state.StateMerkleProof;
+import io.nem.symbol.sdk.model.transaction.NamespaceRegistrationTransaction;
+import io.nem.symbol.sdk.model.transaction.NamespaceRegistrationTransactionFactory;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
 import org.junit.jupiter.api.Order;
@@ -32,6 +39,83 @@ import org.junit.jupiter.api.TestMethodOrder;
 public class AAASetupIntegrationTest extends BaseIntegrationTest {
 
   private final RepositoryType type = DEFAULT_REPOSITORY_TYPE;
+
+  @Test
+  @Order(1)
+  void createRootAndChild() {
+    Account account = config().getNemesisAccount();
+
+    NamespaceRegistrationTransaction root =
+        NamespaceRegistrationTransactionFactory.createRootNamespace(
+                getNetworkType(), getDeadline(), "root", helper.getDuration())
+            .maxFee(maxFee)
+            .build();
+
+    helper().announceAndValidate(type, account, root);
+
+    NamespaceRegistrationTransaction child =
+        NamespaceRegistrationTransactionFactory.createSubNamespace(
+                getNetworkType(), getDeadline(), "child", root.getNamespaceId())
+            .maxFee(maxFee)
+            .build();
+
+    helper().announceAndValidate(type, account, child);
+  }
+
+  @Test
+  @Order(1)
+  void createNamespces() {
+    Account account = config().getNemesisAccount();
+
+    NamespaceRegistrationTransaction root =
+        NamespaceRegistrationTransactionFactory.createRootNamespace(
+                getNetworkType(), getDeadline(), "root3", helper.getDuration())
+            .maxFee(maxFee)
+            .build();
+    helper().announceAndValidate(type, account, root);
+
+    NamespaceRegistrationTransaction child1 =
+        NamespaceRegistrationTransactionFactory.createSubNamespace(
+                getNetworkType(), getDeadline(), "child1", root.getNamespaceId())
+            .maxFee(maxFee)
+            .build();
+    helper().announceAndValidate(type, account, child1);
+
+    NamespaceRegistrationTransaction subchild1 =
+        NamespaceRegistrationTransactionFactory.createSubNamespace(
+                getNetworkType(), getDeadline(), "subchild1", child1.getNamespaceId())
+            .maxFee(maxFee)
+            .build();
+    helper().announceAndValidate(type, account, subchild1);
+
+    NamespaceRegistrationTransaction subchild2 =
+        NamespaceRegistrationTransactionFactory.createSubNamespace(
+                getNetworkType(), getDeadline(), "subchild2", child1.getNamespaceId())
+            .maxFee(maxFee)
+            .build();
+    helper().announceAndValidate(type, account, subchild2);
+
+    NamespaceRegistrationTransaction child2 =
+        NamespaceRegistrationTransactionFactory.createSubNamespace(
+                getNetworkType(), getDeadline(), "child2", root.getNamespaceId())
+            .maxFee(maxFee)
+            .build();
+    helper().announceAndValidate(type, account, child2);
+
+    NamespaceRegistrationTransaction child3 =
+        NamespaceRegistrationTransactionFactory.createSubNamespace(
+                getNetworkType(), getDeadline(), "child3", root.getNamespaceId())
+            .maxFee(maxFee)
+            .build();
+    helper().announceAndValidate(type, account, child3);
+
+    NamespaceRegistrationTransaction subchild3 =
+        NamespaceRegistrationTransactionFactory.createSubNamespace(
+                getNetworkType(), getDeadline(), "subchild3", child1.getNamespaceId())
+            .maxFee(maxFee)
+            .build();
+    helper().announceAndValidate(type, account, subchild3);
+  }
 
   @Test
   @Order(1)
@@ -71,24 +155,30 @@ public class AAASetupIntegrationTest extends BaseIntegrationTest {
   @Test
   @Order(6)
   void createMultisigAccountCompleteUsingNemesis() {
-    System.out.println(config().getNemesisAccount8().getAddress().encoded());
-    helper()
-        .createMultisigAccountComplete(
-            type,
-            config().getNemesisAccount8(),
-            config().getNemesisAccount9(),
-            config().getNemesisAccount10());
+    Account multisig = config().getNemesisAccount8();
+    System.out.println(multisig.getAddress().plain());
+    RepositoryFactory repositoryFactory = getRepositoryFactory(DEFAULT_REPOSITORY_TYPE);
+    MultisigAccountInfo info =
+        helper()
+            .createMultisigAccountComplete(
+                type, multisig, config().getNemesisAccount9(), config().getNemesisAccount10());
+
+    StateProofService service = new StateProofServiceImpl(repositoryFactory);
+    StateMerkleProof<MultisigAccountInfo> proof = get(service.multisig(info));
+    Assertions.assertTrue(proof.isValid());
   }
 
   @Test
   @Order(7)
   void createMultisigAccountBondedUsingNemesis() {
-    System.out.println(config().getNemesisAccount7().getAddress().encoded());
-    helper()
-        .createMultisigAccountBonded(
-            type,
-            config().getNemesisAccount8(),
-            config().getNemesisAccount9(),
-            config().getNemesisAccount10());
+    Account multisig = config().getNemesisAccount8();
+    RepositoryFactory repositoryFactory = getRepositoryFactory(DEFAULT_REPOSITORY_TYPE);
+    MultisigAccountInfo info =
+        helper()
+            .createMultisigAccountBonded(
+                type, multisig, config().getNemesisAccount9(), config().getNemesisAccount10());
+    StateProofService service = new StateProofServiceImpl(repositoryFactory);
+    StateMerkleProof<MultisigAccountInfo> proof = get(service.multisig(info));
+    Assertions.assertTrue(proof.isValid());
   }
 }

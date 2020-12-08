@@ -94,8 +94,7 @@ public class TransactionRepositoryVertxImpl extends AbstractRepositoryVertxImpl
   public Observable<Transaction> getTransaction(TransactionGroup group, String transactionHash) {
     Consumer<Handler<AsyncResult<TransactionInfoDTO>>> callback =
         getTransactionHandler(group, transactionHash);
-    return exceptionHandling(
-        call(callback).map(transactionDto -> mapTransaction(group, transactionDto)));
+    return call(callback, transactionDto -> mapTransaction(group, transactionDto));
   }
 
   @Override
@@ -194,8 +193,11 @@ public class TransactionRepositoryVertxImpl extends AbstractRepositoryVertxImpl
                     criteria.getHeight(),
                     criteria.getFromHeight(),
                     criteria.getToHeight(),
+                    criteria.getFromTransferAmount(),
+                    criteria.getToTransferAmount(),
                     toDto(criteria.getTransactionTypes()),
                     criteria.getEmbedded(),
+                    toDto(criteria.getTransferMosaicId()),
                     criteria.getPageSize(),
                     criteria.getPageNumber(),
                     criteria.getOffset(),
@@ -211,8 +213,11 @@ public class TransactionRepositoryVertxImpl extends AbstractRepositoryVertxImpl
                     criteria.getHeight(),
                     criteria.getFromHeight(),
                     criteria.getToHeight(),
+                    criteria.getFromTransferAmount(),
+                    criteria.getToTransferAmount(),
                     toDto(criteria.getTransactionTypes()),
                     criteria.getEmbedded(),
+                    toDto(criteria.getTransferMosaicId()),
                     criteria.getPageSize(),
                     criteria.getPageNumber(),
                     criteria.getOffset(),
@@ -228,8 +233,11 @@ public class TransactionRepositoryVertxImpl extends AbstractRepositoryVertxImpl
                     criteria.getHeight(),
                     criteria.getFromHeight(),
                     criteria.getToHeight(),
+                    criteria.getFromTransferAmount(),
+                    criteria.getToTransferAmount(),
                     toDto(criteria.getTransactionTypes()),
                     criteria.getEmbedded(),
+                    toDto(criteria.getTransferMosaicId()),
                     criteria.getPageSize(),
                     criteria.getPageNumber(),
                     criteria.getOffset(),

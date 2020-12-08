@@ -15,6 +15,7 @@
  */
 package io.nem.symbol.sdk.api;
 
+import io.nem.symbol.sdk.model.blockchain.MerkleStateInfo;
 import io.nem.symbol.sdk.model.mosaic.MosaicId;
 import io.nem.symbol.sdk.model.mosaic.MosaicInfo;
 import io.reactivex.Observable;
@@ -25,7 +26,7 @@ import java.util.List;
  *
  * @since 1.0
  */
-public interface MosaicRepository extends Searcher<MosaicInfo, MosaicSearchCriteria> {
+public interface MosaicRepository extends SearcherRepository<MosaicInfo, MosaicSearchCriteria> {
 
   /**
    * Gets a MosaicInfo for a given mosaicId
@@ -34,6 +35,14 @@ public interface MosaicRepository extends Searcher<MosaicInfo, MosaicSearchCrite
    * @return Observable of {@link MosaicInfo}
    */
   Observable<MosaicInfo> getMosaic(MosaicId mosaicId);
+
+  /**
+   * Gets a MosaicInfo merkle for a given mosaicId
+   *
+   * @param mosaicId {@link MosaicId}
+   * @return Observable of {@link MerkleStateInfo}
+   */
+  Observable<MerkleStateInfo> getMosaicMerkle(MosaicId mosaicId);
 
   /**
    * Gets MosaicInfo for different mosaicIds.

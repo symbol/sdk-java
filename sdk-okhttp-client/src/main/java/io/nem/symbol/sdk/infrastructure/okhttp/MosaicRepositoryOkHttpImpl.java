@@ -21,10 +21,10 @@ import io.nem.symbol.core.utils.MapperUtils;
 import io.nem.symbol.sdk.api.MosaicRepository;
 import io.nem.symbol.sdk.api.MosaicSearchCriteria;
 import io.nem.symbol.sdk.api.Page;
+import io.nem.symbol.sdk.model.blockchain.MerkleStateInfo;
 import io.nem.symbol.sdk.model.mosaic.MosaicFlags;
 import io.nem.symbol.sdk.model.mosaic.MosaicId;
 import io.nem.symbol.sdk.model.mosaic.MosaicInfo;
-import io.nem.symbol.sdk.model.network.NetworkType;
 import io.nem.symbol.sdk.openapi.okhttp_gson.api.MosaicRoutesApi;
 import io.nem.symbol.sdk.openapi.okhttp_gson.invoker.ApiClient;
 import io.nem.symbol.sdk.openapi.okhttp_gson.model.MosaicDTO;
@@ -35,6 +35,7 @@ import io.reactivex.Observable;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.stream.Collectors;
+import org.apache.commons.lang3.ObjectUtils;
 
 /**
  * Mosaic http repository.
@@ -46,13 +47,9 @@ public class MosaicRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl
 
   private final MosaicRoutesApi client;
 
-  private final Observable<NetworkType> networkTypeObservable;
-
-  public MosaicRepositoryOkHttpImpl(
-      ApiClient apiClient, Observable<NetworkType> networkTypeObservable) {
+  public MosaicRepositoryOkHttpImpl(ApiClient apiClient) {
     super(apiClient);
     this.client = new MosaicRoutesApi(apiClient);
-    this.networkTypeObservable = networkTypeObservable;
   }
 
   public MosaicRoutesApi getClient() {
@@ -62,10 +59,12 @@ public class MosaicRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl
   @Override
   public Observable<MosaicInfo> getMosaic(MosaicId mosaicId) {
     Callable<MosaicInfoDTO> callback = () -> getClient().getMosaic(mosaicId.getIdAsHex());
-    return exceptionHandling(
-        networkTypeObservable.flatMap(
-            networkType ->
-                call(callback).map(mosaicInfoDTO -> createMosaicInfo(mosaicInfoDTO, networkType))));
+    return call(callback, this::createMosaicInfo);
+  }
+
+  @Override
+  public Observable<MerkleStateInfo> getMosaicMerkle(MosaicId mosaicId) {
+    return call(() -> getClient().getMosaicMerkle(mosaicId.getIdAsHex()), this::toMerkleStateInfo);
   }
 
   @Override
@@ -74,13 +73,11 @@ public class MosaicRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl
     mosaicIds.mosaicIds(ids.stream().map(MosaicId::getIdAsHex).collect(Collectors.toList()));
     Callable<List<MosaicInfoDTO>> callback = () -> getClient().getMosaics(mosaicIds);
     return exceptionHandling(
-        networkTypeObservable.flatMap(
-            networkType ->
-                call(callback)
-                    .flatMapIterable(item -> item)
-                    .map(mosaicInfoDTO -> createMosaicInfo(mosaicInfoDTO, networkType))
-                    .toList()
-                    .toObservable()));
+        call(callback)
+            .flatMapIterable(item -> item)
+            .map(this::createMosaicInfo)
+            .toList()
+            .toObservable());
   }
 
   @Override
@@ -95,26 +92,24 @@ public class MosaicRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl
                     criteria.getOffset(),
                     toDto(criteria.getOrder()));
 
-    return exceptionHandling(
-        networkTypeObservable.flatMap(
-            networkType ->
-                call(callback)
-                    .map(
-                        mosaicPage ->
-                            this.toPage(
-                                mosaicPage.getPagination(),
-                                mosaicPage.getData().stream()
-                                    .map(dto -> this.createMosaicInfo(dto, networkType))
-                                    .collect(Collectors.toList())))));
+    return call(
+        callback,
+        mosaicPage ->
+            this.toPage(
+                mosaicPage.getPagination(),
+                mosaicPage.getData().stream()
+                    .map(this::createMosaicInfo)
+                    .collect(Collectors.toList())));
   }
 
-  private MosaicInfo createMosaicInfo(MosaicInfoDTO mosaicInfoDTO, NetworkType networkType) {
+  private MosaicInfo createMosaicInfo(MosaicInfoDTO mosaicInfoDTO) {
     return createMosaicInfo(mosaicInfoDTO.getMosaic(), mosaicInfoDTO.getId());
   }
 
   private MosaicInfo createMosaicInfo(MosaicDTO mosaic, String recordId) {
     return new MosaicInfo(
         recordId,
+        ObjectUtils.defaultIfNull(mosaic.getVersion(), 1),
         toMosaicId(mosaic.getId()),
         mosaic.getSupply(),
         mosaic.getStartHeight(),

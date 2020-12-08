@@ -19,8 +19,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import io.nem.symbol.catapult.builders.EmbeddedTransactionBuilderHelper;
 import io.nem.symbol.catapult.builders.EmbeddedTransferTransactionBuilder;
-import io.nem.symbol.catapult.builders.TransactionBuilderFactory;
+import io.nem.symbol.catapult.builders.TransactionBuilderHelper;
 import io.nem.symbol.catapult.builders.TransferTransactionBuilder;
 import io.nem.symbol.core.crypto.KeyPair;
 import io.nem.symbol.core.crypto.PrivateKey;
@@ -35,9 +36,9 @@ import io.nem.symbol.sdk.model.message.MessageType;
 import io.nem.symbol.sdk.model.message.PersistentHarvestingDelegationMessage;
 import io.nem.symbol.sdk.model.message.PersistentHarvestingDelegationMessage.HarvestingKeys;
 import io.nem.symbol.sdk.model.message.PlainMessage;
+import io.nem.symbol.sdk.model.mosaic.Currency;
 import io.nem.symbol.sdk.model.mosaic.Mosaic;
 import io.nem.symbol.sdk.model.mosaic.MosaicId;
-import io.nem.symbol.sdk.model.mosaic.NetworkCurrency;
 import io.nem.symbol.sdk.model.namespace.NamespaceId;
 import java.math.BigInteger;
 import java.time.Duration;
@@ -221,7 +222,7 @@ class TransferTransactionTest extends AbstractTransactionTester {
 
     TransferTransactionBuilder transactionBuilder =
         (TransferTransactionBuilder)
-            TransactionBuilderFactory.createTransactionBuilder(
+            TransactionBuilderHelper.loadFromBinary(
                 SerializationUtils.toDataInput(ConvertUtils.fromHexToBytes(expected)));
 
     Assertions.assertEquals(expected, ConvertUtils.toHex(transactionBuilder.serialize()));
@@ -236,7 +237,7 @@ class TransferTransactionTest extends AbstractTransactionTester {
 
     EmbeddedTransferTransactionBuilder transactionBuilder =
         (EmbeddedTransferTransactionBuilder)
-            TransactionBuilderFactory.createEmbeddedTransactionBuilder(
+            EmbeddedTransactionBuilderHelper.loadFromBinary(
                 SerializationUtils.toDataInput(ConvertUtils.fromHexToBytes(expected)));
 
     Assertions.assertEquals(expected, ConvertUtils.toHex(transactionBuilder.serialize()));
@@ -301,8 +302,7 @@ class TransferTransactionTest extends AbstractTransactionTester {
                 networkType,
                 new Deadline(BigInteger.ONE),
                 namespaceId,
-                Collections.singletonList(
-                    NetworkCurrency.CAT_CURRENCY.createAbsolute(BigInteger.ONE)))
+                Collections.singletonList(Currency.CAT_CURRENCY.createAbsolute(BigInteger.ONE)))
             .message(new PlainMessage("test-message"))
             .build();
 

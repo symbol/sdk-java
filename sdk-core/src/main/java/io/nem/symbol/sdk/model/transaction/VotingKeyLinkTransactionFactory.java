@@ -15,7 +15,7 @@
  */
 package io.nem.symbol.sdk.model.transaction;
 
-import io.nem.symbol.core.crypto.VotingKey;
+import io.nem.symbol.core.crypto.PublicKey;
 import io.nem.symbol.core.utils.ConvertUtils;
 import io.nem.symbol.sdk.model.network.NetworkType;
 import org.apache.commons.lang3.Validate;
@@ -24,7 +24,7 @@ import org.apache.commons.lang3.Validate;
 public class VotingKeyLinkTransactionFactory extends TransactionFactory<VotingKeyLinkTransaction> {
 
   /** The voting key. */
-  private final VotingKey linkedPublicKey;
+  private final PublicKey linkedPublicKey;
 
   /** Start finalization epoch. */
   private final long startEpoch;
@@ -47,7 +47,7 @@ public class VotingKeyLinkTransactionFactory extends TransactionFactory<VotingKe
   private VotingKeyLinkTransactionFactory(
       final NetworkType networkType,
       final Deadline deadline,
-      final VotingKey linkedPublicKey,
+      final PublicKey linkedPublicKey,
       long startEpoch,
       long endEpoch,
       final LinkAction linkAction) {
@@ -66,6 +66,7 @@ public class VotingKeyLinkTransactionFactory extends TransactionFactory<VotingKe
    * Create method factory for {@link VotingKeyLinkTransactionFactory}
    *
    * @param networkType the network type of this transaction.
+   * @param deadline the deadline.
    * @param linkedPublicKey the voting key.
    * @param startEpoch Start finalization epoch.
    * @param endEpoch End finalization epoch.
@@ -75,7 +76,7 @@ public class VotingKeyLinkTransactionFactory extends TransactionFactory<VotingKe
   public static VotingKeyLinkTransactionFactory create(
       final NetworkType networkType,
       final Deadline deadline,
-      final VotingKey linkedPublicKey,
+      final PublicKey linkedPublicKey,
       long startEpoch,
       long endEpoch,
       final LinkAction linkAction) {
@@ -88,7 +89,7 @@ public class VotingKeyLinkTransactionFactory extends TransactionFactory<VotingKe
     return new VotingKeyLinkTransaction(this);
   }
 
-  public VotingKey getLinkedPublicKey() {
+  public PublicKey getLinkedPublicKey() {
     return linkedPublicKey;
   }
 

@@ -22,9 +22,12 @@ import io.nem.symbol.sdk.api.OrderBy;
 import io.nem.symbol.sdk.api.Page;
 import io.nem.symbol.sdk.api.RepositoryCallException;
 import io.nem.symbol.sdk.model.account.Address;
+import io.nem.symbol.sdk.model.blockchain.MerkleStateInfo;
+import io.nem.symbol.sdk.model.mosaic.MosaicId;
 import io.nem.symbol.sdk.model.transaction.JsonHelper;
 import io.nem.symbol.sdk.openapi.vertx.invoker.ApiClient;
 import io.nem.symbol.sdk.openapi.vertx.invoker.ApiException;
+import io.nem.symbol.sdk.openapi.vertx.model.MerkleStateInfoDTO;
 import io.nem.symbol.sdk.openapi.vertx.model.Order;
 import io.nem.symbol.sdk.openapi.vertx.model.Pagination;
 import io.reactivex.Observable;
@@ -134,6 +137,10 @@ public abstract class AbstractRepositoryVertxImpl {
     return address == null ? null : address.plain();
   }
 
+  protected String toDto(MosaicId mosaicId) {
+    return mosaicId == null ? null : mosaicId.getIdAsHex();
+  }
+
   protected String toDto(BigInteger number) {
     if (number == null) {
       return null;
@@ -148,5 +155,9 @@ public abstract class AbstractRepositoryVertxImpl {
 
   public JsonHelper getJsonHelper() {
     return jsonHelper;
+  }
+
+  protected MerkleStateInfo toMerkleStateInfo(MerkleStateInfoDTO dto) {
+    return new MerkleMapper(getJsonHelper()).toMerkleStateInfo(dto);
   }
 }

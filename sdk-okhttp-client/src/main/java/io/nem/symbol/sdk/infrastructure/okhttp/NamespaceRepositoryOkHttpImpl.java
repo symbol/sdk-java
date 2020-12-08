@@ -23,6 +23,7 @@ import io.nem.symbol.sdk.api.NamespaceSearchCriteria;
 import io.nem.symbol.sdk.api.Page;
 import io.nem.symbol.sdk.model.account.AccountNames;
 import io.nem.symbol.sdk.model.account.Address;
+import io.nem.symbol.sdk.model.blockchain.MerkleStateInfo;
 import io.nem.symbol.sdk.model.mosaic.MosaicId;
 import io.nem.symbol.sdk.model.mosaic.MosaicNames;
 import io.nem.symbol.sdk.model.namespace.AddressAlias;
@@ -56,6 +57,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.Callable;
 import java.util.stream.Collectors;
+import org.apache.commons.lang3.ObjectUtils;
 
 /**
  * Namespace http repository.
@@ -78,8 +80,13 @@ public class NamespaceRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl
 
   @Override
   public Observable<NamespaceInfo> getNamespace(NamespaceId namespaceId) {
-    Callable<NamespaceInfoDTO> callback = () -> getClient().getNamespace(namespaceId.getIdAsHex());
-    return exceptionHandling(call(callback).map(this::toNamespaceInfo));
+    return call(() -> getClient().getNamespace(namespaceId.getIdAsHex()), this::toNamespaceInfo);
+  }
+
+  @Override
+  public Observable<MerkleStateInfo> getNamespaceMerkle(NamespaceId namespaceId) {
+    return call(
+        () -> getClient().getNamespaceMerkle(namespaceId.getIdAsHex()), this::toMerkleStateInfo);
   }
 
   @Override
@@ -239,9 +246,9 @@ public class NamespaceRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl
   private NamespaceInfo toNamespaceInfo(NamespaceInfoDTO namespaceInfoDTO) {
     return new NamespaceInfo(
         namespaceInfoDTO.getId(),
+        ObjectUtils.defaultIfNull(namespaceInfoDTO.getNamespace().getVersion(), 1),
         namespaceInfoDTO.getMeta().getActive(),
         namespaceInfoDTO.getMeta().getIndex(),
-        namespaceInfoDTO.getMeta().getId(),
         NamespaceRegistrationType.rawValueOf(
             namespaceInfoDTO.getNamespace().getRegistrationType().getValue()),
         namespaceInfoDTO.getNamespace().getDepth(),
@@ -272,9 +279,7 @@ public class NamespaceRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl
   }
 
   /** Extract the alias from a NamespaceDTO */
-  private Alias extractAlias(NamespaceDTO namespaceDTO) {
-
-    Alias alias = new EmptyAlias();
+  private Alias<?> extractAlias(NamespaceDTO namespaceDTO) {
     if (namespaceDTO.getAlias() != null) {
       if (namespaceDTO.getAlias().getType().getValue().equals(AliasType.MOSAIC.getValue())) {
         return new MosaicAlias(toMosaicId(namespaceDTO));
@@ -286,13 +291,13 @@ public class NamespaceRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl
         return new AddressAlias(toAddress(namespaceDTO));
       }
     }
-    return alias;
+    return new EmptyAlias();
   }
 
   /** Create a MosaicId from a NamespaceDTO */
   private MosaicId toMosaicId(NamespaceDTO namespaceDTO) {
     if (namespaceDTO.getAlias() != null
-        && AliasType.MOSAIC.getValue().equals(namespaceDTO.getAlias().getType().getValue())) {
+        && AliasType.MOSAIC.getValue() == (namespaceDTO.getAlias().getType().getValue())) {
       return MapperUtils.toMosaicId(namespaceDTO.getAlias().getMosaicId());
     } else {
       return null;
@@ -302,7 +307,7 @@ public class NamespaceRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl
   /** Create a Address from a NamespaceDTO */
   private Address toAddress(NamespaceDTO namespaceDTO) {
     if (namespaceDTO.getAlias() != null
-        && AliasType.ADDRESS.getValue().equals(namespaceDTO.getAlias().getType().getValue())) {
+        && AliasType.ADDRESS.getValue() == (namespaceDTO.getAlias().getType().getValue())) {
       return MapperUtils.toAddress(namespaceDTO.getAlias().getAddress());
     } else {
       return null;

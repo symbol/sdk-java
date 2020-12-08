@@ -39,7 +39,8 @@ public class Config {
   private static final String CONFIG_JSON = "./integration-tests/src/test/resources/config.json";
   private static final String ADDRESSES_YML = "./target/bootstrap/addresses.yml";
   //  private static final String ADDRESSES_YML =
-  // "./target/bootstrap/config/generated-addresses/addresses.yml";
+  //        "../../symbol-bootstrap/target/bootstrap/addresses.yml";
+  //  private static final String ADDRESSES_YML = "../../catapult-rest/rest/target/addresses.yml";
 
   private final JsonObject config;
   private final Map<String, Account> accountCache = new HashMap<>();
@@ -67,20 +68,29 @@ public class Config {
                 + " Nemesis address must bue added manually");
         return Collections.emptyList();
       }
-      Map<String, List<Map<String, String>>> mosaics =
-          (Map<String, List<Map<String, String>>>)
-              mapper.readValue(generatedAddresses, Map.class).get("mosaics");
-      List<Map<String, String>> bootstrapAddresses = mosaics.get("currency");
+
+      List<Map<String, String>> bootstrapAddresses;
+      try {
+        // OLD FORMAT
+        Map<String, List<Map<String, String>>> mosaics =
+            (Map<String, List<Map<String, String>>>)
+                mapper.readValue(generatedAddresses, Map.class).get("mosaics");
+        bootstrapAddresses = mosaics.get("currency");
+      } catch (ClassCastException e) {
+        // NEW FORMAT
+        List<Map<String, List<Map<String, String>>>> mosaics =
+            (List<Map<String, List<Map<String, String>>>>)
+                mapper.readValue(generatedAddresses, Map.class).get("mosaics");
+        bootstrapAddresses = mosaics.get(0).get("accounts");
+      }
 
       return bootstrapAddresses.stream()
           .map(m -> Account.createFromPrivateKey(m.get("privateKey"), networkType))
           .collect(Collectors.toList());
 
     } catch (Exception e) {
-      System.err.println(
-          "Nemesis account could not be loaded from Bootstrap: " + ExceptionUtils.getMessage(e));
-      e.printStackTrace();
-      return Collections.emptyList();
+      throw new IllegalStateException(
+          "Nemesis account could not be loaded from Bootstrap: " + ExceptionUtils.getMessage(e), e);
     }
   }
 
@@ -212,6 +222,10 @@ public class Config {
 
   public Account getTestAccount2() {
     return getAccount("testAccount2");
+  }
+
+  public Account getTestAccount3() {
+    return getAccount("testAccount3");
   }
 
   public Account getCosignatory3Account() {

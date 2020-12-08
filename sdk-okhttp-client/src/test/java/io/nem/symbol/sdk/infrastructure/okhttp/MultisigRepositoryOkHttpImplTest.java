@@ -16,8 +16,11 @@
 package io.nem.symbol.sdk.infrastructure.okhttp;
 
 import io.nem.symbol.sdk.model.account.Account;
+import io.nem.symbol.sdk.model.account.Address;
 import io.nem.symbol.sdk.model.account.MultisigAccountGraphInfo;
 import io.nem.symbol.sdk.model.account.MultisigAccountInfo;
+import io.nem.symbol.sdk.model.blockchain.MerkleStateInfo;
+import io.nem.symbol.sdk.openapi.okhttp_gson.model.MerkleStateInfoDTO;
 import io.nem.symbol.sdk.openapi.okhttp_gson.model.MultisigAccountGraphInfoDTO;
 import io.nem.symbol.sdk.openapi.okhttp_gson.model.MultisigAccountInfoDTO;
 import io.nem.symbol.sdk.openapi.okhttp_gson.model.MultisigDTO;
@@ -44,7 +47,7 @@ public class MultisigRepositoryOkHttpImplTest extends AbstractOkHttpRespositoryT
   @BeforeEach
   public void setUp() {
     super.setUp();
-    repository = new MultisigRepositoryOkHttpImpl(apiClientMock, networkTypeObservable);
+    repository = new MultisigRepositoryOkHttpImpl(apiClientMock);
   }
 
   @Test
@@ -104,6 +107,7 @@ public class MultisigRepositoryOkHttpImplTest extends AbstractOkHttpRespositoryT
     MultisigAccountInfoDTO dto = new MultisigAccountInfoDTO();
 
     MultisigDTO multisigDto = new MultisigDTO();
+    multisigDto.setVersion(1);
     multisigDto.setAccountAddress(account.getAddress().encoded());
     multisigDto.setMinApproval(1L);
     multisigDto.setMinRemoval(2L);
@@ -113,6 +117,17 @@ public class MultisigRepositoryOkHttpImplTest extends AbstractOkHttpRespositoryT
         Arrays.asList(account2.getAddress().encoded(), account3.getAddress().encoded()));
     dto.setMultisig(multisigDto);
     return dto;
+  }
+
+  @Test
+  public void getMultisigAccountInfoMerkle() throws Exception {
+    mockRemoteCall(new MerkleStateInfoDTO().raw("abc"));
+    MerkleStateInfo merkle =
+        repository
+            .getMultisigAccountInfoMerkle(Address.generateRandom(this.networkType))
+            .toFuture()
+            .get();
+    Assertions.assertEquals("abc", merkle.getRaw());
   }
 
   @Override

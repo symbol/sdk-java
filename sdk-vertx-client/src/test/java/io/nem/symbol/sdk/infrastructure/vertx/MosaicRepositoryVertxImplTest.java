@@ -20,9 +20,11 @@ import io.nem.symbol.sdk.api.MosaicSearchCriteria;
 import io.nem.symbol.sdk.model.account.Account;
 import io.nem.symbol.sdk.model.account.Address;
 import io.nem.symbol.sdk.model.account.PublicAccount;
+import io.nem.symbol.sdk.model.blockchain.MerkleStateInfo;
 import io.nem.symbol.sdk.model.mosaic.MosaicId;
 import io.nem.symbol.sdk.model.mosaic.MosaicInfo;
 import io.nem.symbol.sdk.model.network.NetworkType;
+import io.nem.symbol.sdk.openapi.vertx.model.MerkleStateInfoDTO;
 import io.nem.symbol.sdk.openapi.vertx.model.MosaicDTO;
 import io.nem.symbol.sdk.openapi.vertx.model.MosaicInfoDTO;
 import io.nem.symbol.sdk.openapi.vertx.model.MosaicPage;
@@ -46,7 +48,7 @@ public class MosaicRepositoryVertxImplTest extends AbstractVertxRespositoryTest 
   @BeforeEach
   public void setUp() {
     super.setUp();
-    repository = new MosaicRepositoryVertxImpl(apiClientMock, networkTypeObservable);
+    repository = new MosaicRepositoryVertxImpl(apiClientMock);
   }
 
   @Test
@@ -62,8 +64,11 @@ public class MosaicRepositoryVertxImplTest extends AbstractVertxRespositoryTest 
     mosaicDto.setRevision(123L);
 
     mosaicDto.setFlags(5);
+    mosaicDto.setVersion(1);
     mosaicDto.setDivisibility(6);
     mosaicDto.setDuration(BigInteger.valueOf(7));
+    mosaicDto.supply(BigInteger.valueOf(1000));
+    mosaicDto.startHeight(BigInteger.valueOf(100));
 
     mosaicInfoDto.setMosaic(mosaicDto);
     mockRemoteCall(Collections.singletonList(mosaicInfoDto));
@@ -82,6 +87,8 @@ public class MosaicRepositoryVertxImplTest extends AbstractVertxRespositoryTest 
     Assertions.assertFalse(mosaicInfo.isTransferable());
     Assertions.assertEquals(6, mosaicInfo.getDivisibility());
     Assertions.assertEquals(BigInteger.valueOf(7), mosaicInfo.getDuration());
+    Assertions.assertEquals(mosaicDto.getStartHeight(), mosaicInfo.getStartHeight());
+    Assertions.assertEquals(mosaicDto.getSupply(), mosaicInfo.getSupply());
   }
 
   @Test
@@ -100,7 +107,10 @@ public class MosaicRepositoryVertxImplTest extends AbstractVertxRespositoryTest 
 
     mosaicDto.setFlags(5);
     mosaicDto.setDivisibility(6);
+    mosaicDto.setVersion(1);
     mosaicDto.setDuration(BigInteger.valueOf(7));
+    mosaicDto.supply(BigInteger.valueOf(1000));
+    mosaicDto.startHeight(BigInteger.valueOf(100));
 
     mockRemoteCall(toPage(new MosaicInfoDTO().mosaic(mosaicDto).id("ABC")));
 
@@ -122,6 +132,8 @@ public class MosaicRepositoryVertxImplTest extends AbstractVertxRespositoryTest 
     Assertions.assertFalse(mosaicInfo.isTransferable());
     Assertions.assertEquals(6, mosaicInfo.getDivisibility());
     Assertions.assertEquals(BigInteger.valueOf(7), mosaicInfo.getDuration());
+    Assertions.assertEquals(mosaicDto.getStartHeight(), mosaicInfo.getStartHeight());
+    Assertions.assertEquals(mosaicDto.getSupply(), mosaicInfo.getSupply());
   }
 
   private MosaicPage toPage(MosaicInfoDTO dto) {
@@ -142,10 +154,12 @@ public class MosaicRepositoryVertxImplTest extends AbstractVertxRespositoryTest 
     mosaicDto.setOwnerAddress(address.encoded());
     mosaicDto.setId("481110499");
     mosaicDto.setRevision(123L);
-
+    mosaicDto.setVersion(1);
     mosaicDto.setFlags(5);
     mosaicDto.setDivisibility(6);
     mosaicDto.setDuration(BigInteger.valueOf(7));
+    mosaicDto.supply(BigInteger.valueOf(1000));
+    mosaicDto.startHeight(BigInteger.valueOf(100));
 
     mosaicInfoDto.setMosaic(mosaicDto);
     mockRemoteCall(mosaicInfoDto);
@@ -160,5 +174,15 @@ public class MosaicRepositoryVertxImplTest extends AbstractVertxRespositoryTest 
     Assertions.assertFalse(mosaicInfo.isTransferable());
     Assertions.assertEquals(6, mosaicInfo.getDivisibility());
     Assertions.assertEquals(BigInteger.valueOf(7), mosaicInfo.getDuration());
+    Assertions.assertEquals(mosaicDto.getStartHeight(), mosaicInfo.getStartHeight());
+    Assertions.assertEquals(mosaicDto.getSupply(), mosaicInfo.getSupply());
+  }
+
+  @Test
+  public void getMetadataMerkle() throws Exception {
+    MosaicId mosaicId = MapperUtils.toMosaicId("481110499");
+    mockRemoteCall(new MerkleStateInfoDTO().raw("abc"));
+    MerkleStateInfo merkle = repository.getMosaicMerkle(mosaicId).toFuture().get();
+    Assertions.assertEquals("abc", merkle.getRaw());
   }
 }

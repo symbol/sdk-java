@@ -28,18 +28,19 @@ class HashLockSearchCriteriaTest {
 
   @Test
   void shouldCreate() {
-    HashLockSearchCriteria criteria = new HashLockSearchCriteria(account1.getAddress());
+    HashLockSearchCriteria criteria = new HashLockSearchCriteria();
     Assertions.assertNull(criteria.getOrder());
     Assertions.assertNull(criteria.getPageSize());
     Assertions.assertNull(criteria.getPageNumber());
     Assertions.assertNull(criteria.getOffset());
-    Assertions.assertEquals(account1.getAddress(), criteria.getAddress());
+    Assertions.assertNull(criteria.getAddress());
   }
 
   @Test
   void shouldSetValues() {
 
-    HashLockSearchCriteria criteria = new HashLockSearchCriteria(account1.getAddress());
+    HashLockSearchCriteria criteria = new HashLockSearchCriteria();
+    criteria.setAddress(account1.getAddress());
     criteria.setOrder(OrderBy.DESC);
     criteria.setPageSize(10);
     criteria.setPageNumber(5);
@@ -56,11 +57,9 @@ class HashLockSearchCriteriaTest {
   void shouldUseBuilderMethods() {
 
     HashLockSearchCriteria criteria =
-        new HashLockSearchCriteria(account1.getAddress())
-            .order(OrderBy.ASC)
-            .pageSize(10)
-            .pageNumber(5);
+        new HashLockSearchCriteria().order(OrderBy.ASC).pageSize(10).pageNumber(5);
 
+    criteria.address(account1.getAddress());
     criteria.offset("abc");
     Assertions.assertEquals(OrderBy.ASC, criteria.getOrder());
     Assertions.assertEquals(10, criteria.getPageSize());
@@ -72,16 +71,16 @@ class HashLockSearchCriteriaTest {
   @Test
   void shouldBeEquals() {
 
-    HashLockSearchCriteria criteria1 = new HashLockSearchCriteria(account1.getAddress());
+    HashLockSearchCriteria criteria1 = new HashLockSearchCriteria().address(account1.getAddress());
 
-    HashLockSearchCriteria criteria2 = new HashLockSearchCriteria(account1.getAddress());
+    HashLockSearchCriteria criteria2 = new HashLockSearchCriteria().address(account1.getAddress());
 
     Assertions.assertEquals(
-        new HashLockSearchCriteria(account1.getAddress()),
-        new HashLockSearchCriteria(account1.getAddress()));
+        new HashLockSearchCriteria().address(account1.getAddress()),
+        new HashLockSearchCriteria().address(account1.getAddress()));
     Assertions.assertNotEquals(
-        new HashLockSearchCriteria(account1.getAddress()),
-        new HashLockSearchCriteria(account2.getAddress()));
+        new HashLockSearchCriteria().address(account1.getAddress()),
+        new HashLockSearchCriteria().address(account2.getAddress()));
     Assertions.assertEquals(criteria1, criteria2);
     Assertions.assertEquals(criteria1, criteria1);
     Assertions.assertEquals(criteria1.hashCode(), criteria2.hashCode());

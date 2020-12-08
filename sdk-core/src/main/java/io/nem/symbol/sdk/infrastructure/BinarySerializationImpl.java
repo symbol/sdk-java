@@ -29,6 +29,7 @@ import io.nem.symbol.catapult.builders.AmountDto;
 import io.nem.symbol.catapult.builders.BlockDurationDto;
 import io.nem.symbol.catapult.builders.CosignatureBuilder;
 import io.nem.symbol.catapult.builders.EmbeddedTransactionBuilder;
+import io.nem.symbol.catapult.builders.EmbeddedTransactionBuilderHelper;
 import io.nem.symbol.catapult.builders.EntityTypeDto;
 import io.nem.symbol.catapult.builders.FinalizationEpochDto;
 import io.nem.symbol.catapult.builders.Hash256Dto;
@@ -59,13 +60,15 @@ import io.nem.symbol.catapult.builders.Serializer;
 import io.nem.symbol.catapult.builders.SignatureDto;
 import io.nem.symbol.catapult.builders.TimestampDto;
 import io.nem.symbol.catapult.builders.TransactionBuilder;
-import io.nem.symbol.catapult.builders.TransactionBuilderFactory;
+import io.nem.symbol.catapult.builders.TransactionBuilderHelper;
 import io.nem.symbol.catapult.builders.TransferTransactionBodyBuilder;
 import io.nem.symbol.catapult.builders.UnresolvedAddressDto;
 import io.nem.symbol.catapult.builders.UnresolvedMosaicBuilder;
 import io.nem.symbol.catapult.builders.UnresolvedMosaicIdDto;
 import io.nem.symbol.catapult.builders.VotingKeyDto;
 import io.nem.symbol.catapult.builders.VotingKeyLinkTransactionBodyBuilder;
+import io.nem.symbol.catapult.builders.VotingKeyLinkV1TransactionBodyBuilder;
+import io.nem.symbol.catapult.builders.VotingKeyV1Dto;
 import io.nem.symbol.catapult.builders.VrfKeyLinkTransactionBodyBuilder;
 import io.nem.symbol.core.crypto.PublicKey;
 import io.nem.symbol.core.crypto.VotingKey;
@@ -101,6 +104,7 @@ import io.nem.symbol.sdk.model.transaction.AccountMosaicRestrictionTransactionFa
 import io.nem.symbol.sdk.model.transaction.AccountOperationRestrictionFlags;
 import io.nem.symbol.sdk.model.transaction.AccountOperationRestrictionTransaction;
 import io.nem.symbol.sdk.model.transaction.AccountOperationRestrictionTransactionFactory;
+import io.nem.symbol.sdk.model.transaction.AccountRestrictionFlag;
 import io.nem.symbol.sdk.model.transaction.AddressAliasTransaction;
 import io.nem.symbol.sdk.model.transaction.AddressAliasTransactionFactory;
 import io.nem.symbol.sdk.model.transaction.AggregateTransaction;
@@ -144,6 +148,8 @@ import io.nem.symbol.sdk.model.transaction.TransferTransaction;
 import io.nem.symbol.sdk.model.transaction.TransferTransactionFactory;
 import io.nem.symbol.sdk.model.transaction.VotingKeyLinkTransaction;
 import io.nem.symbol.sdk.model.transaction.VotingKeyLinkTransactionFactory;
+import io.nem.symbol.sdk.model.transaction.VotingKeyLinkV1Transaction;
+import io.nem.symbol.sdk.model.transaction.VotingKeyLinkV1TransactionFactory;
 import io.nem.symbol.sdk.model.transaction.VrfKeyLinkTransaction;
 import io.nem.symbol.sdk.model.transaction.VrfKeyLinkTransactionFactory;
 import java.io.DataInputStream;
@@ -151,13 +157,14 @@ import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.EnumMap;
 import java.util.EnumSet;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import org.apache.commons.lang3.Validate;
+import org.apache.commons.lang3.tuple.Pair;
 
 /**
  * Implementation of BinarySerialization. It uses the catbuffer generated builders to deserialize an
@@ -169,8 +176,8 @@ public class BinarySerializationImpl implements BinarySerialization {
   public static final BinarySerialization INSTANCE = new BinarySerializationImpl();
 
   /** The serializers, one per {@link TransactionType} must be registered. */
-  private final Map<TransactionType, TransactionSerializer<?>> serializers =
-      new EnumMap<>(TransactionType.class);
+  private final Map<Pair<TransactionType, Integer>, TransactionSerializer<?>> serializers =
+      new HashMap<>();
 
   /** Constructor */
   public BinarySerializationImpl() {
@@ -195,6 +202,7 @@ public class BinarySerializationImpl implements BinarySerialization {
     register(new AccountAddressRestrictionTransactionSerializer());
     register(new NodeKeyLinkTransactionBuilderSerializer());
     register(new VotingKeyLinkTransactionBuilderSerializer());
+    register(new VotingKeyLinkV1TransactionBuilderSerializer());
     register(new VrfKeyLinkTransactionBuilderSerializer());
     register(new AggregateTransactionSerializer(TransactionType.AGGREGATE_COMPLETE, this));
     register(new AggregateTransactionSerializer(TransactionType.AGGREGATE_BONDED, this));
@@ -202,10 +210,15 @@ public class BinarySerializationImpl implements BinarySerialization {
 
   /** @param serializer the serializer to be registered. */
   private void register(TransactionSerializer serializer) {
-    if (serializers.put(serializer.getTransactionType(), serializer) != null) {
+
+    Pair<TransactionType, Integer> pair =
+        Pair.of(serializer.getTransactionType(), serializer.getVersion());
+    if (serializers.put(pair, serializer) != null) {
       throw new IllegalArgumentException(
           "TransactionSerializer for type "
               + serializer.getTransactionType()
+              + " and version "
+              + serializer.getVersion()
               + " was already registered!");
     }
   }
@@ -214,13 +227,15 @@ public class BinarySerializationImpl implements BinarySerialization {
    * It returns the registered {@link TransactionSerializer} for the given {@link TransactionType}.
    *
    * @param transactionType the transaction type.
+   * @param version the transaction version.
    * @param <T> the transaction type
    * @return the {@link TransactionSerializer}
    */
   <T extends Transaction> TransactionSerializer<T> resolveSerializer(
-      TransactionType transactionType) {
+      TransactionType transactionType, int version) {
     @SuppressWarnings("unchecked")
-    TransactionSerializer<T> mapper = (TransactionSerializer<T>) serializers.get(transactionType);
+    TransactionSerializer<T> mapper =
+        (TransactionSerializer<T>) serializers.get(Pair.of(transactionType, version));
     if (mapper == null) {
       throw new UnsupportedOperationException("Unimplemented Transaction type " + transactionType);
     }
@@ -267,7 +282,7 @@ public class BinarySerializationImpl implements BinarySerialization {
    */
   private <T extends Transaction> EmbeddedTransactionBuilder toEmbeddedTransactionBuilder(
       T transaction) {
-    return TransactionBuilderFactory.createEmbeddedTransactionBuilder(
+    return EmbeddedTransactionBuilderHelper.loadFromBinary(
         SerializationUtils.toDataInput(serializeEmbedded(transaction)));
   }
 
@@ -291,13 +306,16 @@ public class BinarySerializationImpl implements BinarySerialization {
             .map(SerializationUtils::toByteBuffer)
             .orElseGet(() -> ByteBuffer.allocate(32));
 
+    int networkTypeValue = transaction.getNetworkType().getValue();
+    int typeValue = transaction.getType().getValue();
+    byte version = transaction.getVersion().byteValue();
     return TransactionBuilder.create(
         signatureDto,
         new KeyDto(signerBuffer),
-        transaction.getVersion().byteValue(),
-        NetworkTypeDto.rawValueOf((byte) transaction.getNetworkType().getValue()),
-        EntityTypeDto.rawValueOf((short) transaction.getType().getValue()),
-        new AmountDto(SerializationUtils.toUnsignedLong(transaction.getMaxFee())),
+        version,
+        NetworkTypeDto.rawValueOf((byte) networkTypeValue),
+        EntityTypeDto.rawValueOf((short) typeValue),
+        SerializationUtils.toAmount(transaction.getMaxFee()),
         new TimestampDto(transaction.getDeadline().getValue()));
   }
 
@@ -313,7 +331,8 @@ public class BinarySerializationImpl implements BinarySerialization {
     Validate.isTrue(
         transaction.isTransactionFullyLoaded(),
         "Partially loaded and incomplete transactions cannot be serialized.");
-    TransactionSerializer<T> transactionSerializer = resolveSerializer(transaction.getType());
+    TransactionSerializer<T> transactionSerializer =
+        resolveSerializer(transaction.getType(), transaction.getVersion());
     Validate.isTrue(
         transactionSerializer.getTransactionClass().isAssignableFrom(transaction.getClass()),
         "Invalid TransactionSerializer's transaction class.");
@@ -331,7 +350,9 @@ public class BinarySerializationImpl implements BinarySerialization {
   @Override
   public <T extends Transaction> long getSize(T transaction) {
     return getTransactionBuilder(transaction).getSize()
-        + resolveSerializer(transaction.getType()).toBodyBuilder(transaction).getSize();
+        + resolveSerializer(transaction.getType(), transaction.getVersion())
+            .toBodyBuilder(transaction)
+            .getSize();
   }
 
   /**
@@ -357,7 +378,7 @@ public class BinarySerializationImpl implements BinarySerialization {
   public TransactionFactory<?> deserializeToFactory(byte[] payload) {
     Validate.notNull(payload, "Payload must not be null");
     DataInputStream stream = SerializationUtils.toDataInput(payload);
-    TransactionBuilder builder = TransactionBuilderFactory.createTransactionBuilder(stream);
+    TransactionBuilder builder = TransactionBuilderHelper.loadFromBinary(stream);
 
     return toTransactionFactory(builder);
   }
@@ -394,7 +415,7 @@ public class BinarySerializationImpl implements BinarySerialization {
         new Deadline(SerializationUtils.toUnsignedBigInteger(builder.getDeadline().getTimestamp()));
 
     TransactionFactory<?> factory =
-        resolveSerializer(transactionType)
+        resolveSerializer(transactionType, builder.getVersion())
             .fromBodyBuilder(networkType, deadline, builder.getBody());
 
     factory.version(SerializationUtils.byteToUnsignedInt(builder.getVersion()));
@@ -433,7 +454,7 @@ public class BinarySerializationImpl implements BinarySerialization {
         () -> {
           Validate.notNull(payload, "Payload must not be null");
           EmbeddedTransactionBuilder builder =
-              TransactionBuilderFactory.createEmbeddedTransactionBuilder(payload);
+              EmbeddedTransactionBuilderHelper.loadFromBinary(payload);
           return toTransaction(builder);
         });
   }
@@ -452,7 +473,7 @@ public class BinarySerializationImpl implements BinarySerialization {
         NetworkType.rawValueOf(
             SerializationUtils.byteToUnsignedInt(builder.getNetwork().getValue()));
     TransactionFactory<?> factory =
-        resolveSerializer(transactionType)
+        resolveSerializer(transactionType, builder.getVersion())
             .fromBodyBuilder(networkType, new Deadline(BigInteger.ZERO), builder.getBody());
     factory.signer(SerializationUtils.toPublicAccount(builder.getSignerPublicKey(), networkType));
     factory.version(SerializationUtils.byteToUnsignedInt(builder.getVersion()));
@@ -467,6 +488,11 @@ public class BinarySerializationImpl implements BinarySerialization {
 
     /** @return the {@link TransactionType} of the transaction this helper handles. */
     TransactionType getTransactionType();
+
+    /** @return the version of the transaction this helper handles. */
+    default int getVersion() {
+      return getTransactionType().getCurrentVersion();
+    }
 
     /** @return the transaction class this serializer handles. */
     Class<T> getTransactionClass();
@@ -558,7 +584,7 @@ public class BinarySerializationImpl implements BinarySerialization {
         final UnresolvedMosaicBuilder mosaicBuilder =
             UnresolvedMosaicBuilder.create(
                 new UnresolvedMosaicIdDto(mosaic.getId().getIdAsLong()),
-                new AmountDto(SerializationUtils.toUnsignedLong(mosaic.getAmount())));
+                SerializationUtils.toAmount(mosaic.getAmount()));
         unresolvedMosaicList.add(mosaicBuilder);
       }
       return unresolvedMosaicList;
@@ -608,7 +634,7 @@ public class BinarySerializationImpl implements BinarySerialization {
       return MosaicSupplyChangeTransactionBodyBuilder.create(
           new UnresolvedMosaicIdDto(
               SerializationUtils.toUnsignedLong(transaction.getMosaicId().getId())),
-          new AmountDto(SerializationUtils.toUnsignedLong(transaction.getDelta())),
+          SerializationUtils.toAmount(transaction.getDelta()),
           MosaicSupplyChangeActionDto.rawValueOf((byte) transaction.getAction().getValue()));
     }
   }
@@ -650,27 +676,8 @@ public class BinarySerializationImpl implements BinarySerialization {
           new MosaicIdDto(SerializationUtils.toUnsignedLong(transaction.getMosaicId().getId())),
           new BlockDurationDto(transaction.getBlockDuration().getDuration()),
           new MosaicNonceDto((int) transaction.getMosaicNonce().getNonceAsLong()),
-          getMosaicFlagsEnumSet(transaction),
+          SerializationUtils.getMosaicFlagsEnumSet(transaction.getMosaicFlags()),
           (byte) transaction.getDivisibility());
-    }
-
-    /**
-     * Get the mosaic flags.
-     *
-     * @return Mosaic flags
-     */
-    private EnumSet<MosaicFlagsDto> getMosaicFlagsEnumSet(MosaicDefinitionTransaction transaction) {
-      EnumSet<MosaicFlagsDto> mosaicFlagsBuilder = EnumSet.of(MosaicFlagsDto.NONE);
-      if (transaction.getMosaicFlags().isSupplyMutable()) {
-        mosaicFlagsBuilder.add(MosaicFlagsDto.SUPPLY_MUTABLE);
-      }
-      if (transaction.getMosaicFlags().isTransferable()) {
-        mosaicFlagsBuilder.add(MosaicFlagsDto.TRANSFERABLE);
-      }
-      if (transaction.getMosaicFlags().isRestrictable()) {
-        mosaicFlagsBuilder.add(MosaicFlagsDto.RESTRICTABLE);
-      }
-      return mosaicFlagsBuilder;
     }
   }
 
@@ -950,8 +957,7 @@ public class BinarySerializationImpl implements BinarySerialization {
     public Serializer toBodyBuilder(SecretLockTransaction transaction) {
       UnresolvedMosaicIdDto mosaicId =
           new UnresolvedMosaicIdDto(transaction.getMosaic().getId().getIdAsLong());
-      AmountDto amount =
-          new AmountDto(SerializationUtils.toUnsignedLong(transaction.getMosaic().getAmount()));
+      AmountDto amount = SerializationUtils.toAmount(transaction.getMosaic().getAmount());
       UnresolvedMosaicBuilder unresolvedMosaicBuilder =
           UnresolvedMosaicBuilder.create(mosaicId, amount);
       return SecretLockTransactionBodyBuilder.create(
@@ -1216,10 +1222,7 @@ public class BinarySerializationImpl implements BinarySerialization {
     public Serializer toBodyBuilder(AccountAddressRestrictionTransaction transaction) {
 
       EnumSet<AccountRestrictionFlagsDto> flags =
-          transaction.getRestrictionFlags().getFlags().stream()
-              .map(f -> AccountRestrictionFlagsDto.rawValueOf((short) f.getValue()))
-              .collect(
-                  Collectors.toCollection(() -> EnumSet.noneOf(AccountRestrictionFlagsDto.class)));
+          toAccountRestrictionsFlagsDto(transaction.getRestrictionFlags().getFlags());
 
       List<UnresolvedAddressDto> restrictionAdditions =
           transaction.getRestrictionAdditions().stream()
@@ -1281,10 +1284,7 @@ public class BinarySerializationImpl implements BinarySerialization {
     public Serializer toBodyBuilder(AccountMosaicRestrictionTransaction transaction) {
 
       EnumSet<AccountRestrictionFlagsDto> flags =
-          transaction.getRestrictionFlags().getFlags().stream()
-              .map(f -> AccountRestrictionFlagsDto.rawValueOf((short) f.getValue()))
-              .collect(
-                  Collectors.toCollection(() -> EnumSet.noneOf(AccountRestrictionFlagsDto.class)));
+          toAccountRestrictionsFlagsDto(transaction.getRestrictionFlags().getFlags());
 
       List<UnresolvedMosaicIdDto> restrictionAdditions =
           transaction.getRestrictionAdditions().stream()
@@ -1346,11 +1346,10 @@ public class BinarySerializationImpl implements BinarySerialization {
     @Override
     public Serializer toBodyBuilder(AccountOperationRestrictionTransaction transaction) {
 
+      List<AccountRestrictionFlag> accountRestrictionFlags =
+          transaction.getRestrictionFlags().getFlags();
       EnumSet<AccountRestrictionFlagsDto> flags =
-          transaction.getRestrictionFlags().getFlags().stream()
-              .map(f -> AccountRestrictionFlagsDto.rawValueOf((short) f.getValue()))
-              .collect(
-                  Collectors.toCollection(() -> EnumSet.noneOf(AccountRestrictionFlagsDto.class)));
+          toAccountRestrictionsFlagsDto(accountRestrictionFlags);
 
       List<EntityTypeDto> restrictionAdditions =
           transaction.getRestrictionAdditions().stream()
@@ -1365,6 +1364,13 @@ public class BinarySerializationImpl implements BinarySerialization {
       return AccountOperationRestrictionTransactionBodyBuilder.create(
           flags, restrictionAdditions, restrictionDeletions);
     }
+  }
+
+  public static EnumSet<AccountRestrictionFlagsDto> toAccountRestrictionsFlagsDto(
+      List<AccountRestrictionFlag> accountRestrictionFlags) {
+    return accountRestrictionFlags.stream()
+        .map(f -> AccountRestrictionFlagsDto.rawValueOf((short) f.getValue()))
+        .collect(Collectors.toCollection(() -> EnumSet.noneOf(AccountRestrictionFlagsDto.class)));
   }
 
   private static class MosaicAddressRestrictionTransactionSerializer
@@ -1681,6 +1687,54 @@ public class BinarySerializationImpl implements BinarySerialization {
     }
   }
 
+  private static class VotingKeyLinkV1TransactionBuilderSerializer
+      implements TransactionSerializer<VotingKeyLinkV1Transaction> {
+
+    @Override
+    public TransactionType getTransactionType() {
+      return TransactionType.VOTING_KEY_LINK;
+    }
+
+    @Override
+    public int getVersion() {
+      return 1;
+    }
+
+    @Override
+    public Class<VotingKeyLinkV1Transaction> getTransactionClass() {
+      return VotingKeyLinkV1Transaction.class;
+    }
+
+    @Override
+    public TransactionFactory fromBodyBuilder(
+        NetworkType networkType, Deadline deadline, Serializer transactionBuilder) {
+      VotingKeyLinkV1TransactionBodyBuilder builder =
+          (VotingKeyLinkV1TransactionBodyBuilder) transactionBuilder;
+      VotingKey linkedPublicKey =
+          new VotingKey(builder.getLinkedPublicKey().getVotingKeyV1().array());
+      long startEpoch =
+          SerializationUtils.intToUnsignedLong(builder.getStartEpoch().getFinalizationEpoch());
+      long endEpoch =
+          SerializationUtils.intToUnsignedLong(builder.getEndEpoch().getFinalizationEpoch());
+      LinkAction linkAction = LinkAction.rawValueOf(builder.getLinkAction().getValue());
+      return VotingKeyLinkV1TransactionFactory.create(
+          networkType, deadline, linkedPublicKey, startEpoch, endEpoch, linkAction);
+    }
+
+    @Override
+    public Serializer toBodyBuilder(VotingKeyLinkV1Transaction transaction) {
+      VotingKeyV1Dto linkedPublicKey =
+          new VotingKeyV1Dto(ByteBuffer.wrap(transaction.getLinkedPublicKey().getBytes()));
+      FinalizationEpochDto startEpoch =
+          SerializationUtils.toFinalizationEpochDto(transaction.getStartEpoch());
+      FinalizationEpochDto endEpoch =
+          SerializationUtils.toFinalizationEpochDto(transaction.getEndEpoch());
+      LinkActionDto linkAction = LinkActionDto.rawValueOf(transaction.getLinkAction().getValue());
+      return VotingKeyLinkV1TransactionBodyBuilder.create(
+          linkedPublicKey, startEpoch, endEpoch, linkAction);
+    }
+  }
+
   private static class VotingKeyLinkTransactionBuilderSerializer
       implements TransactionSerializer<VotingKeyLinkTransaction> {
 
@@ -1699,7 +1753,8 @@ public class BinarySerializationImpl implements BinarySerialization {
         NetworkType networkType, Deadline deadline, Serializer transactionBuilder) {
       VotingKeyLinkTransactionBodyBuilder builder =
           (VotingKeyLinkTransactionBodyBuilder) transactionBuilder;
-      VotingKey linkedPublicKey = SerializationUtils.toVotingKey(builder.getLinkedPublicKey());
+      PublicKey linkedPublicKey =
+          new PublicKey(builder.getLinkedPublicKey().getVotingKey().array());
       long startEpoch =
           SerializationUtils.intToUnsignedLong(builder.getStartEpoch().getFinalizationEpoch());
       long endEpoch =
@@ -1712,7 +1767,7 @@ public class BinarySerializationImpl implements BinarySerialization {
     @Override
     public Serializer toBodyBuilder(VotingKeyLinkTransaction transaction) {
       VotingKeyDto linkedPublicKey =
-          SerializationUtils.toVotingKeyDto(transaction.getLinkedPublicKey());
+          new VotingKeyDto(ByteBuffer.wrap(transaction.getLinkedPublicKey().getBytes()));
       FinalizationEpochDto startEpoch =
           SerializationUtils.toFinalizationEpochDto(transaction.getStartEpoch());
       FinalizationEpochDto endEpoch =

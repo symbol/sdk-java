@@ -70,7 +70,7 @@ class BlockInfoTest {
             signer,
             NetworkType.MIJIN_TEST,
             1,
-            32768,
+            BlockType.NORMAL_BLOCK,
             BigInteger.ONE,
             BigInteger.ZERO,
             BigInteger.valueOf(276447232L),
@@ -95,7 +95,7 @@ class BlockInfoTest {
     Assertions.assertEquals(signer, blockInfo.getSignerPublicAccount());
     assertEquals(NetworkType.MIJIN_TEST, blockInfo.getNetworkType());
     assertEquals(1, (int) blockInfo.getVersion());
-    assertEquals(32768, blockInfo.getType());
+    assertEquals(BlockType.NORMAL_BLOCK, blockInfo.getType());
     assertEquals(BigInteger.valueOf(1), blockInfo.getHeight());
     assertEquals(BigInteger.valueOf(0), blockInfo.getTimestamp());
     assertEquals(BigInteger.valueOf(276447232), blockInfo.getDifficulty());

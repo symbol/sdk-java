@@ -15,11 +15,22 @@
  */
 package io.nem.symbol.sdk.model.mosaic;
 
+import io.nem.symbol.catapult.builders.AddressDto;
+import io.nem.symbol.catapult.builders.AmountDto;
+import io.nem.symbol.catapult.builders.BlockDurationDto;
+import io.nem.symbol.catapult.builders.HeightDto;
+import io.nem.symbol.catapult.builders.MosaicDefinitionBuilder;
+import io.nem.symbol.catapult.builders.MosaicEntryBuilder;
+import io.nem.symbol.catapult.builders.MosaicFlagsDto;
+import io.nem.symbol.catapult.builders.MosaicIdDto;
+import io.nem.symbol.catapult.builders.MosaicPropertiesBuilder;
+import io.nem.symbol.sdk.infrastructure.SerializationUtils;
 import io.nem.symbol.sdk.model.Stored;
 import io.nem.symbol.sdk.model.account.Address;
-import io.nem.symbol.sdk.model.account.UnresolvedAddress;
 import java.math.BigInteger;
+import java.util.EnumSet;
 import java.util.Optional;
+import org.apache.commons.lang3.Validate;
 
 /**
  * The mosaic info structure contains its properties, the owner and the namespace to which it
@@ -30,11 +41,12 @@ public class MosaicInfo implements Stored {
   /** The database id. */
   private final String recordId;
 
+  private final int version;
   private final MosaicId mosaicId;
   private final BigInteger supply;
   private final BigInteger startHeight;
   private final Address ownerAddress;
-  private final Long revision;
+  private final long revision;
   private final MosaicFlags mosaicFlags;
   private final int divisibility;
   private final BigInteger duration;
@@ -42,15 +54,23 @@ public class MosaicInfo implements Stored {
   @SuppressWarnings("squid:S00107")
   public MosaicInfo(
       final String recordId,
+      int version,
       final MosaicId mosaicId,
       final BigInteger supply,
       final BigInteger startHeight,
       final Address ownerAddress,
-      final Long revision,
+      final long revision,
       final MosaicFlags mosaicFlags,
       final int divisibility,
       final BigInteger duration) {
+    Validate.notNull(mosaicId, "mosaicId must be provided");
+    Validate.notNull(supply, "supply must be provided");
+    Validate.notNull(startHeight, "startHeight must be provided");
+    Validate.notNull(ownerAddress, "ownerAddress must be provided");
+    Validate.notNull(mosaicFlags, "mosaicFlags must be provided");
+    Validate.notNull(duration, "duration must be provided");
     this.recordId = recordId;
+    this.version = version;
     this.mosaicId = mosaicId;
     this.supply = supply;
     this.startHeight = startHeight;
@@ -93,7 +113,7 @@ public class MosaicInfo implements Stored {
    *
    * @return mosaic account owner
    */
-  public UnresolvedAddress getOwnerAddress() {
+  public Address getOwnerAddress() {
     return ownerAddress;
   }
 
@@ -102,7 +122,7 @@ public class MosaicInfo implements Stored {
    *
    * @return revision
    */
-  public Long getRevision() {
+  public long getRevision() {
     return revision;
   }
 
@@ -151,16 +171,48 @@ public class MosaicInfo implements Stored {
     return duration;
   }
 
+  /**
+   * Returns the state version
+   *
+   * @return the version
+   */
+  public int getVersion() {
+    return version;
+  }
+
+  /** @return the flags of the mosaics */
+  public MosaicFlags getMosaicFlags() {
+    return mosaicFlags;
+  }
+
   /** @return the internal database id. */
   public Optional<String> getRecordId() {
     return Optional.ofNullable(recordId);
   }
 
   /** @return a network currency that can be used to create mosiac. */
-  public NetworkCurrency toNetworkCurrency() {
-    return new NetworkCurrencyBuilder(getMosaicId(), getDivisibility())
+  public Currency toCurrency() {
+    return new CurrencyBuilder(getMosaicId(), getDivisibility())
         .withTransferable(isTransferable())
         .withSupplyMutable(isSupplyMutable())
+        .withRestrictable(isRestrictable())
         .build();
+  }
+
+  /** @return serializes the state of the mosaic. */
+  public byte[] serialize() {
+    MosaicIdDto mosaicId = SerializationUtils.toMosaicIdDto(getMosaicId());
+    AmountDto supply = SerializationUtils.toAmount(getSupply());
+    HeightDto startHeight = new HeightDto(getStartHeight().longValue());
+    AddressDto ownerAddress = SerializationUtils.toAddressDto(getOwnerAddress());
+    int revision = (int) getRevision();
+    EnumSet<MosaicFlagsDto> flags = SerializationUtils.getMosaicFlagsEnumSet(this.getMosaicFlags());
+    MosaicPropertiesBuilder properties =
+        MosaicPropertiesBuilder.create(
+            flags, (byte) getDivisibility(), new BlockDurationDto(getDuration().longValue()));
+    MosaicDefinitionBuilder definition =
+        MosaicDefinitionBuilder.create(startHeight, ownerAddress, revision, properties);
+    return MosaicEntryBuilder.create((short) getVersion(), mosaicId, supply, definition)
+        .serialize();
   }
 }

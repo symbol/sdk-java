@@ -20,8 +20,10 @@ import io.nem.symbol.sdk.api.MosaicSearchCriteria;
 import io.nem.symbol.sdk.model.account.Account;
 import io.nem.symbol.sdk.model.account.Address;
 import io.nem.symbol.sdk.model.account.PublicAccount;
+import io.nem.symbol.sdk.model.blockchain.MerkleStateInfo;
 import io.nem.symbol.sdk.model.mosaic.MosaicId;
 import io.nem.symbol.sdk.model.mosaic.MosaicInfo;
+import io.nem.symbol.sdk.openapi.okhttp_gson.model.MerkleStateInfoDTO;
 import io.nem.symbol.sdk.openapi.okhttp_gson.model.MosaicDTO;
 import io.nem.symbol.sdk.openapi.okhttp_gson.model.MosaicInfoDTO;
 import io.nem.symbol.sdk.openapi.okhttp_gson.model.MosaicPage;
@@ -45,7 +47,7 @@ public class MosaicRepositoryOkHttpImplTest extends AbstractOkHttpRespositoryTes
   @BeforeEach
   public void setUp() {
     super.setUp();
-    repository = new MosaicRepositoryOkHttpImpl(apiClientMock, networkTypeObservable);
+    repository = new MosaicRepositoryOkHttpImpl(apiClientMock);
   }
 
   @Test
@@ -62,6 +64,9 @@ public class MosaicRepositoryOkHttpImplTest extends AbstractOkHttpRespositoryTes
     mosaicDto.setFlags(5);
     mosaicDto.setDivisibility(6);
     mosaicDto.setDuration(BigInteger.valueOf(7));
+    mosaicDto.supply(BigInteger.valueOf(1000));
+    mosaicDto.startHeight(BigInteger.valueOf(100));
+    mosaicDto.setVersion(1);
 
     mosaicInfoDto.setMosaic(mosaicDto);
     mockRemoteCall(Collections.singletonList(mosaicInfoDto));
@@ -80,6 +85,8 @@ public class MosaicRepositoryOkHttpImplTest extends AbstractOkHttpRespositoryTes
     Assertions.assertFalse(mosaicInfo.isTransferable());
     Assertions.assertEquals(6, mosaicInfo.getDivisibility());
     Assertions.assertEquals(BigInteger.valueOf(7), mosaicInfo.getDuration());
+    Assertions.assertEquals(mosaicDto.getStartHeight(), mosaicInfo.getStartHeight());
+    Assertions.assertEquals(mosaicDto.getSupply(), mosaicInfo.getSupply());
   }
 
   @Test
@@ -97,6 +104,9 @@ public class MosaicRepositoryOkHttpImplTest extends AbstractOkHttpRespositoryTes
     mosaicDto.setFlags(5);
     mosaicDto.setDivisibility(6);
     mosaicDto.setDuration(BigInteger.valueOf(7));
+    mosaicDto.supply(BigInteger.valueOf(1000));
+    mosaicDto.startHeight(BigInteger.valueOf(100));
+    mosaicDto.setVersion(1);
 
     mosaicInfoDto.setMosaic(mosaicDto);
     mockRemoteCall(mosaicInfoDto);
@@ -111,6 +121,8 @@ public class MosaicRepositoryOkHttpImplTest extends AbstractOkHttpRespositoryTes
     Assertions.assertFalse(mosaicInfo.isTransferable());
     Assertions.assertEquals(6, mosaicInfo.getDivisibility());
     Assertions.assertEquals(BigInteger.valueOf(7), mosaicInfo.getDuration());
+    Assertions.assertEquals(mosaicDto.getStartHeight(), mosaicInfo.getStartHeight());
+    Assertions.assertEquals(mosaicDto.getSupply(), mosaicInfo.getSupply());
   }
 
   @Test
@@ -128,6 +140,9 @@ public class MosaicRepositoryOkHttpImplTest extends AbstractOkHttpRespositoryTes
     mosaicDto.setFlags(5);
     mosaicDto.setDivisibility(6);
     mosaicDto.setDuration(BigInteger.valueOf(7));
+    mosaicDto.supply(BigInteger.valueOf(1000));
+    mosaicDto.startHeight(BigInteger.valueOf(100));
+    mosaicDto.setVersion(1);
 
     mockRemoteCall(toPage(new MosaicInfoDTO().mosaic(mosaicDto).id("ABC")));
 
@@ -149,12 +164,22 @@ public class MosaicRepositoryOkHttpImplTest extends AbstractOkHttpRespositoryTes
     Assertions.assertFalse(mosaicInfo.isTransferable());
     Assertions.assertEquals(6, mosaicInfo.getDivisibility());
     Assertions.assertEquals(BigInteger.valueOf(7), mosaicInfo.getDuration());
+    Assertions.assertEquals(mosaicDto.getStartHeight(), mosaicInfo.getStartHeight());
+    Assertions.assertEquals(mosaicDto.getSupply(), mosaicInfo.getSupply());
   }
 
   private MosaicPage toPage(MosaicInfoDTO dto) {
     return new MosaicPage()
         .data(Collections.singletonList(dto))
         .pagination(new Pagination().pageNumber(1).pageSize(2));
+  }
+
+  @Test
+  public void getMetadataMerkle() throws Exception {
+    MosaicId mosaicId = MapperUtils.toMosaicId("481110499");
+    mockRemoteCall(new MerkleStateInfoDTO().raw("abc"));
+    MerkleStateInfo merkle = repository.getMosaicMerkle(mosaicId).toFuture().get();
+    Assertions.assertEquals("abc", merkle.getRaw());
   }
 
   @Override

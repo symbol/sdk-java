@@ -20,7 +20,7 @@ import io.nem.symbol.sdk.api.MultisigRepository;
 import io.nem.symbol.sdk.model.account.Address;
 import io.nem.symbol.sdk.model.account.MultisigAccountGraphInfo;
 import io.nem.symbol.sdk.model.account.MultisigAccountInfo;
-import io.nem.symbol.sdk.model.network.NetworkType;
+import io.nem.symbol.sdk.model.blockchain.MerkleStateInfo;
 import io.nem.symbol.sdk.openapi.okhttp_gson.api.MultisigRoutesApi;
 import io.nem.symbol.sdk.openapi.okhttp_gson.invoker.ApiClient;
 import io.nem.symbol.sdk.openapi.okhttp_gson.model.MultisigAccountGraphInfoDTO;
@@ -31,58 +31,52 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import org.apache.commons.lang3.ObjectUtils;
 
 public class MultisigRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl
     implements MultisigRepository {
 
   private final MultisigRoutesApi client;
 
-  private final Observable<NetworkType> networkTypeObservable;
-
-  public MultisigRepositoryOkHttpImpl(
-      ApiClient apiClient, Observable<NetworkType> networkTypeObservable) {
+  public MultisigRepositoryOkHttpImpl(ApiClient apiClient) {
     super(apiClient);
     this.client = new MultisigRoutesApi(apiClient);
-    this.networkTypeObservable = networkTypeObservable;
   }
 
   @Override
   public Observable<MultisigAccountInfo> getMultisigAccountInfo(Address address) {
-    return exceptionHandling(
-        networkTypeObservable.flatMap(
-            networkType ->
-                call(() -> getClient().getAccountMultisig(address.plain()))
-                    .map(MultisigAccountInfoDTO::getMultisig)
-                    .map(dto -> toMultisigAccountInfo(dto))));
+    return call(() -> getClient().getAccountMultisig(address.plain()), this::toMultisigAccountInfo);
+  }
+
+  @Override
+  public Observable<MerkleStateInfo> getMultisigAccountInfoMerkle(Address address) {
+    return call(
+        () -> getClient().getAccountMultisigMerkle(address.plain()), this::toMerkleStateInfo);
   }
 
   @Override
   public Observable<MultisigAccountGraphInfo> getMultisigAccountGraphInfo(Address address) {
-    return exceptionHandling(
-        networkTypeObservable.flatMap(
-            networkType ->
-                call(() -> getClient().getAccountMultisigGraph(address.plain()))
-                    .map(
-                        multisigAccountGraphInfoDTOList -> {
-                          Map<Integer, List<MultisigAccountInfo>> multisigAccountInfoMap =
-                              new HashMap<>();
-                          multisigAccountGraphInfoDTOList.forEach(
-                              item ->
-                                  multisigAccountInfoMap.put(
-                                      item.getLevel(), toMultisigAccountInfo(item)));
-                          return new MultisigAccountGraphInfo(multisigAccountInfoMap);
-                        })));
+    return (call(
+        () -> getClient().getAccountMultisigGraph(address.plain()),
+        multisigAccountGraphInfoDTOList -> {
+          Map<Integer, List<MultisigAccountInfo>> multisigAccountInfoMap = new HashMap<>();
+          multisigAccountGraphInfoDTOList.forEach(
+              item -> multisigAccountInfoMap.put(item.getLevel(), toMultisigAccountInfo(item)));
+          return new MultisigAccountGraphInfo(multisigAccountInfoMap);
+        }));
   }
 
   private List<MultisigAccountInfo> toMultisigAccountInfo(MultisigAccountGraphInfoDTO item) {
     return item.getMultisigEntries().stream()
-        .map(MultisigAccountInfoDTO::getMultisig)
-        .map(dto -> toMultisigAccountInfo(dto))
+        .map(this::toMultisigAccountInfo)
         .collect(Collectors.toList());
   }
 
-  private MultisigAccountInfo toMultisigAccountInfo(MultisigDTO dto) {
+  private MultisigAccountInfo toMultisigAccountInfo(MultisigAccountInfoDTO info) {
+    MultisigDTO dto = info.getMultisig();
     return new MultisigAccountInfo(
+        null,
+        ObjectUtils.defaultIfNull(info.getMultisig().getVersion(), 1),
         MapperUtils.toAddress(dto.getAccountAddress()),
         dto.getMinApproval(),
         dto.getMinRemoval(),

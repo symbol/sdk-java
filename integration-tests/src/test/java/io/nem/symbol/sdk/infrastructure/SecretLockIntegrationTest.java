@@ -22,9 +22,10 @@ import io.nem.symbol.sdk.api.RepositoryFactory;
 import io.nem.symbol.sdk.api.SecretLockRepository;
 import io.nem.symbol.sdk.api.SecretLockSearchCriteria;
 import io.nem.symbol.sdk.model.account.Account;
+import io.nem.symbol.sdk.model.mosaic.Currency;
 import io.nem.symbol.sdk.model.mosaic.Mosaic;
-import io.nem.symbol.sdk.model.mosaic.NetworkCurrency;
 import io.nem.symbol.sdk.model.transaction.LockHashAlgorithm;
+import io.nem.symbol.sdk.model.transaction.LockStatus;
 import io.nem.symbol.sdk.model.transaction.SecretLockInfo;
 import io.nem.symbol.sdk.model.transaction.SecretLockTransaction;
 import io.nem.symbol.sdk.model.transaction.SecretLockTransactionFactory;
@@ -71,15 +72,16 @@ class SecretLockIntegrationTest extends BaseIntegrationTest {
 
     Account account = config().getNemesisAccount1();
     Account account2 = config().getNemesisAccount2();
-    NetworkCurrency networkCurrency = get(repositoryFactory.getNetworkCurrency());
-    Mosaic mosaic = networkCurrency.createAbsolute(BigInteger.valueOf(1));
+    Currency currency = get(repositoryFactory.getNetworkCurrency());
+    Mosaic mosaic = currency.createAbsolute(BigInteger.valueOf(1));
     BigInteger amount = mosaic.getAmount();
+    BigInteger duration = BigInteger.valueOf(10000);
     SecretLockTransaction secretLockTransaction =
         SecretLockTransactionFactory.create(
                 getNetworkType(),
                 getDeadline(),
                 mosaic,
-                BigInteger.valueOf(100),
+                duration,
                 lockHashAlgorithm,
                 secret,
                 account2.getAddress())
@@ -111,19 +113,23 @@ class SecretLockIntegrationTest extends BaseIntegrationTest {
     SecretLockRepository hashLockRepository =
         getRepositoryFactory(type).createSecretLockRepository();
 
-    SecretLockInfo info = get(hashLockRepository.getSecretLock(secret));
+    SecretLockInfo info =
+        get(hashLockRepository.search(
+                new SecretLockSearchCriteria().address(account.getAddress()).secret(storedSecret)))
+            .getData()
+            .get(0);
     Assertions.assertNotNull(info);
     Assertions.assertEquals(account.getAddress(), info.getOwnerAddress());
     Assertions.assertEquals(account2.getAddress(), info.getRecipientAddress());
     Assertions.assertEquals(amount, info.getAmount());
-    Assertions.assertEquals(lockHashAlgorithm, info.getHashAlgorithm());
-    Assertions.assertEquals(1, info.getStatus());
     Assertions.assertEquals(storedSecret, info.getSecret());
+    Assertions.assertEquals(lockHashAlgorithm, info.getHashAlgorithm());
+    Assertions.assertEquals(LockStatus.USED, info.getStatus());
 
     Page<SecretLockInfo> page =
         get(
             hashLockRepository.search(
-                new SecretLockSearchCriteria(account.getAddress()).order(OrderBy.DESC)));
+                new SecretLockSearchCriteria().address(account.getAddress()).order(OrderBy.DESC)));
 
     Assertions.assertTrue(
         page.getData().stream().anyMatch(m -> m.getSecret().equals(storedSecret)));
@@ -136,7 +142,7 @@ class SecretLockIntegrationTest extends BaseIntegrationTest {
     Assertions.assertEquals(account2.getAddress(), infoSearch.getRecipientAddress());
     Assertions.assertEquals(amount, infoSearch.getAmount());
     Assertions.assertEquals(lockHashAlgorithm, infoSearch.getHashAlgorithm());
-    Assertions.assertEquals(1, infoSearch.getStatus());
+    Assertions.assertEquals(LockStatus.USED, infoSearch.getStatus());
     Assertions.assertEquals(storedSecret, infoSearch.getSecret());
   }
 }

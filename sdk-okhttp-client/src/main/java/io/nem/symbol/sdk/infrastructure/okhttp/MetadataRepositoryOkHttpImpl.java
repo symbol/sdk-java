@@ -20,6 +20,7 @@ import io.nem.symbol.core.utils.MapperUtils;
 import io.nem.symbol.sdk.api.MetadataRepository;
 import io.nem.symbol.sdk.api.MetadataSearchCriteria;
 import io.nem.symbol.sdk.api.Page;
+import io.nem.symbol.sdk.model.blockchain.MerkleStateInfo;
 import io.nem.symbol.sdk.model.metadata.Metadata;
 import io.nem.symbol.sdk.model.metadata.MetadataType;
 import io.nem.symbol.sdk.openapi.okhttp_gson.api.MetadataRoutesApi;
@@ -31,10 +32,9 @@ import io.nem.symbol.sdk.openapi.okhttp_gson.model.MetadataTypeEnum;
 import io.nem.symbol.sdk.openapi.okhttp_gson.model.Order;
 import io.reactivex.Observable;
 import java.math.BigInteger;
-import java.util.Objects;
-import java.util.Optional;
 import java.util.concurrent.Callable;
 import java.util.stream.Collectors;
+import org.apache.commons.lang3.ObjectUtils;
 
 /** Implementation of {@link MetadataRepository} */
 public class MetadataRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl
@@ -100,12 +100,23 @@ public class MetadataRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl
     MetadataEntryDTO entryDto = dto.getMetadataEntry();
     return new Metadata(
         dto.getId(),
+        ObjectUtils.defaultIfNull(dto.getMetadataEntry().getVersion(), 1),
         entryDto.getCompositeHash(),
         MapperUtils.toAddress(entryDto.getSourceAddress()),
         MapperUtils.toAddress(entryDto.getTargetAddress()),
         new BigInteger(entryDto.getScopedMetadataKey(), 16),
         MetadataType.rawValueOf(entryDto.getMetadataType().getValue()),
         ConvertUtils.fromHexToString(entryDto.getValue()),
-        Optional.ofNullable(Objects.toString(entryDto.getTargetId(), null)));
+        entryDto.getTargetId());
+  }
+
+  @Override
+  public Observable<Metadata> getMetadata(String compositeHash) {
+    return call(() -> this.client.getMetadata(compositeHash), this::toMetadata);
+  }
+
+  @Override
+  public Observable<MerkleStateInfo> getMetadataMerkle(String compositeHash) {
+    return call(() -> this.client.getMetadataMerkle(compositeHash), this::toMerkleStateInfo);
   }
 }

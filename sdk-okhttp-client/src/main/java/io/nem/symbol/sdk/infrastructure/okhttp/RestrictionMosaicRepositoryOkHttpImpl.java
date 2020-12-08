@@ -19,6 +19,7 @@ import io.nem.symbol.core.utils.MapperUtils;
 import io.nem.symbol.sdk.api.MosaicRestrictionSearchCriteria;
 import io.nem.symbol.sdk.api.Page;
 import io.nem.symbol.sdk.api.RestrictionMosaicRepository;
+import io.nem.symbol.sdk.model.blockchain.MerkleStateInfo;
 import io.nem.symbol.sdk.model.restriction.MosaicAddressRestriction;
 import io.nem.symbol.sdk.model.restriction.MosaicGlobalRestriction;
 import io.nem.symbol.sdk.model.restriction.MosaicGlobalRestrictionItem;
@@ -37,9 +38,11 @@ import io.nem.symbol.sdk.openapi.okhttp_gson.model.MosaicRestrictionsPage;
 import io.nem.symbol.sdk.openapi.okhttp_gson.model.Order;
 import io.reactivex.Observable;
 import java.math.BigInteger;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.stream.Collectors;
+import org.apache.commons.lang3.ObjectUtils;
 
 public class RestrictionMosaicRepositoryOkHttpImpl extends AbstractRepositoryOkHttpImpl
     implements RestrictionMosaicRepository {
@@ -60,9 +63,14 @@ public class RestrictionMosaicRepositoryOkHttpImpl extends AbstractRepositoryOkH
             .collect(
                 Collectors.toMap(
                     e -> new BigInteger(e.getKey()),
-                    e -> toMosaicGlobalRestrictionItem(e.getRestriction())));
+                    e -> toMosaicGlobalRestrictionItem(e.getRestriction()),
+                    (x, y) -> y,
+                    LinkedHashMap::new));
 
     return new MosaicGlobalRestriction(
+        mosaicGlobalRestrictionDTO.getId(),
+        ObjectUtils.defaultIfNull(
+            mosaicGlobalRestrictionDTO.getMosaicRestrictionEntry().getVersion(), 1),
         dto.getCompositeHash(),
         MosaicRestrictionEntryType.rawValueOf(dto.getEntryType().getValue()),
         MapperUtils.toMosaicId(dto.getMosaicId()),
@@ -87,6 +95,8 @@ public class RestrictionMosaicRepositoryOkHttpImpl extends AbstractRepositoryOkH
                 Collectors.toMap(e -> new BigInteger(e.getKey()), e -> toBigInteger(e.getValue())));
 
     return new MosaicAddressRestriction(
+        mosaicAddressRestrictionDTO.getId(),
+        ObjectUtils.defaultIfNull(dto.getVersion(), 1),
         dto.getCompositeHash(),
         MosaicRestrictionEntryType.rawValueOf(dto.getEntryType().getValue()),
         MapperUtils.toMosaicId(dto.getMosaicId()),
@@ -119,7 +129,7 @@ public class RestrictionMosaicRepositoryOkHttpImpl extends AbstractRepositoryOkH
     Callable<MosaicRestrictionsPage> callback =
         () ->
             getClient()
-                .searchMosaicRestriction(
+                .searchMosaicRestrictions(
                     mosaicId, entryType, targetAddress, pageSize, pageNumber, offset, order);
 
     return call(
@@ -145,5 +155,17 @@ public class RestrictionMosaicRepositoryOkHttpImpl extends AbstractRepositoryOkH
             getJsonHelper().convert(restrictionObject, MosaicGlobalRestrictionDTO.class));
     }
     throw new IllegalStateException("Invalid entry type " + thisEntryType);
+  }
+
+  @Override
+  public Observable<MosaicRestriction<?>> getMosaicRestrictions(String compositeHash) {
+    return this.call(
+        () -> getClient().getMosaicRestrictions(compositeHash), this::toMosaicRestriction);
+  }
+
+  @Override
+  public Observable<MerkleStateInfo> getMosaicRestrictionsMerkle(String compositeHash) {
+    return this.call(
+        () -> getClient().getMosaicRestrictionsMerkle(compositeHash), this::toMerkleStateInfo);
   }
 }

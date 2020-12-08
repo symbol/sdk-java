@@ -45,7 +45,6 @@ import io.reactivex.Observable;
 import java.math.BigInteger;
 import java.time.Duration;
 import java.util.Collections;
-import java.util.Optional;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -88,14 +87,14 @@ class MetadataTransactionServiceTest {
 
     return new NamespaceInfo(
         "abc",
+        1,
         true,
         0,
-        "metadaId",
         NamespaceRegistrationType.ROOT_NAMESPACE,
         1,
         Collections.emptyList(),
         null,
-        null,
+        Address.generateRandom(networkType),
         BigInteger.ONE,
         BigInteger.TEN,
         new MosaicAlias(mosaicId));
@@ -116,13 +115,14 @@ class MetadataTransactionServiceTest {
     Metadata metadata =
         new Metadata(
             "someId",
+            1,
             "compositeHash",
             sourceAddress,
             targetAccount.getAddress(),
             metadataKey,
             MetadataType.ACCOUNT,
             oldValue,
-            Optional.of(targetAccount.getAddress().encoded()));
+            null);
 
     MetadataSearchCriteria criteria =
         new MetadataSearchCriteria()
@@ -265,13 +265,14 @@ class MetadataTransactionServiceTest {
     Metadata metadata =
         new Metadata(
             "someId",
+            1,
             "compositeHash",
             sourceAddress,
             targetAccount.getAddress(),
             metadataKey,
             MetadataType.MOSAIC,
             oldValue,
-            Optional.of(targetAccount.getAddress().encoded()));
+            mosaicId.getIdAsHex());
 
     MetadataSearchCriteria criteria =
         new MetadataSearchCriteria()
@@ -312,13 +313,14 @@ class MetadataTransactionServiceTest {
     Metadata metadata =
         new Metadata(
             "someId",
+            1,
             "compositeHash",
             sourceAddress,
             targetAccount.getAddress(),
             metadataKey,
             MetadataType.MOSAIC,
             oldValue,
-            Optional.of(targetAccount.getAddress().encoded()));
+            mosaicId.getIdAsHex());
 
     MetadataSearchCriteria criteria =
         new MetadataSearchCriteria()
@@ -470,13 +472,14 @@ class MetadataTransactionServiceTest {
     Metadata metadata =
         new Metadata(
             "someId",
+            1,
             "compositeHash",
             sourceAddress,
             targetAccount.getAddress(),
             metadataKey,
             MetadataType.NAMESPACE,
             oldValue,
-            Optional.of(targetAccount.getAddress().encoded()));
+            namespaceId.getIdAsHex());
 
     MetadataSearchCriteria criteria =
         new MetadataSearchCriteria()

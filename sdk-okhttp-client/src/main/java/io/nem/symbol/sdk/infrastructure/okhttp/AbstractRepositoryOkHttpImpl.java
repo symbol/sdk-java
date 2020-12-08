@@ -22,9 +22,12 @@ import io.nem.symbol.sdk.api.OrderBy;
 import io.nem.symbol.sdk.api.Page;
 import io.nem.symbol.sdk.api.RepositoryCallException;
 import io.nem.symbol.sdk.model.account.Address;
+import io.nem.symbol.sdk.model.blockchain.MerkleStateInfo;
+import io.nem.symbol.sdk.model.mosaic.MosaicId;
 import io.nem.symbol.sdk.model.transaction.JsonHelper;
 import io.nem.symbol.sdk.openapi.okhttp_gson.invoker.ApiClient;
 import io.nem.symbol.sdk.openapi.okhttp_gson.invoker.ApiException;
+import io.nem.symbol.sdk.openapi.okhttp_gson.model.MerkleStateInfoDTO;
 import io.nem.symbol.sdk.openapi.okhttp_gson.model.Order;
 import io.nem.symbol.sdk.openapi.okhttp_gson.model.Pagination;
 import io.reactivex.Observable;
@@ -125,6 +128,10 @@ public abstract class AbstractRepositoryOkHttpImpl {
     return publicKey == null ? null : publicKey.toHex();
   }
 
+  protected String toDto(MosaicId mosaicId) {
+    return mosaicId == null ? null : mosaicId.getIdAsHex();
+  }
+
   protected String toDto(Address address) {
     return address == null ? null : address.plain();
   }
@@ -139,6 +146,10 @@ public abstract class AbstractRepositoryOkHttpImpl {
 
   protected <T> Page<T> toPage(Pagination pagination, List<T> data) {
     return new Page<>(data, pagination.getPageNumber(), pagination.getPageSize());
+  }
+
+  public MerkleStateInfo toMerkleStateInfo(MerkleStateInfoDTO dto) {
+    return new MerkleMapper(getJsonHelper()).toMerkleStateInfo(dto);
   }
 
   public JsonHelper getJsonHelper() {
