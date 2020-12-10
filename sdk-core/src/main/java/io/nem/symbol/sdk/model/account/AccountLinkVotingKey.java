@@ -15,14 +15,13 @@
  */
 package io.nem.symbol.sdk.model.account;
 
-import io.nem.symbol.core.crypto.PublicKey;
 import org.apache.commons.lang3.Validate;
 
 /** Account link voting key */
 public class AccountLinkVotingKey {
 
   /** Public Key. */
-  private final PublicKey publicKey;
+  private final String publicKey;
 
   /** Start epoch. */
   private final long startEpoch;
@@ -30,14 +29,14 @@ public class AccountLinkVotingKey {
   /** End epoch. */
   private final long endEpoch;
 
-  public AccountLinkVotingKey(PublicKey publicKey, long startEpoch, long endEpoch) {
+  public AccountLinkVotingKey(String publicKey, long startEpoch, long endEpoch) {
     Validate.notNull(publicKey, "public key is required");
     this.publicKey = publicKey;
     this.startEpoch = startEpoch;
     this.endEpoch = endEpoch;
   }
 
-  public PublicKey getPublicKey() {
+  public String getPublicKey() {
     return publicKey;
   }
 
