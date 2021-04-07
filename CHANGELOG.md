@@ -8,8 +8,8 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 **Milestone**: Symbol Mainnet
  Package  | Version  | Link
 ---|---|---
-SDK OkHttp | v1.0.0 | https://repo.maven.apache.org/maven2/io/nem/symbol-sdk-okhttp-client
-SDK Vertx | v1.0.0 | https://repo.maven.apache.org/maven2/io/nem/symbol-sdk-vertx-client
+SDK OkHttp | v1.0.1 | https://repo.maven.apache.org/maven2/io/nem/symbol-sdk-okhttp-client
+SDK Vertx | v1.0.1 | https://repo.maven.apache.org/maven2/io/nem/symbol-sdk-vertx-client
 Catbuffer Library | v0.1.2 | https://repo.maven.apache.org/maven2/io/nem/catbuffer-java
 Client OkHttp | v1.0.0  | https://repo.maven.apache.org/maven2/io/nem/symbol-openapi-okhttp-gson-client
 Client Vertx | v1.0.0  | https://repo.maven.apache.org/maven2/io/nem/symbol-openapi-vertx-client/
