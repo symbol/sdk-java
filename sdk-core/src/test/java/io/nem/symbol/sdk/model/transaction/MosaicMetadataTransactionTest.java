@@ -17,6 +17,7 @@ package io.nem.symbol.sdk.model.transaction;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import io.nem.symbol.core.utils.StringEncoder;
 import io.nem.symbol.sdk.model.account.Account;
 import io.nem.symbol.sdk.model.mosaic.MosaicId;
 import io.nem.symbol.sdk.model.network.NetworkType;
@@ -47,10 +48,10 @@ public class MosaicMetadataTransactionTest extends AbstractTransactionTester {
                 account.getAddress(),
                 mosaicId,
                 BigInteger.TEN,
-                "123ABC")
+                StringEncoder.getBytes("123ABC"))
             .valueSizeDelta(10)
             .build();
-    assertEquals("123ABC", transaction.getValue());
+    assertEquals("123ABC", StringEncoder.getString(transaction.getValue()));
     assertEquals(mosaicId, transaction.getTargetMosaicId());
     assertEquals(NetworkType.MIJIN_TEST, transaction.getNetworkType());
     assertEquals(10, transaction.getValueSizeDelta());
@@ -69,7 +70,7 @@ public class MosaicMetadataTransactionTest extends AbstractTransactionTester {
                 account.getAddress(),
                 mosaicId,
                 BigInteger.TEN,
-                "123ABC")
+                StringEncoder.getBytes("123ABC"))
             .valueSizeDelta(10)
             .signer(account.getPublicAccount())
             .build();

@@ -16,6 +16,7 @@
 package io.nem.symbol.sdk.infrastructure;
 
 import io.nem.symbol.core.utils.ConvertUtils;
+import io.nem.symbol.core.utils.StringEncoder;
 import io.nem.symbol.sdk.api.AliasService;
 import io.nem.symbol.sdk.api.MetadataRepository;
 import io.nem.symbol.sdk.api.MetadataSearchCriteria;
@@ -36,7 +37,6 @@ import java.math.BigInteger;
 import java.time.Duration;
 import java.util.Objects;
 import java.util.function.Function;
-import org.apache.commons.lang3.tuple.Pair;
 
 /**
  * Implementation of {@link MetadataTransactionService}
@@ -63,7 +63,7 @@ public class MetadataTransactionServiceImpl implements MetadataTransactionServic
   @Override
   public Observable<AccountMetadataTransactionFactory> createAccountMetadataTransactionFactory(
       Address targetAddress, BigInteger key, String value, Address sourceAddress) {
-    TriFunction<String, NetworkType, Deadline, AccountMetadataTransactionFactory> factory =
+    TriFunction<byte[], NetworkType, Deadline, AccountMetadataTransactionFactory> factory =
         (newValue, networkType, deadline) ->
             AccountMetadataTransactionFactory.create(
                 networkType, deadline, targetAddress, key, newValue);
@@ -90,7 +90,7 @@ public class MetadataTransactionServiceImpl implements MetadataTransactionServic
         .resolveMosaicId(unresolvedTargetId)
         .flatMap(
             targetId -> {
-              TriFunction<String, NetworkType, Deadline, MosaicMetadataTransactionFactory> factory =
+              TriFunction<byte[], NetworkType, Deadline, MosaicMetadataTransactionFactory> factory =
                   (newValue, networkType, deadline) ->
                       MosaicMetadataTransactionFactory.create(
                           networkType, deadline, targetAddress, unresolvedTargetId, key, newValue);
@@ -113,7 +113,7 @@ public class MetadataTransactionServiceImpl implements MetadataTransactionServic
       String value,
       Address sourceAddress,
       NamespaceId targetId) {
-    TriFunction<String, NetworkType, Deadline, NamespaceMetadataTransactionFactory> factory =
+    TriFunction<byte[], NetworkType, Deadline, NamespaceMetadataTransactionFactory> factory =
         (newValue, networkType, deadline) ->
             NamespaceMetadataTransactionFactory.create(
                 networkType, deadline, targetAddress, targetId, key, newValue);
@@ -140,7 +140,7 @@ public class MetadataTransactionServiceImpl implements MetadataTransactionServic
    */
   private <T extends MetadataTransactionFactory> Observable<T> processMetadata(
       MetadataSearchCriteria criteria,
-      TriFunction<String, NetworkType, Deadline, T> transactionFactory,
+      TriFunction<byte[], NetworkType, Deadline, T> transactionFactory,
       String newValue) {
     return Observable.combineLatest(
             networkTypeObservable,
@@ -152,15 +152,15 @@ public class MetadataTransactionServiceImpl implements MetadataTransactionServic
                         page -> {
                           Deadline deadline = Deadline.create(epochAdjustment);
                           if (page.getData().isEmpty()) {
-                            return transactionFactory.apply(newValue, networkType, deadline);
+                            return transactionFactory.apply(
+                                StringEncoder.getBytes(newValue), networkType, deadline);
                           } else {
-                            String originalValue = page.getData().get(0).getValue();
-                            Pair<String, Integer> xorAndDelta =
-                                ConvertUtils.xorValues(originalValue, newValue);
-                            T factory =
-                                transactionFactory.apply(
-                                    xorAndDelta.getLeft(), networkType, deadline);
-                            factory.valueSizeDelta(xorAndDelta.getRight());
+                            byte[] originalValue = page.getData().get(0).getValue();
+                            byte[] newValueBytes = StringEncoder.getBytes(newValue);
+                            byte[] xoredBytes = ConvertUtils.xor(originalValue, newValueBytes);
+
+                            T factory = transactionFactory.apply(xoredBytes, networkType, deadline);
+                            factory.valueSizeDelta(newValueBytes.length - originalValue.length);
                             return factory;
                           }
                         }))

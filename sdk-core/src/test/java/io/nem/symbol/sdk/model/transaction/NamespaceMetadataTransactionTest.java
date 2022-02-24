@@ -17,6 +17,7 @@ package io.nem.symbol.sdk.model.transaction;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import io.nem.symbol.core.utils.StringEncoder;
 import io.nem.symbol.sdk.model.account.Account;
 import io.nem.symbol.sdk.model.namespace.NamespaceId;
 import io.nem.symbol.sdk.model.network.NetworkType;
@@ -41,10 +42,10 @@ public class NamespaceMetadataTransactionTest extends AbstractTransactionTester 
                 account.getPublicAccount().getAddress(),
                 namespaceId,
                 BigInteger.TEN,
-                "ABC123")
+                StringEncoder.getBytes("ABC123"))
             .valueSizeDelta(10)
             .build();
-    assertEquals("ABC123", transaction.getValue());
+    assertEquals("ABC123", StringEncoder.getString(transaction.getValue()));
     assertEquals(namespaceId, transaction.getTargetNamespaceId());
     assertEquals(NetworkType.MIJIN_TEST, transaction.getNetworkType());
     assertEquals(10, transaction.getValueSizeDelta());
@@ -63,7 +64,7 @@ public class NamespaceMetadataTransactionTest extends AbstractTransactionTester 
                 account.getAddress(),
                 namespaceId,
                 BigInteger.TEN,
-                "ABC123")
+                StringEncoder.getBytes("ABC123"))
             .valueSizeDelta(10)
             .signer(account.getPublicAccount())
             .build();

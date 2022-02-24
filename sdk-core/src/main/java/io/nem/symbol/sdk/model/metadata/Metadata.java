@@ -26,7 +26,6 @@ import io.nem.symbol.sdk.model.Stored;
 import io.nem.symbol.sdk.model.account.Address;
 import io.nem.symbol.sdk.model.mosaic.MosaicId;
 import io.nem.symbol.sdk.model.namespace.NamespaceId;
-import io.nem.symbol.sdk.model.transaction.MetadataTransaction;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.util.Optional;
@@ -57,7 +56,7 @@ public class Metadata implements Stored {
   private final MetadataType metadataType;
 
   /** The metadata value */
-  private final String value;
+  private final byte[] value;
 
   /**
    * The target {@link MosaicId} (when metadata type is MOSAIC)
@@ -77,7 +76,7 @@ public class Metadata implements Stored {
       Address targetAddress,
       BigInteger scopedMetadataKey,
       MetadataType metadataType,
-      String value,
+      byte[] value,
       String targetId) {
     this.recordId = recordId;
     this.version = version;
@@ -129,7 +128,7 @@ public class Metadata implements Stored {
     return metadataType;
   }
 
-  public String getValue() {
+  public byte[] getValue() {
     return value;
   }
 
@@ -169,8 +168,8 @@ public class Metadata implements Stored {
         .serialize();
   }
 
-  public static MetadataValueBuilder toMetadataValueBuilder(String value) {
-    ByteBuffer rawValue = ByteBuffer.wrap(MetadataTransaction.toByteArray(value));
+  public static MetadataValueBuilder toMetadataValueBuilder(byte[] value) {
+    ByteBuffer rawValue = ByteBuffer.wrap(value);
     return MetadataValueBuilder.create(rawValue);
   }
 

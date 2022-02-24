@@ -16,6 +16,7 @@
 package io.nem.symbol.sdk.infrastructure;
 
 import io.nem.symbol.core.utils.MapperUtils;
+import io.nem.symbol.core.utils.StringEncoder;
 import io.nem.symbol.sdk.api.MetadataSearchCriteria;
 import io.nem.symbol.sdk.api.Page;
 import io.nem.symbol.sdk.model.account.Account;
@@ -62,7 +63,12 @@ public class MosaicMetadataIntegrationTest extends BaseIntegrationTest {
     BigInteger key = BigInteger.TEN;
     MosaicMetadataTransaction transaction =
         MosaicMetadataTransactionFactory.create(
-                getNetworkType(), getDeadline(), testAccount.getAddress(), alias, key, message)
+                getNetworkType(),
+                getDeadline(),
+                testAccount.getAddress(),
+                alias,
+                key,
+                StringEncoder.getBytes(message))
             .maxFee(maxFee)
             .build();
 
@@ -135,7 +141,7 @@ public class MosaicMetadataIntegrationTest extends BaseIntegrationTest {
             .getData());
 
     assertMetadata(targetMosaicId, transaction, metadata);
-    Assertions.assertEquals(message, processedTransaction.getValue());
+    Assertions.assertArrayEquals(StringEncoder.getBytes(message), processedTransaction.getValue());
   }
 
   private String assertMetadata(
@@ -154,7 +160,7 @@ public class MosaicMetadataIntegrationTest extends BaseIntegrationTest {
 
     Assertions.assertEquals(targetMosaicId, endpointMetadata.get().getTargetId().get());
 
-    Assertions.assertEquals(transaction.getValue(), endpointMetadata.get().getValue());
+    Assertions.assertArrayEquals(transaction.getValue(), endpointMetadata.get().getValue());
     return endpointMetadata.get().getCompositeHash();
   }
 

@@ -16,6 +16,7 @@
 package io.nem.symbol.sdk.infrastructure;
 
 import io.nem.symbol.core.utils.ExceptionUtils;
+import io.nem.symbol.core.utils.StringEncoder;
 import io.nem.symbol.sdk.api.Listener;
 import io.nem.symbol.sdk.api.Page;
 import io.nem.symbol.sdk.api.ReceiptRepository;
@@ -618,7 +619,7 @@ class TransactionServiceTest {
                 Account.generateNewAccount(networkType).getAddress(),
                 mosaicNamespace2,
                 BigInteger.TEN,
-                "Value")
+                StringEncoder.getBytes("Value"))
             .transactionInfo(TransactionInfo.create(height, 4, "ABC", transactionHash, ""));
 
     MosaicMetadataTransaction transaction = factory.build();

@@ -121,7 +121,7 @@ class MetadataTransactionServiceTest {
             targetAccount.getAddress(),
             metadataKey,
             MetadataType.ACCOUNT,
-            oldValue,
+            StringEncoder.getBytes(oldValue),
             null);
 
     MetadataSearchCriteria criteria =
@@ -142,8 +142,8 @@ class MetadataTransactionServiceTest {
             .get();
 
     Assertions.assertEquals(metadataKey, result.getScopedMetadataKey());
-    Assertions.assertNotEquals(oldValue, result.getValue());
-    Assertions.assertNotEquals(newValue, result.getValue());
+    Assertions.assertNotEquals(oldValue, StringEncoder.getString(result.getValue()));
+    Assertions.assertNotEquals(newValue, StringEncoder.getString(result.getValue()));
     Assertions.assertEquals(
         StringEncoder.getBytes(newValue).length - StringEncoder.getBytes(oldValue).length,
         result.getValueSizeDelta());
@@ -176,7 +176,7 @@ class MetadataTransactionServiceTest {
             .get();
 
     Assertions.assertEquals(metadataKey, result.getScopedMetadataKey());
-    Assertions.assertEquals(newValue, result.getValue());
+    Assertions.assertArrayEquals(StringEncoder.getBytes(newValue), result.getValue());
     Assertions.assertEquals(StringEncoder.getBytes(newValue).length, result.getValueSizeDelta());
     Assertions.assertEquals(targetAccount.getAddress(), result.getTargetAddress());
 
@@ -271,7 +271,7 @@ class MetadataTransactionServiceTest {
             targetAccount.getAddress(),
             metadataKey,
             MetadataType.MOSAIC,
-            oldValue,
+            StringEncoder.getBytes(oldValue),
             mosaicId.getIdAsHex());
 
     MetadataSearchCriteria criteria =
@@ -292,8 +292,8 @@ class MetadataTransactionServiceTest {
             .get();
 
     Assertions.assertEquals(metadataKey, result.getScopedMetadataKey());
-    Assertions.assertNotEquals(oldValue, result.getValue());
-    Assertions.assertNotEquals(newValue, result.getValue());
+    Assertions.assertNotEquals(oldValue, StringEncoder.getString(result.getValue()));
+    Assertions.assertNotEquals(newValue, StringEncoder.getString(result.getValue()));
     Assertions.assertEquals(
         StringEncoder.getBytes(newValue).length - StringEncoder.getBytes(oldValue).length,
         result.getValueSizeDelta());
@@ -319,7 +319,7 @@ class MetadataTransactionServiceTest {
             targetAccount.getAddress(),
             metadataKey,
             MetadataType.MOSAIC,
-            oldValue,
+            StringEncoder.getBytes(oldValue),
             mosaicId.getIdAsHex());
 
     MetadataSearchCriteria criteria =
@@ -340,8 +340,8 @@ class MetadataTransactionServiceTest {
             .get();
 
     Assertions.assertEquals(metadataKey, result.getScopedMetadataKey());
-    Assertions.assertNotEquals(oldValue, result.getValue());
-    Assertions.assertNotEquals(newValue, result.getValue());
+    Assertions.assertNotEquals(oldValue, StringEncoder.getString(result.getValue()));
+    Assertions.assertNotEquals(newValue, StringEncoder.getString(result.getValue()));
     Assertions.assertEquals(
         StringEncoder.getBytes(newValue).length - StringEncoder.getBytes(oldValue).length,
         result.getValueSizeDelta());
@@ -375,7 +375,7 @@ class MetadataTransactionServiceTest {
             .get();
 
     Assertions.assertEquals(metadataKey, result.getScopedMetadataKey());
-    Assertions.assertEquals(newValue, result.getValue());
+    Assertions.assertArrayEquals(StringEncoder.getBytes(newValue), result.getValue());
     Assertions.assertEquals(StringEncoder.getBytes(newValue).length, result.getValueSizeDelta());
     Assertions.assertEquals(targetAccount.getAddress(), result.getTargetAddress());
     Assertions.assertEquals(mosaicId.getId(), result.getTargetMosaicId().getId());
@@ -478,7 +478,7 @@ class MetadataTransactionServiceTest {
             targetAccount.getAddress(),
             metadataKey,
             MetadataType.NAMESPACE,
-            oldValue,
+            StringEncoder.getBytes(oldValue),
             namespaceId.getIdAsHex());
 
     MetadataSearchCriteria criteria =
@@ -499,8 +499,8 @@ class MetadataTransactionServiceTest {
             .get();
 
     Assertions.assertEquals(metadataKey, result.getScopedMetadataKey());
-    Assertions.assertNotEquals(oldValue, result.getValue());
-    Assertions.assertNotEquals(newValue, result.getValue());
+    Assertions.assertNotEquals(oldValue, StringEncoder.getString(result.getValue()));
+    Assertions.assertNotEquals(newValue, StringEncoder.getString(result.getValue()));
     Assertions.assertEquals(
         StringEncoder.getBytes(newValue).length - StringEncoder.getBytes(oldValue).length,
         result.getValueSizeDelta());
@@ -534,7 +534,7 @@ class MetadataTransactionServiceTest {
             .get();
 
     Assertions.assertEquals(metadataKey, result.getScopedMetadataKey());
-    Assertions.assertEquals(newValue, result.getValue());
+    Assertions.assertArrayEquals(StringEncoder.getBytes(newValue), result.getValue());
     Assertions.assertEquals(StringEncoder.getBytes(newValue).length, result.getValueSizeDelta());
     Assertions.assertEquals(targetAccount.getAddress(), result.getTargetAddress());
     Assertions.assertEquals(namespaceId.getId(), result.getTargetNamespaceId().getId());

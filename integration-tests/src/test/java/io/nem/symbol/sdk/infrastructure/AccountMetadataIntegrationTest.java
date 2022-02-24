@@ -15,6 +15,7 @@
  */
 package io.nem.symbol.sdk.infrastructure;
 
+import io.nem.symbol.core.utils.StringEncoder;
 import io.nem.symbol.sdk.api.MetadataSearchCriteria;
 import io.nem.symbol.sdk.model.account.Account;
 import io.nem.symbol.sdk.model.metadata.Metadata;
@@ -59,7 +60,11 @@ public class AccountMetadataIntegrationTest extends BaseIntegrationTest {
 
     AccountMetadataTransaction transaction =
         AccountMetadataTransactionFactory.create(
-                getNetworkType(), getDeadline(), testAccount.getAddress(), key, message)
+                getNetworkType(),
+                getDeadline(),
+                testAccount.getAddress(),
+                key,
+                StringEncoder.getBytes(message))
             .maxFee(maxFee)
             .build();
 
@@ -108,7 +113,7 @@ public class AccountMetadataIntegrationTest extends BaseIntegrationTest {
                         .scopedMetadataKey(metadata.getScopedMetadataKey())))
             .getData());
 
-    Assertions.assertEquals(message, processedTransaction.getValue());
+    Assertions.assertArrayEquals(StringEncoder.getBytes(message), processedTransaction.getValue());
   }
 
   private Metadata assertMetadata(AccountMetadataTransaction transaction, List<Metadata> metadata) {
@@ -123,7 +128,7 @@ public class AccountMetadataIntegrationTest extends BaseIntegrationTest {
             .findFirst();
 
     Assertions.assertTrue(endpointMetadata.isPresent());
-    Assertions.assertEquals(transaction.getValue(), endpointMetadata.get().getValue());
+    Assertions.assertArrayEquals(transaction.getValue(), endpointMetadata.get().getValue());
     return endpointMetadata.get();
   }
 }

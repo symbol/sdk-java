@@ -16,6 +16,7 @@
 package io.nem.symbol.sdk.infrastructure.vertx;
 
 import io.nem.symbol.core.utils.ConvertUtils;
+import io.nem.symbol.core.utils.StringEncoder;
 import io.nem.symbol.sdk.api.MetadataSearchCriteria;
 import io.nem.symbol.sdk.model.account.Account;
 import io.nem.symbol.sdk.model.account.Address;
@@ -98,7 +99,8 @@ public class MetadataRepositoryVertxImplTest extends AbstractVertxRespositoryTes
         MetadataTypeEnum.fromValue(result.getMetadataType().getValue()));
 
     Assertions.assertEquals(
-        ConvertUtils.fromHexToString(expected.getMetadataEntry().getValue()), result.getValue());
+        ConvertUtils.fromHexToString(expected.getMetadataEntry().getValue()),
+        StringEncoder.getString(result.getValue()));
 
     if (expected.getMetadataEntry().getTargetId() != null) {
       Assertions.assertTrue(result.getTargetId().isPresent());

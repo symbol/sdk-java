@@ -30,11 +30,8 @@ public abstract class MetadataTransactionFactory<T extends MetadataTransaction>
 
   /** Metadata key scoped to source, target and type. */
   private final BigInteger scopedMetadataKey;
-  /**
-   * When there is an existing value, the new value is calculated as xor(previous-value, value). It
-   * can be a plain text.
-   */
-  private final String value;
+  /** When there is an existing value, the new value is calculated as xor(previous-value, value). */
+  private final byte[] value;
   /** Change in value size in bytes. Defaulted to the size of the encoded value. */
   private int valueSizeDelta;
   /** The value size. Defaulted to the size of the encoded value. */
@@ -46,7 +43,7 @@ public abstract class MetadataTransactionFactory<T extends MetadataTransaction>
       Deadline deadline,
       UnresolvedAddress targetAddress,
       BigInteger scopedMetadataKey,
-      String value) {
+      byte[] value) {
     super(transactionType, networkType, deadline);
 
     Validate.notNull(targetAddress, "TargetAddress must not be null");
@@ -58,7 +55,7 @@ public abstract class MetadataTransactionFactory<T extends MetadataTransaction>
     this.targetAddress = targetAddress;
     this.scopedMetadataKey = scopedMetadataKey;
     this.value = value;
-    int defaultSize = MetadataTransaction.toByteArray(value).length;
+    int defaultSize = value.length;
     this.valueSizeDelta = defaultSize;
     this.valueSize = defaultSize;
   }
@@ -96,7 +93,7 @@ public abstract class MetadataTransactionFactory<T extends MetadataTransaction>
     return this;
   }
 
-  public String getValue() {
+  public byte[] getValue() {
     return value;
   }
 }

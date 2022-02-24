@@ -45,7 +45,7 @@ class NamespaceMetadataTransactionMapper
     Integer valueSizeDelta = transaction.getValueSizeDelta();
     BigInteger scopedMetaDataKey =
         MapperUtils.fromHexToBigInteger(transaction.getScopedMetadataKey());
-    String value = ConvertUtils.fromHexToString(transaction.getValue());
+    byte[] value = ConvertUtils.fromHexToBytes(transaction.getValue());
     NamespaceId targetNamespace = MapperUtils.toNamespaceId(transaction.getTargetNamespaceId());
     NamespaceMetadataTransactionFactory factory =
         NamespaceMetadataTransactionFactory.create(
@@ -64,7 +64,7 @@ class NamespaceMetadataTransactionMapper
     dto.setTargetAddress(transaction.getTargetAddress().encoded(transaction.getNetworkType()));
     dto.setTargetNamespaceId(MapperUtils.getIdAsHex(transaction.getTargetNamespaceId()));
     dto.setScopedMetadataKey(MapperUtils.fromBigIntegerToHex(transaction.getScopedMetadataKey()));
-    dto.setValue(ConvertUtils.fromStringToHex(transaction.getValue()));
+    dto.setValue(ConvertUtils.toHex(transaction.getValue()));
     dto.setValueSizeDelta(transaction.getValueSizeDelta());
     dto.setValueSize(transaction.getValueSize());
   }

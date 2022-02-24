@@ -33,12 +33,8 @@ public abstract class MetadataTransaction extends Transaction {
   /** The value size. */
   private final long valueSize;
 
-  /**
-   * When there is an existing value, the new value is calculated as xor(previous-value, value). The
-   * value is an hex string as it comes from the rest objects. Value is converted to byte array when
-   * serialized to Catbuffer.
-   */
-  private final String value;
+  /** When there is an existing value, the new value is calculated as xor(previous-value, value). */
+  private final byte[] value;
 
   /**
    * Constructor
@@ -66,7 +62,7 @@ public abstract class MetadataTransaction extends Transaction {
     return valueSizeDelta;
   }
 
-  public String getValue() {
+  public byte[] getValue() {
     return value;
   }
 

@@ -44,7 +44,7 @@ class AccountMetadataTransactionMapper
     Integer valueSizeDelta = transaction.getValueSizeDelta();
     BigInteger scopedMetaDataKey =
         MapperUtils.fromHexToBigInteger(transaction.getScopedMetadataKey());
-    String value = ConvertUtils.fromHexToString(transaction.getValue());
+    byte[] value = ConvertUtils.fromHexToBytes(transaction.getValue());
     AccountMetadataTransactionFactory factory =
         AccountMetadataTransactionFactory.create(
             networkType, deadline, targetAddress, scopedMetaDataKey, value);
@@ -62,7 +62,7 @@ class AccountMetadataTransactionMapper
     dto.setTargetAddress(transaction.getTargetAddress().encoded(transaction.getNetworkType()));
     dto.setValueSizeDelta(transaction.getValueSizeDelta());
     dto.setScopedMetadataKey(MapperUtils.fromBigIntegerToHex(transaction.getScopedMetadataKey()));
-    dto.setValue(ConvertUtils.fromStringToHex(transaction.getValue()));
+    dto.setValue(ConvertUtils.toHex(transaction.getValue()));
     dto.setValueSize(transaction.getValueSize());
   }
 }

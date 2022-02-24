@@ -34,7 +34,7 @@ public class NamespaceMetadataTransactionFactory
       UnresolvedAddress targetAddress,
       NamespaceId targetNamespaceId,
       BigInteger scopedMetadataKey,
-      String value) {
+      byte[] value) {
     super(
         TransactionType.NAMESPACE_METADATA,
         networkType,
@@ -63,7 +63,7 @@ public class NamespaceMetadataTransactionFactory
       UnresolvedAddress targetAddress,
       NamespaceId targetNamespaceId,
       BigInteger scopedMetadataKey,
-      String value) {
+      byte[] value) {
     return new NamespaceMetadataTransactionFactory(
         networkType, deadline, targetAddress, targetNamespaceId, scopedMetadataKey, value);
   }

@@ -34,7 +34,7 @@ public class MosaicMetadataTransactionFactory
       UnresolvedAddress targetAddress,
       UnresolvedMosaicId targetMosaicId,
       BigInteger scopedMetadataKey,
-      String value) {
+      byte[] value) {
     super(
         TransactionType.MOSAIC_METADATA,
         networkType,
@@ -63,7 +63,7 @@ public class MosaicMetadataTransactionFactory
       UnresolvedAddress targetAddress,
       UnresolvedMosaicId targetMosaicId,
       BigInteger scopedMetadataKey,
-      String value) {
+      byte[] value) {
     return new MosaicMetadataTransactionFactory(
         networkType, deadline, targetAddress, targetMosaicId, scopedMetadataKey, value);
   }

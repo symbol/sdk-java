@@ -17,6 +17,7 @@ package io.nem.symbol.sdk.model.transaction;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import io.nem.symbol.core.utils.StringEncoder;
 import io.nem.symbol.sdk.model.account.Account;
 import io.nem.symbol.sdk.model.network.NetworkType;
 import java.math.BigInteger;
@@ -44,11 +45,11 @@ public class AccountMetadataTransactionTest extends AbstractTransactionTester {
                 new Deadline(BigInteger.ONE),
                 account.getPublicAccount().getAddress(),
                 BigInteger.TEN,
-                "123BAC")
+                StringEncoder.getBytes("123BAC"))
             .valueSizeDelta(10)
             .build();
 
-    assertEquals("123BAC", transaction.getValue());
+    assertEquals("123BAC", StringEncoder.getString(transaction.getValue()));
     assertEquals(NetworkType.MIJIN_TEST, transaction.getNetworkType());
     assertEquals(10, transaction.getValueSizeDelta());
     assertEquals(BigInteger.TEN, transaction.getScopedMetadataKey());
@@ -64,7 +65,7 @@ public class AccountMetadataTransactionTest extends AbstractTransactionTester {
                 new Deadline(BigInteger.ONE),
                 account.getPublicAccount().getAddress(),
                 BigInteger.TEN,
-                "123BAC")
+                "123BAC".getBytes())
             .valueSizeDelta(10)
             .signer(account.getPublicAccount())
             .build();

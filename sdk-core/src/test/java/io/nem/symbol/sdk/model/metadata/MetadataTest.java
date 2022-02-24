@@ -42,7 +42,7 @@ public class MetadataTest {
   Address sourceAddress = Address.createFromPublicKey(sourceAccount.toHex(), networkType);
   Address targetAddress = Address.createFromPublicKey(targetAccount.toHex(), networkType);
   BigInteger metadataKey = BigInteger.valueOf(10);
-  String value = "Some String";
+  byte[] value = StringEncoder.getBytes("Some String");
   NamespaceId namespaceId = NamespaceId.createFromName("this.currency");
   MosaicId mosaicId = MosaicId.createFromNonce(new MosaicNonce(1), sourceAddress);
   String recordId = "someId";
@@ -87,7 +87,7 @@ public class MetadataTest {
     Assertions.assertEquals(sourceAddress, metadata.getSourceAddress());
     Assertions.assertEquals(targetAddress, metadata.getTargetAddress());
     Assertions.assertEquals(MetadataType.NAMESPACE, metadata.getMetadataType());
-    Assertions.assertEquals(value, metadata.getValue());
+    Assertions.assertArrayEquals(value, metadata.getValue());
 
     byte[] serializedState = metadata.serialize();
     String expectedHex =
@@ -99,7 +99,7 @@ public class MetadataTest {
     Assertions.assertEquals(
         ConvertUtils.toHex(metadata.serialize()), ConvertUtils.toHex(builder.serialize()));
 
-    Assertions.assertEquals(value, StringEncoder.getString(builder.getValue().getData().array()));
+    Assertions.assertArrayEquals(value, builder.getValue().getData().array());
   }
 
   /** Contructor */
@@ -123,7 +123,7 @@ public class MetadataTest {
     Assertions.assertEquals(sourceAddress, metadata.getSourceAddress());
     Assertions.assertEquals(targetAddress, metadata.getTargetAddress());
     Assertions.assertEquals(MetadataType.ACCOUNT, metadata.getMetadataType());
-    Assertions.assertEquals(value, metadata.getValue());
+    Assertions.assertArrayEquals(value, metadata.getValue());
 
     byte[] serializedState = metadata.serialize();
     String expectedHex =
@@ -135,7 +135,7 @@ public class MetadataTest {
     Assertions.assertEquals(
         ConvertUtils.toHex(metadata.serialize()), ConvertUtils.toHex(builder.serialize()));
 
-    Assertions.assertEquals(value, StringEncoder.getString(builder.getValue().getData().array()));
+    Assertions.assertArrayEquals(value, builder.getValue().getData().array());
   }
 
   /** Contructor */
@@ -159,7 +159,7 @@ public class MetadataTest {
     Assertions.assertEquals(sourceAddress, metadata.getSourceAddress());
     Assertions.assertEquals(targetAddress, metadata.getTargetAddress());
     Assertions.assertEquals(MetadataType.MOSAIC, metadata.getMetadataType());
-    Assertions.assertEquals(value, metadata.getValue());
+    Assertions.assertArrayEquals(value, metadata.getValue());
 
     byte[] serializedState = metadata.serialize();
     String expectedHex =
@@ -171,6 +171,6 @@ public class MetadataTest {
     Assertions.assertEquals(
         ConvertUtils.toHex(metadata.serialize()), ConvertUtils.toHex(builder.serialize()));
 
-    Assertions.assertEquals(value, StringEncoder.getString(builder.getValue().getData().array()));
+    Assertions.assertArrayEquals(value, builder.getValue().getData().array());
   }
 }

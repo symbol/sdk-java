@@ -113,7 +113,7 @@ public class MetadataRepositoryVertxImpl extends AbstractRepositoryVertxImpl
         MapperUtils.toAddress(entryDto.getTargetAddress()),
         new BigInteger(entryDto.getScopedMetadataKey(), 16),
         MetadataType.rawValueOf(entryDto.getMetadataType().getValue()),
-        ConvertUtils.fromHexToString(entryDto.getValue()),
+        ConvertUtils.fromHexToBytes(entryDto.getValue()),
         entryDto.getTargetId());
   }
 

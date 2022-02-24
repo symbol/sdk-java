@@ -28,7 +28,7 @@ public class AccountMetadataTransactionFactory
       Deadline deadline,
       UnresolvedAddress targetAddress,
       BigInteger scopedMetadataKey,
-      String value) {
+      byte[] value) {
     super(
         TransactionType.ACCOUNT_METADATA,
         networkType,
@@ -53,7 +53,7 @@ public class AccountMetadataTransactionFactory
       Deadline deadline,
       UnresolvedAddress targetAddress,
       BigInteger scopedMetadataKey,
-      String value) {
+      byte[] value) {
     return new AccountMetadataTransactionFactory(
         networkType, deadline, targetAddress, scopedMetadataKey, value);
   }

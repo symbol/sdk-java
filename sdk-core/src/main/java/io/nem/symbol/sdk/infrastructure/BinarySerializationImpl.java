@@ -112,7 +112,6 @@ import io.nem.symbol.sdk.model.transaction.HashLockTransaction;
 import io.nem.symbol.sdk.model.transaction.HashLockTransactionFactory;
 import io.nem.symbol.sdk.model.transaction.LinkAction;
 import io.nem.symbol.sdk.model.transaction.LockHashAlgorithm;
-import io.nem.symbol.sdk.model.transaction.MetadataTransaction;
 import io.nem.symbol.sdk.model.transaction.MosaicAddressRestrictionTransaction;
 import io.nem.symbol.sdk.model.transaction.MosaicAddressRestrictionTransactionFactory;
 import io.nem.symbol.sdk.model.transaction.MosaicAliasTransaction;
@@ -729,7 +728,7 @@ public class BinarySerializationImpl implements BinarySerialization {
           SerializationUtils.toUnresolvedAddress(builder.getTargetAddress());
       BigInteger scopedMetadataKey =
           SerializationUtils.toUnsignedBigInteger(builder.getScopedMetadataKey());
-      String value = SerializationUtils.toString(builder.getValue());
+      byte[] value = builder.getValue().array();
       return AccountMetadataTransactionFactory.create(
               networkType, deadline, targetAccount, scopedMetadataKey, value)
           .valueSizeDelta(builder.getValueSizeDelta());
@@ -742,7 +741,7 @@ public class BinarySerializationImpl implements BinarySerialization {
               transaction.getTargetAddress(), transaction.getNetworkType()),
           SerializationUtils.toUnsignedLong(transaction.getScopedMetadataKey()),
           (short) transaction.getValueSizeDelta(),
-          ByteBuffer.wrap(MetadataTransaction.toByteArray(transaction.getValue())));
+          ByteBuffer.wrap(transaction.getValue()));
     }
   }
 
@@ -768,7 +767,7 @@ public class BinarySerializationImpl implements BinarySerialization {
           SerializationUtils.toUnresolvedAddress(builder.getTargetAddress());
       BigInteger scopedMetadataKey =
           SerializationUtils.toUnsignedBigInteger(builder.getScopedMetadataKey());
-      String value = StringEncoder.getString(builder.getValue().array());
+      byte[] value = builder.getValue().array();
       UnresolvedMosaicId targetMosaicId =
           SerializationUtils.toUnresolvedMosaicId(builder.getTargetMosaicId());
       return MosaicMetadataTransactionFactory.create(
@@ -784,7 +783,7 @@ public class BinarySerializationImpl implements BinarySerialization {
           SerializationUtils.toUnsignedLong(transaction.getScopedMetadataKey()),
           SerializationUtils.toUnresolvedMosaicIdDto(transaction.getTargetMosaicId()),
           (short) transaction.getValueSizeDelta(),
-          ByteBuffer.wrap(MetadataTransaction.toByteArray(transaction.getValue())));
+          ByteBuffer.wrap(transaction.getValue()));
     }
   }
 
@@ -810,7 +809,7 @@ public class BinarySerializationImpl implements BinarySerialization {
           SerializationUtils.toUnresolvedAddress(builder.getTargetAddress());
       BigInteger scopedMetadataKey =
           SerializationUtils.toUnsignedBigInteger(builder.getScopedMetadataKey());
-      String value = StringEncoder.getString(builder.getValue().array());
+      byte[] value = builder.getValue().array();
       NamespaceId targetNamespaceId =
           SerializationUtils.toNamespaceId(builder.getTargetNamespaceId());
       return NamespaceMetadataTransactionFactory.create(
@@ -827,7 +826,7 @@ public class BinarySerializationImpl implements BinarySerialization {
           new NamespaceIdDto(
               SerializationUtils.toUnsignedLong(transaction.getTargetNamespaceId().getId())),
           (short) transaction.getValueSizeDelta(),
-          ByteBuffer.wrap(MetadataTransaction.toByteArray(transaction.getValue())));
+          ByteBuffer.wrap(transaction.getValue()));
     }
   }
 

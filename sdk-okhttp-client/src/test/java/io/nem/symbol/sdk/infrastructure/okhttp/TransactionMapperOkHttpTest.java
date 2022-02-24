@@ -22,6 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import io.nem.symbol.core.utils.ConvertUtils;
 import io.nem.symbol.core.utils.MapperUtils;
+import io.nem.symbol.core.utils.StringEncoder;
 import io.nem.symbol.sdk.infrastructure.okhttp.mappers.GeneralTransactionMapper;
 import io.nem.symbol.sdk.model.account.Address;
 import io.nem.symbol.sdk.model.account.PublicAccount;
@@ -486,8 +487,9 @@ public class TransactionMapperOkHttpTest {
     Assertions.assertEquals(1, transaction.getValueSizeDelta());
     Assertions.assertEquals(
         new BigInteger("11529215046069664444"), transaction.getScopedMetadataKey());
-    Assertions.assertEquals(
-        "This is the message for this account! 汉字89664", transaction.getValue());
+    Assertions.assertArrayEquals(
+        StringEncoder.getBytes("This is the message for this account! 汉字89664"),
+        transaction.getValue());
     Assertions.assertEquals("0003070467832AAA", transaction.getTargetMosaicId().getIdAsHex());
   }
 
@@ -511,8 +513,9 @@ public class TransactionMapperOkHttpTest {
     Assertions.assertEquals(-1, transaction.getValueSizeDelta());
     Assertions.assertEquals(
         new BigInteger("11529215046069664444"), transaction.getScopedMetadataKey());
-    Assertions.assertEquals(
-        "This is the message for this account! 汉字89664", transaction.getValue());
+    Assertions.assertArrayEquals(
+        StringEncoder.getBytes("This is the message for this account! 汉字89664"),
+        transaction.getValue());
     Assertions.assertEquals("0003070467832AAA", transaction.getTargetNamespaceId().getIdAsHex());
   }
 
@@ -536,8 +539,9 @@ public class TransactionMapperOkHttpTest {
     Assertions.assertEquals(-1, transaction.getValueSizeDelta());
     Assertions.assertEquals(
         new BigInteger("11529215046069664444"), transaction.getScopedMetadataKey());
-    Assertions.assertEquals(
-        "This is the message for this account! 汉字89664", transaction.getValue());
+    Assertions.assertArrayEquals(
+        StringEncoder.getBytes("This is the message for this account! 汉字89664"),
+        transaction.getValue());
   }
 
   @Test
