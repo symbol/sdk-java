@@ -50,8 +50,7 @@ class BinarySerializationTest {
   @Test
   void testAllTransactionAreHandled() {
     BinarySerializationImpl binarySerialization = new BinarySerializationImpl();
-    List<TransactionType> notHandledTransactionTypes =
-        Arrays.stream(TransactionType.values())
+    List<TransactionType> notHandledTransactionTypes = Arrays.stream(TransactionType.values())
             .filter(
                 t -> {
                   try {
@@ -63,6 +62,12 @@ class BinarySerializationTest {
                   }
                 })
             .collect(Collectors.toList());
+
+	if (null == binarySerialization.resolveSerializer(TransactionType.AGGREGATE_BONDED, 1))
+		notHandledTransactionTypes.add(TransactionType.AGGREGATE_BONDED);
+
+	if (null == binarySerialization.resolveSerializer(TransactionType.AGGREGATE_COMPLETE, 1))
+		notHandledTransactionTypes.add(TransactionType.AGGREGATE_BONDED);
 
     Assertions.assertTrue(
         notHandledTransactionTypes.isEmpty(),

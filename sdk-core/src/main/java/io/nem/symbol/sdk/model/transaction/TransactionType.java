@@ -45,10 +45,10 @@ public enum TransactionType {
   MULTISIG_ACCOUNT_MODIFICATION(16725, 1),
 
   /** Aggregate complete transaction type. */
-  AGGREGATE_COMPLETE(16705, 1),
+  AGGREGATE_COMPLETE(16705, 2),
 
   /** Aggregate bonded transaction type */
-  AGGREGATE_BONDED(16961, 1),
+  AGGREGATE_BONDED(16961, 2),
 
   /** Voting key link transaction builder. */
   VOTING_KEY_LINK(16707, 1),

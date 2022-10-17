@@ -16,19 +16,18 @@
 package io.nem.symbol.core.crypto;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /** Merkle hash builder. */
 public class MerkleHashBuilder {
 
-  private final List<byte[]> hashes;
+  private final ArrayList<byte[]> hashes;
 
   /** Constructor. */
   public MerkleHashBuilder() {
     this.hashes = new ArrayList<>();
   }
 
-  private byte[] getRootHash(List<byte[]> hashes) {
+  private byte[] getRootHash(ArrayList<byte[]> hashes) {
     if (hashes.isEmpty()) {
       return new byte[32];
     }
@@ -38,15 +37,14 @@ public class MerkleHashBuilder {
 
     Hasher hasher = Hashes::sha3_256;
     while (numRemainingHashes > 1) {
-
       for (int i = 0; i < numRemainingHashes; i += 2) {
         if (i + 1 < numRemainingHashes) {
-          hashes.add(i / 2, hasher.hash(hashes.get(i), hashes.get(i + 1)));
+          hashes.set(i / 2, hasher.hash(hashes.get(i), hashes.get(i + 1)));
           continue;
         }
 
         // if there is an odd number of hashes, duplicate the last one
-        hashes.add(i / 2, hasher.hash(hashes.get(i), hashes.get(i)));
+        hashes.set(i / 2, hasher.hash(hashes.get(i), hashes.get(i)));
         ++numRemainingHashes;
       }
 
