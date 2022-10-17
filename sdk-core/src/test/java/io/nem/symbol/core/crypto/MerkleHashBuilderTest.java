@@ -16,64 +16,108 @@
 package io.nem.symbol.core.crypto;
 
 import io.nem.symbol.core.utils.ConvertUtils;
+import io.nem.symbol.sdk.infrastructure.RandomUtils;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 /** Testing of {@link MerkleHashBuilder} */
 public class MerkleHashBuilderTest {
+	byte[] calculateMerkleHash(Stream<byte[]> hashes) {
+		MerkleHashBuilder builder = new MerkleHashBuilder();
+		hashes.forEach(embeddedHash -> builder.update(embeddedHash));
+		return builder.getRootHash();
+	}
 
-  @Test
-  public void testZero() {
-    MerkleHashBuilder builder = new MerkleHashBuilder();
-    Assertions.assertEquals(
-        "0000000000000000000000000000000000000000000000000000000000000000",
-        ConvertUtils.toHex(builder.getRootHash()));
-  }
+	void assertMerkleHash(String expectedHash, String[] hashes) {
+		// Act:
+		byte[] calculatedHash = calculateMerkleHash(Stream.of(hashes).map(ConvertUtils::fromHexToBytes));
 
-  @Test
-  public void testOne() {
-    MerkleHashBuilder builder = new MerkleHashBuilder();
-    builder.update(
-        ConvertUtils.fromHexToBytes(
-            "215b158f0bd416b596271bce527cd9dc8e4a639cc271d896f9156af6f441eeb9"));
-    Assertions.assertEquals(
-        "215B158F0BD416B596271BCE527CD9DC8E4A639CC271D896F9156AF6F441EEB9",
-        ConvertUtils.toHex(builder.getRootHash()));
-  }
+		// Assert:
+		Assertions.assertEquals(expectedHash, ConvertUtils.toHex(calculatedHash));
+	}
 
-  @Test
-  public void testTwo() {
-    MerkleHashBuilder builder = new MerkleHashBuilder();
+	@Test
+	public void testZero() {
+		this.assertMerkleHash("0000000000000000000000000000000000000000000000000000000000000000", new String[] {});
+	}
 
-    builder.update(
-        ConvertUtils.fromHexToBytes(
-            "215b158f0bd416b596271bce527cd9dc8e4a639cc271d896f9156af6f441eeb9"));
-    builder.update(
-        ConvertUtils.fromHexToBytes(
-            "976c5ce6bf3f797113e5a3a094c7801c885daf783c50563ffd3ca6a5ef580e25"));
+	@Test
+	public void testOne() {
+		String randomHash = ConvertUtils.toHex(RandomUtils.generateRandomBytes(32));
+		this.assertMerkleHash(randomHash, new String[] { randomHash });
+	}
 
-    Assertions.assertEquals(
-        "1C704E3AC99B124F92D2648649EC72C7A19EA4E2BB24F669B976180A295876FA",
-        ConvertUtils.toHex(builder.getRootHash()));
-  }
+	@Test
+	public void testCanBuildBalancedTree() {
+		this.assertMerkleHash(
+				"7D853079F5F9EE30BDAE49C4956AF20CDF989647AFE971C069AC263DA1FFDF7E",
+				new String[] {
+						"36C8213162CDBC78767CF43D4E06DDBE0D3367B6CEAEAEB577A50E2052441BC8",
+						"8A316E48F35CDADD3F827663F7535E840289A16A43E7134B053A86773E474C28",
+						"6D80E71F00DFB73B358B772AD453AEB652AE347D3E098AE269005A88DA0B84A7",
+						"2AE2CA59B5BB29721BFB79FE113929B6E52891CAA29CBF562EBEDC46903FF681",
+						"421D6B68A6DF8BB1D5C9ACF7ED44515E77945D42A491BECE68DA009B551EE6CE",
+						"7A1711AF5C402CFEFF87F6DA4B9C738100A7AC3EDAD38D698DF36CA3FE883480",
+						"1E6516B2CC617E919FAE0CF8472BEB2BFF598F19C7A7A7DC260BC6715382822C",
+						"410330530D04A277A7C96C1E4F34184FDEB0FFDA63563EFD796C404D7A6E5A20" });
+	}
 
-  @Test
-  public void testThree() {
-    MerkleHashBuilder builder = new MerkleHashBuilder();
+	@Test
+	public void testCanBuildFromUnbalancedTree() {
+		this.assertMerkleHash(
+				"DEFB4BF7ACF2145500087A02C88F8D1FCF27B8DEF4E0FDABE09413D87A3F0D09",
+				new String[] {
+						"36C8213162CDBC78767CF43D4E06DDBE0D3367B6CEAEAEB577A50E2052441BC8",
+						"8A316E48F35CDADD3F827663F7535E840289A16A43E7134B053A86773E474C28",
+						"6D80E71F00DFB73B358B772AD453AEB652AE347D3E098AE269005A88DA0B84A7",
+						"2AE2CA59B5BB29721BFB79FE113929B6E52891CAA29CBF562EBEDC46903FF681",
+						"421D6B68A6DF8BB1D5C9ACF7ED44515E77945D42A491BECE68DA009B551EE6CE" });
+	}
 
-    builder.update(
-        ConvertUtils.fromHexToBytes(
-            "215b158f0bd416b596271bce527cd9dc8e4a639cc271d896f9156af6f441eeb9"));
-    builder.update(
-        ConvertUtils.fromHexToBytes(
-            "976c5ce6bf3f797113e5a3a094c7801c885daf783c50563ffd3ca6a5ef580e25"));
+	@Test
+	public void testChangingSubHashOrderChangesMerkleHash() {
+		// Arrange:
+		ArrayList<byte[]> seed1 = new ArrayList<byte[]>();
+		for (int i = 0; i < 8; ++i)
+			seed1.add(RandomUtils.generateRandomBytes(32));
 
-    builder.update(
-        ConvertUtils.fromHexToBytes(
-            "e926cc323886d47234bb0b49219c81e280e8a65748b437c2ae83b09b37a5aaf2"));
+		List<byte[]> seed2 = Arrays.asList(
+			seed1.get(0), seed1.get(1), seed1.get(2), seed1.get(5),
+			seed1.get(4), seed1.get(3), seed1.get(6), seed1.get(7)
+		);
 
-    Assertions.assertEquals(
-        "5DC17B2409D50BCC7C1FAA720D0EC8B79A1705D0C517BCC0BDBD316540974D5E",
-        ConvertUtils.toHex(builder.getRootHash()));
-  }
+		// Act:
+		byte[] rootHash1 = this.calculateMerkleHash(seed1.stream());
+		byte[] rootHash2 = this.calculateMerkleHash(seed2.stream());
+
+		// Assert:
+		Assertions.assertNotEquals(ConvertUtils.toHex(rootHash1), ConvertUtils.toHex(rootHash2));
+	}
+
+	@Test
+	public void testChangingSubHashChangesMerkleHash() {
+		// Arrange:
+		ArrayList<byte[]> seed1 = new ArrayList<byte[]>();
+		for (int i = 0; i < 8; ++i)
+			seed1.add(RandomUtils.generateRandomBytes(32));
+
+		List<byte[]> seed2 = Arrays.asList(
+			seed1.get(0), seed1.get(1), seed1.get(2), seed1.get(3),
+			RandomUtils.generateRandomBytes(32), seed1.get(5), seed1.get(6), seed1.get(7)
+		);
+
+		// Act:
+		byte[] rootHash1 = this.calculateMerkleHash(seed1.stream());
+		byte[] rootHash2 = this.calculateMerkleHash(seed2.stream());
+
+		// Assert:
+		Assertions.assertNotEquals(ConvertUtils.toHex(rootHash1), ConvertUtils.toHex(rootHash2));
+	}
 }

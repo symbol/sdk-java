@@ -34,6 +34,7 @@ plugins {
     id 'jacoco'
     id 'signing'
     id 'java-library'
+    id 'java'
 }
 
 apply plugin: 'nebula-aggregate-javadocs'
@@ -43,8 +44,8 @@ apply plugin: 'nebula-aggregate-javadocs'
 ext {
     vertxVersion = "3.5.0"
     rxjavaVersion = "2.1.7"
-    junitVersion = "5.4.0"
-    catbufferVersion = "0.1.2"
+    junitVersion = "5.9.0"
+    catbufferVersion = "0.1.3-SNAPSHOT"
     restApiVersion = "1.0.0"
     jackson_version = "2.9.9"
     jackson_databind_version = "2.9.9"

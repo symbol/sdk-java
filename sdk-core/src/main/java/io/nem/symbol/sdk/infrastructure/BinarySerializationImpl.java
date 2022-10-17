@@ -175,43 +175,126 @@ public class BinarySerializationImpl implements BinarySerialization {
 
   /** Constructor */
   public BinarySerializationImpl() {
-    register(new TransferTransactionSerializer());
-    register(new MosaicSupplyChangeTransactionSerializer());
-    register(new MosaicDefinitionTransactionSerializer());
-    register(new AccountKeyLinkTransactionSerializer());
-    register(new AccountMetadataTransactionSerializer());
-    register(new MosaicMetadataTransactionSerializer());
-    register(new NamespaceMetadataTransactionSerializer());
-    register(new NamespaceRegistrationTransactionSerializer());
-    register(new SecretLockTransactionSerializer());
-    register(new SecretProofTransactionSerializer());
-    register(new AddressAliasTransactionSerializer());
-    register(new MosaicAliasTransactionSerializer());
-    register(new HashLockTransactionSerializer());
-    register(new MultisigAccountModificationTransactionSerializer());
-    register(new MosaicAddressRestrictionTransactionSerializer());
-    register(new MosaicGlobalRestrictionTransactionSerializer());
-    register(new AccountMosaicRestrictionTransactionSerializer());
-    register(new AccountOperationRestrictionTransactionSerializer());
-    register(new AccountAddressRestrictionTransactionSerializer());
-    register(new NodeKeyLinkTransactionBuilderSerializer());
-    register(new VotingKeyLinkTransactionBuilderSerializer());
-    register(new VrfKeyLinkTransactionBuilderSerializer());
-    register(new AggregateTransactionSerializer(TransactionType.AGGREGATE_COMPLETE, this));
-    register(new AggregateTransactionSerializer(TransactionType.AGGREGATE_BONDED, this));
+    {
+		TransactionSerializer<?> serializer = new TransferTransactionSerializer();
+		register(serializer, serializer.getVersion());
+	}
+    {
+		TransactionSerializer<?> serializer = new MosaicSupplyChangeTransactionSerializer();
+		register(serializer, serializer.getVersion());
+	}
+    {
+		TransactionSerializer<?> serializer = new MosaicDefinitionTransactionSerializer();
+		register(serializer, serializer.getVersion());
+	}
+    {
+		TransactionSerializer<?> serializer = new AccountKeyLinkTransactionSerializer();
+		register(serializer, serializer.getVersion());
+	}
+    {
+		TransactionSerializer<?> serializer = new AccountMetadataTransactionSerializer();
+		register(serializer, serializer.getVersion());
+	}
+    {
+		TransactionSerializer<?> serializer = new MosaicMetadataTransactionSerializer();
+		register(serializer, serializer.getVersion());
+	}
+    {
+		TransactionSerializer<?> serializer = new NamespaceMetadataTransactionSerializer();
+		register(serializer, serializer.getVersion());
+	}
+    {
+		TransactionSerializer<?> serializer = new NamespaceRegistrationTransactionSerializer();
+		register(serializer, serializer.getVersion());
+	}
+    {
+		TransactionSerializer<?> serializer = new SecretLockTransactionSerializer();
+		register(serializer, serializer.getVersion());
+	}
+    {
+		TransactionSerializer<?> serializer = new SecretProofTransactionSerializer();
+		register(serializer, serializer.getVersion());
+	}
+    {
+		TransactionSerializer<?> serializer = new AddressAliasTransactionSerializer();
+		register(serializer, serializer.getVersion());
+	}
+    {
+		TransactionSerializer<?> serializer = new MosaicAliasTransactionSerializer();
+		register(serializer, serializer.getVersion());
+	}
+    {
+		TransactionSerializer<?> serializer = new HashLockTransactionSerializer();
+		register(serializer, serializer.getVersion());
+	}
+    {
+		TransactionSerializer<?> serializer = new MultisigAccountModificationTransactionSerializer();
+		register(serializer, serializer.getVersion());
+	}
+    {
+		TransactionSerializer<?> serializer = new MosaicAddressRestrictionTransactionSerializer();
+		register(serializer, serializer.getVersion());
+	}
+    {
+		TransactionSerializer<?> serializer = new MosaicGlobalRestrictionTransactionSerializer();
+		register(serializer, serializer.getVersion());
+	}
+    {
+		TransactionSerializer<?> serializer = new AccountMosaicRestrictionTransactionSerializer();
+		register(serializer, serializer.getVersion());
+	}
+    {
+		TransactionSerializer<?> serializer = new AccountOperationRestrictionTransactionSerializer();
+		register(serializer, serializer.getVersion());
+	}
+    {
+		TransactionSerializer<?> serializer = new AccountAddressRestrictionTransactionSerializer();
+		register(serializer, serializer.getVersion());
+	}
+    {
+		TransactionSerializer<?> serializer = new NodeKeyLinkTransactionBuilderSerializer();
+		register(serializer, serializer.getVersion());
+	}
+    {
+		TransactionSerializer<?> serializer = new VotingKeyLinkTransactionBuilderSerializer();
+		register(serializer, serializer.getVersion());
+	}
+    {
+		TransactionSerializer<?> serializer = new VrfKeyLinkTransactionBuilderSerializer();
+		register(serializer, serializer.getVersion());
+	}
+
+	// beginregion use same objects for OLD version (format has not changed)
+	{
+		TransactionSerializer<?> serializer = new AggregateTransactionSerializer(TransactionType.AGGREGATE_COMPLETE, this);
+		register(serializer, 1);
+	}
+    {
+		TransactionSerializer<?> serializer = new AggregateTransactionSerializer(TransactionType.AGGREGATE_BONDED, this);
+		register(serializer, 1);
+	}
+	// endregion
+
+    {
+		TransactionSerializer<?> serializer = new AggregateTransactionSerializer(TransactionType.AGGREGATE_COMPLETE, this);
+		register(serializer, serializer.getVersion());
+	}
+    {
+		TransactionSerializer<?> serializer = new AggregateTransactionSerializer(TransactionType.AGGREGATE_BONDED, this);
+		register(serializer, serializer.getVersion());
+	}
   }
 
   /** @param serializer the serializer to be registered. */
-  private void register(TransactionSerializer serializer) {
+  private void register(TransactionSerializer<?> serializer, int version) {
 
-    Pair<TransactionType, Integer> pair =
-        Pair.of(serializer.getTransactionType(), serializer.getVersion());
+    Pair<TransactionType, Integer> pair = Pair.of(serializer.getTransactionType(), version);
     if (serializers.put(pair, serializer) != null) {
       throw new IllegalArgumentException(
           "TransactionSerializer for type "
               + serializer.getTransactionType()
               + " and version "
-              + serializer.getVersion()
+              + version
               + " was already registered!");
     }
   }
