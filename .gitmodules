@@ -1,9 +1,0 @@
-[submodule "catbuffer-generators"]
-	path = catbuffer-generators
-	url = git@github.com:symbol/sdk-java-catbuffer-generators.git
-[submodule "catbuffer-schemas"]
-	path = catbuffer-schemas
-	url = git@github.com:symbol/sdk-java-catbuffer-schemas.git
-[submodule "catbuffer-parser"]
-	path = catbuffer-parser
-	url = git@github.com:symbol/sdk-java-catbuffer-parser.git
