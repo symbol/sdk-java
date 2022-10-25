@@ -1,0 +1,13 @@
+# 1. suppress generation of setters for field listed in cats file
+# 2. when setting the field in builder replace with specified formula
+# note, currently only fields with kind SIMPLE are supported
+
+MosaicDefinitionTransaction:
+  id: model::GenerateMosaicId(model::GetSignerAddress(*pTransaction), m_nonce)
+
+NamespaceRegistrationTransaction:
+  # disable setter for discriminator
+  registrationType: m_registrationType
+
+  # need to use quoted string with escape characters to break setter onto multiple lines to avoid line length warning
+  id: "model::GenerateNamespaceId(m_parentId, {{ reinterpret_cast<const char*>(m_name.data()), m_name.size() }})"

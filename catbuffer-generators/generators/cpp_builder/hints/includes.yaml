@@ -1,0 +1,7 @@
+# custom setters may require additional includes
+
+MosaicDefinitionTransaction:
+  - plugins/txes/mosaic/src/model/MosaicIdGenerator.h
+
+NamespaceRegistrationTransaction:
+  - plugins/txes/namespace/src/model/NamespaceIdGenerator.h

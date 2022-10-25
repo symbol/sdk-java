@@ -1,0 +1,9 @@
+pyyaml==4.2b1
+pytest>=5.4.1
+pycodestyle>=2.5.0
+pylint==2.4.4
+pylint-quotes>=0.2.1
+mako>=1.1.0
+keyring==21.4.0
+twine>=3.1.1
+wheel>=0.30.0

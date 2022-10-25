@@ -1,0 +1,42 @@
+{
+  "name": "#artifactName",
+  "version": "#artifactVersion",
+  "description": "NEM Catbuffer builders",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nemtech/catbuffer-generators.git"
+  },
+  "scripts": {
+    "clean": "rm -Rf node_modules/ *.js",
+    "build": "tsc",
+    "test": "mocha -r ts-node/register ./test/**/*.test.ts",
+    "prettier": "prettier --write ./src",
+    "lint": "eslint --cache src/ --ext .ts",
+    "lint:fix": "eslint src/ --ext .ts --fix",
+    "style:fix": "npm run prettier && npm run lint:fix"
+  },
+  "bugs": {
+    "url": "https://github.com/nemtech/catbuffer-generators"
+  },
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "homepage": "https://github.com/nemtech/catbuffer-generators",
+  "license": "Apache-2.0",
+  "dependencies": {},
+  "devDependencies": {
+    "@types/mocha": "^8.0.3",
+    "@types/node": "13.9.8",
+    "mocha": "^8.2.1",
+    "nyc": "^15.1.0",
+    "ts-node": "^9.0.0",
+    "typescript": "^3.9.7",
+    "yaml": "^1.10.0",
+    "@typescript-eslint/eslint-plugin": "^2.34.0",
+    "@typescript-eslint/parser": "^2.34.0",
+    "eslint": "^6.8.0",
+    "eslint-config-prettier": "^6.12.0",
+    "eslint-plugin-prettier": "^3.1.4",
+    "prettier-plugin-organize-imports": "^1.1.1",
+    "prettier": "^2.1.2"
+  }
+}

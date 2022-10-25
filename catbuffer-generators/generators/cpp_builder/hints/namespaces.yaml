@@ -1,0 +1,56 @@
+# some transactions use types that need to be namespace-qualified in c++ builders
+
+VotingKeyLinkTransaction:
+  LinkAction: model
+
+VrfKeyLinkTransaction:
+  LinkAction: model
+
+AddressAliasTransaction:
+  AliasAction: model
+
+MosaicAliasTransaction:
+  AliasAction: model
+
+AccountKeyLinkTransaction:
+  LinkAction: model
+
+NodeKeyLinkTransaction:
+  LinkAction: model
+
+HashLockTransaction:
+  UnresolvedMosaic: model
+
+MosaicDefinitionTransaction:
+  MosaicFlags: model
+  MosaicProperty: model
+
+MosaicSupplyChangeTransaction:
+  MosaicSupplyChangeAction: model
+
+SecretLockTransaction:
+  LockHashAlgorithm: model
+  UnresolvedMosaic: model
+
+SecretProofTransaction:
+  LockHashAlgorithm: model
+
+TransferTransaction:
+  Mosaic: model
+  UnresolvedMosaic: model
+
+NamespaceRegistrationTransaction:
+  NamespaceRegistrationType: model
+
+AccountAddressRestrictionTransaction:
+  AccountRestrictionFlags: model
+
+AccountMosaicRestrictionTransaction:
+  AccountRestrictionFlags: model
+
+AccountOperationRestrictionTransaction:
+  AccountRestrictionFlags: model
+  EntityType: model
+
+MosaicGlobalRestrictionTransaction:
+  MosaicRestrictionType: model

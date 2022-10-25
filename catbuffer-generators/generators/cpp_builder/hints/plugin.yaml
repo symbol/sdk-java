@@ -1,0 +1,37 @@
+# transaction plugin name needs to be known in order to produce correct include paths in c++ builders
+
+VotingKeyLinkTransaction: ../coresystem
+VrfKeyLinkTransaction: ../coresystem
+
+AccountKeyLinkTransaction: account_link
+NodeKeyLinkTransaction: account_link
+
+AggregateCompleteTransaction: aggregate
+AggregateBondedTransaction: aggregate
+
+HashLockTransaction: lock_hash
+
+SecretLockTransaction: lock_secret
+SecretProofTransaction: lock_secret
+
+AccountMetadataTransaction: metadata
+MosaicMetadataTransaction: metadata
+NamespaceMetadataTransaction: metadata
+
+MosaicDefinitionTransaction: mosaic
+MosaicSupplyChangeTransaction: mosaic
+
+MultisigAccountModificationTransaction: multisig
+
+AddressAliasTransaction: namespace
+MosaicAliasTransaction: namespace
+NamespaceRegistrationTransaction: namespace
+
+AccountAddressRestrictionTransaction: restriction_account
+AccountMosaicRestrictionTransaction: restriction_account
+AccountOperationRestrictionTransaction: restriction_account
+
+MosaicAddressRestrictionTransaction: restriction_mosaic
+MosaicGlobalRestrictionTransaction: restriction_mosaic
+
+TransferTransaction: transfer
