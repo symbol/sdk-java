@@ -1,0 +1,3 @@
+[submodule "catbuffer"]
+	path = catbuffer
+	url = https://github.com/nemtech/catbuffer.git

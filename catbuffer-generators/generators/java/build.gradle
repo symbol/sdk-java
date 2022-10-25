@@ -1,0 +1,125 @@
+plugins {
+    id 'java'
+    id 'signing'
+    id "de.marcphilipp.nexus-publish" version "0.4.0"
+    id 'io.codearte.nexus-staging' version '0.21.1'
+}
+
+apply plugin: 'java'
+apply plugin: 'maven'
+apply plugin: 'signing'
+apply plugin: "de.marcphilipp.nexus-publish"
+
+repositories {
+    mavenCentral()
+    mavenLocal()
+}
+
+dependencies {
+    testImplementation 'org.bouncycastle:bcprov-jdk15on:1.58'
+    testImplementation group: 'org.yaml', name: 'snakeyaml', version: '1.27'
+    testImplementation(platform("org.junit:junit-bom:5.4.0"))
+    testImplementation("org.junit.jupiter:junit-jupiter:5.4.0")
+}
+
+def getPropertyValue(key, defaultValue = null) {
+    def value = project.hasProperty(key) ? project[key] : System.getenv(key)
+    return value?.trim() == '' ? defaultValue : value
+}
+
+def ossrhUsername = getPropertyValue('ossrhUsername');
+def ossrhPassword = getPropertyValue('ossrhPassword');
+
+def signingSecretKeyRingFile = getPropertyValue('signingSecretKeyRingFile')
+def signingKeyId = getPropertyValue('signingKeyId')
+def signingPassword = getPropertyValue('signingPassword')
+
+def repoPath = getPropertyValue('TRAVIS_REPO_SLUG', "nemtech/catbuffer-generators")
+
+allprojects {
+    ext."signing.keyId" = signingKeyId
+    ext."signing.secretKeyRingFile" = signingSecretKeyRingFile
+    ext."signing.password" = signingPassword
+}
+
+test {
+    useJUnitPlatform()
+}
+
+sourceCompatibility = '1.8'
+targetCompatibility = '1.8'
+version = '#artifactVersion'
+description = 'catapult generated lib'
+group 'io.nem'
+
+task sourcesJar(type: Jar) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+task javadocJar(type: Jar) {
+    classifier = 'javadoc'
+    from javadoc
+}
+
+artifacts {
+    archives javadocJar, sourcesJar
+}
+
+signing {
+    required { signingKeyId }
+    sign publishing.publications
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+            artifact sourcesJar
+            artifact javadocJar
+            pom {
+                url = "https://github.com/${repoPath}"
+                groupId = 'io.nem'
+                name = "${project.name}"
+                description = "Generated lib in charge of buffering catpult transactions."
+                scm {
+                    connection = "scm:git:https://github.com/${repoPath}.git"
+                    developerConnection = "scm:svn:https://github.com/${repoPath}"
+                    url = "https://github.com/${repoPath}"
+                }
+                licenses {
+                    license {
+                        name = 'The Apache License, Version 2.0'
+                        url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    }
+                }
+                developers {
+                    developer {
+                        id = 'fboucquez'
+                        name = 'Fernando Boucquez'
+                    }
+                }
+            }
+        }
+    }
+}
+
+if (ossrhUsername) {
+    nexusPublishing {
+        repositories {
+            sonatype {
+                username = ossrhUsername
+                password = ossrhPassword
+            }
+        }
+        connectTimeout = Duration.ofSeconds(360)
+        clientTimeout = Duration.ofSeconds(360)
+    }
+
+    nexusStaging {
+        packageGroup = "io.nem"
+        stagingProfileId = "365f7aa90b3b13"
+        username = ossrhUsername
+        password = ossrhPassword
+    }
+}
