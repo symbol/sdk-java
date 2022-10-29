@@ -66,6 +66,9 @@ public class GeneralTransactionMapper implements TransactionMapper {
     register(new AccountKeyLinkTransactionMapper(jsonHelper));
     register(new AggregateTransactionMapper(jsonHelper, TransactionType.AGGREGATE_BONDED, this));
     register(new AggregateTransactionMapper(jsonHelper, TransactionType.AGGREGATE_COMPLETE, this));
+    register(new AggregateTransactionV1Mapper(jsonHelper, TransactionType.AGGREGATE_BONDED, this));
+    register(
+        new AggregateTransactionV1Mapper(jsonHelper, TransactionType.AGGREGATE_COMPLETE, this));
   }
 
   private void register(TransactionMapper mapper) {

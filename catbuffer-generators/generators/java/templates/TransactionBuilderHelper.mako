@@ -21,7 +21,7 @@ public class TransactionBuilderHelper {
         entityTypeVersion = next(iter([x for x in layout if x.get('name','') == 'version']),{}).get('value',0)
 %>\
     %if (entityTypeValue > 0  and 'Aggregate' not in name and 'Block' not in name and not name.startswith('Embedded')):
-        if (headerBuilder.getType() == EntityTypeDto.${helper.create_enum_name(name)} && headerBuilder.getVersion() == ${entityTypeVersion}) {
+        if (headerBuilder.getType().getValue() == ${entityTypeValue} && headerBuilder.getVersion() == ${entityTypeVersion}) {
             ${name}BodyBuilder bodyBuilder = ${name}BodyBuilder.loadFromBinary(stream);
             SequenceInputStream concatenate = new SequenceInputStream(
             new ByteArrayInputStream(headerBuilder.serialize()),
@@ -29,7 +29,7 @@ public class TransactionBuilderHelper {
             return ${name}Builder.loadFromBinary(new DataInputStream(concatenate));
         }
     %elif (entityTypeValue > 0 and 'Block' not in name and not name.startswith('Embedded')):
-        if (headerBuilder.getType() == EntityTypeDto.${helper.create_enum_name(name)} && headerBuilder.getVersion() == ${entityTypeVersion}) {
+        if (headerBuilder.getType().getValue() == ${entityTypeValue} && headerBuilder.getVersion() == ${entityTypeVersion}) {
             AggregateTransactionBodyBuilder bodyBuilder = AggregateTransactionBodyBuilder.loadFromBinary(stream);
             SequenceInputStream concatenate = new SequenceInputStream(
             new ByteArrayInputStream(headerBuilder.serialize()),
