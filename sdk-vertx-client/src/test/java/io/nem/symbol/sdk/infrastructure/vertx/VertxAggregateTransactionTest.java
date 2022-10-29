@@ -81,7 +81,7 @@ public class VertxAggregateTransactionTest {
             .build();
 
     assertEquals(networkType, aggregateTx.getNetworkType());
-    assertEquals(1, (int) aggregateTx.getVersion());
+    assertEquals(2, (int) aggregateTx.getVersion());
     assertTrue(
         LocalDateTime.now().isBefore(aggregateTx.getDeadline().getLocalDateTime(epochAdjustment)));
     assertEquals(BigInteger.valueOf(0), aggregateTx.getMaxFee());
