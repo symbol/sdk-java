@@ -21,7 +21,7 @@ public class EmbeddedTransactionBuilderHelper {
         entityTypeVersion = next(iter([x for x in layout if x.get('name','') == 'version']),{}).get('value',0)
 %>\
     %if (entityTypeValue > 0 and 'Aggregate' not in name and 'Block' not in name and name.startswith('Embedded')):
-        if (headerBuilder.getType() == EntityTypeDto.${helper.create_enum_name(name[8:])} && headerBuilder.getVersion() == ${entityTypeVersion}) {
+        if (headerBuilder.getType().getValue() == ${entityTypeValue} && headerBuilder.getVersion() == ${entityTypeVersion}) {
             ${name[8:]}BodyBuilder bodyBuilder = ${name[8:]}BodyBuilder.loadFromBinary(stream);
             SequenceInputStream concatenate = new SequenceInputStream(
             new ByteArrayInputStream(headerBuilder.serialize()),
