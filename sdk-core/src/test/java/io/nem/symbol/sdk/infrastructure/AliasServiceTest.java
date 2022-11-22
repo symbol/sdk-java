@@ -43,7 +43,7 @@ import org.mockito.Mockito;
 /** Tests of {@link AliasServiceImpl} */
 public class AliasServiceTest {
 
-  private NetworkType networkType = NetworkType.MIJIN_TEST;
+  private NetworkType networkType = NetworkType.TEST_NET;
   private AliasServiceImpl service;
 
   private NamespaceRepository namespaceRepository;

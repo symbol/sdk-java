@@ -53,7 +53,7 @@ import org.mockito.Mockito;
 /** Test of {@link AggregateTransactionServiceImpl} */
 public class AggregateTransactionServiceTest {
 
-  private final NetworkType networkType = NetworkType.MIJIN_TEST;
+  private final NetworkType networkType = NetworkType.TEST_NET;
   private final Account account1 = Account.generateNewAccount(networkType);
   private final Account account2 = Account.generateNewAccount(networkType);
   private final Account account3 = Account.generateNewAccount(networkType);

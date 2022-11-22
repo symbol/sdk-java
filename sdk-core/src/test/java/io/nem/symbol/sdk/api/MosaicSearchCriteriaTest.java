@@ -36,7 +36,7 @@ class MosaicSearchCriteriaTest {
   @Test
   void shouldSetValues() {
 
-    Address address1 = Address.generateRandom(NetworkType.MIJIN_TEST);
+    Address address1 = Address.generateRandom(NetworkType.TEST_NET);
 
     MosaicSearchCriteria criteria = new MosaicSearchCriteria();
 
@@ -56,7 +56,7 @@ class MosaicSearchCriteriaTest {
   @Test
   void shouldUseBuilderMethods() {
 
-    Address address1 = Address.generateRandom(NetworkType.MIJIN_TEST);
+    Address address1 = Address.generateRandom(NetworkType.TEST_NET);
 
     MosaicSearchCriteria criteria =
         new MosaicSearchCriteria()
@@ -76,7 +76,7 @@ class MosaicSearchCriteriaTest {
   @Test
   void shouldBeEquals() {
 
-    Address address1 = Address.generateRandom(NetworkType.MIJIN_TEST);
+    Address address1 = Address.generateRandom(NetworkType.TEST_NET);
 
     MosaicSearchCriteria criteria1 =
         new MosaicSearchCriteria()

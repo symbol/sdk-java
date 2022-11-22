@@ -34,8 +34,7 @@ class MultisigAccountModificationTransactionTest extends AbstractTransactionTest
 
   private static final Account account =
       new Account(
-          "041e2ce90c31cd65620ed16ab7a5a485e5b335d7e61c75cd9b3a2fed3e091728",
-          NetworkType.MIJIN_TEST);
+          "041e2ce90c31cd65620ed16ab7a5a485e5b335d7e61c75cd9b3a2fed3e091728", NetworkType.TEST_NET);
 
   @Test
   void createAMultisigModificationTransactionViaConstructor() {
@@ -44,17 +43,17 @@ class MultisigAccountModificationTransactionTest extends AbstractTransactionTest
         Collections.singletonList(
             PublicAccount.createFromPublicKey(
                     "68b3fbb18729c1fde225c57f8ce080fa828f0067e451a3fd81fa628842b0b111",
-                    NetworkType.MIJIN_TEST)
+                    NetworkType.TEST_NET)
                 .getAddress());
     List<UnresolvedAddress> deletions =
         Collections.singletonList(
             PublicAccount.createFromPublicKey(
                     "68b3fbb18729c1fde225c57f8ce080fa828f0067e451a3fd81fa628842b0b222",
-                    NetworkType.MIJIN_TEST)
+                    NetworkType.TEST_NET)
                 .getAddress());
     MultisigAccountModificationTransaction multisigAccountModificationTransaction =
         MultisigAccountModificationTransactionFactory.create(
-                NetworkType.MIJIN_TEST,
+                NetworkType.TEST_NET,
                 Deadline.create(epochAdjustment),
                 (byte) 2,
                 (byte) 1,
@@ -62,7 +61,7 @@ class MultisigAccountModificationTransactionTest extends AbstractTransactionTest
                 deletions)
             .build();
 
-    assertEquals(NetworkType.MIJIN_TEST, multisigAccountModificationTransaction.getNetworkType());
+    assertEquals(NetworkType.TEST_NET, multisigAccountModificationTransaction.getNetworkType());
     assertTrue(1 == multisigAccountModificationTransaction.getVersion());
     assertTrue(
         LocalDateTime.now()
@@ -86,17 +85,17 @@ class MultisigAccountModificationTransactionTest extends AbstractTransactionTest
         Collections.singletonList(
             PublicAccount.createFromPublicKey(
                     "68b3fbb18729c1fde225c57f8ce080fa828f0067e451a3fd81fa628842b0b111",
-                    NetworkType.MIJIN_TEST)
+                    NetworkType.TEST_NET)
                 .getAddress());
     List<UnresolvedAddress> deletions =
         Collections.singletonList(
             PublicAccount.createFromPublicKey(
                     "68b3fbb18729c1fde225c57f8ce080fa828f0067e451a3fd81fa628842b0b222",
-                    NetworkType.MIJIN_TEST)
+                    NetworkType.TEST_NET)
                 .getAddress());
     MultisigAccountModificationTransaction transaction =
         MultisigAccountModificationTransactionFactory.create(
-                NetworkType.MIJIN_TEST,
+                NetworkType.TEST_NET,
                 new Deadline(BigInteger.ONE),
                 (byte) 2,
                 (byte) 1,
@@ -106,12 +105,12 @@ class MultisigAccountModificationTransactionTest extends AbstractTransactionTest
             .build();
 
     String expected =
-        "B80000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000F6503F78FBF99544B906872DDB392F4BE707180D285E7919DBACEF2E9573B1E60000000001905541000000000000000001000000000000000102010100000000905ED2343582DFB4D14DC837BF18E3C9BE5271FF9B8A9EC1908760369DC78761E7EBCC6CFAEA44EE946ED0637B67EE55";
+        "B80000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000F6503F78FBF99544B906872DDB392F4BE707180D285E7919DBACEF2E9573B1E60000000001985541000000000000000001000000000000000102010100000000985ED2343582DFB4D14DC837BF18E3C9BE5271FF9B34A1D0988760369DC78761E7EBCC6CFAEA44EE946ED0637B81D44F";
 
     assertSerialization(expected, transaction);
 
     String expectedEmbedded =
-        "6800000000000000F6503F78FBF99544B906872DDB392F4BE707180D285E7919DBACEF2E9573B1E600000000019055410102010100000000905ED2343582DFB4D14DC837BF18E3C9BE5271FF9B8A9EC1908760369DC78761E7EBCC6CFAEA44EE946ED0637B67EE55";
+        "6800000000000000F6503F78FBF99544B906872DDB392F4BE707180D285E7919DBACEF2E9573B1E600000000019855410102010100000000985ED2343582DFB4D14DC837BF18E3C9BE5271FF9B34A1D0988760369DC78761E7EBCC6CFAEA44EE946ED0637B81D44F";
 
     assertEmbeddedSerialization(expectedEmbedded, transaction);
   }

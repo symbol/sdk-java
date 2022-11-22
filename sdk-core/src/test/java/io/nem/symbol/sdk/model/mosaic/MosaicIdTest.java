@@ -108,23 +108,23 @@ class MosaicIdTest {
 
   @Test
   void createAMosaicIdFromNonceAndOwner() {
-    PublicAccount owner = PublicAccount.createFromPublicKey(publicKey, NetworkType.MIJIN_TEST);
+    PublicAccount owner = PublicAccount.createFromPublicKey(publicKey, NetworkType.TEST_NET);
     MosaicNonce nonce = MosaicNonce.createFromInteger(0);
     MosaicId mosaicId = MosaicId.createFromNonce(nonce, owner);
-    MosaicId mosaicId2 = new MosaicId(new BigInteger("5331590414131997017"));
+    MosaicId mosaicId2 = new MosaicId(new BigInteger("3838684857742514484"));
     MosaicId mosaicId3 = MosaicId.createFromNonce(nonce, owner.getAddress());
     assertEquals(mosaicId, mosaicId);
     assertEquals(mosaicId, mosaicId2);
     assertEquals(mosaicId, mosaicId3);
-    assertEquals(5331590414131997017L, mosaicId2.getIdAsLong());
+    assertEquals(3838684857742514484L, mosaicId2.getIdAsLong());
   }
 
   @Test
   void hashCodeAndEquals() {
-    PublicAccount owner = PublicAccount.createFromPublicKey(publicKey, NetworkType.MIJIN_TEST);
+    PublicAccount owner = PublicAccount.createFromPublicKey(publicKey, NetworkType.TEST_NET);
     MosaicNonce nonce = MosaicNonce.createFromInteger(0);
     MosaicId mosaicId = MosaicId.createFromNonce(nonce, owner);
-    MosaicId mosaicId2 = new MosaicId(new BigInteger("5331590414131997017"));
+    MosaicId mosaicId2 = new MosaicId(new BigInteger("3838684857742514484"));
     MosaicId mosaicId3 = MosaicId.createFromNonce(nonce, owner.getAddress());
     assertEquals(mosaicId, mosaicId);
     assertNotEquals("", mosaicId);
@@ -136,7 +136,7 @@ class MosaicIdTest {
 
   @Test
   void createAMosaicIdFromNonceAndOwnerTwiceTheSame() {
-    PublicAccount owner = PublicAccount.createFromPublicKey(publicKey, NetworkType.MIJIN_TEST);
+    PublicAccount owner = PublicAccount.createFromPublicKey(publicKey, NetworkType.TEST_NET);
     MosaicNonce nonce = MosaicNonce.createFromInteger(0);
     MosaicId mosaicId1 = MosaicId.createFromNonce(nonce, owner);
     MosaicId mosaicId2 = MosaicId.createFromNonce(nonce, owner);

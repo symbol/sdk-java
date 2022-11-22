@@ -38,7 +38,7 @@ class NamespaceInfoTest {
   void createANamespaceInfoViaConstructor() {
 
     NamespaceId namespaceId = NamespaceId.createFromId(new BigInteger("-8884663987180930485"));
-    Address address = Address.createFromRawAddress("SDXK5NYCKOSAT2NCIPYIEYN57N5XEVNCZ5AIAOI");
+    Address address = Address.createFromRawAddress("TBEM3LTBAHSDOXONNOKAVIGIZJLUCCPIBWY7WEA");
     NamespaceInfo namespaceInfo =
         new NamespaceInfo(
             "abc",
@@ -68,7 +68,7 @@ class NamespaceInfoTest {
 
     byte[] serialize = namespaceInfo.serialize(Arrays.asList(createSubNamespaceInfo(namespaceId)));
     assertEquals(
-        "01004BFA5F372D55B38490EEAEB70253A409E9A243F08261BDFB7B7255A2CF4080390100000000000000FFFFFFFFFFFFFFFF01640000000000000001000000000000000129CF2728A91AE7F0016400000000000000",
+        "01004BFA5F372D55B3849848CDAE6101E4375DCD6B940AA0C8CA574109E80DB1FB100100000000000000FFFFFFFFFFFFFFFF01640000000000000001000000000000000129CF2728A91AE7F0016400000000000000",
         ConvertUtils.toHex(serialize));
   }
 
@@ -76,7 +76,7 @@ class NamespaceInfoTest {
   void createANamespaceInfoViaConstructorEmptyAlias() {
 
     NamespaceId namespaceId = NamespaceId.createFromId(new BigInteger("-8884663987180930485"));
-    Address address = Address.createFromRawAddress("SDXK5NYCKOSAT2NCIPYIEYN57N5XEVNCZ5AIAOI");
+    Address address = Address.createFromRawAddress("TBEM3LTBAHSDOXONNOKAVIGIZJLUCCPIBWY7WEA");
     NamespaceInfo namespaceInfo =
         new NamespaceInfo(
             "abc",
@@ -104,7 +104,7 @@ class NamespaceInfoTest {
 
     byte[] serialize = namespaceInfo.serialize(Arrays.asList(createSubNamespaceInfo(namespaceId)));
     assertEquals(
-        "01004BFA5F372D55B38490EEAEB70253A409E9A243F08261BDFB7B7255A2CF4080390100000000000000FFFFFFFFFFFFFFFF0001000000000000000129CF2728A91AE7F0016400000000000000",
+        "01004BFA5F372D55B3849848CDAE6101E4375DCD6B940AA0C8CA574109E80DB1FB100100000000000000FFFFFFFFFFFFFFFF0001000000000000000129CF2728A91AE7F0016400000000000000",
         ConvertUtils.toHex(serialize));
   }
 
@@ -177,7 +177,7 @@ class NamespaceInfoTest {
         NamespaceId.createFromId(new BigInteger("0")),
         new PublicAccount(
                 "B4F12E7C9F6946091E2CB8B6D3A12B50D17CCBBF646386EA27CE2946A7423DCF",
-                NetworkType.MIJIN_TEST)
+                NetworkType.TEST_NET)
             .getAddress(),
         new BigInteger("1"),
         new BigInteger("-1"),
@@ -198,7 +198,7 @@ class NamespaceInfoTest {
         parentId,
         new PublicAccount(
                 "B4F12E7C9F6946091E2CB8B6D3A12B50D17CCBBF646386EA27CE2946A7423DCF",
-                NetworkType.MIJIN_TEST)
+                NetworkType.TEST_NET)
             .getAddress(),
         new BigInteger("1"),
         new BigInteger("-1"),

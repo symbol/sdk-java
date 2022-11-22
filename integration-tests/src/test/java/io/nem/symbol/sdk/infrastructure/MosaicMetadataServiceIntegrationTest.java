@@ -16,6 +16,7 @@
 package io.nem.symbol.sdk.infrastructure;
 
 import io.nem.symbol.core.utils.ConvertUtils;
+import io.nem.symbol.core.utils.StringEncoder;
 import io.nem.symbol.sdk.api.MetadataRepository;
 import io.nem.symbol.sdk.api.MetadataSearchCriteria;
 import io.nem.symbol.sdk.api.MetadataTransactionService;
@@ -70,7 +71,8 @@ class MosaicMetadataServiceIntegrationTest extends BaseIntegrationTest {
     Assertions.assertEquals(targetAccount.getAddress(), originalTransaction.getTargetAddress());
     Assertions.assertEquals(targetMosaicId, originalTransaction.getTargetMosaicId());
     Assertions.assertEquals(key, originalTransaction.getScopedMetadataKey());
-    Assertions.assertEquals(originalMessage, originalTransaction.getValue());
+    Assertions.assertArrayEquals(
+        StringEncoder.getBytes(originalMessage), originalTransaction.getValue());
 
     helper().announceAggregateAndValidate(type, originalTransaction, signerAccount);
 
@@ -92,7 +94,8 @@ class MosaicMetadataServiceIntegrationTest extends BaseIntegrationTest {
     Assertions.assertEquals(key, updateTransaction.getScopedMetadataKey());
 
     Pair<String, Integer> xorAndDelta = ConvertUtils.xorValues(originalMessage, newMessage);
-    Assertions.assertEquals(xorAndDelta.getLeft(), updateTransaction.getValue());
+    Assertions.assertArrayEquals(
+        StringEncoder.getBytes(xorAndDelta.getLeft()), updateTransaction.getValue());
     Assertions.assertEquals(xorAndDelta.getRight(), updateTransaction.getValueSizeDelta());
 
     helper().announceAggregateAndValidate(type, updateTransaction, signerAccount);
@@ -115,6 +118,6 @@ class MosaicMetadataServiceIntegrationTest extends BaseIntegrationTest {
             .scopedMetadataKey(key)
             .sourceAddress(signerAccount.getAddress());
     Metadata originalMetadata = get(metadataRepository.search(criteria)).getData().get(0);
-    Assertions.assertEquals(value, originalMetadata.getValue());
+    Assertions.assertArrayEquals(StringEncoder.getBytes(value), originalMetadata.getValue());
   }
 }

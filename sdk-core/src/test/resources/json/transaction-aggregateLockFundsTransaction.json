@@ -31,7 +31,7 @@
         "transaction": {
           "signerPublicKey": "1026D70E1954775749C6811084D6450A3184D977383F0E4282CD47118AF37755",
           "version": 1,
-          "network": 144,
+          "network": 152,
           "type": 16712,
           "duration": "100",
           "amount": "10000000",
@@ -42,6 +42,6 @@
     ],
     "type": 16705,
     "version": 1,
-    "network": 144
+    "network": 152
   }
 }

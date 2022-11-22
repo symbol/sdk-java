@@ -182,7 +182,7 @@ public class StateProofServiceTest {
   void account() throws Exception {
     AccountRepository repository = mock(AccountRepository.class);
     when(factory.createAccountRepository()).thenReturn(repository);
-    Address id = Address.generateRandom(NetworkType.MIJIN_TEST);
+    Address id = Address.generateRandom(NetworkType.TEST_NET);
     AccountInfo state = Mockito.mock(AccountInfo.class);
     when(state.getAddress()).thenReturn(id);
     when(state.serialize()).thenReturn(ConvertUtils.fromHexToBytes(serialized));
@@ -197,7 +197,7 @@ public class StateProofServiceTest {
   void multisig() throws Exception {
     MultisigRepository repository = mock(MultisigRepository.class);
     when(factory.createMultisigRepository()).thenReturn(repository);
-    Address id = Address.generateRandom(NetworkType.MIJIN_TEST);
+    Address id = Address.generateRandom(NetworkType.TEST_NET);
     MultisigAccountInfo state = Mockito.mock(MultisigAccountInfo.class);
     when(state.getAccountAddress()).thenReturn(id);
     when(state.serialize()).thenReturn(ConvertUtils.fromHexToBytes(serialized));
@@ -212,7 +212,7 @@ public class StateProofServiceTest {
   void accountRestrictions() throws Exception {
     RestrictionAccountRepository repository = mock(RestrictionAccountRepository.class);
     when(factory.createRestrictionAccountRepository()).thenReturn(repository);
-    Address id = Address.generateRandom(NetworkType.MIJIN_TEST);
+    Address id = Address.generateRandom(NetworkType.TEST_NET);
     AccountRestrictions state = Mockito.mock(AccountRestrictions.class);
     when(state.getAddress()).thenReturn(id);
     when(state.serialize()).thenReturn(ConvertUtils.fromHexToBytes(serialized));

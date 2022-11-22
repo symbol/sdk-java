@@ -29,7 +29,7 @@ import org.junit.jupiter.api.Test;
 
 public class TransactionTest {
 
-  private final NetworkType networkType = NetworkType.MIJIN_TEST;
+  private final NetworkType networkType = NetworkType.TEST_NET;
   private final Deadline deadline = new Deadline(BigInteger.ONE);
   private final PublicAccount signer =
       PublicAccount.createFromPublicKey(
@@ -43,7 +43,7 @@ public class TransactionTest {
         TransferTransactionFactory.create(
                 networkType,
                 new Deadline(BigInteger.ONE),
-                new Address("SDZWZJUAYNOWGBTCUDBY3SE5JF4NCC2RDM6SIGQ", networkType),
+                new Address("TDICGGG5273NEYOPJPRN5RXFLENIVYTEBA7NA3I", networkType),
                 Collections.emptyList())
             .message(new PlainMessage(""));
     TransferTransaction transaction = factory.build();
@@ -61,7 +61,7 @@ public class TransactionTest {
         TransferTransactionFactory.create(
                 networkType,
                 new Deadline(BigInteger.ONE),
-                new Address("SDZWZJUAYNOWGBTCUDBY3SE5JF4NCC2RDM6SIGQ", networkType),
+                new Address("TDICGGG5273NEYOPJPRN5RXFLENIVYTEBA7NA3I", networkType),
                 Collections.emptyList())
             .message(new PlainMessage(""));
     TransferTransaction transaction = factory.build();

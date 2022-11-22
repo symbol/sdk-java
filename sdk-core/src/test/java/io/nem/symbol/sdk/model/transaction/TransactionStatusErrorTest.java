@@ -26,7 +26,7 @@ class TransactionStatusErrorTest {
 
   @Test
   void getHash() {
-    Address address = Address.generateRandom(NetworkType.MIJIN_TEST);
+    Address address = Address.generateRandom(NetworkType.TEST_NET);
     final TransactionStatusError transactionStatusError =
         new TransactionStatusError(address, "hash", "error", new Deadline(BigInteger.valueOf(1)));
     assertEquals("hash", transactionStatusError.getHash());
@@ -34,7 +34,7 @@ class TransactionStatusErrorTest {
 
   @Test
   void getStatus() {
-    Address address = Address.generateRandom(NetworkType.MIJIN_TEST);
+    Address address = Address.generateRandom(NetworkType.TEST_NET);
     final TransactionStatusError transactionStatusError =
         new TransactionStatusError(address, "hash", "error", new Deadline(BigInteger.valueOf(1)));
     assertEquals("error", transactionStatusError.getStatus());
@@ -42,7 +42,7 @@ class TransactionStatusErrorTest {
 
   @Test
   void getDeadline() {
-    Address address = Address.generateRandom(NetworkType.MIJIN_TEST);
+    Address address = Address.generateRandom(NetworkType.TEST_NET);
     Deadline deadline = new Deadline(BigInteger.valueOf(1));
     final TransactionStatusError transactionStatusError =
         new TransactionStatusError(address, "hash", "error", deadline);
@@ -51,7 +51,7 @@ class TransactionStatusErrorTest {
 
   @Test
   void getAddress() {
-    Address address = Address.generateRandom(NetworkType.MIJIN_TEST);
+    Address address = Address.generateRandom(NetworkType.TEST_NET);
     Deadline deadline = new Deadline(BigInteger.valueOf(1));
     final TransactionStatusError transactionStatusError =
         new TransactionStatusError(address, "hash", "error", deadline);

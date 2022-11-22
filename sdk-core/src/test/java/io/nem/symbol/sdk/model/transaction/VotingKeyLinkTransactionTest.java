@@ -27,8 +27,7 @@ public class VotingKeyLinkTransactionTest extends AbstractTransactionTester {
 
   static Account account =
       new Account(
-          "041e2ce90c31cd65620ed16ab7a5a485e5b335d7e61c75cd9b3a2fed3e091728",
-          NetworkType.MIJIN_TEST);
+          "041e2ce90c31cd65620ed16ab7a5a485e5b335d7e61c75cd9b3a2fed3e091728", NetworkType.TEST_NET);
 
   static PublicKey publicKey = PublicKey.fromHexString("AAAA");
 
@@ -36,7 +35,7 @@ public class VotingKeyLinkTransactionTest extends AbstractTransactionTester {
   void create() {
     VotingKeyLinkTransaction transaction =
         VotingKeyLinkTransactionFactory.create(
-                NetworkType.MIJIN_TEST,
+                NetworkType.TEST_NET,
                 new Deadline(BigInteger.ONE),
                 publicKey,
                 1,
@@ -56,7 +55,7 @@ public class VotingKeyLinkTransactionTest extends AbstractTransactionTester {
 
     VotingKeyLinkTransaction transaction =
         VotingKeyLinkTransactionFactory.create(
-                NetworkType.MIJIN_TEST,
+                NetworkType.TEST_NET,
                 new Deadline(BigInteger.ONE),
                 publicKey,
                 1,
@@ -66,11 +65,11 @@ public class VotingKeyLinkTransactionTest extends AbstractTransactionTester {
             .build();
 
     String expected =
-        "A90000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000F6503F78FBF99544B906872DDB392F4BE707180D285E7919DBACEF2E9573B1E6000000000190434100000000000000000100000000000000000000000000000000000000000000000000000000000000000000000000AAAA010000000300000001";
+        "A90000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000F6503F78FBF99544B906872DDB392F4BE707180D285E7919DBACEF2E9573B1E6000000000198434100000000000000000100000000000000000000000000000000000000000000000000000000000000000000000000AAAA010000000300000001";
     assertEquals(1, assertSerialization(expected, transaction).getVersion());
 
     String expectedEmbeddedHash =
-        "5900000000000000F6503F78FBF99544B906872DDB392F4BE707180D285E7919DBACEF2E9573B1E60000000001904341000000000000000000000000000000000000000000000000000000000000AAAA010000000300000001";
+        "5900000000000000F6503F78FBF99544B906872DDB392F4BE707180D285E7919DBACEF2E9573B1E60000000001984341000000000000000000000000000000000000000000000000000000000000AAAA010000000300000001";
     assertEquals(1, assertEmbeddedSerialization(expectedEmbeddedHash, transaction).getVersion());
   }
 }

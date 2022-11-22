@@ -452,7 +452,7 @@ public class TransactionMapperVertxTest {
             ((AggregateTransaction) aggregateTransferTransaction).getInnerTransactions().get(0);
 
     Assertions.assertEquals(
-        "SDT4THYNVUQK2GM6XXYTWHZXSPE3AUA2GTDPM2Q", transaction.getAddress().plain());
+        "TAEO4NNJJBVZ3GUQNMMIY3L6T42LNTSRMJJ3IEQ", transaction.getAddress().plain());
     Assertions.assertEquals(AliasAction.LINK, transaction.getAliasAction());
     Assertions.assertEquals(
         new BigInteger("307262000798378"), transaction.getNamespaceId().getId());
@@ -492,7 +492,7 @@ public class TransactionMapperVertxTest {
         (MosaicMetadataTransaction) aggregateTransferTransaction.getInnerTransactions().get(0);
 
     Assertions.assertEquals(
-        "9103B60AAF27626883000000000000000000000000000000",
+        "9903B60AAF27626883000000000000000000000000000000",
         transaction.getTargetAddress().encoded(transaction.getNetworkType()));
 
     Assertions.assertEquals(1, transaction.getValueSizeDelta());
@@ -518,7 +518,7 @@ public class TransactionMapperVertxTest {
         (NamespaceMetadataTransaction) aggregateTransferTransaction.getInnerTransactions().get(0);
 
     Assertions.assertEquals(
-        "90E6FF7755A80B6AA935A5C31B6D3D0CFAF82E06BF2B9CC9",
+        "98D1A942E470A320FDB93E59E2FFBCBC68F05C63AC342124",
         transaction.getTargetAddress().encoded(transaction.getNetworkType()));
 
     Assertions.assertEquals(-1, transaction.getValueSizeDelta());
@@ -544,7 +544,7 @@ public class TransactionMapperVertxTest {
         (AccountMetadataTransaction) aggregateTransferTransaction.getInnerTransactions().get(0);
 
     Assertions.assertEquals(
-        "90E6FF7755A80B6AA935A5C31B6D3D0CFAF82E06BF2B9CC9",
+        "98D1A942E470A320FDB93E59E2FFBCBC68F05C63AC342124",
         transaction.getTargetAddress().encoded(transaction.getNetworkType()));
 
     Assertions.assertEquals(-1, transaction.getValueSizeDelta());
@@ -570,11 +570,11 @@ public class TransactionMapperVertxTest {
         AccountAddressRestrictionFlags.ALLOW_INCOMING_ADDRESS, transaction.getRestrictionFlags());
     Assertions.assertEquals(1, transaction.getRestrictionAdditions().size());
     Assertions.assertEquals(
-        MapperUtils.toAddress("90DD539FC43C3703715A7445EA9188544F9086BC93A22465"),
+        MapperUtils.toAddress("985B6F3150839A64EBBEE0FDF1E1807E646D571ADC5EF9CD"),
         transaction.getRestrictionAdditions().get(0));
 
     Assertions.assertEquals(
-        MapperUtils.toAddress("9067C932B35C128FB23AAD0153036FF8DA44E52448D2E633"),
+        MapperUtils.toAddress("9808EE35A9486B9D9A906B188C6D7E9F34B6CE516253B412"),
         transaction.getRestrictionDeletions().get(0));
   }
 
@@ -631,7 +631,7 @@ public class TransactionMapperVertxTest {
 
     Assertions.assertEquals(LinkAction.LINK, transaction.getLinkAction());
     Assertions.assertEquals(
-        "SARNASAS2BIAB6LMFA3FPMGBPGIJGK6IJETM3ZQ",
+        "TARNASAS2BIAB6LMFA3FPMGBPGIJGK6IJE47FYQ",
         PublicAccount.createFromPublicKey(
                 transaction.getLinkedPublicKey().toHex(), transaction.getNetworkType())
             .getAddress()

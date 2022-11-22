@@ -32,14 +32,14 @@ public class AccountKeyLinkTransactionTest extends AbstractTransactionTester {
     account =
         new Account(
             "041e2ce90c31cd65620ed16ab7a5a485e5b335d7e61c75cd9b3a2fed3e091728",
-            NetworkType.MIJIN_TEST);
+            NetworkType.TEST_NET);
   }
 
   @Test
   void create() {
     AccountKeyLinkTransaction transaction =
         AccountKeyLinkTransactionFactory.create(
-                NetworkType.MIJIN_TEST,
+                NetworkType.TEST_NET,
                 new Deadline(BigInteger.ONE),
                 account.getPublicAccount().getPublicKey(),
                 LinkAction.LINK)
@@ -55,7 +55,7 @@ public class AccountKeyLinkTransactionTest extends AbstractTransactionTester {
 
     AccountKeyLinkTransaction transaction =
         AccountKeyLinkTransactionFactory.create(
-                NetworkType.MIJIN_TEST,
+                NetworkType.TEST_NET,
                 new Deadline(BigInteger.ONE),
                 account.getPublicAccount().getPublicKey(),
                 LinkAction.LINK)
@@ -63,11 +63,11 @@ public class AccountKeyLinkTransactionTest extends AbstractTransactionTester {
             .build();
 
     String expected =
-        "A10000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000F6503F78FBF99544B906872DDB392F4BE707180D285E7919DBACEF2E9573B1E60000000001904C4100000000000000000100000000000000F6503F78FBF99544B906872DDB392F4BE707180D285E7919DBACEF2E9573B1E601";
+        "A10000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000F6503F78FBF99544B906872DDB392F4BE707180D285E7919DBACEF2E9573B1E60000000001984C4100000000000000000100000000000000F6503F78FBF99544B906872DDB392F4BE707180D285E7919DBACEF2E9573B1E601";
     assertSerialization(expected, transaction);
 
     String expectedEmbeddedHash =
-        "5100000000000000f6503f78fbf99544b906872ddb392f4be707180d285e7919dbacef2e9573b1e60000000001904c41f6503f78fbf99544b906872ddb392f4be707180d285e7919dbacef2e9573b1e601";
+        "5100000000000000F6503F78FBF99544B906872DDB392F4BE707180D285E7919DBACEF2E9573B1E60000000001984C41F6503F78FBF99544B906872DDB392F4BE707180D285E7919DBACEF2E9573B1E601";
     assertEmbeddedSerialization(expectedEmbeddedHash, transaction);
   }
 }

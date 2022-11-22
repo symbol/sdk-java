@@ -33,22 +33,22 @@ class MultisigAccountInfoTest {
   private final Address address1 =
       new PublicAccount(
               "b4f12e7c9f6946091e2cb8b6d3a12b50d17ccbbf646386ea27ce2946a7423dcf",
-              NetworkType.MIJIN_TEST)
+              NetworkType.TEST_NET)
           .getAddress();
   private final Address address2 =
       new PublicAccount(
               "846b4439154579a5903b1459c9cf69cb8153f6d0110a7a0ed61de29ae4810bf2",
-              NetworkType.MIJIN_TEST)
+              NetworkType.TEST_NET)
           .getAddress();
   private final Address address3 =
       new PublicAccount(
               "cf893ffcc47c33e7f68ab1db56365c156b0736824a0c1e273f9e00b8df8f01eb",
-              NetworkType.MIJIN_TEST)
+              NetworkType.TEST_NET)
           .getAddress();
   private final Address address4 =
       new PublicAccount(
               "68b3fbb18729c1fde225c57f8ce080fa828f0067e451a3fd81fa628842b0b763",
-              NetworkType.MIJIN_TEST)
+              NetworkType.TEST_NET)
           .getAddress();
 
   @Test
@@ -158,7 +158,7 @@ class MultisigAccountInfoTest {
 
     byte[] serializedState = info.serialize();
     String expectedHex =
-        "010003000000020000009022D04812D05000F96C283657B0C17990932BC84926CDE6020000000000000090CF2886A23771534F2CEF86094B4C4FBC1E19C286B11E5B9049E14BEBCA93758EB36805BAE760A57239976F009A545C02000000000000009050B9837EFAB4BBE8A4B9BB32D812F9885C00D8FC1650E190CF2886A23771534F2CEF86094B4C4FBC1E19C286B11E5B";
+        "010003000000020000009822D04812D05000F96C283657B0C17990932BC84939F2E2020000000000000098CF2886A23771534F2CEF86094B4C4FBC1E19C286B105F89849E14BEBCA93758EB36805BAE760A57239976F00726BA602000000000000009850B9837EFAB4BBE8A4B9BB32D812F9885C00D8FCC0C28D98CF2886A23771534F2CEF86094B4C4FBC1E19C286B105F8";
     Assertions.assertEquals(expectedHex, ConvertUtils.toHex(serializedState));
     MultisigEntryBuilder builder =
         MultisigEntryBuilder.loadFromBinary(SerializationUtils.toDataInput(serializedState));

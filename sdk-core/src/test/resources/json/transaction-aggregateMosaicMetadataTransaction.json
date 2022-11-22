@@ -22,9 +22,9 @@
         },
         "id": "5D5F9E27EBB06700013CB1C2",
         "transaction": {
-          "targetAddress": "9103B60AAF27626883000000000000000000000000000000",
+          "targetAddress": "9903B60AAF27626883000000000000000000000000000000",
           "version": 1,
-          "network": 144,
+          "network": 152,
           "type": 16964,
           "valueSizeDelta": 1,
           "valueSize": 49,
@@ -37,6 +37,6 @@
     ],
     "type": 16705,
     "version": 1,
-    "network": 144
+    "network": 152
   }
 }

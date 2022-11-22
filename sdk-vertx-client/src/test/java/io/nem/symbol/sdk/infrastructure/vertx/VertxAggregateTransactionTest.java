@@ -56,7 +56,7 @@ public class VertxAggregateTransactionTest {
   private final JsonHelper jsonHelper =
       new JsonHelperJackson2(JsonHelperJackson2.configureMapper(Json.mapper));
 
-  private NetworkType networkType = NetworkType.MIJIN_TEST;
+  private NetworkType networkType = NetworkType.TEST_NET;
 
   @Test
   void createAAggregateTransactionViaStaticConstructor() {

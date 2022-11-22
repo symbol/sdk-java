@@ -31,16 +31,16 @@
         "transaction": {
           "signerPublicKey": "69970C5FB7A72662A6457504851DC11B10B19EB8A7D8C5E22301F1DC7492F292",
           "version": 1,
-          "network": 144,
+          "network": 152,
           "type": 16974,
           "namespaceId": "0001177402691AAA",
           "aliasAction": 1,
-          "address": "90E7C99F0DAD20AD199EBDF13B1F3793C9B0501A34C6F66A"
+          "address": "9808EE35A9486B9D9A906B188C6D7E9F34B6CE516253B412"
         }
       }
     ],
     "type": 16705,
     "version": 1,
-    "network": 144
+    "network": 152
   }
 }

@@ -31,7 +31,7 @@ public class AggregateTransactionCosignatureTest {
             "signature",
             new PublicAccount(
                 "9A49366406ACA952B88BADF5F1E9BE6CE4968141035A60BE503273EA65456B24",
-                NetworkType.MIJIN_TEST));
+                NetworkType.TEST_NET));
     assertEquals(
         AggregateTransactionCosignature.DEFAULT_VERSION,
         aggregateTransactionCosignature.getVersion());
@@ -39,7 +39,7 @@ public class AggregateTransactionCosignatureTest {
     assertEquals(
         new PublicAccount(
             "9A49366406ACA952B88BADF5F1E9BE6CE4968141035A60BE503273EA65456B24",
-            NetworkType.MIJIN_TEST),
+            NetworkType.TEST_NET),
         aggregateTransactionCosignature.getSigner());
   }
 }

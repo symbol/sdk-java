@@ -10,7 +10,7 @@
         {
           "version": 1,
           "type": 8515,
-          "targetAddress": "90E6FF7755A80B6AA935A5C31B6D3D0CFAF82E06BF2B9CC9",
+          "targetAddress": "98CF978DCDBD7013E713A3A48885640464F5750CDDD15159",
           "mosaicId": "85BBEA6CC462B244",
           "amount": "1000"
         }
@@ -28,9 +28,9 @@
         {
           "version": 1,
           "type": 4942,
-          "senderAddress": "90E6FF7755A80B6AA935A5C31B6D3D0CFAF82E06BF2B9CC9",
+          "senderAddress": "98CF978DCDBD7013E713A3A48885640464F5750CDDD15159",
           "mosaicId": "85BBEA6CC462B244",
-          "recipientAddress": "903CC58E8C242DCFC33DE4E2F8B434C77F93A48BA13BC3E3",
+          "recipientAddress": "985B6F3150839A64EBBEE0FDF1E1807E646D571ADC5EF9CD",
           "amount": "1000"
         },
         {

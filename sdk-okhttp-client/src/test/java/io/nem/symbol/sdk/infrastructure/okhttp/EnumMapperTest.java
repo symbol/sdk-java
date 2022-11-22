@@ -113,11 +113,9 @@ public class EnumMapperTest {
 
   @Test
   public void shouldAccountRestrictionTypeMapToAccountRestrictionType() {
-    AccountRestrictionFlags.values().stream()
+    AccountRestrictionFlags.values()
         .forEach(
-            v ->
-                Assertions.assertNotNull(
-                    AccountRestrictionFlagsEnum.fromValue((int) v.getValue())));
+            v -> Assertions.assertNotNull(AccountRestrictionFlagsEnum.fromValue(v.getValue())));
   }
 
   @Test
@@ -234,7 +232,7 @@ public class EnumMapperTest {
   @Test
   void testAccountRestrictionModificationDTO() {
     Set<Integer> existingValues = new HashSet<>();
-    AccountRestrictionFlags.values().stream()
+    AccountRestrictionFlags.values()
         .forEach(
             v -> {
               Assertions.assertNotNull(
@@ -271,7 +269,7 @@ public class EnumMapperTest {
   @Test
   void testAccountRestrictionTypeDTO() {
     Set<Integer> existingValues = new HashSet<>();
-    AccountRestrictionFlags.values().stream()
+    AccountRestrictionFlags.values()
         .forEach(
             v -> {
               Assertions.assertNotNull(

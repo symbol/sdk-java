@@ -54,8 +54,8 @@ class TransactionSearchCriteriaTest {
   @Test
   void shouldSetValues() {
 
-    Address address1 = Address.generateRandom(NetworkType.MIJIN_TEST);
-    Address address2 = Address.generateRandom(NetworkType.MIJIN_TEST);
+    Address address1 = Address.generateRandom(NetworkType.TEST_NET);
+    Address address2 = Address.generateRandom(NetworkType.TEST_NET);
     PublicKey signerPublicKey = PublicKey.fromHexString("227F");
     MosaicId mosaicId = new MosaicId(BigInteger.TEN);
 
@@ -107,8 +107,8 @@ class TransactionSearchCriteriaTest {
   @Test
   void shouldUseBuilderMethods() {
 
-    Address address1 = Address.generateRandom(NetworkType.MIJIN_TEST);
-    Address address2 = Address.generateRandom(NetworkType.MIJIN_TEST);
+    Address address1 = Address.generateRandom(NetworkType.TEST_NET);
+    Address address2 = Address.generateRandom(NetworkType.TEST_NET);
     PublicKey signerPublicKey = PublicKey.fromHexString("227F");
     MosaicId mosaicId = new MosaicId(BigInteger.TEN);
 
@@ -152,8 +152,8 @@ class TransactionSearchCriteriaTest {
   @Test
   void shouldBeEquals() {
 
-    Address address1 = Address.generateRandom(NetworkType.MIJIN_TEST);
-    Address address2 = Address.generateRandom(NetworkType.MIJIN_TEST);
+    Address address1 = Address.generateRandom(NetworkType.TEST_NET);
+    Address address2 = Address.generateRandom(NetworkType.TEST_NET);
     PublicKey signerPublicKey = PublicKey.fromHexString("227F");
 
     TransactionSearchCriteria criteria1 =

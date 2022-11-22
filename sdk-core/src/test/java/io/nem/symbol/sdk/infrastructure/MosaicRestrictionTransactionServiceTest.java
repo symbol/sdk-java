@@ -56,7 +56,7 @@ import org.mockito.Mockito;
 /** Tests of {@link MosaicRestrictionTransactionServiceImpl} */
 public class MosaicRestrictionTransactionServiceTest {
 
-  private final NetworkType networkType = NetworkType.MIJIN_TEST;
+  private final NetworkType networkType = NetworkType.TEST_NET;
   private final Account account1 = Account.generateNewAccount(networkType);
   private final Account account2 = Account.generateNewAccount(networkType);
   private final NamespaceId accountAlias1 =

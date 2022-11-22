@@ -127,7 +127,7 @@ public class MosaicRepositoryVertxImplTest extends AbstractVertxRespositoryTest 
     Assertions.assertEquals(mosaicId, mosaicInfo.getMosaicId());
     Assertions.assertEquals(mosaicDto.getRevision(), mosaicInfo.getRevision());
     Assertions.assertEquals(
-        mosaicDto.getOwnerAddress(), mosaicInfo.getOwnerAddress().encoded(NetworkType.MIJIN_TEST));
+        mosaicDto.getOwnerAddress(), mosaicInfo.getOwnerAddress().encoded(NetworkType.TEST_NET));
 
     Assertions.assertFalse(mosaicInfo.isTransferable());
     Assertions.assertEquals(6, mosaicInfo.getDivisibility());

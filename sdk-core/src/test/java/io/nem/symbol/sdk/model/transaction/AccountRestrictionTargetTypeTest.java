@@ -25,9 +25,9 @@ public class AccountRestrictionTargetTypeTest {
   @Test
   public void shouldGetModelObjectFromFromString() {
     Assertions.assertEquals(
-        MapperUtils.toUnresolvedAddress("9050B9837EFAB4BBE8A4B9BB32D812F9885C00D8FC1650E1"),
+        MapperUtils.toUnresolvedAddress("983FA2882A4A7F13A781112BD7C6693D52DA44F762B85ED7"),
         AccountRestrictionTargetType.ADDRESS.fromString(
-            "9050B9837EFAB4BBE8A4B9BB32D812F9885C00D8FC1650E1"));
+            "983FA2882A4A7F13A781112BD7C6693D52DA44F762B85ED7"));
 
     Assertions.assertEquals(
         TransactionType.MOSAIC_DEFINITION,

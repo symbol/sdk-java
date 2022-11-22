@@ -36,14 +36,14 @@ class MosaicSupplyChangeTransactionTest extends AbstractTransactionTester {
     Duration epochAdjustment = Duration.ofSeconds(100);
     MosaicSupplyChangeTransaction mosaicSupplyChangeTx =
         MosaicSupplyChangeTransactionFactory.create(
-                NetworkType.MIJIN_TEST,
+                NetworkType.TEST_NET,
                 Deadline.create(epochAdjustment),
                 new MosaicId(new BigInteger("6300565133566699912")),
                 MosaicSupplyChangeActionType.INCREASE,
                 BigInteger.valueOf(10))
             .build();
 
-    assertEquals(NetworkType.MIJIN_TEST, mosaicSupplyChangeTx.getNetworkType());
+    assertEquals(NetworkType.TEST_NET, mosaicSupplyChangeTx.getNetworkType());
     assertEquals(1, mosaicSupplyChangeTx.getVersion());
     assertTrue(
         LocalDateTime.now()
@@ -58,11 +58,11 @@ class MosaicSupplyChangeTransactionTest extends AbstractTransactionTester {
   @DisplayName("Serialization")
   void serialization() {
     String expected =
-        "91000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001904D42000000000000000001000000000000008869746E9B1A70570A0000000000000001";
+        "91000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001984D42000000000000000001000000000000008869746E9B1A70570A0000000000000001";
 
     MosaicSupplyChangeTransaction transaction =
         MosaicSupplyChangeTransactionFactory.create(
-                NetworkType.MIJIN_TEST,
+                NetworkType.TEST_NET,
                 new Deadline(BigInteger.ONE),
                 new MosaicId(new BigInteger("6300565133566699912")),
                 MosaicSupplyChangeActionType.INCREASE,

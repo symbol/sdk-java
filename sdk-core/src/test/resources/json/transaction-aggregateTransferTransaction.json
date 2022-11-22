@@ -36,16 +36,16 @@
               "id": "00003646934825AA"
             }
           ],
-          "recipientAddress": "9050B9837EFAB4BBE8A4B9BB32D812F9885C00D8FC1650E1",
+          "recipientAddress": "9812E8D2079D25BE594145807F0A5BC6E6490E7F103E0C64",
           "signerPublicKey": "B4F12E7C9F6946091E2CB8B6D3A12B50D17CCBBF646386EA27CE2946A7423DCF",
           "type": 16724,
           "version": 1,
-          "network": 144
+          "network": 152
         }
       }
     ],
     "type": 16705,
     "version": 1,
-    "network": 144
+    "network": 152
   }
 }

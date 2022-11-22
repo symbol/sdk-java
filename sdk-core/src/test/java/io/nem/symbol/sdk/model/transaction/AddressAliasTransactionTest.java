@@ -27,13 +27,13 @@ public class AddressAliasTransactionTest extends AbstractTransactionTester {
   @Test
   void shouldSerialize() {
 
-    NetworkType networkType = NetworkType.MIJIN_TEST;
+    NetworkType networkType = NetworkType.TEST_NET;
     BigInteger fee = BigInteger.ONE;
     NamespaceId namespaceId = NamespaceId.createFromId(new BigInteger("-8884663987180930485"));
     PublicAccount signature =
         PublicAccount.createFromPublicKey(
             "68b3fbb18729c1fde225c57f8ce080fa828f0067e451a3fd81fa628842b0b763",
-            NetworkType.MIJIN_TEST);
+            NetworkType.TEST_NET);
     TransactionInfo transactionInfo =
         TransactionInfo.createAggregate(
             new BigInteger("121855"),
@@ -60,11 +60,11 @@ public class AddressAliasTransactionTest extends AbstractTransactionTester {
     String expectedHash =
         "A100000000000000"
             + signatureHex
-            + "68B3FBB18729C1FDE225C57F8CE080FA828F0067E451A3FD81FA628842B0B7630000000001904E42010000000000000001000000000000004BFA5F372D55B3849049E14BEBCA93758EB36805BAE760A57239976F009A545C01";
+            + "68B3FBB18729C1FDE225C57F8CE080FA828F0067E451A3FD81FA628842B0B7630000000001984E42010000000000000001000000000000004BFA5F372D55B3849849E14BEBCA93758EB36805BAE760A57239976F00726BA601";
     assertSerialization(expectedHash, transaction);
 
     String expectedEmbeddedHash =
-        "510000000000000068B3FBB18729C1FDE225C57F8CE080FA828F0067E451A3FD81FA628842B0B7630000000001904E424BFA5F372D55B3849049E14BEBCA93758EB36805BAE760A57239976F009A545C01";
+        "510000000000000068B3FBB18729C1FDE225C57F8CE080FA828F0067E451A3FD81FA628842B0B7630000000001984E424BFA5F372D55B3849849E14BEBCA93758EB36805BAE760A57239976F00726BA601";
     assertEmbeddedSerialization(expectedEmbeddedHash, transaction);
   }
 }

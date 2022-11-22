@@ -33,7 +33,7 @@ public class MosaicResolutionStatementTest {
 
   private final BigInteger height = BigInteger.valueOf(1473L);
   private final BigInteger height2 = BigInteger.valueOf(1500L);
-  private final NetworkType networkType = NetworkType.MIJIN_TEST;
+  private final NetworkType networkType = NetworkType.TEST_NET;
 
   private List<MosaicResolutionStatement> mosaicResolutionStatements;
 

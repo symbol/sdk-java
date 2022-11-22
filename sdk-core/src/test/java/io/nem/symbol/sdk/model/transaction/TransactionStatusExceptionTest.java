@@ -26,7 +26,7 @@ class TransactionStatusExceptionTest {
 
   @Test
   void getStatusError() {
-    Address address = Address.generateRandom(NetworkType.MIJIN_TEST);
+    Address address = Address.generateRandom(NetworkType.TEST_NET);
     TransactionStatusError transactionStatusError =
         new TransactionStatusError(address, "hash", "error", new Deadline(BigInteger.valueOf(1)));
 

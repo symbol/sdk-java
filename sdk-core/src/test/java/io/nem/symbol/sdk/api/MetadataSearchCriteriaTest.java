@@ -46,8 +46,8 @@ public class MetadataSearchCriteriaTest {
   @Test
   void shouldSetValues() {
 
-    Address sourceAddress = Address.generateRandom(NetworkType.MIJIN_TEST);
-    Address targetAddress = Address.generateRandom(NetworkType.MIJIN_TEST);
+    Address sourceAddress = Address.generateRandom(NetworkType.TEST_NET);
+    Address targetAddress = Address.generateRandom(NetworkType.TEST_NET);
     MetadataSearchCriteria criteria = new MetadataSearchCriteria();
     criteria.setOrder(OrderBy.DESC);
     criteria.setPageSize(10);
@@ -75,8 +75,8 @@ public class MetadataSearchCriteriaTest {
   @Test
   void shouldUseBuilderMethods() {
 
-    Address sourceAddress = Address.generateRandom(NetworkType.MIJIN_TEST);
-    Address targetAddress = Address.generateRandom(NetworkType.MIJIN_TEST);
+    Address sourceAddress = Address.generateRandom(NetworkType.TEST_NET);
+    Address targetAddress = Address.generateRandom(NetworkType.TEST_NET);
     MosaicId mosaicId = MosaicId.createFromNonce(MosaicNonce.createRandom(), sourceAddress);
     MetadataSearchCriteria criteria =
         new MetadataSearchCriteria()
@@ -105,8 +105,8 @@ public class MetadataSearchCriteriaTest {
   @Test
   void shouldBeEquals() {
 
-    Address sourceAddress = Address.generateRandom(NetworkType.MIJIN_TEST);
-    Address targetAddress = Address.generateRandom(NetworkType.MIJIN_TEST);
+    Address sourceAddress = Address.generateRandom(NetworkType.TEST_NET);
+    Address targetAddress = Address.generateRandom(NetworkType.TEST_NET);
     MosaicId mosaicId = MosaicId.createFromNonce(MosaicNonce.createRandom(), sourceAddress);
 
     MetadataSearchCriteria criteria1 =

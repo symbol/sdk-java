@@ -112,7 +112,7 @@ public class NamespaceRepositoryVertxImplTest extends AbstractVertxRespositoryTe
   @Test
   public void search() throws Exception {
     Address address = Address.generateRandom(networkType);
-    Address ownerAccount = Account.generateNewAccount(NetworkType.MIJIN_TEST).getAddress();
+    Address ownerAccount = Account.generateNewAccount(NetworkType.TEST_NET).getAddress();
 
     NamespaceInfoDTO dto = new NamespaceInfoDTO();
     NamespaceMetaDTO meta = new NamespaceMetaDTO();

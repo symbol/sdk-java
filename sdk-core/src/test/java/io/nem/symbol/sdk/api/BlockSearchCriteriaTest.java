@@ -24,8 +24,8 @@ import org.junit.jupiter.api.Test;
 /** Test of {@link BlockSearchCriteria} */
 class BlockSearchCriteriaTest {
 
-  private final Account account1 = Account.generateNewAccount(NetworkType.MIJIN_TEST);
-  private final Account account2 = Account.generateNewAccount(NetworkType.MIJIN_TEST);
+  private final Account account1 = Account.generateNewAccount(NetworkType.TEST_NET);
+  private final Account account2 = Account.generateNewAccount(NetworkType.TEST_NET);
   private final PublicKey publicKey2 = account2.getKeyPair().getPublicKey();
 
   @Test

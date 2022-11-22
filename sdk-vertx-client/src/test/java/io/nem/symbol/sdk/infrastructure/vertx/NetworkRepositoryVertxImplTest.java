@@ -51,7 +51,7 @@ public class NetworkRepositoryVertxImplTest extends AbstractVertxRespositoryTest
   void shouldGetNetworkType() throws Exception {
 
     NodeInfoDTO dto = new NodeInfoDTO();
-    dto.setNetworkIdentifier(NetworkType.MIJIN_TEST.getValue());
+    dto.setNetworkIdentifier(NetworkType.TEST_NET.getValue());
 
     mockRemoteCall(dto);
 
@@ -59,7 +59,7 @@ public class NetworkRepositoryVertxImplTest extends AbstractVertxRespositoryTest
 
     Assertions.assertNotNull(info);
 
-    Assertions.assertEquals(NetworkType.MIJIN_TEST, info);
+    Assertions.assertEquals(NetworkType.TEST_NET, info);
   }
 
   @Test

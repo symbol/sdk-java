@@ -25,7 +25,7 @@ public class SignedTransactionTest {
 
   @Test
   void createASignedTransactionViaConstructor() {
-    Account signer = Account.generateNewAccount(NetworkType.MIJIN_TEST);
+    Account signer = Account.generateNewAccount(NetworkType.TEST_NET);
     SignedTransaction signedTransaction =
         new SignedTransaction(
             signer.getPublicAccount(), "payload", "hash", TransactionType.TRANSFER);

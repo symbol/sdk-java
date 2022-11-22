@@ -50,7 +50,7 @@ public class NetworkRepositoryOkHttpImplTest extends AbstractOkHttpRespositoryTe
   void shouldGetNetworkType() throws Exception {
 
     NodeInfoDTO dto = new NodeInfoDTO();
-    dto.setNetworkIdentifier(NetworkType.MIJIN_TEST.getValue());
+    dto.setNetworkIdentifier(NetworkType.TEST_NET.getValue());
 
     mockRemoteCall(dto);
 
@@ -58,7 +58,7 @@ public class NetworkRepositoryOkHttpImplTest extends AbstractOkHttpRespositoryTe
 
     Assertions.assertNotNull(info);
 
-    Assertions.assertEquals(NetworkType.MIJIN_TEST, info);
+    Assertions.assertEquals(NetworkType.TEST_NET, info);
   }
 
   @Test
