@@ -29,7 +29,7 @@ import java.util.Collections;
 /** Super class of all transaction unit tests. */
 abstract class AbstractTransactionTester {
 
-  public static NetworkType networkType = NetworkType.MIJIN_TEST;
+  public static NetworkType networkType = NetworkType.TEST_NET;
 
   private BinarySerializationImpl binarySerialization = new BinarySerializationImpl();
 

@@ -73,7 +73,7 @@ public class ReceiptRepositoryVertxImplTest extends AbstractVertxRespositoryTest
 
     Assertions.assertEquals(transactionStatementInfoDTOS.size(), transactionStatements.size());
     Assertions.assertEquals(
-        "82FEFFC329618ECF56B8A6FDBCFCF1BF0A4B6747AB6A5746B195CEEB810F335C",
+        "436D897697490D2969D784C7BBB14EB069279A6DE48E31912011B4DB0DC896BC",
         transactionStatements.get(0).generateHash().toUpperCase());
   }
 

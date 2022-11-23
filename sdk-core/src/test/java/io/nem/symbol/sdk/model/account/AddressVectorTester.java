@@ -37,8 +37,6 @@ class AddressVectorTester extends AbstractVectorTester {
     List<Arguments> arguments = new ArrayList<>();
     arguments.add(extractArguments(entry, NetworkType.MAIN_NET, "address_Public"));
     arguments.add(extractArguments(entry, NetworkType.TEST_NET, "address_PublicTest"));
-    arguments.add(extractArguments(entry, NetworkType.PRIVATE, "address_Private"));
-    //    arguments.add(extractArguments(entry, NetworkType.PRIVATE_TEST, "address_PrivateTest"));
     return arguments;
   }
 

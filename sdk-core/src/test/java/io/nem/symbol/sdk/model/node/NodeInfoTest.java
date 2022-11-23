@@ -33,7 +33,7 @@ public class NodeInfoTest {
     account =
         new Account(
             "787225aaff3d2c71f4ffa32d4f19ec4922f3cd869747f267378f81f8e3fcb12d",
-            NetworkType.MIJIN_TEST);
+            NetworkType.TEST_NET);
   }
 
   @Test
@@ -43,7 +43,7 @@ public class NodeInfoTest {
         new NodeInfo(
             account.getPublicKey(),
             3000,
-            NetworkType.MIJIN_TEST,
+            NetworkType.TEST_NET,
             0,
             roles,
             "localhost",
@@ -53,7 +53,7 @@ public class NodeInfoTest {
     assertEquals(0, nodeInfo.getVersion());
     assertEquals(3000, nodeInfo.getPort());
     assertEquals("test", nodeInfo.getFriendlyName());
-    assertEquals(NetworkType.MIJIN_TEST, nodeInfo.getNetworkIdentifier());
+    assertEquals(NetworkType.TEST_NET, nodeInfo.getNetworkIdentifier());
     assertEquals(roles, nodeInfo.getRoles());
     assertEquals(nodeInfo.getPublicKey(), account.getPublicKey());
     assertEquals("abc", nodeInfo.getNetworkGenerationHashSeed());

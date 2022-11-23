@@ -35,7 +35,7 @@ public class MosaicMetadataTransactionTest extends AbstractTransactionTester {
     account =
         new Account(
             "041e2ce90c31cd65620ed16ab7a5a485e5b335d7e61c75cd9b3a2fed3e091728",
-            NetworkType.MIJIN_TEST);
+            NetworkType.TEST_NET);
   }
 
   @Test
@@ -43,7 +43,7 @@ public class MosaicMetadataTransactionTest extends AbstractTransactionTester {
     MosaicId mosaicId = new MosaicId(BigInteger.valueOf(1000));
     MosaicMetadataTransaction transaction =
         MosaicMetadataTransactionFactory.create(
-                NetworkType.MIJIN_TEST,
+                NetworkType.TEST_NET,
                 new Deadline(BigInteger.ONE),
                 account.getAddress(),
                 mosaicId,
@@ -53,7 +53,7 @@ public class MosaicMetadataTransactionTest extends AbstractTransactionTester {
             .build();
     assertEquals("123ABC", StringEncoder.getString(transaction.getValue()));
     assertEquals(mosaicId, transaction.getTargetMosaicId());
-    assertEquals(NetworkType.MIJIN_TEST, transaction.getNetworkType());
+    assertEquals(NetworkType.TEST_NET, transaction.getNetworkType());
     assertEquals(10, transaction.getValueSizeDelta());
     assertEquals(BigInteger.TEN, transaction.getScopedMetadataKey());
 
@@ -65,7 +65,7 @@ public class MosaicMetadataTransactionTest extends AbstractTransactionTester {
     MosaicId mosaicId = new MosaicId(BigInteger.valueOf(1000));
     MosaicMetadataTransaction transaction =
         MosaicMetadataTransactionFactory.create(
-                NetworkType.MIJIN_TEST,
+                NetworkType.TEST_NET,
                 new Deadline(BigInteger.ONE),
                 account.getAddress(),
                 mosaicId,
@@ -76,11 +76,11 @@ public class MosaicMetadataTransactionTest extends AbstractTransactionTester {
             .build();
 
     String expectedHash =
-        "B20000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000F6503F78FBF99544B906872DDB392F4BE707180D285E7919DBACEF2E9573B1E60000000001904442000000000000000001000000000000009083025FF3A8AB5AD104631FB370F290004952CD1FDDC4C90A00000000000000E8030000000000000A000600313233414243";
+        "B20000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000F6503F78FBF99544B906872DDB392F4BE707180D285E7919DBACEF2E9573B1E60000000001984442000000000000000001000000000000009883025FF3A8AB5AD104631FB370F290004952CD1FB931E00A00000000000000E8030000000000000A000600313233414243";
     assertSerialization(expectedHash, transaction);
 
     String expectedEmbeddedHash =
-        "6200000000000000F6503F78FBF99544B906872DDB392F4BE707180D285E7919DBACEF2E9573B1E600000000019044429083025FF3A8AB5AD104631FB370F290004952CD1FDDC4C90A00000000000000E8030000000000000A000600313233414243";
+        "6200000000000000F6503F78FBF99544B906872DDB392F4BE707180D285E7919DBACEF2E9573B1E600000000019844429883025FF3A8AB5AD104631FB370F290004952CD1FB931E00A00000000000000E8030000000000000A000600313233414243";
     assertEmbeddedSerialization(expectedEmbeddedHash, transaction);
   }
 }

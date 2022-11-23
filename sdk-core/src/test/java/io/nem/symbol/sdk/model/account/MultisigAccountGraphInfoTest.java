@@ -37,14 +37,14 @@ class MultisigAccountGraphInfoTest {
             1,
             new PublicAccount(
                     "5D58EC16F07BF00BDE9B040E7451A37F9908C59E143A01438C04345D8E9DDF39",
-                    NetworkType.MIJIN_TEST)
+                    NetworkType.TEST_NET)
                 .getAddress(),
             1,
             1,
             Collections.singletonList(
                 new PublicAccount(
                         "1674016C27FE2C2EB5DFA73996FA54A183B38AED0AA64F756A3918BAF08E061B",
-                        NetworkType.MIJIN_TEST)
+                        NetworkType.TEST_NET)
                     .getAddress()),
             Collections.EMPTY_LIST);
     info.put(-3, Collections.singletonList(multisigAccountInfo));

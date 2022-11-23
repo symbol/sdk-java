@@ -24,17 +24,9 @@ import java.util.Arrays;
  */
 public enum NetworkType {
   /** Main net network */
-  MAIN_NET(104, "public", 'N'),
+  MAIN_NET(104, "mainnet", 'N'),
   /** Test net network */
-  TEST_NET(152, "publicTest", 'T'),
-  /** Private net network */
-  PRIVATE(120, "private", 'P'),
-  /** Private Test net network */
-  PRIVATE_TEST(168, "privateTest", 'V'),
-  /** Mijin net network */
-  MIJIN(96, "mijin", 'M'),
-  /** Mijin test net network */
-  MIJIN_TEST(144, "mijinTest", 'S');
+  TEST_NET(152, "testnet", 'T');
 
   /** The serialization value. */
   private final int value;

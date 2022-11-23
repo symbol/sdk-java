@@ -49,7 +49,7 @@ import org.junit.jupiter.api.Test;
 
 public class OkHttpAggregateTransactionTest {
 
-  public final NetworkType networkType = NetworkType.MIJIN_TEST;
+  public final NetworkType networkType = NetworkType.TEST_NET;
 
   private final String generationHash =
       "57F7DA205008026C776CB6AED843393F04CD458E0AA2D9F1D5F31A402072B2D6";
@@ -61,7 +61,7 @@ public class OkHttpAggregateTransactionTest {
   @Test
   void createAAggregateTransactionViaStaticConstructor() {
     Duration epochAdjustment = Duration.ofSeconds(100);
-    Address recipient = Address.generateRandom(NetworkType.MIJIN_TEST);
+    Address recipient = Address.generateRandom(NetworkType.TEST_NET);
     TransferTransaction transferTx =
         TransferTransactionFactory.create(networkType, deadline, recipient, Collections.emptyList())
             .message(new PlainMessage(""))

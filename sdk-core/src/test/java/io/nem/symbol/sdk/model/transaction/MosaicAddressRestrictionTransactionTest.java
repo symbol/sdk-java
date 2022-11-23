@@ -30,8 +30,7 @@ class MosaicAddressRestrictionTransactionTest extends AbstractTransactionTester 
 
   static Account account =
       new Account(
-          "26b64cb10f005e5988a36744ca19e20d835ccc7c105aaa5f3b212da593180930",
-          NetworkType.MIJIN_TEST);
+          "26b64cb10f005e5988a36744ca19e20d835ccc7c105aaa5f3b212da593180930", NetworkType.TEST_NET);
   static String generationHash = "57F7DA205008026C776CB6AED843393F04CD458E0AA2D9F1D5F31A402072B2D6";
 
   @Test
@@ -40,7 +39,7 @@ class MosaicAddressRestrictionTransactionTest extends AbstractTransactionTester 
     Duration epochAdjustment = Duration.ofSeconds(100);
     MosaicAddressRestrictionTransaction transaction =
         MosaicAddressRestrictionTransactionFactory.create(
-                NetworkType.MIJIN_TEST,
+                NetworkType.TEST_NET,
                 Deadline.create(epochAdjustment),
                 new MosaicId(new BigInteger("0")), // restricted
                 // MosaicId
@@ -52,7 +51,7 @@ class MosaicAddressRestrictionTransactionTest extends AbstractTransactionTester 
             .previousRestrictionValue(BigInteger.valueOf(9))
             .build();
 
-    assertEquals(NetworkType.MIJIN_TEST, transaction.getNetworkType());
+    assertEquals(NetworkType.TEST_NET, transaction.getNetworkType());
     assertEquals(1, (int) transaction.getVersion());
     assertTrue(
         LocalDateTime.now().isBefore(transaction.getDeadline().getLocalDateTime(epochAdjustment)));
@@ -68,7 +67,7 @@ class MosaicAddressRestrictionTransactionTest extends AbstractTransactionTester 
   void serializeAndSignTransaction() {
     MosaicAddressRestrictionTransaction transaction =
         MosaicAddressRestrictionTransactionFactory.create(
-                NetworkType.MIJIN_TEST,
+                NetworkType.TEST_NET,
                 new Deadline(BigInteger.ONE),
                 new MosaicId(new BigInteger("1")), // restricted
                 // MosaicId
@@ -82,7 +81,7 @@ class MosaicAddressRestrictionTransactionTest extends AbstractTransactionTester 
     SignedTransaction signedTransaction = transaction.signWith(account, generationHash);
 
     assertEquals(
-        "B8000000000000006EFCD6CE2F8C961035F6BBA96EB2A8BA6B3C652A71A735E1E5ED7145B2947F2F1A9A0FDFC1BFA067744D8A3E8CB0B35394C16B37B24DE337A4B26173609DB2049801508C58666C746F471538E43002B85B1CD542F9874B2861183919BA8787B6000000000190514200000000000000000100000000000000010000000000000001000000000000000900000000000000080000000000000090D66C33420E5411995BACFCA2B28CF1C9F5DD7AB1204EA4",
+        "B80000000000000058465D666400CFADA970F9303D3CEEAC6307691D73BECF3C1851864E595F29957969A435DE77E7F45C2AC4601646E7D14E12F19A04E70BC387179C2BD8CAC3049801508C58666C746F471538E43002B85B1CD542F9874B2861183919BA8787B6000000000198514200000000000000000100000000000000010000000000000001000000000000000900000000000000080000000000000098D66C33420E5411995BACFCA2B28CF1C9F5DD7AB1914687",
         signedTransaction.getPayload());
   }
 
@@ -90,7 +89,7 @@ class MosaicAddressRestrictionTransactionTest extends AbstractTransactionTester 
   void serialize() {
     MosaicAddressRestrictionTransaction transaction =
         MosaicAddressRestrictionTransactionFactory.create(
-                NetworkType.MIJIN_TEST,
+                NetworkType.TEST_NET,
                 new Deadline(BigInteger.ONE),
                 new MosaicId(new BigInteger("1")), // restricted
                 // MosaicId
@@ -103,11 +102,11 @@ class MosaicAddressRestrictionTransactionTest extends AbstractTransactionTester 
             .build();
 
     String expected =
-        "B800000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000009801508C58666C746F471538E43002B85B1CD542F9874B2861183919BA8787B6000000000190514200000000000000000100000000000000010000000000000001000000000000000900000000000000080000000000000090D66C33420E5411995BACFCA2B28CF1C9F5DD7AB1204EA4";
+        "B800000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000009801508C58666C746F471538E43002B85B1CD542F9874B2861183919BA8787B6000000000198514200000000000000000100000000000000010000000000000001000000000000000900000000000000080000000000000098D66C33420E5411995BACFCA2B28CF1C9F5DD7AB1914687";
     assertSerialization(expected, transaction);
 
     String expectedEmbeddedHash =
-        "68000000000000009801508C58666C746F471538E43002B85B1CD542F9874B2861183919BA8787B60000000001905142010000000000000001000000000000000900000000000000080000000000000090D66C33420E5411995BACFCA2B28CF1C9F5DD7AB1204EA4";
+        "68000000000000009801508C58666C746F471538E43002B85B1CD542F9874B2861183919BA8787B60000000001985142010000000000000001000000000000000900000000000000080000000000000098D66C33420E5411995BACFCA2B28CF1C9F5DD7AB1914687";
     assertEmbeddedSerialization(expectedEmbeddedHash, transaction);
   }
 }

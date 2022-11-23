@@ -163,7 +163,7 @@ public class TransactionRepositoryOkHttpImplTest extends AbstractOkHttpResposito
 
     TransferTransaction transferTransaction =
         TransferTransactionFactory.create(
-                NetworkType.MIJIN_TEST,
+                NetworkType.TEST_NET,
                 deadline,
                 address,
                 Collections.singletonList(createAbsolute(BigInteger.valueOf(1))))

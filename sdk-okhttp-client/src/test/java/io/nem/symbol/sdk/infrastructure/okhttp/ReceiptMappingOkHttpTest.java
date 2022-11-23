@@ -39,7 +39,7 @@ public class ReceiptMappingOkHttpTest {
 
   private final JsonHelper jsonHelper = new JsonHelperGson();
 
-  private final NetworkType networkType = NetworkType.MIJIN_TEST;
+  private final NetworkType networkType = NetworkType.TEST_NET;
 
   private final ReceiptMappingOkHttp mapper = new ReceiptMappingOkHttp(jsonHelper);
 
@@ -74,7 +74,7 @@ public class ReceiptMappingOkHttpTest {
             .collect(Collectors.toList());
 
     Assertions.assertEquals(
-        "82FEFFC329618ECF56B8A6FDBCFCF1BF0A4B6747AB6A5746B195CEEB810F335C",
+        "436D897697490D2969D784C7BBB14EB069279A6DE48E31912011B4DB0DC896BC",
         transactionStatements.get(0).generateHash().toUpperCase());
   }
 
@@ -92,7 +92,7 @@ public class ReceiptMappingOkHttpTest {
             .collect(Collectors.toList());
     TransactionStatement transactionStatement = transactionStatements.get(1);
     Assertions.assertEquals(
-        "41BF730BD307EB507880CA0576A4CCEFEF95F3060DC334CA364AE737114D1F60",
+        "533876FACE7B11F23E021E95FAEA49464F644F1C8675491D37DA7D06FD83F2C8",
         transactionStatement.generateHash().toUpperCase());
 
     List<Receipt> receipts = transactionStatement.getReceipts();
@@ -144,7 +144,7 @@ public class ReceiptMappingOkHttpTest {
             .collect(Collectors.toList());
 
     Assertions.assertEquals(
-        "9FB5235FB53C815DEFDCC9FC137BF949987097BDE2D3132EEF746F0AE0A6B02F",
+        "15FDD72A2B341B77585B8014857BE2D26B0FA0DD696CA159874BF003C437C481",
         addressResolutionStatements.get(0).generateHash(networkType));
   }
 }

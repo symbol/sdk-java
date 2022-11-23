@@ -37,23 +37,9 @@ public class NetworkTypeTest {
   }
 
   @Test
-  void MIJINIs0x60() {
-    assertEquals(0x60, NetworkType.MIJIN.getValue());
-    assertEquals(96, NetworkType.MIJIN.getValue());
-  }
-
-  @Test
-  void MIJIN_TESTIs0x90() {
-    assertEquals(0x90, NetworkType.MIJIN_TEST.getValue());
-    assertEquals(144, NetworkType.MIJIN_TEST.getValue());
-  }
-
-  @Test
   void rawValueOfNetworkName() {
-    assertEquals(NetworkType.MAIN_NET, NetworkType.rawValueOf("public"));
-    assertEquals(NetworkType.MIJIN_TEST, NetworkType.rawValueOf("mijinTest"));
-    assertEquals(NetworkType.TEST_NET, NetworkType.rawValueOf("publicTest"));
-    assertEquals(NetworkType.MIJIN, NetworkType.rawValueOf("mijin"));
+    assertEquals(NetworkType.MAIN_NET, NetworkType.rawValueOf("mainnet"));
+    assertEquals(NetworkType.TEST_NET, NetworkType.rawValueOf("testnet"));
   }
 
   @Test

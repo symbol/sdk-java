@@ -53,7 +53,7 @@ import org.mockito.Mockito;
 
 class MetadataTransactionServiceTest {
 
-  private final NetworkType networkType = NetworkType.MIJIN_TEST;
+  private final NetworkType networkType = NetworkType.TEST_NET;
   private MetadataTransactionServiceImpl service;
   private MetadataRepository metadataRepositoryMock;
   private PublicAccount targetAccount;

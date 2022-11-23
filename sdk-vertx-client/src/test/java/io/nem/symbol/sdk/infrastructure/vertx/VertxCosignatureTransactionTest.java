@@ -47,7 +47,7 @@ public class VertxCosignatureTransactionTest {
     account =
         new Account(
             "26b64cb10f005e5988a36744ca19e20d835ccc7c105aaa5f3b212da593180930",
-            NetworkType.MIJIN_TEST);
+            NetworkType.TEST_NET);
   }
 
   @Test
@@ -81,7 +81,7 @@ public class VertxCosignatureTransactionTest {
 
     AggregateTransaction aggregateTransaction =
         AggregateTransactionFactory.createComplete(
-                NetworkType.MIJIN_TEST, new Deadline(BigInteger.ONE), Collections.emptyList())
+                NetworkType.TEST_NET, new Deadline(BigInteger.ONE), Collections.emptyList())
             .build();
 
     assertThrows(

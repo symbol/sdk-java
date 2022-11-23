@@ -32,22 +32,9 @@ public class SerializationUtilsTest {
     Assertions.assertEquals("BDED68013AAEE068", namespaceId.getIdAsHex());
 
     Assertions.assertEquals(
-        "9168E0AE3A0168EDBD000000000000000000000000000000",
+        "9968E0AE3A0168EDBD000000000000000000000000000000",
         ConvertUtils.toHex(
-            SerializationUtils.fromUnresolvedAddressToByteBuffer(
-                    namespaceId, NetworkType.MIJIN_TEST)
-                .array()));
-
-    Assertions.assertEquals(
-        "6968E0AE3A0168EDBD000000000000000000000000000000",
-        ConvertUtils.toHex(
-            SerializationUtils.fromUnresolvedAddressToByteBuffer(namespaceId, NetworkType.MAIN_NET)
-                .array()));
-
-    Assertions.assertEquals(
-        "6168E0AE3A0168EDBD000000000000000000000000000000",
-        ConvertUtils.toHex(
-            SerializationUtils.fromUnresolvedAddressToByteBuffer(namespaceId, NetworkType.MIJIN)
+            SerializationUtils.fromUnresolvedAddressToByteBuffer(namespaceId, NetworkType.TEST_NET)
                 .array()));
 
     Assertions.assertEquals(

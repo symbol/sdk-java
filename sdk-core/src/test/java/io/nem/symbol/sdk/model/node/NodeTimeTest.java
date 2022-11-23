@@ -32,7 +32,7 @@ public class NodeTimeTest {
     account =
         new Account(
             "787225aaff3d2c71f4ffa32d4f19ec4922f3cd869747f267378f81f8e3fcb12d",
-            NetworkType.MIJIN_TEST);
+            NetworkType.TEST_NET);
   }
 
   @Test

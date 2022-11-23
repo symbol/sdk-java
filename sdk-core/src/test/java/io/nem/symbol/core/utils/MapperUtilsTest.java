@@ -28,7 +28,7 @@ import org.junit.jupiter.api.Test;
 
 public class MapperUtilsTest {
 
-  private final NetworkType networkType = NetworkType.MIJIN_TEST;
+  private final NetworkType networkType = NetworkType.TEST_NET;
 
   @Test
   void shouldMapToNamespaceId() {
@@ -51,12 +51,12 @@ public class MapperUtilsTest {
   void toAddressFromEncoded() {
 
     Assertions.assertNull(MapperUtils.toAddress(null));
-    Address address = MapperUtils.toAddress("9050B9837EFAB4BBE8A4B9BB32D812F9885C00D8FC1650E1");
+    Address address = MapperUtils.toAddress("987DF4D46158E9395BF674FB55BC708DEE82E364C88BAAD0");
     Assertions.assertNotNull(address);
 
-    Assertions.assertEquals("SBILTA367K2LX2FEXG5TFWAS7GEFYAGY7QLFBYI", address.plain());
-    Assertions.assertEquals("SBILTA-367K2L-X2FEXG-5TFWAS-7GEFYA-GY7QLF-BYI", address.pretty());
-    Assertions.assertEquals("9050B9837EFAB4BBE8A4B9BB32D812F9885C00D8FC1650E1", address.encoded());
+    Assertions.assertEquals("TB67JVDBLDUTSW7WOT5VLPDQRXXIFY3EZCF2VUA", address.plain());
+    Assertions.assertEquals("TB67JV-DBLDUT-SW7WOT-5VLPDQ-RXXIFY-3EZCF2-VUA", address.pretty());
+    Assertions.assertEquals("987DF4D46158E9395BF674FB55BC708DEE82E364C88BAAD0", address.encoded());
   }
 
   @Test
@@ -81,7 +81,7 @@ public class MapperUtilsTest {
     NamespaceId namespaceId = NamespaceId.createFromName("some.name");
 
     Assertions.assertEquals(
-        "91D9E338F78767ED95000000000000000000000000000000", namespaceId.encoded(networkType));
+        "99D9E338F78767ED95000000000000000000000000000000", namespaceId.encoded(networkType));
     Assertions.assertEquals(
         namespaceId.encoded(networkType),
         MapperUtils.toUnresolvedAddress(namespaceId.encoded(networkType)).encoded(networkType));

@@ -27,7 +27,7 @@ class AccountNamesTest {
 
   @Test
   void createAccountNames() {
-    Address address = Address.generateRandom(NetworkType.MIJIN_TEST);
+    Address address = Address.generateRandom(NetworkType.TEST_NET);
     List<NamespaceName> namespaceNames =
         Arrays.asList(new NamespaceName("accountalias"), new NamespaceName("anotheralias"));
     AccountNames names = new AccountNames(address, namespaceNames);

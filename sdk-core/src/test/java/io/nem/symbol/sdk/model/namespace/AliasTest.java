@@ -28,8 +28,8 @@ import org.junit.jupiter.api.Test;
 
 public class AliasTest {
 
-  Address address = Address.generateRandom(NetworkType.MIJIN_TEST);
-  Address address2 = Address.generateRandom(NetworkType.MIJIN_TEST);
+  Address address = Address.generateRandom(NetworkType.TEST_NET);
+  Address address2 = Address.generateRandom(NetworkType.TEST_NET);
   MosaicId mosaicId = new MosaicId("0dc67fbe1cad29e3");
   MosaicId mosaicId2 = new MosaicId("0dc67fbd1cad29e2");
 

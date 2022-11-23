@@ -42,9 +42,6 @@ class MosaicVectorTester extends AbstractVectorTester {
         extractArguments(entry, NetworkType.MAIN_NET, "address_Public", "mosaicId_Public"));
     arguments.add(
         extractArguments(entry, NetworkType.TEST_NET, "address_PublicTest", "mosaicId_PublicTest"));
-    arguments.add(extractArguments(entry, NetworkType.MIJIN, "address_Mijin", "mosaicId_Mijin"));
-    arguments.add(
-        extractArguments(entry, NetworkType.MIJIN_TEST, "address_MijinTest", "mosaicId_MijinTest"));
     return arguments;
   }
 

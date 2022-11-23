@@ -296,7 +296,7 @@ public class TransactionRepositoryVertxImplTest extends AbstractVertxRespository
 
     TransferTransaction transferTransaction =
         TransferTransactionFactory.create(
-                NetworkType.MIJIN_TEST,
+                NetworkType.TEST_NET,
                 new Deadline(BigInteger.ONE),
                 recipientAddress,
                 Collections.singletonList(createAbsolute(BigInteger.valueOf(1))))

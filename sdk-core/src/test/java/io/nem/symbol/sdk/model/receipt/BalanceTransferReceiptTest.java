@@ -36,7 +36,7 @@ public class BalanceTransferReceiptTest {
   static MosaicId mosaicId;
   static Address unresolvedAddress;
   static Address address;
-  static NetworkType networkType = NetworkType.MIJIN_TEST;
+  static NetworkType networkType = NetworkType.TEST_NET;
 
   @BeforeAll
   public static void setup() {

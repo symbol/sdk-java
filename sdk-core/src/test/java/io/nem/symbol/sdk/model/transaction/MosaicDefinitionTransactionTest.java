@@ -37,13 +37,13 @@ class MosaicDefinitionTransactionTest extends AbstractTransactionTester {
 
   @Test
   void createAMosaicCreationTransactionViaStaticConstructor() {
-    Account owner = Account.generateNewAccount(NetworkType.MIJIN_TEST);
+    Account owner = Account.generateNewAccount(NetworkType.TEST_NET);
     Duration epochAdjustment = Duration.ofSeconds(100);
     int nonceNumber = 12345;
     MosaicNonce nonce = MosaicNonce.createFromInteger(nonceNumber);
     MosaicDefinitionTransaction mosaicCreationTx =
         MosaicDefinitionTransactionFactory.create(
-                NetworkType.MIJIN_TEST,
+                NetworkType.TEST_NET,
                 Deadline.create(epochAdjustment),
                 nonce,
                 MosaicId.createFromNonce(nonce, owner.getPublicAccount()),
@@ -54,7 +54,7 @@ class MosaicDefinitionTransactionTest extends AbstractTransactionTester {
 
     System.out.println(
         ConvertUtils.toHex(BinarySerializationImpl.INSTANCE.serialize(mosaicCreationTx)));
-    assertEquals(NetworkType.MIJIN_TEST, mosaicCreationTx.getNetworkType());
+    assertEquals(NetworkType.TEST_NET, mosaicCreationTx.getNetworkType());
     assertEquals(1, (int) mosaicCreationTx.getVersion());
     assertTrue(
         LocalDateTime.now()
@@ -73,10 +73,10 @@ class MosaicDefinitionTransactionTest extends AbstractTransactionTester {
   @DisplayName("Serialization")
   void serialization() {
     String expected =
-        "96000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001904d410000000000000000010000000000000000000000000000001027000000000000000000000504";
+        "96000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001984D410000000000000000010000000000000000000000000000001027000000000000000000000504";
     MosaicDefinitionTransaction transaction =
         MosaicDefinitionTransactionFactory.create(
-                NetworkType.MIJIN_TEST,
+                NetworkType.TEST_NET,
                 new Deadline(BigInteger.ONE),
                 MosaicNonce.createFromBigInteger(new BigInteger("0")),
                 new MosaicId(new BigInteger("0")),
@@ -91,9 +91,9 @@ class MosaicDefinitionTransactionTest extends AbstractTransactionTester {
   @DisplayName("SerializationEmbeddedBytes")
   void shouldGenerateEmbeddedBytes() {
     String expected =
-        "460000000000000068b3fbb18729c1fde225c57f8ce080fa828f0067e451a3fd81fa628842b0b7630000000001904d4100000000000000000a00000000000000000000000203";
+        "460000000000000068B3FBB18729C1FDE225C57F8CE080FA828F0067E451A3FD81FA628842B0B7630000000001984D4100000000000000000A00000000000000000000000203";
 
-    NetworkType networkType = NetworkType.MIJIN_TEST;
+    NetworkType networkType = NetworkType.TEST_NET;
     MosaicId mosaicId = new MosaicId(new BigInteger("0"));
     BigInteger fee = BigInteger.ONE;
     MosaicNonce mosaicNonce = MosaicNonce.createFromBigInteger(new BigInteger("0"));
@@ -102,7 +102,7 @@ class MosaicDefinitionTransactionTest extends AbstractTransactionTester {
     PublicAccount signature =
         PublicAccount.createFromPublicKey(
             "68b3fbb18729c1fde225c57f8ce080fa828f0067e451a3fd81fa628842b0b763",
-            NetworkType.MIJIN_TEST);
+            NetworkType.TEST_NET);
     TransactionInfo transactionInfo =
         TransactionInfo.createAggregate(
             new BigInteger("121855"),

@@ -42,9 +42,9 @@ public class TransactionStatementSearchCriteriaTest {
   @Test
   void shouldSetValues() {
 
-    Address recipientAddress = Address.generateRandom(NetworkType.MIJIN_TEST);
-    Address targetAddress = Address.generateRandom(NetworkType.MIJIN_TEST);
-    Address senderAddress = Address.generateRandom(NetworkType.MIJIN_TEST);
+    Address recipientAddress = Address.generateRandom(NetworkType.TEST_NET);
+    Address targetAddress = Address.generateRandom(NetworkType.TEST_NET);
+    Address senderAddress = Address.generateRandom(NetworkType.TEST_NET);
 
     TransactionStatementSearchCriteria criteria = new TransactionStatementSearchCriteria();
 
@@ -80,9 +80,9 @@ public class TransactionStatementSearchCriteriaTest {
   @Test
   void shouldUseBuilderMethods() {
 
-    Address recipientAddress = Address.generateRandom(NetworkType.MIJIN_TEST);
-    Address targetAddress = Address.generateRandom(NetworkType.MIJIN_TEST);
-    Address senderAddress = Address.generateRandom(NetworkType.MIJIN_TEST);
+    Address recipientAddress = Address.generateRandom(NetworkType.TEST_NET);
+    Address targetAddress = Address.generateRandom(NetworkType.TEST_NET);
+    Address senderAddress = Address.generateRandom(NetworkType.TEST_NET);
 
     TransactionStatementSearchCriteria criteria =
         new TransactionStatementSearchCriteria().height(BigInteger.ONE);
@@ -115,9 +115,9 @@ public class TransactionStatementSearchCriteriaTest {
   @Test
   void shouldBeEquals() {
 
-    Address recipientAddress = Address.generateRandom(NetworkType.MIJIN_TEST);
-    Address targetAddress = Address.generateRandom(NetworkType.MIJIN_TEST);
-    Address senderAddress = Address.generateRandom(NetworkType.MIJIN_TEST);
+    Address recipientAddress = Address.generateRandom(NetworkType.TEST_NET);
+    Address targetAddress = Address.generateRandom(NetworkType.TEST_NET);
+    Address senderAddress = Address.generateRandom(NetworkType.TEST_NET);
 
     TransactionStatementSearchCriteria criteria1 =
         new TransactionStatementSearchCriteria()

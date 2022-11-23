@@ -25,16 +25,16 @@ import org.junit.jupiter.api.Test;
 
 class PublicAccountTest {
 
-  private final String plain = "SAKQRU2RTNWMBE3KAQRTA46T3EB6DX567FO4EBA";
-  private final String pretty = "SAKQRU-2RTNWM-BE3KAQ-RTA46T-3EB6DX-567FO4-EBA";
-  private final String encoded = "901508D3519B6CC0936A04233073D3D903E1DFBEF95DC204";
+  private final String plain = "TBE5JFS6AG2RBQVJE7R3IZV4B4RCXULIXY77ZZQ";
+  private final String pretty = "TBE5JF-S6AG2R-BQVJE7-R3IZV4-B4RCXU-LIXY77-ZZQ";
+  private final String encoded = "9849D4965E01B510C2A927E3B466BC0F222BD168BE3FFCE6";
   private final String publicKey =
-      "089E931203F63EECF695DB94957B03E1A6B7941532069B687386D6D4A7B6BE4A";
-  private final NetworkType networkType = NetworkType.MIJIN_TEST;
+      "9A49366406ACA952B88BADF5F1E9BE6CE4968141035A60BE503273EA65456332";
+  private final NetworkType networkType = NetworkType.TEST_NET;
 
   @Test
   void shouldCreatePublicAccountViaConstructor() {
-    PublicAccount publicAccount = new PublicAccount(publicKey, NetworkType.MIJIN_TEST);
+    PublicAccount publicAccount = new PublicAccount(publicKey, NetworkType.TEST_NET);
     assertEquals(publicKey.toUpperCase(), publicAccount.getPublicKey().toHex());
     assertEquals(plain, publicAccount.getAddress().plain());
   }
@@ -42,21 +42,21 @@ class PublicAccountTest {
   @Test
   void shouldCreatePublicAccountViaStaticConstructor() {
     PublicAccount publicAccount =
-        PublicAccount.createFromPublicKey(publicKey, NetworkType.MIJIN_TEST);
+        PublicAccount.createFromPublicKey(publicKey, NetworkType.TEST_NET);
     assertEquals(publicKey.toUpperCase(), publicAccount.getPublicKey().toHex());
     assertEquals(plain, publicAccount.getAddress().plain());
   }
 
   @Test
   void equalityIsBasedOnPublicKeyAndNetwork() {
-    PublicAccount publicAccount = new PublicAccount(publicKey, NetworkType.MIJIN_TEST);
-    PublicAccount publicAccount2 = new PublicAccount(publicKey, NetworkType.MIJIN_TEST);
+    PublicAccount publicAccount = new PublicAccount(publicKey, NetworkType.TEST_NET);
+    PublicAccount publicAccount2 = new PublicAccount(publicKey, NetworkType.TEST_NET);
     assertEquals(publicAccount, publicAccount2);
   }
 
   @Test
   void equalityReturnsFalseIfNetworkIsDifferent() {
-    PublicAccount publicAccount = new PublicAccount(publicKey, NetworkType.MIJIN_TEST);
+    PublicAccount publicAccount = new PublicAccount(publicKey, NetworkType.TEST_NET);
     PublicAccount publicAccount2 = new PublicAccount(publicKey, NetworkType.MAIN_NET);
     assertNotEquals(publicAccount, publicAccount2);
   }
@@ -81,12 +81,12 @@ class PublicAccountTest {
     PublicAccount account1 =
         PublicAccount.createFromPublicKey(
             "A5F82EC8EBB341427B6785C8111906CD0DF18838FB11B51CE0E18B5E79DFF630",
-            NetworkType.MIJIN_TEST);
+            NetworkType.TEST_NET);
 
     PublicAccount account2 =
         PublicAccount.createFromPublicKey(
             "A5F82EC8EBB341427B6785C8111906CD0DF18838FB11B51CE0E18B5E79DFF630",
-            NetworkType.MIJIN_TEST);
+            NetworkType.TEST_NET);
 
     PublicAccount account3 =
         PublicAccount.createFromPublicKey(

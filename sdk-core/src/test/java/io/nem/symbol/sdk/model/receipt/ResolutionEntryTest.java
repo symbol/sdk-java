@@ -33,7 +33,7 @@ public class ResolutionEntryTest {
 
   @BeforeAll
   public static void setup() {
-    address = Address.generateRandom(NetworkType.MIJIN_TEST);
+    address = Address.generateRandom(NetworkType.TEST_NET);
     mosaicId = new MosaicId("85BBEA6CC462B244");
     receiptSource = new ReceiptSource(1, 1);
   }

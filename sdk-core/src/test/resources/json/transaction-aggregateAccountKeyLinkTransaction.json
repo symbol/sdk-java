@@ -31,7 +31,7 @@
         "transaction": {
           "signerPublicKey": "69970C5FB7A72662A6457504851DC11B10B19EB8A7D8C5E22301F1DC7492F292",
           "version": 1,
-          "network": 144,
+          "network": 152,
           "type": 16716,
           "linkAction": 1,
           "linkedPublicKey": "B4F12E7C9F6946091E2CB8B6D3A12B50D17CCBBF646386EA27CE2946A7423DCF"
@@ -40,6 +40,6 @@
     ],
     "type": 16705,
     "version": 1,
-    "network": 144
+    "network": 152
   }
 }

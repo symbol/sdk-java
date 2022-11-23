@@ -49,7 +49,7 @@ public abstract class AbstractVertxRespositoryTest {
 
   protected JsonHelper jsonHelper;
 
-  protected final NetworkType networkType = NetworkType.MIJIN_TEST;
+  protected final NetworkType networkType = NetworkType.TEST_NET;
 
   protected final Observable<NetworkType> networkTypeObservable = Observable.just(networkType);
 

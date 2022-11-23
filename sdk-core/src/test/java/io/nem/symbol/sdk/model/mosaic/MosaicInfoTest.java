@@ -36,7 +36,7 @@ class MosaicInfoTest {
     MosaicFlags mosaicFlags = MosaicFlags.create(true, true, true);
     MosaicId mosaicId = new MosaicId(new BigInteger("-3087871471161192663"));
 
-    Address address = Address.createFromRawAddress("SDY3NFHBQAPO7ZBII3USHG2UZHJYD7G7FICKIII");
+    Address address = Address.createFromRawAddress("TBEM3LTBAHSDOXONNOKAVIGIZJLUCCPIBWY7WEA");
     MosaicInfo info =
         new MosaicInfo(
             "abc",
@@ -64,7 +64,7 @@ class MosaicInfoTest {
 
     byte[] serializedState = info.serialize();
     String expectedHex =
-        "010029CF5FD941AD25D56400000000000000C80000000000000090F1B694E1801EEFE42846E9239B54C9D381FCDF2A04A4210100000007030A00000000000000";
+        "010029CF5FD941AD25D56400000000000000C8000000000000009848CDAE6101E4375DCD6B940AA0C8CA574109E80DB1FB100100000007030A00000000000000";
     Assertions.assertEquals(expectedHex, ConvertUtils.toHex(serializedState));
     MosaicEntryBuilder builder =
         MosaicEntryBuilder.loadFromBinary(SerializationUtils.toDataInput(serializedState));
@@ -77,7 +77,7 @@ class MosaicInfoTest {
     MosaicFlags mosaicFlags = MosaicFlags.create(true, true, true);
     MosaicId mosaicId = new MosaicId(new BigInteger("-3087871471161192663"));
 
-    Address address = Account.generateNewAccount(NetworkType.MIJIN_TEST).getAddress();
+    Address address = Account.generateNewAccount(NetworkType.TEST_NET).getAddress();
     MosaicInfo mosaicInfo =
         new MosaicInfo(
             "abc",
@@ -110,7 +110,7 @@ class MosaicInfoTest {
             new MosaicId(new BigInteger("-3087871471161192663")),
             new BigInteger("100"),
             new BigInteger("0"),
-            Account.generateNewAccount(NetworkType.MIJIN_TEST).getAddress(),
+            Account.generateNewAccount(NetworkType.TEST_NET).getAddress(),
             1L,
             mosaicFlags,
             3,
@@ -130,7 +130,7 @@ class MosaicInfoTest {
             new MosaicId(new BigInteger("-3087871471161192663")),
             new BigInteger("100"),
             new BigInteger("0"),
-            Account.generateNewAccount(NetworkType.MIJIN_TEST).getAddress(),
+            Account.generateNewAccount(NetworkType.TEST_NET).getAddress(),
             1L,
             mosaicFlags,
             3,
@@ -150,7 +150,7 @@ class MosaicInfoTest {
             new MosaicId(new BigInteger("-3087871471161192663")),
             new BigInteger("100"),
             new BigInteger("0"),
-            Account.generateNewAccount(NetworkType.MIJIN_TEST).getAddress(),
+            Account.generateNewAccount(NetworkType.TEST_NET).getAddress(),
             1L,
             mosaicFlags,
             3,
@@ -170,7 +170,7 @@ class MosaicInfoTest {
             new MosaicId(new BigInteger("-3087871471161192663")),
             new BigInteger("100"),
             new BigInteger("0"),
-            Account.generateNewAccount(NetworkType.MIJIN_TEST).getAddress(),
+            Account.generateNewAccount(NetworkType.TEST_NET).getAddress(),
             1L,
             mosaicFlags,
             3,
@@ -190,7 +190,7 @@ class MosaicInfoTest {
             new MosaicId(new BigInteger("-3087871471161192663")),
             new BigInteger("100"),
             new BigInteger("0"),
-            Account.generateNewAccount(NetworkType.MIJIN_TEST).getAddress(),
+            Account.generateNewAccount(NetworkType.TEST_NET).getAddress(),
             1L,
             mosaicFlags,
             3,
@@ -210,7 +210,7 @@ class MosaicInfoTest {
             new MosaicId(new BigInteger("-3087871471161192663")),
             new BigInteger("100"),
             new BigInteger("0"),
-            Account.generateNewAccount(NetworkType.MIJIN_TEST).getAddress(),
+            Account.generateNewAccount(NetworkType.TEST_NET).getAddress(),
             1L,
             mosaicFlags,
             3,

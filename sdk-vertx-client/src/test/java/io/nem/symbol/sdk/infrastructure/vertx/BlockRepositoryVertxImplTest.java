@@ -92,7 +92,7 @@ public class BlockRepositoryVertxImplTest extends AbstractVertxRespositoryTest {
     blockDto.setType(BlockType.NORMAL_BLOCK.getValue());
     blockDto.setVersion(3);
     blockDto.setSize(10L);
-    blockDto.setNetwork(NetworkTypeEnum.NUMBER_144);
+    blockDto.setNetwork(NetworkTypeEnum.NUMBER_152);
     blockDto.setSignerPublicKey("B630EFDDFADCC4A2077AB8F1EC846B08FEE2D2972EACF95BBAC6BFAC3D31834C");
     blockDto.setBeneficiaryAddress(address.encoded());
     blockDto.setHeight(BigInteger.valueOf(9));
@@ -115,7 +115,7 @@ public class BlockRepositoryVertxImplTest extends AbstractVertxRespositoryTest {
     Assertions.assertEquals(BlockType.NORMAL_BLOCK, info.getType());
     Assertions.assertEquals(10, info.getSize());
     Assertions.assertEquals(3, info.getVersion().intValue());
-    Assertions.assertEquals(NetworkType.MIJIN_TEST, info.getNetworkType());
+    Assertions.assertEquals(NetworkType.TEST_NET, info.getNetworkType());
     Assertions.assertEquals(BigInteger.valueOf(9L), info.getHeight());
     Assertions.assertEquals(metaDTO.getHash(), info.getHash());
     Assertions.assertEquals(metaDTO.getTotalTransactionsCount(), info.getTotalTransactionsCount());
@@ -152,7 +152,7 @@ public class BlockRepositoryVertxImplTest extends AbstractVertxRespositoryTest {
     blockDto.setType(BlockType.IMPORTANCE_BLOCK.getValue());
     blockDto.setVersion(3);
     blockDto.setSize(10L);
-    blockDto.setNetwork(NetworkTypeEnum.NUMBER_144);
+    blockDto.setNetwork(NetworkTypeEnum.NUMBER_152);
     blockDto.setSignerPublicKey("B630EFDDFADCC4A2077AB8F1EC846B08FEE2D2972EACF95BBAC6BFAC3D31834C");
     blockDto.setBeneficiaryAddress(address.encoded());
     blockDto.setHeight(BigInteger.valueOf(9));
@@ -181,7 +181,7 @@ public class BlockRepositoryVertxImplTest extends AbstractVertxRespositoryTest {
     Assertions.assertEquals(BlockType.IMPORTANCE_BLOCK, info.getType());
     Assertions.assertEquals(10, info.getSize());
     Assertions.assertEquals(3, info.getVersion().intValue());
-    Assertions.assertEquals(NetworkType.MIJIN_TEST, info.getNetworkType());
+    Assertions.assertEquals(NetworkType.TEST_NET, info.getNetworkType());
     Assertions.assertEquals(BigInteger.valueOf(9L), info.getHeight());
     Assertions.assertEquals(metaDTO.getHash(), info.getHash());
     Assertions.assertEquals(metaDTO.getTotalTransactionsCount(), info.getTotalTransactionsCount());
@@ -226,7 +226,7 @@ public class BlockRepositoryVertxImplTest extends AbstractVertxRespositoryTest {
     blockDto.setSignerPublicKey("B630EFDDFADCC4A2077AB8F1EC846B08FEE2D2972EACF95BBAC6BFAC3D31834C");
     blockDto.setBeneficiaryAddress(address.encoded());
     blockDto.setHeight(BigInteger.valueOf(9L));
-    blockDto.setNetwork(NetworkTypeEnum.NUMBER_144);
+    blockDto.setNetwork(NetworkTypeEnum.NUMBER_152);
 
     blockDto.setProofGamma("proofGamma");
     blockDto.setProofScalar("proofScalar");
@@ -253,7 +253,7 @@ public class BlockRepositoryVertxImplTest extends AbstractVertxRespositoryTest {
 
     Assertions.assertEquals(BlockType.NORMAL_BLOCK, info.getType());
     Assertions.assertEquals(3, info.getVersion().intValue());
-    Assertions.assertEquals(NetworkType.MIJIN_TEST, info.getNetworkType());
+    Assertions.assertEquals(NetworkType.TEST_NET, info.getNetworkType());
     Assertions.assertEquals(BigInteger.valueOf(9L), info.getHeight());
     Assertions.assertEquals(metaDTO.getHash(), info.getHash());
     Assertions.assertEquals(metaDTO.getGenerationHash(), info.getGenerationHash());

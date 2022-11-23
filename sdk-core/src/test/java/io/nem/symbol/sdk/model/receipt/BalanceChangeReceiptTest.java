@@ -42,7 +42,7 @@ public class BalanceChangeReceiptTest {
     account =
         new Account(
             "787225aaff3d2c71f4ffa32d4f19ec4922f3cd869747f267378f81f8e3fcb12d",
-            NetworkType.MIJIN_TEST);
+            NetworkType.TEST_NET);
     mosaicId = new MosaicId("85BBEA6CC462B244");
   }
 
@@ -65,7 +65,7 @@ public class BalanceChangeReceiptTest {
 
     String hex = ConvertUtils.toHex(balanceChangeReceipt.serialize());
     Assertions.assertEquals(
-        "0100432144B262C46CEABB850A0000000000000090089108860764C22FDD34EB8979FEAE8BD9B9E303AA0176",
+        "0100432144B262C46CEABB850A0000000000000098089108860764C22FDD34EB8979FEAE8BD9B9E3030D5C7E",
         hex);
   }
 
@@ -88,7 +88,7 @@ public class BalanceChangeReceiptTest {
 
     String hex = ConvertUtils.toHex(balanceChangeReceipt.serialize());
     Assertions.assertEquals(
-        "0100483144B262C46CEABB850A0000000000000090089108860764C22FDD34EB8979FEAE8BD9B9E303AA0176",
+        "0100483144B262C46CEABB850A0000000000000098089108860764C22FDD34EB8979FEAE8BD9B9E3030D5C7E",
         hex);
   }
 
@@ -111,7 +111,7 @@ public class BalanceChangeReceiptTest {
 
     String hex = ConvertUtils.toHex(balanceChangeReceipt.serialize());
     Assertions.assertEquals(
-        "0100482344B262C46CEABB850A0000000000000090089108860764C22FDD34EB8979FEAE8BD9B9E303AA0176",
+        "0100482344B262C46CEABB850A0000000000000098089108860764C22FDD34EB8979FEAE8BD9B9E3030D5C7E",
         hex);
   }
 
@@ -134,7 +134,7 @@ public class BalanceChangeReceiptTest {
 
     String hex = ConvertUtils.toHex(balanceChangeReceipt.serialize());
     Assertions.assertEquals(
-        "0100482244B262C46CEABB850A0000000000000090089108860764C22FDD34EB8979FEAE8BD9B9E303AA0176",
+        "0100482244B262C46CEABB850A0000000000000098089108860764C22FDD34EB8979FEAE8BD9B9E3030D5C7E",
         hex);
   }
 
@@ -157,7 +157,7 @@ public class BalanceChangeReceiptTest {
 
     String hex = ConvertUtils.toHex(balanceChangeReceipt.serialize());
     Assertions.assertEquals(
-        "0100523144B262C46CEABB850A0000000000000090089108860764C22FDD34EB8979FEAE8BD9B9E303AA0176",
+        "0100523144B262C46CEABB850A0000000000000098089108860764C22FDD34EB8979FEAE8BD9B9E3030D5C7E",
         hex);
   }
 
@@ -180,7 +180,7 @@ public class BalanceChangeReceiptTest {
 
     String hex = ConvertUtils.toHex(balanceChangeReceipt.serialize());
     Assertions.assertEquals(
-        "0100522344B262C46CEABB850A0000000000000090089108860764C22FDD34EB8979FEAE8BD9B9E303AA0176",
+        "0100522344B262C46CEABB850A0000000000000098089108860764C22FDD34EB8979FEAE8BD9B9E3030D5C7E",
         hex);
   }
 
@@ -203,7 +203,7 @@ public class BalanceChangeReceiptTest {
 
     String hex = ConvertUtils.toHex(balanceChangeReceipt.serialize());
     Assertions.assertEquals(
-        "0100522244B262C46CEABB850A0000000000000090089108860764C22FDD34EB8979FEAE8BD9B9E303AA0176",
+        "0100522244B262C46CEABB850A0000000000000098089108860764C22FDD34EB8979FEAE8BD9B9E3030D5C7E",
         hex);
   }
 

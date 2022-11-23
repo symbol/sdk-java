@@ -37,7 +37,7 @@ public class MosaicAddressRestrictionTest {
 
   private final PublicKey accountPublicKey =
       PublicKey.fromHexString("1111111111111111111111111111111111111111111111111111111111111111");
-  private final NetworkType networkType = NetworkType.MIJIN_TEST;
+  private final NetworkType networkType = NetworkType.TEST_NET;
   private final PublicAccount account =
       PublicAccount.createFromPublicKey(accountPublicKey.toHex(), networkType);
   private final MosaicId mosaicId = MosaicId.createFromNonce(new MosaicNonce(1), account);
@@ -60,7 +60,7 @@ public class MosaicAddressRestrictionTest {
 
     byte[] serializedState = restriction.serialize();
     String expectedHex =
-        "0100009FA9BCEE6D3B6E5890FD35818960C7B18B72F49A5598FA9F712A354DB38EB076020A00000000000000010000000000000014000000000000000200000000000000";
+        "0100008DF99620C875030998FD35818960C7B18B72F49A5598FA9F712A354DB33EDE57020A00000000000000010000000000000014000000000000000200000000000000";
     assertEquals(expectedHex, ConvertUtils.toHex(serializedState));
 
     MosaicRestrictionEntryBuilder builder =

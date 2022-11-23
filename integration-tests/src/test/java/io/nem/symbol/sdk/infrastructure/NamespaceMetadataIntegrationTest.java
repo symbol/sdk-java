@@ -15,6 +15,7 @@
  */
 package io.nem.symbol.sdk.infrastructure;
 
+import io.nem.symbol.core.utils.StringEncoder;
 import io.nem.symbol.sdk.api.MetadataSearchCriteria;
 import io.nem.symbol.sdk.api.MetadataTransactionService;
 import io.nem.symbol.sdk.model.account.Account;
@@ -136,7 +137,7 @@ public class NamespaceMetadataIntegrationTest extends BaseIntegrationTest {
                         .scopedMetadataKey(key)))
             .getData());
 
-    Assertions.assertEquals(message, processedTransaction.getValue());
+    Assertions.assertArrayEquals(StringEncoder.getBytes(message), processedTransaction.getValue());
   }
 
   private String assertMetadata(NamespaceMetadataTransaction transaction, List<Metadata> metadata) {
@@ -155,7 +156,7 @@ public class NamespaceMetadataIntegrationTest extends BaseIntegrationTest {
     Assertions.assertEquals(
         transaction.getTargetNamespaceId(), endpointMetadata.get().getTargetId().get());
     Assertions.assertNotNull(endpointMetadata.get().getCompositeHash());
-    Assertions.assertEquals(transaction.getValue(), endpointMetadata.get().getValue());
+    Assertions.assertArrayEquals(transaction.getValue(), endpointMetadata.get().getValue());
     return endpointMetadata.get().getCompositeHash();
   }
 }

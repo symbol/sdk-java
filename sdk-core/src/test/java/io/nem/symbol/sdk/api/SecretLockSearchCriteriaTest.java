@@ -23,8 +23,8 @@ import org.junit.jupiter.api.Test;
 /** Test of {@link SecretLockSearchCriteria} */
 class SecretLockSearchCriteriaTest {
 
-  private final Account account1 = Account.generateNewAccount(NetworkType.MIJIN_TEST);
-  private final Account account2 = Account.generateNewAccount(NetworkType.MIJIN_TEST);
+  private final Account account1 = Account.generateNewAccount(NetworkType.TEST_NET);
+  private final Account account2 = Account.generateNewAccount(NetworkType.TEST_NET);
 
   @Test
   void shouldCreate() {

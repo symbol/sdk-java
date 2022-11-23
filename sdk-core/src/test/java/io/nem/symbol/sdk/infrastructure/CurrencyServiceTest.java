@@ -88,7 +88,7 @@ class CurrencyServiceTest {
     Mockito.when(networkRepository.getNetworkProperties())
         .thenReturn(Observable.just(networkConfiguration));
 
-    Address account = Address.generateRandom(NetworkType.MIJIN_TEST);
+    Address account = Address.generateRandom(NetworkType.TEST_NET);
     MosaicInfo currencyMosaicInfo =
         new MosaicInfo(
             "abc",

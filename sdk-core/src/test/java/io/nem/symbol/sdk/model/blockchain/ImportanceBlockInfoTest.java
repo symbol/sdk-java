@@ -44,14 +44,14 @@ class ImportanceBlockInfoTest {
     String signature =
         "37351C8244AC166BE6664E3FA954E99A3239AC46E51E2B32CEA1C72DD0851100A7731868E932E1A9BEF8A27D48E1"
             + "FFEE401E933EB801824373E7537E51733E0F";
-    PublicAccount signer = Account.generateNewAccount(NetworkType.MIJIN_TEST).getPublicAccount();
+    PublicAccount signer = Account.generateNewAccount(NetworkType.TEST_NET).getPublicAccount();
     String previousBlockHash = "0000000000000000000000000000000000000000000000000000000000000000";
     String blockTransactionsHash =
         "702090BA31CEF9E90C62BBDECC0CCCC0F88192B6625839382850357F70DD68A0";
     String blockReceiptsHash = "702090BA31CEF9E90C62BBDECC0CCCC0F88192B6625839382850357F70DD68A0";
     String stateHash = "702090BA31CEF9E90C62BBDECC0CCCC0F88192B6625839382850357F70DD68A0";
     List<String> subCacheMerkleRoots = new ArrayList<>();
-    Address beneficiaryAddress = Account.generateNewAccount(NetworkType.MIJIN_TEST).getAddress();
+    Address beneficiaryAddress = Account.generateNewAccount(NetworkType.TEST_NET).getAddress();
     String id = "abc";
     List<String> stateHashSubCacheMerkleRoots = Arrays.asList("abc");
 
@@ -74,7 +74,7 @@ class ImportanceBlockInfoTest {
             subCacheMerkleRoots,
             signature,
             signer,
-            NetworkType.MIJIN_TEST,
+            NetworkType.TEST_NET,
             1,
             BlockType.IMPORTANCE_BLOCK,
             BigInteger.ONE,
@@ -103,7 +103,7 @@ class ImportanceBlockInfoTest {
     assertEquals(35, blockInfo.getStatementsCount());
     assertEquals(signature, blockInfo.getSignature());
     Assertions.assertEquals(signer, blockInfo.getSignerPublicAccount());
-    assertEquals(NetworkType.MIJIN_TEST, blockInfo.getNetworkType());
+    assertEquals(NetworkType.TEST_NET, blockInfo.getNetworkType());
     assertEquals(1, (int) blockInfo.getVersion());
     assertEquals(BlockType.IMPORTANCE_BLOCK, blockInfo.getType());
     assertEquals(BigInteger.valueOf(1), blockInfo.getHeight());

@@ -68,7 +68,7 @@ public class ListenerOkHttpTest {
   private MultisigRepository multisigRepository;
   private WebSocket webSocketMock;
   private JsonHelper jsonHelper;
-  private final NetworkType networkType = NetworkType.MIJIN_TEST;
+  private final NetworkType networkType = NetworkType.TEST_NET;
 
   @BeforeEach
   public void setUp() {

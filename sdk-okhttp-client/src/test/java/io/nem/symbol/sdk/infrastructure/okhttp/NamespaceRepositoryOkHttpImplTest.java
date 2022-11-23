@@ -68,7 +68,7 @@ public class NamespaceRepositoryOkHttpImplTest extends AbstractOkHttpRespository
   @Test
   public void shouldGetNamespace() throws Exception {
 
-    Address ownerAccount = Account.generateNewAccount(NetworkType.MIJIN_TEST).getAddress();
+    Address ownerAccount = Account.generateNewAccount(NetworkType.TEST_NET).getAddress();
 
     NamespaceId namespaceId = NamespaceId.createFromName("accountalias");
 
@@ -113,7 +113,7 @@ public class NamespaceRepositoryOkHttpImplTest extends AbstractOkHttpRespository
   @Test
   public void search() throws Exception {
     Address address = Address.generateRandom(networkType);
-    Address ownerAccount = Account.generateNewAccount(NetworkType.MIJIN_TEST).getAddress();
+    Address ownerAccount = Account.generateNewAccount(NetworkType.TEST_NET).getAddress();
 
     NamespaceInfoDTO dto = new NamespaceInfoDTO();
     NamespaceMetaDTO meta = new NamespaceMetaDTO();
@@ -205,7 +205,7 @@ public class NamespaceRepositoryOkHttpImplTest extends AbstractOkHttpRespository
     Address address = Address.generateRandom(networkType);
 
     NamespaceId namespaceId = NamespaceId.createFromName("accountalias");
-    Address ownerAccount = Account.generateNewAccount(NetworkType.MIJIN_TEST).getAddress();
+    Address ownerAccount = Account.generateNewAccount(NetworkType.TEST_NET).getAddress();
 
     NamespaceInfoDTO dto = new NamespaceInfoDTO();
     NamespaceMetaDTO meta = new NamespaceMetaDTO();
@@ -238,7 +238,7 @@ public class NamespaceRepositoryOkHttpImplTest extends AbstractOkHttpRespository
   @Test
   public void shouldGetLinkedMosaicId() throws Exception {
 
-    Address ownerAccount = Account.generateNewAccount(NetworkType.MIJIN_TEST).getAddress();
+    Address ownerAccount = Account.generateNewAccount(NetworkType.TEST_NET).getAddress();
     NamespaceId namespaceId = NamespaceId.createFromName("accountalias");
     NamespaceInfoDTO dto = new NamespaceInfoDTO();
     NamespaceMetaDTO meta = new NamespaceMetaDTO();

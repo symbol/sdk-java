@@ -26,7 +26,7 @@ public class CosignatureSignedTransactionTest {
 
   @Test
   void createACosignatureSignedTransactionViaConstructor() {
-    PublicAccount signer = Account.generateNewAccount(NetworkType.MIJIN_TEST).getPublicAccount();
+    PublicAccount signer = Account.generateNewAccount(NetworkType.TEST_NET).getPublicAccount();
     CosignatureSignedTransaction cosignatureSignedTransaction =
         new CosignatureSignedTransaction(
             AggregateTransactionCosignature.DEFAULT_VERSION, "parentHash", "signature", signer);

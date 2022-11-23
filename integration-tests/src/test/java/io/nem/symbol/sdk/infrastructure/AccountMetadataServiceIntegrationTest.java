@@ -15,6 +15,7 @@
  */
 package io.nem.symbol.sdk.infrastructure;
 
+import io.nem.symbol.core.utils.StringEncoder;
 import io.nem.symbol.sdk.api.MetadataRepository;
 import io.nem.symbol.sdk.api.MetadataSearchCriteria;
 import io.nem.symbol.sdk.api.MetadataTransactionService;
@@ -84,6 +85,6 @@ class AccountMetadataServiceIntegrationTest extends BaseIntegrationTest {
             .scopedMetadataKey(key)
             .sourceAddress(signerAccount.getAddress());
     Metadata originalMetadata = get(metadataRepository.search(criteria)).getData().get(0);
-    Assertions.assertEquals(value, originalMetadata.getValue());
+    Assertions.assertArrayEquals(StringEncoder.getBytes(value), originalMetadata.getValue());
   }
 }

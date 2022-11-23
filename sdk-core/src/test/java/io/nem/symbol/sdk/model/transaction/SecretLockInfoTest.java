@@ -34,9 +34,9 @@ public class SecretLockInfoTest {
 
     Optional<String> recordId = Optional.of("abc");
 
-    Address ownerAddress = Address.createFromRawAddress("SDY3NFHBQAPO7ZBII3USHG2UZHJYD7G7FICKIII");
+    Address ownerAddress = Address.createFromRawAddress("TBEM3LTBAHSDOXONNOKAVIGIZJLUCCPIBWY7WEA");
     Address recipientAddress =
-        Address.createFromRawAddress("SDZWZJUAYNOWGBTCUDBY3SE5JF4NCC2RDM6SIGQ");
+        Address.createFromRawAddress("TDI2SQXEOCRSB7NZHZM6F754XRUPAXDDVQ2CCJA");
     MosaicId mosaicId = MosaicId.createFromNonce(new MosaicNonce(1), ownerAddress);
     BigInteger amount = BigInteger.ONE;
     BigInteger endHeight = BigInteger.TEN;
@@ -72,7 +72,7 @@ public class SecretLockInfoTest {
 
     byte[] serializedState = info.serialize();
     String expectedHex =
-        "010090F1B694E1801EEFE42846E9239B54C9D381FCDF2A04A421E9F49B9E5199FC7601000000000000000A000000000000000102DD9EC2AC9AB11FC7E942E5FA39AF8811180F236E29BCD40DB812392295512AAA90F36CA680C35D630662A0C38DC89D4978D10B511B3D241A";
+        "01009848CDAE6101E4375DCD6B940AA0C8CA574109E80DB1FB100582F8C0EAB3C16601000000000000000A000000000000000102DD9EC2AC9AB11FC7E942E5FA39AF8811180F236E29BCD40DB812392295512AAA98D1A942E470A320FDB93E59E2FFBCBC68F05C63AC342124";
     Assertions.assertEquals(expectedHex, ConvertUtils.toHex(serializedState));
     SecretLockInfoBuilder builder =
         SecretLockInfoBuilder.loadFromBinary(SerializationUtils.toDataInput(serializedState));

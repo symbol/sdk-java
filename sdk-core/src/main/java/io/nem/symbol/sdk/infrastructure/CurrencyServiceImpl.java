@@ -134,7 +134,7 @@ public class CurrencyServiceImpl implements CurrencyService {
                     .orElseThrow(
                         () ->
                             new IllegalArgumentException(
-                                "There is no currency with id " + mosaicId)));
+                                "There is no currency with id " + mosaicId.getIdAsHex())));
   }
 
   @Override

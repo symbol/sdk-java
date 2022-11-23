@@ -61,27 +61,7 @@ class AddressTest {
                 IllegalArgumentException.class,
                 () ->
                     new Address(
-                        Address.generateRandom(NetworkType.MIJIN_TEST).plain(),
-                        NetworkType.MAIN_NET))
-            .getMessage());
-
-    Assertions.assertEquals(
-        "MIJIN_TEST Address must start with S",
-        Assertions.assertThrows(
-                IllegalArgumentException.class,
-                () ->
-                    new Address(
-                        Address.generateRandom(NetworkType.MAIN_NET).plain(),
-                        NetworkType.MIJIN_TEST))
-            .getMessage());
-
-    Assertions.assertEquals(
-        "MIJIN Address must start with M",
-        Assertions.assertThrows(
-                IllegalArgumentException.class,
-                () ->
-                    new Address(
-                        Address.generateRandom(NetworkType.MIJIN_TEST).plain(), NetworkType.MIJIN))
+                        Address.generateRandom(NetworkType.TEST_NET).plain(), NetworkType.MAIN_NET))
             .getMessage());
 
     Assertions.assertEquals(
@@ -120,7 +100,7 @@ class AddressTest {
     String encoded = "6826D27E1D0A26CA4E316F901E23E55C8711DB20DF250DEF";
     Address address = Address.createFromEncoded(encoded);
     assertEquals(encoded, address.encoded());
-    assertEquals(encoded, address.encoded(NetworkType.MIJIN_TEST).toUpperCase());
+    assertEquals(encoded, address.encoded(NetworkType.TEST_NET).toUpperCase());
   }
 
   @Test
@@ -168,8 +148,8 @@ class AddressTest {
 
   @Test
   void noEquality() {
-    Address address1 = generateAddress(NetworkType.MIJIN_TEST);
-    Address address2 = generateAddress(NetworkType.MIJIN_TEST);
+    Address address1 = generateAddress(NetworkType.TEST_NET);
+    Address address2 = generateAddress(NetworkType.TEST_NET);
     assertNotEquals(address1, address2);
     assertNotEquals("notAndAddress", address2);
   }
