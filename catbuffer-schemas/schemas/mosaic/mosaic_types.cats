@@ -15,6 +15,9 @@ enum MosaicFlags : uint8
 	# mosaic supports custom restrictions configured by mosaic owner
 	restrictable = 0x04
 
+	# mosaic supports revocation of tokens by the mosaic creator
+	revokable = 0x08
+
 # enumeration of mosaic supply change actions
 enum MosaicSupplyChangeAction : uint8
 	# decreases the supply
