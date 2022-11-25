@@ -47,6 +47,8 @@ import io.nem.symbol.sdk.model.transaction.MosaicMetadataTransaction;
 import io.nem.symbol.sdk.model.transaction.MosaicMetadataTransactionFactory;
 import io.nem.symbol.sdk.model.transaction.MosaicSupplyChangeTransaction;
 import io.nem.symbol.sdk.model.transaction.MosaicSupplyChangeTransactionFactory;
+import io.nem.symbol.sdk.model.transaction.MosaicSupplyRevocationTransaction;
+import io.nem.symbol.sdk.model.transaction.MosaicSupplyRevocationTransactionFactory;
 import io.nem.symbol.sdk.model.transaction.SecretLockTransaction;
 import io.nem.symbol.sdk.model.transaction.SecretLockTransactionFactory;
 import io.nem.symbol.sdk.model.transaction.SecretProofTransaction;
@@ -241,6 +243,14 @@ public class TransactionServiceImpl implements TransactionService {
       return resolveTransactionFactory(
           (MosaicSupplyChangeTransaction) transaction,
           expectedReceiptSource,
+          mosaicResolutionStatements);
+    }
+
+    if (transaction.getType() == TransactionType.MOSAIC_SUPPLY_REVOCATION) {
+      return resolveTransactionFactory(
+          (MosaicSupplyRevocationTransaction) transaction,
+          expectedReceiptSource,
+          addressResolutionStatements,
           mosaicResolutionStatements);
     }
 
@@ -551,6 +561,32 @@ public class TransactionServiceImpl implements TransactionService {
                 mosaicId,
                 transaction.getAction(),
                 transaction.getDelta()));
+  }
+
+  private Observable<TransactionFactory<? extends Transaction>> resolveTransactionFactory(
+      MosaicSupplyRevocationTransaction transaction,
+      ReceiptSource expectedReceiptSource,
+      Observable<List<AddressResolutionStatement>> addressResolutionStatements,
+      Observable<List<MosaicResolutionStatement>> mosaicResolutionStatements) {
+
+    Observable<Address> resolvedAddress =
+        getResolvedAddress(
+            transaction,
+            transaction.getSourceAddress(),
+            addressResolutionStatements,
+            expectedReceiptSource);
+    Observable<Mosaic> resolvedMosaic =
+        getResolvedMosaic(
+            transaction,
+            transaction.getMosaic(),
+            mosaicResolutionStatements,
+            expectedReceiptSource);
+    return Observable.combineLatest(
+        resolvedAddress,
+        resolvedMosaic,
+        (address, mosaic) ->
+            MosaicSupplyRevocationTransactionFactory.create(
+                transaction.getNetworkType(), transaction.getDeadline(), address, mosaic));
   }
 
   private Observable<TransactionFactory<? extends Transaction>> resolveTransactionFactory(

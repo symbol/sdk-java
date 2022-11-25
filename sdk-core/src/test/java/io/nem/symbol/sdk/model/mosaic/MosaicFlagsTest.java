@@ -25,11 +25,12 @@ class MosaicFlagsTest {
 
   @Test
   void shouldCreateMosaicFlagsViaConstructor() {
-    MosaicFlags mosaicFlags = MosaicFlags.create(true, true, true);
+    MosaicFlags mosaicFlags = MosaicFlags.create(true, true, true, true);
     assertTrue(mosaicFlags.isSupplyMutable());
     assertTrue(mosaicFlags.isTransferable());
     assertTrue(mosaicFlags.isRestrictable());
-    assertEquals(7, mosaicFlags.getValue());
+    assertTrue(mosaicFlags.isRevokable());
+    assertEquals(15, mosaicFlags.getValue());
   }
 
   @Test
@@ -38,6 +39,7 @@ class MosaicFlagsTest {
     assertTrue(mosaicFlags.isSupplyMutable());
     assertTrue(mosaicFlags.isTransferable());
     assertFalse(mosaicFlags.isRestrictable());
+    assertFalse(mosaicFlags.isRevokable());
     assertEquals(3, mosaicFlags.getValue());
   }
 

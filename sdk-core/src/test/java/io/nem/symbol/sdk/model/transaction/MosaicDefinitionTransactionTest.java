@@ -47,7 +47,7 @@ class MosaicDefinitionTransactionTest extends AbstractTransactionTester {
                 Deadline.create(epochAdjustment),
                 nonce,
                 MosaicId.createFromNonce(nonce, owner.getPublicAccount()),
-                MosaicFlags.create(true, true, true),
+                MosaicFlags.create(true, true, true, true),
                 4,
                 new BlockDuration(222222))
             .build();
@@ -64,6 +64,7 @@ class MosaicDefinitionTransactionTest extends AbstractTransactionTester {
     assertTrue(mosaicCreationTx.getMosaicFlags().isSupplyMutable());
     assertTrue(mosaicCreationTx.getMosaicFlags().isTransferable());
     assertTrue(mosaicCreationTx.getMosaicFlags().isRestrictable());
+    assertTrue(mosaicCreationTx.getMosaicFlags().isRevokable());
     assertEquals(nonceNumber, mosaicCreationTx.getMosaicNonce().getNonceAsInt());
     assertEquals(4, mosaicCreationTx.getDivisibility());
     assertEquals(new BlockDuration(222222), mosaicCreationTx.getBlockDuration());
@@ -80,7 +81,7 @@ class MosaicDefinitionTransactionTest extends AbstractTransactionTester {
                 new Deadline(BigInteger.ONE),
                 MosaicNonce.createFromBigInteger(new BigInteger("0")),
                 new MosaicId(new BigInteger("0")),
-                MosaicFlags.create(true, false, true),
+                MosaicFlags.create(true, false, true, false),
                 4,
                 new BlockDuration(10000))
             .build();
@@ -97,7 +98,7 @@ class MosaicDefinitionTransactionTest extends AbstractTransactionTester {
     MosaicId mosaicId = new MosaicId(new BigInteger("0"));
     BigInteger fee = BigInteger.ONE;
     MosaicNonce mosaicNonce = MosaicNonce.createFromBigInteger(new BigInteger("0"));
-    MosaicFlags mosaicFlags = MosaicFlags.create(false, true, false);
+    MosaicFlags mosaicFlags = MosaicFlags.create(false, true, false, false);
 
     PublicAccount signature =
         PublicAccount.createFromPublicKey(

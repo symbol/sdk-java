@@ -49,6 +49,7 @@ public class GeneralTransactionMapper implements TransactionMapper {
     register(new MosaicDefinitionTransactionMapper(jsonHelper));
     register(new MosaicGlobalRestrictionTransactionMapper(jsonHelper));
     register(new MosaicSupplyChangeTransactionMapper(jsonHelper));
+    register(new MosaicSupplyRevocationTransactionMapper(jsonHelper));
     register(new MultisigAccountModificationTransactionMapper(jsonHelper));
     register(new NamespaceRegistrationTransactionMapper(jsonHelper));
     register(new SecretLockTransactionMapper(jsonHelper));

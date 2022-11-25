@@ -48,6 +48,7 @@ import io.nem.symbol.catapult.builders.MosaicNonceDto;
 import io.nem.symbol.catapult.builders.MosaicRestrictionTypeDto;
 import io.nem.symbol.catapult.builders.MosaicSupplyChangeActionDto;
 import io.nem.symbol.catapult.builders.MosaicSupplyChangeTransactionBodyBuilder;
+import io.nem.symbol.catapult.builders.MosaicSupplyRevocationTransactionBodyBuilder;
 import io.nem.symbol.catapult.builders.MultisigAccountModificationTransactionBodyBuilder;
 import io.nem.symbol.catapult.builders.NamespaceIdDto;
 import io.nem.symbol.catapult.builders.NamespaceMetadataTransactionBodyBuilder;
@@ -125,6 +126,8 @@ import io.nem.symbol.sdk.model.transaction.MosaicMetadataTransactionFactory;
 import io.nem.symbol.sdk.model.transaction.MosaicRestrictionType;
 import io.nem.symbol.sdk.model.transaction.MosaicSupplyChangeTransaction;
 import io.nem.symbol.sdk.model.transaction.MosaicSupplyChangeTransactionFactory;
+import io.nem.symbol.sdk.model.transaction.MosaicSupplyRevocationTransaction;
+import io.nem.symbol.sdk.model.transaction.MosaicSupplyRevocationTransactionFactory;
 import io.nem.symbol.sdk.model.transaction.MultisigAccountModificationTransaction;
 import io.nem.symbol.sdk.model.transaction.MultisigAccountModificationTransactionFactory;
 import io.nem.symbol.sdk.model.transaction.NamespaceMetadataTransaction;
@@ -181,6 +184,10 @@ public class BinarySerializationImpl implements BinarySerialization {
     }
     {
       TransactionSerializer<?> serializer = new MosaicSupplyChangeTransactionSerializer();
+      register(serializer, serializer.getVersion());
+    }
+    {
+      TransactionSerializer<?> serializer = new MosaicSupplyRevocationTransactionSerializer();
       register(serializer, serializer.getVersion());
     }
     {
@@ -719,6 +726,45 @@ public class BinarySerializationImpl implements BinarySerialization {
     }
   }
 
+  private static class MosaicSupplyRevocationTransactionSerializer
+      implements TransactionSerializer<MosaicSupplyRevocationTransaction> {
+
+    @Override
+    public TransactionType getTransactionType() {
+      return TransactionType.MOSAIC_SUPPLY_REVOCATION;
+    }
+
+    @Override
+    public Class<MosaicSupplyRevocationTransaction> getTransactionClass() {
+      return MosaicSupplyRevocationTransaction.class;
+    }
+
+    @Override
+    public TransactionFactory<?> fromBodyBuilder(
+        NetworkType networkType, Deadline deadline, Serializer transactionBuilder) {
+      MosaicSupplyRevocationTransactionBodyBuilder builder =
+          ((MosaicSupplyRevocationTransactionBodyBuilder) transactionBuilder);
+      UnresolvedAddress sourceAddress =
+          SerializationUtils.toUnresolvedAddress(builder.getSourceAddress());
+      Mosaic mosaic = SerializationUtils.toMosaic(builder.getMosaic());
+      return MosaicSupplyRevocationTransactionFactory.create(
+          networkType, deadline, sourceAddress, mosaic);
+    }
+
+    @Override
+    public Serializer toBodyBuilder(MosaicSupplyRevocationTransaction transaction) {
+      UnresolvedMosaicIdDto mosaicId =
+          new UnresolvedMosaicIdDto(transaction.getMosaic().getId().getIdAsLong());
+      AmountDto amount = SerializationUtils.toAmount(transaction.getMosaic().getAmount());
+      UnresolvedMosaicBuilder unresolvedMosaicBuilder =
+          UnresolvedMosaicBuilder.create(mosaicId, amount);
+      return MosaicSupplyRevocationTransactionBodyBuilder.create(
+          SerializationUtils.toUnresolvedAddress(
+              transaction.getSourceAddress(), transaction.getNetworkType()),
+          unresolvedMosaicBuilder);
+    }
+  }
+
   private static class MosaicDefinitionTransactionSerializer
       implements TransactionSerializer<MosaicDefinitionTransaction> {
 
@@ -743,7 +789,8 @@ public class BinarySerializationImpl implements BinarySerialization {
           MosaicFlags.create(
               builder.getFlags().contains(MosaicFlagsDto.SUPPLY_MUTABLE),
               builder.getFlags().contains(MosaicFlagsDto.TRANSFERABLE),
-              builder.getFlags().contains(MosaicFlagsDto.RESTRICTABLE));
+              builder.getFlags().contains(MosaicFlagsDto.RESTRICTABLE),
+              builder.getFlags().contains(MosaicFlagsDto.REVOKABLE));
       int divisibility = SerializationUtils.byteToUnsignedInt(builder.getDivisibility());
       BlockDuration blockDuration = new BlockDuration(builder.getDuration().getBlockDuration());
       return MosaicDefinitionTransactionFactory.create(

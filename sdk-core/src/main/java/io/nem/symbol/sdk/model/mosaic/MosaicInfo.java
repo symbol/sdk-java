@@ -154,6 +154,15 @@ public class MosaicInfo implements Stored {
   }
 
   /**
+   * Returns tue if the mosaic is revokable
+   *
+   * @return if the mosaic is revokable
+   */
+  public boolean isRevokable() {
+    return mosaicFlags.isRevokable();
+  }
+
+  /**
    * Returns the mosaic divisibility
    *
    * @return mosaic divisibility
@@ -196,6 +205,7 @@ public class MosaicInfo implements Stored {
         .withTransferable(isTransferable())
         .withSupplyMutable(isSupplyMutable())
         .withRestrictable(isRestrictable())
+        .withRevokable(isRevokable())
         .build();
   }
 

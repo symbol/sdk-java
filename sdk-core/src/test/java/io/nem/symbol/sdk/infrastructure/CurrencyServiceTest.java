@@ -98,7 +98,7 @@ class CurrencyServiceTest {
             BigInteger.ONE,
             account,
             4L,
-            MosaicFlags.create(false, true, false),
+            MosaicFlags.create(false, true, false, false),
             10,
             BigInteger.TEN);
 
@@ -111,7 +111,7 @@ class CurrencyServiceTest {
             BigInteger.ONE,
             account,
             4L,
-            MosaicFlags.create(true, false, true),
+            MosaicFlags.create(true, false, true, false),
             3,
             BigInteger.TEN);
 
@@ -146,7 +146,7 @@ class CurrencyServiceTest {
             BigInteger.ONE,
             account.getAddress(),
             4L,
-            MosaicFlags.create(true, true, true),
+            MosaicFlags.create(true, true, true, true),
             10,
             BigInteger.TEN);
 
@@ -165,6 +165,8 @@ class CurrencyServiceTest {
     Assertions.assertFalse(currency.getNamespaceId().isPresent());
     Assertions.assertTrue(currency.isTransferable());
     Assertions.assertTrue(currency.isSupplyMutable());
+    Assertions.assertTrue(currency.isRestrictable());
+    Assertions.assertTrue(currency.isRevokable());
   }
 
   @Test
@@ -182,7 +184,7 @@ class CurrencyServiceTest {
             BigInteger.ONE,
             account.getAddress(),
             4L,
-            MosaicFlags.create(true, true, true),
+            MosaicFlags.create(true, true, true, true),
             10,
             BigInteger.TEN);
 
@@ -201,6 +203,8 @@ class CurrencyServiceTest {
     Assertions.assertFalse(currency.getNamespaceId().isPresent());
     Assertions.assertTrue(currency.isTransferable());
     Assertions.assertTrue(currency.isSupplyMutable());
+    Assertions.assertTrue(currency.isRestrictable());
+    Assertions.assertTrue(currency.isRevokable());
   }
 
   @Test
@@ -218,7 +222,7 @@ class CurrencyServiceTest {
             BigInteger.ONE,
             account.getAddress(),
             4L,
-            MosaicFlags.create(true, true, true),
+            MosaicFlags.create(true, true, true, true),
             10,
             BigInteger.TEN);
 
@@ -239,6 +243,8 @@ class CurrencyServiceTest {
     Assertions.assertFalse(currency.getNamespaceId().isPresent());
     Assertions.assertTrue(currency.isTransferable());
     Assertions.assertTrue(currency.isSupplyMutable());
+    Assertions.assertTrue(currency.isRestrictable());
+    Assertions.assertTrue(currency.isRevokable());
   }
 
   @Test
@@ -256,7 +262,7 @@ class CurrencyServiceTest {
             BigInteger.ONE,
             account.getAddress(),
             4L,
-            MosaicFlags.create(true, true, true),
+            MosaicFlags.create(true, true, true, true),
             10,
             BigInteger.TEN);
 
@@ -287,6 +293,8 @@ class CurrencyServiceTest {
     Assertions.assertEquals("some.alias", currency.getNamespaceId().get().getFullName().get());
     Assertions.assertTrue(currency.isTransferable());
     Assertions.assertTrue(currency.isSupplyMutable());
+    Assertions.assertTrue(currency.isRestrictable());
+    Assertions.assertTrue(currency.isRevokable());
   }
 
   @Test
@@ -304,7 +312,7 @@ class CurrencyServiceTest {
             BigInteger.ONE,
             account.getAddress(),
             4L,
-            MosaicFlags.create(true, true, true),
+            MosaicFlags.create(true, true, true, true),
             10,
             BigInteger.TEN);
 
@@ -337,5 +345,7 @@ class CurrencyServiceTest {
     Assertions.assertEquals("some.alias", currency.getNamespaceId().get().getFullName().get());
     Assertions.assertTrue(currency.isTransferable());
     Assertions.assertTrue(currency.isSupplyMutable());
+    Assertions.assertTrue(currency.isRestrictable());
+    Assertions.assertTrue(currency.isRevokable());
   }
 }

@@ -531,7 +531,7 @@ public class TestHelper {
                 getDeadline(),
                 nonce,
                 mosaicId,
-                MosaicFlags.create(true, true, true),
+                MosaicFlags.create(true, true, true, true),
                 4,
                 new BlockDuration(100))
             .maxFee(maxFee)

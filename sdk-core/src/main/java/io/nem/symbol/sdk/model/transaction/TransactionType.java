@@ -29,6 +29,9 @@ public enum TransactionType {
   /** Mosaic supply change transaction. */
   MOSAIC_SUPPLY_CHANGE(16973, 1),
 
+  /** Mosaic supply revocation transaction. */
+  MOSAIC_SUPPLY_REVOCATION(17229, 1),
+
   /** Register namespace transaction type. */
   NAMESPACE_REGISTRATION(16718, 1),
 

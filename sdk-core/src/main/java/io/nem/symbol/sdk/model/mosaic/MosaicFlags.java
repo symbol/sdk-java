@@ -42,12 +42,18 @@ public class MosaicFlags {
    * tokens like the public network currency.
    */
   private final boolean restrictable;
+  /** The creator can choose if he can revoke tokens after a transfer. */
+  private final boolean revokable;
 
   private MosaicFlags(
-      final boolean supplyMutable, final boolean transferable, final boolean restrictable) {
+      final boolean supplyMutable,
+      final boolean transferable,
+      final boolean restrictable,
+      final boolean revokable) {
     this.supplyMutable = supplyMutable;
     this.transferable = transferable;
     this.restrictable = restrictable;
+    this.revokable = revokable;
   }
 
   /**
@@ -57,10 +63,13 @@ public class MosaicFlags {
    * @return Mosaic flags.
    */
   public static MosaicFlags create(int flags) {
-    String flagsString = "00" + Integer.toBinaryString(flags);
-    String bitMapFlags = flagsString.substring(flagsString.length() - 3);
+    String flagsString = "000" + Integer.toBinaryString(flags);
+    String bitMapFlags = flagsString.substring(flagsString.length() - 4);
     return MosaicFlags.create(
-        bitMapFlags.charAt(2) == '1', bitMapFlags.charAt(1) == '1', bitMapFlags.charAt(0) == '1');
+        bitMapFlags.charAt(3) == '1',
+        bitMapFlags.charAt(2) == '1',
+        bitMapFlags.charAt(1) == '1',
+        bitMapFlags.charAt(0) == '1');
   }
 
   /**
@@ -72,8 +81,8 @@ public class MosaicFlags {
    * @return Mosaic flags.
    */
   public static MosaicFlags create(
-      boolean supplyMutable, boolean transferable, boolean restrictable) {
-    return new MosaicFlags(supplyMutable, transferable, restrictable);
+      boolean supplyMutable, boolean transferable, boolean restrictable, boolean revokable) {
+    return new MosaicFlags(supplyMutable, transferable, restrictable, revokable);
   }
 
   /**
@@ -84,7 +93,7 @@ public class MosaicFlags {
    * @return Mosaic flags.
    */
   public static MosaicFlags create(boolean supplyMutable, boolean transferable) {
-    return new MosaicFlags(supplyMutable, transferable, false);
+    return new MosaicFlags(supplyMutable, transferable, false, false);
   }
 
   /**
@@ -115,11 +124,23 @@ public class MosaicFlags {
   }
 
   /**
+   * Returns true if mosaic is revokable
+   *
+   * @return if mosaic is revokable
+   */
+  public boolean isRevokable() {
+    return revokable;
+  }
+
+  /**
    * Gets the consolidated mosaic flags value.
    *
    * @return the merged flags in a int.
    */
   public int getValue() {
-    return (this.supplyMutable ? 1 : 0) + (this.transferable ? 2 : 0) + (this.restrictable ? 4 : 0);
+    return (this.supplyMutable ? 1 : 0)
+        + (this.transferable ? 2 : 0)
+        + (this.restrictable ? 4 : 0)
+        + (this.revokable ? 8 : 0);
   }
 }

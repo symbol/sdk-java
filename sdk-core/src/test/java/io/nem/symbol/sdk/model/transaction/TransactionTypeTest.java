@@ -58,6 +58,14 @@ class TransactionTypeTest {
   }
 
   @Test
+  void mosaicSupplyRevocationType() {
+    TransactionType transactionType = TransactionType.MOSAIC_SUPPLY_REVOCATION;
+    assertEquals(0x434d, transactionType.getValue());
+    assertEquals(17229, transactionType.getValue());
+    assertEquals(TransactionType.MOSAIC_SUPPLY_REVOCATION, TransactionType.rawValueOf(17229));
+  }
+
+  @Test
   void multisigModificationAction() {
     TransactionType transactionType = TransactionType.MULTISIG_ACCOUNT_MODIFICATION;
     assertEquals(0x4155, transactionType.getValue());
