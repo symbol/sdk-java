@@ -64,6 +64,8 @@ import io.nem.symbol.sdk.model.transaction.MosaicMetadataTransactionFactory;
 import io.nem.symbol.sdk.model.transaction.MosaicRestrictionType;
 import io.nem.symbol.sdk.model.transaction.MosaicSupplyChangeTransaction;
 import io.nem.symbol.sdk.model.transaction.MosaicSupplyChangeTransactionFactory;
+import io.nem.symbol.sdk.model.transaction.MosaicSupplyRevocationTransaction;
+import io.nem.symbol.sdk.model.transaction.MosaicSupplyRevocationTransactionFactory;
 import io.nem.symbol.sdk.model.transaction.SecretLockTransaction;
 import io.nem.symbol.sdk.model.transaction.SecretLockTransactionFactory;
 import io.nem.symbol.sdk.model.transaction.SecretProofTransaction;
@@ -671,6 +673,38 @@ class TransactionServiceTest {
   }
 
   @Test
+  void mosaicSupplyRevocationTransactionResolveAlias()
+      throws ExecutionException, InterruptedException {
+
+    String transactionHash = "aaaa";
+    Mosaic mosaic = new Mosaic(mosaicNamespace2, BigInteger.valueOf(2));
+    UnresolvedAddress recipient = addressNamespace1;
+
+    TransactionFactory<MosaicSupplyRevocationTransaction> factory =
+        MosaicSupplyRevocationTransactionFactory.create(
+                NetworkType.TEST_NET, new Deadline(BigInteger.ONE), recipient, mosaic)
+            .transactionInfo(TransactionInfo.create(height, 4, "ABC", transactionHash, ""));
+
+    MosaicSupplyRevocationTransaction transaction = factory.build();
+
+    simulateStatement(height, 5, 0);
+
+    List<String> hashes = Collections.singletonList(transactionHash);
+
+    Mockito.when(
+            transactionRepositoryMock.getTransactions(
+                Mockito.eq(TransactionGroup.CONFIRMED), Mockito.eq(hashes)))
+        .thenReturn(Observable.just(Collections.singletonList(transaction)));
+
+    MosaicSupplyRevocationTransaction resolvedTransaction =
+        (MosaicSupplyRevocationTransaction) service.resolveAliases(hashes).toFuture().get().get(0);
+
+    Assertions.assertEquals(mosaicId2, resolvedTransaction.getMosaic().getId());
+
+    Assertions.assertEquals(address1, resolvedTransaction.getSourceAddress());
+  }
+
+  @Test
   void mosaicDefinitionTransactionResolveAlias() throws ExecutionException, InterruptedException {
 
     String transactionHash = "aaaa";
@@ -681,7 +715,7 @@ class TransactionServiceTest {
                 new Deadline(BigInteger.ONE),
                 MosaicNonce.createFromBigInteger(new BigInteger("0")),
                 mosaicId2,
-                MosaicFlags.create(true, true, true),
+                MosaicFlags.create(true, true, true, true),
                 4,
                 new BlockDuration(10000))
             .transactionInfo(TransactionInfo.create(height, 4, "ABC", transactionHash, ""));

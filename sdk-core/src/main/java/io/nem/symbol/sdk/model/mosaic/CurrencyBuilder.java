@@ -55,6 +55,9 @@ public final class CurrencyBuilder {
   /** Is this currency restrictable. */
   private boolean restrictable = false;
 
+  /** Is this currency revokable. */
+  private boolean revokable = false;
+
   public CurrencyBuilder(UnresolvedMosaicId unresolvedMosaicId, int divisibility) {
     Validate.notNull(unresolvedMosaicId, "unresolvedMosaicId must not be null");
     Validate.isTrue(divisibility > 0, "divisibility must be greater than 0");
@@ -125,6 +128,17 @@ public final class CurrencyBuilder {
   }
 
   /**
+   * Helper method to setup the revokable flag.
+   *
+   * @param revokable the revokable
+   * @return this builder.
+   */
+  public CurrencyBuilder withRevokable(boolean revokable) {
+    this.revokable = revokable;
+    return this;
+  }
+
+  /**
    * Once the builder is configured, call this method to create the {@link Currency}
    *
    * @return the network currency.
@@ -159,5 +173,9 @@ public final class CurrencyBuilder {
 
   public boolean isRestrictable() {
     return restrictable;
+  }
+
+  public boolean isRevokable() {
+    return revokable;
   }
 }

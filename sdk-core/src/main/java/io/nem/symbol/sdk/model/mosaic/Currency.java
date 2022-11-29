@@ -60,6 +60,7 @@ public class Currency {
           .withSupplyMutable(false)
           .withTransferable(true)
           .withRestrictable(false)
+          .withRevokable(false)
           .build();
 
   /** The original public bootstrap network currency. This is for test only! */
@@ -68,6 +69,7 @@ public class Currency {
           .withSupplyMutable(false)
           .withTransferable(true)
           .withRestrictable(false)
+          .withRevokable(false)
           .build();
   /** The original public bootstrap havest currency. This is for test only! */
   public static final Currency CAT_HARVEST =
@@ -75,6 +77,7 @@ public class Currency {
           .withSupplyMutable(true)
           .withTransferable(true)
           .withRestrictable(false)
+          .withRevokable(false)
           .build();
 
   /**
@@ -104,6 +107,9 @@ public class Currency {
   /** Is this currency restrictable. */
   private final boolean restrictable;
 
+  /** Is this currency revokable. */
+  private final boolean revokable;
+
   /**
    * User would create these objects using the builder.
    *
@@ -119,6 +125,7 @@ public class Currency {
     this.transferable = builder.isTransferable();
     this.supplyMutable = builder.isSupplyMutable();
     this.restrictable = builder.isRestrictable();
+    this.revokable = builder.isRevokable();
   }
 
   public UnresolvedMosaicId getUnresolvedMosaicId() {
@@ -143,6 +150,14 @@ public class Currency {
 
   public boolean isSupplyMutable() {
     return supplyMutable;
+  }
+
+  public boolean isRestrictable() {
+    return restrictable;
+  }
+
+  public boolean isRevokable() {
+    return revokable;
   }
 
   /**
@@ -224,6 +239,7 @@ public class Currency {
         && transferable == currency.transferable
         && supplyMutable == currency.supplyMutable
         && restrictable == currency.restrictable
+        && revokable == currency.revokable
         && Objects.equals(unresolvedMosaicId, currency.unresolvedMosaicId)
         && Objects.equals(mosaicId, currency.mosaicId)
         && Objects.equals(namespaceId, currency.namespaceId);
@@ -238,6 +254,7 @@ public class Currency {
         divisibility,
         transferable,
         supplyMutable,
-        restrictable);
+        restrictable,
+        revokable);
   }
 }

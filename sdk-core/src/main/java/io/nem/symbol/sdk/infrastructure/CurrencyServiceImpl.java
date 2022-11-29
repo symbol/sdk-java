@@ -178,7 +178,8 @@ public class CurrencyServiceImpl implements CurrencyService {
             .withMosaicId(mosaicInfo.getMosaicId())
             .withSupplyMutable(mosaicInfo.isSupplyMutable())
             .withTransferable(mosaicInfo.isTransferable())
-            .withRestrictable(mosaicInfo.isRestrictable());
+            .withRestrictable(mosaicInfo.isRestrictable())
+            .withRevokable(mosaicInfo.isRevokable());
     namespaceId.ifPresent(builder::withNamespaceId);
     return builder;
   }

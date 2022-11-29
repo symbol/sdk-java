@@ -472,6 +472,9 @@ public class SerializationUtils {
     if (flags.isRestrictable()) {
       mosaicFlagsBuilder.add(MosaicFlagsDto.RESTRICTABLE);
     }
+    if (flags.isRevokable()) {
+      mosaicFlagsBuilder.add(MosaicFlagsDto.REVOKABLE);
+    }
     return mosaicFlagsBuilder;
   }
 }

@@ -56,6 +56,7 @@ public class MosaicDefinitionTransactionIntegrationTest extends BaseIntegrationT
     Assertions.assertTrue(mosaicInfo.isTransferable());
     Assertions.assertTrue(mosaicInfo.isSupplyMutable());
     Assertions.assertTrue(mosaicInfo.isRestrictable());
+    Assertions.assertTrue(mosaicInfo.isRevokable());
     Assertions.assertEquals(100, mosaicInfo.getDuration().intValue());
   }
 
@@ -69,7 +70,7 @@ public class MosaicDefinitionTransactionIntegrationTest extends BaseIntegrationT
                 getDeadline(),
                 nonce,
                 mosaicId,
-                MosaicFlags.create(true, true, true),
+                MosaicFlags.create(true, true, true, true),
                 4,
                 new BlockDuration(100))
             .maxFee(maxFee)
@@ -95,7 +96,7 @@ public class MosaicDefinitionTransactionIntegrationTest extends BaseIntegrationT
                 getDeadline(),
                 nonce,
                 mosaicId,
-                MosaicFlags.create(true, false, true),
+                MosaicFlags.create(true, false, true, true),
                 4,
                 new BlockDuration(100))
             .maxFee(maxFee)
