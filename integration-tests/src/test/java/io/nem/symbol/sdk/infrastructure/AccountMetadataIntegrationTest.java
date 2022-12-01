@@ -87,7 +87,8 @@ public class AccountMetadataIntegrationTest extends BaseIntegrationTest {
                     .search(
                         new MetadataSearchCriteria()
                             .metadataType(MetadataType.ACCOUNT)
-                            .sourceAddress(testAccount.getAddress())))
+                            .sourceAddress(testAccount.getAddress())
+                            .scopedMetadataKey(transaction.getScopedMetadataKey())))
                 .getData());
 
     assertMetadata(

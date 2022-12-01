@@ -15,6 +15,8 @@
  */
 package io.nem.symbol.sdk.infrastructure;
 
+import static java.lang.Math.max;
+
 import io.nem.symbol.sdk.api.FinalizationRepository;
 import io.nem.symbol.sdk.api.RepositoryFactory;
 import io.nem.symbol.sdk.model.blockchain.FinalizedBlock;
@@ -53,14 +55,17 @@ public class FinalizationRepositoryIntegrationTest extends BaseIntegrationTest {
 
   @ParameterizedTest
   @EnumSource(RepositoryType.class)
-  void getFinalizationProofAtCurrentFinalizedHeight(RepositoryType type) {
+  void getFinalizationProofAtPreviousFinalizedEpochHeight(RepositoryType type) {
     RepositoryFactory repositoryFactory = getRepositoryFactory(type);
     FinalizedBlock finalizedBlock =
         get(repositoryFactory.createChainRepository().getChainInfo()).getLatestFinalizedBlock();
 
     FinalizationRepository repository = repositoryFactory.createFinalizationRepository();
+    long previousEpoch = max(finalizedBlock.getFinalizationEpoch() - 1, 1);
+    FinalizationProof latestFinalizationProof =
+        get(repository.getFinalizationProofAtEpoch(previousEpoch));
     FinalizationProof finalizationProof =
-        get(repository.getFinalizationProofAtHeight(finalizedBlock.getHeight()));
+        get(repository.getFinalizationProofAtHeight(latestFinalizationProof.getHeight()));
 
     Assertions.assertEquals(
         finalizationProof.getFinalizationEpoch(), finalizationProof.getFinalizationEpoch());

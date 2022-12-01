@@ -47,7 +47,10 @@ public class AAASetupIntegrationTest extends BaseIntegrationTest {
 
     NamespaceRegistrationTransaction root =
         NamespaceRegistrationTransactionFactory.createRootNamespace(
-                getNetworkType(), getDeadline(), "root", helper.getDuration())
+                getNetworkType(),
+                getDeadline(),
+                "root" + RandomUtils.generateRandomInt(),
+                helper.getDuration())
             .maxFee(maxFee)
             .build();
 
@@ -69,7 +72,10 @@ public class AAASetupIntegrationTest extends BaseIntegrationTest {
 
     NamespaceRegistrationTransaction root =
         NamespaceRegistrationTransactionFactory.createRootNamespace(
-                getNetworkType(), getDeadline(), "root3", helper.getDuration())
+                getNetworkType(),
+                getDeadline(),
+                "root" + RandomUtils.generateRandomInt(),
+                helper.getDuration())
             .maxFee(maxFee)
             .build();
     helper().announceAndValidate(type, account, root);

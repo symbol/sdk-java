@@ -257,7 +257,7 @@ public class MosaicAddressRestrictionIntegrationTest extends BaseIntegrationTest
                 getDeadline(),
                 mosaicId,
                 restrictionKey1,
-                testAccount2.getAddress(),
+                testAccount.getAddress(),
                 BigInteger.valueOf(30))
             .maxFee(maxFee)
             .build();
@@ -268,7 +268,7 @@ public class MosaicAddressRestrictionIntegrationTest extends BaseIntegrationTest
                 getDeadline(),
                 mosaicId,
                 restrictionKey1,
-                testAccount3.getAddress(),
+                testAccount2.getAddress(),
                 BigInteger.valueOf(20))
             .maxFee(maxFee)
             .build();

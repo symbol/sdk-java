@@ -242,7 +242,6 @@ public class TransactionSearchRepositoryIntegrationTest extends BaseIntegrationT
         b ->
             Assertions.assertTrue(
                 b.getTransactionInfo().get().getHeight().compareTo(BigInteger.ONE) > 0));
-    Assertions.assertFalse(transactions.isEmpty());
   }
 
   @ParameterizedTest
@@ -275,7 +274,10 @@ public class TransactionSearchRepositoryIntegrationTest extends BaseIntegrationT
     TransactionPaginationStreamer streamer =
         new TransactionPaginationStreamer(transactionRepository);
     TransactionGroup group = TransactionGroup.CONFIRMED;
-    TransactionSearchCriteria criteria = new TransactionSearchCriteria(group).embedded(true);
+    TransactionSearchCriteria criteria =
+        new TransactionSearchCriteria(group)
+            .transactionTypes(Collections.singletonList(TransactionType.TRANSFER))
+            .embedded(true);
     List<Transaction> transactions = get(streamer.search(criteria).toList().toObservable());
 
     transactions.forEach(
