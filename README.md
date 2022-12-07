@@ -23,7 +23,7 @@ Each SDK user can depend on the best library for its need (example, ``symbol-sdk
 <dependency>
     <groupId>io.nem</groupId>
     <artifactId>symbol-sdk-vertx-client</artifactId>
-    <version>1.0.2</version>
+    <version>1.0.3</version>
 </dependency>
 ```
 
@@ -33,25 +33,25 @@ OR
 <dependency>
     <groupId>io.nem</groupId>
     <artifactId>symbol-sdk-okhttp-client</artifactId>
-    <version>1.0.2</version>
+    <version>1.0.3</version>
 </dependency>
 ```
 
 ### Gradle
 
-```compile 'io.nem:symbol-sdk-vertx-client:1.0.2```
+```compile 'io.nem:symbol-sdk-vertx-client:1.0.3```
 
 OR
 
-```compile 'io.nem:symbol-sdk-okhttp-client:1.0.2```
+```compile 'io.nem:symbol-sdk-okhttp-client:1.0.3```
 
 ### SBT
 
-```libraryDependencies += "io.nem" % "symbol-sdk-vertx-client" % "1.0.2"```
+```libraryDependencies += "io.nem" % "symbol-sdk-vertx-client" % "1.0.3"```
 
 OR
 
-```libraryDependencies += "io.nem" % "symbol-sdk-okhttp-client" % "1.0.2"```
+```libraryDependencies += "io.nem" % "symbol-sdk-okhttp-client" % "1.0.3"```
 
 ## Usage
 
@@ -83,7 +83,7 @@ Use the following available resources to get help:
 
 - [Symbol Documentation][docs]
 - [Symbol SDK Java Reference][sdk-ref]
-- Join the community [slack group (#sig-api)][slack] 
+- Join the community [discord group (#sdk-general)][discord] 
 - If you found a bug, [open a new issue][issues]
 
 ## Contributing
@@ -98,10 +98,10 @@ You can also find useful notes for developers under our documentation [guideline
 Copyright (c) 2018-present NEM
 Licensed under the [Apache License 2.0](LICENSE)
 
-[self]: https://github.com/nemtech/symbol-sdk-java
-[docs]: http://nemtech.github.io/getting-started/setup-workstation.html
-[issues]: https://github.com/nemtech/symbol-sdk-java/issues
-[sdk-ref]: https://nemtech.github.io/references/java-sdk.html
-[symbol-openapi-generator]: https://github.com/nemtech/symbol-openapi-generator
-[guidelines]: https://nemtech.github.io/contribute/contributing.html#sdk
-[slack]: https://join.slack.com/t/nem2/shared_invite/enQtMzY4MDc2NTg0ODgyLWZmZWRiMjViYTVhZjEzOTA0MzUyMTA1NTA5OWQ0MWUzNTA4NjM5OTJhOGViOTBhNjkxYWVhMWRiZDRkOTE0YmU
+[self]: https://github.com/symbol/sdk-java
+[docs]: https://docs.symbol.dev/getting-started/setup-workstation.html
+[issues]: https://github.com/symbol/sdk-java/issues
+[sdk-ref]: https://docs.symbol.dev/references/java-sdk.html
+[symbol-openapi-generator]: https://github.com/symbol/symbol-openapi-generator
+[guidelines]: https://docs.symbol.dev/contribute/contributing.html#sdk
+[discord]: https://discord.com/invite/xymcity
