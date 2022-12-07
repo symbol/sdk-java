@@ -83,15 +83,14 @@ class CurrencyServiceIntegrationTest extends BaseIntegrationTest {
     RepositoryFactory repositoryFactory = getRepositoryFactory(type);
     CurrencyService service = new CurrencyServiceImpl(repositoryFactory);
 
-    RepositoryCallException exception =
+    IllegalArgumentException exception =
         Assertions.assertThrows(
-            RepositoryCallException.class,
+            IllegalArgumentException.class,
             () -> {
               get(service.getCurrency(new MosaicId(BigInteger.TEN)));
             });
 
     Assertions.assertEquals(
-        "ApiException: Not Found - 404 - ResourceNotFound - no resource exists with id '000000000000000A'",
-        exception.getMessage());
+        "There is no currency with id 000000000000000A", exception.getMessage());
   }
 }

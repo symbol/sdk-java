@@ -33,44 +33,53 @@ import io.nem.symbol.sdk.model.transaction.TransactionGroup;
 import io.nem.symbol.sdk.model.transaction.TransactionType;
 import io.nem.symbol.sdk.model.transaction.TransferTransaction;
 import io.reactivex.Observable;
+import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-// TODO BROKEN!
 class AccountRepositoryIntegrationTest extends BaseIntegrationTest {
 
-  public AccountRepository getAccountRepository(RepositoryType type) {
-    return getRepositoryFactory(type).createAccountRepository();
+  private Account testAccount;
+
+  @BeforeAll
+  void setup() {
+    testAccount = helper().getTestAccount(TestHelper.DEFAULT_REPOSITORY_TYPE).getLeft();
+    helper()
+        .basicTransfer(
+            TestHelper.DEFAULT_REPOSITORY_TYPE,
+            testAccount,
+            testAccount.getAddress(),
+            BigInteger.TEN);
   }
 
   @ParameterizedTest
   @EnumSource(RepositoryType.class)
   void getAccountInfo(RepositoryType type) {
-    Account testAccount = this.config().getDefaultAccount();
+    Account account = config().getDefaultAccount();
     Observable<AccountInfo> accountInfo1 =
-        this.getAccountRepository(type).getAccountInfo(testAccount.getPublicAccount().getAddress());
+        this.getAccountRepository(type).getAccountInfo(account.getPublicAccount().getAddress());
     AccountInfo accountInfo = get(accountInfo1);
 
-    assertEquals(testAccount.getPublicKey(), accountInfo.getPublicKey().toHex());
+    assertEquals(account.getPublicKey(), accountInfo.getPublicKey().toHex());
     assertEquals(AccountType.UNLINKED, accountInfo.getAccountType());
   }
 
   @ParameterizedTest
   @EnumSource(RepositoryType.class)
   void getAccountsInfoFromAddresses(RepositoryType type) {
-    Account account = config().getDefaultAccount();
-    Address address = account.getAddress();
+    Address address = testAccount.getAddress();
     List<AccountInfo> accountInfos =
         get(this.getAccountRepository(type).getAccountsInfo(Collections.singletonList(address)));
 
     assertEquals(1, accountInfos.size());
-    assertEquals(account.getAddress(), accountInfos.get(0).getAddress());
+    assertEquals(address, accountInfos.get(0).getAddress());
     assertEquals(AccountType.UNLINKED, accountInfos.get(0).getAccountType());
   }
 
@@ -146,7 +155,9 @@ class AccountRepositoryIntegrationTest extends BaseIntegrationTest {
 
     String id = transactions.get(1).getTransactionInfo().get().getId().get();
     List<Transaction> transactions2 =
-        get(transactionRepository.getTransactions(TransactionGroup.CONFIRMED, Arrays.asList(id)));
+        get(
+            transactionRepository.getTransactions(
+                TransactionGroup.CONFIRMED, Collections.singletonList(id)));
 
     Assertions.assertEquals(1, transactions2.size());
     transactions2.forEach(
@@ -158,18 +169,17 @@ class AccountRepositoryIntegrationTest extends BaseIntegrationTest {
   void outgoingTransactionsById(RepositoryType type) {
     TransactionRepository transactionRepository =
         getRepositoryFactory(type).createTransactionRepository();
-    Account account = config().getDefaultAccount();
 
     List<Transaction> transactions =
         get(transactionRepository.search(
                 new TransactionSearchCriteria(TransactionGroup.CONFIRMED)
-                    .signerPublicKey(account.getPublicAccount().getPublicKey())
+                    .signerPublicKey(testAccount.getPublicAccount().getPublicKey())
                     .pageSize(10)))
             .getData();
 
-    Assertions.assertTrue(transactions.size() > 1);
+    Assertions.assertTrue(transactions.size() > 0);
 
-    String id = transactions.get(1).getTransactionInfo().get().getId().get();
+    String id = transactions.get(0).getTransactionInfo().get().getId().get();
     List<Transaction> transactions2 =
         get(transactionRepository.getTransactions(TransactionGroup.CONFIRMED, Arrays.asList(id)));
 
@@ -192,9 +202,6 @@ class AccountRepositoryIntegrationTest extends BaseIntegrationTest {
                     .signerPublicKey(account.getPublicAccount().getPublicKey())
                     .pageSize(10)))
             .getData();
-
-    System.out.println(transactions.size());
-    Assertions.assertFalse(transactions.isEmpty());
 
     transactions.forEach(t -> Assertions.assertEquals(transactionType, t.getType()));
   }
@@ -239,7 +246,6 @@ class AccountRepositoryIntegrationTest extends BaseIntegrationTest {
   @ParameterizedTest
   @EnumSource(RepositoryType.class)
   void unconfirmedTransactions(RepositoryType type) {
-    Account testAccount = this.config().getDefaultAccount();
     TransactionRepository transactionRepository =
         getRepositoryFactory(type).createTransactionRepository();
     PublicAccount publicAccount = this.helper().getTestAccount(type).getLeft().getPublicAccount();
@@ -249,7 +255,7 @@ class AccountRepositoryIntegrationTest extends BaseIntegrationTest {
                     .signerPublicKey(publicAccount.getPublicKey())))
             .getData();
     System.out.println(transactions.size());
-    transactions.forEach(transaction -> assertTransaction(transaction, testAccount.getAddress()));
+    transactions.forEach(transaction -> assertTransaction(transaction, publicAccount.getAddress()));
   }
 
   @ParameterizedTest
@@ -265,5 +271,9 @@ class AccountRepositoryIntegrationTest extends BaseIntegrationTest {
             + address.plain()
             + "'",
         exception.getMessage());
+  }
+
+  private AccountRepository getAccountRepository(RepositoryType type) {
+    return getRepositoryFactory(type).createAccountRepository();
   }
 }

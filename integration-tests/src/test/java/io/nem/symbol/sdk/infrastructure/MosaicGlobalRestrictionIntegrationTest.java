@@ -81,6 +81,8 @@ public class MosaicGlobalRestrictionIntegrationTest extends BaseIntegrationTest 
 
     // 5) Validate the data from the endpoints
 
+    waitForIndexing();
+
     RestrictionMosaicRepository restrictionRepository =
         getRepositoryFactory(type).createRestrictionMosaicRepository();
 
@@ -108,6 +110,8 @@ public class MosaicGlobalRestrictionIntegrationTest extends BaseIntegrationTest 
     assertTransaction(updateTransaction, processedUpdateTransaction);
 
     // 8) Validating that the endpoints show the new value and type.
+
+    waitForIndexing();
 
     assertMosaicGlobalRestriction(
         updateTransaction, getMosaicRestriction(mosaicId, restrictionRepository));

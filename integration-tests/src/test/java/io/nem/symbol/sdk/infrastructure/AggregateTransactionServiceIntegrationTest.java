@@ -40,19 +40,6 @@ class AggregateTransactionServiceIntegrationTest extends BaseIntegrationTest {
 
   @ParameterizedTest
   @EnumSource(RepositoryType.class)
-  void aggregateWhenEmptyInnerTransactions(RepositoryType type) {
-
-    AggregateTransaction aggregateTransaction =
-        AggregateTransactionFactory.createComplete(
-                getNetworkType(), getDeadline(), Collections.emptyList())
-            .maxFee(maxFee)
-            .build();
-
-    announceAggregateAndValidate(type, aggregateTransaction, config().getDefaultAccount());
-  }
-
-  @ParameterizedTest
-  @EnumSource(RepositoryType.class)
   void isMultisigAccountModificationTransactionAdditionComplete(RepositoryType type) {
 
     Account multisigAccount = helper().getMultisigAccount(type).getKey();

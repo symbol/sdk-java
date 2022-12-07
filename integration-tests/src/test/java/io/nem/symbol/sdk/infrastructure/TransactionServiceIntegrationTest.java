@@ -32,6 +32,7 @@ import java.util.List;
 import org.apache.commons.lang3.RandomUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
@@ -39,15 +40,21 @@ import org.junit.jupiter.params.provider.EnumSource;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class TransactionServiceIntegrationTest extends BaseIntegrationTest {
 
+  private Account testAccount;
+  private String recipientAlias;
+
+  @BeforeAll
+  void setUp() {
+    Pair<Account, NamespaceId> testAccountPair =
+        helper().getTestAccount(TestHelper.DEFAULT_REPOSITORY_TYPE);
+    testAccount = testAccountPair.getLeft();
+    recipientAlias = testAccountPair.getRight().getFullName().get();
+  }
+
   @ParameterizedTest
   @EnumSource(RepositoryType.class)
   public void testTransferCatCurrencyFromNemesis(RepositoryType type) {
     String mosaicAlias = getNetworkCurrency().getNamespaceId().get().getFullName().get();
-
-    Account testAccount = helper().getTestAccount(type).getLeft();
-    String recipientAlias = "testaccount" + RandomUtils.nextInt(0, 10000);
-    helper().setAddressAlias(type, testAccount.getAddress(), recipientAlias);
-
     String hash =
         transferUsingAliases(
                 config().getNemesisAccount(), type, mosaicAlias, recipientAlias, BigInteger.TEN)
@@ -78,8 +85,6 @@ public class TransactionServiceIntegrationTest extends BaseIntegrationTest {
 
     String mosaicAlias =
         ("testTransferCustomCurrencyFromAccount1" + RandomUtils.nextInt(0, 10000)).toLowerCase();
-    String recipientAlias = "testaccount" + RandomUtils.nextInt(0, 10000);
-    Account testAccount = helper.getTestAccount(type).getLeft();
     MosaicId mosaicId =
         helper().createMosaic(testAccount, type, BigInteger.valueOf(10000), mosaicAlias);
     helper().setAddressAlias(type, testAccount.getAddress(), recipientAlias);
@@ -105,9 +110,6 @@ public class TransactionServiceIntegrationTest extends BaseIntegrationTest {
     String mosaicAlias =
         ("testTransferCustomCurrencyFromAccount1UsingAggregate" + RandomUtils.nextInt(0, 10000))
             .toLowerCase();
-    Account testAccount = helper().getTestAccount(type).getLeft();
-    String recipientAlias = "testaccount" + RandomUtils.nextInt(0, 10000);
-
     MosaicId mosaicId =
         helper().createMosaic(testAccount, type, BigInteger.valueOf(10000), mosaicAlias);
 

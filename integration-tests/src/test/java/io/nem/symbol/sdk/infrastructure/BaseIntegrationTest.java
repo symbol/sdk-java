@@ -188,4 +188,8 @@ public abstract class BaseIntegrationTest {
       RepositoryType type, Account testAccount, String namespaceName) {
     return helper().createRootNamespace(type, testAccount, namespaceName);
   }
+
+  protected void waitForIndexing() {
+    sleep(1000);
+  }
 }

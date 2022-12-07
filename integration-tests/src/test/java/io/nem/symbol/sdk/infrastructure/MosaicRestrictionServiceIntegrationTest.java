@@ -45,7 +45,7 @@ public class MosaicRestrictionServiceIntegrationTest extends BaseIntegrationTest
 
   @BeforeAll
   void setup() {
-    testAccount = config().getDefaultAccount();
+    testAccount = helper().getTestAccount(TestHelper.DEFAULT_REPOSITORY_TYPE).getLeft();
   }
 
   @ParameterizedTest
@@ -77,6 +77,8 @@ public class MosaicRestrictionServiceIntegrationTest extends BaseIntegrationTest
 
     // 5) Validate the data from the endpoints
 
+    waitForIndexing();
+
     RestrictionMosaicRepository restrictionRepository =
         getRepositoryFactory(type).createRestrictionMosaicRepository();
 
@@ -97,6 +99,8 @@ public class MosaicRestrictionServiceIntegrationTest extends BaseIntegrationTest
     assertTransaction(updateTransaction, processedUpdateTransaction);
 
     // 8) Validating that the endpoints show the new value and type.
+
+    waitForIndexing();
 
     assertMosaicGlobalRestriction(
         updateTransaction, getMosaicGlobalRestriction(restrictionRepository, mosaicId));
@@ -201,6 +205,8 @@ public class MosaicRestrictionServiceIntegrationTest extends BaseIntegrationTest
     RestrictionMosaicRepository restrictionRepository =
         getRepositoryFactory(type).createRestrictionMosaicRepository();
 
+    waitForIndexing();
+
     assertMosaicGlobalRestriction(
         createTransaction, getMosaicGlobalRestriction(restrictionRepository, mosaicId));
 
@@ -214,6 +220,9 @@ public class MosaicRestrictionServiceIntegrationTest extends BaseIntegrationTest
     announceAndValidate(type, testAccount, createAddressTransaction);
 
     // 7) Announcing the update restriction transaction and checking the processed one.
+
+    waitForIndexing();
+
     MosaicAddressRestrictionTransaction updateAddressTransaction =
         get(restrictionService.createMosaicAddressRestrictionTransactionFactory(
                 mosaicId, restrictionKey, testAccount.getAddress(), BigInteger.valueOf(50)))
@@ -240,6 +249,8 @@ public class MosaicRestrictionServiceIntegrationTest extends BaseIntegrationTest
 
     // 2) Create a restriction on the mosaic
 
+    waitForIndexing();
+
     MosaicRestrictionTransactionService restrictionService =
         getMosaicRestrictionTransactionService(type);
 
@@ -260,6 +271,8 @@ public class MosaicRestrictionServiceIntegrationTest extends BaseIntegrationTest
 
     // 5) Validate the data from the endpoints
 
+    waitForIndexing();
+
     RestrictionMosaicRepository restrictionRepository =
         getRepositoryFactory(type).createRestrictionMosaicRepository();
 
@@ -276,6 +289,9 @@ public class MosaicRestrictionServiceIntegrationTest extends BaseIntegrationTest
     announceAndValidate(type, testAccount, createAddressTransaction);
 
     // 7) Announcing the update restriction transaction and checking the processed one.
+
+    waitForIndexing();
+
     MosaicAddressRestrictionTransaction updateAddressTransaction =
         get(restrictionService.createMosaicAddressRestrictionTransactionFactory(
                 mosaicAlias, restrictionKey, testAccount.getAddress(), BigInteger.valueOf(50)))

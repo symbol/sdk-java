@@ -37,7 +37,6 @@ import io.nem.symbol.sdk.api.SecretLockRepository;
 import io.nem.symbol.sdk.api.SecretLockSearchCriteria;
 import io.nem.symbol.sdk.model.account.AccountInfo;
 import io.nem.symbol.sdk.model.account.AccountRestrictions;
-import io.nem.symbol.sdk.model.account.Address;
 import io.nem.symbol.sdk.model.account.MultisigAccountInfo;
 import io.nem.symbol.sdk.model.metadata.Metadata;
 import io.nem.symbol.sdk.model.mosaic.MosaicInfo;
@@ -46,18 +45,14 @@ import io.nem.symbol.sdk.model.namespace.NamespaceRegistrationType;
 import io.nem.symbol.sdk.model.restriction.MosaicRestriction;
 import io.nem.symbol.sdk.model.state.StateMerkleProof;
 import io.nem.symbol.sdk.model.transaction.HashLockInfo;
+import io.nem.symbol.sdk.model.transaction.LockStatus;
 import io.nem.symbol.sdk.model.transaction.SecretLockInfo;
-import io.reactivex.Observable;
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.EnumSource;
 
 @TestInstance(Lifecycle.PER_CLASS)
 public class MerkleLoaderIntegrationTest extends BaseIntegrationTest {
@@ -66,35 +61,65 @@ public class MerkleLoaderIntegrationTest extends BaseIntegrationTest {
 
   public static final OrderBy ORDER_BY = OrderBy.DESC;
 
-  public List<Arguments> mosaicRestriction() {
+  @ParameterizedTest
+  @EnumSource(RepositoryType.class)
+  void mosaicRestrictionMerkles(RepositoryType repositoryType) {
+    mosaicRestriction()
+        .forEach(
+            mosaicRestriction -> {
+              StateProofServiceImpl service =
+                  new StateProofServiceImpl(getRepositoryFactory(repositoryType));
+              StateMerkleProof<MosaicRestriction<?>> proof =
+                  get(service.mosaicRestriction(mosaicRestriction));
+              Assertions.assertTrue(
+                  proof.isValid(), "Invalid proof " + proof.getState().getCompositeHash());
+            });
+  }
+
+  private List<MosaicRestriction<?>> mosaicRestriction() {
     RepositoryFactory repositoryFactory = getRepositoryFactory(DEFAULT_REPOSITORY_TYPE);
     RestrictionMosaicRepository repository = repositoryFactory.createRestrictionMosaicRepository();
     return getArguments(repository, new MosaicRestrictionSearchCriteria());
   }
 
   @ParameterizedTest
-  @MethodSource("mosaicRestriction")
-  void mosaicRestrictionMerkles(MosaicRestriction<?> state, RepositoryType repositoryType) {
-    StateProofServiceImpl service = new StateProofServiceImpl(getRepositoryFactory(repositoryType));
-    StateMerkleProof<MosaicRestriction<?>> proof = get(service.mosaicRestriction(state));
-    Assertions.assertTrue(proof.isValid(), "Invalid proof " + proof.getState().getCompositeHash());
+  @EnumSource(RepositoryType.class)
+  void hashLocksMerkles(RepositoryType repositoryType) {
+    hashLocks()
+        .forEach(
+            hashLockInfo -> {
+              if (hashLockInfo.getStatus() == LockStatus.UNUSED) {
+                StateProofServiceImpl service =
+                    new StateProofServiceImpl(getRepositoryFactory(repositoryType));
+                StateMerkleProof<HashLockInfo> proof = get(service.hashLock(hashLockInfo));
+                Assertions.assertTrue(
+                    proof.isValid(), "Invalid proof " + proof.getState().getHash());
+              }
+            });
   }
 
-  public List<Arguments> hashLocks() {
+  private List<HashLockInfo> hashLocks() {
     RepositoryFactory repositoryFactory = getRepositoryFactory(DEFAULT_REPOSITORY_TYPE);
     HashLockRepository repository = repositoryFactory.createHashLockRepository();
     return getArguments(repository, new HashLockSearchCriteria());
   }
 
   @ParameterizedTest
-  @MethodSource("hashLocks")
-  void hashLocksMerkles(HashLockInfo state, RepositoryType repositoryType) {
-    StateProofServiceImpl service = new StateProofServiceImpl(getRepositoryFactory(repositoryType));
-    StateMerkleProof<HashLockInfo> proof = get(service.hashLock(state));
-    Assertions.assertTrue(proof.isValid(), "Invalid proof " + proof.getState().getHash());
+  @EnumSource(RepositoryType.class)
+  void accountRestrictionsMerkles(RepositoryType repositoryType) {
+    accountRestrictions()
+        .forEach(
+            accountRestrictions -> {
+              StateProofServiceImpl service =
+                  new StateProofServiceImpl(getRepositoryFactory(repositoryType));
+              StateMerkleProof<AccountRestrictions> proof =
+                  get(service.accountRestrictions(accountRestrictions));
+              Assertions.assertTrue(
+                  proof.isValid(), "Invalid proof " + proof.getState().getAddress().plain());
+            });
   }
 
-  public List<Arguments> accountRestrictions() {
+  private List<AccountRestrictions> accountRestrictions() {
     RepositoryFactory repositoryFactory = getRepositoryFactory(DEFAULT_REPOSITORY_TYPE);
     RestrictionAccountRepository repository =
         repositoryFactory.createRestrictionAccountRepository();
@@ -102,74 +127,98 @@ public class MerkleLoaderIntegrationTest extends BaseIntegrationTest {
   }
 
   @ParameterizedTest
-  @MethodSource("accountRestrictions")
-  void accountRestrictionsMerkles(AccountRestrictions state, RepositoryType repositoryType) {
-    StateProofServiceImpl service = new StateProofServiceImpl(getRepositoryFactory(repositoryType));
-    StateMerkleProof<AccountRestrictions> proof = get(service.accountRestrictions(state));
-    Assertions.assertTrue(
-        proof.isValid(), "Invalid proof " + proof.getState().getAddress().plain());
-  }
-
-  @Test
-  void multisigMerkles() {
-    RepositoryFactory repositoryFactory = getRepositoryFactory(DEFAULT_REPOSITORY_TYPE);
+  @EnumSource(RepositoryType.class)
+  void multisigMerkles(RepositoryType repositoryType) {
+    RepositoryFactory repositoryFactory = getRepositoryFactory(repositoryType);
     MultisigAccountInfo state =
         get(
             repositoryFactory
                 .createMultisigRepository()
                 .getMultisigAccountInfo(
-                    Address.createFromRawAddress("TCFAEINOWAAPSGT2OCBCZYMH2Q3PGHQPEYTIUKI")));
+                    helper().getMultisigAccount(repositoryType).getLeft().getAddress()));
     StateProofServiceImpl service = new StateProofServiceImpl(repositoryFactory);
     StateMerkleProof<MultisigAccountInfo> proof = get(service.multisig(state));
     Assertions.assertTrue(
         proof.isValid(), "Invalid proof " + proof.getState().getAccountAddress().plain());
   }
 
-  public List<Arguments> secretLocks() {
+  @ParameterizedTest
+  @EnumSource(RepositoryType.class)
+  void secretLocksMerkles(RepositoryType repositoryType) {
+    secretLocks()
+        .forEach(
+            secretLockInfo -> {
+              if (secretLockInfo.getStatus() == LockStatus.UNUSED) {
+                StateProofServiceImpl service =
+                    new StateProofServiceImpl(getRepositoryFactory(repositoryType));
+                StateMerkleProof<SecretLockInfo> proof = get(service.secretLock(secretLockInfo));
+                Assertions.assertTrue(
+                    proof.isValid(), "Invalid proof " + proof.getState().getCompositeHash());
+              }
+            });
+  }
+
+  private List<SecretLockInfo> secretLocks() {
     RepositoryFactory repositoryFactory = getRepositoryFactory(DEFAULT_REPOSITORY_TYPE);
     SecretLockRepository repository = repositoryFactory.createSecretLockRepository();
     return getArguments(repository, new SecretLockSearchCriteria().order(ORDER_BY));
   }
 
   @ParameterizedTest
-  @MethodSource("secretLocks")
-  void secretLocksMerkles(SecretLockInfo state, RepositoryType repositoryType) {
-    StateProofServiceImpl service = new StateProofServiceImpl(getRepositoryFactory(repositoryType));
-    StateMerkleProof<SecretLockInfo> proof = get(service.secretLock(state));
-    Assertions.assertTrue(proof.isValid(), "Invalid proof " + proof.getState().getCompositeHash());
+  @EnumSource(RepositoryType.class)
+  void accountsMerkles(RepositoryType repositoryType) {
+    accounts()
+        .forEach(
+            account -> {
+              StateProofServiceImpl service =
+                  new StateProofServiceImpl(getRepositoryFactory(repositoryType));
+              StateMerkleProof<AccountInfo> proof = get(service.account(account));
+              Assertions.assertTrue(
+                  proof.isValid(), "Invalid proof " + proof.getState().getAddress().plain());
+            });
   }
 
-  public List<Arguments> accounts() {
+  private List<AccountInfo> accounts() {
     RepositoryFactory repositoryFactory = getRepositoryFactory(DEFAULT_REPOSITORY_TYPE);
     AccountRepository repository = repositoryFactory.createAccountRepository();
     return getArguments(repository, new AccountSearchCriteria().order(ORDER_BY));
   }
 
   @ParameterizedTest
-  @MethodSource("accounts")
-  void accountsMerkles(AccountInfo state, RepositoryType repositoryType) {
-    StateProofServiceImpl service = new StateProofServiceImpl(getRepositoryFactory(repositoryType));
-    StateMerkleProof<AccountInfo> proof = get(service.account(state));
-    Assertions.assertTrue(
-        proof.isValid(), "Invalid proof " + proof.getState().getAddress().plain());
+  @EnumSource(RepositoryType.class)
+  void mosaicsMerkles(RepositoryType repositoryType) {
+    mosaics()
+        .forEach(
+            mosaicInfo -> {
+              StateProofServiceImpl service =
+                  new StateProofServiceImpl(getRepositoryFactory(repositoryType));
+              StateMerkleProof<MosaicInfo> proof = get(service.mosaic(mosaicInfo));
+              Assertions.assertTrue(
+                  proof.isValid(), "Invalid proof " + proof.getState().getMosaicId().getIdAsHex());
+            });
   }
 
-  public List<Arguments> mosaics() {
+  private List<MosaicInfo> mosaics() {
     RepositoryFactory repositoryFactory = getRepositoryFactory(DEFAULT_REPOSITORY_TYPE);
     MosaicRepository repository = repositoryFactory.createMosaicRepository();
     return getArguments(repository, new MosaicSearchCriteria().order(ORDER_BY));
   }
 
   @ParameterizedTest
-  @MethodSource("mosaics")
-  void mosaicsMerkles(MosaicInfo state, RepositoryType repositoryType) {
-    StateProofServiceImpl service = new StateProofServiceImpl(getRepositoryFactory(repositoryType));
-    StateMerkleProof<MosaicInfo> proof = get(service.mosaic(state));
-    Assertions.assertTrue(
-        proof.isValid(), "Invalid proof " + proof.getState().getMosaicId().getIdAsHex());
+  @EnumSource(RepositoryType.class)
+  void namespacesMerkles(RepositoryType repositoryType) {
+    namespaces()
+        .forEach(
+            namespaceInfo -> {
+              RepositoryFactory repositoryFactory = getRepositoryFactory(repositoryType);
+              StateProofServiceImpl service = new StateProofServiceImpl(repositoryFactory);
+              StateMerkleProof<NamespaceInfo> proof = get(service.namespace(namespaceInfo));
+              Assertions.assertTrue(
+                  proof.isValid(), "Invalid proof " + proof.getState().getId().getIdAsHex());
+            });
   }
 
-  public List<Arguments> namespaces() {
+  private List<NamespaceInfo> namespaces() {
     RepositoryFactory repositoryFactory = getRepositoryFactory(DEFAULT_REPOSITORY_TYPE);
     NamespaceRepository repository = repositoryFactory.createNamespaceRepository();
     return getArguments(
@@ -180,42 +229,32 @@ public class MerkleLoaderIntegrationTest extends BaseIntegrationTest {
   }
 
   @ParameterizedTest
-  @MethodSource("namespaces")
-  void namespacesMerkles(NamespaceInfo state, RepositoryType repositoryType) {
-    RepositoryFactory repositoryFactory = getRepositoryFactory(repositoryType);
-    StateProofServiceImpl service = new StateProofServiceImpl(repositoryFactory);
-    StateMerkleProof<NamespaceInfo> proof = get(service.namespace(state));
-    Assertions.assertTrue(
-        proof.isValid(), "Invalid proof " + proof.getState().getId().getIdAsHex());
+  @EnumSource(RepositoryType.class)
+  void metadatasMerkles(RepositoryType repositoryType) {
+    metadatas()
+        .forEach(
+            metadata -> {
+              StateProofServiceImpl service =
+                  new StateProofServiceImpl(getRepositoryFactory(repositoryType));
+              StateMerkleProof<Metadata> proof = get(service.metadata(metadata));
+              Assertions.assertTrue(
+                  proof.isValid(), "Invalid proof " + proof.getState().getCompositeHash());
+            });
   }
 
-  public List<Arguments> metadatas() {
+  private List<Metadata> metadatas() {
     RepositoryFactory repositoryFactory = getRepositoryFactory(DEFAULT_REPOSITORY_TYPE);
     MetadataRepository repository = repositoryFactory.createMetadataRepository();
     return getArguments(repository, new MetadataSearchCriteria().order(ORDER_BY));
   }
 
-  @ParameterizedTest
-  @MethodSource("metadatas")
-  void metadatasMerkles(Metadata state, RepositoryType repositoryType) {
-    StateProofServiceImpl service = new StateProofServiceImpl(getRepositoryFactory(repositoryType));
-    StateMerkleProof<Metadata> proof = get(service.metadata(state));
-    Assertions.assertTrue(proof.isValid(), "Invalid proof " + proof.getState().getCompositeHash());
-  }
-
-  private <E, C extends SearchCriteria<C>> List<Arguments> getArguments(
+  private <E, C extends SearchCriteria<C>> List<E> getArguments(
       SearcherRepository<E, C> repository, C criteria) {
     return get(
         repository
             .streamer()
             .search(criteria.order(OrderBy.DESC))
             .take(TAKE_COUNT)
-            .flatMap(
-                state ->
-                    Observable.fromIterable(
-                        Arrays.stream(RepositoryType.values())
-                            .map(r -> Arguments.of(state, r))
-                            .collect(Collectors.toList())))
             .toList()
             .toObservable());
   }

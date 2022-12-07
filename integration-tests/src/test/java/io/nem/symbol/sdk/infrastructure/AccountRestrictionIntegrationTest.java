@@ -217,6 +217,9 @@ class AccountRestrictionIntegrationTest extends BaseIntegrationTest {
       AccountRestrictionFlags restrictionFlags,
       Object value) {
     try {
+
+      waitForIndexing();
+
       AccountRestrictions restrictions =
           get(
               getRepositoryFactory(type)
