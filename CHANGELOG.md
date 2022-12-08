@@ -3,6 +3,23 @@ All notable changes to this project will be documented in this file.
 
 The changelog format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [1.0.3] - 8-Dec-2022
+| Package           | Version | Link                                                                          |
+|-------------------|---------|-------------------------------------------------------------------------------|
+| SDK OkHttp        | v1.0.3  | https://repo.maven.apache.org/maven2/io/nem/symbol-sdk-okhttp-client          |
+| SDK Vertx         | v1.0.3  | https://repo.maven.apache.org/maven2/io/nem/symbol-sdk-vertx-client           |
+| Catbuffer Library | v0.1.5  | https://repo.maven.apache.org/maven2/io/nem/catbuffer-java                    |
+| Client OkHttp     | v1.0.3  | https://repo.maven.apache.org/maven2/io/nem/symbol-openapi-okhttp-gson-client |
+| Client Vertx      | v1.0.3  | https://repo.maven.apache.org/maven2/io/nem/symbol-openapi-vertx-client/      |
+
+- upgrade rest openapi version to 1.0.3
+- keep only mainnet and testnet network types
+- catbuffer - add a revokable flag to mosaic and revocation transaction type
+- sdk - add revokable mosaic and revocation transaction support
+- upgrade Catbuffer to v0.1.5
+- add a revokable flag to mosaic and revocation transaction type and tests
+- correct e2e tests to make them pass
+
 ## [1.0.2] - 1-Nov-2022
 | Package           | Version | Link                                                                          |
 |-------------------|---------|-------------------------------------------------------------------------------|
