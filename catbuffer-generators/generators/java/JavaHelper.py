@@ -5,7 +5,7 @@ class JavaHelper(Helper):
 
     def get_body_class_name(self, name):
         body_name = name if not name.startswith('Embedded') else name[8:]
-        if name.startswith('Aggregate') and any(name.endswith(postfix) for postfix in ('Transaction', 'TransactionV1')):
+        if name.startswith('Aggregate') and any(name.endswith(postfix) for postfix in ('Transaction', 'TransactionV1', 'TransactionV2')):
             body_name = 'AggregateTransaction'
 
         return '{0}Body'.format(body_name)

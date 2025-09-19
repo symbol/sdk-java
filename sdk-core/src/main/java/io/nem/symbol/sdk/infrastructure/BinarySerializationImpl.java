@@ -282,6 +282,16 @@ public class BinarySerializationImpl implements BinarySerialization {
           new AggregateTransactionSerializer(TransactionType.AGGREGATE_BONDED, this);
       register(serializer, 1);
     }
+    {
+      TransactionSerializer<?> serializer =
+          new AggregateTransactionSerializer(TransactionType.AGGREGATE_COMPLETE, this);
+      register(serializer, 2);
+    }
+    {
+      TransactionSerializer<?> serializer =
+          new AggregateTransactionSerializer(TransactionType.AGGREGATE_BONDED, this);
+      register(serializer, 2);
+    }
     // endregion
 
     {

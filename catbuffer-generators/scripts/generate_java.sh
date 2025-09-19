@@ -1,8 +1,8 @@
 #!/bin/bash
-set -e
+set -ex
 
 generatorsRootDir="$(dirname $0)/.."
-topLevelRoot="$(git rev-parse --show-superproject-working-tree)"
+topLevelRoot="$(git rev-parse --show-toplevel)"
 
 ARTIFACT_NAME="catbuffer-java"
 RELEASE_VERSION="$(head -n 1 ${generatorsRootDir}/version.txt)"

@@ -23,7 +23,7 @@ Each SDK user can depend on the best library for its need (example, ``symbol-sdk
 <dependency>
     <groupId>io.nem</groupId>
     <artifactId>symbol-sdk-vertx-client</artifactId>
-    <version>1.0.3</version>
+    <version>1.0.4</version>
 </dependency>
 ```
 
@@ -33,25 +33,25 @@ OR
 <dependency>
     <groupId>io.nem</groupId>
     <artifactId>symbol-sdk-okhttp-client</artifactId>
-    <version>1.0.3</version>
+    <version>1.0.4</version>
 </dependency>
 ```
 
 ### Gradle
 
-```compile 'io.nem:symbol-sdk-vertx-client:1.0.3```
+```compile 'io.nem:symbol-sdk-vertx-client:1.0.4```
 
 OR
 
-```compile 'io.nem:symbol-sdk-okhttp-client:1.0.3```
+```compile 'io.nem:symbol-sdk-okhttp-client:1.0.4```
 
 ### SBT
 
-```libraryDependencies += "io.nem" % "symbol-sdk-vertx-client" % "1.0.3"```
+```libraryDependencies += "io.nem" % "symbol-sdk-vertx-client" % "1.0.4"```
 
 OR
 
-```libraryDependencies += "io.nem" % "symbol-sdk-okhttp-client" % "1.0.3"```
+```libraryDependencies += "io.nem" % "symbol-sdk-okhttp-client" % "1.0.4"```
 
 ## Usage
 
