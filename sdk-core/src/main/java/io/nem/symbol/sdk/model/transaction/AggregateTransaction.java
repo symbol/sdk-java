@@ -139,7 +139,7 @@ public class AggregateTransaction extends Transaction {
   public byte[] getSignBytes(final byte[] payloadBytes, final byte[] generationHashBytes) {
     final short headerSize = 4 + 32 + 64 + 8;
     // Aggregate tx only require to sign the body.
-    final short signingBytesSize = 52;
+    final short signingBytesSize = 52 + 4; // include the payload size
     final byte[] signingBytes = new byte[signingBytesSize + generationHashBytes.length];
     System.arraycopy(generationHashBytes, 0, signingBytes, 0, generationHashBytes.length);
     System.arraycopy(
